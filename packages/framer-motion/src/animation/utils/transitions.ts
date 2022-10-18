@@ -13,6 +13,7 @@ import { warning } from "hey-listen"
 import { getAnimatableNone } from "../../render/dom/value-types/animatable-none"
 import { instantAnimationState } from "../../utils/use-instant-transition-state"
 import { resolveFinalValueInKeyframes } from "../../utils/resolve-value"
+import { delay } from "../../utils/delay"
 
 type StopAnimation = { stop: () => void }
 
@@ -23,7 +24,7 @@ type StopAnimation = { stop: () => void }
  */
 export function isTransitionDefined({
     when,
-    delay,
+    delay: _delay,
     delayChildren,
     staggerChildren,
     staggerDirection,
@@ -268,7 +269,6 @@ export function startAnimation(
     }
 
     return value.start((onComplete) => {
-        let delayTimer: number
         let controls: StopAnimation
         const animation = getAnimation(
             key,
@@ -277,18 +277,19 @@ export function startAnimation(
             transition,
             onComplete
         )
-        const delay = getDelayFromTransition(transition, key)
+        const delayBy = getDelayFromTransition(transition, key)
 
         const start = () => (controls = animation())
 
-        if (delay) {
-            delayTimer = window.setTimeout(start, secondsToMilliseconds(delay))
+        let cancelDelay: VoidFunction
+        if (delayBy) {
+            cancelDelay = delay(start, secondsToMilliseconds(delayBy))
         } else {
             start()
         }
 
         return () => {
-            clearTimeout(delayTimer)
+            cancelDelay && cancelDelay()
             controls && controls.stop()
         }
     })

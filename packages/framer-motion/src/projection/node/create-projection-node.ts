@@ -46,6 +46,7 @@ import { Transition } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { MotionStyle } from "../../motion/types"
 import { globalProjectionState } from "./state"
+import { delay } from "../../utils/delay"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -362,7 +363,7 @@ export function createProjectionNode<I>({
             }
 
             if (attachResizeListener) {
-                let unblockTimeout: number
+                let cancelDelay: VoidFunction
 
                 const resizeUnblockUpdate = () =>
                     (this.root.updateBlockedByResize = false)
@@ -370,8 +371,8 @@ export function createProjectionNode<I>({
                 attachResizeListener(instance, () => {
                     this.root.updateBlockedByResize = true
 
-                    clearTimeout(unblockTimeout)
-                    unblockTimeout = window.setTimeout(resizeUnblockUpdate, 250)
+                    cancelDelay && cancelDelay()
+                    cancelDelay = delay(resizeUnblockUpdate, 250)
 
                     if (globalProjectionState.hasAnimatedSinceResize) {
                         globalProjectionState.hasAnimatedSinceResize = false

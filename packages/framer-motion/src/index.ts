@@ -82,6 +82,7 @@ export { addScaleCorrector } from "./projection/styles/scale-correction"
 export { useInstantTransition } from "./utils/use-instant-transition"
 export { useInstantLayoutTransition } from "./projection/use-instant-layout-transition"
 export { useResetProjection } from "./projection/use-reset-projection"
+export * from "./utils/delay"
 
 /**
  * Contexts
