@@ -4,6 +4,8 @@ import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { TimelineContext } from "./context"
 import { useMotionValue } from "../../value/use-motion-value"
 import { animate as animateMotionValue } from "../../animation/animate"
+import { useConstant } from "../../utils/use-constant"
+import { createTimeline } from "./create-timeline"
 // import { useConstant } from "../../utils/use-constant"
 
 export function Timeline({
@@ -12,11 +14,16 @@ export function Timeline({
     progress,
     children,
 }: TimelineProps) {
-    // const tracks = useConstant(createTracksManager)
     const timeProgress = useMotionValue(initial ? 0 : 1)
     const timelineProgress = progress || timeProgress
 
-    // const initialValues = useConstant(() => getInitialKeyframes(animate))
+    const timeline = useConstant(() =>
+        createTimeline(animate, timelineProgress)
+    )
+
+    // useIsomorphicLayoutEffect(() => {
+    //     timeline.update()
+    // })
 
     useIsomorphicLayoutEffect(() => {
         if (timelineProgress === progress) {
@@ -26,7 +33,7 @@ export function Timeline({
     }, [JSON.stringify(animate)])
 
     return (
-        <TimelineContext.Provider value={undefined}>
+        <TimelineContext.Provider value={timeline}>
             {children}
         </TimelineContext.Provider>
     )

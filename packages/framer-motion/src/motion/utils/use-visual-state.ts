@@ -14,6 +14,8 @@ import {
     isControllingVariants as checkIsControllingVariants,
     isVariantNode as checkIsVariantNode,
 } from "../../render/utils/is-controlling-variants"
+import { TimelineContext } from "../../components/Timeline/context"
+import { Timeline } from "../../components/Timeline/types"
 
 export interface VisualState<Instance, RenderState> {
     renderState: RenderState
@@ -44,13 +46,15 @@ function makeState<I, RS>(
     }: UseVisualStateConfig<I, RS>,
     props: MotionProps,
     context: MotionContextProps,
-    presenceContext: PresenceContextProps | null
+    presenceContext: PresenceContextProps | null,
+    timelineContext: Timeline | undefined
 ) {
     const state: VisualState<I, RS> = {
         latestValues: makeLatestValues(
             props,
             context,
             presenceContext,
+            timelineContext,
             scrapeMotionValuesFromProps
         ),
         renderState: createRenderState(),
@@ -68,7 +72,9 @@ export const makeUseVisualState =
     (props: MotionProps, isStatic: boolean): VisualState<I, RS> => {
         const context = useContext(MotionContext)
         const presenceContext = useContext(PresenceContext)
-        const make = () => makeState(config, props, context, presenceContext)
+        const timelineContext = useContext(TimelineContext)
+        const make = () =>
+            makeState(config, props, context, presenceContext, timelineContext)
 
         return isStatic ? make() : useConstant(make)
     }
@@ -77,6 +83,7 @@ function makeLatestValues(
     props: MotionProps,
     context: MotionContextProps,
     presenceContext: PresenceContextProps | null,
+    timelineContext: Timeline | undefined,
     scrapeMotionValues: ScrapeMotionValuesFromProps
 ) {
     const values: ResolvedValues = {}
@@ -84,6 +91,13 @@ function makeLatestValues(
     const motionValues = scrapeMotionValues(props)
     for (const key in motionValues) {
         values[key] = resolveMotionValue(motionValues[key])
+    }
+
+    if (props.track && timelineContext) {
+        const unresolvedTrack = timelineContext.getStatic(props.track)
+        for (const key in unresolvedTrack) {
+            values[key] = unresolvedTrack[key]
+        }
     }
 
     let { initial, animate } = props

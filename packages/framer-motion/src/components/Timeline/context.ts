@@ -1,6 +1,4 @@
 import { createContext } from "react"
-import { TimelineContextProps } from "./types"
+import { Timeline } from "./types"
 
-export const TimelineContext = createContext<TimelineContextProps | undefined>(
-    undefined
-)
+export const TimelineContext = createContext<Timeline | undefined>(undefined)

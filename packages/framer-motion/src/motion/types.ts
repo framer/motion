@@ -232,6 +232,15 @@ export interface AnimationProps {
      * ```
      */
     transition?: Transition
+
+    /**
+     * The name of a timeline track to be animated by.
+     *
+     * <Timeline animate={[["box", { opacity: 0 }]]}>
+     *   <motion.div track="box" />
+     * </Timeline>
+     */
+    track?: string
 }
 
 /**

@@ -39,7 +39,11 @@ export interface TimelineProps {
     children: ReactNode
 }
 
-export interface TimelineContextProps {}
+export interface Timeline {
+    getStatic(trackName: string): {
+        [key: string]: string | number
+    }
+}
 
 export type UnresolvedKeyframeValue = string | number | null
 
