@@ -5,8 +5,7 @@ import { TimelineContext } from "./context"
 import { useMotionValue } from "../../value/use-motion-value"
 import { animate as animateMotionValue } from "../../animation/animate"
 import { useConstant } from "../../utils/use-constant"
-import { createTimeline } from "./create-timeline"
-// import { useConstant } from "../../utils/use-constant"
+import { createTimeline } from "./timeline"
 
 export function Timeline({
     initial = true,
@@ -20,10 +19,6 @@ export function Timeline({
     const timeline = useConstant(() =>
         createTimeline(animate, timelineProgress)
     )
-
-    // useIsomorphicLayoutEffect(() => {
-    //     timeline.update()
-    // })
 
     useIsomorphicLayoutEffect(() => {
         if (timelineProgress === progress) {

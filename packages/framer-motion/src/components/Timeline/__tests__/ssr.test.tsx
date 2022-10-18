@@ -53,6 +53,18 @@ function runTests(render: (components: any) => string) {
         expect(html).toBe(`<div style="opacity:0.5"></div>`)
     })
 
+    test("renders final values if initial=false", () => {
+        const sequence: TimelineSequence = [["box", { opacity: [0.5, 0.1] }]]
+
+        const html = render(
+            <Timeline initial={false} animate={sequence}>
+                <motion.div track="box" />
+            </Timeline>
+        )
+
+        expect(html).toBe(`<div style="opacity:0.1"></div>`)
+    })
+
     test("renders component initial values instead of timeline values", () => {
         const sequence: TimelineSequence = [["box", { opacity: [0.5, 0] }]]
 

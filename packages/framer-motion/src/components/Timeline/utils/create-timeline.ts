@@ -3,6 +3,7 @@ import {
     TimelineSequence,
     UnresolvedTimeline,
     UnresolvedTracks,
+    UnresolvedValueSequence,
 } from "../types"
 import { calcNextTime } from "./calc-next-time"
 import { defaultTransition } from "./defaults"
@@ -144,4 +145,21 @@ export function createUnresolvedTimeline(
     }
 
     return timeline
+}
+
+export function resolveTrack(
+    track: UnresolvedValueSequence,
+    valueName: string,
+    readValue: (key: string) => string | number | null | undefined
+) {
+    for (let i = 0; i < track.length; i++) {
+        if (track[i].value === null) {
+            const resolvedValue =
+                i === 0 ? readValue(valueName) : track[i - 1].value
+
+            if (resolvedValue !== null && resolvedValue !== undefined) {
+                track[i].value = resolvedValue
+            }
+        }
+    }
 }

@@ -43,6 +43,12 @@ export interface Timeline {
     getStatic(trackName: string): {
         [key: string]: string | number
     }
+    getMotionValues(
+        trackName: string,
+        readValue: (key: string) => string | number | null | undefined
+    ): {
+        [key: string]: MotionValue<string | number>
+    }
 }
 
 export type UnresolvedKeyframeValue = string | number | null

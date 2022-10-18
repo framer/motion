@@ -54,6 +54,7 @@ export const visualElement =
             blockInitialAnimation,
             visualState,
             reducedMotionConfig,
+            timeline,
         }: VisualElementOptions<Instance>,
         options: Options = {} as Options
     ) => {
@@ -80,6 +81,11 @@ export const visualElement =
          * value might be provided externally by the component via props.
          */
         const values = new Map<string, MotionValue>()
+
+        /**
+         * A map of all timeline motion values for this visual element.
+         */
+        let timelineValues: { [key: string]: MotionValue } | undefined
 
         /**
          * A map of every subscription that binds the provided or generated
@@ -145,6 +151,7 @@ export const visualElement =
         function bindToMotionValue(key: string, value: MotionValue) {
             const removeOnChange = value.onChange(
                 (latestValue: string | number) => {
+                    console.log("setting", key, "to", latestValue)
                     latestValues[key] = latestValue
                     props.onUpdate && sync.update(update, false, true)
                 }
@@ -280,6 +287,17 @@ export const visualElement =
                 }
 
                 values.forEach((value, key) => bindToMotionValue(key, value))
+
+                if (props.track && timeline) {
+                    timelineValues = timeline.getMotionValues(
+                        props.track,
+                        element.readValue
+                    )
+                    for (const key in timelineValues) {
+                        bindToMotionValue(key, timelineValues[key])
+                        latestValues[key] = timelineValues[key].get()
+                    }
+                }
 
                 if (!hasReducedMotionListener.current) {
                     initPrefersReducedMotion()

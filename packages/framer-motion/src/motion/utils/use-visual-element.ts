@@ -9,6 +9,7 @@ import { VisualState } from "./use-visual-state"
 import { LazyContext } from "../../context/LazyContext"
 import { MotionConfigProps } from "../../components/MotionConfig"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
+import { TimelineContext } from "../../components/Timeline/context"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -20,6 +21,7 @@ export function useVisualElement<Instance, RenderState>(
     const lazyContext = useContext(LazyContext)
     const presenceContext = useContext(PresenceContext)
     const reducedMotionConfig = useContext(MotionConfigContext).reducedMotion
+    const timeline = useContext(TimelineContext)
 
     const visualElementRef: MutableRefObject<VisualElement | undefined> =
         useRef(undefined)
@@ -39,6 +41,7 @@ export function useVisualElement<Instance, RenderState>(
                 ? presenceContext.initial === false
                 : false,
             reducedMotionConfig,
+            timeline,
         })
     }
 
