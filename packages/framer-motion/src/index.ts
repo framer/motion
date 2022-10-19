@@ -9,6 +9,7 @@ export { MotionConfig } from "./components/MotionConfig"
 export { LazyMotion } from "./components/LazyMotion"
 export { LayoutGroup } from "./components/LayoutGroup"
 export { Reorder } from "./components/Reorder"
+export { Timeline } from "./components/Timeline"
 
 /**
  * Three
@@ -152,6 +153,8 @@ export { LazyProps } from "./components/LazyMotion/types"
 export { FlatTree } from "./render/utils/flat-tree"
 export * from "./projection/geometry/types"
 export { IProjectionNode } from "./projection/node/types"
+export * from "./components/Timeline/types"
+
 /**
  * Deprecated
  */

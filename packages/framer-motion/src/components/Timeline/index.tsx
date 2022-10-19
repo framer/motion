@@ -10,6 +10,7 @@ import { createTimeline } from "./timeline"
 export function Timeline({
     initial = true,
     animate,
+    transition,
     progress,
     children,
 }: TimelineProps) {
@@ -23,7 +24,11 @@ export function Timeline({
     useIsomorphicLayoutEffect(() => {
         if (timelineProgress === progress) {
         } else {
-            animateMotionValue(timeProgress, [0, 1])
+            animateMotionValue(timeProgress, [0, 1], {
+                duration: timeline.getDuration(),
+                ease: "linear",
+                ...transition,
+            } as any)
         }
     }, [JSON.stringify(animate)])
 

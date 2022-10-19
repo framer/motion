@@ -1,14 +1,14 @@
 import { easingDefinitionToFunction } from "../../animation/utils/easing"
 import { transform } from "../../utils/transform"
 import { motionValue, MotionValue } from "../../value"
-import { Timeline, TimelineSequence } from "./types"
+import type { TimelineController, TimelineSequence } from "./types"
 import { createUnresolvedTimeline, resolveTrack } from "./utils/create-timeline"
 import { defaultTransition } from "./utils/defaults"
 
 export function createTimeline(
     sequence: TimelineSequence,
     progress: MotionValue<number>
-): Timeline {
+): TimelineController {
     return {
         getStatic(trackName) {
             const timeline = createUnresolvedTimeline(sequence).tracks // cache
@@ -54,12 +54,6 @@ export function createTimeline(
 
                 motionValues[valueName] = motionValue(0)
                 const update = (latest: number) => {
-                    console.log(
-                        "setting",
-                        valueName,
-                        "to",
-                        timeToValues(latest * duration)
-                    )
                     motionValues[valueName].set(timeToValues(latest * duration))
                 }
                 update(progress.get())
@@ -67,6 +61,9 @@ export function createTimeline(
             }
 
             return motionValues
+        },
+        getDuration() {
+            return createUnresolvedTimeline(sequence).duration // cache
         },
     }
 }

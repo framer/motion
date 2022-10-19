@@ -15,7 +15,7 @@ import {
     isVariantNode as checkIsVariantNode,
 } from "../../render/utils/is-controlling-variants"
 import { TimelineContext } from "../../components/Timeline/context"
-import { Timeline } from "../../components/Timeline/types"
+import type { TimelineController } from "../../components/Timeline/types"
 
 export interface VisualState<Instance, RenderState> {
     renderState: RenderState
@@ -47,7 +47,7 @@ function makeState<I, RS>(
     props: MotionProps,
     context: MotionContextProps,
     presenceContext: PresenceContextProps | null,
-    timelineContext: Timeline | undefined
+    timelineContext: TimelineController | undefined
 ) {
     const state: VisualState<I, RS> = {
         latestValues: makeLatestValues(
@@ -83,7 +83,7 @@ function makeLatestValues(
     props: MotionProps,
     context: MotionContextProps,
     presenceContext: PresenceContextProps | null,
-    timelineContext: Timeline | undefined,
+    timelineContext: TimelineController | undefined,
     scrapeMotionValues: ScrapeMotionValuesFromProps
 ) {
     const values: ResolvedValues = {}

@@ -12,7 +12,7 @@ import { MotionConfigProps } from "../components/MotionConfig"
 import { ReducedMotionConfig } from "../context/MotionConfigContext"
 import { FeatureBundle } from "../motion/features/types"
 import type { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
-import { Timeline } from "../components/Timeline/types"
+import type { TimelineController } from "../components/Timeline/types"
 
 export interface MotionPoint {
     x: MotionValue<number>
@@ -169,7 +169,7 @@ export type VisualElementOptions<Instance, RenderState = any> = {
     props: MotionProps
     blockInitialAnimation?: boolean
     reducedMotionConfig?: ReducedMotionConfig
-    timeline?: Timeline
+    timeline?: TimelineController
 }
 
 export type CreateVisualElement<Instance> = (

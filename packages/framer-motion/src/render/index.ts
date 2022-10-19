@@ -9,6 +9,7 @@ import { motionValue, MotionValue } from "../value"
 import { isWillChangeMotionValue } from "../value/use-will-change/is"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import {
+    ResolvedValues,
     VisualElement,
     VisualElementConfig,
     VisualElementOptions,
@@ -29,6 +30,7 @@ import { createElement } from "react"
 import { IProjectionNode } from "../projection/node/types"
 import { isRefObject } from "../utils/is-ref-object"
 import { resolveVariantFromProps } from "./utils/resolve-variants"
+import { mix } from "popmotion"
 
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
@@ -60,6 +62,9 @@ export const visualElement =
     ) => {
         let isMounted = false
         const { latestValues, renderState } = visualState
+
+        const latestComponentValues: ResolvedValues = {}
+        let latestTimelineValues: ResolvedValues = {}
 
         /**
          * The instance of the render-specific node that will be hydrated by the
@@ -138,6 +143,27 @@ export const visualElement =
         }
 
         function triggerBuild() {
+            // TODO Skip this and make latestValues the same as latestComponentValues
+            // if no timeline present
+            for (const key in latestComponentValues) {
+                latestValues[key] = latestComponentValues[key]
+            }
+            if (latestTimelineValues) {
+                for (const key in latestTimelineValues) {
+                    if (latestComponentValues[key] === undefined) {
+                        latestValues[key] = latestTimelineValues[key]
+                    } else {
+                        latestValues[key] = mix(
+                            latestTimelineValues[key],
+                            latestComponentValues[key],
+
+                            1
+                        )
+                    }
+                }
+            }
+
+            console.log(latestValues.y)
             build(element, renderState, latestValues, options, props)
         }
 
@@ -148,11 +174,14 @@ export const visualElement =
         /**
          *
          */
-        function bindToMotionValue(key: string, value: MotionValue) {
+        function bindToMotionValue(
+            key: string,
+            value: MotionValue,
+            output: ResolvedValues
+        ) {
             const removeOnChange = value.onChange(
                 (latestValue: string | number) => {
-                    console.log("setting", key, "to", latestValue)
-                    latestValues[key] = latestValue
+                    output[key] = latestValue
                     props.onUpdate && sync.update(update, false, true)
                 }
             )
@@ -286,16 +315,23 @@ export const visualElement =
                     removeFromVariantTree = parent?.addVariantChild(element)
                 }
 
-                values.forEach((value, key) => bindToMotionValue(key, value))
+                values.forEach((value, key) =>
+                    bindToMotionValue(key, value, latestComponentValues)
+                )
 
                 if (props.track && timeline) {
                     timelineValues = timeline.getMotionValues(
                         props.track,
                         element.readValue
                     )
+                    latestTimelineValues = {}
                     for (const key in timelineValues) {
-                        bindToMotionValue(key, timelineValues[key])
-                        latestValues[key] = timelineValues[key].get()
+                        bindToMotionValue(
+                            key,
+                            timelineValues[key],
+                            latestTimelineValues
+                        )
+                        latestTimelineValues[key] = timelineValues[key].get()
                     }
                 }
 
@@ -506,7 +542,7 @@ export const visualElement =
 
                 values.set(key, value)
                 latestValues[key] = value.get()
-                bindToMotionValue(key, value)
+                bindToMotionValue(key, value, latestComponentValues)
             },
 
             /**

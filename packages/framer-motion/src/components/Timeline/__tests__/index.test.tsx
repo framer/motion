@@ -70,4 +70,26 @@ describe("Timeline", () => {
             "opacity: 0.5; transform: translateX(75px) translateZ(0)"
         )
     })
+
+    test("Respects transition", async () => {
+        const promise = new Promise((resolve) => {
+            const ref = createRef<HTMLDivElement>()
+            const Component = () => (
+                <Timeline
+                    animate={[["box", { opacity: [0.4, 0.6], x: [50, 100] }]]}
+                    transition={{ type: false }}
+                >
+                    <motion.div track="box" ref={ref} />
+                </Timeline>
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+
+            resolve(ref.current)
+        })
+
+        await expect(promise).resolves.toHaveStyle(
+            "opacity: 0.6; transform: translateX(100px) translateZ(0)"
+        )
+    })
 })

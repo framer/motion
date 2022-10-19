@@ -1,6 +1,12 @@
 import { ReactNode } from "react"
-import { Easing, TargetWithKeyframes, Transition } from "../../types"
-import type { MotionValue } from "../../value"
+import {
+    Easing,
+    Repeat,
+    TargetWithKeyframes,
+    Transition,
+    TransitionDefinition,
+} from "../../types"
+import { MotionValue } from "../../value"
 
 export type ValueTransition = {}
 
@@ -34,12 +40,12 @@ export type TimelineSequence = Array<TimelineSegment | LabelDescription>
 export interface TimelineProps {
     initial?: boolean
     animate: TimelineSequence
-    options?: TimelineOptions
+    transition?: Repeat & TransitionDefinition
     progress?: MotionValue<number>
     children: ReactNode
 }
 
-export interface Timeline {
+export interface TimelineController {
     getStatic(trackName: string): {
         [key: string]: string | number
     }
@@ -49,6 +55,7 @@ export interface Timeline {
     ): {
         [key: string]: MotionValue<string | number>
     }
+    getDuration(): number
 }
 
 export type UnresolvedKeyframeValue = string | number | null
