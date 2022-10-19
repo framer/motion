@@ -23,7 +23,10 @@ const sortTransformProps = (a: string, b: string) =>
  * providing a transformTemplate function.
  */
 export function buildTransform(
-    { transform, transformKeys }: HTMLRenderState,
+    {
+        transform,
+        transformKeys,
+    }: Pick<HTMLRenderState, "transform" | "transformKeys">,
     {
         enableHardwareAcceleration = true,
         allowTransformNone = true,
