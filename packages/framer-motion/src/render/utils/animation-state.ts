@@ -336,10 +336,16 @@ export function createAnimationState(
          */
         if (removedKeys.size) {
             const fallbackAnimation = {}
+            const timeline = visualElement.getTimeline()
+
             removedKeys.forEach((key) => {
-                const fallbackTarget = visualElement.getBaseTarget(key)
-                if (fallbackTarget !== undefined) {
-                    fallbackAnimation[key] = fallbackTarget
+                if (timeline && timeline.isAnimating(visualElement, key)) {
+                    timeline.startCrossfade(visualElement, key)
+                } else {
+                    const fallbackTarget = visualElement.getBaseTarget(key)
+                    if (fallbackTarget !== undefined) {
+                        fallbackAnimation[key] = fallbackTarget
+                    }
                 }
             })
 

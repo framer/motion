@@ -40,6 +40,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     addVariantChild(child: VisualElement): undefined | (() => void)
     getClosestVariantNode(): VisualElement | undefined
     shouldReduceMotion?: boolean | null
+    getTimeline(): TimelineController | undefined
 
     animateMotionValue?: typeof startAnimation
 
@@ -76,6 +77,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     getStaticValue(key: string): number | string | undefined
     setStaticValue(key: string, value: number | string): void
     getLatestValues(): ResolvedValues
+    latestComponentValues: ResolvedValues
     scheduleRender(): void
 
     makeTargetAnimatable(

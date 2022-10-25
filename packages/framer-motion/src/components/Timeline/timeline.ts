@@ -1,69 +1,188 @@
-import { easingDefinitionToFunction } from "../../animation/utils/easing"
-import { transform } from "../../utils/transform"
-import { motionValue, MotionValue } from "../../value"
-import type { TimelineController, TimelineSequence } from "./types"
-import { createUnresolvedTimeline, resolveTrack } from "./utils/create-timeline"
-import { defaultTransition } from "./utils/defaults"
+import { mixComplex } from "popmotion"
+import { animate } from "../../animation/animate"
+import { ResolvedValues, VisualElement } from "../../render/types"
+import { motionValue } from "../../value"
+import type {
+    ElementTimelineState,
+    TimelineController,
+    TimelineProps,
+    UnresolvedTimeline,
+} from "./types"
+import {
+    createUnresolvedTimeline,
+    createValueTransformers,
+} from "./utils/create-timeline"
 
-export function createTimeline(
-    sequence: TimelineSequence,
-    progress: MotionValue<number>
-): TimelineController {
+export function createTimeline(props: TimelineProps): TimelineController {
+    const registeredElements = new Map<VisualElement, ElementTimelineState>()
+
+    let isInitialRender = true
+    const timeProgress = motionValue(props.initial === false ? 1 : 0)
+    let progress = props.progress || timeProgress
+    let unresolvedTimeline: UnresolvedTimeline
+
+    function updateUnresolvedTimeline() {
+        unresolvedTimeline = createUnresolvedTimeline(props.animate)
+    }
+
+    updateUnresolvedTimeline()
+
+    function startAnimation() {
+        animate(timeProgress, [0, 1], {
+            duration: unresolvedTimeline.duration,
+            ease: "linear",
+            ...props.transition,
+        } as any)
+    }
+
+    function registerElement(element: VisualElement) {
+        if (registeredElements.has(element)) {
+            removeElement(element)
+        }
+
+        const trackId = element.getProps().track
+
+        if (!trackId) return
+
+        const unsubscribe = progress.onChange(() => element.scheduleRender())
+
+        const timeToValue = createValueTransformers(
+            unresolvedTimeline.tracks[trackId],
+            element.readValue
+        )
+
+        registeredElements.set(element, {
+            unsubscribe,
+            timeToValue,
+            crossfade: {},
+            latestResolvedValues: {},
+        })
+    }
+
+    function removeElement(element: VisualElement) {
+        const state = registeredElements.get(element)
+        if (state && state.unsubscribe) {
+            state.unsubscribe()
+        }
+
+        registeredElements.delete(element)
+    }
+
     return {
-        getStatic(trackName) {
-            const timeline = createUnresolvedTimeline(sequence).tracks // cache
-            const currentProgress = progress.get()
-            const staticValues = {}
+        update(newProps: TimelineProps) {
+            props = newProps
+            progress = props.progress || timeProgress
 
-            for (const valueName in timeline[trackName]) {
-                const unresolvedKeyframes = timeline[trackName][valueName]
+            updateUnresolvedTimeline()
+
+            if (
+                !isInitialRender ||
+                (isInitialRender && props.initial !== false)
+            ) {
+                startAnimation()
+            }
+
+            /**
+             * Rescubscribe
+             */
+            if (!isInitialRender) {
+                const currentElements = new Map(registeredElements)
+                currentElements.forEach((_, element) => removeElement(element))
+                currentElements.forEach((_, element) =>
+                    registerElement(element)
+                )
+            }
+
+            isInitialRender = false
+        },
+
+        getInitialValues(trackName) {
+            const { tracks } = unresolvedTimeline
+            const track = tracks[trackName]
+            const currentProgress = progress.get()
+            const values: ResolvedValues = {}
+
+            for (const valueName in track) {
+                const unresolvedKeyframes = track[valueName]
                 const index =
                     currentProgress === 1 ? unresolvedKeyframes.length - 1 : 0
                 const { value } = unresolvedKeyframes[index]
 
-                if (value !== null) staticValues[valueName] = value
+                if (value !== null) values[valueName] = value
             }
 
-            return staticValues
+            return values
         },
-        getMotionValues(trackName, readValue) {
-            const motionValues = {}
-            const { tracks, duration } = createUnresolvedTimeline(sequence) // cache
 
-            const track = tracks[trackName]
-            for (const valueName in track) {
-                resolveTrack(track[valueName], valueName, readValue)
+        registerElement,
+        removeElement,
 
-                const values: Array<string | number> = []
-                const times: Array<number> = []
-                const easings = []
+        merge(element) {
+            const state = registeredElements.get(element)
 
-                for (let i = 0; i < track[valueName].length; i++) {
-                    const { at, value, easing } = track[valueName][i]
-                    values.push(value as string | number)
-                    times.push(at)
-                    easings.push(
-                        easingDefinitionToFunction(
-                            easing || (defaultTransition.easing as any)
-                        )
-                    )
-                }
-                easings.pop()
+            if (!state || !unresolvedTimeline) return
 
-                const timeToValues = transform(times, values, { ease: easings })
+            const { duration } = unresolvedTimeline
+            const currentProgress = progress.get()
 
-                motionValues[valueName] = motionValue(0)
-                const update = (latest: number) => {
-                    motionValues[valueName].set(timeToValues(latest * duration))
-                }
-                update(progress.get())
-                progress.onChange(update)
+            const latestValues = element.getLatestValues()
+
+            for (const key in state.timeToValue) {
+                const value = state.timeToValue[key](currentProgress * duration)
+                state.latestResolvedValues[key] = latestValues[key] = value
             }
 
-            return motionValues
+            for (const key in element.latestComponentValues) {
+                console.log(
+                    "setting",
+                    key,
+                    "to",
+                    element.latestComponentValues[key]
+                )
+                latestValues[key] = element.latestComponentValues[key]
+            }
+
+            for (const key in state.crossfade) {
+                const { mix, fromValue } = state.crossfade[key]
+
+                if (state.latestResolvedValues[key] !== undefined) {
+                    console.log(state.latestResolvedValues[key], fromValue)
+                    latestValues[key] = mixComplex(
+                        state.latestResolvedValues[key],
+                        fromValue
+                    )(mix.get())
+                }
+            }
         },
-        getDuration() {
-            return createUnresolvedTimeline(sequence).duration // cache
+
+        startCrossfade(element, valueName) {
+            const state = registeredElements.get(element)
+            if (!state) return
+
+            const existingCrossfade = state.crossfade[valueName]
+            if (existingCrossfade) {
+                existingCrossfade.mix.stop()
+            }
+
+            const fromValue = element.latestComponentValues[valueName]
+            delete element.latestComponentValues[valueName]
+
+            if (fromValue === undefined) return
+
+            const mix = motionValue(1)
+            state.crossfade[valueName] = { fromValue, mix }
+
+            animate(mix, 0, {
+                ...(element.getDefaultTransition() as any),
+                onComplete: () => {
+                    delete state.crossfade[valueName]
+                },
+            })
+        },
+
+        isAnimating(element, valueName) {
+            const state = registeredElements.get(element)
+            return Boolean(state && state.timeToValue[valueName])
         },
     }
 }

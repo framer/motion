@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import { ResolvedValues, VisualElement } from "../../render/types"
 import {
     Easing,
     Repeat,
@@ -37,25 +37,13 @@ export interface LabelDescription {
 
 export type TimelineSequence = Array<TimelineSegment | LabelDescription>
 
+export type TimelineTransition = Repeat & TransitionDefinition
+
 export interface TimelineProps {
     initial?: boolean
     animate: TimelineSequence
     transition?: Repeat & TransitionDefinition
     progress?: MotionValue<number>
-    children: ReactNode
-}
-
-export interface TimelineController {
-    getStatic(trackName: string): {
-        [key: string]: string | number
-    }
-    getMotionValues(
-        trackName: string,
-        readValue: (key: string) => string | number | null | undefined
-    ): {
-        [key: string]: MotionValue<string | number>
-    }
-    getDuration(): number
 }
 
 export type UnresolvedKeyframeValue = string | number | null
@@ -79,4 +67,33 @@ export interface UnresolvedTracks {
 export interface UnresolvedTimeline {
     duration: number
     tracks: UnresolvedTracks
+}
+
+export type MapTimeToValue = (time: number) => number | string
+
+export interface TimelineController {
+    getInitialValues(trackName: string): {
+        [key: string]: string | number
+    }
+    registerElement(element: VisualElement): void
+    removeElement(element: VisualElement): void
+    update(props: TimelineProps): void
+    merge(element: VisualElement): void
+    startCrossfade(
+        element: VisualElement,
+        valueName: string,
+        transition: Transition
+    ): void
+    isAnimating(element: VisualElement, valueName: string): boolean
+}
+
+export interface ElementTimelineState {
+    unsubscribe: VoidFunction
+    timeToValue: {
+        [key: string]: MapTimeToValue
+    }
+    latestResolvedValues: ResolvedValues
+    crossfade: {
+        [key: string]: { fromValue: number | string; mix: MotionValue<number> }
+    }
 }

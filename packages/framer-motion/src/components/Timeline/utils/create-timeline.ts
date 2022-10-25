@@ -1,8 +1,12 @@
+import { easingDefinitionToFunction } from "../../../animation/utils/easing"
 import { getValueTransition } from "../../../animation/utils/transitions"
+import { transform } from "../../../utils/transform"
 import {
+    MapTimeToValue,
     TimelineSequence,
     UnresolvedTimeline,
     UnresolvedTracks,
+    UnresolvedTrackSequence,
     UnresolvedValueSequence,
 } from "../types"
 import { calcNextTime } from "./calc-next-time"
@@ -147,10 +151,12 @@ export function createUnresolvedTimeline(
     return timeline
 }
 
+type ReadValue = (key: string) => string | number | null | undefined
+
 export function resolveTrack(
     track: UnresolvedValueSequence,
     valueName: string,
-    readValue: (key: string) => string | number | null | undefined
+    readValue: ReadValue
 ) {
     for (let i = 0; i < track.length; i++) {
         if (track[i].value === null) {
@@ -162,4 +168,51 @@ export function resolveTrack(
             }
         }
     }
+}
+
+export function createValueTransformers(
+    track: UnresolvedTrackSequence,
+    readValue: ReadValue
+) {
+    const transformers: { [key: string]: MapTimeToValue } = {}
+
+    for (const valueName in track) {
+        let isResolved = true
+        const valueTrack = track[valueName]
+        resolveTrack(valueTrack, valueName, readValue)
+
+        const values: Array<string | number> = []
+        const times: number[] = []
+        const easings = []
+
+        for (let i = 0; i < valueTrack.length; i++) {
+            const { at, value, easing } = valueTrack[i]
+
+            if (value === null || !isResolved) {
+                isResolved = false
+                continue
+            }
+
+            values.push(value)
+            times.push(at)
+
+            const easingFunction = easingDefinitionToFunction(
+                easing || (defaultTransition.easing as any)
+            )
+            easings.push(easingFunction)
+        }
+
+        /**
+         * The final easing function is redundant.
+         */
+        easings.pop()
+
+        if (isResolved) {
+            transformers[valueName] = transform(times, values, {
+                ease: easings,
+            })
+        }
+    }
+
+    return transformers
 }

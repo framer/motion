@@ -1,4 +1,7 @@
-import { createUnresolvedTimeline } from "../create-timeline"
+import {
+    createUnresolvedTimeline,
+    createValueTransformers,
+} from "../create-timeline"
 import { defaultTransition } from "../defaults"
 
 describe("createUnresolvedTimeline", () => {
@@ -305,5 +308,27 @@ describe("createUnresolvedTimeline", () => {
             at: 0.75,
             easing: defaultTransition.easing,
         })
+    })
+})
+
+describe("createValueTransformers", () => {
+    test("Creates value transformers based on provided unresolved tracks", () => {
+        const transformers = createValueTransformers(
+            {
+                x: [
+                    { value: null, at: 0 },
+                    { value: 200, at: 100 },
+                ],
+                opacity: [
+                    { value: null, at: 0 },
+                    { value: 100, at: 100 },
+                ],
+            },
+            (key) => (key === "x" ? 100 : null)
+        )
+
+        expect(transformers.x).toBeTruthy()
+        expect(transformers.opacity).toBeUndefined()
+        expect(transformers.x(50)).toEqual(150)
     })
 })

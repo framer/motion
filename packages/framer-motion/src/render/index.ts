@@ -30,7 +30,6 @@ import { createElement } from "react"
 import { IProjectionNode } from "../projection/node/types"
 import { isRefObject } from "../utils/is-ref-object"
 import { resolveVariantFromProps } from "./utils/resolve-variants"
-import { mix } from "popmotion"
 
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
@@ -60,11 +59,13 @@ export const visualElement =
         }: VisualElementOptions<Instance>,
         options: Options = {} as Options
     ) => {
-        let isMounted = false
-        const { latestValues, renderState } = visualState
+        const { initialValues, renderState } = visualState
 
-        const latestComponentValues: ResolvedValues = {}
-        let latestTimelineValues: ResolvedValues = {}
+        const latestValues: ResolvedValues = { ...initialValues }
+
+        const latestComponentValues: ResolvedValues = timeline
+            ? {}
+            : latestValues
 
         /**
          * The instance of the render-specific node that will be hydrated by the
@@ -88,11 +89,6 @@ export const visualElement =
         const values = new Map<string, MotionValue>()
 
         /**
-         * A map of all timeline motion values for this visual element.
-         */
-        let timelineValues: { [key: string]: MotionValue } | undefined
-
-        /**
          * A map of every subscription that binds the provided or generated
          * motion values onChange listeners to this visual element.
          */
@@ -110,13 +106,8 @@ export const visualElement =
          * for a fallback value to animate to. These values are tracked in baseTarget.
          */
         const baseTarget: { [key: string]: string | number | null } = {
-            ...latestValues,
+            ...initialValues,
         }
-
-        /**
-         * Create an object of the values we initially animated from (if initial prop present).
-         */
-        const initialValues = props.initial ? { ...latestValues } : {}
 
         // Internal methods ========================
 
@@ -131,7 +122,7 @@ export const visualElement =
          * render lifecycle
          */
         function render() {
-            if (!instance || !isMounted) return
+            if (!instance) return
 
             triggerBuild()
             renderInstance(
@@ -143,27 +134,10 @@ export const visualElement =
         }
 
         function triggerBuild() {
-            // TODO Skip this and make latestValues the same as latestComponentValues
-            // if no timeline present
-            for (const key in latestComponentValues) {
-                latestValues[key] = latestComponentValues[key]
-            }
-            if (latestTimelineValues) {
-                for (const key in latestTimelineValues) {
-                    if (latestComponentValues[key] === undefined) {
-                        latestValues[key] = latestTimelineValues[key]
-                    } else {
-                        latestValues[key] = mix(
-                            latestTimelineValues[key],
-                            latestComponentValues[key],
-
-                            1
-                        )
-                    }
-                }
+            if (props.track && timeline) {
+                timeline.merge(element)
             }
 
-            console.log(latestValues.y)
             build(element, renderState, latestValues, options, props)
         }
 
@@ -174,14 +148,10 @@ export const visualElement =
         /**
          *
          */
-        function bindToMotionValue(
-            key: string,
-            value: MotionValue,
-            output: ResolvedValues
-        ) {
+        function bindToMotionValue(value: MotionValue, key: string) {
             const removeOnChange = value.onChange(
                 (latestValue: string | number) => {
-                    output[key] = latestValue
+                    latestComponentValues[key] = latestValue
                     props.onUpdate && sync.update(update, false, true)
                 }
             )
@@ -303,8 +273,6 @@ export const visualElement =
             isMounted: () => Boolean(instance),
 
             mount(newInstance: Instance) {
-                isMounted = true
-
                 instance = element.current = newInstance
 
                 if (element.projection) {
@@ -315,24 +283,10 @@ export const visualElement =
                     removeFromVariantTree = parent?.addVariantChild(element)
                 }
 
-                values.forEach((value, key) =>
-                    bindToMotionValue(key, value, latestComponentValues)
-                )
+                values.forEach(bindToMotionValue)
 
                 if (props.track && timeline) {
-                    timelineValues = timeline.getMotionValues(
-                        props.track,
-                        element.readValue
-                    )
-                    latestTimelineValues = {}
-                    for (const key in timelineValues) {
-                        bindToMotionValue(
-                            key,
-                            timelineValues[key],
-                            latestTimelineValues
-                        )
-                        latestTimelineValues[key] = timelineValues[key].get()
-                    }
+                    timeline.registerElement(element)
                 }
 
                 if (!hasReducedMotionListener.current) {
@@ -361,8 +315,8 @@ export const visualElement =
                 removeFromVariantTree?.()
                 parent?.children.delete(element)
                 lifecycles.clearAllListeners()
+                if (timeline) timeline.removeElement(element)
                 instance = undefined
-                isMounted = false
             },
 
             loadFeatures(
@@ -500,6 +454,8 @@ export const visualElement =
              */
             getLatestValues: () => latestValues,
 
+            latestComponentValues,
+
             /**
              * Set the visiblity of the visual element. If it's changed, schedule
              * a render to reflect these changes.
@@ -541,8 +497,8 @@ export const visualElement =
                 if (element.hasValue(key)) element.removeValue(key)
 
                 values.set(key, value)
-                latestValues[key] = value.get()
-                bindToMotionValue(key, value, latestComponentValues)
+                latestComponentValues[key] = value.get()
+                bindToMotionValue(value, key)
             },
 
             /**
@@ -553,6 +509,7 @@ export const visualElement =
                 valueSubscriptions.get(key)?.()
                 valueSubscriptions.delete(key)
                 delete latestValues[key]
+                delete latestComponentValues[key]
                 removeValueFromRenderState(key, renderState)
             },
 
@@ -590,10 +547,11 @@ export const visualElement =
              * we need to check for it in our state and as a last resort read it
              * directly from the instance (which might have performance implications).
              */
-            readValue: (key: string) =>
-                latestValues[key] !== undefined
+            readValue: (key: string) => {
+                return latestValues[key] !== undefined
                     ? latestValues[key]
-                    : readValueFromInstance(instance!, key, options),
+                    : readValueFromInstance(instance!, key, options)
+            },
 
             /**
              * Set the base target to later animate back to. This is currently
@@ -677,7 +635,16 @@ export const visualElement =
                     element.scheduleRender()
                 }
 
+                const oldTrack = props.track
+
                 props = newProps
+
+                // TODO Add test for switching tracks
+                if (timeline && props.track !== oldTrack) {
+                    timeline.removeElement(element)
+                    timeline.registerElement(element)
+                }
+
                 lifecycles.updatePropListeners(newProps)
 
                 prevMotionValues = updateMotionValuesFromProps(
@@ -688,6 +655,8 @@ export const visualElement =
             },
 
             getProps: () => props,
+
+            getTimeline: () => timeline,
 
             // Variants ==============================
 

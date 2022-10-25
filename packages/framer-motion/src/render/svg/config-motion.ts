@@ -12,7 +12,7 @@ export const svgMotionConfig: Partial<
     useVisualState: makeUseVisualState({
         scrapeMotionValuesFromProps: scrapeSVGProps,
         createRenderState: createSvgRenderState,
-        onMount: (props, instance, { renderState, latestValues }) => {
+        onMount: (props, instance, { renderState, initialValues }) => {
             try {
                 renderState.dimensions =
                     typeof (instance as SVGGraphicsElement).getBBox ===
@@ -31,7 +31,7 @@ export const svgMotionConfig: Partial<
 
             buildSVGAttrs(
                 renderState,
-                latestValues,
+                initialValues,
                 { enableHardwareAcceleration: false },
                 props.transformTemplate
             )

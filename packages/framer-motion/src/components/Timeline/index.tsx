@@ -1,36 +1,20 @@
 import * as React from "react"
+import { PropsWithChildren } from "react"
 import { TimelineProps } from "./types"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { TimelineContext } from "./context"
-import { useMotionValue } from "../../value/use-motion-value"
-import { animate as animateMotionValue } from "../../animation/animate"
 import { useConstant } from "../../utils/use-constant"
 import { createTimeline } from "./timeline"
 
 export function Timeline({
-    initial = true,
-    animate,
-    transition,
-    progress,
     children,
-}: TimelineProps) {
-    const timeProgress = useMotionValue(initial ? 0 : 1)
-    const timelineProgress = progress || timeProgress
-
-    const timeline = useConstant(() =>
-        createTimeline(animate, timelineProgress)
-    )
+    ...props
+}: PropsWithChildren<TimelineProps>) {
+    const timeline = useConstant(() => createTimeline(props))
 
     useIsomorphicLayoutEffect(() => {
-        if (timelineProgress === progress) {
-        } else {
-            animateMotionValue(timeProgress, [0, 1], {
-                duration: timeline.getDuration(),
-                ease: "linear",
-                ...transition,
-            } as any)
-        }
-    }, [JSON.stringify(animate)])
+        timeline.update(props)
+    }, [JSON.stringify(props.animate)])
 
     return (
         <TimelineContext.Provider value={timeline}>

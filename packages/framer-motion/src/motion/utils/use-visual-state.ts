@@ -19,7 +19,7 @@ import type { TimelineController } from "../../components/Timeline/types"
 
 export interface VisualState<Instance, RenderState> {
     renderState: RenderState
-    latestValues: ResolvedValues
+    initialValues: ResolvedValues
     mount?: (instance: Instance) => void
 }
 
@@ -50,7 +50,7 @@ function makeState<I, RS>(
     timelineContext: TimelineController | undefined
 ) {
     const state: VisualState<I, RS> = {
-        latestValues: makeLatestValues(
+        initialValues: makeInitialValues(
             props,
             context,
             presenceContext,
@@ -79,25 +79,19 @@ export const makeUseVisualState =
         return isStatic ? make() : useConstant(make)
     }
 
-function makeLatestValues(
+function makeInitialValues(
     props: MotionProps,
     context: MotionContextProps,
     presenceContext: PresenceContextProps | null,
-    timelineContext: TimelineController | undefined,
+    timeline: TimelineController | undefined,
     scrapeMotionValues: ScrapeMotionValuesFromProps
 ) {
-    const values: ResolvedValues = {}
+    const values: ResolvedValues =
+        timeline && props.track ? timeline.getInitialValues(props.track) : {}
 
     const motionValues = scrapeMotionValues(props)
     for (const key in motionValues) {
         values[key] = resolveMotionValue(motionValues[key])
-    }
-
-    if (props.track && timelineContext) {
-        const unresolvedTrack = timelineContext.getStatic(props.track)
-        for (const key in unresolvedTrack) {
-            values[key] = unresolvedTrack[key]
-        }
     }
 
     let { initial, animate } = props

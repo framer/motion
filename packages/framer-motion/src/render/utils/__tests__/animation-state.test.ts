@@ -46,7 +46,7 @@ function createTest(
             props,
             parent,
             visualState: {
-                latestValues: {},
+                initialValues: {},
                 renderState: createHtmlRenderState(),
             },
         },
