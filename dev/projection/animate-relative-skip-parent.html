@@ -1,0 +1,107 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #parent {
+                position: relative;
+                width: 200px;
+                height: 200px;
+                padding: 50px;
+                background-color: #00cc88;
+            }
+
+            #mid {
+                width: 100px;
+                height: 100px;
+                background-color: white;
+                display: flex;
+                align-items: flex-start;
+                justify-content: flex-start;
+                position: absolute;
+                top: 50px;
+                left: 50px;
+            }
+
+            #parent.b {
+                width: 500px;
+                height: 500px;
+            }
+
+            .b #mid {
+                justify-content: flex-end;
+            }
+
+            #child {
+                width: 50px;
+                height: 50px;
+                background-color: #0077ff;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="parent">
+            <div id="mid"><div id="child"></div></div>
+        </div>
+
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            /**
+             * This file tests whether, if the middle box finishes its animation correctly,
+             * does the child correctly use the middle box instead of the parent box
+             * as its relative parent.
+             */
+            const { createNode, relativeEase } = window.Animate
+            const { matchViewportBox } = window.Assert
+
+            const parent = document.getElementById("parent")
+            const mid = document.getElementById("mid")
+            const child = document.getElementById("child")
+
+            const childOrigin = child.getBoundingClientRect()
+
+            const parentProjection = createNode(
+                parent,
+                undefined,
+                {},
+                { duration: 2 } // { duration: 200, ease: relativeEase() }
+            )
+            const midProjection = createNode(
+                mid,
+                parentProjection,
+                {},
+                { duration: 2, delay: 1 } // { duration: 200, ease: relativeEase() }
+            )
+            const childProjection = createNode(
+                child,
+                midProjection,
+                {},
+                { duration: 2, delay: 1 } // { duration: 0 }
+            )
+
+            parentProjection.willUpdate()
+            midProjection.willUpdate()
+            childProjection.willUpdate()
+
+            parent.classList.add("b")
+
+            parentProjection.root.didUpdate()
+
+            // sync.postRender(() => {
+            //     sync.postRender(() => {
+            //         matchViewportBox(child, childOrigin)
+            //     })
+            // })
+        </script>
+    </body>
+</html>

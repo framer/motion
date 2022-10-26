@@ -433,6 +433,10 @@ export function createProjectionNode<I>({
                         const hasOnlyRelativeTargetChanged =
                             !hasLayoutChanged && hasRelativeTargetChanged
 
+                        if (visualElement.getInstance().id === "mid") {
+                            console.log(hasLayoutChanged, targetChanged)
+                        }
+
                         if (
                             this.resumeFrom?.instance ||
                             hasOnlyRelativeTargetChanged ||
@@ -474,6 +478,7 @@ export function createProjectionNode<I>({
                                 !hasLayoutChanged &&
                                 this.animationProgress === 0
                             ) {
+                                console.log("finishing animation")
                                 finishAnimation(this)
                             }
 
