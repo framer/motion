@@ -133,12 +133,6 @@ export function createTimeline(props: TimelineProps): TimelineController {
             }
 
             for (const key in element.latestComponentValues) {
-                console.log(
-                    "setting",
-                    key,
-                    "to",
-                    element.latestComponentValues[key]
-                )
                 latestValues[key] = element.latestComponentValues[key]
             }
 
@@ -146,7 +140,6 @@ export function createTimeline(props: TimelineProps): TimelineController {
                 const { mix, fromValue } = state.crossfade[key]
 
                 if (state.latestResolvedValues[key] !== undefined) {
-                    console.log(state.latestResolvedValues[key], fromValue)
                     latestValues[key] = mixComplex(
                         state.latestResolvedValues[key],
                         fromValue
@@ -166,6 +159,7 @@ export function createTimeline(props: TimelineProps): TimelineController {
 
             const fromValue = element.latestComponentValues[valueName]
             delete element.latestComponentValues[valueName]
+            element.removeValue(valueName)
 
             if (fromValue === undefined) return
 
@@ -174,10 +168,20 @@ export function createTimeline(props: TimelineProps): TimelineController {
 
             animate(mix, 0, {
                 ...(element.getDefaultTransition() as any),
+                onUpdate: () => element.scheduleRender(),
                 onComplete: () => {
                     delete state.crossfade[valueName]
                 },
             })
+        },
+
+        cancelCrossfade(element, valueName) {
+            const state = registeredElements.get(element)
+            if (!state) return
+
+            state.crossfade[valueName]?.mix.stop()
+
+            delete state.crossfade[valueName]
         },
 
         isAnimating(element, valueName) {

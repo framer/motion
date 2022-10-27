@@ -17,6 +17,9 @@ export const underDampedSpring = () => ({
 export const criticallyDampedSpring = (to: SingleTarget) => ({
     type: "spring",
     stiffness: 550,
+    // Use a damping that leads to a stiffness-damping ratio that ensures
+    // we never overshoot the target of `0` into the negatives, on the presumption
+    // that this is a scale animation.
     damping: to === 0 ? 2 * Math.sqrt(550) : 30,
     restSpeed: 10,
 })

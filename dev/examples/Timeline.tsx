@@ -29,6 +29,7 @@ export const App = () => {
                     track="ball1"
                     whileHover={{ scale: 2 }}
                     style={ball}
+                    transition={{ duration: 1 }}
                 />
                 <motion.div track="ball2" style={ball} />
                 <motion.div track="ball3" style={ball} />

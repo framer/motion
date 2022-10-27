@@ -151,6 +151,7 @@ function animateTarget(
         type && visualElement.animationState?.getState()[type]
 
     for (const key in target) {
+        visualElement.getTimeline()?.cancelCrossfade(visualElement, key)
         const value = visualElement.getValue(key)
         const valueTarget = target[key]
 

@@ -124,7 +124,7 @@ describe("Timeline", () => {
         )
     })
 
-    test.only("Updates new timeline", async () => {
+    test("Updates new timeline", async () => {
         const promise = new Promise((resolve) => {
             const ref = createRef<HTMLDivElement>()
             const Component = ({ animate }: { animate: TimelineSequence }) => (

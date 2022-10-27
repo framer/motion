@@ -79,11 +79,8 @@ export interface TimelineController {
     removeElement(element: VisualElement): void
     update(props: TimelineProps): void
     merge(element: VisualElement): void
-    startCrossfade(
-        element: VisualElement,
-        valueName: string,
-        transition: Transition
-    ): void
+    startCrossfade(element: VisualElement, valueName: string): void
+    cancelCrossfade(element: VisualElement, valueName: string): void
     isAnimating(element: VisualElement, valueName: string): boolean
 }
 
