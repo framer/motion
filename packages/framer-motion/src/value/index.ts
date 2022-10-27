@@ -229,6 +229,13 @@ export class MotionValue<V = any> {
         this.prev = this.current
         this.current = v
 
+        console.log(
+            this.prev,
+            this.current,
+            this.lastUpdated,
+            this.updateSubscribers.getSize()
+        )
+
         // Update timestamp
         const { delta, timestamp } = getFrameData()
         if (this.lastUpdated !== timestamp) {
@@ -246,7 +253,7 @@ export class MotionValue<V = any> {
         if (this.velocityUpdateSubscribers.getSize()) {
             this.velocityUpdateSubscribers.notify(this.getVelocity())
         }
-
+        console.log({ render })
         // Update render subscribers
         if (render) {
             this.renderSubscribers.notify(this.current)

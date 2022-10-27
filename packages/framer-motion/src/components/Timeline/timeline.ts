@@ -40,14 +40,14 @@ export function createTimeline(props: TimelineProps): TimelineController {
             removeElement(element)
         }
 
-        const trackId = element.getProps().track
+        const { track } = element.getProps()
 
-        if (!trackId) return
+        if (!track) return
 
         const unsubscribe = progress.onChange(() => element.scheduleRender())
 
         const timeToValue = createValueTransformers(
-            unresolvedTimeline.tracks[trackId],
+            unresolvedTimeline.tracks[track],
             element.readValue
         )
 
@@ -112,6 +112,10 @@ export function createTimeline(props: TimelineProps): TimelineController {
             }
 
             return values
+        },
+
+        getProgressMotionValue() {
+            return progress
         },
 
         registerElement,

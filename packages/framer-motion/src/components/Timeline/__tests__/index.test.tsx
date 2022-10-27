@@ -207,7 +207,7 @@ describe("Timeline", () => {
 
             mouseEnter(container.firstChild as Element)
 
-            resolve(ref.current)
+            sync.postRender(() => resolve(ref.current))
         })
 
         return expect(promise).resolves.toHaveStyle("opacity: 0.9")
@@ -237,12 +237,14 @@ describe("Timeline", () => {
 
             mouseEnter(container.firstChild as Element)
 
-            expect(ref.current).toHaveStyle("opacity: 0.9")
+            sync.postRender(() => {
+                expect(ref.current).toHaveStyle("opacity: 0.9")
 
-            setTimeout(() => {
-                mouseLeave(container.firstChild as Element)
-                resolve(ref.current)
-            }, 10)
+                setTimeout(() => {
+                    mouseLeave(container.firstChild as Element)
+                    resolve(ref.current)
+                }, 10)
+            })
         })
 
         return expect(promise).resolves.toHaveStyle("opacity: 0.2")

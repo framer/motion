@@ -1,12 +1,13 @@
 import React from "react"
-import { motion } from "framer-motion"
+import { motion, useMotionValue } from "framer-motion"
 
 export function App() {
-    const [scale, setScale] = React.useState(2)
+    const scale = useMotionValue(1)
+
     return (
         <motion.div
             whileHover={{
-                scale,
+                scale: 2,
                 transition: {
                     type: "spring",
                     mass: 0.5,
@@ -16,8 +17,7 @@ export function App() {
                     restSpeed: 0.00001,
                 },
             }}
-            onClick={() => setScale(scale + 1)}
-            style={{ width: 100, height: 100, background: "white" }}
+            style={{ width: 100, height: 100, background: "white", scale }}
         />
     )
 }

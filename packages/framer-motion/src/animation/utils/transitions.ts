@@ -195,7 +195,7 @@ function getAnimation(
             onComplete,
             onUpdate: (v: Animatable) => value.set(v),
         }
-
+        console.log("start animation")
         return valueTransition.type === "inertia" ||
             valueTransition.type === "decay"
             ? inertia({ ...options, ...valueTransition })
@@ -206,10 +206,12 @@ function getAnimation(
                       key
                   ),
                   onUpdate: (v: any) => {
+                      console.log("updating", v)
                       options.onUpdate(v)
                       valueTransition.onUpdate && valueTransition.onUpdate(v)
                   },
                   onComplete: () => {
+                      console.log("complete", origin, target)
                       options.onComplete()
                       valueTransition.onComplete && valueTransition.onComplete()
                   },
@@ -218,9 +220,9 @@ function getAnimation(
 
     function set(): StopAnimation {
         const finalTarget = resolveFinalValueInKeyframes(target)
+        console.log("setting value to", finalTarget)
         value.set(finalTarget)
         onComplete()
-
         valueTransition.onUpdate && valueTransition.onUpdate(finalTarget)
         valueTransition.onComplete && valueTransition.onComplete()
         return { stop: () => {} }

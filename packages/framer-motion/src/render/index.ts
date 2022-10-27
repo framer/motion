@@ -566,7 +566,7 @@ export const visualElement =
              * props.
              */
             getBaseTarget(key) {
-                const { initial } = props
+                const { initial, style = {} } = props
                 const valueFromInitial =
                     typeof initial === "string" || typeof initial === "object"
                         ? resolveVariantFromProps(props, initial as any)?.[key]
@@ -594,7 +594,8 @@ export const visualElement =
                  * return undefined. Otherwise return the value as initially read from the DOM.
                  */
                 return initialValues[key] !== undefined &&
-                    valueFromInitial === undefined
+                    valueFromInitial === undefined &&
+                    style[key] === undefined
                     ? undefined
                     : baseTarget[key]
             },
@@ -615,6 +616,7 @@ export const visualElement =
              * Schedule a render on the next animation frame.
              */
             scheduleRender() {
+                console.log("schedule render")
                 sync.render(render, false, true)
             },
 
