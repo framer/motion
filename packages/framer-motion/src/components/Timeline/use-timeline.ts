@@ -1,8 +1,7 @@
-import { useContext, useEffect, useMemo } from "react"
+import { useContext, useMemo } from "react"
 import { useIsomorphicLayoutEffect } from "../../three-entry"
 import { motionValue, MotionValue } from "../../value"
 import { TimelineContext } from "./context"
-import { createValueTransformers } from "./utils/create-timeline"
 
 export type TimelineMotionValues<T> = { [K in keyof T]: MotionValue<T[K]> }
 
@@ -26,12 +25,10 @@ export function useTimeline<T extends Record<string, unknown>>(
         return motionValues as TimelineMotionValues<T>
     }, [])
 
-    useIsomorphicLayoutEffect(() => {
-        const timeToValue = createValueTransformers(
-            unresolvedTimeline.tracks[track],
-            (key) => initialValues[key]
-        )
-    }, [])
+    useIsomorphicLayoutEffect(
+        () => timeline?.registerMotionValues(trackId, values),
+        [trackId, values]
+    )
 
     return values
 }

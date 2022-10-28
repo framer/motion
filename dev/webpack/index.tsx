@@ -2,6 +2,7 @@ import * as React from "react"
 import { createRoot } from "react-dom/client"
 import { Example, ExampleList } from "./examples"
 import { Test } from "./tests"
+import { App as Timeline } from "./timeline"
 
 const App = () => {
     const url = new URL(window.location.href)
@@ -15,6 +16,12 @@ const App = () => {
 
     if (test) {
         return <Test id={test} />
+    }
+
+    const timeline = url.searchParams.get("timeline")
+
+    if (timeline) {
+        return <Timeline />
     }
 
     return <ExampleList />

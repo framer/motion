@@ -77,6 +77,10 @@ export interface TimelineController {
     }
     registerElement(element: VisualElement): void
     removeElement(element: VisualElement): void
+    registerMotionValues(
+        trackName: string,
+        values: TimelineMotionValues
+    ): VoidFunction
     update(props: TimelineProps): void
     merge(element: VisualElement): void
     startCrossfade(element: VisualElement, valueName: string): void
@@ -93,4 +97,8 @@ export interface ElementTimelineState {
     crossfade: {
         [key: string]: { fromValue: number | string; mix: MotionValue<number> }
     }
+}
+
+export interface TimelineMotionValues {
+    [key: string]: MotionValue
 }

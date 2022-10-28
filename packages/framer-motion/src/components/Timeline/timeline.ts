@@ -7,6 +7,7 @@ import type {
     TimelineController,
     TimelineProps,
     UnresolvedTimeline,
+    TimelineMotionValues,
 } from "./types"
 import {
     createUnresolvedTimeline,
@@ -15,6 +16,7 @@ import {
 
 export function createTimeline(props: TimelineProps): TimelineController {
     const registeredElements = new Map<VisualElement, ElementTimelineState>()
+    const registeredMotionValues = new Set<TimelineMotionValues>()
 
     let isInitialRender = true
     const timeProgress = motionValue(props.initial === false ? 1 : 0)
@@ -114,12 +116,29 @@ export function createTimeline(props: TimelineProps): TimelineController {
             return values
         },
 
-        getProgressMotionValue() {
-            return progress
-        },
-
         registerElement,
         removeElement,
+
+        registerMotionValues(trackName, motionValues) {
+            registeredMotionValues.add(motionValues)
+            const { tracks, duration } = unresolvedTimeline
+            const track = tracks[trackName]
+
+            const timeToValue = createValueTransformers(track, (key) =>
+                motionValues[key].get()
+            )
+
+            const unsubscribe = progress.onChange((latest) => {
+                for (const key in motionValues) {
+                    motionValues[key].set(timeToValue[key](latest * duration))
+                }
+            })
+
+            return () => {
+                unsubscribe()
+                registeredMotionValues.delete(motionValues)
+            }
+        },
 
         merge(element) {
             const state = registeredElements.get(element)
