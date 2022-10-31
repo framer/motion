@@ -225,7 +225,7 @@ function animateChildren(
 }
 
 export function stopAnimation(visualElement: VisualElement) {
-    visualElement.forEachValue((value) => value.stop())
+    visualElement.values.forEach((value) => value.stop())
 }
 
 export function sortByTreeOrder(a: VisualElement, b: VisualElement) {

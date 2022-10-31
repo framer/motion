@@ -84,7 +84,7 @@ Animate.createNode = (
         scheduleRender()
     }
 
-    node.render = () => visualElement.syncRender()
+    node.render = () => visualElement.render()
 
     return node
 }

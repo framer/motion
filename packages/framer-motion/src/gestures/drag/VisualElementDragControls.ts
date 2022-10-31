@@ -189,10 +189,10 @@ export class VisualElementDragControls {
              * of a re-render we want to ensure the browser can read the latest
              * bounding box to ensure the pointer and element don't fall out of sync.
              */
-            this.visualElement.syncRender()
+            this.visualElement.render()
 
             /**
-             * This must fire after the syncRender call as it might trigger a state
+             * This must fire after the render call as it might trigger a state
              * change which itself might trigger a layout update.
              */
             onDrag?.(event, info)
@@ -490,7 +490,7 @@ export class VisualElementDragControls {
          * Update the layout of this element and resolve the latest drag constraints
          */
         const { transformTemplate } = this.visualElement.getProps()
-        this.visualElement.getInstance().style.transform = transformTemplate
+        this.visualElement.current.style.transform = transformTemplate
             ? transformTemplate({}, "")
             : "none"
         projection.root?.updateScroll()
@@ -515,7 +515,7 @@ export class VisualElementDragControls {
 
     addListeners() {
         elementDragControls.set(this.visualElement, this)
-        const element = this.visualElement.getInstance()
+        const element = this.visualElement.current
 
         /**
          * Attach a pointerdown event listener on this DOM element to initiate drag tracking.
@@ -576,7 +576,7 @@ export class VisualElementDragControls {
                         )
                     })
 
-                    this.visualElement.syncRender()
+                    this.visualElement.render()
                 }
             }) as any
         )

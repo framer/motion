@@ -50,7 +50,7 @@ export function useTapGesture({
          * We only count this as a tap gesture if the event.target is the same
          * as, or a child of, this component's element
          */
-        !isNodeOrChild(visualElement.getInstance(), event.target as Element)
+        !isNodeOrChild(visualElement.current, event.target as Element)
             ? onTapCancel && onTapCancel(event, info)
             : onTap && onTap(event, info)
     }

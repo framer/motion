@@ -89,7 +89,7 @@ function removeNonTranslationalTransform(visualElement: VisualElement) {
     })
 
     // Apply changes to element before measurement
-    if (removedTransforms.length) visualElement.syncRender()
+    if (removedTransforms.length) visualElement.render()
 
     return removedTransforms
 }
@@ -119,7 +119,7 @@ const convertChangedValueTypes = (
     changedKeys: string[]
 ) => {
     const originBbox = visualElement.measureViewportBox()
-    const element = visualElement.getInstance()
+    const element = visualElement.current
     const elementComputedStyle = getComputedStyle(element)
     const { display } = elementComputedStyle
     const origin: ResolvedValues = {}
@@ -141,7 +141,7 @@ const convertChangedValueTypes = (
     })
 
     // Apply the latest values (as set in checkAndConvertChangedValueTypes)
-    visualElement.syncRender()
+    visualElement.render()
 
     const targetBbox = visualElement.measureViewportBox()
 
@@ -281,7 +281,7 @@ const checkAndConvertChangedValueTypes = (
         }
 
         // Reapply original values
-        visualElement.syncRender()
+        visualElement.render()
 
         // Restore scroll position
         if (isBrowser && scrollY !== null) {

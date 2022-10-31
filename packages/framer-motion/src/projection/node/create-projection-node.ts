@@ -350,7 +350,7 @@ export function createProjectionNode<I>({
             this.instance = instance
 
             const { layoutId, layout, visualElement } = this.options
-            if (visualElement && !visualElement.getInstance()) {
+            if (visualElement && !visualElement.current) {
                 visualElement.mount(instance)
             }
 
@@ -1421,7 +1421,7 @@ export function createProjectionNode<I>({
 
             // Force a render of this element to apply the transform with all rotations
             // set to 0.
-            visualElement?.syncRender()
+            visualElement?.render()
 
             // Put back all the values we reset
             for (const key in resetValues) {
