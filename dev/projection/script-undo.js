@@ -83,7 +83,7 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
         scheduleRender()
     }
 
-    node.render = () => visualElement.syncRender()
+    node.render = () => visualElement.render()
 
     return node
 }

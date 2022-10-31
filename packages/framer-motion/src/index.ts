@@ -139,7 +139,7 @@ export {
     Variants,
 } from "./types"
 export { EventInfo } from "./events/types"
-export { VisualElementLifecycles } from "./render/utils/lifecycles"
+export { EventProps } from "./render/utils/lifecycles"
 export * from "./motion/features/types"
 export {
     DraggableProps,

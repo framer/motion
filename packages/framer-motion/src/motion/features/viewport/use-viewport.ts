@@ -93,7 +93,7 @@ function useIntersectionObserver(
         }
 
         return observeIntersection(
-            visualElement.getInstance(),
+            visualElement.current,
             options,
             intersectionCallback
         )

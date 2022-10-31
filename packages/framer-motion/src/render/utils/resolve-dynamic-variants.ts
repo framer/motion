@@ -7,7 +7,7 @@ import { resolveVariantFromProps } from "./resolve-variants"
  */
 function getCurrent(visualElement: VisualElement) {
     const current = {}
-    visualElement.forEachValue((value, key) => (current[key] = value.get()))
+    visualElement.values.forEach((value, key) => (current[key] = value.get()))
     return current
 }
 
@@ -16,7 +16,7 @@ function getCurrent(visualElement: VisualElement) {
  */
 function getVelocity(visualElement: VisualElement) {
     const velocity = {}
-    visualElement.forEachValue(
+    visualElement.values.forEach(
         (value, key) => (velocity[key] = value.getVelocity())
     )
     return velocity

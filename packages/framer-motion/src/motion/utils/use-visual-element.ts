@@ -45,7 +45,7 @@ export function useVisualElement<Instance, RenderState>(
     const visualElement = visualElementRef.current
 
     useIsomorphicLayoutEffect(() => {
-        visualElement && visualElement.syncRender()
+        visualElement && visualElement.render()
     })
 
     useEffect(() => {
@@ -55,7 +55,7 @@ export function useVisualElement<Instance, RenderState>(
     })
 
     useIsomorphicLayoutEffect(
-        () => () => visualElement && visualElement.notifyUnmount(),
+        () => () => visualElement && visualElement.notify("unmount"),
         []
     )
 
