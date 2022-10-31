@@ -15,7 +15,6 @@ export function buildHTMLStyles(
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
     const { style, vars, transform, transformKeys, transformOrigin } = state
-
     transformKeys.length = 0
 
     // Track whether we encounter any transform or transformOrigin values.

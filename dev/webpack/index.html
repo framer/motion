@@ -7,9 +7,84 @@
         <title>Framer Development</title>
         <script src="react.development.js"></script>
         <script src="react-dom.development.js"></script>
+        <link rel="stylesheet" href="https://use.typekit.net/kfx0vct.css" />
+
         <style>
             body {
-                background: #fdfdfd;
+                --black: #000000;
+                --ash-black: #222;
+                --white: #fafafa;
+                --sky: #00ccff;
+                --green: #22dddd;
+                --blue: #1300ff;
+                --dusk: #6600ff;
+                --purple: #9900ff;
+                --pink: #ff0066;
+                --red: #fe0222;
+                --orange: #fd7702;
+                --yellow: #ffbb00;
+
+                --background: var(--blue);
+                --accent: var(--white);
+
+                margin: 0;
+                padding: 0;
+            }
+
+            * {
+                font-family: sofia-pro, sans-serif;
+                font-weight: 400;
+                font-style: normal;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            h1,
+            h2,
+            h3 {
+                font-family: sofia-pro, sans-serif;
+                font-weight: 600;
+                font-style: normal;
+                padding: 0;
+                margin: 0;
+            }
+            code {
+                font-family: input-mono, monospace;
+                font-weight: 400;
+                font-style: normal;
+            }
+
+            ::-webkit-scrollbar {
+                height: 5px;
+                width: 5px;
+                background: var(--background);
+                -webkit-border-radius: 1ex;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: var(--accent);
+                -webkit-border-radius: 1ex;
+            }
+
+            ::-webkit-scrollbar-corner {
+                background: #fff3;
+            }
+
+            button {
+                -webkit-appearance: button;
+                background: var(--accent);
+                color: var(--background);
+                border: none;
+                border-radius: 10px;
+                padding: 10px 20px;
+                font-size: 18px;
+                font-weight: 700;
+                cursor: pointer;
+                width: 100%;
+                text-align: left;
+                margin-bottom: 10px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
         </style>
     </head>

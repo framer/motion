@@ -63,9 +63,8 @@ export const visualElement =
 
         const latestValues: ResolvedValues = { ...initialValues }
 
-        const latestComponentValues: ResolvedValues = timeline
-            ? {}
-            : latestValues
+        const latestComponentValues: ResolvedValues =
+            timeline && props.track ? {} : latestValues
 
         /**
          * The instance of the render-specific node that will be hydrated by the
@@ -137,7 +136,6 @@ export const visualElement =
             if (props.track && timeline) {
                 timeline.merge(element)
             }
-
             build(element, renderState, latestValues, options, props)
         }
 
@@ -616,7 +614,6 @@ export const visualElement =
              * Schedule a render on the next animation frame.
              */
             scheduleRender() {
-                console.log("schedule render")
                 sync.render(render, false, true)
             },
 

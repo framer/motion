@@ -1,4 +1,5 @@
-import { mixComplex } from "popmotion"
+import { isNumber } from "@motionone/utils"
+import { mix as mixNumber, mixComplex } from "popmotion"
 import { animate } from "../../animation/animate"
 import { ResolvedValues, VisualElement } from "../../render/types"
 import { motionValue } from "../../value"
@@ -30,6 +31,7 @@ export function createTimeline(props: TimelineProps): TimelineController {
     updateUnresolvedTimeline()
 
     function startAnimation() {
+        if (timeProgress !== progress) return
         animate(timeProgress, [0, 1], {
             duration: unresolvedTimeline.duration,
             ease: "linear",
@@ -162,11 +164,25 @@ export function createTimeline(props: TimelineProps): TimelineController {
             for (const key in state.crossfade) {
                 const { mix, fromValue } = state.crossfade[key]
 
-                if (state.latestResolvedValues[key] !== undefined) {
-                    latestValues[key] = mixComplex(
+                console.log(
+                    key,
+                    mixComplex(
                         state.latestResolvedValues[key],
                         fromValue
                     )(mix.get())
+                )
+
+                if (state.latestResolvedValues[key] !== undefined) {
+                    latestValues[key] = isNumber(fromValue)
+                        ? mixNumber(
+                              state.latestResolvedValues[key],
+                              fromValue,
+                              mix.get()
+                          )
+                        : mixComplex(
+                              state.latestResolvedValues[key],
+                              fromValue
+                          )(mix.get())
                 }
             }
         },

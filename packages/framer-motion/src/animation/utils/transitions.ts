@@ -206,12 +206,10 @@ function getAnimation(
                       key
                   ),
                   onUpdate: (v: any) => {
-                      console.log("updating", v)
                       options.onUpdate(v)
                       valueTransition.onUpdate && valueTransition.onUpdate(v)
                   },
                   onComplete: () => {
-                      console.log("complete", origin, target)
                       options.onComplete()
                       valueTransition.onComplete && valueTransition.onComplete()
                   },
