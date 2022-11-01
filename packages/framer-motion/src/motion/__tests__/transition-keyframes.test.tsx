@@ -66,7 +66,7 @@ describe("keyframes transition", () => {
         expect(promise).resolves.toHaveStyle("width: 100%;")
     })
 
-    test.only("if initial={false}, take state of final keyframe", async () => {
+    test("if initial={false}, take state of final keyframe", async () => {
         const xResult = await new Promise((resolve) => {
             const x = motionValue(0)
             const Component = ({ animate }: any) => {
