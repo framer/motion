@@ -23,7 +23,6 @@ import { isWillChangeMotionValue } from "../value/use-will-change/is"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import {
     ResolvedValues,
-    ScrapeMotionValuesFromProps,
     VariantStateContext,
     VisualElementEventCallbacks,
     VisualElementOptions,
@@ -52,7 +51,6 @@ export abstract class VisualElement<
     abstract type: string
 
     abstract build(
-        visualElement: VisualElement<Instance>,
         renderState: RenderState,
         latestValues: ResolvedValues,
         options: Options,
@@ -62,7 +60,6 @@ export abstract class VisualElement<
     abstract sortInstanceNodePosition(a: Instance, b: Instance): number
 
     abstract makeTargetAnimatableFromInstance(
-        element: VisualElement<Instance>,
         target: TargetAndTransition,
         props: MotionProps,
         isLive: boolean
@@ -83,17 +80,6 @@ export abstract class VisualElement<
         key: string,
         options: Options
     ): string | number | null | undefined
-
-    abstract resetTransform(
-        element: VisualElement<Instance>,
-        instance: Instance,
-        props: MotionProps
-    ): void
-
-    abstract restoreTransform(
-        instance: Instance,
-        renderState: RenderState
-    ): void
 
     abstract renderInstance(
         instance: Instance,
@@ -218,13 +204,15 @@ export abstract class VisualElement<
 
     private events: {
         [key: string]: SubscriptionManager<any>
-    }
+    } = {}
 
     private propEventSubscriptions: {
         [key: string]: VoidFunction
     }
 
     animationState?: AnimationState
+
+    isVisible = true
 
     constructor(
         {
@@ -447,7 +435,6 @@ export abstract class VisualElement<
 
     triggerBuild() {
         this.build(
-            this,
             this.renderState,
             this.latestValues,
             this.options,
@@ -498,7 +485,6 @@ export abstract class VisualElement<
         canMutate = true
     ): TargetAndTransition {
         return this.makeTargetAnimatableFromInstance(
-            this,
             target,
             this.props,
             canMutate

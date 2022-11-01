@@ -43,12 +43,13 @@ class StateVisualElement extends VisualElement<
         return 0
     }
 
-    makeTargetAnimatableFromInstance(
-        element: StateVisualElement,
-        { transition, transitionEnd, ...target }: TargetAndTransition
-    ) {
-        const origin = getOrigin(target as any, transition || {}, element)
-        checkTargetForNewValues(element, target, origin as any)
+    makeTargetAnimatableFromInstance({
+        transition,
+        transitionEnd,
+        ...target
+    }: TargetAndTransition) {
+        const origin = getOrigin(target as any, transition || {}, this)
+        checkTargetForNewValues(this, target, origin as any)
         return { transition, transitionEnd, ...target }
     }
 }

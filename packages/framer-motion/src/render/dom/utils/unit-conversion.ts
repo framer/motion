@@ -116,7 +116,7 @@ export const positionalValues: { [key: string]: GetActualMeasurementInPixels } =
 
 const convertChangedValueTypes = (
     target: TargetWithKeyframes,
-    visualElement: VisualElement<HTMLElement>,
+    visualElement: VisualElement<HTMLElement | SVGElement>,
     changedKeys: string[]
 ) => {
     const originBbox = visualElement.measureViewportBox()
@@ -159,7 +159,7 @@ const convertChangedValueTypes = (
 }
 
 const checkAndConvertChangedValueTypes = (
-    visualElement: VisualElement<HTMLElement>,
+    visualElement: VisualElement<HTMLElement | SVGElement>,
     target: TargetWithKeyframes,
     origin: Target = {},
     transitionEnd: Target = {}
@@ -303,7 +303,7 @@ const checkAndConvertChangedValueTypes = (
  * @internal
  */
 export function unitConversion(
-    visualElement: VisualElement<HTMLElement>,
+    visualElement: VisualElement<HTMLElement | SVGElement>,
     target: TargetWithKeyframes,
     origin?: Target,
     transitionEnd?: Target

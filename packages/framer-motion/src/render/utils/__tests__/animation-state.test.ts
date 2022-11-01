@@ -14,8 +14,6 @@ const stateVisualElement = visualElement<
 >({
     build() {},
     measureViewportBox: createBox,
-    resetTransform() {},
-    restoreTransform() {},
     removeValueFromRenderState() {},
     render() {},
     scrapeMotionValuesFromProps() {
