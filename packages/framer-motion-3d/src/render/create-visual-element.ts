@@ -2,6 +2,7 @@ import type {
     CreateVisualElement,
     TargetAndTransition,
     ResolvedValues,
+    MotionProps,
 } from "framer-motion"
 
 import {
@@ -25,7 +26,9 @@ export class ThreeVisualElement extends VisualElement<
 > {
     type = "three"
 
-    readValueFromInstance = readThreeValue
+    readValueFromInstance(instance: Object3DNode<any, any>, key: string) {
+        return readThreeValue(instance, key)
+    }
 
     getBaseTargetFromInstance() {
         return undefined
@@ -48,9 +51,13 @@ export class ThreeVisualElement extends VisualElement<
 
     removeValueFromRenderState() {}
 
-    measureInstanceViewportBox = createBox
+    measureInstanceViewportBox() {
+        return createBox()
+    }
 
-    scrapeMotionValuesFromProps = scrapeMotionValuesFromProps
+    scrapeMotionValuesFromProps(props: MotionProps) {
+        return scrapeMotionValuesFromProps(props)
+    }
 
     build(state: ThreeRenderState, latestValues: ResolvedValues) {
         for (const key in latestValues) {

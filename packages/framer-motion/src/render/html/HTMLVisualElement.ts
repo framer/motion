@@ -10,11 +10,11 @@ import { renderHTML } from "./utils/render"
 import { getDefaultValueType } from "../dom/value-types/defaults"
 import { measureViewportBox } from "../../projection/utils/measure"
 import { VisualElement } from "../VisualElement"
-import { MotionProps } from "../../motion/types"
+import { MotionProps, MotionStyle } from "../../motion/types"
 import { MotionValue } from "../../value"
 import { MotionConfigProps } from "../../components/MotionConfig"
 import { Box } from "../../projection/geometry/types"
-import { ResolvedValues, TargetAndTransition } from "../.."
+import { IProjectionNode, ResolvedValues, TargetAndTransition } from "../.."
 
 export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)
@@ -131,7 +131,16 @@ export class HTMLVisualElement extends DOMVisualElement<
         )
     }
 
-    scrapeMotionValuesFromProps = scrapeMotionValuesFromProps
+    scrapeMotionValuesFromProps(props: MotionProps) {
+        return scrapeMotionValuesFromProps(props)
+    }
 
-    renderInstance = renderHTML
+    renderInstance(
+        instance: HTMLElement,
+        renderState: HTMLRenderState,
+        styleProp?: MotionStyle | undefined,
+        projection?: IProjectionNode<unknown> | undefined
+    ): void {
+        renderHTML(instance, renderState, styleProp, projection)
+    }
 }
