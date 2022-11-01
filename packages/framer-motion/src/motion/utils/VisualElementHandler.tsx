@@ -1,6 +1,6 @@
 import React from "react"
 import { MotionConfigProps } from "../.."
-import { VisualElement } from "../../render/types"
+import type { VisualElement } from "../../render/VisualElement"
 import { MotionProps } from "../types"
 
 interface Props {

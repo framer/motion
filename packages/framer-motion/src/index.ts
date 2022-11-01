@@ -76,8 +76,7 @@ export { useDomEvent } from "./events/use-dom-event"
 export { createMotionComponent } from "./motion"
 export { isMotionComponent } from "./motion/utils/is-motion-component"
 export { unwrapMotionComponent } from "./motion/utils/unwrap-motion-component"
-export { visualElement } from "./render"
-export { VisualElement } from "./render/types"
+export { VisualElement } from "./render/VisualElement"
 export { addScaleCorrector } from "./projection/styles/scale-correction"
 export { useInstantTransition } from "./utils/use-instant-transition"
 export { useInstantLayoutTransition } from "./projection/use-instant-layout-transition"
@@ -139,7 +138,6 @@ export {
     Variants,
 } from "./types"
 export { EventInfo } from "./events/types"
-export { EventProps } from "./render/utils/lifecycles"
 export * from "./motion/features/types"
 export {
     DraggableProps,

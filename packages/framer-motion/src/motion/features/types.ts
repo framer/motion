@@ -1,13 +1,14 @@
 import * as React from "react"
 import { MotionProps } from "../types"
 import { VisualState } from "../utils/use-visual-state"
-import { CreateVisualElement, VisualElement } from "../../render/types"
+import { VisualElement } from "../../render/VisualElement"
+import { CreateVisualElement } from "../../render/types"
 
 /**
  * @public
  */
-export interface FeatureProps extends MotionProps {
-    visualElement: VisualElement
+export interface FeatureProps<T = unknown> extends MotionProps {
+    visualElement: VisualElement<T>
 }
 
 export type FeatureNames = {
@@ -22,7 +23,9 @@ export type FeatureNames = {
     measureLayout: true
 }
 
-export type FeatureComponent = React.ComponentType<React.PropsWithChildren<FeatureProps>>
+export type FeatureComponent = React.ComponentType<
+    React.PropsWithChildren<FeatureProps>
+>
 
 /**
  * @public

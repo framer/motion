@@ -4,7 +4,6 @@ import { MotionProps } from "./types"
 import { RenderComponent, FeatureBundle } from "./features/types"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { MotionContext } from "../context/MotionContext"
-import { CreateVisualElement } from "../render/types"
 import { useVisualElement } from "./utils/use-visual-element"
 import { UseVisualState } from "./utils/use-visual-state"
 import { useMotionRef } from "./utils/use-motion-ref"
@@ -18,6 +17,7 @@ import { VisualElementHandler } from "./utils/VisualElementHandler"
 import { LazyContext } from "../context/LazyContext"
 import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
 import { motionComponentSymbol } from "./utils/symbol"
+import { CreateVisualElement } from "../render/types"
 
 export interface MotionComponentConfig<Instance, RenderState> {
     preloadedFeatures?: FeatureBundle
@@ -135,7 +135,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                             visualState,
                             context.visualElement,
                             externalRef
-                        ),
+                        ) as any,
                         visualState,
                         isStatic,
                         context.visualElement

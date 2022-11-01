@@ -705,7 +705,8 @@ export function createProjectionNode<I>({
             this.projectionDelta = undefined
             this.notifyListeners("measure", this.layout.actual)
 
-            this.options.visualElement?.notifyLayoutMeasure(
+            this.options.visualElement?.notify(
+                "LayoutMeasure",
                 this.layout.actual,
                 prevLayout?.actual
             )
@@ -1695,7 +1696,7 @@ function clearMeasurements(node: IProjectionNode) {
 function resetTransformStyle(node: IProjectionNode) {
     const { visualElement } = node.options
     if (visualElement?.getProps().onBeforeLayoutMeasure) {
-        visualElement.notifyBeforeLayoutMeasure()
+        visualElement.notify("BeforeLayoutMeasure")
     }
 
     node.resetTransform()

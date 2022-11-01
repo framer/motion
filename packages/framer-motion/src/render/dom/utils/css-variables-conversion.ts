@@ -1,6 +1,6 @@
 import { Target, TargetWithKeyframes } from "../../../types"
 import { invariant } from "hey-listen"
-import { VisualElement } from "../../types"
+import type { VisualElement } from "../../VisualElement"
 
 function isCSSVariable(value: any): value is string {
     return typeof value === "string" && value.startsWith("var(--")

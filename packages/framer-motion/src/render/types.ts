@@ -1,11 +1,10 @@
-import * as React from "react"
-import { startAnimation } from "../animation/utils/transitions"
-import { MotionProps, MotionStyle } from "../motion/types"
+import { MotionProps } from "../motion/types"
 import { VisualState } from "../motion/utils/use-visual-state"
 import { MotionValue } from "../value"
 import { ReducedMotionConfig } from "../context/MotionConfigContext"
 import { AnimationDefinition } from "./utils/animation"
 import { Axis, Box, Delta } from "../projection/geometry/types"
+import type { VisualElement } from "./VisualElement"
 
 export interface MotionPoint {
     x: MotionValue<number>
@@ -37,11 +36,6 @@ export type VisualElementOptions<Instance, RenderState = any> = {
     blockInitialAnimation?: boolean
     reducedMotionConfig?: ReducedMotionConfig
 }
-
-export type CreateVisualElement<Instance> = (
-    Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
-    options: VisualElementOptions<Instance>
-) => VisualElement<Instance>
 
 /**
  * A generic set of string/number values
@@ -145,3 +139,8 @@ export interface AnimationLifecycles {
 }
 
 export type EventProps = LayoutLifecycles & AnimationLifecycles
+
+export type CreateVisualElement<Instance> = (
+    Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
+    options: VisualElementOptions<Instance>
+) => VisualElement<Instance>
