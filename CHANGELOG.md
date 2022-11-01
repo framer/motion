@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.6.3] 2022-11-01
+
+### Added
+
+-   Exposing `buildTransform` for internal use.
+
 ## [7.6.2] 2022-10-27
 
 ### Added
