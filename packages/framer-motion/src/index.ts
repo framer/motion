@@ -99,6 +99,7 @@ export { SwitchLayoutGroupContext } from "./context/SwitchLayoutGroupContext"
  */
 export { HTMLMotionProps, ForwardRefComponent } from "./render/html/types"
 export { SVGMotionProps, SVGAttributesAsMotionValues } from "./render/svg/types"
+export { AnimationLifecycles } from "./render/types"
 export {
     AnimationOptions,
     AnimationPlaybackControls,
@@ -149,6 +150,7 @@ export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { MotionConfigProps } from "./components/MotionConfig"
 export { LazyProps } from "./components/LazyMotion/types"
 export { FlatTree } from "./render/utils/flat-tree"
+export { CreateVisualElement } from "./render/types"
 export * from "./projection/geometry/types"
 export { IProjectionNode } from "./projection/node/types"
 /**

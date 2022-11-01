@@ -27,8 +27,8 @@ export type AnimationOptions = {
     type?: AnimationType
 }
 
-export type MakeTargetAnimatable = (
-    visualElement: VisualElement,
+export type MakeTargetAnimatable<T = unknown> = (
+    visualElement: VisualElement<T>,
     target: TargetWithKeyframes,
     origin?: Target,
     transitionEnd?: Target
