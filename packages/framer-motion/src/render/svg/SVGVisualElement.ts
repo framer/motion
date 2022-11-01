@@ -22,7 +22,7 @@ export class SVGVisualElement extends DOMVisualElement<
 > {
     type: "svg"
 
-    getBaseTargetFromInstance(
+    getBaseTargetFromProps(
         props: MotionProps,
         key: string
     ): string | number | MotionValue<any> | undefined {

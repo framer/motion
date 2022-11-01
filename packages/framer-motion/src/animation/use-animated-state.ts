@@ -31,7 +31,7 @@ class StateVisualElement extends VisualElement<
     scrapeMotionValuesFromProps() {
         return createObject()
     }
-    getBaseTargetFromInstance() {
+    getBaseTargetFromProps() {
         return undefined
     }
 

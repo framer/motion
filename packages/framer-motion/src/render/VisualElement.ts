@@ -81,7 +81,7 @@ export abstract class VisualElement<
         props: MotionProps & MotionConfigProps
     ): Box
 
-    abstract getBaseTargetFromInstance(
+    abstract getBaseTargetFromProps(
         props: MotionProps,
         key: string
     ): string | number | undefined | MotionValue
@@ -687,7 +687,7 @@ export abstract class VisualElement<
          * Alternatively, if this VisualElement config has defined a getBaseTarget
          * so we can read the value from an alternative source, try that.
          */
-        const target = this.getBaseTargetFromInstance(this.props, key)
+        const target = this.getBaseTargetFromProps(this.props, key)
         if (target !== undefined && !isMotionValue(target)) return target
 
         /**

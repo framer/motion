@@ -34,7 +34,7 @@ export abstract class DOMVisualElement<
         return a.compareDocumentPosition(b) & 2 ? 1 : -1
     }
 
-    getBaseTargetFromInstance(
+    getBaseTargetFromProps(
         props: MotionProps,
         key: string
     ): string | number | MotionValue<any> | undefined {

@@ -30,7 +30,7 @@ export class ThreeVisualElement extends VisualElement<
         return readThreeValue(instance, key)
     }
 
-    getBaseTargetFromInstance() {
+    getBaseTargetFromProps() {
         return undefined
     }
 

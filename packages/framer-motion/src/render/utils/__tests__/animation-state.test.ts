@@ -26,7 +26,7 @@ class StateVisualElement extends VisualElement<
         return 0
     }
 
-    getBaseTargetFromInstance(props: MotionProps, key: string) {
+    getBaseTargetFromProps(props: MotionProps, key: string) {
         return props.style?.[key]
     }
 

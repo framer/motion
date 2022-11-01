@@ -15,7 +15,7 @@ export const useRender: RenderComponent<
     ThreeRenderState
 > = (
     Component,
-    props: any,
+    props: ThreeMotionProps & MeshProps,
     _projectionId,
     ref,
     _state,
