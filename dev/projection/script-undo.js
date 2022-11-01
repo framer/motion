@@ -8,7 +8,7 @@ const {
     addScaleCorrector,
     correctBoxShadow,
     correctBorderRadius,
-    htmlVisualElement,
+    HTMLVisualElement,
 } = Projection
 
 addScaleCorrector({
@@ -31,7 +31,7 @@ addScaleCorrector({
 let id = 1
 Undo.createNode = (element, parent, options = {}, overrideId) => {
     const latestValues = {}
-    const visualElement = htmlVisualElement({
+    const visualElement = new HTMLVisualElement({
         visualState: {
             latestValues,
             renderState: {

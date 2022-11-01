@@ -8,7 +8,7 @@ const {
     addScaleCorrector,
     correctBoxShadow,
     correctBorderRadius,
-    htmlVisualElement,
+    HTMLVisualElement,
 } = Projection
 
 addScaleCorrector({
@@ -36,7 +36,7 @@ Animate.createNode = (
     transition = { duration: 10, ease: () => 0.5 }
 ) => {
     const latestValues = {}
-    const visualElement = htmlVisualElement({
+    const visualElement = new HTMLVisualElement({
         visualState: {
             latestValues,
             renderState: {

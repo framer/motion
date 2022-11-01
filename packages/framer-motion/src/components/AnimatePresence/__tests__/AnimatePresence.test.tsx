@@ -140,7 +140,7 @@ describe("AnimatePresence", () => {
         expect(opacity).toEqual(0.1)
     })
 
-    test("when: afterChildren fires correctly", async () => {
+    test.only("when: afterChildren fires correctly", async () => {
         const child = await new Promise<number>((resolve) => {
             const parentOpacityOutput: ResolvedValues[] = []
 
