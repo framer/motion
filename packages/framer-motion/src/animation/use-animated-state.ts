@@ -21,12 +21,16 @@ class StateVisualElement extends VisualElement<
 > {
     type: "state"
     build() {}
-    measureInstanceViewportBox = createBox
+    measureInstanceViewportBox() {
+        return createBox()
+    }
     resetTransform() {}
     restoreTransform() {}
     removeValueFromRenderState() {}
     renderInstance() {}
-    scrapeMotionValuesFromProps = createObject
+    scrapeMotionValuesFromProps() {
+        return createObject()
+    }
     getBaseTargetFromInstance() {
         return undefined
     }
@@ -76,7 +80,7 @@ export function useAnimatedState(initialState: any) {
 
     useEffect(() => {
         element.mount({})
-        return element.unmount
+        return () => element.unmount()
     }, [element])
 
     useEffect(() => {

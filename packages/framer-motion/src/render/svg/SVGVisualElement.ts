@@ -8,11 +8,12 @@ import { camelCaseAttributes } from "./utils/camel-case-attrs"
 import { transformProps } from "../html/utils/transform"
 import { renderSVG } from "./utils/render"
 import { getDefaultValueType } from "../dom/value-types/defaults"
-import { MotionProps } from "../../motion/types"
+import { MotionProps, MotionStyle } from "../../motion/types"
 import { MotionValue } from "../../value"
 import { ResolvedValues } from "../types"
 import { Box } from "../../projection/geometry/types"
 import { createBox } from "../../projection/geometry/models"
+import { IProjectionNode } from "../../projection/node/types"
 
 export class SVGVisualElement extends DOMVisualElement<
     SVGElement,
@@ -40,7 +41,9 @@ export class SVGVisualElement extends DOMVisualElement<
         return createBox()
     }
 
-    scrapeMotionValuesFromProps = scrapeMotionValuesFromProps
+    scrapeMotionValuesFromProps(props: MotionProps) {
+        return scrapeMotionValuesFromProps(props)
+    }
 
     build(
         renderState: SVGRenderState,
@@ -56,5 +59,12 @@ export class SVGVisualElement extends DOMVisualElement<
         )
     }
 
-    renderInstance = renderSVG
+    renderInstance(
+        instance: SVGElement,
+        renderState: SVGRenderState,
+        styleProp?: MotionStyle | undefined,
+        projection?: IProjectionNode<unknown> | undefined
+    ): void {
+        renderSVG(instance, renderState, styleProp, projection)
+    }
 }
