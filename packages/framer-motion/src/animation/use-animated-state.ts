@@ -2,11 +2,11 @@ import { useEffect, useState } from "react"
 import { useConstant } from "../utils/use-constant"
 import { checkTargetForNewValues, getOrigin } from "../render/utils/setters"
 import { TargetAndTransition } from "../types"
-import { visualElement } from "../render"
 import { ResolvedValues } from "../render/types"
 import { animateVisualElement } from "../render/utils/animation"
 import { makeUseVisualState } from "../motion/utils/use-visual-state"
 import { createBox } from "../projection/geometry/models"
+import { VisualElement } from "../render/VisualElement"
 
 interface AnimatedStateOptions {
     initialState: ResolvedValues
@@ -14,29 +14,44 @@ interface AnimatedStateOptions {
 
 const createObject = () => ({})
 
-const stateVisualElement = visualElement<
+class StateVisualElement extends VisualElement<
     ResolvedValues,
     {},
     AnimatedStateOptions
->({
-    build() {},
-    measureViewportBox: createBox,
-    resetTransform() {},
-    restoreTransform() {},
-    removeValueFromRenderState() {},
-    render() {},
-    scrapeMotionValuesFromProps: createObject,
+> {
+    type: "state"
+    build() {}
+    measureInstanceViewportBox = createBox
+    resetTransform() {}
+    restoreTransform() {}
+    removeValueFromRenderState() {}
+    renderInstance() {}
+    scrapeMotionValuesFromProps = createObject
+    getBaseTargetFromInstance() {
+        return undefined
+    }
 
-    readValueFromInstance(_state, key, options) {
+    readValueFromInstance(
+        _state: ResolvedValues,
+        key: string,
+        options: AnimatedStateOptions
+    ) {
         return options.initialState[key] || 0
-    },
+    }
 
-    makeTargetAnimatable(element, { transition, transitionEnd, ...target }) {
+    sortInstanceNodePosition() {
+        return 0
+    }
+
+    makeTargetAnimatableFromInstance(
+        element: StateVisualElement,
+        { transition, transitionEnd, ...target }: TargetAndTransition
+    ) {
         const origin = getOrigin(target as any, transition || {}, element)
         checkTargetForNewValues(element, target, origin as any)
         return { transition, transitionEnd, ...target }
-    },
-})
+    }
+}
 
 const useVisualState = makeUseVisualState({
     scrapeMotionValuesFromProps: createObject,
@@ -51,9 +66,12 @@ export function useAnimatedState(initialState: any) {
     const [animationState, setAnimationState] = useState(initialState)
     const visualState = useVisualState({}, false)
 
-    const element = useConstant(() =>
-        stateVisualElement({ props: {}, visualState }, { initialState })
-    )
+    const element = useConstant(() => {
+        return new StateVisualElement(
+            { props: {}, visualState },
+            { initialState }
+        )
+    })
 
     useEffect(() => {
         element.mount({})

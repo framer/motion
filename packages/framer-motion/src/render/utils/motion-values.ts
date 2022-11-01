@@ -3,7 +3,7 @@ import { MotionStyle } from "../../motion/types"
 import { warnOnce } from "../../utils/warn-once"
 import { motionValue } from "../../value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
-import { VisualElement } from "../types"
+import type { VisualElement } from "../VisualElement"
 
 export function updateMotionValuesFromProps(
     element: VisualElement,

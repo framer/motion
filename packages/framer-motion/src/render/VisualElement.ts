@@ -1,17 +1,26 @@
 import sync, { cancelSync } from "framesync"
+import { invariant } from "hey-listen"
+import { createElement } from "react"
 import { MotionConfigProps } from "../components/MotionConfig"
 import { ReducedMotionConfig } from "../context/MotionConfigContext"
+import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
+import { featureDefinitions } from "../motion/features/definitions"
+import { FeatureBundle, FeatureDefinition } from "../motion/features/types"
 import { MotionProps, MotionStyle } from "../motion/types"
 import { Box } from "../projection/geometry/types"
 import { IProjectionNode } from "../projection/node/types"
 import { TargetAndTransition } from "../types"
+import { isRefObject } from "../utils/is-ref-object"
+import { env } from "../utils/process"
 import { initPrefersReducedMotion } from "../utils/reduced-motion"
 import {
     hasReducedMotionListener,
     prefersReducedMotion,
 } from "../utils/reduced-motion/state"
 import { SubscriptionManager } from "../utils/subscription-manager"
-import { MotionValue } from "../value"
+import { motionValue, MotionValue } from "../value"
+import { isWillChangeMotionValue } from "../value/use-will-change/is"
+import { isMotionValue } from "../value/utils/is-motion-value"
 import {
     ResolvedValues,
     ScrapeMotionValuesFromProps,
@@ -26,6 +35,10 @@ import {
 } from "./utils/is-controlling-variants"
 import { isVariantLabel } from "./utils/is-variant-label"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
+import { resolveVariantFromProps } from "./utils/resolve-variants"
+
+const featureNames = Object.keys(featureDefinitions)
+const numFeatures = featureNames.length
 
 export abstract class VisualElement<
     Instance = unknown,
@@ -37,12 +50,6 @@ export abstract class VisualElement<
      * identify when crossing type boundaries.
      */
     abstract type: string
-
-    /**
-     * A reference to the current underlying instance, e.g. a HTMLElement
-     * or Three.Mesh etc.
-     */
-    abstract current?: Instance
 
     abstract build(
         visualElement: VisualElement<Instance>,
@@ -100,7 +107,19 @@ export abstract class VisualElement<
         renderState: RenderState
     ): void
 
-    abstract scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps
+    scrapeMotionValuesFromProps(_props: MotionProps): {
+        [key: string]: MotionValue | string | number
+    } {
+        return {}
+    }
+
+    isPresent = true
+
+    /**
+     * A reference to the current underlying instance, e.g. a HTMLElement
+     * or Three.Mesh etc.
+     */
+    current: Instance | null = null
 
     parent: VisualElement | undefined
 
@@ -161,6 +180,8 @@ export abstract class VisualElement<
      */
     values = new Map<string, MotionValue>()
 
+    private options: Options
+
     /**
      * A map of every subscription that binds the provided or generated
      * motion values onChange listeners to this visual element.
@@ -205,12 +226,15 @@ export abstract class VisualElement<
 
     animationState?: AnimationState
 
-    constructor({
-        parent,
-        props,
-        reducedMotionConfig,
-        visualState,
-    }: VisualElementOptions<Instance, RenderState>) {
+    constructor(
+        {
+            parent,
+            props,
+            reducedMotionConfig,
+            visualState,
+        }: VisualElementOptions<Instance, RenderState>,
+        options: Options
+    ) {
         const { latestValues, renderState } = visualState
         this.latestValues = latestValues
         this.baseTarget = { ...latestValues }
@@ -220,6 +244,7 @@ export abstract class VisualElement<
         this.props = props
         this.depth = parent ? parent.depth + 1 : 0
         this.reducedMotionConfig = reducedMotionConfig
+        this.options = options
 
         this.isControllingVariants = checkIsControllingVariants(props)
         this.isVariantNode = checkIsVariantNode(props)
@@ -228,6 +253,43 @@ export abstract class VisualElement<
         }
 
         this.manuallyAnimateOnMount = Boolean(parent && parent.current)
+
+        /**
+         * Any motion values that are provided to the element when created
+         * aren't yet bound to the element, as this would technically be impure.
+         * However, we iterate through the motion values and set them to the
+         * initial values for this component.
+         *
+         * TODO: This is impure and we should look at changing this to run on mount.
+         * Doing so will break some tests but this isn't neccessarily a breaking change,
+         * more a reflection of the test.
+         */
+        const { willChange, ...initialMotionValues } =
+            this.scrapeMotionValuesFromProps(props)
+
+        for (const key in initialMotionValues) {
+            const value = initialMotionValues[key]
+
+            if (latestValues[key] !== undefined && isMotionValue(value)) {
+                value.set(latestValues[key], false)
+
+                if (isWillChangeMotionValue(willChange)) {
+                    willChange.add(key)
+                }
+            }
+        }
+
+        /**
+         * Update external values with initial values
+         */
+        if (props.values) {
+            for (const key in props.values) {
+                const value = props.values[key] as MotionValue<number | string>
+                if (latestValues[key] !== undefined && isMotionValue(value)) {
+                    value.set(latestValues[key])
+                }
+            }
+        }
     }
 
     mount(instance: Instance) {
@@ -268,7 +330,7 @@ export abstract class VisualElement<
         for (const key in this.events) {
             this.events[key].clear()
         }
-        this.current = undefined
+        this.current = null
     }
 
     private bindToMotionValue(key: string, value: MotionValue) {
@@ -306,12 +368,12 @@ export abstract class VisualElement<
     }
 
     loadFeatures(
-        props: MotionProps,
+        renderedProps: MotionProps,
         isStrict?: boolean,
         preloadedFeatures?: FeatureBundle,
         projectionId?: number,
         ProjectionNodeConstructor?: any,
-        initialPromotionConfig?: SwitchLayoutGroupContext
+        initialLayoutGroupConfig?: SwitchLayoutGroupContext
     ) {
         const features: JSX.Element[] = []
 
@@ -342,29 +404,29 @@ export abstract class VisualElement<
                     createElement(Component, {
                         key: name,
                         ...renderedProps,
-                        visualElement: element,
+                        visualElement: this,
                     })
                 )
             }
         }
 
-        if (!element.projection && ProjectionNodeConstructor) {
-            element.projection = new ProjectionNodeConstructor(
+        if (!this.projection && ProjectionNodeConstructor) {
+            this.projection = new ProjectionNodeConstructor(
                 projectionId,
-                element.getLatestValues(),
-                parent && parent.projection
+                this.latestValues,
+                this.parent && this.parent.projection
             ) as IProjectionNode
 
             const { layoutId, layout, drag, dragConstraints, layoutScroll } =
                 renderedProps
-            element.projection.setOptions({
+            this.projection.setOptions({
                 layoutId,
                 layout,
                 alwaysMeasureLayout:
                     Boolean(drag) ||
                     (dragConstraints && isRefObject(dragConstraints)),
-                visualElement: element,
-                scheduleRender: () => element.scheduleRender(),
+                visualElement: this,
+                scheduleRender: () => this.scheduleRender(),
                 /**
                  * TODO: Update options in an effect. This could be tricky as it'll be too late
                  * to update by the time layout animations run.
@@ -382,6 +444,16 @@ export abstract class VisualElement<
     }
 
     notifyUpdate = () => this.notify("Update", this.latestValues)
+
+    triggerBuild() {
+        this.build(
+            this,
+            this.renderState,
+            this.latestValues,
+            this.options,
+            this.props
+        )
+    }
 
     render = () => {
         if (!this.current) return
@@ -411,7 +483,7 @@ export abstract class VisualElement<
     }
 
     setStaticValue(key: string, value: string | number) {
-        latestValues[key] = value
+        this.latestValues[key] = value
     }
 
     /**
@@ -421,11 +493,14 @@ export abstract class VisualElement<
      * pluggable to support Framer's custom value types like Color,
      * and CSS variables.
      */
-    makeTargetAnimatable(target, canMutate = true) {
+    makeTargetAnimatable(
+        target: TargetAndTransition,
+        canMutate = true
+    ): TargetAndTransition {
         return this.makeTargetAnimatableFromInstance(
-            element,
+            this,
             target,
-            props,
+            this.props,
             canMutate
         )
     }
@@ -529,11 +604,11 @@ export abstract class VisualElement<
      */
     addValue(key: string, value: MotionValue) {
         // Remove existing value if it exists
-        if (element.hasValue(key)) element.removeValue(key)
+        if (this.hasValue(key)) this.removeValue(key)
 
-        values.set(key, value)
-        latestValues[key] = value.get()
-        bindToMotionValue(key, value)
+        this.values.set(key, value)
+        this.latestValues[key] = value.get()
+        this.bindToMotionValue(key, value)
     }
 
     /**
@@ -541,10 +616,10 @@ export abstract class VisualElement<
      */
     removeValue(key: string) {
         this.values.delete(key)
-        valueSubscriptions.get(key)?.()
-        valueSubscriptions.delete(key)
-        delete latestValues[key]
-        removeValueFromRenderState(key, renderState)
+        this.valueSubscriptions.get(key)?.()
+        this.valueSubscriptions.delete(key)
+        delete this.latestValues[key]
+        this.removeValueFromRenderState(key, this.renderState)
     }
 
     /**
@@ -559,15 +634,15 @@ export abstract class VisualElement<
      * value, we'll create one if none exists.
      */
     getValue(key: string, defaultValue?: string | number) {
-        if (props.values && props.values[key]) {
-            return props.values[key]
+        if (this.props.values && this.props.values[key]) {
+            return this.props.values[key]
         }
 
-        let value = values.get(key)
+        let value = this.values.get(key)
 
         if (value === undefined && defaultValue !== undefined) {
             value = motionValue(defaultValue)
-            element.addValue(key, value)
+            this.addValue(key, value)
         }
 
         return value as MotionValue
@@ -579,9 +654,9 @@ export abstract class VisualElement<
      * directly from the instance (which might have performance implications).
      */
     readValue(key: string) {
-        return latestValues[key] !== undefined
-            ? latestValues[key]
-            : readValueFromInstance(instance!, key, options)
+        return this.latestValues[key] !== undefined || !this.current
+            ? this.latestValues[key]
+            : this.readValueFromInstance(this.current, key, this.options)
     }
 
     /**
@@ -589,7 +664,7 @@ export abstract class VisualElement<
      * only hydrated on creation and when we first read a value.
      */
     setBaseTarget(key: string, value: string | number) {
-        baseTarget[key] = value
+        this.baseTarget[key] = value
     }
 
     /**
@@ -597,10 +672,10 @@ export abstract class VisualElement<
      * props.
      */
     getBaseTarget(key: string) {
-        const { initial } = props
+        const { initial } = this.props
         const valueFromInitial =
             typeof initial === "string" || typeof initial === "object"
-                ? resolveVariantFromProps(props, initial as any)?.[key]
+                ? resolveVariantFromProps(this.props, initial as any)?.[key]
                 : undefined
 
         /**
@@ -614,19 +689,17 @@ export abstract class VisualElement<
          * Alternatively, if this VisualElement config has defined a getBaseTarget
          * so we can read the value from an alternative source, try that.
          */
-        if (getBaseTarget) {
-            const target = getBaseTarget(props, key)
-            if (target !== undefined && !isMotionValue(target)) return target
-        }
+        const target = this.getBaseTargetFromInstance(this.props, key)
+        if (target !== undefined && !isMotionValue(target)) return target
 
         /**
          * If the value was initially defined on initial, but it doesn't any more,
          * return undefined. Otherwise return the value as initially read from the DOM.
          */
-        return initialValues[key] !== undefined &&
+        return this.initialValues[key] !== undefined &&
             valueFromInitial === undefined
             ? undefined
-            : baseTarget[key]
+            : this.baseTarget[key]
     }
 
     on<EventName extends keyof VisualElementEventCallbacks>(

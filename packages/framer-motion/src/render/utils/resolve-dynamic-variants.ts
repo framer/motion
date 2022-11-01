@@ -1,5 +1,5 @@
 import { TargetAndTransition, TargetResolver } from "../../types"
-import { VisualElement } from "../types"
+import type { VisualElement } from "../VisualElement"
 import { resolveVariantFromProps } from "./resolve-variants"
 
 /**

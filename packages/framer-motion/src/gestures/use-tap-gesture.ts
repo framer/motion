@@ -18,7 +18,7 @@ export function useTapGesture({
     onTapCancel,
     whileTap,
     visualElement,
-}: FeatureProps) {
+}: FeatureProps<HTMLElement>) {
     const hasPressListeners = onTap || onTapStart || onTapCancel || whileTap
     const isPressing = useRef(false)
     const cancelPointerEndListeners = useRef<Function | null>(null)

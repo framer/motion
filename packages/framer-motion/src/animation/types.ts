@@ -1,5 +1,5 @@
 import { TargetAndTransition, TargetResolver, Transition } from "../types"
-import { VisualElement } from "../render/types"
+import type { VisualElement } from "../render/VisualElement"
 
 /**
  * @public

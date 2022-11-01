@@ -2,7 +2,7 @@ import { isMouseEvent } from "./utils/event-type"
 import { EventInfo } from "../events/types"
 import { AnimationType } from "../render/utils/types"
 import { usePointerEvent } from "../events/use-pointer-event"
-import { VisualElement } from "../render/types"
+import type { VisualElement } from "../render/VisualElement"
 import { FeatureProps } from "../motion/features/types"
 import { isDragActive } from "./drag/utils/lock"
 
@@ -32,7 +32,7 @@ export function useHoverGesture({
     onHoverEnd,
     whileHover,
     visualElement,
-}: FeatureProps) {
+}: FeatureProps<HTMLElement>) {
     usePointerEvent(
         visualElement,
         "pointerenter",

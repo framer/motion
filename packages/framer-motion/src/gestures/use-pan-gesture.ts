@@ -23,7 +23,7 @@ export function usePanGesture({
     onPanEnd,
     onPanSessionStart,
     visualElement,
-}: FeatureProps) {
+}: FeatureProps<HTMLElement>) {
     const hasPanEvents = onPan || onPanStart || onPanEnd || onPanSessionStart
     const panSession = useRef<PanSession | null>(null)
     const { transformPagePoint } = useContext(MotionConfigContext)

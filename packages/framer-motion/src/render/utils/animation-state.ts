@@ -3,7 +3,7 @@ import { isKeyframesTarget } from "../../animation/utils/is-keyframes-target"
 import { VariantLabels } from "../../motion/types"
 import { TargetAndTransition } from "../../types"
 import { shallowCompare } from "../../utils/shallow-compare"
-import { VisualElement } from "../types"
+import type { VisualElement } from "../VisualElement"
 import {
     animateVisualElement,
     AnimationDefinition,

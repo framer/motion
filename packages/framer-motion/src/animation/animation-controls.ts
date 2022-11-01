@@ -1,7 +1,7 @@
 import { invariant } from "hey-listen"
-import { VisualElement } from "../render/types"
 import { animateVisualElement, stopAnimation } from "../render/utils/animation"
 import { setValues } from "../render/utils/setters"
+import type { VisualElement } from "../render/VisualElement"
 import { AnimationControls, PendingAnimations } from "./types"
 
 /**

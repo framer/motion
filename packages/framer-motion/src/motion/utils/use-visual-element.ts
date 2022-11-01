@@ -3,12 +3,13 @@ import { MutableRefObject, useContext, useEffect, useRef } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 import { MotionProps } from "../../motion/types"
 import { useVisualElementContext } from "../../context/MotionContext"
-import { CreateVisualElement, VisualElement } from "../../render/types"
+import { CreateVisualElement } from "../../render/types"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { VisualState } from "./use-visual-state"
 import { LazyContext } from "../../context/LazyContext"
 import { MotionConfigProps } from "../../components/MotionConfig"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
+import type { VisualElement } from "../../render/VisualElement"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -21,8 +22,9 @@ export function useVisualElement<Instance, RenderState>(
     const presenceContext = useContext(PresenceContext)
     const reducedMotionConfig = useContext(MotionConfigContext).reducedMotion
 
-    const visualElementRef: MutableRefObject<VisualElement | undefined> =
-        useRef(undefined)
+    const visualElementRef: MutableRefObject<
+        VisualElement<Instance> | undefined
+    > = useRef(undefined)
 
     /**
      * If we haven't preloaded a renderer, check to see if we have one lazy-loaded
@@ -55,7 +57,7 @@ export function useVisualElement<Instance, RenderState>(
     })
 
     useIsomorphicLayoutEffect(
-        () => () => visualElement && visualElement.notify("unmount"),
+        () => () => visualElement && visualElement.notify("Unmount"),
         []
     )
 

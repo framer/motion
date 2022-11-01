@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useCallback } from "react"
-import { VisualElement } from "../../render/types"
+import type { VisualElement } from "../../render/VisualElement"
 import { isRefObject } from "../../utils/is-ref-object"
 import { VisualState } from "./use-visual-state"
 
