@@ -53,7 +53,7 @@ const propEventHandlers = [
 export abstract class VisualElement<
     Instance = unknown,
     RenderState = unknown,
-    Options = unknown
+    Options extends {} = {}
 > {
     /**
      * A unique string identifier for the VisualElement type. Used to
@@ -232,7 +232,7 @@ export abstract class VisualElement<
             reducedMotionConfig,
             visualState,
         }: VisualElementOptions<Instance, RenderState>,
-        options: Options
+        options: Options = {} as any
     ) {
         const { latestValues, renderState } = visualState
         this.latestValues = latestValues
