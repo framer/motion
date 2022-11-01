@@ -3,7 +3,7 @@ import { VisualState } from "../motion/utils/use-visual-state"
 import { MotionValue } from "../value"
 import { ReducedMotionConfig } from "../context/MotionConfigContext"
 import { AnimationDefinition } from "./utils/animation"
-import { Axis, Box, Delta } from "../projection/geometry/types"
+import { Axis, Box } from "../projection/geometry/types"
 import type { VisualElement } from "./VisualElement"
 
 export interface MotionPoint {
@@ -48,7 +48,6 @@ export interface VisualElementEventCallbacks {
     BeforeLayoutMeasure: () => void
     LayoutMeasure: (layout: Box, prevLayout?: Box) => void
     LayoutUpdate: (layout: Axis, prevLayout: Axis) => void
-    ViewportBoxUpdate: (box: Axis, delta: Delta) => void
     Update: (latest: ResolvedValues) => void
     Render: () => void
     AnimationStart: (definition: AnimationDefinition) => void
