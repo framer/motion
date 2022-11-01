@@ -119,10 +119,6 @@ export class HTMLVisualElement extends DOMVisualElement<
         options: DOMVisualElementOptions,
         props: MotionProps
     ) {
-        if (this.isVisible !== undefined) {
-            renderState.style.visibility = this.isVisible ? "visible" : "hidden"
-        }
-
         buildHTMLStyles(
             renderState,
             latestValues,

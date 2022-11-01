@@ -50,17 +50,81 @@ const propEventHandlers = [
     "LayoutAnimationComplete",
 ]
 
+/**
+ * A VisualElement is an imperative abstraction around UI elements such as
+ * HTMLElement, SVGElement, Three.Object3D etc.
+ */
 export abstract class VisualElement<
     Instance = unknown,
     RenderState = unknown,
     Options extends {} = {}
 > {
     /**
-     * A unique string identifier for the VisualElement type. Used to
-     * identify when crossing type boundaries.
+     * VisualElements are arranged in trees mirroring that of the React tree.
+     * Each type of VisualElement has a unique name, to detect when we're crossing
+     * type boundaries within that tree.
      */
     abstract type: string
 
+    /**
+     * An `Array.sort` compatible function that will compare two Instances and
+     * compare their respective positions within the tree.
+     */
+    abstract sortInstanceNodePosition(a: Instance, b: Instance): number
+
+    /**
+     * Take a target and make it animatable. For instance if provided
+     * height: "auto" we need to measure height in pixels and animate that instead.
+     */
+    abstract makeTargetAnimatableFromInstance(
+        target: TargetAndTransition,
+        props: MotionProps,
+        isLive: boolean
+    ): TargetAndTransition
+
+    /**
+     * Measure the viewport-relative bounding box of the Instance.
+     */
+    abstract measureInstanceViewportBox(
+        instance: Instance,
+        props: MotionProps & MotionConfigProps
+    ): Box
+
+    /**
+     * When a value has been removed from all animation props we need to
+     * pick a target to animate back to. For instance, for HTMLElements
+     * we can look in the style prop.
+     */
+    abstract getBaseTargetFromProps(
+        props: MotionProps,
+        key: string
+    ): string | number | undefined | MotionValue
+
+    /**
+     * When we first animate to a value we need to animate it *from* a value.
+     * Often this have been specified via the initial prop but it might be
+     * that the value needs to be read from the Instance.
+     */
+    abstract readValueFromInstance(
+        instance: Instance,
+        key: string,
+        options: Options
+    ): string | number | null | undefined
+
+    /**
+     * When a value has been removed from the VisualElement we use this to remove
+     * it from the inherting class' unique render state.
+     */
+    abstract removeValueFromRenderState(
+        key: string,
+        renderState: RenderState
+    ): void
+
+    /**
+     * Run before a React or VisualElement render, builds the latest motion
+     * values into an Instance-specific format. For example, HTMLVisualElement
+     * will use this step to build `style` and `var` values.
+     */
     abstract build(
         renderState: RenderState,
         latestValues: ResolvedValues,
@@ -68,30 +132,11 @@ export abstract class VisualElement<
         props: MotionProps
     ): void
 
-    abstract sortInstanceNodePosition(a: Instance, b: Instance): number
-
-    abstract makeTargetAnimatableFromInstance(
-        target: TargetAndTransition,
-        props: MotionProps,
-        isLive: boolean
-    ): TargetAndTransition
-
-    abstract measureInstanceViewportBox(
-        instance: Instance,
-        props: MotionProps & MotionConfigProps
-    ): Box
-
-    abstract getBaseTargetFromProps(
-        props: MotionProps,
-        key: string
-    ): string | number | undefined | MotionValue
-
-    abstract readValueFromInstance(
-        instance: Instance,
-        key: string,
-        options: Options
-    ): string | number | null | undefined
-
+    /**
+     * Apply the built values to the Instance. For example, HTMLElements will have
+     * styles applied via `setProperty` and the style attribute, whereas SVGElements
+     * will have values applied to attributes.
+     */
     abstract renderInstance(
         instance: Instance,
         renderState: RenderState,
@@ -99,36 +144,49 @@ export abstract class VisualElement<
         projection?: IProjectionNode
     ): void
 
-    abstract removeValueFromRenderState(
-        key: string,
-        renderState: RenderState
-    ): void
-
+    /**
+     * This method takes React props and returns found MotionValues. For example, HTML
+     * MotionValues will be found within the style prop, whereas for Three.js within attribute arrays.
+     *
+     * This isn't an abstract method as it needs calling in the constructor, but it is
+     * intended to be one.
+     */
     scrapeMotionValuesFromProps(_props: MotionProps): {
         [key: string]: MotionValue | string | number
     } {
         return {}
     }
 
-    isPresent = true
-
     /**
-     * A reference to the current underlying instance, e.g. a HTMLElement
+     * A reference to the current underlying Instance, e.g. a HTMLElement
      * or Three.Mesh etc.
      */
     current: Instance | null = null
 
+    /**
+     * A reference to the parent VisualElement (if exists).
+     */
     parent: VisualElement | undefined
+
+    /**
+     * A set containing references to this VisualElement's children.
+     */
+    children = new Set<VisualElement>()
 
     /**
      * The depth of this VisualElement within the overall VisualElement tree.
      */
     depth: number
 
-    children = new Set<VisualElement>()
-
+    /**
+     * The current render state of this VisualElement. Defined by inherting VisualElements.
+     */
     renderState: RenderState
 
+    /**
+     * An object containing the latest static values for each of this VisualElement's
+     * MotionValues.
+     */
     latestValues: ResolvedValues
 
     /**
@@ -169,7 +227,11 @@ export abstract class VisualElement<
      */
     blockInitialAnimation: boolean
 
+    /**
+     * A reference to this VisualElement's projection node, used in layout animations.
+     */
     projection?: IProjectionNode
+
     /**
      * A map of all motion values attached to this visual element. Motion
      * values are source of truth for any given animated value. A motion
@@ -177,7 +239,27 @@ export abstract class VisualElement<
      */
     values = new Map<string, MotionValue>()
 
-    private options: Options
+    /**
+     * Tracks whether this VisualElement's React component is currently present
+     * within the defined React tree.
+     */
+    isPresent = true
+
+    /**
+     * The AnimationState, this is hydrated by the animation Feature.
+     */
+    animationState?: AnimationState
+
+    /**
+     * The options used to create this VisualElement. The Options type is defined
+     * by the inheriting VisualElement and is passed straight through to the render functions.
+     */
+    private readonly options: Options
+
+    /**
+     * A reference to the latest props provided to the VisualElement's host React component.
+     */
+    private props: MotionProps
 
     /**
      * A map of every subscription that binds the provided or generated
@@ -185,8 +267,9 @@ export abstract class VisualElement<
      */
     private valueSubscriptions = new Map<string, VoidFunction>()
 
-    private props: MotionProps
-
+    /**
+     * A reference to the ReducedMotionConfig passed to the VisualElement's host React component.
+     */
     private reducedMotionConfig: ReducedMotionConfig | undefined
 
     /**
@@ -213,17 +296,21 @@ export abstract class VisualElement<
      */
     private initialValues: ResolvedValues
 
+    /**
+     * An object containing a SubscriptionManager for each active event.
+     */
     private events: {
         [key: string]: SubscriptionManager<any>
     } = {}
 
+    /**
+     * An object containing an unsubscribe function for each prop event subscription.
+     * For example, every "Update" event can have multiple subscribers via
+     * VisualElement.on(), but only one of those can be defined via the onUpdate prop.
+     */
     private propEventSubscriptions: {
         [key: string]: VoidFunction
     } = {}
-
-    animationState?: AnimationState
-
-    isVisible = true
 
     constructor(
         {
