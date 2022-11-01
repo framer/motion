@@ -135,7 +135,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                             visualState,
                             context.visualElement,
                             externalRef
-                        ) as any,
+                        ) as React.Ref<Instance>,
                         visualState,
                         isStatic,
                         context.visualElement
