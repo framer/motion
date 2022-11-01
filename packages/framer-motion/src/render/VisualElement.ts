@@ -39,6 +39,17 @@ import { resolveVariantFromProps } from "./utils/resolve-variants"
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
 
+const propEventHandlers = [
+    "AnimationStart",
+    "AnimationComplete",
+    "Update",
+    "Unmount",
+    "BeforeLayoutMeasure",
+    "LayoutMeasure",
+    "LayoutAnimationStart",
+    "LayoutAnimationComplete",
+]
+
 export abstract class VisualElement<
     Instance = unknown,
     RenderState = unknown,
@@ -208,7 +219,7 @@ export abstract class VisualElement<
 
     private propEventSubscriptions: {
         [key: string]: VoidFunction
-    }
+    } = {}
 
     animationState?: AnimationState
 
@@ -503,9 +514,10 @@ export abstract class VisualElement<
         this.props = props
 
         /**
-         * Update event handlers
+         * Update prop event handlers ie onAnimationStart, onAnimationComplete
          */
-        for (const key in this.events) {
+        for (let i = 0; i < propEventHandlers.length; i++) {
+            const key = propEventHandlers[i]
             if (this.propEventSubscriptions[key]) {
                 this.propEventSubscriptions[key]()
                 delete this.propEventSubscriptions[key]
