@@ -1,5 +1,5 @@
 import { invariant } from "hey-listen"
-import { PanSession, AnyPointerEvent, PanInfo } from "../../gestures/PanSession"
+import { PanSession, PanInfo } from "../../gestures/PanSession"
 import { ResolvedConstraints } from "./types"
 import { Lock, getGlobalLock } from "./utils/lock"
 import { isRefObject } from "../../utils/is-ref-object"
@@ -48,7 +48,7 @@ type DragDirection = "x" | "y"
 /**
  *
  */
-// let latestPointerEvent: AnyPointerEvent
+// let latestPointerEvent: PointerEvent
 
 export class VisualElementDragControls {
     private visualElement: VisualElement<HTMLElement>
@@ -82,7 +82,7 @@ export class VisualElementDragControls {
     }
 
     start(
-        originEvent: AnyPointerEvent,
+        originEvent: PointerEvent,
         { snapToCursor = false }: DragControlOptions = {}
     ) {
         /**
@@ -90,7 +90,7 @@ export class VisualElementDragControls {
          */
         if (this.visualElement.isPresent === false) return
 
-        const onSessionStart = (event: AnyPointerEvent) => {
+        const onSessionStart = (event: PointerEvent) => {
             // Stop any animations on both axis values immediately. This allows the user to throw and catch
             // the component.
             this.stopAnimation()
@@ -100,7 +100,7 @@ export class VisualElementDragControls {
             }
         }
 
-        const onStart = (event: AnyPointerEvent, info: PanInfo) => {
+        const onStart = (event: PointerEvent, info: PanInfo) => {
             // Attempt to grab the global drag gesture lock - maybe make this part of PanSession
             const { drag, dragPropagation, onDragStart } = this.getProps()
 
@@ -153,7 +153,7 @@ export class VisualElementDragControls {
             )
         }
 
-        const onMove = (event: AnyPointerEvent, info: PanInfo) => {
+        const onMove = (event: PointerEvent, info: PanInfo) => {
             // latestPointerEvent = event
 
             const {
@@ -198,7 +198,7 @@ export class VisualElementDragControls {
             onDrag?.(event, info)
         }
 
-        const onSessionEnd = (event: AnyPointerEvent, info: PanInfo) =>
+        const onSessionEnd = (event: PointerEvent, info: PanInfo) =>
             this.stop(event, info)
 
         this.panSession = new PanSession(
@@ -213,7 +213,7 @@ export class VisualElementDragControls {
         )
     }
 
-    private stop(event: AnyPointerEvent, info: PanInfo) {
+    private stop(event: PointerEvent, info: PanInfo) {
         const isDragging = this.isDragging
         this.cancel()
         if (!isDragging) return

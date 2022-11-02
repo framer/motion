@@ -6,10 +6,7 @@ export interface EventInfo {
     point: Point
 }
 
-export type EventHandler = (
-    event: MouseEvent | TouchEvent | PointerEvent,
-    info: EventInfo
-) => void
+export type EventHandler = (event: PointerEvent, info: EventInfo) => void
 
 export type ListenerControls = [() => void, () => void]
 
