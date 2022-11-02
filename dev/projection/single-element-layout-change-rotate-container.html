@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #container {
+                width: 100px;
+                height: 200px;
+                display: flex;
+                align-items: flex-end;
+            }
+
+            #container.b {
+                align-items: flex-start;
+            }
+
+            #box {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="container">
+            <div id="box" data-layout-correct="true"></div>
+        </div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-undo.js"></script>
+        <script>
+            const { createNode } = window.Undo
+            const { matchViewportBox } = window.Assert
+            const container = document.getElementById("container")
+            const containerProjection = createNode(container)
+            const box = document.getElementById("box")
+            const boxProjection = createNode(box, containerProjection)
+
+            containerProjection.setValue("rotate", 180)
+
+            requestAnimationFrame(() => {
+                const boxOrigin = box.getBoundingClientRect()
+                boxProjection.willUpdate()
+                containerProjection.willUpdate()
+                container.classList.add("b")
+
+                requestAnimationFrame(() => {
+                    containerProjection.root.didUpdate()
+                    matchViewportBox(box, boxOrigin)
+                })
+            })
+        </script>
+    </body>
+</html>
