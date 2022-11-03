@@ -73,20 +73,20 @@
             const parentProjection = createNode(
                 parent,
                 undefined,
-                {},
-                { duration: 2 } // { duration: 200, ease: relativeEase() }
+                { layoutScroll: true },
+                { duration: 0.01 }
             )
             const midProjection = createNode(
                 mid,
                 parentProjection,
                 {},
-                { duration: 2, delay: 1 } // { duration: 200, ease: relativeEase() }
+                { duration: 0.01, delay: 0 }
             )
             const childProjection = createNode(
                 child,
                 midProjection,
                 {},
-                { duration: 2, delay: 1 } // { duration: 0 }
+                { duration: 10, delay: 0.1 } // { duration: 0 }
             )
 
             parentProjection.willUpdate()
@@ -97,11 +97,17 @@
 
             parentProjection.root.didUpdate()
 
-            // sync.postRender(() => {
-            //     sync.postRender(() => {
-            //         matchViewportBox(child, childOrigin)
-            //     })
-            // })
+            setTimeout(() => {
+                parentProjection.willUpdate()
+                midProjection.willUpdate()
+                childProjection.willUpdate()
+                parent.classList.remove("b")
+                parentProjection.root.didUpdate()
+
+                sync.postRender(() => {
+                    matchViewportBox(child, childOrigin, 0.5)
+                })
+            }, 150)
         </script>
     </body>
 </html>

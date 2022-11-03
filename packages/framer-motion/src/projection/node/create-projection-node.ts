@@ -433,10 +433,6 @@ export function createProjectionNode<I>({
                         const hasOnlyRelativeTargetChanged =
                             !hasLayoutChanged && hasRelativeTargetChanged
 
-                        if (visualElement.getInstance().id === "mid") {
-                            console.log(hasLayoutChanged, targetChanged)
-                        }
-
                         if (
                             this.resumeFrom?.instance ||
                             hasOnlyRelativeTargetChanged ||
@@ -478,7 +474,6 @@ export function createProjectionNode<I>({
                                 !hasLayoutChanged &&
                                 this.animationProgress === 0
                             ) {
-                                console.log("finishing animation")
                                 finishAnimation(this)
                             }
 
@@ -973,7 +968,6 @@ export function createProjectionNode<I>({
             /**
              * If we've been told to attempt to resolve a relative target, do so.
              */
-
             if (this.attemptToResolveRelativeTarget) {
                 this.attemptToResolveRelativeTarget = false
                 this.relativeParent = this.getClosestProjectingParent()
