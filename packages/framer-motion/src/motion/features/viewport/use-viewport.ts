@@ -45,7 +45,7 @@ function useIntersectionObserver(
     { root, margin: rootMargin, amount = "some", once }: ViewportOptions
 ) {
     useEffect(() => {
-        if (!shouldObserve) return
+        if (!shouldObserve || !visualElement.current) return
 
         const options = {
             root: root?.current,
@@ -93,7 +93,7 @@ function useIntersectionObserver(
         }
 
         return observeIntersection(
-            visualElement.current!,
+            visualElement.current,
             options,
             intersectionCallback
         )

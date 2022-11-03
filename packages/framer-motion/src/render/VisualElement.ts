@@ -7,6 +7,7 @@ import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
 import { featureDefinitions } from "../motion/features/definitions"
 import { FeatureBundle, FeatureDefinition } from "../motion/features/types"
 import { MotionProps, MotionStyle } from "../motion/types"
+import { createBox } from "../projection/geometry/models"
 import { Box } from "../projection/geometry/types"
 import { IProjectionNode } from "../projection/node/types"
 import { TargetAndTransition } from "../types"
@@ -560,7 +561,9 @@ export abstract class VisualElement<
      * removed with a re-render to work.
      */
     measureViewportBox() {
-        return this.measureInstanceViewportBox(this.current!, this.props)
+        return this.current
+            ? this.measureInstanceViewportBox(this.current, this.props)
+            : createBox()
     }
 
     getStaticValue(key: string) {
