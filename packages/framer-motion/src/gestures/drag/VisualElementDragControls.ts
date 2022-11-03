@@ -459,6 +459,8 @@ export class VisualElementDragControls {
      * relative to where it was before the resize.
      */
     scalePositionWithinConstraints() {
+        if (!this.visualElement.current) return
+
         const { drag, dragConstraints } = this.getProps()
         const { projection } = this.visualElement
         if (!isRefObject(dragConstraints) || !projection || !this.constraints)
@@ -490,7 +492,7 @@ export class VisualElementDragControls {
          * Update the layout of this element and resolve the latest drag constraints
          */
         const { transformTemplate } = this.visualElement.getProps()
-        this.visualElement.current!.style.transform = transformTemplate
+        this.visualElement.current.style.transform = transformTemplate
             ? transformTemplate({}, "")
             : "none"
         projection.root?.updateScroll()
@@ -514,8 +516,9 @@ export class VisualElementDragControls {
     }
 
     addListeners() {
+        if (!this.visualElement.current) return
         elementDragControls.set(this.visualElement, this)
-        const element = this.visualElement.current!
+        const element = this.visualElement.current
 
         /**
          * Attach a pointerdown event listener on this DOM element to initiate drag tracking.
