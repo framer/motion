@@ -49,7 +49,7 @@ const propEventHandlers = [
     "LayoutMeasure",
     "LayoutAnimationStart",
     "LayoutAnimationComplete",
-]
+] as const
 
 /**
  * A VisualElement is an imperative abstraction around UI elements such as
