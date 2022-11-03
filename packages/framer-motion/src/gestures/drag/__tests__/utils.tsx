@@ -34,7 +34,7 @@ export function deferred<T>(): Deferred<T> {
 export const drag = (element: any, triggerElement?: any) => {
     pos.x = 0
     pos.y = 0
-    fireEvent.mouseDown(triggerElement || element)
+    fireEvent.pointerDown(triggerElement || element)
 
     const controls = {
         to: async (x: number, y: number) => {
@@ -49,7 +49,7 @@ export const drag = (element: any, triggerElement?: any) => {
             return controls
         },
         end: () => {
-            fireEvent.mouseUp(element)
+            fireEvent.pointerUp(element)
         },
     }
 

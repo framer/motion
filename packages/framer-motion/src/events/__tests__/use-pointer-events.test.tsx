@@ -1,8 +1,8 @@
-import { mouseEnter, mouseLeave, render } from "../../../jest.setup"
-import { fireEvent } from "@testing-library/dom"
+import { render } from "../../../jest.setup"
+
 import * as React from "react"
 import { usePointerEvent } from "../use-pointer-event"
-import { enableTouchEvents, enablePointerEvents } from "./utils/event-helpers"
+import { enablePointerEvents } from "./utils/event-helpers"
 import { fireCustomEvent } from "./utils/fire-event"
 
 function testEventsWithRef(fireFunctions: {
@@ -29,24 +29,6 @@ function testEventsWithRef(fireFunctions: {
         expect(handlers[key]).toHaveBeenCalledTimes(1)
     }
 }
-
-const touchEvents = {
-    pointerdown: fireEvent.touchStart,
-    pointermove: fireEvent.touchMove,
-    pointerup: fireEvent.touchEnd,
-    pointercancel: fireEvent.touchCancel,
-}
-
-const mouseEvents = {
-    pointerdown: fireEvent.mouseDown,
-    pointermove: fireEvent.mouseMove,
-    pointerup: fireEvent.mouseUp,
-    pointerover: fireEvent.mouseOver,
-    pointerout: fireEvent.mouseOut,
-    pointerenter: mouseEnter,
-    pointerleave: mouseLeave,
-}
-
 const pointerEvents = {
     pointerdown: fireCustomEvent("pointerdown"),
     pointermove: fireCustomEvent("pointermove"),
@@ -59,23 +41,6 @@ const pointerEvents = {
 }
 
 describe("usePointerEvents", () => {
-    describe("with touch events", () => {
-        let restore: Function
-        beforeAll(() => {
-            restore = enableTouchEvents()
-        })
-        afterAll(() => {
-            restore()
-        })
-        it(`should call handlers with ref`, async () => {
-            testEventsWithRef(touchEvents)
-        })
-    })
-    describe("with mouse events", () => {
-        it(`should call handlers with ref`, async () => {
-            testEventsWithRef(mouseEvents)
-        })
-    })
     describe("with pointer events", () => {
         let restore: Function
         beforeAll(() => {

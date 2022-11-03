@@ -10,24 +10,24 @@ describe("useDomEvent", () => {
         const handler = jest.fn()
         const Component = () => {
             const ref = useRef(null)
-            useDomEvent(ref, "mousedown", handler)
+            useDomEvent(ref, "pointerDown", handler)
             return <div />
         }
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
-        fireEvent.mouseDown(container.firstChild as Element)
+        fireEvent.pointerDown(container.firstChild as Element)
         expect(handler).not.toHaveBeenCalled()
     })
     it("should call the handler when the event is fired", () => {
         const handler = jest.fn()
         const Component = () => {
             const ref = useRef(null)
-            useDomEvent(ref, "mousedown", handler)
+            useDomEvent(ref, "pointerDown", handler)
             return <div ref={ref} />
         }
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
-        fireEvent.mouseDown(container.firstChild as Element)
+        fireEvent.pointerDown(container.firstChild as Element)
         expect(handler).toHaveBeenCalledTimes(1)
     })
 
@@ -36,13 +36,13 @@ describe("useDomEvent", () => {
         const promise = new Promise<void>((resolve) => {
             const Component = () => {
                 const ref = useRef(document.body)
-                useDomEvent(ref, "mousedown", handler)
+                useDomEvent(ref, "pointerDown", handler)
                 useEffect(resolve)
                 return <div />
             }
             const { rerender } = render(<Component />)
             rerender(<Component />)
-            fireEvent.mouseDown(document.body)
+            fireEvent.pointerDown(document.body)
         })
         await expect(promise).resolves.toEqual(undefined)
         expect(handler).toHaveBeenCalled()
@@ -52,14 +52,14 @@ describe("useDomEvent", () => {
         const promise = new Promise<void>((resolve) => {
             const Component = () => {
                 const ref = useRef(document.body)
-                useDomEvent(ref, "mousedown", handler)
+                useDomEvent(ref, "pointerDown", handler)
                 return <div />
             }
             const { rerender, unmount } = render(<Component />)
             rerender(<Component />)
             unmount()
             requestAnimationFrame(() => {
-                fireEvent.mouseDown(document.body)
+                fireEvent.pointerDown(document.body)
                 resolve()
             })
         })

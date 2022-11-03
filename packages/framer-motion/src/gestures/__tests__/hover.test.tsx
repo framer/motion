@@ -1,4 +1,4 @@
-import { mouseEnter, mouseLeave, render } from "../../../jest.setup"
+import { pointerEnter, pointerLeave, render } from "../../../jest.setup"
 import * as React from "react"
 import { motion } from "../../"
 import { fireEvent } from "@testing-library/react"
@@ -15,8 +15,8 @@ describe("hover", () => {
         )
 
         const { container } = render(<Component />)
-        mouseEnter(container.firstChild as Element)
-        mouseLeave(container.firstChild as Element)
+        pointerEnter(container.firstChild as Element)
+        pointerLeave(container.firstChild as Element)
 
         expect(hoverIn).toBeCalledTimes(1)
         expect(hoverOut).toBeCalledTimes(1)
@@ -36,7 +36,7 @@ describe("hover", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 
-            mouseEnter(container.firstChild as Element)
+            pointerEnter(container.firstChild as Element)
 
             resolve(opacity.get())
         })
@@ -63,7 +63,7 @@ describe("hover", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 
-            mouseEnter(container.firstChild as Element)
+            pointerEnter(container.firstChild as Element)
 
             resolve(opacity.get())
         })
@@ -99,7 +99,7 @@ describe("hover", () => {
 
             const { container } = render(<Component />)
 
-            mouseEnter(container.firstChild as Element)
+            pointerEnter(container.firstChild as Element)
             resolve(opacity.get())
         })
 
@@ -130,10 +130,10 @@ describe("hover", () => {
                 <Component onAnimationComplete={onComplete} />
             )
 
-            mouseEnter(container.firstChild as Element)
+            pointerEnter(container.firstChild as Element)
             setTimeout(() => {
                 hasMousedOut = true
-                mouseLeave(container.firstChild as Element)
+                pointerLeave(container.firstChild as Element)
             }, 10)
         })
 
@@ -161,8 +161,8 @@ describe("hover", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 
-            fireEvent.mouseDown(container.firstChild as Element)
-            mouseEnter(container.firstChild as Element)
+            fireEvent.pointerDown(container.firstChild as Element)
+            pointerEnter(container.firstChild as Element)
 
             resolve([opacity.get(), scale.get()])
         })
@@ -188,10 +188,10 @@ describe("hover", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 
-            mouseEnter(container.firstChild as Element)
+            pointerEnter(container.firstChild as Element)
 
             sync.postRender(() => {
-                mouseLeave(container.firstChild as Element)
+                pointerLeave(container.firstChild as Element)
                 sync.postRender(() => resolve(container.firstChild as Element))
             })
         })

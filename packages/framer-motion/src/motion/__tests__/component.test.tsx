@@ -94,8 +94,8 @@ describe("motion component rendering and styles", () => {
             />
         )
 
-        fireEvent.mouseEnter(container.firstChild as Element)
-        fireEvent.mouseLeave(container.firstChild as Element)
+        fireEvent.pointerEnter(container.firstChild as Element)
+        fireEvent.pointerLeave(container.firstChild as Element)
 
         expect(onMouseEnter).toBeCalled()
         expect(onMouseLeave).toBeCalled()
