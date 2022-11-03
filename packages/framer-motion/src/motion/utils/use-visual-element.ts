@@ -1,5 +1,5 @@
 import * as React from "react"
-import { MutableRefObject, useContext, useEffect, useRef } from "react"
+import { useContext, useEffect, useRef } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 import { MotionProps } from "../../motion/types"
 import { useVisualElementContext } from "../../context/MotionContext"
@@ -22,9 +22,7 @@ export function useVisualElement<Instance, RenderState>(
     const presenceContext = useContext(PresenceContext)
     const reducedMotionConfig = useContext(MotionConfigContext).reducedMotion
 
-    const visualElementRef: MutableRefObject<
-        VisualElement<Instance> | undefined
-    > = useRef(undefined)
+    const visualElementRef = useRef<VisualElement<Instance>>()
 
     /**
      * If we haven't preloaded a renderer, check to see if we have one lazy-loaded
