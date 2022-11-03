@@ -77,8 +77,8 @@ export class VisualElementDragControls {
      */
     private elastic = createBox()
 
-    constructor(visualElement: VisualElement) {
-        this.visualElement = visualElement as any
+    constructor(visualElement: VisualElement<HTMLElement>) {
+        this.visualElement = visualElement
     }
 
     start(
