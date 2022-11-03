@@ -1,6 +1,6 @@
 import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-values"
 import { SVGRenderState } from "./types"
-import { DOMVisualElement } from "../html/HTMLVisualElement"
+import { DOMVisualElement } from "../dom/DOMVisualElement"
 import { DOMVisualElementOptions } from "../dom/types"
 import { buildSVGAttrs } from "./utils/build-attrs"
 import { camelToDash } from "../dom/utils/camel-to-dash"
