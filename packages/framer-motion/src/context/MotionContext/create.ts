@@ -3,7 +3,9 @@ import { MotionContext, MotionContextProps } from "."
 import { MotionProps } from "../../motion/types"
 import { getCurrentTreeVariants } from "./utils"
 
-export function useCreateMotionContext(props: MotionProps): MotionContextProps {
+export function useCreateMotionContext<Instance>(
+    props: MotionProps
+): MotionContextProps<Instance> {
     const { initial, animate } = getCurrentTreeVariants(
         props,
         useContext(MotionContext)

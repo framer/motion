@@ -60,7 +60,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
 
         let features: JSX.Element[] | null = null
 
-        const context = useCreateMotionContext(props)
+        const context = useCreateMotionContext<Instance>(props)
 
         /**
          * Create a unique projection ID for this component. If a new component is added
@@ -87,7 +87,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
              * providing a way of rendering to these APIs outside of the React render loop
              * for more performant animations and interactions
              */
-            context.visualElement = useVisualElement(
+            context.visualElement = useVisualElement<Instance, RenderState>(
                 Component,
                 visualState,
                 configAndProps,
@@ -131,11 +131,11 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                         Component,
                         props,
                         projectionId,
-                        useMotionRef(
+                        useMotionRef<Instance, RenderState>(
                             visualState,
                             context.visualElement,
                             externalRef
-                        ) as React.Ref<Instance>,
+                        ),
                         visualState,
                         isStatic,
                         context.visualElement
