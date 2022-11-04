@@ -23,6 +23,9 @@ export const HTMLProjectionNode = createProjectionNode<HTMLElement>({
     resetTransform: (instance, value) => {
         instance.style.transform = value !== undefined ? value : "none"
     },
-    checkIsScrollRoot: (instance) =>
-        Boolean(window.getComputedStyle(instance).position === "fixed"),
+    checkIsScrollRoot: (instance) => {
+        const { position } = window.getComputedStyle(instance)
+
+        return Boolean(position === "fixed" || position === "sticky")
+    },
 })
