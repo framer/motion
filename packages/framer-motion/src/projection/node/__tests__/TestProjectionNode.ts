@@ -7,6 +7,7 @@ let rootNode: IProjectionNode
 export const TestRootNode = createProjectionNode<{}>({
     measureScroll: (_instance) => ({ x: 0, y: 0 }),
     checkIsScrollRoot: () => true,
+    readPosition: () => "static",
 })
 
 interface TestInstance {
@@ -25,6 +26,7 @@ export const TestProjectionNode = createProjectionNode<TestInstance>({
     },
     resetTransform: (instance) => instance.resetTransform?.(),
     checkIsScrollRoot: () => false,
+    readPosition: () => "static",
 })
 
 let id = 0

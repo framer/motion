@@ -7,17 +7,23 @@ import { FlatTree } from "../../render/utils/flat-tree"
 import { InitialPromotionConfig } from "../../context/SwitchLayoutGroupContext"
 import { MotionStyle } from "../../motion/types"
 
-// TODO: Find more appropriate names for each snapshot
-export interface Snapshot {
-    measured: Box
-    layout: Box
-    latestValues: ResolvedValues
-    isShared?: boolean
-}
+export type CSSPosition =
+    | "static"
+    | "sticky"
+    | "fixed"
+    | "absolute"
+    | "relative"
 
-export interface Layout {
-    measured: Box
-    actual: Box // with scroll removed
+export interface Snapshot {
+    frameTimestamp: number
+    viewportBox: Box
+    layoutBox: Box
+    relative?: {
+        parent: IProjectionNode
+        box: Box
+    }
+    values: ResolvedValues
+    position: CSSPosition
 }
 
 export type LayoutEvents =
@@ -32,7 +38,6 @@ export type LayoutEvents =
 export interface IProjectionNode<I = unknown> {
     id: number | undefined
     parent?: IProjectionNode
-    relativeParent?: IProjectionNode
     root?: IProjectionNode
     children: Set<IProjectionNode>
     path: IProjectionNode[]
@@ -43,10 +48,8 @@ export interface IProjectionNode<I = unknown> {
     unmount: () => void
     options: ProjectionNodeOptions
     setOptions(options: ProjectionNodeOptions): void
-    layout?: Layout
-    snapshot?: Snapshot
+
     target?: Box
-    relativeTarget?: Box
     targetDelta?: Delta
     targetWithTransforms?: Box
     scroll?: Point
@@ -145,6 +148,7 @@ export interface ProjectionNodeConfig<I> {
     measureScroll: (instance: I) => Point
     checkIsScrollRoot: (instance: I) => boolean
     resetTransform?: (instance: I, value?: string) => void
+    readPosition: (instance: I) => CSSPosition
 }
 
 export interface ProjectionNodeOptions {

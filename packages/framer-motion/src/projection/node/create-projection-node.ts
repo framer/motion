@@ -1,4 +1,4 @@
-import sync, { cancelSync, flushSync, Process } from "framesync"
+import sync, { cancelSync, flushSync, getFrameData, Process } from "framesync"
 import { mix } from "popmotion"
 import {
     animate,
@@ -33,6 +33,7 @@ import { buildProjectionTransform } from "../styles/transform"
 import { eachAxis } from "../utils/each-axis"
 import { has2DTranslate, hasScale, hasTransform } from "../utils/has-transform"
 import {
+    CSSPosition,
     IProjectionNode,
     Layout,
     LayoutEvents,
@@ -48,6 +49,8 @@ import { MotionStyle } from "../../motion/types"
 import { globalProjectionState } from "./state"
 import { delay } from "../../utils/delay"
 
+const frameData = getFrameData()
+
 const transformAxes = ["", "X", "Y", "Z"]
 
 /**
@@ -62,6 +65,7 @@ export function createProjectionNode<I>({
     measureScroll,
     checkIsScrollRoot,
     resetTransform,
+    readPosition,
 }: ProjectionNodeConfig<I>) {
     return class ProjectionNode implements IProjectionNode<I> {
         /**
@@ -122,7 +126,7 @@ export function createProjectionNode<I>({
          * A box defining the element's layout relative to the page. This will have been
          * captured with all parent scrolls and projection transforms unset.
          */
-        layout: Layout | undefined
+        layout: Snapshot | undefined
 
         /**
          * The layout used to calculate the previous layout animation. We use this to compare
@@ -649,24 +653,14 @@ export function createProjectionNode<I>({
          * Update measurements
          */
         updateSnapshot() {
-            if (this.snapshot || !this.instance) return
-            const measured = this.measure()!
-            const layout = this.removeTransform(
-                this.removeElementScroll(measured)
-            )
-            roundBox(layout)
-
-            this.snapshot = {
-                measured,
-                layout,
-                latestValues: {},
+            if (this.instance && !this.snapshot) {
+                this.snapshot = this.takeSnapshot()
             }
         }
 
         updateLayout() {
             if (!this.instance) return
 
-            // TODO: Incorporate into a forwarded scroll offset
             this.updateScroll()
 
             if (
@@ -690,25 +684,60 @@ export function createProjectionNode<I>({
                 }
             }
 
-            const measured = this.measure()
-
-            roundBox(measured)
-
             const prevLayout = this.layout
-            this.layout = {
-                measured,
-                actual: this.removeElementScroll(measured),
-            }
+            this.layout = this.takeSnapshot(false)
 
+            /**
+             * When we've updated the layout we also want to create
+             */
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
             this.projectionDelta = undefined
-            this.notifyListeners("measure", this.layout.actual)
 
+            this.notifyListeners("measure", this.layout.layoutBox)
             this.options.visualElement?.notifyLayoutMeasure(
-                this.layout.actual,
-                prevLayout?.actual
+                this.layout.layoutBox,
+                prevLayout?.layoutBox
             )
+        }
+
+        private takeSnapshot(removeTreeTransform = true): Snapshot {
+            const viewportBox = this.measureViewportBox()
+
+            /**
+             * Remove page scroll from viewportBox to get pageBox.
+             * TODO: Can this be combined with next step?
+             */
+            const pageBox = createBox()
+            copyBoxInto(pageBox, viewportBox)
+            const { scroll } = this.root
+            if (scroll) {
+                translateAxis(pageBox.x, scroll.x)
+                translateAxis(pageBox.y, scroll.y)
+            }
+
+            // WARN: This is a loop and new box
+            let layoutBox = this.removeElementScroll(pageBox)
+
+            // WARN: This is a loop and new box
+            /**
+             * We only want to remove tree transform when taking a snapshot
+             * because when reading the new layout we've already physically
+             * reset transforms before measurement.
+             */
+            if (removeTreeTransform) {
+                layoutBox = this.removeTransform(layoutBox)
+            }
+
+            roundBox(layoutBox)
+
+            return {
+                frameTimestamp: frameData.timestamp,
+                viewportBox,
+                layoutBox,
+                values: {},
+                position: readPosition(this.instance),
+            }
         }
 
         updateScroll() {
@@ -746,20 +775,8 @@ export function createProjectionNode<I>({
             }
         }
 
-        measure() {
-            const { visualElement } = this.options
-            if (!visualElement) return createBox()
-
-            const box = visualElement.measureViewportBox()
-
-            // Remove viewport scroll to give page-relative coordinates
-            const { scroll } = this.root
-            if (scroll) {
-                translateAxis(box.x, scroll.x)
-                translateAxis(box.y, scroll.y)
-            }
-
-            return box
+        private measureViewportBox() {
+            return this.options.visualElement!.measureViewportBox()
         }
 
         removeElementScroll(box: Box): Box {
@@ -1127,7 +1144,7 @@ export function createProjectionNode<I>({
             hasOnlyRelativeTargetChanged: boolean = false
         ) {
             const snapshot = this.snapshot
-            const snapshotLatestValues = snapshot?.latestValues || {}
+            const snapshotLatestValues = {}
             const mixedValues = { ...this.latestValues }
 
             const targetDelta = createDelta()
