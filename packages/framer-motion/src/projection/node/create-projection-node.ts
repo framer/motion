@@ -33,9 +33,7 @@ import { buildProjectionTransform } from "../styles/transform"
 import { eachAxis } from "../utils/each-axis"
 import { has2DTranslate, hasScale, hasTransform } from "../utils/has-transform"
 import {
-    CSSPosition,
     IProjectionNode,
-    Layout,
     LayoutEvents,
     LayoutUpdateData,
     ProjectionNodeConfig,
@@ -701,7 +699,7 @@ export function createProjectionNode<I>({
             )
         }
 
-        private takeSnapshot(removeTreeTransform = true): Snapshot {
+        takeSnapshot(removeTreeTransform = true): Snapshot {
             const viewportBox = this.measureViewportBox()
 
             /**
@@ -775,7 +773,7 @@ export function createProjectionNode<I>({
             }
         }
 
-        private measureViewportBox() {
+        measureViewportBox() {
             return this.options.visualElement!.measureViewportBox()
         }
 
@@ -858,13 +856,16 @@ export function createProjectionNode<I>({
                 hasScale(node.latestValues) && node.updateSnapshot()
 
                 const sourceBox = createBox()
-                const nodeBox = node.measure()
+
+                // WARN: This could lead to duplicated measurements per
+                // render - maybe not too big a deal?
+                const nodeBox = node.measureViewportBox()
                 copyBoxInto(sourceBox, nodeBox)
 
                 removeBoxTransforms(
                     boxWithoutTransform,
                     node.latestValues,
-                    node.snapshot?.layout,
+                    node.snapshot?.layoutBox,
                     sourceBox
                 )
             }
@@ -928,8 +929,8 @@ export function createProjectionNode<I>({
                     this.relativeTargetOrigin = createBox()
                     calcRelativePosition(
                         this.relativeTargetOrigin,
-                        this.layout.actual,
-                        this.relativeParent.layout.actual
+                        this.layout.layoutBox,
+                        this.relativeParent.layout.layoutBox
                     )
                     copyBoxInto(this.relativeTarget, this.relativeTargetOrigin)
                 }
@@ -969,9 +970,9 @@ export function createProjectionNode<I>({
             } else if (this.targetDelta) {
                 if (Boolean(this.resumingFrom)) {
                     // TODO: This is creating a new object every frame
-                    this.target = this.applyTransform(this.layout.actual)
+                    this.target = this.applyTransform(this.layout.layoutBox)
                 } else {
-                    copyBoxInto(this.target, this.layout.actual)
+                    copyBoxInto(this.target, this.layout.layoutBox)
                 }
 
                 applyBoxDelta(this.target, this.targetDelta)
@@ -979,7 +980,7 @@ export function createProjectionNode<I>({
                 /**
                  * If no target, use own layout as target
                  */
-                copyBoxInto(this.target, this.layout.actual)
+                copyBoxInto(this.target, this.layout.layoutBox)
             }
 
             /**
@@ -1054,7 +1055,7 @@ export function createProjectionNode<I>({
              * Reset the corrected box with the latest values from box, as we're then going
              * to perform mutative operations on it.
              */
-            copyBoxInto(this.layoutCorrected, this.layout.actual)
+            copyBoxInto(this.layoutCorrected, this.layout.layoutBox)
 
             /**
              * Apply all the parent deltas to this box to produce the corrected box. This
@@ -1144,7 +1145,7 @@ export function createProjectionNode<I>({
             hasOnlyRelativeTargetChanged: boolean = false
         ) {
             const snapshot = this.snapshot
-            const snapshotLatestValues = {}
+            const snapshotLatestValues = snapshot?.values || {}
             const mixedValues = { ...this.latestValues }
 
             const targetDelta = createDelta()
@@ -1178,8 +1179,8 @@ export function createProjectionNode<I>({
                 ) {
                     calcRelativePosition(
                         relativeLayout,
-                        this.layout.actual,
-                        this.relativeParent.layout.actual
+                        this.layout.layoutBox,
+                        this.relativeParent.layout.layoutBox
                     )
                     mixBox(
                         this.relativeTarget,
@@ -1291,17 +1292,17 @@ export function createProjectionNode<I>({
                 layout &&
                 shouldAnimatePositionOnly(
                     this.options.animationType,
-                    this.layout.actual,
-                    layout.actual
+                    this.layout.layoutBox,
+                    layout.layoutBox
                 )
             ) {
                 target = this.target || createBox()
 
-                const xLength = calcLength(this.layout!.actual.x)
+                const xLength = calcLength(this.layout!.layoutBox.x)
                 target!.x.min = lead.target!.x.min
                 target!.x.max = target.x.min + xLength
 
-                const yLength = calcLength(this.layout!.actual.y)
+                const yLength = calcLength(this.layout!.layoutBox.y)
                 target!.y.min = lead.target!.y.min
                 target!.y.max = target.y.min + yLength
             }
@@ -1601,7 +1602,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         snapshot &&
         node.hasListeners("didUpdate")
     ) {
-        const { actual: layout, measured: measuredLayout } = node.layout
+        const { layoutBox: layout, viewportBox: measuredLayout } = node.layout
         const { animationType } = node.options
 
         // TODO Maybe we want to also resize the layout snapshot so we don't trigger
@@ -1609,35 +1610,35 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         if (animationType === "size") {
             eachAxis((axis) => {
                 const axisSnapshot = snapshot.isShared
-                    ? snapshot.measured[axis]
-                    : snapshot.layout[axis]
+                    ? snapshot.viewportBox[axis]
+                    : snapshot.layoutBox[axis]
                 const length = calcLength(axisSnapshot)
                 axisSnapshot.min = layout[axis].min
                 axisSnapshot.max = axisSnapshot.min + length
             })
         } else if (
-            shouldAnimatePositionOnly(animationType, snapshot.layout, layout)
+            shouldAnimatePositionOnly(animationType, snapshot.layoutBox, layout)
         ) {
             eachAxis((axis) => {
                 const axisSnapshot = snapshot.isShared
-                    ? snapshot.measured[axis]
-                    : snapshot.layout[axis]
+                    ? snapshot.viewportBox[axis]
+                    : snapshot.layoutBox[axis]
                 const length = calcLength(layout[axis])
                 axisSnapshot.max = axisSnapshot.min + length
             })
         }
 
         const layoutDelta = createDelta()
-        calcBoxDelta(layoutDelta, layout, snapshot.layout)
+        calcBoxDelta(layoutDelta, layout, snapshot.layoutBox)
         const visualDelta = createDelta()
         if (snapshot.isShared) {
             calcBoxDelta(
                 visualDelta,
                 node.applyTransform(measuredLayout, true),
-                snapshot.measured
+                snapshot.viewportBox
             )
         } else {
-            calcBoxDelta(visualDelta, layout, snapshot.layout)
+            calcBoxDelta(visualDelta, layout, snapshot.layoutBox)
         }
 
         const hasLayoutChanged = !isDeltaZero(layoutDelta)
@@ -1658,15 +1659,15 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                     const relativeSnapshot = createBox()
                     calcRelativePosition(
                         relativeSnapshot,
-                        snapshot.layout,
-                        parentSnapshot.layout
+                        snapshot.layoutBox,
+                        parentSnapshot.layoutBox
                     )
 
                     const relativeLayout = createBox()
                     calcRelativePosition(
                         relativeLayout,
                         layout,
-                        parentLayout.actual
+                        parentLayout.viewportBox
                     )
 
                     if (!boxEquals(relativeSnapshot, relativeLayout)) {

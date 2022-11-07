@@ -24,6 +24,9 @@ export interface Snapshot {
     }
     values: ResolvedValues
     position: CSSPosition
+
+    // TODO Remove
+    isShared?: boolean
 }
 
 export type LayoutEvents =
@@ -49,6 +52,12 @@ export interface IProjectionNode<I = unknown> {
     options: ProjectionNodeOptions
     setOptions(options: ProjectionNodeOptions): void
 
+    snapshot?: Snapshot
+    layout?: Snapshot
+
+    relativeTarget?: Box
+    relativeParent?: IProjectionNode
+
     target?: Box
     targetDelta?: Delta
     targetWithTransforms?: Box
@@ -71,7 +80,7 @@ export interface IProjectionNode<I = unknown> {
     startUpdate(): void
     willUpdate(notifyListeners?: boolean): void
     didUpdate(): void
-    measure(): Box
+    measureViewportBox(): Box
     updateLayout(): void
     updateSnapshot(): void
     clearSnapshot(): void

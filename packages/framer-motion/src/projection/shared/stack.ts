@@ -69,7 +69,7 @@ export class NodeStack {
 
             if (prevLead.snapshot) {
                 node.snapshot = prevLead.snapshot
-                node.snapshot.latestValues =
+                node.snapshot.values =
                     prevLead.animationValues || prevLead.latestValues
                 node.snapshot.isShared = true
             }

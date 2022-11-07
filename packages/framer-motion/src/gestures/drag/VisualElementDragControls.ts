@@ -134,7 +134,7 @@ export class VisualElementDragControls {
                  */
                 if (percent.test(current)) {
                     const measuredAxis =
-                        this.visualElement.projection?.layout?.actual[axis]
+                        this.visualElement.projection?.layout?.layoutBox[axis]
 
                     if (measuredAxis) {
                         const length = calcLength(measuredAxis)
@@ -275,7 +275,7 @@ export class VisualElementDragControls {
         } else {
             if (dragConstraints && layout) {
                 this.constraints = calcRelativeConstraints(
-                    layout.actual,
+                    layout.layoutBox,
                     dragConstraints
                 )
             } else {
@@ -298,7 +298,7 @@ export class VisualElementDragControls {
             eachAxis((axis) => {
                 if (this.getAxisMotionValue(axis)) {
                     this.constraints[axis] = rebaseAxisConstraints(
-                        layout.actual[axis],
+                        layout.layoutBox[axis],
                         this.constraints[axis]
                     )
                 }
@@ -330,7 +330,7 @@ export class VisualElementDragControls {
         )
 
         let measuredConstraints = calcViewportConstraints(
-            projection.layout.actual,
+            projection.layout.layoutBox,
             constraintsBox
         )
 
@@ -446,7 +446,7 @@ export class VisualElementDragControls {
             const axisValue = this.getAxisMotionValue(axis)
 
             if (projection && projection.layout) {
-                const { min, max } = projection.layout.actual[axis]
+                const { min, max } = projection.layout.layoutBox[axis]
 
                 axisValue.set(point[axis] - mix(min, max, 0.5))
             }
