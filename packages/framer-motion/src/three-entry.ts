@@ -2,8 +2,6 @@ export type {
     ResolvedValues,
     ScrapeMotionValuesFromProps,
 } from "./render/types"
-export type { AnimationLifecycles } from "./render/utils/lifecycles"
-export type { CreateVisualElement } from "./render/types"
 
 export { AnimationType } from "./render/utils/types"
 export { animations } from "./motion/features/animations"

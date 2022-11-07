@@ -14,7 +14,7 @@ import {
     calcOrigin,
 } from "./utils/constraints"
 import { AnimationType } from "../../render/utils/types"
-import { VisualElement } from "../../render/types"
+import type { VisualElement } from "../../render/VisualElement"
 import { MotionProps } from "../../motion/types"
 import { Point } from "../../projection/geometry/types"
 import { createBox } from "../../projection/geometry/models"
@@ -51,7 +51,7 @@ type DragDirection = "x" | "y"
 // let latestPointerEvent: AnyPointerEvent
 
 export class VisualElementDragControls {
-    private visualElement: VisualElement
+    private visualElement: VisualElement<HTMLElement>
 
     private panSession?: PanSession
 
@@ -77,7 +77,7 @@ export class VisualElementDragControls {
      */
     private elastic = createBox()
 
-    constructor(visualElement: VisualElement) {
+    constructor(visualElement: VisualElement<HTMLElement>) {
         this.visualElement = visualElement
     }
 
@@ -189,10 +189,10 @@ export class VisualElementDragControls {
              * of a re-render we want to ensure the browser can read the latest
              * bounding box to ensure the pointer and element don't fall out of sync.
              */
-            this.visualElement.syncRender()
+            this.visualElement.render()
 
             /**
-             * This must fire after the syncRender call as it might trigger a state
+             * This must fire after the render call as it might trigger a state
              * change which itself might trigger a layout update.
              */
             onDrag?.(event, info)
@@ -459,6 +459,8 @@ export class VisualElementDragControls {
      * relative to where it was before the resize.
      */
     scalePositionWithinConstraints() {
+        if (!this.visualElement.current) return
+
         const { drag, dragConstraints } = this.getProps()
         const { projection } = this.visualElement
         if (!isRefObject(dragConstraints) || !projection || !this.constraints)
@@ -490,7 +492,7 @@ export class VisualElementDragControls {
          * Update the layout of this element and resolve the latest drag constraints
          */
         const { transformTemplate } = this.visualElement.getProps()
-        this.visualElement.getInstance().style.transform = transformTemplate
+        this.visualElement.current.style.transform = transformTemplate
             ? transformTemplate({}, "")
             : "none"
         projection.root?.updateScroll()
@@ -514,8 +516,9 @@ export class VisualElementDragControls {
     }
 
     addListeners() {
+        if (!this.visualElement.current) return
         elementDragControls.set(this.visualElement, this)
-        const element = this.visualElement.getInstance()
+        const element = this.visualElement.current
 
         /**
          * Attach a pointerdown event listener on this DOM element to initiate drag tracking.
@@ -576,7 +579,7 @@ export class VisualElementDragControls {
                         )
                     })
 
-                    this.visualElement.syncRender()
+                    this.visualElement.render()
                 }
             }) as any
         )

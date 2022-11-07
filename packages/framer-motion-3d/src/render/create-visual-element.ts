@@ -1,9 +1,14 @@
-import type { CreateVisualElement } from "framer-motion"
+import type {
+    CreateVisualElement,
+    TargetAndTransition,
+    ResolvedValues,
+    MotionProps,
+} from "framer-motion"
 
 import {
     createBox,
     checkTargetForNewValues,
-    visualElement,
+    VisualElement,
 } from "framer-motion"
 import { Object3DNode } from "@react-three/fiber"
 
@@ -14,50 +19,61 @@ import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-value"
 
 export const createRenderState = () => ({})
 
-export const threeVisualElement = visualElement<
+export class ThreeVisualElement extends VisualElement<
     Object3DNode<any, any>,
     ThreeRenderState,
     {}
->({
-    treeType: "three",
+> {
+    type = "three"
 
-    readValueFromInstance: readThreeValue,
+    readValueFromInstance(instance: Object3DNode<any, any>, key: string) {
+        return readThreeValue(instance, key)
+    }
 
-    getBaseTarget() {
+    getBaseTargetFromProps() {
         return undefined
-    },
+    }
 
-    sortNodePosition(a, b) {
+    sortInstanceNodePosition(
+        a: Object3DNode<any, any>,
+        b: Object3DNode<any, any>
+    ) {
         return a.id - b.id
-    },
+    }
 
-    makeTargetAnimatable(element, { transition, ...target }) {
-        checkTargetForNewValues(element, target, {})
+    makeTargetAnimatableFromInstance({
+        transition,
+        ...target
+    }: TargetAndTransition) {
+        checkTargetForNewValues(this, target, {})
         return target
-    },
+    }
 
-    restoreTransform() {},
+    removeValueFromRenderState() {}
 
-    resetTransform() {},
+    measureInstanceViewportBox() {
+        return createBox()
+    }
 
-    removeValueFromRenderState(_key, _renderState) {},
+    scrapeMotionValuesFromProps(props: MotionProps) {
+        return scrapeMotionValuesFromProps(props)
+    }
 
-    measureViewportBox: createBox,
-
-    scrapeMotionValuesFromProps,
-
-    build(_element, state, latestValues) {
+    build(state: ThreeRenderState, latestValues: ResolvedValues) {
         for (const key in latestValues) {
             state[key] = latestValues[key]
         }
-    },
+    }
 
-    render(instance, renderState) {
+    renderInstance(
+        instance: Object3DNode<any, any>,
+        renderState: ThreeRenderState
+    ) {
         for (const key in renderState) {
             setThreeValue(instance, key, renderState)
         }
-    },
-})
+    }
+}
 
 export const createVisualElement: CreateVisualElement<any> = (_, options) =>
-    threeVisualElement(options)
+    new ThreeVisualElement(options, {})

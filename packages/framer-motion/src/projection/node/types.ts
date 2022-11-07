@@ -1,11 +1,12 @@
 import { Transition } from "../../types"
-import { ResolvedValues, VisualElement } from "../../render/types"
+import { ResolvedValues } from "../../render/types"
 import { Box, Delta, Point } from "../geometry/types"
 import { NodeStack } from "../shared/stack"
 import { AnimationPlaybackControls } from "../../animation/animate"
 import { FlatTree } from "../../render/utils/flat-tree"
 import { InitialPromotionConfig } from "../../context/SwitchLayoutGroupContext"
 import { MotionStyle } from "../../motion/types"
+import type { VisualElement } from "../../render/VisualElement"
 
 // TODO: Find more appropriate names for each snapshot
 export interface Snapshot {

@@ -23,7 +23,10 @@ export const App = () => {
     })
 
     return (
-        <AnimatePresence initial={false} onRest={() => console.log("rest")}>
+        <AnimatePresence
+            initial={false}
+            onExitComplete={() => console.log("rest")}
+        >
             {isVisible && (
                 <motion.div
                     initial={{ opacity: 0 }}

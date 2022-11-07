@@ -7,7 +7,7 @@ import {
     TargetWithKeyframes,
     Transition,
 } from "../../types"
-import { VisualElement } from "../types"
+import type { VisualElement } from "../VisualElement"
 import { AnimationTypeState } from "./animation-state"
 import { AnimationType } from "./types"
 import { setTarget } from "./setters"
@@ -27,8 +27,8 @@ export type AnimationOptions = {
     type?: AnimationType
 }
 
-export type MakeTargetAnimatable = (
-    visualElement: VisualElement,
+export type MakeTargetAnimatable<T = unknown> = (
+    visualElement: VisualElement<T>,
     target: TargetWithKeyframes,
     origin?: Target,
     transitionEnd?: Target
@@ -42,7 +42,7 @@ export function animateVisualElement(
     definition: AnimationDefinition,
     options: AnimationOptions = {}
 ) {
-    visualElement.notifyAnimationStart(definition)
+    visualElement.notify("AnimationStart", definition)
     let animation: Promise<any>
 
     if (Array.isArray(definition)) {
@@ -61,7 +61,7 @@ export function animateVisualElement(
     }
 
     return animation.then(() =>
-        visualElement.notifyAnimationComplete(definition)
+        visualElement.notify("AnimationComplete", definition)
     )
 }
 
@@ -217,7 +217,7 @@ function animateChildren(
                 animateVariant(child, variant, {
                     ...options,
                     delay: delayChildren + generateStaggerDuration(i),
-                }).then(() => child.notifyAnimationComplete(variant))
+                }).then(() => child.notify("AnimationComplete", variant))
             )
         })
 
@@ -225,7 +225,7 @@ function animateChildren(
 }
 
 export function stopAnimation(visualElement: VisualElement) {
-    visualElement.forEachValue((value) => value.stop())
+    visualElement.values.forEach((value) => value.stop())
 }
 
 export function sortByTreeOrder(a: VisualElement, b: VisualElement) {

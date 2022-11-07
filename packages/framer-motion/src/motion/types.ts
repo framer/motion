@@ -11,8 +11,7 @@ import {
 } from "../types"
 import { DraggableProps } from "../gestures/drag/types"
 import { LayoutProps } from "./features/layout/types"
-import { ResolvedValues } from "../render/types"
-import { VisualElementLifecycles } from "../render/utils/lifecycles"
+import { ResolvedValues, EventProps } from "../render/types"
 import {
     PanHandlers,
     TapHandlers,
@@ -276,7 +275,7 @@ type ExternalMotionValues = {
  */
 export interface MotionProps
     extends AnimationProps,
-        VisualElementLifecycles,
+        EventProps,
         PanHandlers,
         TapHandlers,
         HoverHandlers,

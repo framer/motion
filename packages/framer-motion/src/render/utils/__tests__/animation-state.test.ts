@@ -1,47 +1,15 @@
-import { ResolvedValues, VisualElement } from "../../types"
 import { AnimationState, createAnimationState } from "../animation-state"
 import { AnimationType } from "../types"
-import { checkTargetForNewValues, getOrigin } from "../setters"
-import { visualElement } from "../../"
 import { MotionProps } from "../../../motion/types"
 import { createHtmlRenderState } from "../../html/utils/create-render-state"
-import { createBox } from "../../../projection/geometry/models"
-
-const stateVisualElement = visualElement<
-    ResolvedValues,
-    {},
-    { initialState: ResolvedValues }
->({
-    build() {},
-    measureViewportBox: createBox,
-    resetTransform() {},
-    restoreTransform() {},
-    removeValueFromRenderState() {},
-    render() {},
-    scrapeMotionValuesFromProps() {
-        return {}
-    },
-
-    getBaseTarget(props, key) {
-        return props.style?.[key]
-    },
-
-    readValueFromInstance(_state, key, options) {
-        return options.initialState[key] || 0
-    },
-
-    makeTargetAnimatable(element, { transition, transitionEnd, ...target }) {
-        const origin = getOrigin(target as any, transition || {}, element)
-        checkTargetForNewValues(element, target, origin as any)
-        return { transition, transitionEnd, ...target }
-    },
-})
+import { VisualElement } from "../../VisualElement"
+import { StateVisualElement } from "./StateVisualElement"
 
 function createTest(
     props: MotionProps = {},
     parent: VisualElement<any> | undefined = undefined
 ): { element: VisualElement; state: any } {
-    const element = stateVisualElement(
+    const element = new StateVisualElement(
         {
             props,
             parent,

@@ -1,6 +1,6 @@
 import { ComponentType } from "react"
-import { htmlVisualElement } from "../html/visual-element"
-import { svgVisualElement } from "../svg/visual-element"
+import { HTMLVisualElement } from "../html/HTMLVisualElement"
+import { SVGVisualElement } from "../svg/SVGVisualElement"
 import { CreateVisualElement, VisualElementOptions } from "../types"
 import { isSVGComponent } from "./utils/is-svg-component"
 
@@ -11,6 +11,6 @@ export const createDomVisualElement: CreateVisualElement<
     options: VisualElementOptions<HTMLElement | SVGElement>
 ) => {
     return isSVGComponent(Component)
-        ? svgVisualElement(options, { enableHardwareAcceleration: false })
-        : htmlVisualElement(options, { enableHardwareAcceleration: true })
+        ? new SVGVisualElement(options, { enableHardwareAcceleration: false })
+        : new HTMLVisualElement(options, { enableHardwareAcceleration: true })
 }

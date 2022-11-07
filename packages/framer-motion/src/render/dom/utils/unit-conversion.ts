@@ -4,10 +4,11 @@ import { isKeyframesTarget } from "../../../animation/utils/is-keyframes-target"
 import { invariant } from "hey-listen"
 import { MotionValue } from "../../../value"
 import { transformPropOrder } from "../../html/utils/transform"
-import { ResolvedValues, VisualElement } from "../../types"
+import { ResolvedValues } from "../../types"
 import { findDimensionValueType } from "../value-types/dimensions"
 import { Box } from "../../../projection/geometry/types"
 import { isBrowser } from "../../../utils/is-browser"
+import type { VisualElement } from "../../VisualElement"
 
 const positionalKeys = new Set([
     "width",
@@ -89,7 +90,7 @@ function removeNonTranslationalTransform(visualElement: VisualElement) {
     })
 
     // Apply changes to element before measurement
-    if (removedTransforms.length) visualElement.syncRender()
+    if (removedTransforms.length) visualElement.render()
 
     return removedTransforms
 }
@@ -115,12 +116,12 @@ export const positionalValues: { [key: string]: GetActualMeasurementInPixels } =
 
 const convertChangedValueTypes = (
     target: TargetWithKeyframes,
-    visualElement: VisualElement,
+    visualElement: VisualElement<HTMLElement | SVGElement>,
     changedKeys: string[]
 ) => {
     const originBbox = visualElement.measureViewportBox()
-    const element = visualElement.getInstance()
-    const elementComputedStyle = getComputedStyle(element)
+    const element = visualElement.current
+    const elementComputedStyle = getComputedStyle(element!)
     const { display } = elementComputedStyle
     const origin: ResolvedValues = {}
 
@@ -141,7 +142,7 @@ const convertChangedValueTypes = (
     })
 
     // Apply the latest values (as set in checkAndConvertChangedValueTypes)
-    visualElement.syncRender()
+    visualElement.render()
 
     const targetBbox = visualElement.measureViewportBox()
 
@@ -158,7 +159,7 @@ const convertChangedValueTypes = (
 }
 
 const checkAndConvertChangedValueTypes = (
-    visualElement: VisualElement,
+    visualElement: VisualElement<HTMLElement | SVGElement>,
     target: TargetWithKeyframes,
     origin: Target = {},
     transitionEnd: Target = {}
@@ -281,7 +282,7 @@ const checkAndConvertChangedValueTypes = (
         }
 
         // Reapply original values
-        visualElement.syncRender()
+        visualElement.render()
 
         // Restore scroll position
         if (isBrowser && scrollY !== null) {
@@ -302,7 +303,7 @@ const checkAndConvertChangedValueTypes = (
  * @internal
  */
 export function unitConversion(
-    visualElement: VisualElement,
+    visualElement: VisualElement<HTMLElement | SVGElement>,
     target: TargetWithKeyframes,
     origin?: Target,
     transitionEnd?: Target

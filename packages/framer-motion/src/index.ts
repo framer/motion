@@ -76,8 +76,7 @@ export { useDomEvent } from "./events/use-dom-event"
 export { createMotionComponent } from "./motion"
 export { isMotionComponent } from "./motion/utils/is-motion-component"
 export { unwrapMotionComponent } from "./motion/utils/unwrap-motion-component"
-export { visualElement } from "./render"
-export { VisualElement } from "./render/types"
+export { VisualElement } from "./render/VisualElement"
 export { addScaleCorrector } from "./projection/styles/scale-correction"
 export { useInstantTransition } from "./utils/use-instant-transition"
 export { useInstantLayoutTransition } from "./projection/use-instant-layout-transition"
@@ -100,6 +99,7 @@ export { SwitchLayoutGroupContext } from "./context/SwitchLayoutGroupContext"
  */
 export { HTMLMotionProps, ForwardRefComponent } from "./render/html/types"
 export { SVGMotionProps, SVGAttributesAsMotionValues } from "./render/svg/types"
+export { AnimationLifecycles } from "./render/types"
 export {
     AnimationOptions,
     AnimationPlaybackControls,
@@ -139,7 +139,6 @@ export {
     Variants,
 } from "./types"
 export { EventInfo } from "./events/types"
-export { VisualElementLifecycles } from "./render/utils/lifecycles"
 export * from "./motion/features/types"
 export {
     DraggableProps,
@@ -151,6 +150,7 @@ export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { MotionConfigProps } from "./components/MotionConfig"
 export { LazyProps } from "./components/LazyMotion/types"
 export { FlatTree } from "./render/utils/flat-tree"
+export { CreateVisualElement } from "./render/types"
 export * from "./projection/geometry/types"
 export { IProjectionNode } from "./projection/node/types"
 /**
