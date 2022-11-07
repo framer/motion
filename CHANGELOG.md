@@ -4,6 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.6.5] 2022-11-07
+
+### Fixed
+
+-   `VisualElement` changed to `class` implementation.
+-   Fixed issue with relative layout animations when switching relative parents.
+
 ## [7.6.4] 2022-11-01
 
 ### Fixed
