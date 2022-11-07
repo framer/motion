@@ -905,16 +905,19 @@ export function createProjectionNode<I>({
             // TODO If this is unsuccessful this currently happens every frame
             if (!this.targetDelta && !this.relativeTarget) {
                 // TODO: This is a semi-repetition of further down this function, make DRY
-                this.relativeParent = this.getClosestProjectingParent()
-                if (this.relativeParent && this.relativeParent.layout) {
+                const relativeParent = this.getClosestProjectingParent()
+                if (relativeParent && relativeParent.layout) {
+                    this.relativeParent = relativeParent
                     this.relativeTarget = createBox()
                     this.relativeTargetOrigin = createBox()
                     calcRelativePosition(
                         this.relativeTargetOrigin,
                         this.layout.actual,
-                        this.relativeParent.layout.actual
+                        relativeParent.layout.actual
                     )
                     copyBoxInto(this.relativeTarget, this.relativeTargetOrigin)
+                } else {
+                    this.relativeParent = this.relativeTarget = undefined
                 }
             }
 
@@ -968,27 +971,29 @@ export function createProjectionNode<I>({
             /**
              * If we've been told to attempt to resolve a relative target, do so.
              */
-
             if (this.attemptToResolveRelativeTarget) {
                 this.attemptToResolveRelativeTarget = false
-                this.relativeParent = this.getClosestProjectingParent()
+                const relativeParent = this.getClosestProjectingParent()
 
                 if (
-                    this.relativeParent &&
-                    Boolean(this.relativeParent.resumingFrom) ===
+                    relativeParent &&
+                    Boolean(relativeParent.resumingFrom) ===
                         Boolean(this.resumingFrom) &&
-                    !this.relativeParent.options.layoutScroll &&
-                    this.relativeParent.target
+                    !relativeParent.options.layoutScroll &&
+                    relativeParent.target
                 ) {
+                    this.relativeParent = relativeParent
                     this.relativeTarget = createBox()
                     this.relativeTargetOrigin = createBox()
 
                     calcRelativePosition(
                         this.relativeTargetOrigin,
                         this.target,
-                        this.relativeParent.target
+                        relativeParent.target
                     )
                     copyBoxInto(this.relativeTarget, this.relativeTargetOrigin)
+                } else {
+                    this.relativeParent = this.relativeTarget = undefined
                 }
             }
         }
@@ -1627,15 +1632,15 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         let hasRelativeTargetChanged = false
 
         if (!node.resumeFrom) {
-            node.relativeParent = node.getClosestProjectingParent()
+            const relativeParent = node.getClosestProjectingParent()
 
             /**
              * If the relativeParent is itself resuming from a different element then
              * the relative snapshot is not relavent
              */
-            if (node.relativeParent && !node.relativeParent.resumeFrom) {
+            if (relativeParent && !relativeParent.resumeFrom) {
                 const { snapshot: parentSnapshot, layout: parentLayout } =
-                    node.relativeParent
+                    relativeParent
 
                 if (parentSnapshot && parentLayout) {
                     const relativeSnapshot = createBox()
