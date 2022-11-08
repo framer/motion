@@ -519,6 +519,25 @@ export function createProjectionNode<I>({
             )
         }
 
+        /**
+         * TODO: Remove in subsequent PR
+         */
+        measurePageBox() {
+            const { visualElement } = this.options
+            if (!visualElement) return createBox()
+
+            const box = visualElement.measureViewportBox()
+
+            // Remove viewport scroll to give page-relative coordinates
+            const { scroll } = this.root
+            if (scroll) {
+                translateAxis(box.x, scroll.x)
+                translateAxis(box.y, scroll.y)
+            }
+
+            return box
+        }
+
         // Note: currently only running on root node
         startUpdate() {
             if (this.isUpdateBlocked()) return
@@ -703,15 +722,11 @@ export function createProjectionNode<I>({
         }
 
         takeSnapshot(removeTreeTransform = true) {
-            const { visualElement } = this.options
-            const viewportBox = visualElement!.measureViewportBox()
-
             /**
              * Remove page scroll from viewportBox to get pageBox.
              * TODO: Can this be combined with next step?
              */
-            const pageBox = createBox()
-            copyBoxInto(pageBox, viewportBox)
+            const pageBox = this.measurePageBox()
 
             // WARN: This is a loop and new box
             let layoutBox = this.removeElementScroll(pageBox)
@@ -730,7 +745,7 @@ export function createProjectionNode<I>({
 
             return {
                 frameTimestamp: frameData.timestamp,
-                viewportBox,
+                viewportBox: pageBox,
                 layoutBox,
                 values: {},
                 position: readPosition(this.instance),
@@ -854,7 +869,7 @@ export function createProjectionNode<I>({
                 hasScale(node.latestValues) && node.updateSnapshot()
 
                 const sourceBox = createBox()
-                const nodeBox = visualElement.measureViewportBox()
+                const nodeBox = node.measurePageBox()
                 copyBoxInto(sourceBox, nodeBox)
 
                 removeBoxTransforms(
