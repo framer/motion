@@ -67,11 +67,10 @@ export class NodeStack {
                 node.resumeFrom.preserveOpacity = true
             }
 
-            if (prevLead.snapshot) {
-                node.snapshot = prevLead.snapshot
-                node.snapshot.latestValues =
+            if (prevLead.prevSnapshot) {
+                node.prevSnapshot = prevLead.prevSnapshot
+                node.prevSnapshot.values =
                     prevLead.animationValues || prevLead.latestValues
-                node.snapshot.isShared = true
             }
 
             if (node.root?.isUpdating) {
@@ -116,8 +115,8 @@ export class NodeStack {
      * used in future animations and to prevent memory leaks
      */
     removeLeadSnapshot() {
-        if (this.lead && this.lead.snapshot) {
-            this.lead.snapshot = undefined
+        if (this.lead && this.lead.prevSnapshot) {
+            this.lead.prevSnapshot = undefined
         }
     }
 }

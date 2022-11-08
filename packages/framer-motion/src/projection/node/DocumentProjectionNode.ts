@@ -11,4 +11,5 @@ export const DocumentProjectionNode = createProjectionNode<Window>({
         y: document.documentElement.scrollTop || document.body.scrollTop,
     }),
     checkIsScrollRoot: () => true,
+    readPosition: () => "static",
 })

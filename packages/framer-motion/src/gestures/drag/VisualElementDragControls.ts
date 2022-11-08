@@ -134,7 +134,8 @@ export class VisualElementDragControls {
                  */
                 if (percent.test(current)) {
                     const measuredAxis =
-                        this.visualElement.projection?.layout?.actual[axis]
+                        this.visualElement.projection?.currentSnapshot
+                            ?.layoutBox[axis]
 
                     if (measuredAxis) {
                         const length = calcLength(measuredAxis)
@@ -265,7 +266,7 @@ export class VisualElementDragControls {
 
     private resolveConstraints() {
         const { dragConstraints, dragElastic } = this.getProps()
-        const { layout } = this.visualElement.projection || {}
+        const { currentSnapshot } = this.visualElement.projection || {}
         const prevConstraints = this.constraints
 
         if (dragConstraints && isRefObject(dragConstraints)) {
@@ -273,9 +274,9 @@ export class VisualElementDragControls {
                 this.constraints = this.resolveRefConstraints()
             }
         } else {
-            if (dragConstraints && layout) {
+            if (dragConstraints && currentSnapshot) {
                 this.constraints = calcRelativeConstraints(
-                    layout.actual,
+                    currentSnapshot.layoutBox,
                     dragConstraints
                 )
             } else {
@@ -291,14 +292,14 @@ export class VisualElementDragControls {
          */
         if (
             prevConstraints !== this.constraints &&
-            layout &&
+            currentSnapshot &&
             this.constraints &&
             !this.hasMutatedConstraints
         ) {
             eachAxis((axis) => {
                 if (this.getAxisMotionValue(axis)) {
                     this.constraints[axis] = rebaseAxisConstraints(
-                        layout.actual[axis],
+                        currentSnapshot.layoutBox[axis],
                         this.constraints[axis]
                     )
                 }
@@ -321,7 +322,7 @@ export class VisualElementDragControls {
         const { projection } = this.visualElement
 
         // TODO
-        if (!projection || !projection.layout) return false
+        if (!projection || !projection.currentSnapshot) return false
 
         const constraintsBox = measurePageBox(
             constraintsElement,
@@ -330,7 +331,7 @@ export class VisualElementDragControls {
         )
 
         let measuredConstraints = calcViewportConstraints(
-            projection.layout.actual,
+            projection.currentSnapshot.layoutBox,
             constraintsBox
         )
 
@@ -445,8 +446,8 @@ export class VisualElementDragControls {
             const { projection } = this.visualElement
             const axisValue = this.getAxisMotionValue(axis)
 
-            if (projection && projection.layout) {
-                const { min, max } = projection.layout.actual[axis]
+            if (projection && projection.currentSnapshot) {
+                const { min, max } = projection.currentSnapshot.layoutBox[axis]
 
                 axisValue.set(point[axis] - mix(min, max, 0.5))
             }
@@ -546,7 +547,7 @@ export class VisualElementDragControls {
             measureDragConstraints
         )
 
-        if (projection && !projection!.layout) {
+        if (projection && !projection!.currentSnapshot) {
             projection.root?.updateScroll()
             projection.updateLayout()
         }

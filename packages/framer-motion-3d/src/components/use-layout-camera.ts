@@ -86,11 +86,11 @@ export function useLayoutCamera<CameraType>(
         const removeAnimationCompleteListener = projection.addEventListener(
             "animationComplete",
             () => {
-                const { actual } = projection.layout || {}
+                const { layoutBox } = projection.currentSnapshot || {}
 
-                if (actual) {
+                if (layoutBox) {
                     setTimeout(() => {
-                        const newSize = calcBoxSize(actual)
+                        const newSize = calcBoxSize(layoutBox)
                         updateCamera(newSize)
 
                         dimensions.current = { size: newSize }

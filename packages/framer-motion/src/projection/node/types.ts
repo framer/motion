@@ -8,17 +8,19 @@ import { InitialPromotionConfig } from "../../context/SwitchLayoutGroupContext"
 import { MotionStyle } from "../../motion/types"
 import type { VisualElement } from "../../render/VisualElement"
 
-// TODO: Find more appropriate names for each snapshot
-export interface Snapshot {
-    measured: Box
-    layout: Box
-    latestValues: ResolvedValues
-    isShared?: boolean
-}
+export type Position = "static" | "sticky" | "fixed"
 
-export interface Layout {
-    measured: Box
-    actual: Box // with scroll removed
+export interface Snapshot {
+    frameTimestamp: number
+    viewportBox: Box
+    layoutBox: Box
+    relative?: {
+        parent: IProjectionNode
+        box: Box
+    }
+    values: ResolvedValues
+    position: Position
+    origin: IProjectionNode
 }
 
 export type LayoutEvents =
@@ -44,8 +46,11 @@ export interface IProjectionNode<I = unknown> {
     unmount: () => void
     options: ProjectionNodeOptions
     setOptions(options: ProjectionNodeOptions): void
-    layout?: Layout
-    snapshot?: Snapshot
+
+    prevSnapshot?: Snapshot
+    currentSnapshot?: Snapshot
+    measureViewportBox(): Box
+
     target?: Box
     relativeTarget?: Box
     targetDelta?: Delta
@@ -72,7 +77,7 @@ export interface IProjectionNode<I = unknown> {
     measure(): Box
     updateLayout(): void
     updateSnapshot(): void
-    clearSnapshot(): void
+    clearPrevSnapshot(): void
     updateScroll(): void
     scheduleUpdateProjection(): void
     scheduleCheckAfterUnmount(): void
@@ -146,6 +151,7 @@ export interface ProjectionNodeConfig<I> {
     measureScroll: (instance: I) => Point
     checkIsScrollRoot: (instance: I) => boolean
     resetTransform?: (instance: I, value?: string) => void
+    readPosition: (instance: I) => Position
 }
 
 export interface ProjectionNodeOptions {
