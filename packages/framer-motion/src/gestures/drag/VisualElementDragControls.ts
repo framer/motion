@@ -265,7 +265,7 @@ export class VisualElementDragControls {
 
     private resolveConstraints() {
         const { dragConstraints, dragElastic } = this.getProps()
-        const { current } = this.visualElement.projection || {}
+        const { current: measurements } = this.visualElement.projection || {}
         const prevConstraints = this.constraints
 
         if (dragConstraints && isRefObject(dragConstraints)) {
@@ -273,9 +273,9 @@ export class VisualElementDragControls {
                 this.constraints = this.resolveRefConstraints()
             }
         } else {
-            if (dragConstraints && current) {
+            if (dragConstraints && measurements) {
                 this.constraints = calcRelativeConstraints(
-                    current.layoutBox,
+                    measurements.layoutBox,
                     dragConstraints
                 )
             } else {
@@ -291,14 +291,14 @@ export class VisualElementDragControls {
          */
         if (
             prevConstraints !== this.constraints &&
-            current &&
+            measurements &&
             this.constraints &&
             !this.hasMutatedConstraints
         ) {
             eachAxis((axis) => {
                 if (this.getAxisMotionValue(axis)) {
                     this.constraints[axis] = rebaseAxisConstraints(
-                        current.layoutBox[axis],
+                        measurements.layoutBox[axis],
                         this.constraints[axis]
                     )
                 }
