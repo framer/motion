@@ -77,7 +77,7 @@ export interface IProjectionNode<I = unknown> {
     measure(): Box
     updateLayout(): void
     updateSnapshot(): void
-    clearPrevSnapshot(): void
+    clearSnapshot(): void
     updateScroll(): void
     scheduleUpdateProjection(): void
     scheduleCheckAfterUnmount(): void

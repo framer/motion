@@ -612,7 +612,7 @@ export function createProjectionNode<I>({
         }
 
         clearAllSnapshots() {
-            this.nodes!.forEach(clearPrevSnapshot)
+            this.nodes!.forEach(clearSnapshot)
             this.sharedNodes.forEach(removeLeadSnapshots)
         }
 
@@ -1588,7 +1588,7 @@ export function createProjectionNode<I>({
             return styles
         }
 
-        clearPrevSnapshot() {
+        clearSnapshot() {
             this.resumeFrom = this.snapshot = undefined
         }
 
@@ -1713,8 +1713,8 @@ function notifyLayoutUpdate(node: IProjectionNode) {
     node.options.transition = undefined
 }
 
-function clearPrevSnapshot(node: IProjectionNode) {
-    node.clearPrevSnapshot()
+function clearSnapshot(node: IProjectionNode) {
+    node.clearSnapshot()
 }
 
 function clearMeasurements(node: IProjectionNode) {
