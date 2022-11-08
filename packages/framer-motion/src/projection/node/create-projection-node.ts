@@ -683,7 +683,7 @@ export function createProjectionNode<I>({
                 }
             }
 
-            const prevLayoutSnapshot = this.current
+            const prevMeasurements = this.current
             this.current = this.takeSnapshot(false)
 
             this.layoutCorrected = createBox()
@@ -694,7 +694,7 @@ export function createProjectionNode<I>({
             this.options.visualElement?.notify(
                 "LayoutMeasure",
                 this.current.layoutBox,
-                prevLayoutSnapshot?.layoutBox
+                prevMeasurements?.layoutBox
             )
         }
 
