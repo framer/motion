@@ -86,7 +86,7 @@ export function useLayoutCamera<CameraType>(
         const removeAnimationCompleteListener = projection.addEventListener(
             "animationComplete",
             () => {
-                const { layoutBox } = projection.currentSnapshot || {}
+                const { layoutBox } = projection.current || {}
 
                 if (layoutBox) {
                     setTimeout(() => {

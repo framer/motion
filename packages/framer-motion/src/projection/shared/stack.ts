@@ -67,9 +67,9 @@ export class NodeStack {
                 node.resumeFrom.preserveOpacity = true
             }
 
-            if (prevLead.prevSnapshot) {
-                node.prevSnapshot = prevLead.prevSnapshot
-                node.prevSnapshot.values =
+            if (prevLead.snapshot) {
+                node.snapshot = prevLead.snapshot
+                node.snapshot.values =
                     prevLead.animationValues || prevLead.latestValues
             }
 
@@ -115,8 +115,8 @@ export class NodeStack {
      * used in future animations and to prevent memory leaks
      */
     removeLeadSnapshot() {
-        if (this.lead && this.lead.prevSnapshot) {
-            this.lead.prevSnapshot = undefined
+        if (this.lead && this.lead.snapshot) {
+            this.lead.snapshot = undefined
         }
     }
 }

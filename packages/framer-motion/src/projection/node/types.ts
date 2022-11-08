@@ -47,8 +47,8 @@ export interface IProjectionNode<I = unknown> {
     options: ProjectionNodeOptions
     setOptions(options: ProjectionNodeOptions): void
 
-    prevSnapshot?: Snapshot
-    currentSnapshot?: Snapshot
+    snapshot?: Snapshot
+    current?: Snapshot
     measureViewportBox(): Box
 
     target?: Box
