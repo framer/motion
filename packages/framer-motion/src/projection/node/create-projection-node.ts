@@ -698,12 +698,9 @@ export function createProjectionNode<I>({
             )
         }
 
-        measureViewportBox() {
-            return this.options.visualElement!.measureViewportBox()
-        }
-
-        takeSnapshot(removeTreeTransform = true): Snapshot {
-            const viewportBox = this.measureViewportBox()
+        takeSnapshot(removeTreeTransform = true) {
+            const { visualElement } = this.options
+            const viewportBox = visualElement!.measureViewportBox()
 
             /**
              * Remove page scroll from viewportBox to get pageBox.

@@ -49,7 +49,7 @@ export interface IProjectionNode<I = unknown> {
 
     snapshot?: Snapshot
     current?: Snapshot
-    measureViewportBox(): Box
+    takeSnapshot(removeTreeTransform?: boolean): Snapshot
 
     target?: Box
     relativeTarget?: Box
