@@ -651,7 +651,11 @@ export function createProjectionNode<I>({
          * Update measurements
          */
         updateSnapshot() {
-            if (this.instance && !this.snapshot) {
+            if (
+                this.instance &&
+                (!this.snapshot ||
+                    this.snapshot.frameTimestamp !== frameData.timestamp)
+            ) {
                 this.snapshot = this.takeSnapshot()
             }
         }
@@ -769,22 +773,6 @@ export function createProjectionNode<I>({
             }
         }
 
-        measure() {
-            const { visualElement } = this.options
-            if (!visualElement) return createBox()
-
-            const box = visualElement.measureViewportBox()
-
-            // Remove viewport scroll to give page-relative coordinates
-            const { scroll } = this.root
-            if (scroll) {
-                translateAxis(box.x, scroll.x)
-                translateAxis(box.y, scroll.y)
-            }
-
-            return box
-        }
-
         removeElementScroll(box: Box): Box {
             const boxWithoutScroll = createBox()
             copyBoxInto(boxWithoutScroll, box)
@@ -858,13 +846,15 @@ export function createProjectionNode<I>({
 
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
-                if (!node.instance) continue
+                const { instance } = node
+                const { visualElement } = node.options
+                if (!instance || !visualElement) continue
                 if (!hasTransform(node.latestValues)) continue
 
                 hasScale(node.latestValues) && node.updateSnapshot()
 
                 const sourceBox = createBox()
-                const nodeBox = node.measure()
+                const nodeBox = visualElement.measureViewportBox()
                 copyBoxInto(sourceBox, nodeBox)
 
                 removeBoxTransforms(

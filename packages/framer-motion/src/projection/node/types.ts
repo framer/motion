@@ -74,7 +74,6 @@ export interface IProjectionNode<I = unknown> {
     startUpdate(): void
     willUpdate(notifyListeners?: boolean): void
     didUpdate(): void
-    measure(): Box
     updateLayout(): void
     updateSnapshot(): void
     clearSnapshot(): void

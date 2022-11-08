@@ -11,7 +11,8 @@
                 position: relative;
                 height: 200px;
                 width: 500px;
-                top: 100px;
+                top: 200px;
+                left: 200px;
             }
 
             #box {
@@ -58,7 +59,6 @@
 
             scroll.scrollLeft = 100
             window.scrollTo(100, 100)
-            const boxOrigin = box.getBoundingClientRect()
 
             const scrollProjection = createNode(scroll, undefined, {
                 layoutScroll: true,
@@ -74,9 +74,14 @@
 
             boxProjection.root.didUpdate()
 
-            matchViewportBox(box, addPageScroll(boxOrigin, -100, -50))
             matchOpacity(box, 1)
-            matchBorderRadius(box, "20px")
+            matchBorderRadius(box, "10%")
+            matchViewportBox(box, {
+                bottom: 350,
+                left: 100,
+                right: 300,
+                top: 150,
+            })
         </script>
     </body>
 </html>
