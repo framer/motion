@@ -121,7 +121,7 @@ export function createProjectionNode<I>({
         snapshot?: Snapshot | undefined
 
         /**
-         * A snapshot of the element's current layout. This will have been
+         * Current measurements of the element's viewport box and layout. This will have been
          * captured with all parent scrolls and projection transforms unset.
          */
         current?: Snapshot | undefined
