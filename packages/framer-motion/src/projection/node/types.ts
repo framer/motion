@@ -7,12 +7,7 @@ import { FlatTree } from "../../render/utils/flat-tree"
 import { InitialPromotionConfig } from "../../context/SwitchLayoutGroupContext"
 import { MotionStyle } from "../../motion/types"
 
-export type CSSPosition =
-    | "static"
-    | "sticky"
-    | "fixed"
-    | "absolute"
-    | "relative"
+export type Position = "static" | "sticky" | "fixed"
 
 export interface Snapshot {
     frameTimestamp: number
@@ -23,10 +18,8 @@ export interface Snapshot {
         box: Box
     }
     values: ResolvedValues
-    position: CSSPosition
-
-    // TODO Remove
-    isShared?: boolean
+    position: Position
+    origin: IProjectionNode
 }
 
 export type LayoutEvents =
@@ -157,7 +150,7 @@ export interface ProjectionNodeConfig<I> {
     measureScroll: (instance: I) => Point
     checkIsScrollRoot: (instance: I) => boolean
     resetTransform?: (instance: I, value?: string) => void
-    readPosition: (instance: I) => CSSPosition
+    readPosition: (instance: I) => Position
 }
 
 export interface ProjectionNodeOptions {

@@ -708,11 +708,6 @@ export function createProjectionNode<I>({
              */
             const pageBox = createBox()
             copyBoxInto(pageBox, viewportBox)
-            const { scroll } = this.root
-            if (scroll) {
-                translateAxis(pageBox.x, scroll.x)
-                translateAxis(pageBox.y, scroll.y)
-            }
 
             // WARN: This is a loop and new box
             let layoutBox = this.removeElementScroll(pageBox)
@@ -735,6 +730,7 @@ export function createProjectionNode<I>({
                 layoutBox,
                 values: {},
                 position: readPosition(this.instance),
+                origin: this,
             }
         }
 
@@ -787,26 +783,9 @@ export function createProjectionNode<I>({
              */
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
-                const { scroll, options, isScrollRoot } = node
+                const { scroll, options } = node
 
-                if (node !== this.root && scroll && options.layoutScroll) {
-                    /**
-                     * If this is a new scroll root, we want to remove all previous scrolls
-                     * from the viewport box.
-                     */
-                    if (isScrollRoot) {
-                        copyBoxInto(boxWithoutScroll, box)
-                        const { scroll: rootScroll } = this.root
-                        /**
-                         * Undo the application of page scroll that was originally added
-                         * to the measured bounding box.
-                         */
-                        if (rootScroll) {
-                            translateAxis(boxWithoutScroll.x, -rootScroll.x)
-                            translateAxis(boxWithoutScroll.y, -rootScroll.y)
-                        }
-                    }
-
+                if (scroll && (node === this.root || options.layoutScroll)) {
                     translateAxis(boxWithoutScroll.x, scroll.x)
                     translateAxis(boxWithoutScroll.y, scroll.y)
                 }
@@ -815,23 +794,23 @@ export function createProjectionNode<I>({
             return boxWithoutScroll
         }
 
-        applyTransform(box: Box, transformOnly = false): Box {
+        applyTransform(box: Box, _transformOnly = false): Box {
             const withTransforms = createBox()
             copyBoxInto(withTransforms, box)
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
 
-                if (
-                    !transformOnly &&
-                    node.options.layoutScroll &&
-                    node.scroll &&
-                    node !== node.root
-                ) {
-                    transformBox(withTransforms, {
-                        x: -node.scroll.x,
-                        y: -node.scroll.y,
-                    })
-                }
+                // if (
+                //     !transformOnly &&
+                //     node.options.layoutScroll &&
+                //     node.scroll &&
+                //     node !== node.root
+                // ) {
+                //     transformBox(withTransforms, {
+                //         x: -node.scroll.x,
+                //         y: -node.scroll.y,
+                //     })
+                // }
 
                 if (!hasTransform(node.latestValues)) continue
                 transformBox(withTransforms, node.latestValues)
@@ -1154,7 +1133,8 @@ export function createProjectionNode<I>({
 
             const relativeLayout = createBox()
 
-            const isSharedLayoutAnimation = snapshot?.isShared
+            const isSharedLayoutAnimation =
+                snapshot?.origin !== this.layout?.origin
             const isOnlyMember = (this.getStack()?.members.length || 0) <= 1
             const shouldCrossfadeOpacity = Boolean(
                 isSharedLayoutAnimation &&
@@ -1605,11 +1585,13 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         const { layoutBox: layout, viewportBox: measuredLayout } = node.layout
         const { animationType } = node.options
 
+        const isShared = node.layout.origin !== snapshot.origin
+
         // TODO Maybe we want to also resize the layout snapshot so we don't trigger
         // animations for instance if layout="size" and an element has only changed position
         if (animationType === "size") {
             eachAxis((axis) => {
-                const axisSnapshot = snapshot.isShared
+                const axisSnapshot = isShared
                     ? snapshot.viewportBox[axis]
                     : snapshot.layoutBox[axis]
                 const length = calcLength(axisSnapshot)
@@ -1620,7 +1602,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
             shouldAnimatePositionOnly(animationType, snapshot.layoutBox, layout)
         ) {
             eachAxis((axis) => {
-                const axisSnapshot = snapshot.isShared
+                const axisSnapshot = isShared
                     ? snapshot.viewportBox[axis]
                     : snapshot.layoutBox[axis]
                 const length = calcLength(layout[axis])
@@ -1631,7 +1613,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         const layoutDelta = createDelta()
         calcBoxDelta(layoutDelta, layout, snapshot.layoutBox)
         const visualDelta = createDelta()
-        if (snapshot.isShared) {
+        if (isShared) {
             calcBoxDelta(
                 visualDelta,
                 node.applyTransform(measuredLayout, true),

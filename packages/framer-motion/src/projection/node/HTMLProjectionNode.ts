@@ -1,6 +1,6 @@
 import { createProjectionNode } from "./create-projection-node"
 import { DocumentProjectionNode } from "./DocumentProjectionNode"
-import { CSSPosition, IProjectionNode } from "./types"
+import { IProjectionNode } from "./types"
 
 export const rootProjectionNode: { current: IProjectionNode | undefined } = {
     current: undefined,
@@ -28,5 +28,10 @@ export const HTMLProjectionNode = createProjectionNode<HTMLElement>({
 
         return Boolean(position === "fixed")
     },
-    readPosition: (instance) => instance.style.position as CSSPosition,
+    readPosition: (instance) => {
+        const { position } = instance.style
+        return position === "sticky" || position === "fixed"
+            ? position
+            : "static"
+    },
 })
