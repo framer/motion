@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #box {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+                position: sticky;
+                top: 0px;
+            }
+
+            #size {
+                height: 100px;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="size"></div>
+        <div id="box"></div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-undo.js"></script>
+        <script>
+            const { createNode } = window.Undo
+            const { matchViewportBox, addPageScroll } = window.Assert
+
+            const box = document.getElementById("box")
+            const boxProjection = createNode(box, undefined, {
+                layoutScroll: true,
+            })
+
+            requestAnimationFrame(() => {
+                boxProjection.willUpdate()
+
+                const scrollOffset = [50, 150]
+                window.scrollTo(...scrollOffset)
+
+                boxProjection.root.didUpdate()
+
+                matchViewportBox(box, {
+                    top: 0,
+                    left: -50,
+                    bottom: 100,
+                    right: 50,
+                })
+            })
+        </script>
+    </body>
+</html>

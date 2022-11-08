@@ -3,7 +3,7 @@ const path = require("path")
 
 const files = fs
     .readdirSync(__dirname)
-    .filter((f) => path.extname(f) === ".html")
+    .filter((f) => path.extname(f) === ".html" && !f.includes(".skip."))
 
 fs.writeFile(
     "../../packages/framer-motion/cypress/fixtures/projection-tests.json",
