@@ -118,13 +118,13 @@ export function createProjectionNode<I>({
          * hydrated when this node's `willUpdate` method is called and scrubbed at the
          * end of the tree's `didUpdate` method.
          */
-        snapshot?: Snapshot | undefined
+        snapshot: Snapshot | undefined
 
         /**
          * Current measurements of the element's viewport box and layout. This will have been
          * captured with all parent scrolls and projection transforms unset.
          */
-        current?: Snapshot | undefined
+        current: Snapshot | undefined
 
         /**
          * The layout used to calculate the previous layout animation. We use this to compare
