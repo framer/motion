@@ -11,16 +11,56 @@ import type { VisualElement } from "../../render/VisualElement"
 export type Position = "static" | "sticky" | "fixed"
 
 export interface Snapshot {
+    /**
+     * The timestamp of the animation frame this snapshot was taken.
+     * Used to prevent double snapshotting.
+     */
     frameTimestamp: number
+
+    /**
+     * The measured viewport box returned from `getBoundingClientRect`. This
+     * box still has transforms applied .
+     */
+    meaasuredViewportBox: Box
+
+    /**
+     * The viewport-relative box without tree transforms applied.
+     */
     viewportBox: Box
+
+    /**
+     * The box in the flattened layout, without any scrolls or tree
+     * transforms applied.
+     */
     layoutBox: Box
+
+    /**
+     * Details of this bounding box relative to its nearest projecting parent.
+     * If we can resolve this, it becomes possible to do relative layout
+     * animations, so parent and child can have different transitions.
+     */
     relative?: {
         parent: IProjectionNode
         box: Box
     }
+
+    /**
+     * The latest animations values at the time of this snapshot.
+     */
     values: ResolvedValues
+
+    /**
+     * Whether the element is position sticky/fixed/static. The way we calculate
+     * deltas depends on this.
+     */
     position: Position
-    origin: IProjectionNode
+
+    /**
+     * The origin of this snapshot. We currently keep this as a ProjectionNode
+     * but this could be a unique identifier or otherwise - the important thing
+     * is that it can fail an equality check if snapshots are from different sources.
+     */
+    origin: unknown
 }
 
 export type LayoutEvents =
