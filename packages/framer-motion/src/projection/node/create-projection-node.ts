@@ -519,25 +519,6 @@ export function createProjectionNode<I>({
             )
         }
 
-        /**
-         * TODO: Remove in subsequent PR
-         */
-        measurePageBox() {
-            const { visualElement } = this.options
-            if (!visualElement) return createBox()
-
-            const box = visualElement.measureViewportBox()
-
-            // Remove viewport scroll to give page-relative coordinates
-            const { scroll } = this.root
-            if (scroll) {
-                translateAxis(box.x, scroll.x)
-                translateAxis(box.y, scroll.y)
-            }
-
-            return box
-        }
-
         // Note: currently only running on root node
         startUpdate() {
             if (this.isUpdateBlocked()) return
@@ -722,14 +703,11 @@ export function createProjectionNode<I>({
         }
 
         takeSnapshot(removeTreeTransform = true) {
-            /**
-             * Remove page scroll from viewportBox to get pageBox.
-             * TODO: Can this be combined with next step?
-             */
-            const pageBox = this.measurePageBox()
+            const viewportBox =
+                this.options.visualElement?.measureViewportBox()!
 
             // WARN: This is a loop and new box
-            let layoutBox = this.removeElementScroll(pageBox)
+            let layoutBox = this.removeElementScroll(viewportBox)
 
             // WARN: This is a loop and new box
             /**
@@ -745,7 +723,7 @@ export function createProjectionNode<I>({
 
             return {
                 frameTimestamp: frameData.timestamp,
-                viewportBox: pageBox,
+                viewportBox,
                 layoutBox,
                 values: {},
                 position: readPosition(this.instance),
@@ -790,7 +768,6 @@ export function createProjectionNode<I>({
 
         removeElementScroll(box: Box): Box {
             const boxWithoutScroll = createBox()
-            copyBoxInto(boxWithoutScroll, box)
 
             /**
              * Performance TODO: Keep a cumulative scroll offset down the tree
@@ -798,26 +775,17 @@ export function createProjectionNode<I>({
              */
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
-                const { scroll, options, isScrollRoot } = node
+                const { scroll, options } = node
 
-                if (node !== this.root && scroll && options.layoutScroll) {
-                    /**
-                     * If this is a new scroll root, we want to remove all previous scrolls
-                     * from the viewport box.
-                     */
-                    if (isScrollRoot) {
-                        copyBoxInto(boxWithoutScroll, box)
-                        const { scroll: rootScroll } = this.root
-                        /**
-                         * Undo the application of page scroll that was originally added
-                         * to the measured bounding box.
-                         */
-                        if (rootScroll) {
-                            translateAxis(boxWithoutScroll.x, -rootScroll.x)
-                            translateAxis(boxWithoutScroll.y, -rootScroll.y)
-                        }
-                    }
+                /**
+                 * If this element is viewport-relative, reset the viewport box.
+                 * This will always run on the root node.
+                 */
+                if (options.layoutScroll && node.isScrollRoot) {
+                    copyBoxInto(boxWithoutScroll, box)
+                }
 
+                if (scroll && (node === this.root || options.layoutScroll)) {
                     translateAxis(boxWithoutScroll.x, scroll.x)
                     translateAxis(boxWithoutScroll.y, scroll.y)
                 }
@@ -869,7 +837,7 @@ export function createProjectionNode<I>({
                 hasScale(node.latestValues) && node.updateSnapshot()
 
                 const sourceBox = createBox()
-                const nodeBox = node.measurePageBox()
+                const nodeBox = node.options.visualElement!.measureViewportBox()
                 copyBoxInto(sourceBox, nodeBox)
 
                 removeBoxTransforms(
@@ -1619,6 +1587,9 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         node.hasListeners("didUpdate")
     ) {
         const { layoutBox: layout, viewportBox: measuredLayout } = node.current
+
+        console.log(node.current, snapshot)
+
         const { animationType } = node.options
 
         const isShared = snapshot.origin !== node.current.origin
@@ -1694,7 +1665,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                 }
             }
         }
-
+        console.log(visualDelta, layoutDelta)
         node.notifyListeners("didUpdate", {
             layout,
             snapshot,
