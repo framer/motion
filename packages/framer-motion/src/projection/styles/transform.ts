@@ -24,10 +24,8 @@ export function buildProjectionTransform(
      * Apply scale correction for the tree transform.
      * This will apply scale to the screen-orientated axes.
      */
-    const treeScaleCorrectionX = 1 / treeScale.x
-    const treeScaleCorrectionY = 1 / treeScale.y
-    if (treeScaleCorrectionX !== 1 || treeScaleCorrectionY !== 1) {
-        transform += `scale(${treeScaleCorrectionX}, ${treeScaleCorrectionY}) `
+    if (treeScale.x !== 1 || treeScale.y !== 1) {
+        transform += `scale(${1 / treeScale.x}, ${1 / treeScale.y}) `
     }
 
     if (latestTransform) {
