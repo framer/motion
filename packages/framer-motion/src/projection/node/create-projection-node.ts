@@ -73,7 +73,7 @@ export function createProjectionNode<I>({
          * rendered components will be committed by React). In `didUpdate`, we search the DOM for
          * these potential nodes with this id and hydrate the projetion node of the ones that were commited.
          */
-        id: number | undefined
+        elementId: number | undefined
 
         /**
          * A reference to the platform-native node (currently this will be a HTMLElement).
@@ -293,11 +293,11 @@ export function createProjectionNode<I>({
         preserveOpacity?: boolean
 
         constructor(
-            id: number | undefined,
+            elementId: number | undefined,
             latestValues: ResolvedValues = {},
             parent: IProjectionNode | undefined = defaultParent?.()
         ) {
-            this.id = id
+            this.elementId = elementId
             this.latestValues = latestValues
             this.root = parent ? parent.root || parent : this
             this.path = parent ? [...parent.path, parent] : []
@@ -305,7 +305,7 @@ export function createProjectionNode<I>({
 
             this.depth = parent ? parent.depth + 1 : 0
 
-            id && this.root.registerPotentialNode(id, this)
+            elementId && this.root.registerPotentialNode(elementId, this)
 
             for (let i = 0; i < this.path.length; i++) {
                 this.path[i].shouldResetTransform = true
@@ -355,7 +355,7 @@ export function createProjectionNode<I>({
 
             this.root.nodes!.add(this)
             this.parent?.children.add(this)
-            this.id && this.root.potentialNodes.delete(this.id)
+            this.elementId && this.root.potentialNodes.delete(this.elementId)
 
             if (isLayoutDirty && (layout || layoutId)) {
                 this.isLayoutDirty = true
