@@ -36,6 +36,27 @@ describe("buildProjectionTransform", () => {
         ).toEqual(
             "translate3d(50px, 600px, 0) scale(0.5, 2) rotate(45deg) scale(4, 2)"
         )
+
+        expect(
+            buildProjectionTransform(
+                {
+                    x: {
+                        translate: 100,
+                        scale: 0.5,
+                        origin: 0.5,
+                        originPoint: 100,
+                    },
+                    y: {
+                        translate: 300,
+                        scale: 0.5,
+                        origin: 0.5,
+                        originPoint: 100,
+                    },
+                },
+                { x: 2, y: 2 },
+                { rotate: 90 }
+            )
+        ).toEqual("translate3d(50px, 150px, 0) scale(0.5, 0.5) rotate(90deg) ")
     })
 
     it("Doesn't apply unneccessary translation", () => {
