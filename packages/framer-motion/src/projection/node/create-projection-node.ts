@@ -1441,8 +1441,10 @@ export function createProjectionNode<I>({
                 const key = "rotate" + transformAxes[i]
 
                 // Record the rotation and then temporarily set it to 0
-                resetValues[key] = latestValues[key]
-                visualElement.setStaticValue(key, 0)
+                if (latestValues[key] !== undefined) {
+                    resetValues[key] = latestValues[key]
+                    visualElement.setStaticValue(key, 0)
+                }
             }
 
             // Force a render of this element to apply the transform with all rotations
