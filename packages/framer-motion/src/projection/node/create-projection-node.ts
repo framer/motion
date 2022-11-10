@@ -730,19 +730,18 @@ export function createProjectionNode<I>({
             }
         }
 
-        /**
-         * Take measurements of the element. Accepts an optional
-         * removeTransform argument as boxes measured pre-render
-         * still have transforms applied whereas these have been removed
-         * before post-render layout measurements.
-         */
         measure(removeTransform = true) {
             const pageBox = this.measurePageBox()
 
             let layoutBox = this.removeElementScroll(pageBox)
 
+            /**
+             * Measurements taken during the pre-render stage
+             * still have transforms applied so we remove them
+             * via calculation.
+             */
             if (removeTransform) {
-                layoutBox = this.removeTransform(pageBox)
+                layoutBox = this.removeTransform(layoutBox)
             }
 
             roundBox(layoutBox)
