@@ -68,12 +68,10 @@
             boxProjection.setValue("borderRadius", 20)
 
             boxProjection.willUpdate()
-
             scroll.scrollLeft = 50
             window.scrollTo(50, 50)
 
             boxProjection.root.didUpdate()
-
             matchViewportBox(box, addPageScroll(boxOrigin, -100, -50))
             matchOpacity(box, 1)
             matchBorderRadius(box, "20px")
