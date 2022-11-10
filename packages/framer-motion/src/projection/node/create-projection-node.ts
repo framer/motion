@@ -39,6 +39,7 @@ import {
     ProjectionNodeConfig,
     ProjectionNodeOptions,
     Measurements,
+    ScrollMeasurements,
 } from "./types"
 import { FlatTree } from "../../render/utils/flat-tree"
 import { Transition } from "../../types"
@@ -211,7 +212,7 @@ export function createProjectionNode<I>({
         /**
          * If we're tracking the scroll of this element, we store it here.
          */
-        scroll?: Point
+        scroll?: ScrollMeasurements
 
         /**
          * If this element is a scroll root, we ignore scrolls up the tree.
@@ -547,11 +548,8 @@ export function createProjectionNode<I>({
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
                 node.shouldResetTransform = true
-                /**
-                 * TODO: Check we haven't updated the scroll
-                 * since the last didUpdate
-                 */
-                node.updateScroll()
+
+                node.updateScroll(false)
             }
 
             const { layoutId, layout } = this.options
@@ -707,10 +705,26 @@ export function createProjectionNode<I>({
             )
         }
 
-        updateScroll() {
-            if (this.options.layoutScroll && this.instance) {
-                this.isScrollRoot = checkIsScrollRoot(this.instance)
-                this.scroll = measureScroll(this.instance)
+        updateScroll(lockToFrame = true) {
+            let needsMeasurement = Boolean(
+                this.options.layoutScroll && this.instance
+            )
+
+            if (
+                this.scroll &&
+                this.scroll.frameTimestamp === frameData.timestamp &&
+                this.scroll.isLockedToFrame === lockToFrame
+            ) {
+                needsMeasurement = false
+            }
+
+            if (needsMeasurement) {
+                this.scroll = {
+                    frameTimestamp: frameData.timestamp,
+                    isLockedToFrame: lockToFrame,
+                    isRoot: checkIsScrollRoot(this.instance),
+                    offset: measureScroll(this.instance),
+                }
             }
         }
 
@@ -776,8 +790,8 @@ export function createProjectionNode<I>({
             // Remove viewport scroll to give page-relative coordinates
             const { scroll } = this.root
             if (scroll) {
-                translateAxis(box.x, scroll.x)
-                translateAxis(box.y, scroll.y)
+                translateAxis(box.x, scroll.offset.x)
+                translateAxis(box.y, scroll.offset.y)
             }
 
             return box
@@ -793,14 +807,14 @@ export function createProjectionNode<I>({
              */
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
-                const { scroll, options, isScrollRoot } = node
+                const { scroll, options } = node
 
                 if (node !== this.root && scroll && options.layoutScroll) {
                     /**
                      * If this is a new scroll root, we want to remove all previous scrolls
                      * from the viewport box.
                      */
-                    if (isScrollRoot) {
+                    if (scroll.isRoot) {
                         copyBoxInto(boxWithoutScroll, box)
                         const { scroll: rootScroll } = this.root
                         /**
@@ -808,13 +822,19 @@ export function createProjectionNode<I>({
                          * to the measured bounding box.
                          */
                         if (rootScroll) {
-                            translateAxis(boxWithoutScroll.x, -rootScroll.x)
-                            translateAxis(boxWithoutScroll.y, -rootScroll.y)
+                            translateAxis(
+                                boxWithoutScroll.x,
+                                -rootScroll.offset.x
+                            )
+                            translateAxis(
+                                boxWithoutScroll.y,
+                                -rootScroll.offset.y
+                            )
                         }
                     }
 
-                    translateAxis(boxWithoutScroll.x, scroll.x)
-                    translateAxis(boxWithoutScroll.y, scroll.y)
+                    translateAxis(boxWithoutScroll.x, scroll.offset.x)
+                    translateAxis(boxWithoutScroll.y, scroll.offset.y)
                 }
             }
 
@@ -834,8 +854,8 @@ export function createProjectionNode<I>({
                     node !== node.root
                 ) {
                     transformBox(withTransforms, {
-                        x: -node.scroll.x,
-                        y: -node.scroll.y,
+                        x: -node.scroll.offset.x,
+                        y: -node.scroll.offset.y,
                     })
                 }
 
