@@ -25,7 +25,7 @@ export type LayoutEvents =
     | "animationComplete"
 
 export interface IProjectionNode<I = unknown> {
-    id: number | undefined
+    elementId: number | undefined
     parent?: IProjectionNode
     relativeParent?: IProjectionNode
     root?: IProjectionNode
