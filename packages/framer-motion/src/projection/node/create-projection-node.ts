@@ -1,4 +1,4 @@
-import sync, { cancelSync, flushSync, Process } from "framesync"
+import sync, { cancelSync, flushSync, getFrameData, Process } from "framesync"
 import { mix } from "popmotion"
 import {
     animate,
@@ -54,6 +54,11 @@ const transformAxes = ["", "X", "Y", "Z"]
  * which has a noticeable difference in spring animations
  */
 const animationTarget = 1000
+
+/**
+ * A mutable state containing the latest animation frame timestamp.
+ */
+const frameData = getFrameData()
 
 let id = 0
 
@@ -754,6 +759,7 @@ export function createProjectionNode<I>({
             roundBox(layoutBox)
 
             return {
+                frameTimestamp: frameData.timestamp,
                 measuredBox: pageBox,
                 layoutBox,
                 latestValues: {},

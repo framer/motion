@@ -9,6 +9,7 @@ import { MotionStyle } from "../../motion/types"
 import type { VisualElement } from "../../render/VisualElement"
 
 export interface Measurements {
+    frameTimestamp: number
     measuredBox: Box
     layoutBox: Box
     latestValues: ResolvedValues
