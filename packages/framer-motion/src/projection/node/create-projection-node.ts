@@ -1441,7 +1441,7 @@ export function createProjectionNode<I>({
                 const key = "rotate" + transformAxes[i]
 
                 // Record the rotation and then temporarily set it to 0
-                if (latestValues[key] !== undefined) {
+                if (latestValues[key]) {
                     resetValues[key] = latestValues[key]
                     visualElement.setStaticValue(key, 0)
                 }
