@@ -16,6 +16,13 @@ export interface Measurements {
     source: number
 }
 
+export interface ScrollMeasurements {
+    frameTimestamp: number
+    isLockedToFrame: boolean
+    isRoot: boolean
+    offset: Point
+}
+
 export type LayoutEvents =
     | "willUpdate"
     | "didUpdate"
@@ -46,8 +53,7 @@ export interface IProjectionNode<I = unknown> {
     relativeTarget?: Box
     targetDelta?: Delta
     targetWithTransforms?: Box
-    scroll?: Point
-    isScrollRoot?: boolean
+    scroll?: ScrollMeasurements
     treeScale?: Point
     projectionDelta?: Delta
     projectionDeltaWithTransform?: Delta
@@ -70,7 +76,7 @@ export interface IProjectionNode<I = unknown> {
     updateLayout(): void
     updateSnapshot(): void
     clearSnapshot(): void
-    updateScroll(): void
+    updateScroll(lockToFrame?: boolean): void
     scheduleUpdateProjection(): void
     scheduleCheckAfterUnmount(): void
     checkUpdateFailed(): void
