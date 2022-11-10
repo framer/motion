@@ -55,6 +55,8 @@ const transformAxes = ["", "X", "Y", "Z"]
  */
 const animationTarget = 1000
 
+let id = 0
+
 export function createProjectionNode<I>({
     attachResizeListener,
     defaultParent,
@@ -65,6 +67,11 @@ export function createProjectionNode<I>({
     return class ProjectionNode implements IProjectionNode<I> {
         /**
          * A unique ID generated for every projection node.
+         */
+        id: number = id++
+
+        /**
+         * A unique ID generated for every projection element beyond the initial render.
          *
          * The projection tree's `didUpdate` function will be triggered by the first element
          * in the tree to run its layout effects. However, if there are elements entering the tree
@@ -333,8 +340,8 @@ export function createProjectionNode<I>({
 
         // Note: Currently only running on root node
         potentialNodes = new Map<number, IProjectionNode>()
-        registerPotentialNode(id: number, node: IProjectionNode) {
-            this.potentialNodes.set(id, node)
+        registerPotentialNode(elementId: number, node: IProjectionNode) {
+            this.potentialNodes.set(elementId, node)
         }
 
         /**
@@ -750,6 +757,7 @@ export function createProjectionNode<I>({
                 measuredBox: pageBox,
                 layoutBox,
                 latestValues: {},
+                source: this.id,
             }
         }
 
@@ -1148,7 +1156,8 @@ export function createProjectionNode<I>({
 
             const relativeLayout = createBox()
 
-            const isSharedLayoutAnimation = snapshot?.isShared
+            const isSharedLayoutAnimation =
+                snapshot?.source !== this.layout?.source
             const isOnlyMember = (this.getStack()?.members.length || 0) <= 1
             const shouldCrossfadeOpacity = Boolean(
                 isSharedLayoutAnimation &&
@@ -1599,11 +1608,13 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         const { layoutBox: layout, measuredBox: measuredLayout } = node.layout
         const { animationType } = node.options
 
+        const isShared = snapshot.source !== node.layout.source
+
         // TODO Maybe we want to also resize the layout snapshot so we don't trigger
         // animations for instance if layout="size" and an element has only changed position
         if (animationType === "size") {
             eachAxis((axis) => {
-                const axisSnapshot = snapshot.isShared
+                const axisSnapshot = isShared
                     ? snapshot.measuredBox[axis]
                     : snapshot.layoutBox[axis]
                 const length = calcLength(axisSnapshot)
@@ -1614,7 +1625,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
             shouldAnimatePositionOnly(animationType, snapshot.layoutBox, layout)
         ) {
             eachAxis((axis) => {
-                const axisSnapshot = snapshot.isShared
+                const axisSnapshot = isShared
                     ? snapshot.measuredBox[axis]
                     : snapshot.layoutBox[axis]
                 const length = calcLength(layout[axis])
@@ -1625,7 +1636,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         const layoutDelta = createDelta()
         calcBoxDelta(layoutDelta, layout, snapshot.layoutBox)
         const visualDelta = createDelta()
-        if (snapshot.isShared) {
+        if (isShared) {
             calcBoxDelta(
                 visualDelta,
                 node.applyTransform(measuredLayout, true),
@@ -1757,7 +1768,7 @@ const defaultLayoutTransition = {
     ease: [0.4, 0, 0.1, 1],
 }
 
-function mountNodeEarly(node: IProjectionNode, id: number) {
+function mountNodeEarly(node: IProjectionNode, elementId: number) {
     /**
      * Rather than searching the DOM from document we can search the
      * path for the deepest mounted ancestor and search from there
@@ -1773,7 +1784,7 @@ function mountNodeEarly(node: IProjectionNode, id: number) {
         searchNode && searchNode !== node.root ? searchNode.instance : document
 
     const element = (searchElement as Element).querySelector(
-        `[data-projection-id="${id}"]`
+        `[data-projection-id="${elementId}"]`
     )
     if (element) node.mount(element, true)
 }
