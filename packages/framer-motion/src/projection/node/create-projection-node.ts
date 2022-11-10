@@ -649,17 +649,8 @@ export function createProjectionNode<I>({
          */
         updateSnapshot() {
             if (this.snapshot || !this.instance) return
-            const measured = this.measure()!
-            const layout = this.removeTransform(
-                this.removeElementScroll(measured)
-            )
-            roundBox(layout)
 
-            this.snapshot = {
-                measuredBox: measured,
-                layoutBox: layout,
-                latestValues: {},
-            }
+            this.snapshot = this.measure()
         }
 
         updateLayout() {
@@ -689,16 +680,8 @@ export function createProjectionNode<I>({
                 }
             }
 
-            const measured = this.measure()
-
-            roundBox(measured)
-
             const prevLayout = this.layout
-            this.layout = {
-                measuredBox: measured,
-                layoutBox: this.removeElementScroll(measured),
-                latestValues: {},
-            }
+            this.layout = this.measure(false)
 
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
@@ -747,7 +730,30 @@ export function createProjectionNode<I>({
             }
         }
 
-        measure() {
+        measure(removeTransform = true) {
+            const pageBox = this.measurePageBox()
+
+            let layoutBox = this.removeElementScroll(pageBox)
+
+            /**
+             * Measurements taken during the pre-render stage
+             * still have transforms applied so we remove them
+             * via calculation.
+             */
+            if (removeTransform) {
+                layoutBox = this.removeTransform(layoutBox)
+            }
+
+            roundBox(layoutBox)
+
+            return {
+                measuredBox: pageBox,
+                layoutBox,
+                latestValues: {},
+            }
+        }
+
+        measurePageBox() {
             const { visualElement } = this.options
             if (!visualElement) return createBox()
 
@@ -842,7 +848,7 @@ export function createProjectionNode<I>({
                 hasScale(node.latestValues) && node.updateSnapshot()
 
                 const sourceBox = createBox()
-                const nodeBox = node.measure()
+                const nodeBox = node.measurePageBox()
                 copyBoxInto(sourceBox, nodeBox)
 
                 removeBoxTransforms(
