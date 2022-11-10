@@ -1438,8 +1438,7 @@ export function createProjectionNode<I>({
 
             // Check the rotate value of all axes and reset to 0
             for (let i = 0; i < transformAxes.length; i++) {
-                const axis = transformAxes[i]
-                const key = "rotate" + axis
+                const key = "rotate" + transformAxes[i]
 
                 // Record the rotation and then temporarily set it to 0
                 resetValues[key] = latestValues[key]
