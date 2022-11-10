@@ -773,7 +773,7 @@ export function createProjectionNode<I>({
 
             const box = visualElement.measureViewportBox()
 
-            // // Remove viewport scroll to give page-relative coordinates
+            // Remove viewport scroll to give page-relative coordinates
             const { scroll } = this.root
             if (scroll) {
                 translateAxis(box.x, scroll.x)
