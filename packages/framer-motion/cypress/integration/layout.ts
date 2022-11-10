@@ -88,7 +88,7 @@ describe("Layout animation", () => {
                 })
             })
             .trigger("click")
-            .wait(50)
+            .wait(100)
             .should(([$box]: any) => {
                 expectBbox($box, {
                     top: 100,
