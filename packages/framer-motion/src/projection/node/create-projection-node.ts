@@ -58,7 +58,7 @@ const animationTarget = 1000
 /**
  * A mutable state containing the latest animation frame timestamp.
  */
-const frameData = getFrameData()
+const frameState = getFrameData()
 
 let id = 0
 
@@ -759,7 +759,7 @@ export function createProjectionNode<I>({
             roundBox(layoutBox)
 
             return {
-                frameTimestamp: frameData.timestamp,
+                frameTimestamp: frameState.timestamp,
                 measuredBox: pageBox,
                 layoutBox,
                 latestValues: {},
