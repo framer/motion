@@ -9,16 +9,18 @@ import { MotionStyle } from "../../motion/types"
 import type { VisualElement } from "../../render/VisualElement"
 
 export interface Measurements {
-    frameTimestamp: number
+    animationId: number
     measuredBox: Box
     layoutBox: Box
     latestValues: ResolvedValues
     source: number
 }
 
+export type Phase = "snapshot" | "measure"
+
 export interface ScrollMeasurements {
-    frameTimestamp: number
-    isLockedToFrame: boolean
+    animationId: number
+    phase: Phase
     isRoot: boolean
     offset: Point
 }
@@ -35,6 +37,7 @@ export type LayoutEvents =
 export interface IProjectionNode<I = unknown> {
     id: number
     elementId: number | undefined
+    animationId: number
     parent?: IProjectionNode
     relativeParent?: IProjectionNode
     root?: IProjectionNode
@@ -76,7 +79,7 @@ export interface IProjectionNode<I = unknown> {
     updateLayout(): void
     updateSnapshot(): void
     clearSnapshot(): void
-    updateScroll(lockToFrame?: boolean): void
+    updateScroll(phase?: Phase): void
     scheduleUpdateProjection(): void
     scheduleCheckAfterUnmount(): void
     checkUpdateFailed(): void

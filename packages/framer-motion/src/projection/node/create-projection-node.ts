@@ -1,4 +1,4 @@
-import sync, { cancelSync, flushSync, getFrameData, Process } from "framesync"
+import sync, { cancelSync, flushSync, Process } from "framesync"
 import { mix } from "popmotion"
 import {
     animate,
@@ -40,6 +40,7 @@ import {
     ProjectionNodeOptions,
     Measurements,
     ScrollMeasurements,
+    Phase,
 } from "./types"
 import { FlatTree } from "../../render/utils/flat-tree"
 import { Transition } from "../../types"
@@ -55,11 +56,6 @@ const transformAxes = ["", "X", "Y", "Z"]
  * which has a noticeable difference in spring animations
  */
 const animationTarget = 1000
-
-/**
- * A mutable state containing the latest animation frame timestamp.
- */
-const frameState = getFrameData()
 
 let id = 0
 
@@ -87,6 +83,8 @@ export function createProjectionNode<I>({
          * these potential nodes with this id and hydrate the projetion node of the ones that were commited.
          */
         elementId: number | undefined
+
+        animationId: number = 0
 
         /**
          * A reference to the platform-native node (currently this will be a HTMLElement).
@@ -534,6 +532,7 @@ export function createProjectionNode<I>({
             if (this.isUpdateBlocked()) return
             this.isUpdating = true
             this.nodes?.forEach(resetRotation)
+            this.animationId++
         }
 
         willUpdate(shouldNotifyListeners = true) {
@@ -549,7 +548,7 @@ export function createProjectionNode<I>({
                 const node = this.path[i]
                 node.shouldResetTransform = true
 
-                node.updateScroll(false)
+                node.updateScroll("snapshot")
             }
 
             const { layoutId, layout } = this.options
@@ -705,23 +704,23 @@ export function createProjectionNode<I>({
             )
         }
 
-        updateScroll(lockToFrame = true) {
+        updateScroll(phase: Phase = "measure") {
             let needsMeasurement = Boolean(
                 this.options.layoutScroll && this.instance
             )
 
             if (
                 this.scroll &&
-                this.scroll.frameTimestamp === frameData.timestamp &&
-                this.scroll.isLockedToFrame === lockToFrame
+                this.scroll.animationId === this.root.animationId &&
+                this.scroll.phase === phase
             ) {
                 needsMeasurement = false
             }
 
             if (needsMeasurement) {
                 this.scroll = {
-                    frameTimestamp: frameData.timestamp,
-                    isLockedToFrame: lockToFrame,
+                    animationId: this.root.animationId,
+                    phase,
                     isRoot: checkIsScrollRoot(this.instance),
                     offset: measureScroll(this.instance),
                 }
@@ -773,7 +772,7 @@ export function createProjectionNode<I>({
             roundBox(layoutBox)
 
             return {
-                frameTimestamp: frameState.timestamp,
+                animationId: this.root.animationId,
                 measuredBox: pageBox,
                 layoutBox,
                 latestValues: {},
