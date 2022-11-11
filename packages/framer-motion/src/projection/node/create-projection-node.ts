@@ -84,6 +84,9 @@ export function createProjectionNode<I>({
          */
         elementId: number | undefined
 
+        /**
+         * An id that represents a unique session instigated by startUpdate.
+         */
         animationId: number = 0
 
         /**
