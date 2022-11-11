@@ -8,12 +8,15 @@ import { InitialPromotionConfig } from "../../context/SwitchLayoutGroupContext"
 import { MotionStyle } from "../../motion/types"
 import type { VisualElement } from "../../render/VisualElement"
 
+export type Position = "static" | "sticky" | "fixed"
+
 export interface Measurements {
     animationId: number
     measuredBox: Box
     layoutBox: Box
     latestValues: ResolvedValues
     source: number
+    position: Position
 }
 
 export type Phase = "snapshot" | "measure"
