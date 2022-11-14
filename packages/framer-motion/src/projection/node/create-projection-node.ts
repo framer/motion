@@ -539,6 +539,10 @@ export function createProjectionNode<I>({
             this.animationId++
         }
 
+        getTransformTemplate() {
+            return this.options.visualElement?.getProps().transformTemplate
+        }
+
         willUpdate(shouldNotifyListeners = true) {
             if (this.root.isUpdateBlocked()) {
                 this.options.onExitComplete?.()
@@ -558,9 +562,7 @@ export function createProjectionNode<I>({
             const { layoutId, layout } = this.options
             if (layoutId === undefined && !layout) return
 
-            const transformTemplate =
-                this.options.visualElement?.getProps().transformTemplate
-            this.prevTransformTemplateValue = transformTemplate?.(
+            this.prevTransformTemplateValue = this.getTransformTemplate()?.(
                 this.latestValues,
                 ""
             )
@@ -739,9 +741,7 @@ export function createProjectionNode<I>({
             const hasProjection =
                 this.projectionDelta && !isDeltaZero(this.projectionDelta)
 
-            const transformTemplate =
-                this.options.visualElement?.getProps().transformTemplate
-            const transformTemplateValue = transformTemplate?.(
+            const transformTemplateValue = this.getTransformTemplate()?.(
                 this.latestValues,
                 ""
             )
@@ -1503,8 +1503,7 @@ export function createProjectionNode<I>({
                 styles.visibility = ""
             }
 
-            const transformTemplate =
-                this.options.visualElement?.getProps().transformTemplate
+            const transformTemplate = this.getTransformTemplate()
 
             if (this.needsReset) {
                 this.needsReset = false
