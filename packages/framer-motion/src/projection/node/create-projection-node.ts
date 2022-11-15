@@ -21,16 +21,10 @@ import { createBox, createDelta } from "../geometry/models"
 import { transformBox, translateAxis } from "../geometry/delta-apply"
 import { Axis, AxisDelta, Box, Delta, Point } from "../geometry/types"
 import { getValueTransition } from "../../animation/utils/transitions"
-import {
-    aspectRatio,
-    boxEquals,
-    isCloseTo,
-    isDeltaZero,
-} from "../geometry/utils"
+import { boxEquals, isDeltaZero } from "../geometry/utils"
 import { NodeStack } from "../shared/stack"
 import { scaleCorrectors } from "../styles/scale-correction"
 import { buildProjectionTransform } from "../styles/transform"
-import { eachAxis } from "../utils/each-axis"
 import { has2DTranslate, hasScale, hasTransform } from "../utils/has-transform"
 import {
     IProjectionNode,
@@ -49,6 +43,10 @@ import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { MotionStyle } from "../../motion/types"
 import { globalProjectionState } from "./state"
 import { delay } from "../../utils/delay"
+import {
+    calcSnapshotDelta,
+    shouldAnimatePositionOnly,
+} from "../geometry/delta-snapshot"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -123,7 +121,7 @@ export function createProjectionNode<I>({
          * Options for the node. We use this to configure what kind of layout animations
          * we should perform (if any).
          */
-        options: ProjectionNodeOptions = {}
+        options: ProjectionNodeOptions = {} as any
 
         /**
          * A snapshot of the element's state just before the current update. This is
@@ -168,16 +166,9 @@ export function createProjectionNode<I>({
         target?: Box
 
         /**
-         * A mutable structure describing a visual bounding box relative to the element's
-         * projected parent. If defined, target will be derived from this rather than targetDelta.
-         * If not defined, we'll attempt to calculate on the first layout animation frame
-         * based on the targets calculated from targetDelta. This will transfer a layout animation
-         * from viewport-relative to parent-relative.
+         *
          */
-        relativeTarget?: Box
-
-        relativeTargetOrigin?: Box
-        relativeParent?: IProjectionNode
+        relativeLayout: RelativeMeasurements
 
         /**
          * We use this to detect when its safe to shut down part of a projection tree.
@@ -187,11 +178,6 @@ export function createProjectionNode<I>({
         isTreeAnimating = false
 
         isAnimationBlocked = false
-
-        /**
-         * If true, attempt to resolve relativeTarget.
-         */
-        attemptToResolveRelativeTarget?: boolean
 
         /**
          * A mutable structure that represents the target as transformed by the element's
@@ -543,6 +529,11 @@ export function createProjectionNode<I>({
             return this.options.visualElement?.getProps().transformTemplate
         }
 
+        isAnimatingLayout() {
+            const { layoutId, layout } = this.options
+            return layout || layoutId !== undefined
+        }
+
         willUpdate(shouldNotifyListeners = true) {
             if (this.root.isUpdateBlocked()) {
                 this.options.onExitComplete?.()
@@ -555,12 +546,10 @@ export function createProjectionNode<I>({
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
                 node.shouldResetTransform = true
-
                 node.updateScroll("snapshot")
             }
 
-            const { layoutId, layout } = this.options
-            if (layoutId === undefined && !layout) return
+            if (!this.isAnimatingLayout()) return
 
             this.prevTransformTemplateValue = this.getTransformTemplate()?.(
                 this.latestValues,
@@ -568,6 +557,7 @@ export function createProjectionNode<I>({
             )
 
             this.updateSnapshot()
+
             shouldNotifyListeners && this.notifyListeners("willUpdate")
         }
 
@@ -608,10 +598,12 @@ export function createProjectionNode<I>({
              * Read ==================
              */
             // Update layout measurements of updated children
-            this.nodes!.forEach(updateLayout)
+            this.nodes!.forEach(prepareAnimation)
 
             /**
              * Write
+             *
+             * Op: Consolidate these loops
              */
             // Notify listeners that the layout is updated
             this.nodes!.forEach(notifyLayoutUpdate)
@@ -671,7 +663,6 @@ export function createProjectionNode<I>({
         updateLayout() {
             if (!this.instance) return
 
-            // TODO: Incorporate into a forwarded scroll offset
             this.updateScroll()
 
             if (
@@ -687,13 +678,16 @@ export function createProjectionNode<I>({
              * might have updated while the prevLead is unmounted. We need to
              * update the scroll again to make sure the layout we measure is
              * up to date.
+             *
+             * TODO: Removing this for now because you'd think this would happen at
+             * the top of this func
              */
-            if (this.resumeFrom && !this.resumeFrom.instance) {
-                for (let i = 0; i < this.path.length; i++) {
-                    const node = this.path[i]
-                    node.updateScroll()
-                }
-            }
+            // if (this.resumeFrom && !this.resumeFrom.instance) {
+            //     for (let i = 0; i < this.path.length; i++) {
+            //         const node = this.path[i]
+            //         node.updateScroll()
+            //     }
+            // }
 
             const prevLayout = this.layout
             this.layout = this.measure(false)
@@ -701,13 +695,26 @@ export function createProjectionNode<I>({
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
             this.projectionDelta = undefined
-            this.notifyListeners("measure", this.layout.layoutBox)
 
-            this.options.visualElement?.notify(
+            /**
+             * Op: Consolidate listeners so all events are applied
+             * to and dispatched from visualElement
+             *
+             * TODO: Make breaking change for listeners to accept
+             * full Measurements type now that layoutBox doesn't
+             * have treeScroll applied by default.
+             */
+            this.notifyListeners("measure", this.layout.layoutBox)
+            this.options.visualElement.notify(
                 "LayoutMeasure",
                 this.layout.layoutBox,
                 prevLayout?.layoutBox
             )
+        }
+
+        resolveRelativeLayout() {
+            if (!this.parent) {
+            }
         }
 
         updateScroll(phase: Phase = "measure") {
@@ -759,24 +766,61 @@ export function createProjectionNode<I>({
             }
         }
 
+        /**
+         * TODO: Clearly broken the removeTransform part of this
+         */
         measure(removeTransform = true) {
-            const pageBox = this.measurePageBox()
+            const { visualElement } = this.options
+            const viewportBox = visualElement.measureViewportBox()
+            const layoutBox = createBox()
+            copyBoxInto(layoutBox, viewportBox)
 
-            let layoutBox = this.removeElementScroll(pageBox)
+            const treeScroll = { x: 0, y: 0 }
 
-            /**
-             * Measurements taken during the pre-render stage
-             * still have transforms applied so we remove them
-             * via calculation.
-             */
-            if (removeTransform) {
-                layoutBox = this.removeTransform(layoutBox)
+            for (let i = 0; i < this.path.length; i++) {
+                const node = this.path[i]
+                if (!node.instance) continue
+                const { scroll } = node
+
+                /**
+                 * If this element has a scroll offset, apply it to the
+                 * offsets currently acting on the element when this
+                 * measurement was taken.
+                 *
+                 * Op: We already loop through ancestors updating
+                 * scroll. Perhaps we can move this there and then
+                 * only run this loop of removeTransform === true
+                 */
+                if (scroll) {
+                    treeScroll.x += scroll.offset.x
+                    treeScroll.y += scroll.offset.y
+                }
+
+                if (removeTransform && hasTransform(node.latestValues)) {
+                    /**
+                     * If this ancestor has a transform, we need to resolve
+                     * a snapshot so we can measure the originPoint
+                     * that this is being applied to.
+                     *
+                     * Op: Is there a way of doing this without measuring
+                     * the element?
+                     */
+                    node.updateSnapshot()
+
+                    removeBoxTransforms(
+                        layoutBox,
+                        node.latestValues,
+                        node.snapshot!.layoutBox,
+                        node.snapshot!.viewportBox
+                    )
+                }
             }
 
-            roundBox(layoutBox)
+            if (removeTransform && hasTransform(this.latestValues)) {
+                removeBoxTransforms(layoutBox, this.latestValues)
+            }
 
-            const positionStyle =
-                this.options.visualElement?.readValue("position")
+            const positionStyle = visualElement?.readValue("position")
             const position: Position =
                 positionStyle === "fixed" || positionStyle === "sticky"
                     ? positionStyle
@@ -784,8 +828,9 @@ export function createProjectionNode<I>({
 
             return {
                 animationId: this.root.animationId,
-                measuredBox: pageBox,
+                viewportBox,
                 layoutBox,
+                treeScroll,
                 latestValues: {},
                 source: this.id,
                 position,
@@ -806,50 +851,6 @@ export function createProjectionNode<I>({
             }
 
             return box
-        }
-
-        removeElementScroll(box: Box): Box {
-            const boxWithoutScroll = createBox()
-            copyBoxInto(boxWithoutScroll, box)
-
-            /**
-             * Performance TODO: Keep a cumulative scroll offset down the tree
-             * rather than loop back up the path.
-             */
-            for (let i = 0; i < this.path.length; i++) {
-                const node = this.path[i]
-                const { scroll, options } = node
-
-                if (node !== this.root && scroll && options.layoutScroll) {
-                    /**
-                     * If this is a new scroll root, we want to remove all previous scrolls
-                     * from the viewport box.
-                     */
-                    if (scroll.isRoot) {
-                        copyBoxInto(boxWithoutScroll, box)
-                        const { scroll: rootScroll } = this.root
-                        /**
-                         * Undo the application of page scroll that was originally added
-                         * to the measured bounding box.
-                         */
-                        if (rootScroll) {
-                            translateAxis(
-                                boxWithoutScroll.x,
-                                -rootScroll.offset.x
-                            )
-                            translateAxis(
-                                boxWithoutScroll.y,
-                                -rootScroll.offset.y
-                            )
-                        }
-                    }
-
-                    translateAxis(boxWithoutScroll.x, scroll.offset.x)
-                    translateAxis(boxWithoutScroll.y, scroll.offset.y)
-                }
-            }
-
-            return boxWithoutScroll
         }
 
         applyTransform(box: Box, transformOnly = false): Box {
@@ -881,36 +882,6 @@ export function createProjectionNode<I>({
             return withTransforms
         }
 
-        removeTransform(box: Box): Box {
-            const boxWithoutTransform = createBox()
-            copyBoxInto(boxWithoutTransform, box)
-
-            for (let i = 0; i < this.path.length; i++) {
-                const node = this.path[i]
-                if (!node.instance) continue
-                if (!hasTransform(node.latestValues)) continue
-
-                hasScale(node.latestValues) && node.updateSnapshot()
-
-                const sourceBox = createBox()
-                const nodeBox = node.measurePageBox()
-                copyBoxInto(sourceBox, nodeBox)
-
-                removeBoxTransforms(
-                    boxWithoutTransform,
-                    node.latestValues,
-                    node.snapshot?.layoutBox,
-                    sourceBox
-                )
-            }
-
-            if (hasTransform(this.latestValues)) {
-                removeBoxTransforms(boxWithoutTransform, this.latestValues)
-            }
-
-            return boxWithoutTransform
-        }
-
         /**
          *
          */
@@ -919,7 +890,7 @@ export function createProjectionNode<I>({
             this.root.scheduleUpdateProjection()
         }
 
-        setOptions(options: ProjectionNodeOptions) {
+        setOptions(options: Partial<ProjectionNodeOptions>) {
             this.options = {
                 ...this.options,
                 ...options,
@@ -1634,104 +1605,24 @@ export function createProjectionNode<I>({
     }
 }
 
-function updateLayout(node: IProjectionNode) {
+function prepareAnimation(node: IProjectionNode) {
     node.updateLayout()
+    node.resolveRelativeLayout()
 }
 
 function notifyLayoutUpdate(node: IProjectionNode) {
-    const snapshot = node.resumeFrom?.snapshot || node.snapshot
+    const { snapshot } = node.resumeFrom || node
 
     if (
+        snapshot &&
         node.isLead() &&
         node.layout &&
-        snapshot &&
         node.hasListeners("didUpdate")
     ) {
-        const { layoutBox: layout, measuredBox: measuredLayout } = node.layout
-        const { animationType } = node.options
-
-        const isShared = snapshot.source !== node.layout.source
-
-        // TODO Maybe we want to also resize the layout snapshot so we don't trigger
-        // animations for instance if layout="size" and an element has only changed position
-        if (animationType === "size") {
-            eachAxis((axis) => {
-                const axisSnapshot = isShared
-                    ? snapshot.measuredBox[axis]
-                    : snapshot.layoutBox[axis]
-                const length = calcLength(axisSnapshot)
-                axisSnapshot.min = layout[axis].min
-                axisSnapshot.max = axisSnapshot.min + length
-            })
-        } else if (
-            shouldAnimatePositionOnly(animationType, snapshot.layoutBox, layout)
-        ) {
-            eachAxis((axis) => {
-                const axisSnapshot = isShared
-                    ? snapshot.measuredBox[axis]
-                    : snapshot.layoutBox[axis]
-                const length = calcLength(layout[axis])
-                axisSnapshot.max = axisSnapshot.min + length
-            })
-        }
-
-        const layoutDelta = createDelta()
-        calcBoxDelta(layoutDelta, layout, snapshot.layoutBox)
-        const visualDelta = createDelta()
-        if (isShared) {
-            calcBoxDelta(
-                visualDelta,
-                node.applyTransform(measuredLayout, true),
-                snapshot.measuredBox
-            )
-        } else {
-            calcBoxDelta(visualDelta, layout, snapshot.layoutBox)
-        }
-
-        const hasLayoutChanged = !isDeltaZero(layoutDelta)
-        let hasRelativeTargetChanged = false
-
-        if (!node.resumeFrom) {
-            const relativeParent = node.getClosestProjectingParent()
-
-            /**
-             * If the relativeParent is itself resuming from a different element then
-             * the relative snapshot is not relavent
-             */
-            if (relativeParent && !relativeParent.resumeFrom) {
-                const { snapshot: parentSnapshot, layout: parentLayout } =
-                    relativeParent
-
-                if (parentSnapshot && parentLayout) {
-                    const relativeSnapshot = createBox()
-                    calcRelativePosition(
-                        relativeSnapshot,
-                        snapshot.layoutBox,
-                        parentSnapshot.layoutBox
-                    )
-
-                    const relativeLayout = createBox()
-                    calcRelativePosition(
-                        relativeLayout,
-                        layout,
-                        parentLayout.layoutBox
-                    )
-
-                    if (!boxEquals(relativeSnapshot, relativeLayout)) {
-                        hasRelativeTargetChanged = true
-                    }
-                }
-            }
-        }
-
-        node.notifyListeners("didUpdate", {
-            layout,
-            snapshot,
-            delta: visualDelta,
-            layoutDelta,
-            hasLayoutChanged,
-            hasRelativeTargetChanged,
-        })
+        node.notifyListeners(
+            "didUpdate",
+            calcSnapshotDelta(snapshot, node.layout, node.options.animationType)
+        )
     } else if (node.isLead()) {
         node.options.onExitComplete?.()
     }
@@ -1753,11 +1644,7 @@ function clearMeasurements(node: IProjectionNode) {
 }
 
 function resetTransformStyle(node: IProjectionNode) {
-    const { visualElement } = node.options
-    if (visualElement?.getProps().onBeforeLayoutMeasure) {
-        visualElement.notify("BeforeLayoutMeasure")
-    }
-
+    node.options.visualElement.notify("BeforeLayoutMeasure")
     node.resetTransform()
 }
 
@@ -1831,24 +1718,12 @@ function mountNodeEarly(node: IProjectionNode, elementId: number) {
     if (element) node.mount(element, true)
 }
 
-function roundAxis(axis: Axis): void {
-    axis.min = Math.round(axis.min)
-    axis.max = Math.round(axis.max)
-}
+// function roundAxis(axis: Axis): void {
+//     axis.min = Math.round(axis.min)
+//     axis.max = Math.round(axis.max)
+// }
 
-function roundBox(box: Box): void {
-    roundAxis(box.x)
-    roundAxis(box.y)
-}
-
-function shouldAnimatePositionOnly(
-    animationType: string | undefined,
-    snapshot: Box,
-    layout: Box
-) {
-    return (
-        animationType === "position" ||
-        (animationType === "preserve-aspect" &&
-            !isCloseTo(aspectRatio(snapshot), aspectRatio(layout), 0.2))
-    )
-}
+// function roundBox(box: Box): void {
+//     roundAxis(box.x)
+//     roundAxis(box.y)
+// }

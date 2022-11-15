@@ -12,11 +12,16 @@ export type Position = "static" | "sticky" | "fixed"
 
 export interface Measurements {
     animationId: number
-    measuredBox: Box
+    viewportBox: Box
     layoutBox: Box
     latestValues: ResolvedValues
+    treeScroll: Point
     source: number
     position: Position
+}
+
+export interface RelativeMeasurements {
+    box: Box
 }
 
 export type Phase = "snapshot" | "measure"
@@ -104,6 +109,7 @@ export interface IProjectionNode<I = unknown> {
     resolveTargetDelta(): void
     calcProjection(): void
     getProjectionStyles(styles?: MotionStyle): MotionStyle | undefined
+    resolveRelativeLayout(): void
     clearMeasurements(): void
     resetTree(): void
 
@@ -166,7 +172,7 @@ export interface ProjectionNodeOptions {
     animationType?: "size" | "position" | "both" | "preserve-aspect"
     layoutId?: string
     layout?: boolean | string
-    visualElement?: VisualElement
+    visualElement: VisualElement
     crossfade?: boolean
     transition?: Transition
     initialPromotionConfig?: InitialPromotionConfig
