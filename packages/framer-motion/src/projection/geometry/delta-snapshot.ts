@@ -1,6 +1,6 @@
 import { Measurements, ProjectionNodeOptions } from "../node/types"
 import { eachAxis } from "../utils/each-axis"
-import { calcLength } from "./delta-calc"
+import { calcBoxDelta, calcLength } from "./delta-calc"
 import { createDelta } from "./models"
 import { Box } from "./types"
 import { aspectRatio, isCloseTo } from "./utils"
@@ -58,6 +58,11 @@ export function calcSnapshotDelta(
     resizeSnapshot(snapshot, layout, animationType, isShared)
 
     const delta = createDelta()
+
+    if (snapshot.relative && layout.relative) {
+        console.log(layout.relative.box, snapshot.relative.box)
+        calcBoxDelta(delta, layout.relative.box, snapshot.relative.box)
+    }
 
     return delta
 }

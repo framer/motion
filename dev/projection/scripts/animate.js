@@ -1,4 +1,4 @@
-Undo = {}
+Animate = {}
 
 const {
     HTMLProjectionNode,
@@ -29,7 +29,12 @@ addScaleCorrector({
 })
 
 let id = 1
-Undo.createNode = (element, parent, options = {}, overrideId) => {
+Animate.createNode = (
+    element,
+    parent,
+    options = {},
+    transition = { duration: 10, ease: () => 0.5 }
+) => {
     const latestValues = {}
     const visualElement = new HTMLVisualElement({
         visualState: {
@@ -51,31 +56,26 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
     }
 
     id++
-    const node = new HTMLProjectionNode(overrideId || id, latestValues, parent)
+    const node = new HTMLProjectionNode(id, latestValues, parent)
 
     node.setOptions({
-        animate: false,
         scheduleRender: scheduleRender,
-        layout: true,
         visualElement,
+        layout: true,
         ...options,
     })
-    visualElement.projection = node
 
-    if (!overrideId) {
-        console.log("mounting")
-        node.mount(element)
-        visualElement.projection = node
-    }
+    node.mount(element)
+    visualElement.projection = node
 
     node.addEventListener("didUpdate", ({ delta, hasLayoutChanged }) => {
         if (node.resumeFrom) {
             node.resumingFrom = node.resumeFrom
             node.resumingFrom.resumingFrom = undefined
         }
-        // hasLayoutChanged && // or existing delta is not nothing - this needs to be reinstated to fix breaking tests
-        if ((node.resumeFrom && node.resumeFrom.instance) || hasLayoutChanged) {
+        if (hasLayoutChanged) {
             node.setAnimationOrigin(delta)
+            node.startAnimation(transition)
         }
     })
 
@@ -89,4 +89,16 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
     return node
 }
 
-window.Undo = Undo
+Animate.relativeEase = () => {
+    let frame = 0
+    return () => {
+        frame++
+        // one frame for the first synchronous call of mixTargetDelta at the very start,
+        // don't lock it to 0.5 otherwise the relative boxes can't be measure correctly.
+        // Then the first animation frame when we resolve relative delta,
+        // and then finally the first relative frame.
+        return frame >= 2 ? 0.5 : 0
+    }
+}
+
+window.Animate = Animate

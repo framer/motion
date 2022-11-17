@@ -6,9 +6,14 @@
                 margin: 0;
             }
 
-            #box {
+            #position {
                 width: 100px;
                 height: 100px;
+            }
+
+            #box {
+                width: 200px;
+                height: 200px;
                 background-color: #00cc88;
             }
 
@@ -19,9 +24,9 @@
             }
 
             #box.b {
-                width: 200px;
+                width: 300px;
                 position: absolute;
-                top: 100px;
+                top: 200px;
                 left: 200px;
                 padding: 20px;
             }
@@ -41,21 +46,27 @@
         </style>
     </head>
     <body>
-        <div id="box" data-layout-correct="true"></div>
+        <div id="position"></div>
+        <div id="box"></div>
         <div id="trigger-overflow"></div>
 
-        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
-        <script src="./script-assert.js"></script>
-        <script src="./script-undo.js"></script>
+        <script src="../../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="../scripts/assert.js"></script>
+        <script src="../scripts/undo.js"></script>
         <script>
             const { createNode } = window.Undo
             const { matchViewportBox } = window.Assert
             const box = document.getElementById("box")
             const boxProjection = createNode(box)
 
+            const scrollOffset = [50, 100]
+            window.scrollTo(...scrollOffset)
+
             const boxOrigin = box.getBoundingClientRect()
 
             boxProjection.willUpdate()
+
+            box.classList.add("b")
 
             boxProjection.root.didUpdate()
 

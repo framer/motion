@@ -121,7 +121,7 @@ export function createProjectionNode<I>({
          * Options for the node. We use this to configure what kind of layout animations
          * we should perform (if any).
          */
-        options: ProjectionNodeOptions = {} as any
+        options: ProjectionNodeOptions = {}
 
         /**
          * A snapshot of the element's state just before the current update. This is
@@ -391,98 +391,93 @@ export function createProjectionNode<I>({
                 visualElement &&
                 (layoutId || layout)
             ) {
-                this.addEventListener(
-                    "didUpdate",
-                    ({
-                        delta,
-                        hasLayoutChanged,
-                        hasRelativeTargetChanged,
-                        layout: newLayout,
-                    }: LayoutUpdateData) => {
-                        if (this.isTreeAnimationBlocked()) {
-                            this.target = undefined
-                            this.relativeTarget = undefined
-                            return
-                        }
-
-                        // TODO: Check here if an animation exists
-                        const layoutTransition =
-                            this.options.transition ??
-                            visualElement.getDefaultTransition() ??
-                            defaultLayoutTransition
-
-                        const {
-                            onLayoutAnimationStart,
-                            onLayoutAnimationComplete,
-                        } = visualElement.getProps()
-
-                        /**
-                         * The target layout of the element might stay the same,
-                         * but its position relative to its parent has changed.
-                         */
-                        const targetChanged =
-                            !this.targetLayout ||
-                            !boxEquals(this.targetLayout, newLayout) ||
-                            hasRelativeTargetChanged
-
-                        /**
-                         * If the layout hasn't seemed to have changed, it might be that the
-                         * element is visually in the same place in the document but its position
-                         * relative to its parent has indeed changed. So here we check for that.
-                         */
-                        const hasOnlyRelativeTargetChanged =
-                            !hasLayoutChanged && hasRelativeTargetChanged
-
-                        if (
-                            this.resumeFrom?.instance ||
-                            hasOnlyRelativeTargetChanged ||
-                            (hasLayoutChanged &&
-                                (targetChanged || !this.currentAnimation))
-                        ) {
-                            if (this.resumeFrom) {
-                                this.resumingFrom = this.resumeFrom
-                                this.resumingFrom.resumingFrom = undefined
-                            }
-
-                            this.setAnimationOrigin(
-                                delta,
-                                hasOnlyRelativeTargetChanged
-                            )
-
-                            const animationOptions = {
-                                ...getValueTransition(
-                                    layoutTransition,
-                                    "layout"
-                                ),
-                                onPlay: onLayoutAnimationStart,
-                                onComplete: onLayoutAnimationComplete,
-                            }
-
-                            if (visualElement.shouldReduceMotion) {
-                                animationOptions.delay = 0
-                                animationOptions.type = false
-                            }
-
-                            this.startAnimation(animationOptions)
-                        } else {
-                            /**
-                             * If the layout hasn't changed and we have an animation that hasn't started yet,
-                             * finish it immediately. Otherwise it will be animating from a location
-                             * that was probably never commited to screen and look like a jumpy box.
-                             */
-                            if (
-                                !hasLayoutChanged &&
-                                this.animationProgress === 0
-                            ) {
-                                finishAnimation(this)
-                            }
-
-                            this.isLead() && this.options.onExitComplete?.()
-                        }
-
-                        this.targetLayout = newLayout
+                this.addEventListener("didUpdate", (delta: Delta) => {
+                    if (this.isTreeAnimationBlocked()) {
+                        this.target = undefined
+                        return
                     }
-                )
+
+                    if (!isDeltaZero(delta)) {
+                        this.setAnimationOrigin(delta)
+                    }
+
+                    //     // TODO: Check here if an animation exists
+                    //     const layoutTransition =
+                    //         this.options.transition ??
+                    //         visualElement.getDefaultTransition() ??
+                    //         defaultLayoutTransition
+
+                    //     const {
+                    //         onLayoutAnimationStart,
+                    //         onLayoutAnimationComplete,
+                    //     } = visualElement.getProps()
+
+                    //     /**
+                    //      * The target layout of the element might stay the same,
+                    //      * but its position relative to its parent has changed.
+                    //      */
+                    //     const targetChanged =
+                    //         !this.targetLayout ||
+                    //         !boxEquals(this.targetLayout, newLayout) ||
+                    //         hasRelativeTargetChanged
+
+                    //     /**
+                    //      * If the layout hasn't seemed to have changed, it might be that the
+                    //      * element is visually in the same place in the document but its position
+                    //      * relative to its parent has indeed changed. So here we check for that.
+                    //      */
+                    //     const hasOnlyRelativeTargetChanged =
+                    //         !hasLayoutChanged && hasRelativeTargetChanged
+
+                    //     if (
+                    //         this.resumeFrom?.instance ||
+                    //         hasOnlyRelativeTargetChanged ||
+                    //         (hasLayoutChanged &&
+                    //             (targetChanged || !this.currentAnimation))
+                    //     ) {
+                    //         if (this.resumeFrom) {
+                    //             this.resumingFrom = this.resumeFrom
+                    //             this.resumingFrom.resumingFrom = undefined
+                    //         }
+
+                    //         this.setAnimationOrigin(
+                    //             delta,
+                    //             hasOnlyRelativeTargetChanged
+                    //         )
+
+                    //         const animationOptions = {
+                    //             ...getValueTransition(
+                    //                 layoutTransition,
+                    //                 "layout"
+                    //             ),
+                    //             onPlay: onLayoutAnimationStart,
+                    //             onComplete: onLayoutAnimationComplete,
+                    //         }
+
+                    //         if (visualElement.shouldReduceMotion) {
+                    //             animationOptions.delay = 0
+                    //             animationOptions.type = false
+                    //         }
+
+                    //         this.startAnimation(animationOptions)
+                    //     } else {
+                    //         /**
+                    //          * If the layout hasn't changed and we have an animation that hasn't started yet,
+                    //          * finish it immediately. Otherwise it will be animating from a location
+                    //          * that was probably never commited to screen and look like a jumpy box.
+                    //          */
+                    //         if (
+                    //             !hasLayoutChanged &&
+                    //             this.animationProgress === 0
+                    //         ) {
+                    //             finishAnimation(this)
+                    //         }
+
+                    //         this.isLead() && this.options.onExitComplete?.()
+                    //     }
+
+                    //     this.targetLayout = newLayout
+                })
             }
         }
 
@@ -539,6 +534,7 @@ export function createProjectionNode<I>({
                 this.options.onExitComplete?.()
                 return
             }
+
             !this.root.isUpdating && this.root.startUpdate()
             if (this.isLayoutDirty) return
 
@@ -598,7 +594,7 @@ export function createProjectionNode<I>({
              * Read ==================
              */
             // Update layout measurements of updated children
-            this.nodes!.forEach(prepareAnimation)
+            this.nodes!.forEach(updateLayout)
 
             /**
              * Write
@@ -646,10 +642,7 @@ export function createProjectionNode<I>({
             }
         }
 
-        updateProjection = () => {
-            this.nodes!.forEach(resolveTargetDelta)
-            this.nodes!.forEach(calcProjection)
-        }
+        updateProjection = () => this.nodes!.forEach(updateNodeProjection)
 
         /**
          * Update measurements
@@ -658,16 +651,17 @@ export function createProjectionNode<I>({
             if (this.snapshot || !this.instance) return
 
             this.snapshot = this.measure()
+
+            console.log(this.snapshot)
         }
 
         updateLayout() {
-            if (!this.instance) return
-
             this.updateScroll()
 
             if (
-                !(this.options.alwaysMeasureLayout && this.isLead()) &&
-                !this.isLayoutDirty
+                !this.instance ||
+                (!(this.options.alwaysMeasureLayout && this.isLead()) &&
+                    !this.isLayoutDirty)
             ) {
                 return
             }
@@ -692,6 +686,8 @@ export function createProjectionNode<I>({
             const prevLayout = this.layout
             this.layout = this.measure(false)
 
+            console.log(this.layout)
+
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
             this.projectionDelta = undefined
@@ -705,15 +701,54 @@ export function createProjectionNode<I>({
              * have treeScroll applied by default.
              */
             this.notifyListeners("measure", this.layout.layoutBox)
-            this.options.visualElement.notify(
+            this.options.visualElement?.notify(
                 "LayoutMeasure",
                 this.layout.layoutBox,
                 prevLayout?.layoutBox
             )
         }
 
-        resolveRelativeLayout() {
-            if (!this.parent) {
+        resolveRelativeLayout(
+            measurements: Measurements,
+            parentMeasurements?: Measurements
+        ) {
+            /**
+             * If this is position fixed, create new scroll root
+             */
+            if (measurements.position === "fixed") {
+                measurements.relative = {
+                    to: "viewport",
+                    box: measurements.layoutBox,
+                }
+
+                /**
+                 * If this is the first direct child, measure relative to page root
+                 * TODO: This can be combinaed with the next clause if we keep scroll
+                 * as a layout measurement
+                 */
+            } else if (this.parent === this.root && this.root.scroll) {
+                const relativeBox = createBox()
+                copyBoxInto(relativeBox, measurements.layoutBox)
+                translateAxis(relativeBox.x, measurements.treeScroll.x)
+                translateAxis(relativeBox.y, measurements.treeScroll.y)
+                measurements.relative = {
+                    to: this.root,
+                    box: relativeBox,
+                }
+                /**
+                 * Else measure relative to parent
+                 */
+            } else if (parentMeasurements) {
+                const relativeBox = createBox()
+                calcRelativeBox(
+                    relativeBox,
+                    measurements.layoutBox,
+                    parentMeasurements.layoutBox
+                )
+                measurements.relative = {
+                    to: this.parent,
+                    box: relativeBox,
+                }
             }
         }
 
@@ -912,114 +947,114 @@ export function createProjectionNode<I>({
         /**
          * Frame calculations
          */
-        resolveTargetDelta() {
-            const { layout, layoutId } = this.options
+        // resolveTargetDelta() {
+        //     const { layout, layoutId } = this.options
 
-            /**
-             * If we have no layout, we can't perform projection, so early return
-             */
-            if (!this.layout || !(layout || layoutId)) return
+        //     /**
+        //      * If we have no layout, we can't perform projection, so early return
+        //      */
+        //     if (!this.layout || !(layout || layoutId)) return
 
-            /**
-             * If we don't have a targetDelta but do have a layout, we can attempt to resolve
-             * a relativeParent. This will allow a component to perform scale correction
-             * even if no animation has started.
-             */
-            // TODO If this is unsuccessful this currently happens every frame
-            if (!this.targetDelta && !this.relativeTarget) {
-                // TODO: This is a semi-repetition of further down this function, make DRY
-                const relativeParent = this.getClosestProjectingParent()
-                if (relativeParent && relativeParent.layout) {
-                    this.relativeParent = relativeParent
-                    this.relativeTarget = createBox()
-                    this.relativeTargetOrigin = createBox()
-                    calcRelativePosition(
-                        this.relativeTargetOrigin,
-                        this.layout.layoutBox,
-                        relativeParent.layout.layoutBox
-                    )
-                    copyBoxInto(this.relativeTarget, this.relativeTargetOrigin)
-                } else {
-                    this.relativeParent = this.relativeTarget = undefined
-                }
-            }
+        //     /**
+        //      * If we don't have a targetDelta but do have a layout, we can attempt to resolve
+        //      * a relativeParent. This will allow a component to perform scale correction
+        //      * even if no animation has started.
+        //      */
+        //     // TODO If this is unsuccessful this currently happens every frame
+        //     if (!this.targetDelta && !this.relativeTarget) {
+        //         // TODO: This is a semi-repetition of further down this function, make DRY
+        //         const relativeParent = this.getClosestProjectingParent()
+        //         if (relativeParent && relativeParent.layout) {
+        //             this.relativeParent = relativeParent
+        //             this.relativeTarget = createBox()
+        //             this.relativeTargetOrigin = createBox()
+        //             calcRelativePosition(
+        //                 this.relativeTargetOrigin,
+        //                 this.layout.layoutBox,
+        //                 relativeParent.layout.layoutBox
+        //             )
+        //             copyBoxInto(this.relativeTarget, this.relativeTargetOrigin)
+        //         } else {
+        //             this.relativeParent = this.relativeTarget = undefined
+        //         }
+        //     }
 
-            /**
-             * If we have no relative target or no target delta our target isn't valid
-             * for this frame.
-             */
-            if (!this.relativeTarget && !this.targetDelta) return
+        //     /**
+        //      * If we have no relative target or no target delta our target isn't valid
+        //      * for this frame.
+        //      */
+        //     if (!this.relativeTarget && !this.targetDelta) return
 
-            /**
-             * Lazy-init target data structure
-             */
-            if (!this.target) {
-                this.target = createBox()
-                this.targetWithTransforms = createBox()
-            }
+        //     /**
+        //      * Lazy-init target data structure
+        //      */
+        //     if (!this.target) {
+        //         this.target = createBox()
+        //         this.targetWithTransforms = createBox()
+        //     }
 
-            /**
-             * If we've got a relative box for this component, resolve it into a target relative to the parent.
-             */
-            if (
-                this.relativeTarget &&
-                this.relativeTargetOrigin &&
-                this.relativeParent?.target
-            ) {
-                calcRelativeBox(
-                    this.target,
-                    this.relativeTarget,
-                    this.relativeParent.target
-                )
+        //     /**
+        //      * If we've got a relative box for this component, resolve it into a target relative to the parent.
+        //      */
+        //     if (
+        //         this.relativeTarget &&
+        //         this.relativeTargetOrigin &&
+        //         this.relativeParent?.target
+        //     ) {
+        //         calcRelativeBox(
+        //             this.target,
+        //             this.relativeTarget,
+        //             this.relativeParent.target
+        //         )
 
-                /**
-                 * If we've only got a targetDelta, resolve it into a target
-                 */
-            } else if (this.targetDelta) {
-                if (Boolean(this.resumingFrom)) {
-                    // TODO: This is creating a new object every frame
-                    this.target = this.applyTransform(this.layout.layoutBox)
-                } else {
-                    copyBoxInto(this.target, this.layout.layoutBox)
-                }
+        //         /**
+        //          * If we've only got a targetDelta, resolve it into a target
+        //          */
+        //     } else if (this.targetDelta) {
+        //         if (Boolean(this.resumingFrom)) {
+        //             // TODO: This is creating a new object every frame
+        //             this.target = this.applyTransform(this.layout.layoutBox)
+        //         } else {
+        //             copyBoxInto(this.target, this.layout.layoutBox)
+        //         }
 
-                applyBoxDelta(this.target, this.targetDelta)
-            } else {
-                /**
-                 * If no target, use own layout as target
-                 */
-                copyBoxInto(this.target, this.layout.layoutBox)
-            }
+        //         applyBoxDelta(this.target, this.targetDelta)
+        //     } else {
+        //         /**
+        //          * If no target, use own layout as target
+        //          */
+        //         copyBoxInto(this.target, this.layout.layoutBox)
+        //     }
 
-            /**
-             * If we've been told to attempt to resolve a relative target, do so.
-             */
-            if (this.attemptToResolveRelativeTarget) {
-                this.attemptToResolveRelativeTarget = false
-                const relativeParent = this.getClosestProjectingParent()
+        //     /**
+        //      * If we've been told to attempt to resolve a relative target, do so.
+        //      */
+        //     if (this.attemptToResolveRelativeTarget) {
+        //         this.attemptToResolveRelativeTarget = false
+        //         const relativeParent = this.getClosestProjectingParent()
 
-                if (
-                    relativeParent &&
-                    Boolean(relativeParent.resumingFrom) ===
-                        Boolean(this.resumingFrom) &&
-                    !relativeParent.options.layoutScroll &&
-                    relativeParent.target
-                ) {
-                    this.relativeParent = relativeParent
-                    this.relativeTarget = createBox()
-                    this.relativeTargetOrigin = createBox()
+        //         if (
+        //             relativeParent &&
+        //             Boolean(relativeParent.resumingFrom) ===
+        //                 Boolean(this.resumingFrom) &&
+        //             !relativeParent.options.layoutScroll &&
+        //             relativeParent.target
+        //         ) {
+        //             this.relativeParent = relativeParent
+        //             this.relativeTarget = createBox()
+        //             this.relativeTargetOrigin = createBox()
 
-                    calcRelativePosition(
-                        this.relativeTargetOrigin,
-                        this.target,
-                        relativeParent.target
-                    )
-                    copyBoxInto(this.relativeTarget, this.relativeTargetOrigin)
-                } else {
-                    this.relativeParent = this.relativeTarget = undefined
-                }
-            }
-        }
+        //             calcRelativePosition(
+        //                 this.relativeTargetOrigin,
+        //                 this.target,
+        //                 relativeParent.target
+        //             )
+        //             copyBoxInto(this.relativeTarget, this.relativeTargetOrigin)
+        //         } else {
+        //             this.relativeParent = this.relativeTarget = undefined
+        //         }
+        //     }
+        // }
 
         getClosestProjectingParent() {
             if (
@@ -1041,86 +1076,98 @@ export function createProjectionNode<I>({
 
         hasProjected: boolean = false
 
-        calcProjection() {
-            const { layout, layoutId } = this.options
+        calcProjection() {}
+
+        updateNodeProjection() {
+            if (!this.layout) return
 
             /**
-             * If this section of the tree isn't animating we can
-             * delete our target sources for the following frame.
+             * Lazy-init target
              */
-            this.isTreeAnimating = Boolean(
-                this.parent?.isTreeAnimating ||
-                    this.currentAnimation ||
-                    this.pendingAnimation
-            )
-            if (!this.isTreeAnimating) {
-                this.targetDelta = this.relativeTarget = undefined
+            if (!this.target) {
+                this.target = createBox()
+                this.targetWithTransforms = createBox()
             }
 
-            if (!this.layout || !(layout || layoutId)) return
+            // const { layout, layoutId } = this.options
 
-            const lead = this.getLead()
+            // /**
+            //  * If this section of the tree isn't animating we can
+            //  * delete our target sources for the following frame.
+            //  */
+            // this.isTreeAnimating = Boolean(
+            //     this.parent?.isTreeAnimating ||
+            //         this.currentAnimation ||
+            //         this.pendingAnimation
+            // )
+            // if (!this.isTreeAnimating) {
+            //     this.targetDelta = this.relativeTarget = undefined
+            // }
 
-            /**
-             * Reset the corrected box with the latest values from box, as we're then going
-             * to perform mutative operations on it.
-             */
-            copyBoxInto(this.layoutCorrected, this.layout.layoutBox)
+            // if (!this.layout || !(layout || layoutId)) return
 
-            /**
-             * Apply all the parent deltas to this box to produce the corrected box. This
-             * is the layout box, as it will appear on screen as a result of the transforms of its parents.
-             */
-            applyTreeDeltas(
-                this.layoutCorrected,
-                this.treeScale,
-                this.path,
-                Boolean(this.resumingFrom) || this !== lead
-            )
+            // const lead = this.getLead()
 
-            const { target } = lead
-            if (!target) return
+            // /**
+            //  * Reset the corrected box with the latest values from box, as we're then going
+            //  * to perform mutative operations on it.
+            //  */
+            // copyBoxInto(this.layoutCorrected, this.layout.layoutBox)
 
-            if (!this.projectionDelta) {
-                this.projectionDelta = createDelta()
-                this.projectionDeltaWithTransform = createDelta()
-            }
+            // /**
+            //  * Apply all the parent deltas to this box to produce the corrected box. This
+            //  * is the layout box, as it will appear on screen as a result of the transforms of its parents.
+            //  */
+            // applyTreeDeltas(
+            //     this.layoutCorrected,
+            //     this.treeScale,
+            //     this.path,
+            //     Boolean(this.resumingFrom) || this !== lead
+            // )
 
-            const prevTreeScaleX = this.treeScale.x
-            const prevTreeScaleY = this.treeScale.y
-            const prevProjectionTransform = this.projectionTransform
+            // const { target } = lead
+            // if (!target) return
 
-            /**
-             * Update the delta between the corrected box and the target box before user-set transforms were applied.
-             * This will allow us to calculate the corrected borderRadius and boxShadow to compensate
-             * for our layout reprojection, but still allow them to be scaled correctly by the user.
-             * It might be that to simplify this we may want to accept that user-set scale is also corrected
-             * and we wouldn't have to keep and calc both deltas, OR we could support a user setting
-             * to allow people to choose whether these styles are corrected based on just the
-             * layout reprojection or the final bounding box.
-             */
-            calcBoxDelta(
-                this.projectionDelta,
-                this.layoutCorrected,
-                target,
-                this.latestValues
-            )
+            // if (!this.projectionDelta) {
+            //     this.projectionDelta = createDelta()
+            //     this.projectionDeltaWithTransform = createDelta()
+            // }
 
-            this.projectionTransform = buildProjectionTransform(
-                this.projectionDelta!,
-                this.treeScale
-            )
+            // const prevTreeScaleX = this.treeScale.x
+            // const prevTreeScaleY = this.treeScale.y
+            // const prevProjectionTransform = this.projectionTransform
 
-            if (
-                this.projectionTransform !== prevProjectionTransform ||
-                this.treeScale.x !== prevTreeScaleX ||
-                this.treeScale.y !== prevTreeScaleY
-            ) {
-                this.hasProjected = true
-                this.scheduleRender()
+            // /**
+            //  * Update the delta between the corrected box and the target box before user-set transforms were applied.
+            //  * This will allow us to calculate the corrected borderRadius and boxShadow to compensate
+            //  * for our layout reprojection, but still allow them to be scaled correctly by the user.
+            //  * It might be that to simplify this we may want to accept that user-set scale is also corrected
+            //  * and we wouldn't have to keep and calc both deltas, OR we could support a user setting
+            //  * to allow people to choose whether these styles are corrected based on just the
+            //  * layout reprojection or the final bounding box.
+            //  */
+            // calcBoxDelta(
+            //     this.projectionDelta,
+            //     this.layoutCorrected,
+            //     target,
+            //     this.latestValues
+            // )
 
-                this.notifyListeners("projectionUpdate", target)
-            }
+            // this.projectionTransform = buildProjectionTransform(
+            //     this.projectionDelta!,
+            //     this.treeScale
+            // )
+
+            // if (
+            //     this.projectionTransform !== prevProjectionTransform ||
+            //     this.treeScale.x !== prevTreeScaleX ||
+            //     this.treeScale.y !== prevTreeScaleY
+            // ) {
+            //     this.hasProjected = true
+            //     this.scheduleRender()
+
+            //     this.notifyListeners("projectionUpdate", target)
+            // }
         }
 
         isVisible = true
@@ -1147,80 +1194,78 @@ export function createProjectionNode<I>({
         animationValues?: ResolvedValues
         pendingAnimation?: Process
         currentAnimation?: AnimationPlaybackControls
-        mixTargetDelta: (progress: number) => void
-        animationProgress = 0
 
-        setAnimationOrigin(
-            delta: Delta,
-            hasOnlyRelativeTargetChanged: boolean = false
-        ) {
-            const snapshot = this.snapshot
-            const snapshotLatestValues = snapshot?.latestValues || {}
-            const mixedValues = { ...this.latestValues }
-
+        setAnimationOrigin(delta: Delta) {
             const targetDelta = createDelta()
-            this.relativeTarget = this.relativeTargetOrigin = undefined
-            this.attemptToResolveRelativeTarget = !hasOnlyRelativeTargetChanged
+            let progress = 0
 
-            const relativeLayout = createBox()
-
-            const isSharedLayoutAnimation =
-                snapshot?.source !== this.layout?.source
-            const isOnlyMember = (this.getStack()?.members.length || 0) <= 1
-            const shouldCrossfadeOpacity = Boolean(
-                isSharedLayoutAnimation &&
-                    !isOnlyMember &&
-                    this.options.crossfade === true &&
-                    !this.path.some(hasOpacityCrossfade)
-            )
-
-            this.animationProgress = 0
             this.mixTargetDelta = (latest: number) => {
-                const progress = latest / 1000
+                progress = latest / 1000
 
                 mixAxisDelta(targetDelta.x, delta.x, progress)
                 mixAxisDelta(targetDelta.y, delta.y, progress)
+
                 this.setTargetDelta(targetDelta)
-
-                if (
-                    this.relativeTarget &&
-                    this.relativeTargetOrigin &&
-                    this.layout &&
-                    this.relativeParent?.layout
-                ) {
-                    calcRelativePosition(
-                        relativeLayout,
-                        this.layout.layoutBox,
-                        this.relativeParent.layout.layoutBox
-                    )
-                    mixBox(
-                        this.relativeTarget,
-                        this.relativeTargetOrigin,
-                        relativeLayout,
-                        progress
-                    )
-                }
-
-                if (isSharedLayoutAnimation) {
-                    this.animationValues = mixedValues
-
-                    mixValues(
-                        mixedValues,
-                        snapshotLatestValues,
-                        this.latestValues,
-                        progress,
-                        shouldCrossfadeOpacity,
-                        isOnlyMember
-                    )
-                }
-
-                this.root.scheduleUpdateProjection()
-                this.scheduleRender()
-
-                this.animationProgress = progress
             }
 
             this.mixTargetDelta(0)
+
+            // const snapshot = this.snapshot
+            // const snapshotLatestValues = snapshot?.latestValues || {}
+            // const mixedValues = { ...this.latestValues }
+            // const targetDelta = createDelta()
+            // this.relativeTarget = this.relativeTargetOrigin = undefined
+            // this.attemptToResolveRelativeTarget = !hasOnlyRelativeTargetChanged
+            // const relativeLayout = createBox()
+            // const isSharedLayoutAnimation =
+            //     snapshot?.source !== this.layout?.source
+            // const isOnlyMember = (this.getStack()?.members.length || 0) <= 1
+            // const shouldCrossfadeOpacity = Boolean(
+            //     isSharedLayoutAnimation &&
+            //         !isOnlyMember &&
+            //         this.options.crossfade === true &&
+            //         !this.path.some(hasOpacityCrossfade)
+            // )
+            // this.animationProgress = 0
+            // this.mixTargetDelta = (latest: number) => {
+            //     const progress = latest / 1000
+            //     mixAxisDelta(targetDelta.x, delta.x, progress)
+            //     mixAxisDelta(targetDelta.y, delta.y, progress)
+            //     this.setTargetDelta(targetDelta)
+            //     if (
+            //         this.relativeTarget &&
+            //         this.relativeTargetOrigin &&
+            //         this.layout &&
+            //         this.relativeParent?.layout
+            //     ) {
+            //         calcRelativePosition(
+            //             relativeLayout,
+            //             this.layout.layoutBox,
+            //             this.relativeParent.layout.layoutBox
+            //         )
+            //         mixBox(
+            //             this.relativeTarget,
+            //             this.relativeTargetOrigin,
+            //             relativeLayout,
+            //             progress
+            //         )
+            //     }
+            //     if (isSharedLayoutAnimation) {
+            //         this.animationValues = mixedValues
+            //         mixValues(
+            //             mixedValues,
+            //             snapshotLatestValues,
+            //             this.latestValues,
+            //             progress,
+            //             shouldCrossfadeOpacity,
+            //             isOnlyMember
+            //         )
+            //     }
+            //     this.root.scheduleUpdateProjection()
+            //     this.scheduleRender()
+            //     this.animationProgress = progress
+            // }
+            // this.mixTargetDelta(0)
         }
 
         startAnimation(options: AnimationOptions<number>) {
@@ -1605,9 +1650,8 @@ export function createProjectionNode<I>({
     }
 }
 
-function prepareAnimation(node: IProjectionNode) {
+function updateLayout(node: IProjectionNode) {
     node.updateLayout()
-    node.resolveRelativeLayout()
 }
 
 function notifyLayoutUpdate(node: IProjectionNode) {
@@ -1619,6 +1663,11 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         node.layout &&
         node.hasListeners("didUpdate")
     ) {
+        node.resolveRelativeLayout(snapshot, node.parent?.snapshot)
+        node.resolveRelativeLayout(node.layout, node.parent?.layout)
+
+        console.log(snapshot, node.layout)
+
         node.notifyListeners(
             "didUpdate",
             calcSnapshotDelta(snapshot, node.layout, node.options.animationType)
@@ -1644,7 +1693,7 @@ function clearMeasurements(node: IProjectionNode) {
 }
 
 function resetTransformStyle(node: IProjectionNode) {
-    node.options.visualElement.notify("BeforeLayoutMeasure")
+    node.options.visualElement?.notify("BeforeLayoutMeasure")
     node.resetTransform()
 }
 
@@ -1653,12 +1702,8 @@ function finishAnimation(node: IProjectionNode) {
     node.targetDelta = node.relativeTarget = node.target = undefined
 }
 
-function resolveTargetDelta(node: IProjectionNode) {
-    node.resolveTargetDelta()
-}
-
-function calcProjection(node: IProjectionNode) {
-    node.calcProjection()
+function updateNodeProjection(node: IProjectionNode) {
+    node.updateNodeProjection()
 }
 
 function resetRotation(node: IProjectionNode) {

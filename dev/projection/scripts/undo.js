@@ -11,6 +11,14 @@ const {
     HTMLVisualElement,
 } = Projection
 
+function isAxisDeltaZero(delta) {
+    return delta.translate === 0 && delta.scale === 1
+}
+
+function isDeltaZero(delta) {
+    return isAxisDeltaZero(delta.x) && isAxisDeltaZero(delta.y)
+}
+
 addScaleCorrector({
     borderRadius: {
         ...correctBorderRadius,
@@ -63,18 +71,22 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
     visualElement.projection = node
 
     if (!overrideId) {
-        console.log("mounting")
         node.mount(element)
         visualElement.projection = node
     }
 
-    node.addEventListener("didUpdate", ({ delta, hasLayoutChanged }) => {
+    node.addEventListener("didUpdate", (delta) => {
         if (node.resumeFrom) {
             node.resumingFrom = node.resumeFrom
             node.resumingFrom.resumingFrom = undefined
         }
-        // hasLayoutChanged && // or existing delta is not nothing - this needs to be reinstated to fix breaking tests
-        if ((node.resumeFrom && node.resumeFrom.instance) || hasLayoutChanged) {
+
+        console.log(delta)
+
+        if (
+            (node.resumeFrom && node.resumeFrom.instance) ||
+            !isDeltaZero(delta)
+        ) {
             node.setAnimationOrigin(delta)
         }
     })

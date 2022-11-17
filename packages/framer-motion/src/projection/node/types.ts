@@ -172,7 +172,7 @@ export interface ProjectionNodeOptions {
     animationType?: "size" | "position" | "both" | "preserve-aspect"
     layoutId?: string
     layout?: boolean | string
-    visualElement: VisualElement
+    visualElement?: VisualElement
     crossfade?: boolean
     transition?: Transition
     initialPromotionConfig?: InitialPromotionConfig
