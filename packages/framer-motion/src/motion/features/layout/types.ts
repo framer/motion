@@ -75,9 +75,16 @@ export interface LayoutProps {
     layoutDependency?: any
 
     /**
-     * Wether a projection node should measure its scroll when it or its descendants update their layout.
+     * Whether a projection node should measure its scroll when it or its descendants update their layout.
      *
      * @public
      */
     layoutScroll?: boolean
+
+    /**
+     * Whether an element should be considered a "layout root", where
+     * all children will be forced to resolve relatively to it.
+     * Currently used for `position: sticky` elements in Framer.
+     */
+    layoutRoot?: boolean
 }

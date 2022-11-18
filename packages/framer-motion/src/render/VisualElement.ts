@@ -504,13 +504,18 @@ export abstract class VisualElement<
                 this.parent && this.parent.projection
             ) as IProjectionNode
 
-            const { layoutId, layout, drag, dragConstraints, layoutScroll } =
-                renderedProps
+            const {
+                layoutId,
+                layout,
+                drag,
+                dragConstraints,
+                layoutScroll,
+                layoutRoot,
+            } = renderedProps
             this.projection.setOptions({
                 layoutId,
                 layout,
                 alwaysMeasureLayout:
-                    layoutScroll ||
                     Boolean(drag) ||
                     (dragConstraints && isRefObject(dragConstraints)),
                 visualElement: this,
@@ -525,6 +530,7 @@ export abstract class VisualElement<
                 animationType: typeof layout === "string" ? layout : "both",
                 initialPromotionConfig: initialLayoutGroupConfig,
                 layoutScroll,
+                layoutRoot,
             })
         }
 

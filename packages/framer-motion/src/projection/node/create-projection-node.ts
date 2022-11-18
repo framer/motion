@@ -793,7 +793,7 @@ export function createProjectionNode<I>({
             }
         }
 
-        readPosition() {
+        readPosition(): Position {
             const positionStyle =
                 this.options.visualElement?.readValue("position")
 
@@ -834,7 +834,7 @@ export function createProjectionNode<I>({
                      * If this is a new scroll root, we want to remove all previous scrolls
                      * from the viewport box.
                      */
-                    if (scroll.isRoot || node.layout?.position === "sticky") {
+                    if (scroll.isRoot) {
                         copyBoxInto(boxWithoutScroll, box)
                         const { scroll: rootScroll } = this.root
                         /**
@@ -1047,12 +1047,6 @@ export function createProjectionNode<I>({
                     this.relativeTarget = createBox()
                     this.relativeTargetOrigin = createBox()
 
-                    /**
-                     * If the parent is considered a layout root,
-                     * calculate the relative position to the final layout
-                     * rather than the active projection.
-                     */
-
                     calcRelativePosition(
                         this.relativeTargetOrigin,
                         this.target,
@@ -1229,12 +1223,6 @@ export function createProjectionNode<I>({
                 mixAxisDelta(targetDelta.y, delta.y, progress)
                 this.setTargetDelta(targetDelta)
 
-                console.log(
-                    this.relativeTarget,
-                    this.relativeTargetOrigin,
-                    this.layout,
-                    this.relativeParent?.layout
-                )
                 if (
                     this.relativeTarget &&
                     this.relativeTargetOrigin &&
@@ -1751,10 +1739,6 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                         node.relativeTarget = relativeLayout
                         node.relativeTargetOrigin = relativeSnapshot
                         node.relativeParent = relativeParent
-                        console.log(
-                            node.relativeTarget,
-                            node.relativeTargetOrigin
-                        )
                     }
                 }
             }
