@@ -1201,6 +1201,12 @@ export function createProjectionNode<I>({
             const mixedValues = { ...this.latestValues }
 
             const targetDelta = createDelta()
+            if (
+                !this.relativeParent ||
+                !this.relativeParent.options.layoutRoot
+            ) {
+                this.relativeTarget = this.relativeTargetOrigin = undefined
+            }
             this.attemptToResolveRelativeTarget = !hasOnlyRelativeTargetChanged
 
             const relativeLayout = createBox()
@@ -1704,7 +1710,6 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         const hasLayoutChanged = !isDeltaZero(layoutDelta)
         let hasRelativeTargetChanged = false
 
-        node.relativeTarget = node.relativeTargetOrigin = undefined
         if (!node.resumeFrom) {
             const relativeParent = node.getClosestProjectingParent()
 
