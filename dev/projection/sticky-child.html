@@ -24,10 +24,6 @@
                 width: 200px;
             }
 
-            #overlay.b #box {
-                position: relative;
-            }
-
             #trigger-overflow {
                 width: 1px;
                 height: 1px;
@@ -58,16 +54,11 @@
 
             const overlay = document.getElementById("overlay")
             const overlayProjection = createNode(overlay, undefined, {
-                layoutScroll: true,
+                layoutRoot: true,
             })
 
             const box = document.getElementById("box")
-            const boxProjection = createNode(
-                box,
-                overlayProjection
-                // undefined,
-                // { duration: 2 }
-            )
+            const boxProjection = createNode(box, overlayProjection)
 
             const scrollOffset = [50, 150]
             window.scrollTo(...scrollOffset)
@@ -76,11 +67,9 @@
 
             boxProjection.willUpdate()
 
-            overlay.classList.add("b")
-
             boxProjection.root.didUpdate()
 
-            matchViewportBox(box, { top: 0, left: -50, bottom: 100, right: 50 })
+            matchViewportBox(box, boxOrigin)
         </script>
     </body>
 </html>

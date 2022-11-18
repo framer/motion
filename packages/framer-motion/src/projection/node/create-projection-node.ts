@@ -448,6 +448,7 @@ export function createProjectionNode<I>({
                             !hasLayoutChanged && hasRelativeTargetChanged
 
                         if (
+                            this.options.layoutRoot ||
                             this.resumeFrom?.instance ||
                             hasOnlyRelativeTargetChanged ||
                             (hasLayoutChanged &&
@@ -472,7 +473,10 @@ export function createProjectionNode<I>({
                                 onComplete: onLayoutAnimationComplete,
                             }
 
-                            if (visualElement.shouldReduceMotion) {
+                            if (
+                                visualElement.shouldReduceMotion ||
+                                this.options.layoutRoot
+                            ) {
                                 animationOptions.delay = 0
                                 animationOptions.type = false
                             }
@@ -557,6 +561,10 @@ export function createProjectionNode<I>({
                 node.shouldResetTransform = true
 
                 node.updateScroll("snapshot")
+
+                if (node.options.layoutRoot) {
+                    node.willUpdate(false)
+                }
             }
 
             const { layoutId, layout } = this.options
@@ -775,21 +783,23 @@ export function createProjectionNode<I>({
 
             roundBox(layoutBox)
 
-            const positionStyle =
-                this.options.visualElement?.readValue("position")
-            const position: Position =
-                positionStyle === "fixed" || positionStyle === "sticky"
-                    ? positionStyle
-                    : "static"
-
             return {
                 animationId: this.root.animationId,
                 measuredBox: pageBox,
                 layoutBox,
                 latestValues: {},
                 source: this.id,
-                position,
+                position: this.readPosition(),
             }
+        }
+
+        readPosition() {
+            const positionStyle =
+                this.options.visualElement?.readValue("position")
+
+            return positionStyle === "fixed" || positionStyle === "sticky"
+                ? positionStyle
+                : "static"
         }
 
         measurePageBox() {
@@ -797,7 +807,6 @@ export function createProjectionNode<I>({
             if (!visualElement) return createBox()
 
             const box = visualElement.measureViewportBox()
-
             // Remove viewport scroll to give page-relative coordinates
             const { scroll } = this.root
             if (scroll) {
@@ -825,7 +834,7 @@ export function createProjectionNode<I>({
                      * If this is a new scroll root, we want to remove all previous scrolls
                      * from the viewport box.
                      */
-                    if (scroll.isRoot) {
+                    if (scroll.isRoot || node.layout?.position === "sticky") {
                         copyBoxInto(boxWithoutScroll, box)
                         const { scroll: rootScroll } = this.root
                         /**
@@ -1038,11 +1047,18 @@ export function createProjectionNode<I>({
                     this.relativeTarget = createBox()
                     this.relativeTargetOrigin = createBox()
 
+                    /**
+                     * If the parent is considered a layout root,
+                     * calculate the relative position to the final layout
+                     * rather than the active projection.
+                     */
+
                     calcRelativePosition(
                         this.relativeTargetOrigin,
                         this.target,
                         relativeParent.target
                     )
+
                     copyBoxInto(this.relativeTarget, this.relativeTargetOrigin)
                 } else {
                     this.relativeParent = this.relativeTarget = undefined
@@ -1055,11 +1071,14 @@ export function createProjectionNode<I>({
                 !this.parent ||
                 hasScale(this.parent.latestValues) ||
                 has2DTranslate(this.parent.latestValues)
-            )
+            ) {
                 return undefined
+            }
 
             if (
-                (this.parent.relativeTarget || this.parent.targetDelta) &&
+                (this.parent.relativeTarget ||
+                    this.parent.targetDelta ||
+                    this.parent.options.layoutRoot) &&
                 this.parent.layout
             ) {
                 return this.parent
@@ -1188,7 +1207,6 @@ export function createProjectionNode<I>({
             const mixedValues = { ...this.latestValues }
 
             const targetDelta = createDelta()
-            this.relativeTarget = this.relativeTargetOrigin = undefined
             this.attemptToResolveRelativeTarget = !hasOnlyRelativeTargetChanged
 
             const relativeLayout = createBox()
@@ -1211,6 +1229,12 @@ export function createProjectionNode<I>({
                 mixAxisDelta(targetDelta.y, delta.y, progress)
                 this.setTargetDelta(targetDelta)
 
+                console.log(
+                    this.relativeTarget,
+                    this.relativeTargetOrigin,
+                    this.layout,
+                    this.relativeParent?.layout
+                )
                 if (
                     this.relativeTarget &&
                     this.relativeTargetOrigin &&
@@ -1249,7 +1273,7 @@ export function createProjectionNode<I>({
                 this.animationProgress = progress
             }
 
-            this.mixTargetDelta(0)
+            this.mixTargetDelta(this.options.layoutRoot ? 1000 : 0)
         }
 
         startAnimation(options: AnimationOptions<number>) {
@@ -1676,6 +1700,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         }
 
         const layoutDelta = createDelta()
+
         calcBoxDelta(layoutDelta, layout, snapshot.layoutBox)
         const visualDelta = createDelta()
         if (isShared) {
@@ -1691,6 +1716,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         const hasLayoutChanged = !isDeltaZero(layoutDelta)
         let hasRelativeTargetChanged = false
 
+        node.relativeTarget = node.relativeTargetOrigin = undefined
         if (!node.resumeFrom) {
             const relativeParent = node.getClosestProjectingParent()
 
@@ -1719,6 +1745,16 @@ function notifyLayoutUpdate(node: IProjectionNode) {
 
                     if (!boxEquals(relativeSnapshot, relativeLayout)) {
                         hasRelativeTargetChanged = true
+                    }
+
+                    if (relativeParent.options.layoutRoot) {
+                        node.relativeTarget = relativeLayout
+                        node.relativeTargetOrigin = relativeSnapshot
+                        node.relativeParent = relativeParent
+                        console.log(
+                            node.relativeTarget,
+                            node.relativeTargetOrigin
+                        )
                     }
                 }
             }

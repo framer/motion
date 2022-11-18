@@ -510,6 +510,7 @@ export abstract class VisualElement<
                 layoutId,
                 layout,
                 alwaysMeasureLayout:
+                    layoutScroll ||
                     Boolean(drag) ||
                     (dragConstraints && isRefObject(dragConstraints)),
                 visualElement: this,
