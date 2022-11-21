@@ -1,7 +1,6 @@
-import {useEffect, useRef, useState} from "react";
-import {invariant} from "hey-listen";
+import { useEffect, useRef, useState } from "react"
 
-export function useOrderingParameters(ref: React.MutableRefObject<any>){
+export function useOrderingParameters(ref: React.MutableRefObject<any>) {
     const [axis, setAxis] = useState<"x" | "y">("x")
     const itemsPerAxis = useRef<number>(0)
     const [isWrappingItems, setIsWrappingItems] = useState(false)
@@ -10,12 +9,8 @@ export function useOrderingParameters(ref: React.MutableRefObject<any>){
         if (!ref.current) return
 
         const getOrderingParameters = () => {
-            const childrenElements = ref.current
-                ?.children
-            invariant(
-                childrenElements.length > 1,
-                "At least two children components are necessary."
-            )
+            const childrenElements = ref.current?.children
+            if (childrenElements.length <= 1) return
             const newAxis =
                 childrenElements[0].offsetTop === childrenElements[1].offsetTop
                     ? "x"
@@ -43,5 +38,5 @@ export function useOrderingParameters(ref: React.MutableRefObject<any>){
             observer.disconnect()
         }
     }, [])
-    return {axis, isWrappingItems, itemsPerAxis}
+    return { axis, isWrappingItems, itemsPerAxis }
 }
