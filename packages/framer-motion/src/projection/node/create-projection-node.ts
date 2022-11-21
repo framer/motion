@@ -60,7 +60,6 @@ const animationTarget = 1000
 
 let id = 0
 
-let count = 0
 export function createProjectionNode<I>({
     attachResizeListener,
     defaultParent,
@@ -232,8 +231,7 @@ export function createProjectionNode<I>({
 
         /**
          * Flag to true if we think the projection calculations for this or any
-         * child might need recalculating as a result of an updated transform,
-         * layout animation or scroll.
+         * child might need recalculating as a result of an updated transform or layout animation.
          */
         isProjectionDirty = false
 
@@ -661,10 +659,8 @@ export function createProjectionNode<I>({
         }
 
         updateProjection = () => {
-            const time = performance.now()
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
-            console.log(performance.now() - time)
         }
 
         /**
@@ -953,9 +949,12 @@ export function createProjectionNode<I>({
          * Frame calculations
          */
         resolveTargetDelta() {
-            // Propagate isProjectionDirty
-            this.isProjectionDirty =
-                this.isProjectionDirty ||
+            /**
+             * Propagate isProjectionDirty. Nodes are ordered by depth, so if the parent here
+             * is dirty we can simply pass this forward.
+             */
+            this.isProjectionDirty ||=
+                this.getLead().isProjectionDirty ||
                 Boolean(this.parent && this.parent.isProjectionDirty)
 
             if (!this.isProjectionDirty) return

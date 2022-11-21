@@ -22,6 +22,7 @@ import { SubscriptionManager } from "../utils/subscription-manager"
 import { motionValue, MotionValue } from "../value"
 import { isWillChangeMotionValue } from "../value/use-will-change/is"
 import { isMotionValue } from "../value/utils/is-motion-value"
+import { transformProps } from "./html/utils/transform"
 import {
     ResolvedValues,
     VariantStateContext,
@@ -409,7 +410,7 @@ export abstract class VisualElement<
     }
 
     private bindToMotionValue(key: string, value: MotionValue) {
-        const valueIsTransform = isTransformKey(key)
+        const valueIsTransform = transformProps.has(key)
 
         const removeOnChange = value.onChange(
             (latestValue: string | number) => {

@@ -1,3 +1,4 @@
+import { createDelta } from "../../geometry/models"
 import { createTestNode } from "./TestProjectionNode"
 
 describe("node", () => {
@@ -122,5 +123,94 @@ describe("node", () => {
 
         expect(parentInstance.resetTransform).toBeCalledTimes(0)
         expect(childInstance.resetTransform).toBeCalledTimes(1)
+    })
+
+    test("Subtrees with updated targets propagate isProjectionDirty to children", () => {
+        const parent = createTestNode(undefined, {})
+
+        const parentInstance = {
+            id: "parent",
+            resetTransform: jest.fn(),
+            box: {
+                x: { min: 0, max: 100 },
+                y: { min: 0, max: 100 },
+            },
+        }
+        parent.mount(parentInstance)
+
+        const child = createTestNode(parent)
+        const childInstance = {
+            id: "child",
+            resetTransform: jest.fn(),
+            box: {
+                x: { min: 0, max: 50 },
+                y: { min: 0, max: 50 },
+            },
+        }
+        child.mount(childInstance)
+
+        const grandChild = createTestNode(child)
+        const grandChildInstance = {
+            id: "grandchild",
+            resetTransform: jest.fn(),
+            box: {
+                x: { min: 0, max: 50 },
+                y: { min: 0, max: 50 },
+            },
+        }
+        grandChild.mount(childInstance)
+
+        const parentListener = jest.fn()
+        parent.addEventListener("projectionUpdate", parentListener)
+        const childListener = jest.fn()
+        child.addEventListener("projectionUpdate", childListener)
+        const grandChildListener = jest.fn()
+        grandChild.addEventListener("projectionUpdate", grandChildListener)
+
+        parent.willUpdate()
+        child.willUpdate()
+        grandChild.willUpdate()
+
+        parentInstance.box = {
+            x: { min: 100, max: 200 },
+            y: { min: 100, max: 200 },
+        }
+
+        childInstance.box = {
+            x: { min: 150, max: 200 },
+            y: { min: 150, max: 200 },
+        }
+
+        grandChildInstance.box = {
+            x: { min: 150, max: 200 },
+            y: { min: 150, max: 200 },
+        }
+
+        child.root.didUpdate()
+
+        child.setTargetDelta(createDelta())
+
+        parent.resolveTargetDelta()
+        child.resolveTargetDelta()
+        grandChild.resolveTargetDelta()
+
+        // Check isProjectionDirty is propagated from child to grandChild
+        expect(parent.isProjectionDirty).toEqual(false)
+        expect(child.isProjectionDirty).toEqual(true)
+        expect(grandChild.isProjectionDirty).toEqual(true)
+
+        parent.calcProjection()
+        child.calcProjection()
+        grandChild.calcProjection()
+
+        // Check isProjectionDirty is cleaned up after projections are calculated
+        expect(parent.isProjectionDirty).toEqual(false)
+        expect(child.isProjectionDirty).toEqual(false)
+        expect(grandChild.isProjectionDirty).toEqual(false)
+
+        // Check listeners correctly called
+        expect(parentListener).toBeCalledTimes(0)
+        expect(childListener).toBeCalledTimes(1)
+        expect(grandChildListener).toBeCalledTimes(1)
     })
 })
