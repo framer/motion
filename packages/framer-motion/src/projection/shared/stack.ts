@@ -71,7 +71,6 @@ export class NodeStack {
                 node.snapshot = prevLead.snapshot
                 node.snapshot.latestValues =
                     prevLead.animationValues || prevLead.latestValues
-                node.snapshot.isShared = true
             }
 
             if (node.root?.isUpdating) {

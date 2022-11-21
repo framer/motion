@@ -12,7 +12,7 @@ export interface Measurements {
     measuredBox: Box
     layoutBox: Box
     latestValues: ResolvedValues
-    isShared?: boolean
+    source: number
 }
 
 export type LayoutEvents =
@@ -25,6 +25,7 @@ export type LayoutEvents =
     | "animationComplete"
 
 export interface IProjectionNode<I = unknown> {
+    id: number
     elementId: number | undefined
     parent?: IProjectionNode
     relativeParent?: IProjectionNode
