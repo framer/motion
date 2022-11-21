@@ -365,18 +365,6 @@ export abstract class VisualElement<
                 }
             }
         }
-
-        /**
-         * Update external values with initial values
-         */
-        if (props.values) {
-            for (const key in props.values) {
-                const value = props.values[key] as MotionValue<number | string>
-                if (latestValues[key] !== undefined && isMotionValue(value)) {
-                    value.set(latestValues[key])
-                }
-            }
-        }
     }
 
     mount(instance: Instance) {
