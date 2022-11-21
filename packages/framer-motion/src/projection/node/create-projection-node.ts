@@ -1,4 +1,4 @@
-import sync, { cancelSync, flushSync, Process } from "framesync"
+import sync, { cancelSync, flushSync, getFrameData, Process } from "framesync"
 import { mix } from "popmotion"
 import {
     animate,
@@ -54,6 +54,11 @@ const transformAxes = ["", "X", "Y", "Z"]
  * which has a noticeable difference in spring animations
  */
 const animationTarget = 1000
+
+/**
+ * A mutable state containing the latest animation frame timestamp.
+ */
+const frameState = getFrameData()
 
 let id = 0
 
@@ -754,6 +759,7 @@ export function createProjectionNode<I>({
             roundBox(layoutBox)
 
             return {
+                frameTimestamp: frameState.timestamp,
                 measuredBox: pageBox,
                 layoutBox,
                 latestValues: {},
@@ -1411,29 +1417,35 @@ export function createProjectionNode<I>({
             // If there's no detected rotation values, we can early return without a forced render.
             let hasRotate = false
 
-            // Keep a record of all the values we've reset
-            const resetValues = {}
-
-            // Check the rotate value of all axes and reset to 0
-            for (let i = 0; i < transformAxes.length; i++) {
-                const axis = transformAxes[i]
-                const key = "rotate" + axis
-
-                // If this rotation doesn't exist as a motion value, then we don't
-                // need to reset it
-                if (!visualElement.getStaticValue(key)) {
-                    continue
-                }
-
+            /**
+             * An unrolled check for rotation values. Most elements don't have any rotation and
+             * skipping the nested loop and new object creation is 50% faster.
+             */
+            const { latestValues } = visualElement
+            if (
+                latestValues.rotate ||
+                latestValues.rotateX ||
+                latestValues.rotateY ||
+                latestValues.rotateZ
+            ) {
                 hasRotate = true
-
-                // Record the rotation and then temporarily set it to 0
-                resetValues[key] = visualElement.getStaticValue(key)
-                visualElement.setStaticValue(key, 0)
             }
 
             // If there's no rotation values, we don't need to do any more.
             if (!hasRotate) return
+
+            const resetValues = {}
+
+            // Check the rotate value of all axes and reset to 0
+            for (let i = 0; i < transformAxes.length; i++) {
+                const key = "rotate" + transformAxes[i]
+
+                // Record the rotation and then temporarily set it to 0
+                if (latestValues[key]) {
+                    resetValues[key] = latestValues[key]
+                    visualElement.setStaticValue(key, 0)
+                }
+            }
 
             // Force a render of this element to apply the transform with all rotations
             // set to 0.
