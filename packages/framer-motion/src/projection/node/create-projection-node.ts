@@ -60,6 +60,7 @@ const animationTarget = 1000
 
 let id = 0
 
+let count = 0
 export function createProjectionNode<I>({
     attachResizeListener,
     defaultParent,
@@ -228,6 +229,13 @@ export function createProjectionNode<I>({
          * and if one node is dirtied, they all are.
          */
         isLayoutDirty = false
+
+        /**
+         * Flag to true if we think the projection calculations for this or any
+         * child might need recalculating as a result of an updated transform,
+         * layout animation or scroll.
+         */
+        isProjectionDirty = false
 
         /**
          * Block layout updates for instant layout transitions throughout the tree.
@@ -653,8 +661,10 @@ export function createProjectionNode<I>({
         }
 
         updateProjection = () => {
+            const time = performance.now()
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
+            console.log(performance.now() - time)
         }
 
         /**
@@ -916,6 +926,7 @@ export function createProjectionNode<I>({
          */
         setTargetDelta(delta: Delta) {
             this.targetDelta = delta
+            this.isProjectionDirty = true
             this.root.scheduleUpdateProjection()
         }
 
@@ -942,6 +953,13 @@ export function createProjectionNode<I>({
          * Frame calculations
          */
         resolveTargetDelta() {
+            // Propagate isProjectionDirty
+            this.isProjectionDirty =
+                this.isProjectionDirty ||
+                Boolean(this.parent && this.parent.isProjectionDirty)
+
+            if (!this.isProjectionDirty) return
+
             const { layout, layoutId } = this.options
 
             /**
@@ -1071,6 +1089,10 @@ export function createProjectionNode<I>({
         hasProjected: boolean = false
 
         calcProjection() {
+            if (!this.isProjectionDirty) return
+
+            this.isProjectionDirty = false
+
             const { layout, layoutId } = this.options
 
             /**

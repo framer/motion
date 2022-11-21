@@ -409,11 +409,17 @@ export abstract class VisualElement<
     }
 
     private bindToMotionValue(key: string, value: MotionValue) {
+        const valueIsTransform = isTransformKey(key)
+
         const removeOnChange = value.onChange(
             (latestValue: string | number) => {
                 this.latestValues[key] = latestValue
                 this.props.onUpdate &&
                     sync.update(this.notifyUpdate, false, true)
+
+                if (valueIsTransform && this.projection) {
+                    this.projection.isProjectionDirty = true
+                }
             }
         )
 
