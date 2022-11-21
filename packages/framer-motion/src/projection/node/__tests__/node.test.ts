@@ -1,4 +1,3 @@
-import { createDelta } from "../../geometry/models"
 import { createTestNode } from "./TestProjectionNode"
 
 describe("node", () => {
@@ -160,13 +159,6 @@ describe("node", () => {
         }
         grandChild.mount(childInstance)
 
-        const parentListener = jest.fn()
-        parent.addEventListener("projectionUpdate", parentListener)
-        const childListener = jest.fn()
-        child.addEventListener("projectionUpdate", childListener)
-        const grandChildListener = jest.fn()
-        grandChild.addEventListener("projectionUpdate", grandChildListener)
-
         parent.willUpdate()
         child.willUpdate()
         grandChild.willUpdate()
@@ -188,7 +180,10 @@ describe("node", () => {
 
         child.root.didUpdate()
 
-        child.setTargetDelta(createDelta())
+        child.setTargetDelta({
+            x: { translate: 200, scale: 2, origin: 0.5, originPoint: 100 },
+            y: { translate: 200, scale: 2, origin: 0.5, originPoint: 100 },
+        })
 
         parent.resolveTargetDelta()
         child.resolveTargetDelta()
@@ -207,10 +202,5 @@ describe("node", () => {
         expect(parent.isProjectionDirty).toEqual(false)
         expect(child.isProjectionDirty).toEqual(false)
         expect(grandChild.isProjectionDirty).toEqual(false)
-
-        // Check listeners correctly called
-        expect(parentListener).toBeCalledTimes(0)
-        expect(childListener).toBeCalledTimes(1)
-        expect(grandChildListener).toBeCalledTimes(1)
     })
 })
