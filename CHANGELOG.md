@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.6.8] 2022-11-22
+
+### Fixed
+
+-   Reducing number of scroll reads during layout animations.
+
 ## [7.6.7] 2022-11-15
 
 ### Fixed
