@@ -1,4 +1,4 @@
-import sync, { cancelSync, flushSync, getFrameData, Process } from "framesync"
+import sync, { cancelSync, flushSync, Process } from "framesync"
 import { mix } from "popmotion"
 import {
     animate,
@@ -39,6 +39,9 @@ import {
     ProjectionNodeConfig,
     ProjectionNodeOptions,
     Measurements,
+    ScrollMeasurements,
+    Phase,
+    Position,
 } from "./types"
 import { FlatTree } from "../../render/utils/flat-tree"
 import { Transition } from "../../types"
@@ -54,11 +57,6 @@ const transformAxes = ["", "X", "Y", "Z"]
  * which has a noticeable difference in spring animations
  */
 const animationTarget = 1000
-
-/**
- * A mutable state containing the latest animation frame timestamp.
- */
-const frameState = getFrameData()
 
 let id = 0
 
@@ -86,6 +84,11 @@ export function createProjectionNode<I>({
          * these potential nodes with this id and hydrate the projetion node of the ones that were commited.
          */
         elementId: number | undefined
+
+        /**
+         * An id that represents a unique session instigated by startUpdate.
+         */
+        animationId: number = 0
 
         /**
          * A reference to the platform-native node (currently this will be a HTMLElement).
@@ -211,7 +214,7 @@ export function createProjectionNode<I>({
         /**
          * If we're tracking the scroll of this element, we store it here.
          */
-        scroll?: Point
+        scroll?: ScrollMeasurements
 
         /**
          * If this element is a scroll root, we ignore scrolls up the tree.
@@ -533,6 +536,7 @@ export function createProjectionNode<I>({
             if (this.isUpdateBlocked()) return
             this.isUpdating = true
             this.nodes?.forEach(resetRotation)
+            this.animationId++
         }
 
         willUpdate(shouldNotifyListeners = true) {
@@ -547,11 +551,8 @@ export function createProjectionNode<I>({
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
                 node.shouldResetTransform = true
-                /**
-                 * TODO: Check we haven't updated the scroll
-                 * since the last didUpdate
-                 */
-                node.updateScroll()
+
+                node.updateScroll("snapshot")
             }
 
             const { layoutId, layout } = this.options
@@ -707,10 +708,26 @@ export function createProjectionNode<I>({
             )
         }
 
-        updateScroll() {
-            if (this.options.layoutScroll && this.instance) {
-                this.isScrollRoot = checkIsScrollRoot(this.instance)
-                this.scroll = measureScroll(this.instance)
+        updateScroll(phase: Phase = "measure") {
+            let needsMeasurement = Boolean(
+                this.options.layoutScroll && this.instance
+            )
+
+            if (
+                this.scroll &&
+                this.scroll.animationId === this.root.animationId &&
+                this.scroll.phase === phase
+            ) {
+                needsMeasurement = false
+            }
+
+            if (needsMeasurement) {
+                this.scroll = {
+                    animationId: this.root.animationId,
+                    phase,
+                    isRoot: checkIsScrollRoot(this.instance),
+                    offset: measureScroll(this.instance),
+                }
             }
         }
 
@@ -758,12 +775,20 @@ export function createProjectionNode<I>({
 
             roundBox(layoutBox)
 
+            const positionStyle =
+                this.options.visualElement?.readValue("position")
+            const position: Position =
+                positionStyle === "fixed" || positionStyle === "sticky"
+                    ? positionStyle
+                    : "static"
+
             return {
-                frameTimestamp: frameState.timestamp,
+                animationId: this.root.animationId,
                 measuredBox: pageBox,
                 layoutBox,
                 latestValues: {},
                 source: this.id,
+                position,
             }
         }
 
@@ -776,8 +801,8 @@ export function createProjectionNode<I>({
             // Remove viewport scroll to give page-relative coordinates
             const { scroll } = this.root
             if (scroll) {
-                translateAxis(box.x, scroll.x)
-                translateAxis(box.y, scroll.y)
+                translateAxis(box.x, scroll.offset.x)
+                translateAxis(box.y, scroll.offset.y)
             }
 
             return box
@@ -793,14 +818,14 @@ export function createProjectionNode<I>({
              */
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
-                const { scroll, options, isScrollRoot } = node
+                const { scroll, options } = node
 
                 if (node !== this.root && scroll && options.layoutScroll) {
                     /**
                      * If this is a new scroll root, we want to remove all previous scrolls
                      * from the viewport box.
                      */
-                    if (isScrollRoot) {
+                    if (scroll.isRoot) {
                         copyBoxInto(boxWithoutScroll, box)
                         const { scroll: rootScroll } = this.root
                         /**
@@ -808,13 +833,19 @@ export function createProjectionNode<I>({
                          * to the measured bounding box.
                          */
                         if (rootScroll) {
-                            translateAxis(boxWithoutScroll.x, -rootScroll.x)
-                            translateAxis(boxWithoutScroll.y, -rootScroll.y)
+                            translateAxis(
+                                boxWithoutScroll.x,
+                                -rootScroll.offset.x
+                            )
+                            translateAxis(
+                                boxWithoutScroll.y,
+                                -rootScroll.offset.y
+                            )
                         }
                     }
 
-                    translateAxis(boxWithoutScroll.x, scroll.x)
-                    translateAxis(boxWithoutScroll.y, scroll.y)
+                    translateAxis(boxWithoutScroll.x, scroll.offset.x)
+                    translateAxis(boxWithoutScroll.y, scroll.offset.y)
                 }
             }
 
@@ -834,8 +865,8 @@ export function createProjectionNode<I>({
                     node !== node.root
                 ) {
                     transformBox(withTransforms, {
-                        x: -node.scroll.x,
-                        y: -node.scroll.y,
+                        x: -node.scroll.offset.x,
+                        y: -node.scroll.offset.y,
                     })
                 }
 

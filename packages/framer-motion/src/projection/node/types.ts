@@ -8,12 +8,24 @@ import { InitialPromotionConfig } from "../../context/SwitchLayoutGroupContext"
 import { MotionStyle } from "../../motion/types"
 import type { VisualElement } from "../../render/VisualElement"
 
+export type Position = "static" | "sticky" | "fixed"
+
 export interface Measurements {
-    frameTimestamp: number
+    animationId: number
     measuredBox: Box
     layoutBox: Box
     latestValues: ResolvedValues
     source: number
+    position: Position
+}
+
+export type Phase = "snapshot" | "measure"
+
+export interface ScrollMeasurements {
+    animationId: number
+    phase: Phase
+    isRoot: boolean
+    offset: Point
 }
 
 export type LayoutEvents =
@@ -28,6 +40,7 @@ export type LayoutEvents =
 export interface IProjectionNode<I = unknown> {
     id: number
     elementId: number | undefined
+    animationId: number
     parent?: IProjectionNode
     relativeParent?: IProjectionNode
     root?: IProjectionNode
@@ -46,8 +59,7 @@ export interface IProjectionNode<I = unknown> {
     relativeTarget?: Box
     targetDelta?: Delta
     targetWithTransforms?: Box
-    scroll?: Point
-    isScrollRoot?: boolean
+    scroll?: ScrollMeasurements
     treeScale?: Point
     projectionDelta?: Delta
     projectionDeltaWithTransform?: Delta
@@ -70,7 +82,7 @@ export interface IProjectionNode<I = unknown> {
     updateLayout(): void
     updateSnapshot(): void
     clearSnapshot(): void
-    updateScroll(): void
+    updateScroll(phase?: Phase): void
     scheduleUpdateProjection(): void
     scheduleCheckAfterUnmount(): void
     checkUpdateFailed(): void

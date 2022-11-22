@@ -97,7 +97,10 @@ export function applyTreeDeltas(
             node.scroll &&
             node !== node.root
         ) {
-            transformBox(box, { x: -node.scroll.x, y: -node.scroll.y })
+            transformBox(box, {
+                x: -node.scroll.offset.x,
+                y: -node.scroll.offset.y,
+            })
         }
 
         if (delta) {
