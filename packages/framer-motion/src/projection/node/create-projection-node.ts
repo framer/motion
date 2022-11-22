@@ -230,6 +230,12 @@ export function createProjectionNode<I>({
         isLayoutDirty = false
 
         /**
+         * Flag to true if we think the projection calculations for this or any
+         * child might need recalculating as a result of an updated transform or layout animation.
+         */
+        isProjectionDirty = false
+
+        /**
          * Block layout updates for instant layout transitions throughout the tree.
          */
         updateManuallyBlocked = false
@@ -916,6 +922,7 @@ export function createProjectionNode<I>({
          */
         setTargetDelta(delta: Delta) {
             this.targetDelta = delta
+            this.isProjectionDirty = true
             this.root.scheduleUpdateProjection()
         }
 
@@ -942,6 +949,16 @@ export function createProjectionNode<I>({
          * Frame calculations
          */
         resolveTargetDelta() {
+            /**
+             * Propagate isProjectionDirty. Nodes are ordered by depth, so if the parent here
+             * is dirty we can simply pass this forward.
+             */
+            this.isProjectionDirty ||=
+                this.getLead().isProjectionDirty ||
+                Boolean(this.parent && this.parent.isProjectionDirty)
+
+            if (!this.isProjectionDirty) return
+
             const { layout, layoutId } = this.options
 
             /**
@@ -1071,6 +1088,10 @@ export function createProjectionNode<I>({
         hasProjected: boolean = false
 
         calcProjection() {
+            if (!this.isProjectionDirty) return
+
+            this.isProjectionDirty = false
+
             const { layout, layoutId } = this.options
 
             /**
