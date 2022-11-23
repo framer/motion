@@ -45,7 +45,7 @@
         "test-projection": "yarn run collect-projection-tests && start-server-and-test 'pushd ../../; python -m SimpleHTTPServer; popd' http://0.0.0.0:8000 'cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
         "test-e2e-chrome": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --browser chrome  --spec \"cypress/integration/layout-relative.chrome.ts\"'",
         "test-e2e-electron": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
-        "test-e2e": "yarn test-projection && yarn test-e2e-electron",
+        "test-e2e": "",
         "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/while-in-view.ts\"'",
         "collect-projection-tests": "node ../../dev/projection/collect-projection-tests.js",
         "prettier": "prettier ./src/* --write",
@@ -100,5 +100,5 @@
             "maxSize": "30.8kB"
         }
     ],
-    "gitHead": "0705ec371418d200b21b80c8b553a35cd3fa3856"
+    "gitHead": "4a0d62d962dff5981e20a90897bafef7539cd849"
 }
