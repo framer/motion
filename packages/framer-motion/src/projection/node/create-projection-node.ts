@@ -715,19 +715,17 @@ export function createProjectionNode<I>({
         }
 
         updateScroll(phase: Phase = "measure") {
-            let needsMeasurement = Boolean(
+            const needsMeasurement = Boolean(
                 this.options.layoutScroll && this.instance
             )
 
-            if (
-                this.scroll &&
-                this.scroll.animationId === this.root.animationId &&
-                this.scroll.phase === phase
-            ) {
-                needsMeasurement = false
-            }
-
-            needsMeasurement = true
+            // if (
+            //     this.scroll &&
+            //     this.scroll.animationId === this.root.animationId &&
+            //     this.scroll.phase === phase
+            // ) {
+            //     needsMeasurement = false
+            // }
 
             if (needsMeasurement) {
                 this.scroll = {
