@@ -25,7 +25,7 @@
         "measure": "turbo run measure",
         "prepare": "turbo run build measure test test-e2e",
         "new": "lerna publish from-package",
-        "new-alpha": "npm run prepare && lerna publish from-package --canary --preid alpha",
+        "new-alpha": "lerna publish from-package --canary --preid alpha",
         "new-beta": "npm run prepare && lerna publish from-package --canary --preid beta"
     },
     "devDependencies": {
