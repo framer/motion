@@ -727,6 +727,8 @@ export function createProjectionNode<I>({
                 needsMeasurement = false
             }
 
+            needsMeasurement = true
+
             if (needsMeasurement) {
                 this.scroll = {
                     animationId: this.root.animationId,
