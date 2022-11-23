@@ -16,7 +16,6 @@ export interface Measurements {
     layoutBox: Box
     latestValues: ResolvedValues
     source: number
-    position: Position
 }
 
 export type Phase = "snapshot" | "measure"

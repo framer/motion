@@ -41,7 +41,6 @@ import {
     Measurements,
     ScrollMeasurements,
     Phase,
-    Position,
 } from "./types"
 import { FlatTree } from "../../render/utils/flat-tree"
 import { Transition } from "../../types"
@@ -715,17 +714,17 @@ export function createProjectionNode<I>({
         }
 
         updateScroll(phase: Phase = "measure") {
-            const needsMeasurement = Boolean(
+            let needsMeasurement = Boolean(
                 this.options.layoutScroll && this.instance
             )
 
-            // if (
-            //     this.scroll &&
-            //     this.scroll.animationId === this.root.animationId &&
-            //     this.scroll.phase === phase
-            // ) {
-            //     needsMeasurement = false
-            // }
+            if (
+                this.scroll &&
+                this.scroll.animationId === this.root.animationId &&
+                this.scroll.phase === phase
+            ) {
+                needsMeasurement = false
+            }
 
             if (needsMeasurement) {
                 this.scroll = {
@@ -781,20 +780,12 @@ export function createProjectionNode<I>({
 
             roundBox(layoutBox)
 
-            const positionStyle =
-                this.options.visualElement?.readValue("position")
-            const position: Position =
-                positionStyle === "fixed" || positionStyle === "sticky"
-                    ? positionStyle
-                    : "static"
-
             return {
                 animationId: this.root.animationId,
                 measuredBox: pageBox,
                 layoutBox,
                 latestValues: {},
                 source: this.id,
-                position,
             }
         }
 
