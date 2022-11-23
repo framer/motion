@@ -28,6 +28,7 @@ export class HTMLVisualElement extends DOMVisualElement<
         instance: HTMLElement,
         key: string
     ): string | number | null | undefined {
+        if (!instance) return undefined
         if (transformProps.has(key)) {
             const defaultType = getDefaultValueType(key)
             return defaultType ? defaultType.default || 0 : 0
