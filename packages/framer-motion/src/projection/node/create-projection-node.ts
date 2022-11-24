@@ -665,11 +665,9 @@ export function createProjectionNode<I>({
          * the next step.
          */
         updateProjection = () => {
-            const start = performance.now()
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
-            console.log(performance.now() - start)
         }
 
         /**
@@ -1095,15 +1093,16 @@ export function createProjectionNode<I>({
         hasProjected: boolean = false
 
         calcProjection() {
-            const { isProjectionDirty } = this
+            const { isProjectionDirty, isTransformDirty } = this
 
             this.isProjectionDirty = this.isTransformDirty = false
 
             if (!isProjectionDirty) return
 
             const lead = this.getLead()
-            const isShared = Boolean(lead !== this || this.resumeFrom)
-            // if (isShared && isTransformDirty) return
+            const isShared = Boolean(this.resumingFrom) || this !== lead
+
+            if (isShared && isTransformDirty) return
 
             const { layout, layoutId } = this.options
 
