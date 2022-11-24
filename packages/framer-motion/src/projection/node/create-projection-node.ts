@@ -1097,12 +1097,15 @@ export function createProjectionNode<I>({
 
             this.isProjectionDirty = this.isTransformDirty = false
 
-            if (!isProjectionDirty) return
-
             const lead = this.getLead()
             const isShared = Boolean(this.resumingFrom) || this !== lead
 
-            if (isShared && isTransformDirty) return
+            let canSkip = true
+
+            if (isProjectionDirty) canSkip = false
+            if (isShared && isTransformDirty) canSkip = false
+
+            if (canSkip) return
 
             const { layout, layoutId } = this.options
 
