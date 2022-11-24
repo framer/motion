@@ -10,6 +10,10 @@ Undocumented APIs should be considered internal and may change without warning.
 
 -   Treat `<motion.svg />` components as HTML.
 
+### Updated
+
+-   Further layout animation performance enhancements.
+
 ## [7.6.10] 2022-11-24
 
 ### Updated
