@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.6.12] 2022-11-24
+
+### Fixed
+
+-   `isTransformDirty` node skipping logic.
+
 ## [7.6.11] 2022-11-24
 
 ### Fixed
