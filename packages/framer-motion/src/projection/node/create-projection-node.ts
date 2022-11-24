@@ -1776,7 +1776,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
     node.options.transition = undefined
 }
 
-function propagateDirtyNodes(node: IProjectionNode) {
+export function propagateDirtyNodes(node: IProjectionNode) {
     /**
      * Propagate isProjectionDirty. Nodes are ordered by depth, so if the parent here
      * is dirty we can simply pass this forward.

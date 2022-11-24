@@ -1,4 +1,6 @@
 import { createTestNode } from "./TestProjectionNode"
+import { propagateDirtyNodes } from "../create-projection-node"
+import { IProjectionNode } from "../types"
 
 describe("node", () => {
     test("If a child updates layout, and parent has scale, parent resetsTransform during measurement", () => {
@@ -184,6 +186,10 @@ describe("node", () => {
             x: { translate: 200, scale: 2, origin: 0.5, originPoint: 100 },
             y: { translate: 200, scale: 2, origin: 0.5, originPoint: 100 },
         })
+
+        propagateDirtyNodes(parent as IProjectionNode)
+        propagateDirtyNodes(child as IProjectionNode)
+        propagateDirtyNodes(grandChild as IProjectionNode)
 
         parent.resolveTargetDelta()
         child.resolveTargetDelta()
