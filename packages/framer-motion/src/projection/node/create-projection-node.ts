@@ -228,6 +228,8 @@ export function createProjectionNode<I>({
          */
         isLayoutDirty = false
 
+        isTransformDirty = false
+
         /**
          * Flag to true if we think the projection calculations for this or any
          * child might need recalculating as a result of an updated transform or layout animation.
@@ -657,9 +659,17 @@ export function createProjectionNode<I>({
             }
         }
 
+        /**
+         * This is a multi-step process as shared nodes might be of different depths. Nodes
+         * are sorted by depth order, so we need to resolve the entire tree before moving to
+         * the next step.
+         */
         updateProjection = () => {
+            const start = performance.now()
+            this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
+            console.log(performance.now() - start)
         }
 
         /**
@@ -941,14 +951,20 @@ export function createProjectionNode<I>({
          */
         resolveTargetDelta() {
             /**
-             * Propagate isProjectionDirty. Nodes are ordered by depth, so if the parent here
-             * is dirty we can simply pass this forward.
+             * Once the dirty status of nodes has been spread through the tree, we also
+             * need to check if we have a shared node of a different depth that has itself
+             * been dirtied.
              */
-            this.isProjectionDirty ||=
-                this.getLead().isProjectionDirty ||
-                Boolean(this.parent && this.parent.isProjectionDirty)
+            const lead = this.getLead()
+            this.isProjectionDirty ||= lead.isProjectionDirty
+            this.isTransformDirty ||= lead.isTransformDirty
 
-            if (!this.isProjectionDirty) return
+            /**
+             * We don't use transform for this step of processing so we don't
+             * need to check whether any nodes have changed transform.
+             */
+            if (!this.isProjectionDirty && !this.attemptToResolveRelativeTarget)
+                return
 
             const { layout, layoutId } = this.options
 
@@ -1079,9 +1095,15 @@ export function createProjectionNode<I>({
         hasProjected: boolean = false
 
         calcProjection() {
-            if (!this.isProjectionDirty) return
+            const { isProjectionDirty } = this
 
-            this.isProjectionDirty = false
+            this.isProjectionDirty = this.isTransformDirty = false
+
+            if (!isProjectionDirty) return
+
+            const lead = this.getLead()
+            const isShared = Boolean(lead !== this || this.resumeFrom)
+            // if (isShared && isTransformDirty) return
 
             const { layout, layoutId } = this.options
 
@@ -1100,8 +1122,6 @@ export function createProjectionNode<I>({
 
             if (!this.layout || !(layout || layoutId)) return
 
-            const lead = this.getLead()
-
             /**
              * Reset the corrected box with the latest values from box, as we're then going
              * to perform mutative operations on it.
@@ -1116,7 +1136,7 @@ export function createProjectionNode<I>({
                 this.layoutCorrected,
                 this.treeScale,
                 this.path,
-                Boolean(this.resumingFrom) || this !== lead
+                isShared
             )
 
             const { target } = lead
@@ -1755,6 +1775,23 @@ function notifyLayoutUpdate(node: IProjectionNode) {
      * and why we need it at all
      */
     node.options.transition = undefined
+}
+
+function propagateDirtyNodes(node: IProjectionNode) {
+    /**
+     * Propagate isProjectionDirty. Nodes are ordered by depth, so if the parent here
+     * is dirty we can simply pass this forward.
+     */
+    node.isProjectionDirty ||= Boolean(
+        node.parent && node.parent.isProjectionDirty
+    )
+
+    /**
+     * Propagate isTransformDirty.
+     */
+    node.isTransformDirty ||= Boolean(
+        node.parent && node.parent.isTransformDirty
+    )
 }
 
 function clearSnapshot(node: IProjectionNode) {
