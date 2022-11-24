@@ -60,6 +60,16 @@ describe("SVG", () => {
         render(<Component />)
     })
 
+    test("doesn't calculate transformOrigin for <svg /> elements", () => {
+        const Component = () => {
+            return <motion.svg animate={{ rotate: 100 }} />
+        }
+        const { container } = render(<Component />)
+        expect(container.firstChild as Element).not.toHaveStyle(
+            "transform-origin: 0px 0px"
+        )
+    })
+
     // // https://github.com/framer/motion/issues/216
     test("doesn't throw if animating unencounterd value", () => {
         const animation = {
