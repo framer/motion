@@ -21,7 +21,6 @@ export const lowercaseSVGElements = [
     "polyline",
     "rect",
     "stop",
-    "svg",
     "switch",
     "symbol",
     "text",
