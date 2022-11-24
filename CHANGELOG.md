@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.6.10] 2022-11-24
+
+### Updated
+
+-   Removing read of (currently unused) `position` style as it's erroneously breaking a test in Framer.
+
 ## [7.6.9] 2022-11-22
 
 ### Updated
