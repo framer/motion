@@ -7,7 +7,7 @@ export function calcLength(axis: Axis) {
 }
 
 export function isNear(value: number, target = 0, maxDistance = 0.01): boolean {
-    return Math.abs(value - target) < maxDistance
+    return Math.abs(value - target) <= maxDistance
 }
 
 export function calcAxisDelta(
