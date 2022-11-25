@@ -1,8 +1,5 @@
 import { ResolvedValues } from "../../render/types"
 import { Delta, Point } from "../geometry/types"
-import { isCloseTo } from "../geometry/utils"
-
-const scaleThreshold = 0.0000000001
 
 export function buildProjectionTransform(
     delta: Delta,
@@ -27,10 +24,7 @@ export function buildProjectionTransform(
      * Apply scale correction for the tree transform.
      * This will apply scale to the screen-orientated axes.
      */
-    if (
-        !isCloseTo(treeScale.x, 1, scaleThreshold) ||
-        !isCloseTo(treeScale.y, 1, scaleThreshold)
-    ) {
+    if (treeScale.x !== 1 || treeScale.y !== 1) {
         transform += `scale(${1 / treeScale.x}, ${1 / treeScale.y}) `
     }
 
@@ -47,10 +41,7 @@ export function buildProjectionTransform(
      */
     const elementScaleX = delta.x.scale * treeScale.x
     const elementScaleY = delta.y.scale * treeScale.y
-    if (
-        !isCloseTo(elementScaleX, 1, scaleThreshold) ||
-        !isCloseTo(elementScaleY, 1, scaleThreshold)
-    ) {
+    if (elementScaleX !== 1 || elementScaleY !== 1) {
         transform += `scale(${elementScaleX}, ${elementScaleY})`
     }
 

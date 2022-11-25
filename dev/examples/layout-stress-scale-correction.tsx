@@ -94,12 +94,11 @@ const Container = styled.div`
 function Group({ children }: React.PropsWithChildren) {
     return (
         <motion.div layout className="a">
-            <motion.div layout className="b"></motion.div>
-            <motion.div layout className="c"></motion.div>
             <motion.div layout className="d">
+                <motion.div layout className="b"></motion.div>
+                <motion.div layout className="c"></motion.div>
                 {children}
             </motion.div>
-            <motion.div layout className="e"></motion.div>
             <motion.div layout className="f">
                 <motion.div layout className="g"></motion.div>
                 <motion.div layout className="h">
