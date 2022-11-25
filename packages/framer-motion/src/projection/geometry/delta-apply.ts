@@ -116,6 +116,17 @@ export function applyTreeDeltas(
             transformBox(box, node.latestValues)
         }
     }
+
+    /**
+     * Snap tree scale back to 1 if it's within a non-perceivable threshold.
+     * This will help reduce useless scales getting rendered.
+     */
+    // treeScale.x = snapToDefault(treeScale.x)
+    // treeScale.y = snapToDefault(treeScale.y)
+}
+
+function snapToDefault(scale: number): number {
+    return scale > 1.0000000000001 || scale < 0.999999999999 ? scale : 1
 }
 
 export function translateAxis(axis: Axis, distance: number) {
