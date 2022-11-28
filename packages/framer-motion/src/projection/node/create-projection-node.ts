@@ -59,7 +59,12 @@ const animationTarget = 1000
 
 let id = 0
 
-export function createProjectionNode<I>({
+interface WithEventListeners {
+    addEventListener: Element["addEventListener"]
+    removeEventListener: Element["removeEventListener"]
+}
+
+export function createProjectionNode<I extends WithEventListeners>({
     attachResizeListener,
     defaultParent,
     measureScroll,
@@ -420,10 +425,7 @@ export function createProjectionNode<I>({
              */
             if (this === this.root || this.options.layoutScroll) {
                 this.dirtyScroll = () => (this.isScrollDirty = true)
-                ;(this.instance as any).addEventListener(
-                    "scroll",
-                    this.dirtyScroll
-                )
+                this.instance.addEventListener("scroll", this.dirtyScroll)
             }
 
             // Only register the handler if it requires layout animation
@@ -534,10 +536,7 @@ export function createProjectionNode<I>({
             this.parent?.children.delete(this)
 
             if (this.dirtyScroll) {
-                ;(this.instance as any).removeEventListener(
-                    "scroll",
-                    this.dirtyScroll
-                )
+                this.instance.removeEventListener("scroll", this.dirtyScroll)
             }
 
             ;(this.instance as any) = undefined
