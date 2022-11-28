@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.6.15] 2022-11-28
+
+### Fixed
+
+-   Rounding tree scale to `1` to prevent unnecessary `scale` transforms.
+
 ## [7.6.14] 2022-11-28
 
 ### Fixed
