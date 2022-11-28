@@ -236,6 +236,10 @@ export function createProjectionNode<I>({
          */
         isProjectionDirty = false
 
+        /**
+         * This will be flagged to true if current scroll measurements are updated. This will
+         * help reduce the number of times they're sampled (which can trigger style recalculations).
+         */
         isScrollDirty = false
 
         /**
@@ -737,6 +741,11 @@ export function createProjectionNode<I>({
             }
 
             if (needsMeasurement) {
+                /**
+                 * Because renders are sync and scroll event listeners are non-blocking,
+                 * we can only use cached scroll during the pre-render snapshot phase,
+                 * as we will have had time since the last render for a scroll event to fire.
+                 */
                 const useCachedScroll =
                     !this.isScrollDirty && this.scroll && phase === "snapshot"
 
