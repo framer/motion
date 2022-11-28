@@ -73,7 +73,7 @@ export function applyBoxDelta(box: Box, { x, y }: Delta): void {
  */
 export function applyTreeDeltas(
     box: Box,
-    treeScale: Point,
+    _treeScale: Point,
     treePath: IProjectionNode[],
     isSharedTransition: boolean = false
 ) {
@@ -81,7 +81,7 @@ export function applyTreeDeltas(
     if (!treeLength) return
 
     // Reset the treeScale
-    treeScale.x = treeScale.y = 1
+    // treeScale.x = treeScale.y = 1
 
     let node: IProjectionNode
     let delta: Delta | undefined
@@ -104,9 +104,9 @@ export function applyTreeDeltas(
         }
 
         if (delta) {
-            // Incoporate each ancestor's scale into a culmulative treeScale for this component
-            treeScale.x *= delta.x.scale
-            treeScale.y *= delta.y.scale
+            // // Incoporate each ancestor's scale into a culmulative treeScale for this component
+            // treeScale.x *= delta.x.scale
+            // treeScale.y *= delta.y.scale
 
             // Apply each ancestor's calculated delta into this component's recorded layout box
             applyBoxDelta(box, delta)
@@ -117,15 +117,17 @@ export function applyTreeDeltas(
         }
     }
 
-    /**
-     * Snap tree scale back to 1 if it's within a non-perceivable threshold.
-     * This will help reduce useless scales getting rendered.
-     */
-    treeScale.x = snapToDefault(treeScale.x)
-    treeScale.y = snapToDefault(treeScale.y)
+    // /**
+    //  * Snap tree scale back to 1 if it's within a non-perceivable threshold.
+    //  * This will help reduce useless scales getting rendered.
+    //  */
+    // treeScale.x = snapToDefault(treeScale.x)
+    // treeScale.y = snapToDefault(treeScale.y)
+
+    // console.log(treeScale.x)
 }
 
-function snapToDefault(scale: number): number {
+export function snapToDefault(scale: number): number {
     if (Number.isInteger(scale)) return scale
     return scale > 1.0000000000001 || scale < 0.999999999999 ? scale : 1
 }

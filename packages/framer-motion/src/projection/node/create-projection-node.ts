@@ -9,7 +9,11 @@ import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { mixValues } from "../animation/mix-values"
 import { copyBoxInto } from "../geometry/copy"
-import { applyBoxDelta, applyTreeDeltas } from "../geometry/delta-apply"
+import {
+    applyBoxDelta,
+    applyTreeDeltas,
+    snapToDefault,
+} from "../geometry/delta-apply"
 import {
     calcBoxDelta,
     calcLength,
@@ -1089,6 +1093,29 @@ export function createProjectionNode<I>({
         hasProjected: boolean = false
 
         calcProjection() {
+            if (this.parent) {
+                if (this.parent.projectionDelta) {
+                    /**
+                     * Snap tree scale back to 1 if it's within a non-perceivable threshold.
+                     * This will help reduce useless scales getting rendered.
+                     */
+                    this.treeScale.x = snapToDefault(
+                        this.parent.treeScale!.x *
+                            this.parent.projectionDelta.x.scale
+                    )
+                    this.treeScale.y = snapToDefault(
+                        this.parent.treeScale!.y *
+                            this.parent.projectionDelta.y.scale
+                    )
+                } else {
+                    this.treeScale.x = this.parent.treeScale!.x
+                    this.treeScale.y = this.parent.treeScale!.y
+                }
+            } else {
+                this.treeScale.x = 1
+                this.treeScale.y = 1
+            }
+
             const { isProjectionDirty, isTransformDirty } = this
 
             this.isProjectionDirty = this.isTransformDirty = false
