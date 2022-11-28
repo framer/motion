@@ -3,7 +3,7 @@ import { Box, Delta } from "./types"
 
 export function isDeltaZero(delta: Delta) {
     /**
-     * Making !(condition || condition) vs condition && condition allows
+     * Making !(!condition || !condition) vs condition && condition allows
      * earlier bailout.
      */
     return !(
