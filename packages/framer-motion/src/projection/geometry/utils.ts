@@ -1,4 +1,3 @@
-import { distance } from "popmotion"
 import { calcLength } from "./delta-calc"
 import { AxisDelta, Box, Delta } from "./types"
 
@@ -21,8 +20,4 @@ export function boxEquals(a: Box, b: Box) {
 
 export function aspectRatio(box: Box): number {
     return calcLength(box.x) / calcLength(box.y)
-}
-
-export function isCloseTo(a: number, b: number, max = 0.1) {
-    return distance(a, b) <= max
 }

@@ -15,18 +15,14 @@ import {
     calcLength,
     calcRelativeBox,
     calcRelativePosition,
+    isNear,
 } from "../geometry/delta-calc"
 import { removeBoxTransforms } from "../geometry/delta-remove"
 import { createBox, createDelta } from "../geometry/models"
 import { transformBox, translateAxis } from "../geometry/delta-apply"
 import { Axis, AxisDelta, Box, Delta, Point } from "../geometry/types"
 import { getValueTransition } from "../../animation/utils/transitions"
-import {
-    aspectRatio,
-    boxEquals,
-    isCloseTo,
-    isDeltaZero,
-} from "../geometry/utils"
+import { aspectRatio, boxEquals, isDeltaZero } from "../geometry/utils"
 import { NodeStack } from "../shared/stack"
 import { scaleCorrectors } from "../styles/scale-correction"
 import { buildProjectionTransform } from "../styles/transform"
@@ -1901,6 +1897,6 @@ function shouldAnimatePositionOnly(
     return (
         animationType === "position" ||
         (animationType === "preserve-aspect" &&
-            !isCloseTo(aspectRatio(snapshot), aspectRatio(layout), 0.2))
+            !isNear(aspectRatio(snapshot), aspectRatio(layout), 0.2))
     )
 }
