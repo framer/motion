@@ -1,20 +1,25 @@
 import { calcLength } from "./delta-calc"
-import { AxisDelta, Box, Delta } from "./types"
-
-function isAxisDeltaZero(delta: AxisDelta) {
-    return delta.translate === 0 && delta.scale === 1
-}
+import { Box, Delta } from "./types"
 
 export function isDeltaZero(delta: Delta) {
-    return isAxisDeltaZero(delta.x) && isAxisDeltaZero(delta.y)
+    /**
+     * Making !(condition || condition) vs condition && condition allows
+     * earlier bailout.
+     */
+    return !(
+        delta.x.translate !== 0 ||
+        delta.x.scale !== 1 ||
+        delta.y.translate !== 0 ||
+        delta.y.scale !== 1
+    )
 }
 
 export function boxEquals(a: Box, b: Box) {
-    return (
-        a.x.min === b.x.min &&
-        a.x.max === b.x.max &&
-        a.y.min === b.y.min &&
-        a.y.max === b.y.max
+    return !(
+        a.x.min !== b.x.min ||
+        a.x.max !== b.x.max ||
+        a.y.min !== b.y.min ||
+        a.y.max !== b.y.max
     )
 }
 
