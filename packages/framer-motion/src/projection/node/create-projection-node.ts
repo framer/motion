@@ -236,6 +236,8 @@ export function createProjectionNode<I>({
          */
         isProjectionDirty = false
 
+        isScrollDirty = false
+
         /**
          * Block layout updates for instant layout transitions throughout the tree.
          */
@@ -735,13 +737,20 @@ export function createProjectionNode<I>({
             }
 
             if (needsMeasurement) {
+                const useCachedScroll =
+                    !this.isScrollDirty && this.scroll && phase === "snapshot"
+
                 this.scroll = {
                     animationId: this.root.animationId,
                     phase,
                     isRoot: checkIsScrollRoot(this.instance),
-                    offset: measureScroll(this.instance),
+                    offset: useCachedScroll
+                        ? this.scroll!.offset
+                        : measureScroll(this.instance),
                 }
             }
+
+            this.isScrollDirty = false
         }
 
         resetTransform() {
