@@ -419,9 +419,11 @@ export function createProjectionNode<I>({
              * scroll, add an event listener to flag when the scroll measurements are outdated.
              */
             if (this === this.root || this.options.layoutScroll) {
-                const element = this.instance as Element
                 this.dirtyScroll = () => (this.isScrollDirty = true)
-                element.addEventListener("scroll", this.dirtyScroll)
+                ;(this.instance as any).addEventListener(
+                    "scroll",
+                    this.dirtyScroll
+                )
             }
 
             // Only register the handler if it requires layout animation
@@ -532,8 +534,10 @@ export function createProjectionNode<I>({
             this.parent?.children.delete(this)
 
             if (this.dirtyScroll) {
-                const element = this.instance as Element
-                element.removeEventListener("scroll", this.dirtyScroll)
+                ;(this.instance as any).removeEventListener(
+                    "scroll",
+                    this.dirtyScroll
+                )
             }
 
             ;(this.instance as any) = undefined
