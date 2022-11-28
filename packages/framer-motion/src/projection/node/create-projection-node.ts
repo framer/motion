@@ -320,6 +320,8 @@ export function createProjectionNode<I>({
 
         preserveOpacity?: boolean
 
+        dirtyScroll?: VoidFunction
+
         constructor(
             elementId: number | undefined,
             latestValues: ResolvedValues = {},
@@ -410,6 +412,16 @@ export function createProjectionNode<I>({
 
             if (layoutId) {
                 this.root.registerSharedNode(layoutId, this)
+            }
+
+            /**
+             * If this is the root node (viewport) or an element where we're tracking
+             * scroll, add an event listener to flag when the scroll measurements are outdated.
+             */
+            if (this === this.root || this.options.layoutScroll) {
+                const element = this.instance as Element
+                this.dirtyScroll = () => (this.isScrollDirty = true)
+                element.addEventListener("scroll", this.dirtyScroll)
             }
 
             // Only register the handler if it requires layout animation
@@ -518,6 +530,12 @@ export function createProjectionNode<I>({
             this.root.nodes!.remove(this)
             this.getStack()?.remove(this)
             this.parent?.children.delete(this)
+
+            if (this.dirtyScroll) {
+                const element = this.instance as Element
+                element.removeEventListener("scroll", this.dirtyScroll)
+            }
+
             ;(this.instance as any) = undefined
 
             cancelSync.preRender(this.updateProjection)
