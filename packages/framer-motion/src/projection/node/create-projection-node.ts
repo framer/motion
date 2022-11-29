@@ -325,7 +325,7 @@ export function createProjectionNode<I extends WithEventListeners>({
 
         preserveOpacity?: boolean
 
-        dirtyScroll?: VoidFunction
+        dirtyScroll?: (event: Event) => void
 
         constructor(
             elementId: number | undefined,
@@ -424,7 +424,22 @@ export function createProjectionNode<I extends WithEventListeners>({
              * scroll, add an event listener to flag when the scroll measurements are outdated.
              */
             if (this === this.root || this.options.layoutScroll) {
-                this.dirtyScroll = () => (this.isScrollDirty = true)
+                this.dirtyScroll = (event: Event) => {
+                    if (
+                        // true ||
+                        !this.scroll ||
+                        event.timeStamp > this.scroll.timeStamp
+                    ) {
+                        console.log("setting is scroll dirty")
+                        this.isScrollDirty = true
+                    } else {
+                        console.log(
+                            "not dirty",
+                            event.timeStamp,
+                            this.scroll.timeStamp
+                        )
+                    }
+                }
                 this.instance.addEventListener?.("scroll", this.dirtyScroll)
             }
 
@@ -769,9 +784,18 @@ export function createProjectionNode<I extends WithEventListeners>({
                  */
                 const useCachedScroll =
                     !this.isScrollDirty && this.scroll && phase === "snapshot"
-
+                console.log(
+                    phase,
+                    this.isScrollDirty,
+                    this.scroll?.offset,
+                    {
+                        useCachedScroll,
+                    },
+                    performance.now()
+                )
                 this.scroll = {
                     animationId: this.root.animationId,
+                    timeStamp: performance.now(),
                     phase,
                     isRoot: checkIsScrollRoot(this.instance),
                     offset: useCachedScroll

@@ -20,6 +20,7 @@ export type Phase = "snapshot" | "measure"
 
 export interface ScrollMeasurements {
     animationId: number
+    timeStamp: number
     phase: Phase
     isRoot: boolean
     offset: Point
