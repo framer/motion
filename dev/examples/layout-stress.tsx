@@ -40,14 +40,14 @@ const Container = styled.div`
 
     .c {
         background-color: hsla(60, 50%, 50%);
-        width: var(--offset);
-        height: var(--offset);
+        width: 100px;
+        height: 100px;
     }
 
     .d {
         background-color: hsla(90, 50%, 50%);
-        width: var(--offset);
-        height: var(--offset);
+        width: 100px;
+        height: 100px;
     }
 
     .e {

@@ -667,7 +667,9 @@ export function createProjectionNode<I>({
         updateProjection = () => {
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
+            const start = performance.now()
             this.nodes!.forEach(calcProjection)
+            console.log(performance.now() - start)
         }
 
         /**
@@ -1093,27 +1095,28 @@ export function createProjectionNode<I>({
         hasProjected: boolean = false
 
         calcProjection() {
-            if (this.parent) {
-                if (this.parent.projectionDelta) {
-                    /**
-                     * Snap tree scale back to 1 if it's within a non-perceivable threshold.
-                     * This will help reduce useless scales getting rendered.
-                     */
-                    this.treeScale.x = snapToDefault(
-                        this.parent.treeScale!.x *
-                            this.parent.projectionDelta.x.scale
-                    )
-                    this.treeScale.y = snapToDefault(
-                        this.parent.treeScale!.y *
-                            this.parent.projectionDelta.y.scale
-                    )
-                } else {
-                    this.treeScale.x = this.parent.treeScale!.x
-                    this.treeScale.y = this.parent.treeScale!.y
-                }
-            } else {
+            if (!this.parent) {
+                /**
+                 * If this is the top of the tree, reset the treeScale to 1
+                 */
                 this.treeScale.x = 1
                 this.treeScale.y = 1
+            } else if (this.parent.projectionDelta) {
+                /**
+                 * For all children nodes, take the parent treeScale, apply the parent's
+                 *
+                 */
+                this.treeScale.x = snapToDefault(
+                    this.parent.treeScale!.x *
+                        this.parent.projectionDelta.x.scale
+                )
+                this.treeScale.y = snapToDefault(
+                    this.parent.treeScale!.y *
+                        this.parent.projectionDelta.y.scale
+                )
+            } else {
+                this.treeScale.x = this.parent.treeScale!.x
+                this.treeScale.y = this.parent.treeScale!.y
             }
 
             const { isProjectionDirty, isTransformDirty } = this
@@ -1157,12 +1160,7 @@ export function createProjectionNode<I>({
              * Apply all the parent deltas to this box to produce the corrected box. This
              * is the layout box, as it will appear on screen as a result of the transforms of its parents.
              */
-            applyTreeDeltas(
-                this.layoutCorrected,
-                this.treeScale,
-                this.path,
-                isShared
-            )
+            applyTreeDeltas(this.layoutCorrected, this.path, isShared)
 
             const { target } = lead
             if (!target) return
