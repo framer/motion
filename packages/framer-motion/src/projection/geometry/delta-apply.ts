@@ -2,7 +2,7 @@ import { mix } from "popmotion"
 import { ResolvedValues } from "../../render/types"
 import { IProjectionNode } from "../node/types"
 import { hasTransform } from "../utils/has-transform"
-import { Axis, Box, Delta, Point } from "./types"
+import { Axis, Box, Delta } from "./types"
 
 /**
  * Scales a point based on a factor and an originPoint
