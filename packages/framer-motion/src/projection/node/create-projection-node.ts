@@ -667,9 +667,7 @@ export function createProjectionNode<I>({
         updateProjection = () => {
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
-            const start = performance.now()
             this.nodes!.forEach(calcProjection)
-            console.log(performance.now() - start)
         }
 
         /**
