@@ -1094,30 +1094,38 @@ export function createProjectionNode<I>({
 
         hasProjected: boolean = false
 
-        calcProjection() {
+        propagateTreeScale() {
             if (!this.parent) {
                 /**
                  * If this is the top of the tree, reset the treeScale to 1
                  */
                 this.treeScale.x = 1
                 this.treeScale.y = 1
-            } else if (this.parent.projectionDelta) {
+            } else if (this.parent?.projectionDelta) {
                 /**
-                 * For all children nodes, take the parent treeScale, apply the parent's
-                 *
+                 * If the parent has calculated a projectionDelta, incorporate
+                 * it into the tree scale of this node.
                  */
                 this.treeScale.x = snapToDefault(
-                    this.parent.treeScale!.x *
+                    this.parent.treeScale.x *
                         this.parent.projectionDelta.x.scale
                 )
                 this.treeScale.y = snapToDefault(
-                    this.parent.treeScale!.y *
+                    this.parent.treeScale.y *
                         this.parent.projectionDelta.y.scale
                 )
             } else {
-                this.treeScale.x = this.parent.treeScale!.x
-                this.treeScale.y = this.parent.treeScale!.y
+                /**
+                 * If the parent doesn't have an active projection then
+                 * forward its tree scale.
+                 */
+                this.treeScale.x = this.parent.treeScale.x
+                this.treeScale.y = this.parent.treeScale.y
             }
+        }
+
+        calcProjection() {
+            this.propagateTreeScale()
 
             const { isProjectionDirty, isTransformDirty } = this
 
