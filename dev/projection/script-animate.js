@@ -33,7 +33,8 @@ Animate.createNode = (
     element,
     parent,
     options = {},
-    transition = { duration: 10, ease: () => 0.5 }
+    transition = { duration: 10, ease: () => 0.5 },
+    onComplete
 ) => {
     const latestValues = {}
     const visualElement = new HTMLVisualElement({
@@ -68,16 +69,20 @@ Animate.createNode = (
     node.mount(element)
     visualElement.projection = node
 
-    node.addEventListener("didUpdate", ({ delta, hasLayoutChanged }) => {
-        if (node.resumeFrom) {
-            node.resumingFrom = node.resumeFrom
-            node.resumingFrom.resumingFrom = undefined
+    node.addEventListener(
+        "didUpdate",
+        ({ delta, hasLayoutChanged, hasRelativeTargetChanged }) => {
+            console.log(hasRelativeTargetChanged)
+            if (node.resumeFrom) {
+                node.resumingFrom = node.resumeFrom
+                node.resumingFrom.resumingFrom = undefined
+            }
+            if (hasLayoutChanged) {
+                node.setAnimationOrigin(delta)
+                node.startAnimation({ ...transition, onComplete })
+            }
         }
-        if (hasLayoutChanged) {
-            node.setAnimationOrigin(delta)
-            node.startAnimation(transition)
-        }
-    })
+    )
 
     node.setValue = (key, value) => {
         latestValues[key] = value

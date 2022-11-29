@@ -49,6 +49,8 @@ import { MotionStyle } from "../../motion/types"
 import { globalProjectionState } from "./state"
 import { delay } from "../../utils/delay"
 
+let skippedNodes = 0
+
 const transformAxes = ["", "X", "Y", "Z"]
 
 /**
@@ -228,7 +230,7 @@ export function createProjectionNode<I>({
          */
         isLayoutDirty = false
 
-        isTransformDirty = false
+        isTreeDirty = false
 
         /**
          * Flag to true if we think the projection calculations for this or any
@@ -665,9 +667,12 @@ export function createProjectionNode<I>({
          * the next step.
          */
         updateProjection = () => {
+            // const start = performance.now()
+            skippedNodes = 0
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
+            console.log(skippedNodes)
         }
 
         /**
@@ -920,6 +925,12 @@ export function createProjectionNode<I>({
          *
          */
         setTargetDelta(delta: Delta) {
+            console.log(
+                delta.x.translate,
+                delta.y.translate,
+                delta.x.scale,
+                delta.y.scale
+            )
             this.targetDelta = delta
             this.isProjectionDirty = true
             this.root.scheduleUpdateProjection()
@@ -955,7 +966,7 @@ export function createProjectionNode<I>({
              */
             const lead = this.getLead()
             this.isProjectionDirty ||= lead.isProjectionDirty
-            this.isTransformDirty ||= lead.isTransformDirty
+            this.isTreeDirty ||= lead.isTreeDirty
 
             /**
              * We don't use transform for this step of processing so we don't
@@ -1093,6 +1104,9 @@ export function createProjectionNode<I>({
         hasProjected: boolean = false
 
         propagateTreeScale() {
+            let prevScaleX = this.treeScale.x
+            let prevScaleY = this.treeScale.y
+
             if (!this.parent) {
                 /**
                  * If this is the top of the tree, reset the treeScale to 1
@@ -1120,23 +1134,28 @@ export function createProjectionNode<I>({
                 this.treeScale.x = this.parent.treeScale.x
                 this.treeScale.y = this.parent.treeScale.y
             }
+
+            return (
+                prevScaleX !== this.treeScale.x ||
+                prevScaleY !== this.treeScale.y
+            )
         }
 
         calcProjection() {
-            this.propagateTreeScale()
+            const hasTreeScaleChanged = this.propagateTreeScale()
 
-            const { isProjectionDirty, isTransformDirty } = this
+            const { isProjectionDirty, isTreeDirty } = this
 
-            this.isProjectionDirty = this.isTransformDirty = false
+            this.isProjectionDirty = this.isTreeDirty = false
 
             const lead = this.getLead()
             const isShared = Boolean(this.resumingFrom) || this !== lead
 
             let canSkip = true
 
-            if (isProjectionDirty) canSkip = false
-            if (isShared && isTransformDirty) canSkip = false
-
+            if (isProjectionDirty || hasTreeScaleChanged) canSkip = false
+            if (isShared && isTreeDirty) canSkip = false
+            if (canSkip) skippedNodes++
             if (canSkip) return
 
             const { layout, layoutId } = this.options
@@ -1811,16 +1830,14 @@ export function propagateDirtyNodes(node: IProjectionNode) {
      * Propagate isProjectionDirty. Nodes are ordered by depth, so if the parent here
      * is dirty we can simply pass this forward.
      */
-    node.isProjectionDirty ||= Boolean(
-        node.parent && node.parent.isProjectionDirty
-    )
+    // node.isProjectionDirty ||= Boolean(
+    //     node.parent && node.parent.isProjectionDirty
+    // )
 
     /**
-     * Propagate isTransformDirty.
+     * Propagate isTreeDirty.
      */
-    node.isTransformDirty ||= Boolean(
-        node.parent && node.parent.isTransformDirty
-    )
+    node.isTreeDirty ||= Boolean(node.parent && node.parent.isTreeDirty)
 }
 
 function clearSnapshot(node: IProjectionNode) {
