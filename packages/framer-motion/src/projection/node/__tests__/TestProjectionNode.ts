@@ -17,14 +17,6 @@ interface TestInstance {
     box?: Box
 }
 
-export function testInstance(instance: Partial<TestInstance>): TestInstance {
-    return {
-        addEventListener: () => {},
-        removeEventListener: () => {},
-        ...instance,
-    }
-}
-
 export const TestProjectionNode = createProjectionNode<TestInstance>({
     measureScroll: (_instance) => ({ x: 0, y: 0 }),
     defaultParent: () => {
