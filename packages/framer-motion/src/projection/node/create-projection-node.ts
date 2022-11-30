@@ -49,8 +49,6 @@ import { MotionStyle } from "../../motion/types"
 import { globalProjectionState } from "./state"
 import { delay } from "../../utils/delay"
 
-let skippedNodes = 0
-
 const transformAxes = ["", "X", "Y", "Z"]
 
 /**
@@ -58,9 +56,9 @@ const transformAxes = ["", "X", "Y", "Z"]
  * which has a noticeable difference in spring animations
  */
 const animationTarget = 1000
-
+const times: number[] = []
 let id = 0
-
+// let skippedNodes = 0
 export function createProjectionNode<I>({
     attachResizeListener,
     defaultParent,
@@ -667,12 +665,16 @@ export function createProjectionNode<I>({
          * the next step.
          */
         updateProjection = () => {
-            // const start = performance.now()
-            skippedNodes = 0
+            const start = performance.now()
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
-            console.log(skippedNodes)
+            times.push(performance.now() - start)
+
+            if (times.length > 500)
+                console.log(
+                    times.reduce((acc, next) => acc + next, 0) / times.length
+                )
         }
 
         /**
@@ -925,14 +927,8 @@ export function createProjectionNode<I>({
          *
          */
         setTargetDelta(delta: Delta) {
-            console.log(
-                delta.x.translate,
-                delta.y.translate,
-                delta.x.scale,
-                delta.y.scale
-            )
             this.targetDelta = delta
-            this.isProjectionDirty = true
+            this.isProjectionDirty = this.isTreeDirty = true
             this.root.scheduleUpdateProjection()
         }
 
@@ -971,9 +967,17 @@ export function createProjectionNode<I>({
             /**
              * We don't use transform for this step of processing so we don't
              * need to check whether any nodes have changed transform.
+             *
+             * TODO Replace parent isProjectionDirty for isTreeDirty check
              */
-            if (!this.isProjectionDirty && !this.attemptToResolveRelativeTarget)
+            if (
+                !this.isProjectionDirty &&
+                !this.parent?.isProjectionDirty &&
+                !this.attemptToResolveRelativeTarget
+            ) {
+                // skippedNodes++
                 return
+            }
 
             const { layout, layoutId } = this.options
 
@@ -1104,8 +1108,8 @@ export function createProjectionNode<I>({
         hasProjected: boolean = false
 
         propagateTreeScale() {
-            let prevScaleX = this.treeScale.x
-            let prevScaleY = this.treeScale.y
+            const prevScaleX = this.treeScale.x
+            const prevScaleY = this.treeScale.y
 
             if (!this.parent) {
                 /**
@@ -1155,7 +1159,7 @@ export function createProjectionNode<I>({
 
             if (isProjectionDirty || hasTreeScaleChanged) canSkip = false
             if (isShared && isTreeDirty) canSkip = false
-            if (canSkip) skippedNodes++
+            // if (canSkip) skippedNodes++
             if (canSkip) return
 
             const { layout, layoutId } = this.options
@@ -1169,6 +1173,7 @@ export function createProjectionNode<I>({
                     this.currentAnimation ||
                     this.pendingAnimation
             )
+
             if (!this.isTreeAnimating) {
                 this.targetDelta = this.relativeTarget = undefined
             }
@@ -1268,7 +1273,7 @@ export function createProjectionNode<I>({
             const mixedValues = { ...this.latestValues }
 
             const targetDelta = createDelta()
-            this.relativeTarget = this.relativeTargetOrigin = undefined
+            // this.relativeTarget = this.relativeTargetOrigin = undefined
             this.attemptToResolveRelativeTarget = !hasOnlyRelativeTargetChanged
 
             const relativeLayout = createBox()
@@ -1286,7 +1291,6 @@ export function createProjectionNode<I>({
             this.animationProgress = 0
             this.mixTargetDelta = (latest: number) => {
                 const progress = latest / 1000
-
                 mixAxisDelta(targetDelta.x, delta.x, progress)
                 mixAxisDelta(targetDelta.y, delta.y, progress)
                 this.setTargetDelta(targetDelta)
@@ -1302,6 +1306,7 @@ export function createProjectionNode<I>({
                         this.layout.layoutBox,
                         this.relativeParent.layout.layoutBox
                     )
+
                     mixBox(
                         this.relativeTarget,
                         this.relativeTargetOrigin,
@@ -1343,6 +1348,7 @@ export function createProjectionNode<I>({
                 cancelSync.update(this.pendingAnimation)
                 this.pendingAnimation = undefined
             }
+
             /**
              * Start the animation in the next frame to have a frame with progress 0,
              * where the target is the same as when the animation started, so we can
@@ -1801,6 +1807,10 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                     if (!boxEquals(relativeSnapshot, relativeLayout)) {
                         hasRelativeTargetChanged = true
                     }
+
+                    node.relativeTarget = relativeLayout
+                    node.relativeTargetOrigin = relativeSnapshot
+                    node.relativeParent = relativeParent
                 }
             }
         }

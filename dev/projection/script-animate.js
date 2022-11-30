@@ -69,20 +69,18 @@ Animate.createNode = (
     node.mount(element)
     visualElement.projection = node
 
-    node.addEventListener(
-        "didUpdate",
-        ({ delta, hasLayoutChanged, hasRelativeTargetChanged }) => {
-            console.log(hasRelativeTargetChanged)
-            if (node.resumeFrom) {
-                node.resumingFrom = node.resumeFrom
-                node.resumingFrom.resumingFrom = undefined
-            }
-            if (hasLayoutChanged) {
-                node.setAnimationOrigin(delta)
-                node.startAnimation({ ...transition, onComplete })
-            }
+    node.eventHandlers.get("didUpdate")?.clear()
+    node.addEventListener("didUpdate", ({ delta, hasLayoutChanged }) => {
+        if (node.resumeFrom) {
+            node.resumingFrom = node.resumeFrom
+            node.resumingFrom.resumingFrom = undefined
         }
-    )
+
+        if (hasLayoutChanged) {
+            node.setAnimationOrigin(delta)
+            node.startAnimation({ ...transition, onComplete })
+        }
+    })
 
     node.setValue = (key, value) => {
         latestValues[key] = value

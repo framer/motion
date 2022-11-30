@@ -67,6 +67,7 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
         visualElement.projection = node
     }
 
+    node.eventHandlers.get("didUpdate")?.clear()
     node.addEventListener("didUpdate", ({ delta, hasLayoutChanged }) => {
         if (node.resumeFrom) {
             node.resumingFrom = node.resumeFrom
