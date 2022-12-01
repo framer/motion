@@ -1,5 +1,6 @@
-import { interpolate, Easing } from "popmotion"
+import { EasingFunction } from "../easing/types"
 import { CustomValueType } from "../types"
+import { interpolate } from "./interpolate"
 
 /**
  * @public
@@ -19,7 +20,7 @@ export interface TransformOptions<T> {
      *
      * @public
      */
-    ease?: Easing | Easing[]
+    ease?: EasingFunction | EasingFunction[]
 
     /**
      * Provide a function that can interpolate between any two values in the provided range.

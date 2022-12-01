@@ -1,5 +1,5 @@
-import { mix } from "popmotion"
 import { moveItem } from "../../../utils/array"
+import { mix } from "../../../utils/mix"
 import { ItemData } from "../types"
 
 export function checkReorder<T>(

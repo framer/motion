@@ -1,11 +1,11 @@
 import { MeshProps } from "@react-three/fiber"
-import { pipe } from "popmotion"
 import { useRef } from "react"
 import {
     addPointerEvent,
     isDragActive,
     wrapHandler,
     AnimationType,
+    pipe,
 } from "framer-motion"
 import type { VisualElement, EventInfo } from "framer-motion"
 import { ThreeMotionProps } from "../../types"

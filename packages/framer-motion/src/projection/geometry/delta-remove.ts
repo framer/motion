@@ -1,6 +1,6 @@
-import { mix } from "popmotion"
 import { percent } from "style-value-types"
 import { ResolvedValues } from "../../render/types"
+import { mix } from "../../utils/mix"
 import { scalePoint } from "./delta-apply"
 import { Axis, Box } from "./types"
 

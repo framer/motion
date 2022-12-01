@@ -3,7 +3,6 @@ import {
     PermissiveTransitionDefinition,
     ResolvedValueTarget,
 } from "../../types"
-import { AnimationOptions, animate, inertia } from "popmotion"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
 import { isEasingArray, easingDefinitionToFunction } from "./easing"
 import { MotionValue } from "../../value"
@@ -14,6 +13,9 @@ import { getAnimatableNone } from "../../render/dom/value-types/animatable-none"
 import { instantAnimationState } from "../../utils/use-instant-transition-state"
 import { resolveFinalValueInKeyframes } from "../../utils/resolve-value"
 import { delay } from "../../utils/delay"
+import { AnimationOptions } from "../legacy-popmotion/types"
+import { inertia } from "../legacy-popmotion/inertia"
+import { animate } from "../legacy-popmotion"
 
 type StopAnimation = { stop: () => void }
 

@@ -1,7 +1,12 @@
 import * as React from "react"
 import { useEffect, useState } from "react"
-import { motion, useViewportScroll, useSpring, useTransform } from "framer-motion"
-import { mix } from "popmotion"
+import {
+    mix,
+    motion,
+    useViewportScroll,
+    useSpring,
+    useTransform,
+} from "framer-motion"
 
 const randomInt = (min, max) => Math.round(mix(min, max, Math.random()))
 const generateParagraphLength = () => randomInt(10, 40)
@@ -16,7 +21,7 @@ const Word = ({ width }) => <div className="word" style={{ width }} />
 
 const Paragraph = ({ words }) => (
     <div className="paragraph">
-        {words.map(width => (
+        {words.map((width) => (
             <Word width={width} />
         ))}
     </div>
@@ -29,7 +34,7 @@ export const ContentPlaceholder = () => (
             <Word width={245} />
             <Word width={120} />
         </div>
-        {paragraphs.map(words => (
+        {paragraphs.map((words) => (
             <Paragraph words={words} />
         ))}
     </div>
@@ -41,7 +46,7 @@ export const Example = () => {
     const yRange = useTransform(scrollYProgress, [0, 0.9], [0, 1])
     const pathLength = useSpring(yRange, { stiffness: 400, damping: 90 })
 
-    useEffect(() => yRange.onChange(v => setIsComplete(v >= 1)), [yRange])
+    useEffect(() => yRange.onChange((v) => setIsComplete(v >= 1)), [yRange])
 
     return (
         <>

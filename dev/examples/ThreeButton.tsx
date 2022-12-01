@@ -1,11 +1,12 @@
 import * as React from "react"
 import { useRef, useState } from "react"
-import { degreesToRadians } from "popmotion"
 import { motion as motionThree, MotionCanvas } from "framer-motion-3d"
 import { motion, Variants } from "framer-motion"
 import styled from "styled-components"
 import { PointLight, Mesh, BoxGeometry, MeshPhongMaterial, Group } from "three"
 import { extend } from "@react-three/fiber"
+
+const degreesToRadians = (degrees: number) => (degrees * Math.PI) / 180
 
 extend({
     PointLight,

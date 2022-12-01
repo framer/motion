@@ -1,7 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion } from "framer-motion"
-import { mix } from "popmotion"
+import { mix, motion } from "framer-motion"
 
 /**
  * This is an example of animating height: auto from a component that was display: none
@@ -47,7 +46,7 @@ export const App = () => {
 
     return (
         <div className="example-container">
-            {[0, 1, 2, 3].map(i => (
+            {[0, 1, 2, 3].map((i) => (
                 <Accordion
                     i={i}
                     expanded={expanded}
@@ -134,16 +133,14 @@ const generateWordLength = () => randomInt(20, 100)
 const paragraphs = Array(3)
     .fill(1)
     .map(() => {
-        return Array(generateParagraphLength())
-            .fill(1)
-            .map(generateWordLength)
+        return Array(generateParagraphLength()).fill(1).map(generateWordLength)
     })
 
 export const Word = ({ width }) => <div className="word" style={{ width }} />
 
 const Paragraph = ({ words }) => (
     <div className="paragraph">
-        {words.map(width => (
+        {words.map((width) => (
             <Word width={width} />
         ))}
     </div>
@@ -155,7 +152,7 @@ export const ContentPlaceholder = () => (
         transition={{ duration: 0.8 }}
         className="content-placeholder"
     >
-        {paragraphs.map(words => (
+        {paragraphs.map((words) => (
             <Paragraph words={words} />
         ))}
     </motion.div>

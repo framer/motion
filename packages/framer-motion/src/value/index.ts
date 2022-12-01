@@ -1,6 +1,6 @@
 import sync, { getFrameData, FrameData } from "framesync"
-import { velocityPerSecond } from "popmotion"
 import { SubscriptionManager } from "../utils/subscription-manager"
+import { velocityPerSecond } from "../utils/velocity-per-second"
 
 export type Transformer<T> = (v: T) => T
 

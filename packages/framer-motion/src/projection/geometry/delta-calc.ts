@@ -1,5 +1,5 @@
-import { mix } from "popmotion"
 import { ResolvedValues } from "../../render/types"
+import { mix } from "../../utils/mix"
 import { Axis, AxisDelta, Box, Delta } from "./types"
 
 export function calcLength(axis: Axis) {

@@ -4,8 +4,9 @@ import { extractEventInfo } from "../events/event-info"
 import sync, { getFrameData, cancelSync } from "framesync"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { addPointerEvent } from "../events/use-pointer-event"
-import { distance, pipe } from "popmotion"
 import { Point, TransformPoint } from "../projection/geometry/types"
+import { pipe } from "../utils/pipe"
+import { distance2D } from "../utils/distance"
 
 export type AnyPointerEvent = MouseEvent | TouchEvent | PointerEvent
 
@@ -180,7 +181,7 @@ export class PanSession {
         // any larger than this we'll want to reset the pointer history
         // on the first update to avoid visual snapping to the cursoe.
         const isDistancePastThreshold =
-            distance(info.offset, { x: 0, y: 0 }) >= 3
+            distance2D(info.offset, { x: 0, y: 0 }) >= 3
 
         if (!isPanStarted && !isDistancePastThreshold) return
 

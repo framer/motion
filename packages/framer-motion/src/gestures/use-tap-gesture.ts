@@ -3,10 +3,10 @@ import { EventInfo } from "../events/types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
-import { pipe } from "popmotion"
 import { AnimationType } from "../render/utils/types"
 import { isDragActive } from "./drag/utils/lock"
 import { FeatureProps } from "../motion/features/types"
+import { pipe } from "../utils/pipe"
 
 /**
  * @param handlers -

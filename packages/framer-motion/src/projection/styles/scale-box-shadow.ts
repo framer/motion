@@ -1,6 +1,6 @@
-import { mix } from "popmotion"
 import { complex } from "style-value-types"
 import { cssVariableRegex } from "../../render/dom/utils/css-variables-conversion"
+import { mix } from "../../utils/mix"
 import { ScaleCorrectorDefinition } from "./types"
 
 const varToken = "_$css"

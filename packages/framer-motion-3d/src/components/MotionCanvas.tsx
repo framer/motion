@@ -7,6 +7,7 @@ import {
     MutableRefObject,
 } from "react"
 import {
+    clamp,
     MotionContext,
     MotionConfigContext,
     useForceUpdate,
@@ -23,7 +24,6 @@ import {
     ReconcilerRoot,
 } from "@react-three/fiber"
 import { DimensionsState, MotionCanvasContext } from "./MotionCanvasContext"
-import { clamp } from "popmotion"
 
 export interface MotionCanvasProps extends Omit<Props, "resize"> {}
 

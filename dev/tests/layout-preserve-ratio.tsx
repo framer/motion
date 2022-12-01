@@ -1,5 +1,4 @@
-import { motion, useAnimationFrame, useMotionValue } from "framer-motion"
-import { mix } from "popmotion"
+import { mix, motion, useAnimationFrame, useMotionValue } from "framer-motion"
 import * as React from "react"
 
 const transition = {

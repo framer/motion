@@ -1,7 +1,10 @@
-import { circOut, linear, mix, progress as calcProgress } from "popmotion"
 import { percent, px } from "style-value-types"
+import { circOut } from "../../easing/circ"
+import { EasingFunction } from "../../easing/types"
 import { ResolvedValues } from "../../render/types"
-import { EasingFunction } from "../../types"
+import { progress as calcProgress } from "../../utils/progress"
+import { mix } from "../../utils/mix"
+import { noop } from "../../utils/noop"
 
 const borders = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"]
 const numBorders = borders.length
@@ -114,7 +117,7 @@ function getRadius(values: ResolvedValues, radiusName: string) {
 // }
 
 const easeCrossfadeIn = compress(0, 0.5, circOut)
-const easeCrossfadeOut = compress(0.5, 0.95, linear)
+const easeCrossfadeOut = compress(0.5, 0.95, noop)
 
 function compress(
     min: number,
