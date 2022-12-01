@@ -6,10 +6,11 @@ import {
 } from "./types"
 import { keyframes } from "./keyframes"
 import { spring } from "./spring"
+import { decay } from "./decay"
 import sync, { cancelSync, FrameData } from "framesync"
 import { interpolate } from "../../utils/interpolate"
 
-const types = { keyframes, spring }
+const types = { decay, keyframes, spring }
 
 export function loopElapsed(elapsed: number, duration: number, delay = 0) {
     return elapsed - duration - delay

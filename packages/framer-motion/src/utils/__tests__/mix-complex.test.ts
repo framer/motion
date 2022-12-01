@@ -16,9 +16,11 @@ test("mixComplex gracefully handles numbers", () => {
 
 test("mixComplex errors", () => {
     expect(mixComplex("hsla(100%, 100, 100, 1)", "#fff")(0)).toBe(
-        "hsla(100%, 100, 100, 1)"
+        "rgba(255, 255, 255, 1)"
     )
-    expect(mixComplex("hsla(100%, 100, 100, 1)", "#fff")(0.1)).toBe("#fff")
+    expect(mixComplex("hsla(100%, 100, 100, 1)", "#fff")(0.1)).toBe(
+        "rgba(255, 255, 255, 1)"
+    )
 })
 
 test("mixComplex can interpolate out-of-order values", () => {

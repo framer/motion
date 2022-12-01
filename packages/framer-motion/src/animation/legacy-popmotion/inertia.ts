@@ -43,6 +43,7 @@ export function inertia({
         currentAnimation = animate({
             ...options,
             driver,
+            type: "decay",
             onUpdate: (v: number) => {
                 onUpdate?.(v)
                 options.onUpdate?.(v)

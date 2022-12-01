@@ -105,15 +105,15 @@ export function interpolate<T>(
     const mixers = createMixers(output, ease, mixer)
     const numMixers = mixers.length
 
-    const interpolator = (t: number): T => {
+    const interpolator = (v: number): T => {
         let i = 0
-        if (numMixers) {
-            for (; i < length - 2; i++) {
-                if (t < input[i + 1]) break
+        if (numMixers > 1) {
+            for (; i < input.length - 2; i++) {
+                if (v < input[i + 1]) break
             }
         }
 
-        const progressInRange = clamp(0, 1, progress(input[i], input[i + 1], t))
+        const progressInRange = progress(input[i], input[i + 1], v)
 
         return mixers[i](progressInRange)
     }
