@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.6.16] 2022-12-01
+
+### Fixed
+
+-   Fixing `useOnChange` to resubscribe when provided a new motion value (affects `useSpring`).
+
 ## [7.6.15] 2022-11-28
 
 ### Fixed
