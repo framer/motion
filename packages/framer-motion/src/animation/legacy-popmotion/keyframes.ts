@@ -1,7 +1,7 @@
-import { easeInOut } from "../../../easing/ease"
-import { EasingFunction } from "../../../easing/types"
-import { interpolate } from "../../../utils/interpolate"
-import { Animation, AnimationState, KeyframeOptions } from "../types"
+import { easeInOut } from "../../easing/ease"
+import { EasingFunction } from "../../easing/types"
+import { interpolate } from "../../utils/interpolate"
+import { Animation, AnimationState, KeyframeOptions } from "./types"
 
 export function defaultEasing(
     values: any[],

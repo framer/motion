@@ -52,7 +52,7 @@ export function spring({
     from = 0.0,
     to = 1.0,
     restSpeed = 2,
-    restDelta,
+    restDelta = 0.01,
     ...options
 }: SpringOptions): Animation<number> {
     /**
@@ -189,7 +189,7 @@ export function spring({
                 state.done =
                     isBelowVelocityThreshold && isBelowDisplacementThreshold
             } else {
-                state.done = t >= duration
+                state.done = t >= duration!
             }
 
             state.value = state.done ? to : current

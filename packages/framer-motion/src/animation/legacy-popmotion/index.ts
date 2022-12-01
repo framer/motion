@@ -63,7 +63,7 @@ export function animate<V = number>({
     let { to } = options
     let driverControls: DriverControls
     let repeatCount = 0
-    let computedDuration = (options as KeyframeOptions<V>).duration
+    let computedDuration = (options as KeyframeOptions<V>).duration || 0
     let latest: V
     let isComplete = false
     let isForwardPlayback = true

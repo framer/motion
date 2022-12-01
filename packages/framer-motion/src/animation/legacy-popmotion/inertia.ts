@@ -87,8 +87,9 @@ export function inertia({
             velocity = velocityPerSecond(v - prev, getFrameData().delta)
 
             if (
-                (heading === 1 && v > boundary) ||
-                (heading === -1 && v < boundary)
+                boundary !== undefined &&
+                ((heading === 1 && v > boundary) ||
+                    (heading === -1 && v < boundary))
             ) {
                 startSpring({ from: v, to: boundary, velocity })
             }

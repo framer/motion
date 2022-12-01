@@ -77,13 +77,13 @@ export interface DecayOptions {
 }
 
 export interface PhysicsSpringOptions {
-    velocity?: number
-    stiffness?: number
-    damping?: number
-    mass?: number
+    velocity: number
+    stiffness: number
+    damping: number
+    mass: number
 }
 
-export interface SpringOptions extends PhysicsSpringOptions {
+export interface SpringOptions extends Partial<PhysicsSpringOptions> {
     from?: number
     to?: number
     duration?: number
