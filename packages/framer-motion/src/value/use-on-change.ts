@@ -8,7 +8,7 @@ export function useOnChange<T>(
 ) {
     useIsomorphicLayoutEffect(() => {
         if (isMotionValue(value)) return value.onChange(callback)
-    }, [callback])
+    }, [value, callback])
 }
 
 export function useMultiOnChange(
