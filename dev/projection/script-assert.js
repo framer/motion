@@ -7,7 +7,7 @@ function showError(element, msg) {
 }
 
 window.Assert = {
-    showError,
+    showError: showError,
     matchViewportBox: (element, expected, threshold = 0.01) => {
         const bbox = element.getBoundingClientRect()
         if (

@@ -56,9 +56,9 @@ const transformAxes = ["", "X", "Y", "Z"]
  * which has a noticeable difference in spring animations
  */
 const animationTarget = 1000
-const times: number[] = []
+
 let id = 0
-// let skippedNodes = 0
+
 export function createProjectionNode<I>({
     attachResizeListener,
     defaultParent,
@@ -665,16 +665,9 @@ export function createProjectionNode<I>({
          * the next step.
          */
         updateProjection = () => {
-            const start = performance.now()
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
-            times.push(performance.now() - start)
-
-            if (times.length > 500)
-                console.log(
-                    times.reduce((acc, next) => acc + next, 0) / times.length
-                )
         }
 
         /**
@@ -975,7 +968,6 @@ export function createProjectionNode<I>({
                 !this.parent?.isProjectionDirty &&
                 !this.attemptToResolveRelativeTarget
             ) {
-                // skippedNodes++
                 return
             }
 
@@ -1159,7 +1151,7 @@ export function createProjectionNode<I>({
 
             if (isProjectionDirty || hasTreeScaleChanged) canSkip = false
             if (isShared && isTreeDirty) canSkip = false
-            // if (canSkip) skippedNodes++
+
             if (canSkip) return
 
             const { layout, layoutId } = this.options
@@ -1273,7 +1265,6 @@ export function createProjectionNode<I>({
             const mixedValues = { ...this.latestValues }
 
             const targetDelta = createDelta()
-            // this.relativeTarget = this.relativeTargetOrigin = undefined
             this.attemptToResolveRelativeTarget = !hasOnlyRelativeTargetChanged
 
             const relativeLayout = createBox()
@@ -1837,12 +1828,9 @@ function notifyLayoutUpdate(node: IProjectionNode) {
 
 export function propagateDirtyNodes(node: IProjectionNode) {
     /**
-     * Propagate isProjectionDirty. Nodes are ordered by depth, so if the parent here
-     * is dirty we can simply pass this forward.
+     * TODO: Here, change isProjectionDirty to isScaleDirty and propagate
+     * needsScaleCorrection until we hit a node that isProjecting
      */
-    // node.isProjectionDirty ||= Boolean(
-    //     node.parent && node.parent.isProjectionDirty
-    // )
 
     /**
      * Propagate isTreeDirty.
