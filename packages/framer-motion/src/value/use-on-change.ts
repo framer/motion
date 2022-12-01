@@ -7,7 +7,10 @@ export function useOnChange<T>(
     callback: Subscriber<T>
 ) {
     useIsomorphicLayoutEffect(() => {
-        if (isMotionValue(value)) return value.onChange(callback)
+        if (isMotionValue(value)) {
+            callback(value.get())
+            return value.onChange(callback)
+        }
     }, [value, callback])
 }
 
