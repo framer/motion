@@ -82,7 +82,9 @@
             })
 
             const sticky = document.getElementById("sticky")
-            const stickyProjection = createNode(sticky, scrollerProjection)
+            const stickyProjection = createNode(sticky, scrollerProjection, {
+                layoutRoot: true,
+            })
 
             const stickyOrigin = sticky.getBoundingClientRect()
 
