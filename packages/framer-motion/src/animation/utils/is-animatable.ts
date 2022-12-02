@@ -1,5 +1,5 @@
 import { ResolvedValueTarget } from "../../types"
-import { complex } from "style-value-types"
+import { complex } from "../../value/types/complex"
 
 /**
  * Check if a value is animatable. Examples:

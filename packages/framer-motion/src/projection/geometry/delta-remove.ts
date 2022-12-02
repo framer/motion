@@ -1,6 +1,6 @@
-import { percent } from "style-value-types"
 import { ResolvedValues } from "../../render/types"
 import { mix } from "../../utils/mix"
+import { percent } from "../../value/types/numbers/units"
 import { scalePoint } from "./delta-apply"
 import { Axis, Box } from "./types"
 

@@ -1,4 +1,5 @@
-import { color, filter } from "style-value-types"
+import { color } from "../../../value/types/color"
+import { filter } from "../../../value/types/complex/filter"
 import { numberValueTypes } from "./number"
 import { ValueTypeMap } from "./types"
 

@@ -29,9 +29,9 @@ import {
 } from "../../projection/geometry/conversion"
 import { LayoutUpdateData } from "../../projection/node/types"
 import { addDomEvent } from "../../events/use-dom-event"
-import { percent } from "style-value-types"
 import { calcLength } from "../../projection/geometry/delta-calc"
 import { mix } from "../../utils/mix"
+import { percent } from "../../value/types/numbers/units"
 
 export const elementDragControls = new WeakMap<
     VisualElement,

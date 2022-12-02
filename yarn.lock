@@ -8001,7 +8001,6 @@ __metadata:
     "@motionone/dom": 10.13.1
     framesync: 6.1.2
     hey-listen: ^1.0.8
-    style-value-types: 5.1.2
     tslib: 2.4.0
   peerDependencies:
     react: ^18.0.0

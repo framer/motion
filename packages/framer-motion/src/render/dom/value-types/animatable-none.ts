@@ -1,4 +1,5 @@
-import { complex, filter } from "style-value-types"
+import { complex } from "../../../value/types/complex"
+import { filter } from "../../../value/types/complex/filter"
 import { getDefaultValueType } from "./defaults"
 
 export function getAnimatableNone(key: string, value: string) {

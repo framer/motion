@@ -1,10 +1,10 @@
-import { percent, px } from "style-value-types"
 import { circOut } from "../../easing/circ"
 import { EasingFunction } from "../../easing/types"
 import { ResolvedValues } from "../../render/types"
 import { progress as calcProgress } from "../../utils/progress"
 import { mix } from "../../utils/mix"
 import { noop } from "../../utils/noop"
+import { px } from "../../value/types/numbers/units"
 
 const borders = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"]
 const numBorders = borders.length

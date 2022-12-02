@@ -1,4 +1,4 @@
-import { ValueType } from "style-value-types"
+import { ValueType } from "../../../value/types/types"
 
 export interface ValueTypeMap {
     [key: string]: ValueType

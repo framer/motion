@@ -1,10 +1,9 @@
+import { alpha, scale } from "../../../value/types/numbers"
 import {
-    alpha,
     degrees,
     progressPercentage,
     px,
-    scale,
-} from "style-value-types"
+} from "../../../value/types/numbers/units"
 import { int } from "./type-int"
 import { ValueTypeMap } from "./types"
 
