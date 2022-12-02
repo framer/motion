@@ -1,6 +1,6 @@
 // If this number is a decimal, make it just five decimal places
 // to avoid exponents
-export const sanitize = (v: number) => (v % 1 ? Number(v.toFixed(5)) : v)
+export const sanitize = (v: number) => Math.round(v * 100000) / 100000
 
 export const floatRegex = /(-)?([\d]*\.?[\d])+/g
 export const colorRegex =
