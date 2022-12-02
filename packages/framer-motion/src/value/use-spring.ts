@@ -1,10 +1,14 @@
 import { useRef, useMemo, useContext } from "react"
-import { animate, PlaybackControls, SpringOptions } from "popmotion"
 import { MotionValue } from "../value"
 import { isMotionValue } from "./utils/is-motion-value"
 import { useMotionValue } from "./use-motion-value"
 import { useOnChange } from "./use-on-change"
 import { MotionConfigContext } from "../context/MotionConfigContext"
+import {
+    PlaybackControls,
+    SpringOptions,
+} from "../animation/legacy-popmotion/types"
+import { animate } from "../animation/legacy-popmotion"
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
