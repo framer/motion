@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.6.18] 2022-12-02
+
+### Changed
+
+-   Removed `popmotion` as external dependency.
+
 ## [7.6.17] 2022-12-01
 
 ### Fixed
