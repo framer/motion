@@ -43,7 +43,6 @@ export function inertia({
         currentAnimation = animate({
             ...options,
             driver,
-            type: "decay",
             onUpdate: (v: number) => {
                 onUpdate?.(v)
                 options.onUpdate?.(v)
@@ -88,9 +87,8 @@ export function inertia({
             velocity = velocityPerSecond(v - prev, getFrameData().delta)
 
             if (
-                boundary !== undefined &&
-                ((heading === 1 && v > boundary) ||
-                    (heading === -1 && v < boundary))
+                (heading === 1 && v > boundary!) ||
+                (heading === -1 && v < boundary!)
             ) {
                 startSpring({ from: v, to: boundary, velocity })
             }
