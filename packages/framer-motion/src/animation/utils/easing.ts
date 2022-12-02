@@ -1,25 +1,14 @@
 import { invariant } from "hey-listen"
-import { cubicBezier } from "popmotion"
-import {
-    linear,
-    easeIn,
-    easeInOut,
-    easeOut,
-    circIn,
-    circInOut,
-    circOut,
-    backIn,
-    backInOut,
-    backOut,
-    anticipate,
-    bounceIn,
-    bounceInOut,
-    bounceOut,
-} from "popmotion"
-import { Easing } from "../../types"
+import { cubicBezier } from "../../easing/cubic-bezier"
+import { noop } from "../../utils/noop"
+import { easeIn, easeInOut, easeOut } from "../../easing/ease"
+import { circIn, circInOut, circOut } from "../../easing/circ"
+import { backIn, backInOut, backOut } from "../../easing/back"
+import { anticipate } from "../../easing/anticipate"
+import { Easing } from "../../easing/types"
 
 const easingLookup = {
-    linear,
+    linear: noop,
     easeIn,
     easeInOut,
     easeOut,
@@ -30,9 +19,6 @@ const easingLookup = {
     backInOut,
     backOut,
     anticipate,
-    bounceIn,
-    bounceInOut,
-    bounceOut,
 }
 
 export const easingDefinitionToFunction = (definition: Easing) => {

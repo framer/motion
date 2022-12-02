@@ -1,4 +1,4 @@
-import { pipe } from "popmotion"
+import { pipe } from "framer-motion"
 
 interface BoundingBox {
     top: number

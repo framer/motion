@@ -12,7 +12,9 @@ import {
     criticallyDampedSpring,
     linearTween,
 } from "../default-transitions"
-import { linear, easeInOut, circIn } from "popmotion"
+import { noop } from "../../../utils/noop"
+import { easeInOut } from "../../../easing/ease"
+import { circIn } from "../../../easing/circ"
 
 describe("isTransitionDefined", () => {
     test("Detects a transition", () => {
@@ -63,7 +65,7 @@ describe("convertTransitionToAnimationOptions", () => {
                 ease: "linear",
             })
         ).toEqual({
-            ease: linear,
+            ease: noop,
             type: "keyframes",
         })
 
@@ -145,7 +147,7 @@ describe("getPopmotionAnimationOptions", () => {
             from: 0,
             to: 1,
             ...linearTween(),
-            ease: linear,
+            ease: noop,
             duration: 300,
         })
 

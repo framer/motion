@@ -4,7 +4,7 @@ import { useVelocity } from "../use-velocity"
 import { useMotionValue } from "../use-motion-value"
 import { animate } from "../../animation/animate"
 import sync, { getFrameData } from "framesync"
-import { pipe } from "popmotion"
+import { pipe } from "../../utils/pipe"
 
 const setFrameData = (interval: number, time: number) => {
     const data = getFrameData()

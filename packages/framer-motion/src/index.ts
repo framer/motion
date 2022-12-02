@@ -82,7 +82,12 @@ export { useInstantTransition } from "./utils/use-instant-transition"
 export { useInstantLayoutTransition } from "./projection/use-instant-layout-transition"
 export { useResetProjection } from "./projection/use-reset-projection"
 export { buildTransform } from "./render/html/utils/build-transform"
+export { clamp } from "./utils/clamp"
 export * from "./utils/delay"
+export * from "./utils/distance"
+export { mix } from "./utils/mix"
+export { pipe } from "./utils/pipe"
+export { wrap } from "./utils/wrap"
 
 /**
  * Contexts
@@ -124,7 +129,6 @@ export {
     Keyframes,
     Inertia,
     None,
-    EasingFunction,
     Target,
     TargetAndTransition,
     Transition,
@@ -138,6 +142,7 @@ export {
     Variant,
     Variants,
 } from "./types"
+export * from "./easing/types"
 export { EventInfo } from "./events/types"
 export * from "./motion/features/types"
 export {

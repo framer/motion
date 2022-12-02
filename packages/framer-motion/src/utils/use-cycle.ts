@@ -1,5 +1,5 @@
-import { wrap } from "popmotion"
 import { useCallback, useRef, useState } from "react"
+import { wrap } from "./wrap"
 
 export type Cycle = (i?: number) => void
 

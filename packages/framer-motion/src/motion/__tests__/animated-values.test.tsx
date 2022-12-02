@@ -6,8 +6,9 @@ import {
     useMotionValue,
     useTransform,
 } from "../.."
-import { degreesToRadians } from "popmotion"
 import * as React from "react"
+
+const degreesToRadians = (degrees: number) => (degrees * Math.PI) / 180
 
 describe("values prop", () => {
     test("Performs animations only on motion values provided via values", async () => {

@@ -63,7 +63,6 @@
         "@motionone/dom": "10.13.1",
         "framesync": "6.1.2",
         "hey-listen": "^1.0.8",
-        "popmotion": "11.0.5",
         "style-value-types": "5.1.2",
         "tslib": "2.4.0"
     },
@@ -73,7 +72,7 @@
     "bundlesize": [
         {
             "path": "./dist/size-rollup-motion.js",
-            "maxSize": "29.65 kB"
+            "maxSize": "28.9 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
@@ -81,11 +80,11 @@
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
-            "maxSize": "14.9 kB"
+            "maxSize": "14.13 kB"
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
-            "maxSize": "25.7 kB"
+            "maxSize": "24.9 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",
@@ -93,12 +92,11 @@
         },
         {
             "path": "./dist/size-webpack-dom-animation.js",
-            "maxSize": "19.20 kB"
+            "maxSize": "18.4 kB"
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "30.9kB"
+            "maxSize": "30kB"
         }
-    ],
-    "gitHead": "96dee88b1914347acf154ba5d6772609411de00c"
+    ]
 }

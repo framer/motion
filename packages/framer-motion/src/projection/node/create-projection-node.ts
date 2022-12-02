@@ -1,5 +1,4 @@
 import sync, { cancelSync, flushSync, Process } from "framesync"
-import { mix } from "popmotion"
 import {
     animate,
     AnimationOptions,
@@ -44,6 +43,7 @@ import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { MotionStyle } from "../../motion/types"
 import { globalProjectionState } from "./state"
 import { delay } from "../../utils/delay"
+import { mix } from "../../utils/mix"
 
 const transformAxes = ["", "X", "Y", "Z"]
 

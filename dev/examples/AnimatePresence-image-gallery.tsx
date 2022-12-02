@@ -1,7 +1,6 @@
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence, wrap } from "framer-motion"
 import * as React from "react"
 import { useState } from "react"
-import { wrap } from "popmotion"
 
 /**
  * An example of a single-image, single-child image gallery using AnimatePresence
