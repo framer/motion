@@ -18,7 +18,7 @@ export function loopElapsed(elapsed: number, duration: number, delay = 0) {
 
 export function reverseElapsed(
     elapsed: number,
-    duration: number,
+    duration: number = 0,
     delay = 0,
     isForwardPlayback = true
 ) {
@@ -64,14 +64,15 @@ export function animate<V = number>({
     let { to } = options
     let driverControls: DriverControls
     let repeatCount = 0
-    let computedDuration = (options as KeyframeOptions<V>).duration || 0
+    let computedDuration: number | undefined = (options as KeyframeOptions<V>)
+        .duration
     let latest: V
     let isComplete = false
     let isForwardPlayback = true
 
     let interpolateFromNumber: (t: number) => V
 
-    const animator = types[type]
+    const animator = types[Array.isArray(to) ? "keyframes" : type]
 
     if ((animator as any).needsInterpolation?.(from, to)) {
         interpolateFromNumber = interpolate([0, 100], [from, to], {
@@ -95,7 +96,7 @@ export function animate<V = number>({
                 isForwardPlayback
             )
         } else {
-            elapsed = loopElapsed(elapsed, computedDuration, repeatDelay)
+            elapsed = loopElapsed(elapsed, computedDuration!, repeatDelay)
             if (repeatType === "mirror") animation.flipTarget()
         }
 
@@ -131,7 +132,7 @@ export function animate<V = number>({
             if (repeatCount < repeatMax) {
                 hasRepeatDelayElapsed(
                     elapsed,
-                    computedDuration,
+                    computedDuration!,
                     repeatDelay,
                     isForwardPlayback
                 ) && repeat()

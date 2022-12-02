@@ -458,6 +458,7 @@ describe("animate", () => {
             animate({
                 from: 100,
                 to: 1000,
+                type: "spring",
                 stiffness: 300,
                 driver: syncDriver(50),
                 repeat: 2,
@@ -493,6 +494,7 @@ describe("animate", () => {
                 repeatType: "reverse",
                 restSpeed: 10,
                 restDelta: 0.5,
+                type: "spring",
                 onUpdate: (v) => output.push(Math.round(v)),
                 onComplete: () => {
                     expect(output).toEqual(expected)
@@ -518,6 +520,7 @@ describe("animate", () => {
                 stiffness: 300,
                 driver: syncDriver(100),
                 repeat: 2,
+                type: "spring",
                 repeatType: "reverse",
                 repeatDelay: 300,
                 restSpeed: 10,
