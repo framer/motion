@@ -4,7 +4,7 @@ import { ResolvedValues } from "../../render/types"
 import { progress as calcProgress } from "../../utils/progress"
 import { mix } from "../../utils/mix"
 import { noop } from "../../utils/noop"
-import { px } from "../../value/types/numbers/units"
+import { percent, px } from "../../value/types/numbers/units"
 
 const borders = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"]
 const numBorders = borders.length
