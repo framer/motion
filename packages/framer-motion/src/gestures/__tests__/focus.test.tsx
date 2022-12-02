@@ -2,7 +2,7 @@ import { focus, blur, render } from "../../../jest.setup"
 import * as React from "react"
 import { motion, motionValue } from "../../"
 import { transformValues } from "../../motion/__tests__/util-transform-values"
-import sync from "framesync"
+import sync from "../../frameloop"
 
 describe("focus", () => {
     test("whileFocus applied", async () => {

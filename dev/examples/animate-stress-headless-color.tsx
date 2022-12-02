@@ -6,7 +6,7 @@ export const App = () => {
         let count = 0
         for (let i = 0; i < 1000; i++) {
             count++
-            animate("rgba(0,0,0,0)", "rgba(255,255,255,1)", { duration: 10 })
+            animate("rgba(0,0,0,0)", "rgba(255,255,255,1)", { duration: 20 })
         }
 
         console.log("started ", count, "animations")

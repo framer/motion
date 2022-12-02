@@ -5,8 +5,8 @@ import {
     SpringOptions,
 } from "./types"
 import { animate } from "."
-import { getFrameData } from "framesync"
 import { velocityPerSecond } from "../../utils/velocity-per-second"
+import { frameData } from "../../frameloop/data"
 
 export function inertia({
     from = 0,
@@ -84,7 +84,7 @@ export function inertia({
         const checkBoundary = (v: number) => {
             prev = current
             current = v
-            velocity = velocityPerSecond(v - prev, getFrameData().delta)
+            velocity = velocityPerSecond(v - prev, frameData.delta)
 
             if (
                 (heading === 1 && v > boundary!) ||

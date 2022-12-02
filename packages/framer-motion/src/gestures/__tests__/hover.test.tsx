@@ -4,7 +4,7 @@ import { motion } from "../../"
 import { fireEvent } from "@testing-library/react"
 import { motionValue } from "../../value"
 import { transformValues } from "../../motion/__tests__/util-transform-values"
-import sync from "framesync"
+import sync from "../../frameloop"
 
 describe("hover", () => {
     test("hover event listeners fire", () => {

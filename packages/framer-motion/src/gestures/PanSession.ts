@@ -1,12 +1,13 @@
 import { EventInfo } from "../events/types"
 import { isTouchEvent, isMouseEvent } from "./utils/event-type"
 import { extractEventInfo } from "../events/event-info"
-import sync, { getFrameData, cancelSync } from "framesync"
+import sync, { cancelSync } from "../frameloop"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { addPointerEvent } from "../events/use-pointer-event"
 import { Point, TransformPoint } from "../projection/geometry/types"
 import { pipe } from "../utils/pipe"
 import { distance2D } from "../utils/distance"
+import { frameData } from "../frameloop/data"
 
 export type AnyPointerEvent = MouseEvent | TouchEvent | PointerEvent
 
@@ -156,7 +157,7 @@ export class PanSession {
         const initialInfo = transformPoint(info, this.transformPagePoint)
         const { point } = initialInfo
 
-        const { timestamp } = getFrameData()
+        const { timestamp } = frameData
 
         this.history = [{ ...point, timestamp }]
 
@@ -186,7 +187,7 @@ export class PanSession {
         if (!isPanStarted && !isDistancePastThreshold) return
 
         const { point } = info
-        const { timestamp } = getFrameData()
+        const { timestamp } = frameData
         this.history.push({ ...point, timestamp })
 
         const { onStart, onMove } = this.handlers

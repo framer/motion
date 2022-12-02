@@ -1,4 +1,4 @@
-import sync, { cancelSync, flushSync, Process } from "framesync"
+import sync, { cancelSync, flushSync, Process } from "../../frameloop"
 import {
     animate,
     AnimationOptions,
