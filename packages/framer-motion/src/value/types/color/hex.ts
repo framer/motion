@@ -10,17 +10,17 @@ function parseHex(v: string): RGBA {
 
     // If we have 6 characters, ie #FF0000
     if (v.length > 5) {
-        r = v.substring(1, 2)
-        g = v.substring(3, 4)
-        b = v.substring(5, 6)
-        a = v.substring(7, 8)
+        r = v.substring(1, 3)
+        g = v.substring(3, 5)
+        b = v.substring(5, 7)
+        a = v.substring(7, 9)
 
         // Or we have 3 characters, ie #F00
     } else {
-        r = v.substring(1, 1)
-        g = v.substring(2, 2)
-        b = v.substring(3, 3)
-        a = v.substring(4, 4)
+        r = v.substring(1, 2)
+        g = v.substring(2, 3)
+        b = v.substring(3, 4)
+        a = v.substring(4, 5)
         r += r
         g += g
         b += b

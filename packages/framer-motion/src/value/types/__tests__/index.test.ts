@@ -342,6 +342,7 @@ describe("unit transformers", () => {
                 red: 256,
                 green: 24.5,
                 blue: 0,
+                alpha: 1,
             })
         ).toBe("rgba(255, 25, 0, 1)")
         expect(
@@ -358,6 +359,7 @@ describe("unit transformers", () => {
                 red: 256,
                 green: 24.5,
                 blue: 0,
+                alpha: 1,
             })
         ).toBe("rgba(255, 25, 0, 1)")
         expect(
