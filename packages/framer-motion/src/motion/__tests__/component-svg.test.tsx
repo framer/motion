@@ -93,6 +93,7 @@ describe("SVG", () => {
             return (
                 <motion.svg
                     viewBox="0 0 100 100"
+                    transition={{ type: false }}
                     animate={{ viewBox: "100 100 200 200" }}
                 />
             )
