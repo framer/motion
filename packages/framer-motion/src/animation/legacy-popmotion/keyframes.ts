@@ -17,7 +17,10 @@ export function defaultOffset(values: any[]): number[] {
     )
 }
 
-export function hydrateTimes(relativeTimes: number[], duration: number) {
+export function hydrateRelativeTimes(
+    relativeTimes: number[],
+    duration: number
+) {
     return relativeTimes.map((o) => o * duration)
 }
 
@@ -42,7 +45,7 @@ export function keyframes({
     /**
      * Create a times array based on the provided 0-1 offsets
      */
-    const absoluteTimes = hydrateTimes(
+    const absoluteTimes = hydrateRelativeTimes(
         // Only use the provided offsets if they're the correct length
         // TODO Maybe we should warn here if there's a length mismatch
         times && times.length === values.length ? times : defaultOffset(values),

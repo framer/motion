@@ -3,7 +3,7 @@ import {
     convertTransitionToAnimationOptions,
     getDelayFromTransition,
     hydrateKeyframes,
-    getPopmotionAnimationOptions,
+    getAnimationOptions,
     getZeroUnit,
     isZero,
 } from "../transitions"
@@ -38,7 +38,7 @@ describe("convertTransitionToAnimationOptions", () => {
         ).toEqual({
             duration: 1000,
             repeatDelay: 2000,
-            type: "keyframes",
+            type: "tween",
         })
 
         expect(
@@ -48,7 +48,7 @@ describe("convertTransitionToAnimationOptions", () => {
             })
         ).toEqual({
             duration: 1000,
-            type: "keyframes",
+            type: "tween",
         })
 
         expect(
@@ -57,7 +57,7 @@ describe("convertTransitionToAnimationOptions", () => {
             })
         ).toEqual({
             repeat: Infinity,
-            type: "keyframes",
+            type: "tween",
         })
 
         expect(
@@ -66,7 +66,7 @@ describe("convertTransitionToAnimationOptions", () => {
             })
         ).toEqual({
             ease: noop,
-            type: "keyframes",
+            type: "tween",
         })
 
         expect(
@@ -75,7 +75,7 @@ describe("convertTransitionToAnimationOptions", () => {
             })
         ).toEqual({
             ease: [easeInOut, circIn],
-            type: "keyframes",
+            type: "tween",
         })
     })
 })
@@ -125,25 +125,19 @@ describe("hydrateKeyframes", () => {
     })
 })
 
-describe("getPopmotionAnimationOptions", () => {
+describe("getAnimationOptions", () => {
     test("Correctly creates a Popmotion animate options object", () => {
-        expect(
-            getPopmotionAnimationOptions({}, { from: 0, to: 100 }, "x")
-        ).toEqual({
+        expect(getAnimationOptions({}, { from: 0, to: 100 }, "x")).toEqual({
             from: 0,
             to: 100,
             ...underDampedSpring(),
         })
-        expect(
-            getPopmotionAnimationOptions({}, { from: 0, to: 1 }, "scale")
-        ).toEqual({
+        expect(getAnimationOptions({}, { from: 0, to: 1 }, "scale")).toEqual({
             from: 0,
             to: 1,
             ...criticallyDampedSpring(1),
         })
-        expect(
-            getPopmotionAnimationOptions({}, { from: 0, to: 1 }, "opacity")
-        ).toEqual({
+        expect(getAnimationOptions({}, { from: 0, to: 1 }, "opacity")).toEqual({
             from: 0,
             to: 1,
             ...linearTween(),
@@ -152,7 +146,7 @@ describe("getPopmotionAnimationOptions", () => {
         })
 
         expect(
-            getPopmotionAnimationOptions(
+            getAnimationOptions(
                 { duration: 0.4 },
                 { from: 0, to: 1 },
                 "opacity"
@@ -160,12 +154,12 @@ describe("getPopmotionAnimationOptions", () => {
         ).toEqual({
             from: 0,
             to: 1,
-            type: "keyframes",
+            type: "tween",
             duration: 400,
         })
 
         expect(
-            getPopmotionAnimationOptions(
+            getAnimationOptions(
                 { duration: 0.4 },
                 { from: 50, to: [null, 100] },
                 "x"
@@ -173,21 +167,21 @@ describe("getPopmotionAnimationOptions", () => {
         ).toEqual({
             from: 50,
             to: [50, 100],
-            type: "keyframes",
+            type: "tween",
             duration: 400,
         })
 
         expect(
-            getPopmotionAnimationOptions({}, { from: 50, to: [null, 100] }, "x")
+            getAnimationOptions({}, { from: 50, to: [null, 100] }, "x")
         ).toEqual({
             from: 50,
             to: [50, 100],
-            type: "keyframes",
+            type: "tween",
             duration: 800,
         })
 
         expect(
-            getPopmotionAnimationOptions(
+            getAnimationOptions(
                 { duration: 0.9 },
                 { from: 50, to: [null, 100] },
                 "x"
@@ -195,31 +189,27 @@ describe("getPopmotionAnimationOptions", () => {
         ).toEqual({
             from: 50,
             to: [50, 100],
-            type: "keyframes",
+            type: "tween",
             duration: 900,
         })
 
         expect(
-            getPopmotionAnimationOptions(
-                { type: "tween" },
-                { from: 50, to: 100 },
-                "x"
-            )
+            getAnimationOptions({ type: "tween" }, { from: 50, to: 100 }, "x")
         ).toEqual({
             from: 50,
             to: 100,
-            type: "keyframes",
+            type: "tween",
         })
 
         expect(
-            getPopmotionAnimationOptions(
+            getAnimationOptions(
                 { duration: 0.4, times: [0, 0.4, 1] },
                 { from: 50, to: [null, 100] },
                 "x"
             )
         ).toEqual({
             duration: 400,
-            type: "keyframes",
+            type: "tween",
             offset: [0, 0.4, 1],
             from: 50,
             to: [50, 100],

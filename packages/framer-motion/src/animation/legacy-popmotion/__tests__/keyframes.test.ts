@@ -2,7 +2,7 @@ import {
     keyframes,
     defaultEasing,
     defaultOffset,
-    convertOffsetToTimes,
+    hydrateRelativeTimes,
 } from "../keyframes"
 import { noop } from "../../../utils/noop"
 import { animateSync } from "./utils"
@@ -26,9 +26,9 @@ describe("defaultOffset", () => {
     })
 })
 
-describe("convertOffsetToTimes", () => {
-    test("converts offsets to times", () => {
-        expect(convertOffsetToTimes([0, 0.5, 1], 500)).toEqual([0, 250, 500])
+describe("hydrateRelativeTimes", () => {
+    test("converts relative times to absolute times", () => {
+        expect(hydrateRelativeTimes([0, 0.5, 1], 500)).toEqual([0, 250, 500])
     })
 })
 
