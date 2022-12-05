@@ -23,6 +23,7 @@ export const lowercaseSVGElements = [
     "stop",
     "switch",
     "symbol",
+    "svg",
     "text",
     "tspan",
     "use",

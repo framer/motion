@@ -33,6 +33,7 @@ export const svgMotionConfig: Partial<
                 renderState,
                 latestValues,
                 { enableHardwareAcceleration: false },
+                instance.tagName.toLowerCase() === "svg",
                 props.transformTemplate
             )
 

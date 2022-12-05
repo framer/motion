@@ -5,7 +5,12 @@ import { ResolvedValues } from "../types"
 import { buildSVGAttrs } from "./utils/build-attrs"
 import { createSvgRenderState } from "./utils/create-render-state"
 
-export function useSVGProps(props: MotionProps, visualState: ResolvedValues) {
+export function useSVGProps(
+    props: MotionProps,
+    visualState: ResolvedValues,
+    _isStatic: boolean,
+    Component: string | React.ComponentType<React.PropsWithChildren<unknown>>
+) {
     const visualProps = useMemo(() => {
         const state = createSvgRenderState()
 
@@ -13,6 +18,7 @@ export function useSVGProps(props: MotionProps, visualState: ResolvedValues) {
             state,
             visualState,
             { enableHardwareAcceleration: false },
+            Component === "svg",
             props.transformTemplate
         )
 

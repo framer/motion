@@ -22,6 +22,8 @@ export class SVGVisualElement extends DOMVisualElement<
 > {
     type: "svg"
 
+    isSVGTag = false
+
     getBaseTargetFromProps(
         props: MotionProps,
         key: string
@@ -55,6 +57,7 @@ export class SVGVisualElement extends DOMVisualElement<
             renderState,
             latestValues,
             options,
+            this.isSVGTag,
             props.transformTemplate
         )
     }
@@ -66,5 +69,10 @@ export class SVGVisualElement extends DOMVisualElement<
         projection?: IProjectionNode<unknown> | undefined
     ): void {
         renderSVG(instance, renderState, styleProp, projection)
+    }
+
+    mount(instance: SVGElement) {
+        this.isSVGTag = instance.tagName.toLowerCase() === "svg"
+        super.mount(instance)
     }
 }

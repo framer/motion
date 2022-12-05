@@ -21,7 +21,9 @@ describe("SVG useProps", () => {
                     cx: 7,
                     x: 8,
                     scale: 9,
-                }
+                },
+                false,
+                "path"
             )
         )
 
@@ -35,9 +37,14 @@ describe("SVG useProps", () => {
 
     test("should return correct styles for element with pathLength", () => {
         const { result } = renderHook(() =>
-            useSVGProps({ style: {} } as any, {
-                pathLength: 0.5,
-            })
+            useSVGProps(
+                { style: {} } as any,
+                {
+                    pathLength: 0.5,
+                },
+                false,
+                "path"
+            )
         )
 
         expect(result.current).toStrictEqual({
@@ -50,7 +57,12 @@ describe("SVG useProps", () => {
 
     test("should correctly remove props as motionvalues", () => {
         const { result } = renderHook(() =>
-            useSVGProps({ y: motionValue(2) } as any, { attrY: 3 })
+            useSVGProps(
+                { y: motionValue(2) } as any,
+                { attrY: 3 },
+                false,
+                "path"
+            )
         )
 
         expect(result.current).toStrictEqual({
