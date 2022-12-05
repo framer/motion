@@ -14,6 +14,7 @@ import { ResolvedValues } from "../types"
 import { Box } from "../../projection/geometry/types"
 import { createBox } from "../../projection/geometry/models"
 import { IProjectionNode } from "../../projection/node/types"
+import { isSVGTag } from "./utils/is-svg-tag"
 
 export class SVGVisualElement extends DOMVisualElement<
     SVGElement,
@@ -72,7 +73,7 @@ export class SVGVisualElement extends DOMVisualElement<
     }
 
     mount(instance: SVGElement) {
-        this.isSVGTag = instance.tagName.toLowerCase() === "svg"
+        this.isSVGTag = isSVGTag(instance.tagName)
         super.mount(instance)
     }
 }

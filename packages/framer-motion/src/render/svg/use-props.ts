@@ -4,6 +4,7 @@ import { copyRawValuesOnly } from "../html/use-props"
 import { ResolvedValues } from "../types"
 import { buildSVGAttrs } from "./utils/build-attrs"
 import { createSvgRenderState } from "./utils/create-render-state"
+import { isSVGTag } from "./utils/is-svg-tag"
 
 export function useSVGProps(
     props: MotionProps,
@@ -18,7 +19,7 @@ export function useSVGProps(
             state,
             visualState,
             { enableHardwareAcceleration: false },
-            Component === "svg",
+            isSVGTag(Component),
             props.transformTemplate
         )
 
