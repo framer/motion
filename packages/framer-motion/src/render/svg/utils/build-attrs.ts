@@ -27,7 +27,7 @@ export function buildSVGAttrs(
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
     buildHTMLStyles(state, latest, options, transformTemplate)
-    console.log(state.attrs, state.style)
+
     /**
      * For svg tags we just want to make sure viewBox is animatable and treat all the styles
      * as normal HTML tags.

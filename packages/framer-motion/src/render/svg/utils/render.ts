@@ -14,7 +14,6 @@ export function renderSVG(
     renderHTML(element as any, renderState, undefined, projection)
 
     for (const key in renderState.attrs) {
-        console.log(key, renderState.attrs)
         element.setAttribute(
             !camelCaseAttributes.has(key) ? camelToDash(key) : key,
             renderState.attrs[key] as string
