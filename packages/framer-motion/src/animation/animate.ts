@@ -28,7 +28,7 @@ export interface AnimationPlaybackLifecycles<V> {
 export type AnimationOptions<V> = (Tween | Spring) &
     AnimationPlaybackLifecycles<V> & {
         delay?: number
-        type?: "tween" | "spring"
+        type?: "keyframes" | "spring"
     }
 
 /**

@@ -70,7 +70,7 @@ export function convertTransitionToAnimationOptions<T>({
      * a keyframes or spring animation, but does so by detecting velocity and other spring options.
      * It'd be good to introduce a similar thing here.
      */
-    if (transition.type !== "spring") options.type = "tween"
+    if (transition.type !== "spring") options.type = "keyframes"
 
     return options
 }

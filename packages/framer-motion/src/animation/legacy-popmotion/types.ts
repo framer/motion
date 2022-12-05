@@ -50,7 +50,7 @@ export interface PlaybackOptions<V> {
     repeat?: number
     repeatType?: "loop" | "reverse" | "mirror"
     repeatDelay?: number
-    type?: "spring" | "decay" | "tween"
+    type?: "spring" | "decay" | "keyframes"
     onUpdate?: (latest: V) => void
     onPlay?: () => void
     onComplete?: () => void

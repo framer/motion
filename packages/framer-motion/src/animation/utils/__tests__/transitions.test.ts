@@ -126,7 +126,7 @@ describe("hydrateKeyframes", () => {
 })
 
 describe("getAnimationOptions", () => {
-    test("Correctly creates a Popmotion animate options object", () => {
+    test("Correctly creates a animate object", () => {
         expect(getAnimationOptions({}, { from: 0, to: 100 }, "x")).toEqual({
             from: 0,
             to: 100,
