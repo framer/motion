@@ -88,6 +88,23 @@ describe("SVG", () => {
         render(<Component />)
     })
 
+    test("doesn't read viewBox as '0 0 0 0'", () => {
+        const Component = () => {
+            return (
+                <motion.svg
+                    viewBox="0 0 100 100"
+                    transition={{ delay: 1 }}
+                    animate={{ viewBox: "100 100 200 200" }}
+                />
+            )
+        }
+        const { container } = render(<Component />)
+        expect(container.firstChild as Element).toHaveAttribute(
+            "viewBox",
+            "0 0 100 100"
+        )
+    })
+
     test("animates viewBox", () => {
         const Component = () => {
             return (
