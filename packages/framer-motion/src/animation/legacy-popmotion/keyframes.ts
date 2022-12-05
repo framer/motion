@@ -17,15 +17,15 @@ export function defaultOffset(values: any[]): number[] {
     )
 }
 
-export function convertOffsetToTimes(offset: number[], duration: number) {
-    return offset.map((o) => o * duration)
+export function hydrateTimes(relativeTimes: number[], duration: number) {
+    return relativeTimes.map((o) => o * duration)
 }
 
 export function keyframes({
     from = 0,
     to = 1,
     ease,
-    offset,
+    times,
     duration = 300,
 }: KeyframeOptions): Animation<number | string> {
     /**
@@ -42,17 +42,15 @@ export function keyframes({
     /**
      * Create a times array based on the provided 0-1 offsets
      */
-    const times = convertOffsetToTimes(
+    const absoluteTimes = hydrateTimes(
         // Only use the provided offsets if they're the correct length
         // TODO Maybe we should warn here if there's a length mismatch
-        offset && offset.length === values.length
-            ? offset
-            : defaultOffset(values),
+        times && times.length === values.length ? times : defaultOffset(values),
         duration
     )
 
     function createInterpolator() {
-        return interpolate(times, values, {
+        return interpolate(absoluteTimes, values, {
             ease: Array.isArray(ease) ? ease : defaultEasing(values, ease),
         })
     }

@@ -50,7 +50,7 @@ export interface PlaybackOptions<V> {
     repeat?: number
     repeatType?: "loop" | "reverse" | "mirror"
     repeatDelay?: number
-    type?: "spring" | "decay" | "keyframes"
+    type?: "spring" | "decay" | "tween"
     onUpdate?: (latest: V) => void
     onPlay?: () => void
     onComplete?: () => void
@@ -63,7 +63,7 @@ export interface KeyframeOptions<V = number> {
     from?: V
     duration?: number
     ease?: EasingFunction | EasingFunction[]
-    offset?: number[]
+    times?: number[]
 }
 
 export interface DecayOptions {

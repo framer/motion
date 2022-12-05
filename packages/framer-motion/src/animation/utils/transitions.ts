@@ -39,21 +39,14 @@ export function isTransitionDefined({
     return !!Object.keys(transition).length
 }
 
-let legacyRepeatWarning = false
 /**
  * Convert Framer Motion's Transition type into Popmotion-compatible options.
  */
 export function convertTransitionToAnimationOptions<T>({
     ease,
-    times,
-    yoyo,
-    flip,
-    loop,
     ...transition
 }: PermissiveTransitionDefinition): AnimationOptions<T> {
     const options: AnimationOptions<T> = { ...transition }
-
-    if (times) options["offset"] = times
 
     /**
      * Convert any existing durations from seconds to milliseconds
@@ -64,7 +57,7 @@ export function convertTransitionToAnimationOptions<T>({
         options.repeatDelay = secondsToMilliseconds(transition.repeatDelay)
 
     /**
-     * Map easing names to Popmotion's easing functions
+     * Map easing names to easing functions
      */
     if (ease) {
         options["ease"] = isEasingArray(ease)
@@ -73,35 +66,11 @@ export function convertTransitionToAnimationOptions<T>({
     }
 
     /**
-     * Support legacy transition API
-     */
-    if (transition.type === "tween") options.type = "keyframes"
-
-    /**
-     * TODO: These options are officially removed from the API.
-     */
-    if (yoyo || loop || flip) {
-        warning(
-            !legacyRepeatWarning,
-            "yoyo, loop and flip have been removed from the API. Replace with repeat and repeatType options."
-        )
-        legacyRepeatWarning = true
-        if (yoyo) {
-            options.repeatType = "reverse"
-        } else if (loop) {
-            options.repeatType = "loop"
-        } else if (flip) {
-            options.repeatType = "mirror"
-        }
-        options.repeat = loop || yoyo || flip || transition.repeat
-    }
-
-    /**
-     * TODO: Popmotion 9 has the ability to automatically detect whether to use
+     * TODO: Popmotion legacy functions have the ability to automatically detect whether to use
      * a keyframes or spring animation, but does so by detecting velocity and other spring options.
      * It'd be good to introduce a similar thing here.
      */
-    if (transition.type !== "spring") options.type = "keyframes"
+    if (transition.type !== "spring") options.type = "tween"
 
     return options
 }
@@ -123,11 +92,12 @@ export function hydrateKeyframes(options: PermissiveTransitionDefinition) {
     return options
 }
 
-export function getPopmotionAnimationOptions(
+export function getAnimationOptions(
     transition: PermissiveTransitionDefinition,
     options: any,
     key: string
 ) {
+    // Default multiple keyframes duration
     if (Array.isArray(options.to) && transition.duration === undefined) {
         transition.duration = 0.8
     }
@@ -202,11 +172,7 @@ function getAnimation(
             valueTransition.type === "decay"
             ? inertia({ ...options, ...valueTransition })
             : animate({
-                  ...getPopmotionAnimationOptions(
-                      valueTransition,
-                      options,
-                      key
-                  ),
+                  ...getAnimationOptions(valueTransition, options, key),
                   onUpdate: (v: any) => {
                       options.onUpdate(v)
                       valueTransition.onUpdate && valueTransition.onUpdate(v)

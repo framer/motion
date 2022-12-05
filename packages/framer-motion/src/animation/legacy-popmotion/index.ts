@@ -10,7 +10,7 @@ import { decay } from "./decay"
 import sync, { cancelSync, FrameData } from "framesync"
 import { interpolate } from "../../utils/interpolate"
 
-const types = { decay, keyframes, spring }
+const types = { decay, tween: keyframes, spring }
 
 export function loopElapsed(elapsed: number, duration: number, delay = 0) {
     return elapsed - duration - delay
@@ -58,7 +58,7 @@ export function animate<V = number>({
     onComplete,
     onRepeat,
     onUpdate,
-    type = "keyframes",
+    type = "tween",
     ...options
 }: AnimationOptions<V>) {
     let { to } = options
@@ -72,7 +72,7 @@ export function animate<V = number>({
 
     let interpolateFromNumber: (t: number) => V
 
-    const animator = types[Array.isArray(to) ? "keyframes" : type]
+    const animator = types[Array.isArray(to) ? "tween" : type]
 
     if ((animator as any).needsInterpolation?.(from, to)) {
         interpolateFromNumber = interpolate([0, 100], [from, to], {
