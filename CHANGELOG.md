@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.6.19] 2022-12-05
+
+### Fixed
+
+-   Animation of `viewBox` for SVG elements.
+
 ## [7.6.18] 2022-12-02
 
 ### Changed

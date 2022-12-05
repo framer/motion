@@ -14,6 +14,7 @@ import { ResolvedValues } from "../types"
 import { Box } from "../../projection/geometry/types"
 import { createBox } from "../../projection/geometry/models"
 import { IProjectionNode } from "../../projection/node/types"
+import { isSVGTag } from "./utils/is-svg-tag"
 
 export class SVGVisualElement extends DOMVisualElement<
     SVGElement,
@@ -21,6 +22,8 @@ export class SVGVisualElement extends DOMVisualElement<
     DOMVisualElementOptions
 > {
     type: "svg"
+
+    isSVGTag = false
 
     getBaseTargetFromProps(
         props: MotionProps,
@@ -55,6 +58,7 @@ export class SVGVisualElement extends DOMVisualElement<
             renderState,
             latestValues,
             options,
+            this.isSVGTag,
             props.transformTemplate
         )
     }
@@ -66,5 +70,10 @@ export class SVGVisualElement extends DOMVisualElement<
         projection?: IProjectionNode<unknown> | undefined
     ): void {
         renderSVG(instance, renderState, styleProp, projection)
+    }
+
+    mount(instance: SVGElement) {
+        this.isSVGTag = isSVGTag(instance.tagName)
+        super.mount(instance)
     }
 }

@@ -16,7 +16,12 @@ export function createUseRender(forwardMotionProps = false) {
             ? useSVGProps
             : useHTMLProps
 
-        const visualProps = useVisualProps(props, latestValues, isStatic)
+        const visualProps = useVisualProps(
+            props,
+            latestValues,
+            isStatic,
+            Component
+        )
         const filteredProps = filterProps(
             props,
             typeof Component === "string",

@@ -5,6 +5,7 @@ import { scrapeMotionValuesFromProps as scrapeSVGProps } from "./utils/scrape-mo
 import { makeUseVisualState } from "../../motion/utils/use-visual-state"
 import { createSvgRenderState } from "./utils/create-render-state"
 import { buildSVGAttrs } from "./utils/build-attrs"
+import { isSVGTag } from "./utils/is-svg-tag"
 
 export const svgMotionConfig: Partial<
     MotionComponentConfig<SVGElement, SVGRenderState>
@@ -33,6 +34,7 @@ export const svgMotionConfig: Partial<
                 renderState,
                 latestValues,
                 { enableHardwareAcceleration: false },
+                isSVGTag(instance.tagName),
                 props.transformTemplate
             )
 
