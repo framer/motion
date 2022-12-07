@@ -7999,6 +7999,10 @@ __metadata:
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
     "@motionone/dom": ^10.15.3
+<<<<<<< HEAD
+=======
+    framesync: 6.1.2
+>>>>>>> 91a97359 (Optimized appear effects)
     hey-listen: ^1.0.8
     tslib: 2.4.0
   peerDependencies:
