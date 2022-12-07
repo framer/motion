@@ -5,6 +5,7 @@ import type {
     AnimationState,
 } from "./types"
 import { calcAngularFreq, findSpring } from "./find-spring"
+import { velocityPerSecond } from "../../utils/velocity-per-second"
 
 const durationKeys = ["duration", "bounce"]
 const physicsKeys = ["stiffness", "damping", "mass"]
@@ -45,6 +46,8 @@ function getSpringOptions(options: SpringOptions): PhysicsSpringOptions & {
     return springOptions
 }
 
+const velocitySampleDuration = 5
+
 /**
  * This is based on the spring implementation of Wobble https://github.com/skevy/wobble
  */
@@ -71,10 +74,9 @@ export function spring({
     } = getSpringOptions(options)
 
     let resolveSpring = zero
-    let resolveVelocity = zero
+    let initialVelocity = velocity ? -(velocity / 1000) : 0.0
 
     function createSpring() {
-        const initialVelocity = velocity ? -(velocity / 1000) : 0.0
         const initialDelta = to - from
         const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass))
         const undampedAngularFreq = Math.sqrt(stiffness / mass) / 1000
@@ -107,35 +109,6 @@ export function spring({
                             angularFreq) *
                             Math.sin(angularFreq * t) +
                             initialDelta * Math.cos(angularFreq * t))
-                )
-            }
-
-            resolveVelocity = (t: number) => {
-                // TODO Resolve these calculations with the above
-                const envelope = Math.exp(
-                    -dampingRatio * undampedAngularFreq * t
-                )
-
-                return (
-                    dampingRatio *
-                        undampedAngularFreq *
-                        envelope *
-                        ((Math.sin(angularFreq * t) *
-                            (initialVelocity +
-                                dampingRatio *
-                                    undampedAngularFreq *
-                                    initialDelta)) /
-                            angularFreq +
-                            initialDelta * Math.cos(angularFreq * t)) -
-                    envelope *
-                        (Math.cos(angularFreq * t) *
-                            (initialVelocity +
-                                dampingRatio *
-                                    undampedAngularFreq *
-                                    initialDelta) -
-                            angularFreq *
-                                initialDelta *
-                                Math.sin(angularFreq * t))
                 )
             }
         } else if (dampingRatio === 1) {
@@ -181,7 +154,15 @@ export function spring({
             const current = resolveSpring(t)
 
             if (!isResolvedFromDuration) {
-                const currentVelocity = resolveVelocity(t) * 1000
+                let currentVelocity = initialVelocity
+
+                if (t !== 0) {
+                    const prevT = Math.max(0, t - velocitySampleDuration)
+                    currentVelocity = velocityPerSecond(
+                        current - resolveSpring(prevT),
+                        t - prevT
+                    )
+                }
                 const isBelowVelocityThreshold =
                     Math.abs(currentVelocity) <= restSpeed
                 const isBelowDisplacementThreshold =
@@ -196,7 +177,7 @@ export function spring({
             return state
         },
         flipTarget: () => {
-            velocity = -velocity
+            initialVelocity = -initialVelocity
             ;[from, to] = [to, from]
             createSpring()
         },

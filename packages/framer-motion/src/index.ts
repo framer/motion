@@ -90,6 +90,12 @@ export { pipe } from "./utils/pipe"
 export { wrap } from "./utils/wrap"
 
 /**
+ * Appear animations
+ */
+export { startAppearAnimation } from "./animation/appear/start"
+export { spring } from "./animation/legacy-popmotion/spring"
+
+/**
  * Contexts
  */
 export { MotionContext } from "./context/MotionContext"

@@ -142,6 +142,9 @@ function getAnimation(
     onComplete: () => void
 ) {
     const valueTransition = getValueTransition(transition, key) || {}
+
+    valueTransition.elapsed = transition.elapsed
+
     let origin =
         valueTransition.from !== undefined ? valueTransition.from : value.get()
 
