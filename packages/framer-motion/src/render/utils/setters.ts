@@ -29,7 +29,7 @@ function setMotionValue(
     if (visualElement.hasValue(key)) {
         visualElement.getValue(key)!.set(value)
     } else {
-        visualElement.addValue(key, motionValue(value))
+        visualElement.addValue(key, motionValue(value, { isPrivate: true }))
     }
 }
 

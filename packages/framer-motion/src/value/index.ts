@@ -16,6 +16,10 @@ export type PassiveEffect<T> = (v: T, safeSetter: (v: T) => void) => void
 
 export type StartAnimation = (complete: () => void) => () => void
 
+export interface MotionValueOptions {
+    isPrivate?: boolean
+}
+
 const isFloat = (value: any): value is string => {
     return !isNaN(parseFloat(value))
 }
@@ -111,6 +115,12 @@ export class MotionValue<V = any> {
     private canTrackVelocity = false
 
     /**
+     * This flag determines whether this MotionValue is privately owned by
+     * a VisualElement and therefore can be considered to have no external listeners.
+     */
+    isPrivate: boolean
+
+    /**
      * @param init - The initiating value
      * @param config - Optional configuration options
      *
@@ -118,9 +128,10 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    constructor(init: V) {
+    constructor(init: V, { isPrivate = false }: MotionValueOptions = {}) {
         this.prev = this.current = init
         this.canTrackVelocity = isFloat(this.current)
+        this.isPrivate = isPrivate
     }
 
     /**
@@ -378,6 +389,6 @@ export class MotionValue<V = any> {
     }
 }
 
-export function motionValue<V>(init: V) {
-    return new MotionValue<V>(init)
+export function motionValue<V>(init: V, options?: MotionValueOptions) {
+    return new MotionValue<V>(init, options)
 }
