@@ -8,16 +8,25 @@ export function handoffOptimizedAppearAnimation(
 ): number {
     const { MotionAppearAnimations } = window
 
+    const animationId = appearStoreId(
+        id,
+        transformProps.has(name) ? "transform" : name
+    )
     const animation =
-        MotionAppearAnimations &&
-        MotionAppearAnimations.get(
-            appearStoreId(id, transformProps.has(name) ? "transform" : name)
-        )
+        MotionAppearAnimations && MotionAppearAnimations.get(animationId)
 
     if (animation) {
+        /**
+         * We allow the animation to persist until the next frame:
+         *   1. So it continues to play until Framer Motion is ready to render
+         *      (avoiding a potential flash of the element's original state)
+         *   2. As all independent transforms share a single transform animation, stopping
+         *      it synchronously would prevent subsequent transforms to handoff.
+         */
         sync.render(() => {
             try {
                 animation.cancel()
+                MotionAppearAnimations.delete(animationId)
             } catch (e) {}
         })
 
