@@ -75,10 +75,10 @@ export function spring({
 
     let resolveSpring = zero
     let initialVelocity = velocity ? -(velocity / 1000) : 0.0
+    const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass))
 
     function createSpring() {
         const initialDelta = to - from
-        const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass))
         const undampedAngularFreq = Math.sqrt(stiffness / mass) / 1000
 
         /**
@@ -157,12 +157,22 @@ export function spring({
                 let currentVelocity = initialVelocity
 
                 if (t !== 0) {
-                    const prevT = Math.max(0, t - velocitySampleDuration)
-                    currentVelocity = velocityPerSecond(
-                        current - resolveSpring(prevT),
-                        t - prevT
-                    )
+                    /**
+                     * We only need to calculate velocity for under-damped springs
+                     * as over- and critically-damped springs can't overshoot, so
+                     * checking only for displacement is enough.
+                     */
+                    if (dampingRatio < 1) {
+                        const prevT = Math.max(0, t - velocitySampleDuration)
+                        currentVelocity = velocityPerSecond(
+                            current - resolveSpring(prevT),
+                            t - prevT
+                        )
+                    } else {
+                        currentVelocity = 0
+                    }
                 }
+
                 const isBelowVelocityThreshold =
                     Math.abs(currentVelocity) <= restSpeed
                 const isBelowDisplacementThreshold =

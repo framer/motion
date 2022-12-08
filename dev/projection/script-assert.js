@@ -5,6 +5,7 @@ const messages = new Set()
 function showError(element, msg) {
     element.dataset.layoutCorrect = "false"
 
+    // Prevent the same error flagging more than once
     if (!messages.has(msg)) {
         messages.add(msg)
         console.error(msg)
@@ -36,10 +37,9 @@ window.Assert = {
         }
     },
     matchOpacity: (element, expected) => {
+        const computedOpacity = window.getComputedStyle(element).opacity
         const elementOpacity =
-            window.getComputedStyle(element).opacity === ""
-                ? 1
-                : parseFloat(window.getComputedStyle(element).opacity)
+            computedOpacity === "" ? 1 : parseFloat(computedOpacity)
 
         if (elementOpacity !== expected) {
             showError(
