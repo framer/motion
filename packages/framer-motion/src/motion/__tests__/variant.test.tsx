@@ -649,7 +649,7 @@ describe("animate prop as variant", () => {
                     visible: {
                         opacity: 1,
                         transition: {
-                            duration: 0.01,
+                            duration: 0.001,
                         },
                     },
                 }
@@ -702,7 +702,7 @@ describe("animate prop as variant", () => {
                 )
             }
         )
-
+        console.log(recordedOrder)
         expect(recordedOrder).toEqual([4, 3, 2, 1])
         expect(staggeredEqually).toEqual(true)
     })

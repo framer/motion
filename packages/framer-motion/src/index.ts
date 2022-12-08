@@ -92,7 +92,7 @@ export { wrap } from "./utils/wrap"
 /**
  * Appear animations
  */
-export { startAppearAnimation } from "./animation/appear/start"
+export { startInitialAnimation } from "./animation/optimized-initial/start"
 export { spring } from "./animation/legacy-popmotion/spring"
 
 /**

@@ -75,7 +75,10 @@ export function animate<V = number>({
 
     const animator = types[Array.isArray(to) ? "keyframes" : type]
 
-    if ((animator as any).needsInterpolation?.(from, to)) {
+    if (
+        Object.hasOwnProperty.call(animator, "needsInterpolation") &&
+        (animator as typeof spring).needsInterpolation(from, to)
+    ) {
         interpolateFromNumber = interpolate([0, 100], [from, to], {
             clamp: false,
         }) as (t: number) => V
@@ -125,7 +128,15 @@ export function animate<V = number>({
             isComplete = isForwardPlayback ? state.done : elapsed <= 0
         }
 
-        onUpdate?.(latest)
+        /**
+         * Historically, Framer Motion handled the delay of Popmotion animations.
+         * Now the delay is applied via the starting elapsed time, to align with
+         * the old behaviour of not firing updates until after the delay, we add
+         * this check before firing onUpdate.
+         */
+        if (isForwardPlayback && elapsed < 0) {
+            onUpdate && onUpdate(latest)
+        }
 
         if (isComplete) {
             if (repeatCount === 0) {
@@ -147,7 +158,7 @@ export function animate<V = number>({
     }
 
     function play() {
-        onPlay?.()
+        onPlay && onPlay()
         driverControls = driver(update)
         driverControls.start()
     }
@@ -156,7 +167,7 @@ export function animate<V = number>({
 
     return {
         stop: () => {
-            onStop?.()
+            onStop && onStop()
             driverControls.stop()
         },
     }

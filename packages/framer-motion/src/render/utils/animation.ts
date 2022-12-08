@@ -14,7 +14,7 @@ import { setTarget } from "./setters"
 import { resolveVariant } from "./resolve-dynamic-variants"
 import { transformProps } from "../html/utils/transform"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
-import { handoffAppearAnimation } from "../../animation/appear/handoff"
+import { handoffInitialAnimation } from "../../animation/optimized-initial/handoff"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -185,7 +185,7 @@ function animateTarget(
             const appearId = visualElement.getProps()["data-appear-id"]
 
             if (appearId) {
-                valueTransition.elapsed = handoffAppearAnimation(appearId, key)
+                valueTransition.elapsed = handoffInitialAnimation(appearId, key)
             }
         }
 
