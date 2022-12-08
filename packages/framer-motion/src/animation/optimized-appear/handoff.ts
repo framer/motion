@@ -15,7 +15,7 @@ export function handoffOptimizedAppearAnimation(
         )
 
     if (animation) {
-        sync.update(() => {
+        sync.render(() => {
             try {
                 animation.cancel()
             } catch (e) {}

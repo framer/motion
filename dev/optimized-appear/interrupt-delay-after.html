@@ -31,6 +31,7 @@
                 motion,
                 animateStyle,
                 startOptimizedAppearAnimation,
+                optimizedAppearDataAttribute,
                 motionValue,
             } = window.Motion
             const { matchOpacity } = window.Assert
@@ -39,6 +40,7 @@
             const duration = 1
             const opacity = motionValue(0)
             let opacityHasChanged = false
+
             opacity.onChange((v) => {
                 if (!opacityHasChanged) {
                     if (v > 0.3) {
@@ -70,7 +72,7 @@
                 onAnimationStart: () => {
                     matchOpacity(document.getElementById("box"), 0.25)
                 },
-                "data-appear-id": "a",
+                [optimizedAppearDataAttribute]: "a",
             })
 
             // Emulate server rendering of element
@@ -103,6 +105,22 @@
 
                 // Hydrate root mid-way through animation
                 ReactDOM.hydrateRoot(root, Component)
+
+                /**
+                 * Check the animation isn't in its initial state
+                 */
+                setTimeout(() => {
+                    const { opacity: initialOpacity } = window.getComputedStyle(
+                        document.getElementById("box")
+                    )
+
+                    // if (initialOpacity === "0") {
+                    //     showError(
+                    //         document.getElementById("box"),
+                    //         `opacity should have animated`
+                    //     )
+                    // }
+                }, 100)
             })
         </script>
     </body>

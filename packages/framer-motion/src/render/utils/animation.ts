@@ -15,6 +15,7 @@ import { resolveVariant } from "./resolve-dynamic-variants"
 import { transformProps } from "../html/utils/transform"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { handoffOptimizedAppearAnimation } from "../../animation/optimized-appear/handoff"
+import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/data-id"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -182,7 +183,8 @@ function animateTarget(
          * to see if we're handling off from an existing animation.
          */
         if (!value.hasAnimated) {
-            const appearId = visualElement.getProps()["data-appear-id"]
+            const appearId =
+                visualElement.getProps()[optimizedAppearDataAttribute]
 
             if (appearId) {
                 valueTransition.elapsed = handoffOptimizedAppearAnimation(

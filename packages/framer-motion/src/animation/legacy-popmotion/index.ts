@@ -134,7 +134,7 @@ export function animate<V = number>({
          * the old behaviour of not firing updates until after the delay, we add
          * this check before firing onUpdate.
          */
-        if (isForwardPlayback && elapsed < 0) {
+        if (isForwardPlayback && elapsed >= 0) {
             onUpdate && onUpdate(latest)
         }
 

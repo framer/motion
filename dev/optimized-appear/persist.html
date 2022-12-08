@@ -31,6 +31,7 @@
                 motion,
                 animateStyle,
                 startOptimizedAppearAnimation,
+                optimizedAppearDataAttribute,
                 motionValue,
             } = window.Motion
             const { matchOpacity } = window.Assert
@@ -61,7 +62,7 @@
                 onAnimationStart: () => {
                     matchOpacity(document.getElementById("box"), 1)
                 },
-                "data-appear-id": "a",
+                [optimizedAppearDataAttribute]: "a",
             })
 
             // Emulate server rendering of element

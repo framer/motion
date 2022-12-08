@@ -31,6 +31,7 @@
                 motion,
                 animateStyle,
                 startOptimizedAppearAnimation,
+                optimizedAppearDataAttribute,
                 motionValue,
             } = window.Motion
             const { matchViewportBox } = window.Assert
@@ -66,7 +67,7 @@
                         top: 125,
                     })
                 },
-                "data-appear-id": "a",
+                [optimizedAppearDataAttribute]: "a",
             })
 
             // Emulate server rendering of element

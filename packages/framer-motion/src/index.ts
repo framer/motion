@@ -93,6 +93,7 @@ export { wrap } from "./utils/wrap"
  * Appear animations
  */
 export { startOptimizedAppearAnimation } from "./animation/optimized-appear/start"
+export { optimizedAppearDataAttribute } from "./animation/optimized-appear/data-id"
 export { spring } from "./animation/legacy-popmotion/spring"
 
 /**
