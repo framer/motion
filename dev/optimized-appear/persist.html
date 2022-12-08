@@ -60,6 +60,9 @@
                  * On animation start, check the values we expect to see here
                  */
                 onAnimationStart: () => {
+                    console.log(
+                        getComputedStyle(document.getElementById("box")).opacity
+                    )
                     matchOpacity(document.getElementById("box"), 1)
                 },
                 [optimizedAppearDataAttribute]: "a",
@@ -86,11 +89,15 @@
                 // Manually set start time to half way through the animation
                 if (animation) {
                     animation.currentTime = duration * 1000
-                    animation.pause()
                 }
 
-                // Hydrate root mid-way through animation
-                ReactDOM.hydrateRoot(root, Component)
+                /**
+                 * Give it time to commit the finished animation
+                 */
+                setTimeout(() => {
+                    // Hydrate root mid-way through animation
+                    ReactDOM.hydrateRoot(root, Component)
+                }, 50)
             })
         </script>
     </body>
