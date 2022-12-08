@@ -2,7 +2,7 @@ import sync from "framesync"
 import { transformProps } from "../../render/html/utils/transform"
 import { appearStoreId } from "./store-id"
 
-export function handoffAppearAnimation(id: string, name: string): number {
+export function handoffInitialAnimation(id: string, name: string): number {
     const { MotionAppearAnimations } = window
 
     const animation =

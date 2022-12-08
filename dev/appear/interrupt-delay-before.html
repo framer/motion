@@ -34,14 +34,17 @@
 
             const duration = 1
             const opacity = motionValue(0)
-
+            let opacityHasChanged = false
             opacity.onChange((v) => {
-                if (v < 0.5) {
-                    showError(
-                        document.getElementById("box"),
-                        "opacity should never be less than 0.5"
-                    )
+                if (!opacityHasChanged) {
+                    if (v > 0.3) {
+                        showError(
+                            document.getElementById("box"),
+                            `opacity should not start animating beyond 0 (started at ${v})`
+                        )
+                    }
                 }
+                opacityHasChanged = true
             })
 
             // This is the tree to be rendered "server" and client-side.
@@ -49,13 +52,13 @@
                 id: "box",
                 initial: { opacity: 0 },
                 animate: { opacity: 1 },
-                transition: { duration, ease: "linear" },
+                transition: { duration, ease: "linear", delay: 0.25 },
                 style: { opacity },
                 /**
                  * On animation start, check the values we expect to see here
                  */
                 onAnimationStart: () => {
-                    matchOpacity(document.getElementById("box"), 0.5)
+                    matchOpacity(document.getElementById("box"), 0)
                 },
                 "data-appear-id": "a",
             })
@@ -71,6 +74,7 @@
                 {
                     duration: duration * 1000,
                     ease: "linear",
+                    delay: 250,
                 }
             )
 
@@ -78,9 +82,12 @@
              * This is necessary in Chrome
              */
             animation.ready.then(() => {
-                // Manually set start time to half way through the animation
+                /**
+                 * Set currentTime to 500ms - because of the delay this will cut
+                 * into the animation at 0.25
+                 */
                 if (animation) {
-                    animation.currentTime = (duration * 1000) / 2
+                    animation.currentTime = 200
                     animation.pause()
                 }
 

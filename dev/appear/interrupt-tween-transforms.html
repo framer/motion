@@ -27,7 +27,7 @@
         <script src="../projection/script-assert.js"></script>
 
         <script>
-            const { motion, animateStyle, startAppearAnimation, motionValue } =
+            const { motion, animateStyle, startInitialAnimation, motionValue } =
                 window.Motion
             const { matchViewportBox } = window.Assert
             const root = document.getElementById("root")
@@ -69,7 +69,7 @@
             root.innerHTML = ReactDOMServer.renderToString(Component)
 
             // Start Motion One animation
-            const animation = startAppearAnimation(
+            const animation = startInitialAnimation(
                 document.getElementById("box"),
                 "transform",
                 ["translateY(0px) scale(1)", "translateY(100px) scale(2)"],
