@@ -27,8 +27,12 @@
         <script src="../projection/script-assert.js"></script>
 
         <script>
-            const { motion, animateStyle, startInitialAnimation, motionValue } =
-                window.Motion
+            const {
+                motion,
+                animateStyle,
+                startOptimizedAppearAnimation,
+                motionValue,
+            } = window.Motion
             const { matchOpacity } = window.Assert
             const root = document.getElementById("root")
 
@@ -73,7 +77,7 @@
             root.innerHTML = ReactDOMServer.renderToString(Component)
 
             // Start Motion One animation
-            const animation = startInitialAnimation(
+            const animation = startOptimizedAppearAnimation(
                 document.getElementById("box"),
                 "opacity",
                 [0, 1],
