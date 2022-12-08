@@ -75,7 +75,10 @@ export function animate<V = number>({
 
     const animator = types[Array.isArray(to) ? "keyframes" : type]
 
-    if ((animator as any).needsInterpolation?.(from, to)) {
+    if (
+        Object.hasOwnProperty.call(animator, "needsInterpolation") &&
+        (animator as typeof spring).needsInterpolation(from, to)
+    ) {
         interpolateFromNumber = interpolate([0, 100], [from, to], {
             clamp: false,
         }) as (t: number) => V

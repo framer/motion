@@ -702,7 +702,7 @@ describe("animate prop as variant", () => {
                 )
             }
         )
-
+        console.log(recordedOrder)
         expect(recordedOrder).toEqual([4, 3, 2, 1])
         expect(staggeredEqually).toEqual(true)
     })

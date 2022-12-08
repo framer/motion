@@ -14,8 +14,12 @@ import { setTarget } from "./setters"
 import { resolveVariant } from "./resolve-dynamic-variants"
 import { transformProps } from "../html/utils/transform"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
+<<<<<<< HEAD
 import { handoffOptimizedAppearAnimation } from "../../animation/optimized-appear/handoff"
 import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/data-id"
+=======
+import { handoffInitialAnimation } from "../../animation/optimized-initial/handoff"
+>>>>>>> 127b8031 (Latest)
 
 export type AnimationDefinition =
     | VariantLabels

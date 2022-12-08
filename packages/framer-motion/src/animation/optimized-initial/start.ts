@@ -2,7 +2,7 @@ import { appearStoreId } from "./store-id"
 import { animateStyle } from "../waapi"
 import { NativeAnimationOptions } from "../waapi/types"
 
-export function startAppearAnimation(
+export function startInitialAnimation(
     element: HTMLElement,
     name: string,
     keyframes: string[] | number[],
