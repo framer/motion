@@ -1,8 +1,8 @@
 Cypress.config({
-    baseUrl: "http://localhost:8000/dev/appear/",
+    baseUrl: "http://localhost:8000/dev/optimized-appear/",
 })
 
-describe("Project the element to its original box", () => {
+describe("Correctly plays and resumes from optimized appear animations", () => {
     const tests = require("../fixtures/appear-tests.json")
 
     tests.forEach((test) => {
