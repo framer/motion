@@ -21,7 +21,7 @@ export function handoffOptimizedAppearAnimation(
          *   1. So it continues to play until Framer Motion is ready to render
          *      (avoiding a potential flash of the element's original state)
          *   2. As all independent transforms share a single transform animation, stopping
-         *      it synchronously would prevent subsequent transforms to handoff.
+         *      it synchronously would prevent subsequent transforms from handing off.
          */
         sync.render(() => {
             try {
