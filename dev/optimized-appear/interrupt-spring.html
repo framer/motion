@@ -42,8 +42,6 @@
             const damping = 40
             const mass = 1
 
-            const duration = 1
-
             // This is the tree to be rendered "server" and client-side.
             const Component = React.createElement(motion.div, {
                 id: "box",
@@ -62,6 +60,12 @@
                         top: 123.40205383300781,
                     })
                 },
+                onUpdate: () => {
+                    console.log(
+                        getComputedStyle(document.getElementById("box")).opacity
+                    )
+                },
+                style: { willChange: "opacity" },
                 [optimizedAppearDataAttribute]: "a",
             })
 
@@ -133,7 +137,11 @@
                 }
             )
 
-            animation.ready.then(() => {
+            const ready = animation.ready
+                ? animation.ready.then
+                : requestAnimationFrame
+            ready(() => {
+                // TODO: Dont manipulate animation until ready
                 if (animation) {
                     animation.currentTime = 100
                     animation.pause()

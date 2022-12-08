@@ -90,10 +90,10 @@
                 }
             )
 
-            /**
-             * This is necessary in Chrome
-             */
-            animation.ready.then(() => {
+            const ready = animation.ready
+                ? animation.ready.then
+                : requestAnimationFrame
+            ready(() => {
                 /**
                  * Set currentTime to 500ms - because of the delay this will cut
                  * into the animation at 0.25
@@ -114,12 +114,12 @@
                         document.getElementById("box")
                     )
 
-                    // if (initialOpacity === "0") {
-                    //     showError(
-                    //         document.getElementById("box"),
-                    //         `opacity should have animated`
-                    //     )
-                    // }
+                    if (initialOpacity === "0") {
+                        showError(
+                            document.getElementById("box"),
+                            `opacity should have animated`
+                        )
+                    }
                 }, 100)
             })
         </script>

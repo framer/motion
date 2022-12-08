@@ -85,7 +85,7 @@
             /**
              * This is necessary in Chrome
              */
-            animation.ready.then(() => {
+            requestAnimationFrame(() => {
                 // Manually set start time to half way through the animation
                 if (animation) {
                     animation.currentTime = duration * 1000

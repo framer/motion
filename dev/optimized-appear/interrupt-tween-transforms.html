@@ -84,7 +84,10 @@
                 }
             )
 
-            animation.ready.then(() => {
+            const ready = animation.ready
+                ? animation.ready.then
+                : requestAnimationFrame
+            ready(() => {
                 // Manually set start time to half way through the animation
                 if (animation) {
                     animation.currentTime = (duration * 1000) / 2
