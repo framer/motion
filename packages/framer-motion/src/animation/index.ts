@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import { warning } from "hey-listen"
+=======
+>>>>>>> faa95757 (Refactoring internal animation functions)
 import { ResolvedValueTarget, Transition } from "../types"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { instantAnimationState } from "../utils/use-instant-transition-state"
@@ -9,7 +12,10 @@ import { animate } from "./legacy-popmotion"
 import { inertia } from "./legacy-popmotion/inertia"
 import { AnimationOptions } from "./types"
 import { getDefaultTransition } from "./utils/default-transitions"
+<<<<<<< HEAD
 import { isAnimatable } from "./utils/is-animatable"
+=======
+>>>>>>> faa95757 (Refactoring internal animation functions)
 import { getKeyframes } from "./utils/keyframes"
 import { getValueTransition, isTransitionDefined } from "./utils/transitions"
 import { supports } from "./waapi/supports"
@@ -42,6 +48,11 @@ export const createMotionValueAnimation = (
         let { elapsed = 0 } = transition
         elapsed = elapsed - secondsToMilliseconds(delay)
 
+<<<<<<< HEAD
+=======
+        const canAnimate = true
+
+>>>>>>> faa95757 (Refactoring internal animation functions)
         const keyframes = getKeyframes(
             value,
             valueName,
@@ -49,6 +60,7 @@ export const createMotionValueAnimation = (
             valueTransition
         )
 
+<<<<<<< HEAD
         /**
          * Check if we're able to animate between the start and end keyframes,
          * and throw a warning if we're attempting to animate between one that's
@@ -68,6 +80,11 @@ export const createMotionValueAnimation = (
             keyframes,
             velocity: value.getVelocity(),
             ...valueTransition,
+=======
+        let options: AnimationOptions = {
+            keyframes,
+            velocity: value.getVelocity(),
+>>>>>>> faa95757 (Refactoring internal animation functions)
             elapsed,
             onUpdate: (v) => {
                 value.set(v)
@@ -77,11 +94,19 @@ export const createMotionValueAnimation = (
                 onComplete()
                 valueTransition.onComplete && valueTransition.onComplete()
             },
+<<<<<<< HEAD
         }
 
         if (
             !isOriginAnimatable ||
             !isTargetAnimatable ||
+=======
+            ...valueTransition,
+        }
+
+        if (
+            !canAnimate ||
+>>>>>>> faa95757 (Refactoring internal animation functions)
             instantAnimationState.current ||
             valueTransition.type === false
         ) {

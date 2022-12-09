@@ -42,6 +42,10 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Removed
 
+-   Removed ability to define `"inertia"` animation as `"decay"` (officially removed in `3.0.0`).
+
+### Removed
+
 -   Removed legacy repeat options (officially removed in `3.0.0`).
 
 ## [7.6.19] 2022-12-05
