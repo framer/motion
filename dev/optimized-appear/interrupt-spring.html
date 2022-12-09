@@ -2,7 +2,7 @@
     <head>
         <style>
             body {
-                padding: 100px;
+                padding: 300px;
                 margin: 0;
             }
 
@@ -27,131 +27,139 @@
         <script src="../projection/script-assert.js"></script>
 
         <script>
-            const {
-                motion,
-                animateStyle,
-                startOptimizedAppearAnimation,
-                optimizedAppearDataAttribute,
-                motionValue,
-                spring,
-            } = window.Motion
-            const { matchViewportBox, matchOpacity } = window.Assert
-            const root = document.getElementById("root")
+            setTimeout(() => {
+                const {
+                    motion,
+                    animateStyle,
+                    startOptimizedAppearAnimation,
+                    optimizedAppearDataAttribute,
+                    motionValue,
+                    spring,
+                } = window.Motion
+                const { matchViewportBox, matchOpacity } = window.Assert
+                const root = document.getElementById("root")
 
-            const stiffness = 300
-            const damping = 40
-            const mass = 1
+                const stiffness = 200
+                const damping = 13
+                const mass = 1
 
-            // This is the tree to be rendered "server" and client-side.
-            const Component = React.createElement(motion.div, {
-                id: "box",
-                initial: { y: 0, scale: 1, opacity: 0 },
-                animate: { y: 100, scale: 2, opacity: 1 },
-                transition: { type: "spring", stiffness, damping, mass },
-                /**
-                 * On animation start, check the values we expect to see here
-                 */
-                onAnimationStart: () => {
-                    matchOpacity(document.getElementById("box"), 0.463589)
-                    matchViewportBox(document.getElementById("box"), {
-                        bottom: 270.2061767578125,
-                        left: 76.59794616699219,
-                        right: 223.4020538330078,
-                        top: 123.40205383300781,
-                    })
-                },
-                onUpdate: () => {
-                    console.log(
-                        getComputedStyle(document.getElementById("box")).opacity
-                    )
-                },
-                style: { willChange: "opacity" },
-                [optimizedAppearDataAttribute]: "a",
-            })
-
-            // Emulate server rendering of element
-            root.innerHTML = ReactDOMServer.renderToString(Component)
-
-            const springTimeResolution = 10
-
-            function generateSpringKeyframes(from, to) {
-                let t = 0
-                const keyframes = []
-                const springAnimation = spring({
-                    from,
-                    to,
-                    stiffness,
-                    damping,
-                    mass,
+                // This is the tree to be rendered "server" and client-side.
+                const Component = React.createElement(motion.div, {
+                    id: "box",
+                    initial: { scale: 1, opacity: 0 },
+                    animate: { scale: 2, opacity: 1 },
+                    transition: {
+                        type: "spring",
+                        stiffness,
+                        damping,
+                        mass,
+                        restSpeed: 0.00001,
+                    },
+                    /**
+                     * On animation start, check the values we expect to see here
+                     */
+                    onAnimationStart: () => {
+                        // matchOpacity(document.getElementById("box"), 0.463589)
+                        // matchViewportBox(document.getElementById("box"), {
+                        //     bottom: 270.2061767578125,
+                        //     left: 76.59794616699219,
+                        //     right: 223.4020538330078,
+                        //     top: 123.40205383300781,
+                        // })
+                    },
+                    onUpdate: () => {
+                        console.log(
+                            getComputedStyle(document.getElementById("box"))
+                                .opacity
+                        )
+                    },
+                    style: { willChange: "opacity" },
+                    [optimizedAppearDataAttribute]: "a",
                 })
-                let state = { done: false, value: from }
 
-                while (!state.done) {
-                    state = springAnimation.next(t)
-                    keyframes.push(state.value)
-                    t += springTimeResolution
+                // Emulate server rendering of element
+                root.innerHTML = ReactDOMServer.renderToString(Component)
+
+                const springTimeResolution = 10
+
+                function generateSpringKeyframes(from, to) {
+                    let t = 0
+                    const keyframes = []
+                    const springAnimation = spring({
+                        from,
+                        to,
+                        stiffness,
+                        damping,
+                        mass,
+                        restSpeed: 0.00001,
+                    })
+                    let state = { done: false, value: from }
+
+                    while (!state.done) {
+                        state = springAnimation.next(t)
+                        keyframes.push(state.value)
+                        t += springTimeResolution
+                    }
+
+                    return keyframes
                 }
 
-                return keyframes
-            }
-
-            const yKeyframes = generateSpringKeyframes(0, 100)
-            const scaleKeyframes = generateSpringKeyframes(1, 2)
-            const maxKeyframes = Math.max(
-                yKeyframes.length,
-                scaleKeyframes.length
-            )
-
-            const transformOptions = {
-                duration: maxKeyframes * springTimeResolution,
-                ease: "linear",
-            }
-
-            const transformKeyframes = []
-            for (let i = 0; i < maxKeyframes; i++) {
-                transformKeyframes.push(
-                    `translateY(${
-                        yKeyframes[Math.min(i, yKeyframes.length - 1)]
-                    }px) scale(${
-                        scaleKeyframes[Math.min(i, scaleKeyframes.length - 1)]
-                    })`
+                const yKeyframes = generateSpringKeyframes(0, 100)
+                const scaleKeyframes = generateSpringKeyframes(1, 2)
+                const maxKeyframes = Math.max(
+                    yKeyframes.length,
+                    scaleKeyframes.length
                 )
-            }
 
-            // Start Motion One animations
-            const animation = startOptimizedAppearAnimation(
-                document.getElementById("box"),
-                "transform",
-                transformKeyframes,
-                transformOptions
-            )
-
-            const opacityKeyframes = generateSpringKeyframes(0, 1)
-            const opacityAnimation = startOptimizedAppearAnimation(
-                document.getElementById("box"),
-                "opacity",
-                opacityKeyframes,
-                {
-                    duration: opacityKeyframes.length * springTimeResolution,
+                const transformOptions = {
+                    duration: maxKeyframes * springTimeResolution,
                     ease: "linear",
                 }
-            )
 
-            const ready = animation.ready
-                ? animation.ready.then
-                : requestAnimationFrame
-            ready(() => {
-                // TODO: Dont manipulate animation until ready
-                if (animation) {
-                    animation.currentTime = 100
-                    animation.pause()
-                    opacityAnimation.currentTime = 100
-                    opacityAnimation.pause()
+                const transformKeyframes = []
+                for (let i = 0; i < maxKeyframes; i++) {
+                    transformKeyframes.push(
+                        `scale(${
+                            scaleKeyframes[
+                                Math.min(i, scaleKeyframes.length - 1)
+                            ]
+                        })`
+                    )
                 }
 
-                // Hydrate root mid-way through animation
-                ReactDOM.hydrateRoot(root, Component)
-            })
+                // Start Motion One animations
+                const animation = startOptimizedAppearAnimation(
+                    document.getElementById("box"),
+                    "transform",
+                    transformKeyframes,
+                    transformOptions
+                )
+
+                const opacityKeyframes = generateSpringKeyframes(0, 1)
+                const opacityAnimation = startOptimizedAppearAnimation(
+                    document.getElementById("box"),
+                    "opacity",
+                    opacityKeyframes,
+                    {
+                        duration:
+                            opacityKeyframes.length * springTimeResolution,
+                        ease: "linear",
+                    }
+                )
+
+                animation.ready.then(() => {
+                    // TODO: Dont manipulate animation until ready
+                    // if (animation) {
+                    //     animation.currentTime = 100
+                    //     animation.pause()
+                    //     opacityAnimation.currentTime = 100
+                    //     opacityAnimation.pause()
+                    // }
+
+                    // Hydrate root mid-way through animation
+                    setTimeout(() => ReactDOM.hydrateRoot(root, Component), 500)
+                })
+            }, 1000)
         </script>
     </body>
 </html>

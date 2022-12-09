@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import { sync } from "../frameloop"
 import { frameData } from "../frameloop/data"
 import { FrameData } from "../frameloop/types"
+=======
+import sync, { getFrameData, FrameData } from "framesync"
+import type { VisualElement } from "../render/VisualElement"
+>>>>>>> faa95757 (Refactoring internal animation functions)
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { velocityPerSecond } from "../utils/velocity-per-second"
 
@@ -33,6 +38,12 @@ export class MotionValue<V = any> {
      * When MotionValues are provided to motion components, warn if versions are mixed.
      */
     version = "__VERSION__"
+
+    /**
+     * If a MotionValue has an owner, it was created internally within Framer Motion
+     * and therefore has no external listeners. It is therefore safe to animate via WAAPI.
+     */
+    owner?: VisualElement
 
     /**
      * The current state of the `MotionValue`.

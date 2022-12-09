@@ -50,8 +50,7 @@ export function useSpring(
             }
 
             activeSpringAnimation.current = animate({
-                from: value.get(),
-                to: v,
+                keyframes: [value.get(), v],
                 velocity: value.getVelocity(),
                 type: "spring",
                 ...config,

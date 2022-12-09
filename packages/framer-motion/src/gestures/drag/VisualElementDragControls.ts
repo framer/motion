@@ -22,7 +22,6 @@ import { eachAxis } from "../../projection/utils/each-axis"
 import { measurePageBox } from "../../projection/utils/measure"
 import { extractEventInfo } from "../../events/event-info"
 import { Transition } from "../../types"
-import { startAnimation } from "../../animation/utils/transitions"
 import {
     convertBoundingBoxToBox,
     convertBoxToBoundingBox,
@@ -31,7 +30,11 @@ import { LayoutUpdateData } from "../../projection/node/types"
 import { addDomEvent } from "../../events/use-dom-event"
 import { calcLength } from "../../projection/geometry/delta-calc"
 import { mix } from "../../utils/mix"
+<<<<<<< HEAD
 import { percent } from "../../value/types/numbers/units"
+=======
+import { createMotionValueAnimation } from "../../animation"
+>>>>>>> faa95757 (Refactoring internal animation functions)
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -410,7 +413,9 @@ export class VisualElementDragControls {
         transition: Transition
     ) {
         const axisValue = this.getAxisMotionValue(axis)
-        return startAnimation(axis, axisValue, 0, transition)
+        return axisValue.start(
+            createMotionValueAnimation(axis, axisValue, 0, transition)
+        )
     }
 
     private stopAnimation() {

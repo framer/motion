@@ -1,21 +1,24 @@
-import { Animation, AnimationState, DecayOptions } from "./types"
+import { AnimationOptions } from "../types"
+import { Animation, AnimationState } from "./types"
 
 export function decay({
     velocity = 0,
-    from = 0,
+    keyframes,
     power = 0.8,
     timeConstant = 350,
     restDelta = 0.5,
     modifyTarget,
-}: DecayOptions): Animation<number> {
+}: AnimationOptions): Animation<number> {
+    const origin = keyframes[0]
+
     /**
      * This is the Iterator-spec return value. We ensure it's mutable rather than using a generator
      * to reduce GC during animation.
      */
-    const state: AnimationState<number> = { done: false, value: from }
+    const state: AnimationState<number> = { done: false, value: origin }
 
     let amplitude = power * velocity
-    const ideal = from + amplitude
+    const ideal = origin + amplitude
 
     const target = modifyTarget === undefined ? ideal : modifyTarget(ideal)
 
@@ -23,7 +26,7 @@ export function decay({
      * If the target has changed we need to re-calculate the amplitude, otherwise
      * the animation will start from the wrong position.
      */
-    if (target !== ideal) amplitude = target - from
+    if (target !== ideal) amplitude = target - origin
 
     return {
         next: (t: number) => {

@@ -1,17 +1,18 @@
-import {
-    AnimationOptions,
-    Driver,
-    DriverControls,
-    KeyframeOptions,
-} from "./types"
-import { keyframes } from "./keyframes"
+import { Driver, DriverControls } from "./types"
+import { keyframes as keyframeAnimation } from "./keyframes"
 import { spring } from "./spring"
 import { decay } from "./decay"
 import { sync, cancelSync } from "../../frameloop"
 import { interpolate } from "../../utils/interpolate"
 import { FrameData } from "../../frameloop/types"
+import { AnimationOptions } from "../types"
 
-const types = { decay, keyframes, spring }
+const types = {
+    decay,
+    keyframes: keyframeAnimation,
+    tween: keyframeAnimation,
+    spring,
+}
 
 export function loopElapsed(elapsed: number, duration: number, delay = 0) {
     return elapsed - duration - delay
@@ -47,13 +48,13 @@ const framesync: Driver = (update) => {
 }
 
 export function animate<V = number>({
-    from,
-    autoplay = true,
+    duration,
     driver = framesync,
     elapsed = 0,
     repeat: repeatMax = 0,
     repeatType = "loop",
     repeatDelay = 0,
+    keyframes,
     onPlay,
     onStop,
     onComplete,
@@ -62,31 +63,32 @@ export function animate<V = number>({
     type = "keyframes",
     ...options
 }: AnimationOptions<V>) {
-    let { to } = options
     let driverControls: DriverControls
     let repeatCount = 0
-    let computedDuration: number | undefined = (options as KeyframeOptions<V>)
-        .duration
+    let computedDuration: number | undefined = duration
     let latest: V
     let isComplete = false
     let isForwardPlayback = true
 
     let interpolateFromNumber: (t: number) => V
 
-    const animator = types[Array.isArray(to) ? "keyframes" : type]
+    const animator = types[keyframes.length > 2 ? "keyframes" : type]
 
-    if (
-        Object.hasOwnProperty.call(animator, "needsInterpolation") &&
-        (animator as typeof spring).needsInterpolation(from, to)
-    ) {
-        interpolateFromNumber = interpolate([0, 100], [from, to], {
+    const origin = keyframes[0]
+    const target = keyframes[keyframes.length - 1]
+
+    if ((animator as any).needsInterpolation?.(origin, target)) {
+        interpolateFromNumber = interpolate([0, 100], [origin, target], {
             clamp: false,
         }) as (t: number) => V
-        from = 0 as any
-        to = 100 as any
+        keyframes = [0, 100] as any
     }
 
-    const animation = animator({ ...options, from, to } as any)
+    const animation = animator({
+        ...options,
+        duration,
+        keyframes,
+    } as any)
 
     function repeat() {
         repeatCount++
@@ -155,7 +157,7 @@ export function animate<V = number>({
         driverControls.start()
     }
 
-    autoplay && play()
+    play()
 
     return {
         stop: () => {

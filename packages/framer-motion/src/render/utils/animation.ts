@@ -1,4 +1,3 @@
-import { startAnimation } from "../../animation/utils/transitions"
 import { VariantLabels } from "../../motion/types"
 import {
     Target,
@@ -16,6 +15,7 @@ import { transformProps } from "../html/utils/transform"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { handoffOptimizedAppearAnimation } from "../../animation/optimized-appear/handoff"
 import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/data-id"
+import { createMotionValueAnimation } from "../../animation"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -194,7 +194,9 @@ function animateTarget(
             }
         }
 
-        let animation = startAnimation(key, value, valueTarget, valueTransition)
+        let animation = value.start(
+            createMotionValueAnimation(key, value, valueTarget, valueTransition)
+        )
 
         if (isWillChangeMotionValue(willChange)) {
             willChange.add(key)

@@ -1,7 +1,9 @@
-import { easeInOut } from "../../easing/ease"
+import { easeInOut, easeOut } from "../../easing/ease"
 import { EasingFunction } from "../../easing/types"
 import { interpolate } from "../../utils/interpolate"
-import { Animation, AnimationState, KeyframeOptions } from "./types"
+import { AnimationOptions } from "../types"
+import { easingDefinitionToFunction, isEasingArray } from "../utils/easing"
+import { Animation, AnimationState } from "./types"
 
 export function defaultEasing(
     values: any[],
@@ -22,38 +24,46 @@ export function convertOffsetToTimes(offset: number[], duration: number) {
 }
 
 export function keyframes({
-    from = 0,
-    to = 1,
-    ease,
-    offset,
+    keyframes: keyframeValues,
+    ease = easeOut,
+    times,
     duration = 300,
-}: KeyframeOptions): Animation<number | string> {
+}: AnimationOptions): Animation<number | string> {
+    keyframeValues = [...keyframeValues]
+
+    const origin = keyframes[0]
+
+    /**
+     * Easing functions can be externally defined as strings. Here we convert them
+     * into actual functions.
+     */
+    const easingFunctions = isEasingArray(ease)
+        ? ease.map(easingDefinitionToFunction)
+        : easingDefinitionToFunction(ease)
+
     /**
      * This is the Iterator-spec return value. We ensure it's mutable rather than using a generator
      * to reduce GC during animation.
      */
-    const state: AnimationState<typeof from> = { done: false, value: from }
-
-    /**
-     * Convert values to an array if they've been given as from/to options
-     */
-    const values = Array.isArray(to) ? to : [from, to]
+    const state: AnimationState<typeof origin> = { done: false, value: origin }
 
     /**
      * Create a times array based on the provided 0-1 offsets
      */
-    const times = convertOffsetToTimes(
+    const absoluteTimes = convertOffsetToTimes(
         // Only use the provided offsets if they're the correct length
         // TODO Maybe we should warn here if there's a length mismatch
-        offset && offset.length === values.length
-            ? offset
-            : defaultOffset(values),
+        times && times.length === keyframes.length
+            ? times
+            : defaultOffset(keyframeValues),
         duration
     )
 
     function createInterpolator() {
-        return interpolate(times, values, {
-            ease: Array.isArray(ease) ? ease : defaultEasing(values, ease),
+        return interpolate(absoluteTimes, keyframeValues, {
+            ease: Array.isArray(easingFunctions)
+                ? easingFunctions
+                : defaultEasing(keyframeValues, easingFunctions),
         })
     }
 
@@ -66,7 +76,7 @@ export function keyframes({
             return state
         },
         flipTarget: () => {
-            values.reverse()
+            keyframeValues.reverse()
             interpolator = createInterpolator()
         },
     }

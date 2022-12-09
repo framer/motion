@@ -1,7 +1,7 @@
 import { Spring, Tween } from "../types"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
-import { startAnimation } from "./utils/transitions"
+import { createMotionValueAnimation } from "."
 
 /**
  * @public
@@ -64,7 +64,7 @@ export function animate<V>(
     transition: AnimationOptions<V> = {}
 ): AnimationPlaybackControls {
     const value = isMotionValue(from) ? from : motionValue(from)
-    startAnimation("", value, to as any, transition)
+    value.start(createMotionValueAnimation("", value, to as any, transition))
 
     return {
         stop: () => value.stop(),

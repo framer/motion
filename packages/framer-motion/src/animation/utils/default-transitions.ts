@@ -1,11 +1,4 @@
-import {
-    PopmotionTransitionProps,
-    ValueTarget,
-    KeyframesTarget,
-    SingleTarget,
-    Keyframes,
-} from "../../types"
-import { isKeyframesTarget } from "./is-keyframes-target"
+import { AnimationOptions } from "../types"
 
 export const underDampedSpring = () => ({
     type: "spring",
@@ -14,10 +7,10 @@ export const underDampedSpring = () => ({
     restSpeed: 10,
 })
 
-export const criticallyDampedSpring = (to: SingleTarget) => ({
+export const criticallyDampedSpring = (target: unknown) => ({
     type: "spring",
     stiffness: 550,
-    damping: to === 0 ? 2 * Math.sqrt(550) : 30,
+    damping: target === 0 ? 2 * Math.sqrt(550) : 30,
     restSpeed: 10,
 })
 
@@ -27,13 +20,10 @@ export const linearTween = () => ({
     duration: 0.3,
 })
 
-const keyframes = (values: KeyframesTarget): Partial<Keyframes> => ({
+const keyframesTransition: Partial<AnimationOptions> = {
     type: "keyframes",
     duration: 0.8,
-    values,
-})
-
-type TransitionFactory = (to: ValueTarget) => Partial<PopmotionTransitionProps>
+}
 
 const defaultTransitions = {
     x: underDampedSpring,
@@ -54,16 +44,13 @@ const defaultTransitions = {
 
 export const getDefaultTransition = (
     valueKey: string,
-    to: ValueTarget
-): PopmotionTransitionProps => {
-    let transitionFactory: TransitionFactory
-
-    if (isKeyframesTarget(to)) {
-        transitionFactory = keyframes
+    { keyframes }: AnimationOptions
+): Partial<AnimationOptions> => {
+    if (keyframes.length > 2) {
+        return keyframesTransition
     } else {
-        transitionFactory =
+        const factory =
             defaultTransitions[valueKey] || defaultTransitions.default
+        return factory(keyframes[1])
     }
-
-    return { to, ...transitionFactory(to) } as PopmotionTransitionProps
 }

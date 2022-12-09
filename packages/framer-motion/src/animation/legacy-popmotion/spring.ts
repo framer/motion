@@ -6,6 +6,7 @@ import type {
 } from "./types"
 import { calcAngularFreq, findSpring } from "./find-spring"
 import { velocityPerSecond } from "../../utils/velocity-per-second"
+import { AnimationOptions } from "../types"
 
 const durationKeys = ["duration", "bounce"]
 const physicsKeys = ["stiffness", "damping", "mass"]
@@ -52,19 +53,21 @@ const velocitySampleDuration = 5
  * This is based on the spring implementation of Wobble https://github.com/skevy/wobble
  */
 export function spring({
-    from = 0.0,
-    to = 1.0,
+    keyframes,
     restSpeed = 2,
     restDelta = 0.01,
     ...options
-}: SpringOptions): Animation<number> {
+}: AnimationOptions<number>): Animation<number> {
+    let origin = keyframes[0]
+    let target = keyframes[keyframes.length - 1]
+
     /**
      * This is the Iterator-spec return value. We ensure it's mutable rather than using a generator
      * to reduce GC during animation.
      */
-    const state: AnimationState<number> = { done: false, value: from }
+    const state: AnimationState<number> = { done: false, value: origin }
 
-    let {
+    const {
         stiffness,
         damping,
         mass,
@@ -78,7 +81,7 @@ export function spring({
     const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass))
 
     function createSpring() {
-        const initialDelta = to - from
+        const initialDelta = target - origin
         const undampedAngularFreq = Math.sqrt(stiffness / mass) / 1000
 
         /**
@@ -86,7 +89,7 @@ export function spring({
          * to 0.01
          */
         if (restDelta === undefined) {
-            restDelta = Math.min(Math.abs(to - from) / 100, 0.4)
+            restDelta = Math.min(Math.abs(target - origin) / 100, 0.4)
         }
 
         if (dampingRatio < 1) {
@@ -102,7 +105,7 @@ export function spring({
                 )
 
                 return (
-                    to -
+                    target -
                     envelope *
                         (((initialVelocity +
                             dampingRatio * undampedAngularFreq * initialDelta) /
@@ -114,7 +117,7 @@ export function spring({
         } else if (dampingRatio === 1) {
             // Critically damped spring
             resolveSpring = (t: number) =>
-                to -
+                target -
                 Math.exp(-undampedAngularFreq * t) *
                     (initialDelta +
                         (initialVelocity + undampedAngularFreq * initialDelta) *
@@ -133,7 +136,7 @@ export function spring({
                 const freqForT = Math.min(dampedAngularFreq * t, 300)
 
                 return (
-                    to -
+                    target -
                     (envelope *
                         ((initialVelocity +
                             dampingRatio * undampedAngularFreq * initialDelta) *
@@ -176,19 +179,19 @@ export function spring({
                 const isBelowVelocityThreshold =
                     Math.abs(currentVelocity) <= restSpeed
                 const isBelowDisplacementThreshold =
-                    Math.abs(to - current) <= restDelta
+                    Math.abs(target - current) <= restDelta
                 state.done =
                     isBelowVelocityThreshold && isBelowDisplacementThreshold
             } else {
                 state.done = t >= duration!
             }
 
-            state.value = state.done ? to : current
+            state.value = state.done ? target : current
             return state
         },
         flipTarget: () => {
             initialVelocity = -initialVelocity
-            ;[from, to] = [to, from]
+            ;[origin, target] = [target, origin]
             createSpring()
         },
     }

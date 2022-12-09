@@ -1,7 +1,7 @@
 import { animationControls } from "./animation-controls"
-import { AnimationControls } from "./types"
+import { AnimationControls } from "../types"
 import { useEffect } from "react"
-import { useConstant } from "../utils/use-constant"
+import { useConstant } from "../../utils/use-constant"
 
 /**
  * Creates `AnimationControls`, which can be used to manually start, stop
