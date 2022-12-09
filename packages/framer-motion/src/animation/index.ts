@@ -1,3 +1,4 @@
+import { warning } from "hey-listen"
 import { ResolvedValueTarget, Transition } from "../types"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { instantAnimationState } from "../utils/use-instant-transition-state"
@@ -8,6 +9,7 @@ import { animate } from "./legacy-popmotion"
 import { inertia } from "./legacy-popmotion/inertia"
 import { AnimationOptions } from "./types"
 import { getDefaultTransition } from "./utils/default-transitions"
+import { isAnimatable } from "./utils/is-animatable"
 import { getKeyframes } from "./utils/keyframes"
 import { getValueTransition, isTransitionDefined } from "./utils/transitions"
 import { supports } from "./waapi/supports"
@@ -40,13 +42,26 @@ export const createMotionValueAnimation = (
         let { elapsed = 0 } = transition
         elapsed = elapsed - secondsToMilliseconds(delay)
 
-        const canAnimate = true
-
         const keyframes = getKeyframes(
             value,
             valueName,
             target,
             valueTransition
+        )
+
+        /**
+         * Check if we're able to animate between the start and end keyframes,
+         * and throw a warning if we're attempting to animate between one that's
+         * animatable and another that isn't.
+         */
+        const originKeyframe = keyframes[0]
+        const targetKeyframe = keyframes[keyframes.length - 1]
+        const isOriginAnimatable = isAnimatable(valueName, originKeyframe)
+        const isTargetAnimatable = isAnimatable(valueName, targetKeyframe)
+
+        warning(
+            isOriginAnimatable === isTargetAnimatable,
+            `You are trying to animate ${valueName} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`
         )
 
         let options: AnimationOptions = {
@@ -65,7 +80,8 @@ export const createMotionValueAnimation = (
         }
 
         if (
-            !canAnimate ||
+            !isOriginAnimatable ||
+            !isTargetAnimatable ||
             instantAnimationState.current ||
             valueTransition.type === false
         ) {

@@ -1,4 +1,3 @@
-import { warning } from "hey-listen"
 import { getAnimatableNone } from "../../render/dom/value-types/animatable-none"
 import { ResolvedValueTarget, Transition } from "../../types"
 import { MotionValue } from "../../value"
@@ -29,13 +28,6 @@ export function getKeyframes(
     ) {
         target = getZeroUnit(origin)
     }
-
-    const isOriginAnimatable = isAnimatable(valueName, origin)
-
-    warning(
-        isOriginAnimatable === isTargetAnimatable,
-        `You are trying to animate ${valueName} from "${origin}" to "${target}". ${origin} is not an animatable value - to enable this animation set ${origin} to a value animatable to ${target} via the \`style\` property.`
-    )
 
     /**
      * If the target has been defined as a series of keyframes
