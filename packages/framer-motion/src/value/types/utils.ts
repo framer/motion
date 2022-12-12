@@ -1,3 +1,8 @@
+/**
+ * TODO: When we move from string as a source of truth to data models
+ * everything in this folder should probably be referred to as models vs types
+ */
+
 // If this number is a decimal, make it just five decimal places
 // to avoid exponents
 export const sanitize = (v: number) => Math.round(v * 100000) / 100000
