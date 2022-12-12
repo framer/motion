@@ -3,6 +3,12 @@ import type { VisualElement } from "../render/VisualElement"
 import { Driver } from "./legacy-popmotion/types"
 import { Easing } from "../easing/types"
 
+export interface VelocityOptions {
+    velocity?: number
+    restSpeed?: number
+    restDelta?: number
+}
+
 export interface AnimationLifecycleOptions<V> {
     onUpdate: (v: V) => void
     onComplete?: VoidFunction
@@ -17,20 +23,25 @@ export interface AnimationPlaybackOptions {
     repeatDelay?: number
 }
 
-export interface SpringOptions {
+export interface DurationSpringOptions {
+    duration?: number
+    bounce?: number
+}
+
+export interface SpringOptions extends DurationSpringOptions, VelocityOptions {
     stiffness?: number
     damping?: number
     mass?: number
-    bounce?: number
-    restSpeed?: number
-    restDelta?: number
 }
 
-export interface InertiaOptions {
-    decay?: number
+export interface DecayOptions extends VelocityOptions {
+    keyframes?: number[]
     power?: number
     timeConstant?: number
     modifyTarget?: (v: number) => number
+}
+
+export interface InertiaOptions extends DecayOptions {
     bounceStiffness?: number
     bounceDamping?: number
     min?: number
@@ -45,8 +56,8 @@ export interface KeyframeOptions {
 export interface AnimationOptions<V = any>
     extends AnimationLifecycleOptions<V>,
         AnimationPlaybackOptions,
-        SpringOptions,
-        InertiaOptions,
+        Omit<SpringOptions, "keyframes">,
+        Omit<InertiaOptions, "keyframes">,
         KeyframeOptions {
     keyframes: V[]
     elapsed?: number

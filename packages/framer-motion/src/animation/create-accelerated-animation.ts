@@ -1,3 +1,6 @@
+/**
+ *
+ */
 export function createAcceleratedAnimation() {
     return () => {}
 }

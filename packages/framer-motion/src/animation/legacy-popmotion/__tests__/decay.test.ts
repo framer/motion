@@ -10,7 +10,7 @@ describe("decay", () => {
         expect(
             animateSync(
                 decay({
-                    from: 100,
+                    keyframes: [100],
                     velocity: 100,
                     power: 0.8,
                     timeConstant: 350,
@@ -25,7 +25,7 @@ describe("decay", () => {
         expect(
             animateSync(
                 decay({
-                    from: 100,
+                    keyframes: [100],
                     velocity: 100,
                     power: 0.8,
                     modifyTarget: (v) => v * 2,
@@ -37,12 +37,12 @@ describe("decay", () => {
 
     test("Output of animations with negative velocity is inverse of absolute velocity", () => {
         const absolute = animateSync(
-            decay({ from: 0, velocity: 100 }),
+            decay({ keyframes: [0], velocity: 100 }),
             20,
             false
         )
         const negative = animateSync(
-            decay({ from: 0, velocity: -100 }),
+            decay({ keyframes: [0], velocity: -100 }),
             20,
             false
         )

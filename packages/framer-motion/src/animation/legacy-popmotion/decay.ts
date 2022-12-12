@@ -1,14 +1,14 @@
-import { AnimationOptions } from "../types"
+import { DecayOptions } from "../types"
 import { Animation, AnimationState } from "./types"
 
 export function decay({
+    keyframes = [0],
     velocity = 0,
-    keyframes,
     power = 0.8,
     timeConstant = 350,
     restDelta = 0.5,
     modifyTarget,
-}: AnimationOptions): Animation<number> {
+}: DecayOptions): Animation<number> {
     const origin = keyframes[0]
 
     /**

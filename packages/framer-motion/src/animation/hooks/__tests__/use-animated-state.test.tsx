@@ -1,4 +1,4 @@
-import { render } from "../../../jest.setup"
+import { render } from "../../../../jest.setup"
 import * as React from "react"
 import { useEffect } from "react"
 import { useAnimatedState } from "../use-animated-state"
