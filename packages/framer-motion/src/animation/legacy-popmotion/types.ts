@@ -1,5 +1,3 @@
-import { EasingFunction } from "../../easing/types"
-
 export interface Animation<V> {
     next: (t: number) => {
         value: V
