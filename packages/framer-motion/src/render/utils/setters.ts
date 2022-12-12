@@ -129,7 +129,10 @@ export function checkTargetForNewValues(
             value = getAnimatableNone(key, targetValue)
         }
 
-        visualElement.addValue(key, motionValue(value))
+        visualElement.addValue(
+            key,
+            motionValue(value, { owner: visualElement })
+        )
         if (origin[key] === undefined) {
             origin[key] = value as number | string
         }

@@ -724,7 +724,7 @@ export abstract class VisualElement<
         let value = this.values.get(key)
 
         if (value === undefined && defaultValue !== undefined) {
-            value = motionValue(defaultValue)
+            value = motionValue(defaultValue, { owner: this })
             this.addValue(key, value)
         }
 

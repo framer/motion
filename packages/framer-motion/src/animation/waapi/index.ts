@@ -1,4 +1,3 @@
-import { supports } from "./supports"
 import { cubicBezierAsString } from "./easing"
 import { NativeAnimationOptions } from "./types"
 
@@ -7,10 +6,8 @@ export function animateStyle(
     valueName: string,
     keyframes: string[] | number[],
     { delay = 0, duration, ease }: NativeAnimationOptions = {}
-): Animation | undefined {
-    if (!supports.waapi()) return undefined
-
-    const animation = element.animate(
+) {
+    return element.animate(
         { [valueName]: keyframes },
         {
             delay,
@@ -19,6 +16,4 @@ export function animateStyle(
             fill: "both",
         }
     )
-
-    return animation
 }
