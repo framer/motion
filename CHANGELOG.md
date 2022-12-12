@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.7.0] 2022-12-12
+
+### Added
+
+-   Added support for `"startOffset"`, `"textLength"` and `"lengthAdjust"` SVG attributes.
+
 ## [7.6.20] 2022-12-06
 
 ### Removed
