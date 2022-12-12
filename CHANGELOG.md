@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.7.2] 2022-12-12
+
+### Removed
+
+-   Reduced `??` operators to reduce bundlesize.
+
 ## [7.7.1] 2022-12-12
 
 ### Changed
