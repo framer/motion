@@ -23,19 +23,20 @@ describe("animate prop as object", () => {
     test("accepts custom transition prop", async () => {
         const promise = new Promise((resolve) => {
             const x = motionValue(0)
-            const onComplete = () => resolve(x.get())
             const Component = () => (
                 <motion.div
                     animate={{ x: 20 }}
-                    transition={{ x: { type: "tween", to: 50 } }}
+                    transition={{
+                        x: { type: "tween", from: 10, ease: () => 0.5 },
+                    }}
+                    onUpdate={() => resolve(x.get())}
                     style={{ x }}
-                    onAnimationComplete={onComplete}
                 />
             )
             const { rerender } = render(<Component />)
             rerender(<Component />)
         })
-        return expect(promise).resolves.toBe(50)
+        return expect(promise).resolves.toBe(15)
     })
     test("fires onAnimationStart when animation begins", async () => {
         const promise = new Promise((resolve) => {
@@ -389,11 +390,10 @@ describe("animate prop as object", () => {
             })
             const Component = () => (
                 <motion.div
-                    animate={{ x: 20 }}
+                    animate={{ x: [0, 20] }}
                     transition={{
                         x: {
                             type: "tween",
-                            to: 50,
                             duration: 0,
                             repeatDelay: 0.1,
                             repeat: 1,
@@ -406,7 +406,7 @@ describe("animate prop as object", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
         })
-        return expect(promise).resolves.toBe(50)
+        return expect(promise).resolves.toBe(20)
     })
     test("animates previously unseen properties", () => {
         const Component = ({ animate }: any) => (

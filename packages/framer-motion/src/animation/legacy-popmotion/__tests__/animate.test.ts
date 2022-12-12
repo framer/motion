@@ -35,15 +35,6 @@ describe("animate", () => {
             )
         )
     })
-    test("Correctly uses a keyframes animation if to is an array", async () => {
-        return new Promise<void>((resolve) =>
-            testAnimate(
-                { keyframes: [0, 100], type: "spring" },
-                [0, 20, 40, 60, 80, 100],
-                resolve
-            )
-        )
-    })
 
     test("Correctly stops an animation", async () => {
         const output: number[] = []

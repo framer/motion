@@ -12,7 +12,6 @@ export function delay(callback: DelayedFunction, timeout: number) {
     const checkElapsed = ({ timestamp }: FrameData) => {
         const elapsed = timestamp - start
 
-        console.log(elapsed)
         if (elapsed >= timeout) {
             cancelSync.read(checkElapsed)
             callback(elapsed - timeout)
