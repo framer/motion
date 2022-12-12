@@ -10,8 +10,6 @@ Undocumented APIs should be considered internal and may change without warning.
 
 -   Added support for `"startOffset"`, `"textLength"` and `"lengthAdjust"` SVG attributes.
 
-## [7.6.20] 2022-12-06
-
 ### Removed
 
 -   Removed legacy repeat options (officially removed in `3.0.0`).
