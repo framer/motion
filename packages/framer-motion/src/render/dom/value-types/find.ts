@@ -1,4 +1,5 @@
-import { color, complex } from "style-value-types"
+import { color } from "../../../value/types/color"
+import { complex } from "../../../value/types/complex"
 import { dimensionValueTypes } from "./dimensions"
 import { testValueType } from "./test"
 

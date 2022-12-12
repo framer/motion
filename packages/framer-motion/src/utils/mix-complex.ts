@@ -1,8 +1,10 @@
-import { color, complex, RGBA, HSLA } from "style-value-types"
 import { mix } from "./mix"
 import { mixColor } from "./mix-color"
 import { pipe } from "./pipe"
 import { warning } from "hey-listen"
+import { HSLA, RGBA } from "../value/types/types"
+import { color } from "../value/types/color"
+import { analyseComplexValue, complex } from "../value/types/complex"
 
 type MixComplex = (p: number) => string
 
@@ -53,35 +55,13 @@ export const mixObject = (origin: BlendableObject, target: BlendableObject) => {
     }
 }
 
-/**
- * TODO: Combine with function within complex when style-value-types moved inside Framer Motion
- */
-function analyse(value: string | number) {
-    const parsed = complex.parse(value)
-    const numValues = parsed.length
-    let numNumbers = 0
-    let numColors = 0
-
-    for (let i = 0; i < numValues; i++) {
-        // Parsed complex values return with colors first, so if we've seen any number
-        // we're already past that part of the array and don't need to continue running typeof
-        if (numNumbers || typeof parsed[i] === "number") {
-            numNumbers++
-        } else {
-            numColors++
-        }
-    }
-
-    return { parsed, numNumbers, numColors }
-}
-
 export const mixComplex = (
     origin: string | number,
     target: string | number
 ): MixComplex => {
     const template = complex.createTransformer(target)
-    const originStats = analyse(origin)
-    const targetStats = analyse(target)
+    const originStats = analyseComplexValue(origin)
+    const targetStats = analyseComplexValue(target)
 
     const canInterpolate =
         originStats.numColors === targetStats.numColors &&
@@ -89,7 +69,7 @@ export const mixComplex = (
 
     if (canInterpolate) {
         return pipe(
-            mixArray(originStats.parsed, targetStats.parsed),
+            mixArray(originStats.values, targetStats.values),
             template
         ) as MixComplex
     } else {

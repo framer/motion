@@ -1,4 +1,3 @@
-import { complex } from "style-value-types"
 import {
     Target,
     TargetAndTransition,
@@ -10,6 +9,7 @@ import { isNumericalString } from "../../utils/is-numerical-string"
 import { isZeroValueString } from "../../utils/is-zero-value-string"
 import { resolveFinalValueInKeyframes } from "../../utils/resolve-value"
 import { motionValue } from "../../value"
+import { complex } from "../../value/types/complex"
 import { getAnimatableNone } from "../dom/value-types/animatable-none"
 import { findValueType } from "../dom/value-types/find"
 import { ResolvedValues } from "../types"

@@ -3,13 +3,13 @@ import * as React from "react"
 import { useVelocity } from "../use-velocity"
 import { useMotionValue } from "../use-motion-value"
 import { animate } from "../../animation/animate"
-import sync, { getFrameData } from "framesync"
+import sync from "../../frameloop"
 import { pipe } from "../../utils/pipe"
+import { frameData } from "../../frameloop/data"
 
 const setFrameData = (interval: number, time: number) => {
-    const data = getFrameData()
-    data.timestamp = time
-    data.delta = interval
+    frameData.timestamp = time
+    frameData.delta = interval
 }
 
 const syncDriver =

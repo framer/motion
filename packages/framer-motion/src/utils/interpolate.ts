@@ -1,6 +1,6 @@
 import { invariant } from "hey-listen"
-import { color } from "style-value-types"
 import { EasingFunction } from "../easing/types"
+import { color } from "../value/types/color"
 import { clamp } from "./clamp"
 import { mix } from "./mix"
 import { mixColor } from "./mix-color"

@@ -1,4 +1,4 @@
-import sync from "framesync"
+import sync from "../frameloop"
 import { useState, useCallback } from "react"
 import { useIsMounted } from "./use-is-mounted"
 

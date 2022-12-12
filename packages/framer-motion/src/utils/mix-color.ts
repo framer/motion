@@ -1,7 +1,10 @@
 import { mix } from "./mix"
-import { hsla, rgba, hex, Color } from "style-value-types"
 import { invariant } from "hey-listen"
 import { hslaToRgba } from "./hsla-to-rgba"
+import { hex } from "../value/types/color/hex"
+import { rgba } from "../value/types/color/rgba"
+import { hsla } from "../value/types/color/hsla"
+import { Color, HSLA, RGBA } from "../value/types/types"
 
 // Linear color space blending
 // Explained https://www.youtube.com/watch?v=LKnqECcg6Gw
@@ -26,10 +29,11 @@ function asRGBA(color: Color | string) {
     let model = type!.parse(color)
 
     if (type === hsla) {
-        model = hslaToRgba(model)
+        // TODO Remove this cast - needed since Framer Motion's stricter typing
+        model = hslaToRgba(model as HSLA)
     }
 
-    return model
+    return model as RGBA
 }
 
 export const mixColor = (from: Color | string, to: Color | string) => {

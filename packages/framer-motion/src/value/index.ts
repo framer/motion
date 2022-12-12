@@ -1,4 +1,5 @@
-import sync, { getFrameData, FrameData } from "framesync"
+import sync, { FrameData } from "../frameloop"
+import { frameData } from "../frameloop/data"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { velocityPerSecond } from "../utils/velocity-per-second"
 
@@ -230,7 +231,7 @@ export class MotionValue<V = any> {
         this.current = v
 
         // Update timestamp
-        const { delta, timestamp } = getFrameData()
+        const { delta, timestamp } = frameData
         if (this.lastUpdated !== timestamp) {
             this.timeDelta = delta
             this.lastUpdated = timestamp

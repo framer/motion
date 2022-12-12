@@ -1,4 +1,4 @@
-import { number } from "style-value-types"
+import { number } from "../../../value/types/numbers"
 
 export const int = {
     ...number,

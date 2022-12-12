@@ -1,4 +1,3 @@
-import { number, px, ValueType } from "style-value-types"
 import { Target, TargetWithKeyframes } from "../../../types"
 import { isKeyframesTarget } from "../../../animation/utils/is-keyframes-target"
 import { invariant } from "hey-listen"
@@ -9,6 +8,9 @@ import { findDimensionValueType } from "../value-types/dimensions"
 import { Box } from "../../../projection/geometry/types"
 import { isBrowser } from "../../../utils/is-browser"
 import type { VisualElement } from "../../VisualElement"
+import { ValueType } from "../../../value/types/types"
+import { number } from "../../../value/types/numbers"
+import { px } from "../../../value/types/numbers/units"
 
 const positionalKeys = new Set([
     "width",

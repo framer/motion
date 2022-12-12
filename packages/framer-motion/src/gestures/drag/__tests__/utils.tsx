@@ -1,5 +1,5 @@
 import * as React from "react"
-import sync from "framesync"
+import sync from "../../../frameloop"
 import { MotionConfig } from "../../../components/MotionConfig"
 import { act } from "react-dom/test-utils"
 import { fireEvent } from "@testing-library/dom"

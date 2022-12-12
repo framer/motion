@@ -1,4 +1,11 @@
-import { degrees, number, percent, px, vh, vw } from "style-value-types"
+import { number } from "../../../value/types/numbers"
+import {
+    degrees,
+    percent,
+    px,
+    vh,
+    vw,
+} from "../../../value/types/numbers/units"
 import { testValueType } from "./test"
 import { auto } from "./type-auto"
 

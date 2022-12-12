@@ -1,4 +1,4 @@
-import sync from "framesync"
+import sync from "../../../frameloop"
 import React, { useContext } from "react"
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import {

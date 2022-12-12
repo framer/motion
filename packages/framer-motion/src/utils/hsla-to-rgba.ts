@@ -1,4 +1,4 @@
-import { HSLA, RGBA } from "style-value-types"
+import { HSLA, RGBA } from "../value/types/types"
 
 // Adapted from https://gist.github.com/mjackson/5311256
 function hueToRgb(p: number, q: number, t: number) {

@@ -1,4 +1,4 @@
-import sync, { cancelSync, FrameData } from "framesync"
+import sync, { cancelSync, FrameData } from "../frameloop"
 import { useContext, useEffect, useRef } from "react"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 
