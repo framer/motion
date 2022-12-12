@@ -370,7 +370,7 @@ export class VisualElementDragControls {
                 return
             }
 
-            let transition = constraints?.[axis] ?? {}
+            let transition = constraints?.[axis] || {}
 
             if (dragSnapToOrigin) transition = { min: 0, max: 0 }
 
@@ -431,7 +431,7 @@ export class VisualElementDragControls {
             ? externalMotionValue
             : this.visualElement.getValue(
                   axis,
-                  this.visualElement.getProps().initial?.[axis] ?? 0
+                  this.visualElement.getProps().initial?.[axis] || 0
               )
     }
 

@@ -128,7 +128,10 @@ export function animate<V = number>({
         onUpdate?.(latest)
 
         if (isComplete) {
-            if (repeatCount === 0) computedDuration ??= elapsed
+            if (repeatCount === 0) {
+                computedDuration =
+                    computedDuration !== undefined ? computedDuration : elapsed
+            }
 
             if (repeatCount < repeatMax) {
                 hasRepeatDelayElapsed(

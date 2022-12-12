@@ -10,8 +10,8 @@ function test(v: any) {
     return (
         isNaN(v) &&
         isString(v) &&
-        (v.match(floatRegex)?.length ?? 0) +
-            (v.match(colorRegex)?.length ?? 0) >
+        (v.match(floatRegex)?.length || 0) +
+            (v.match(colorRegex)?.length || 0) >
             0
     )
 }

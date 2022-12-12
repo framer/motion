@@ -26,20 +26,19 @@ export function mixValues(
     if (shouldCrossfadeOpacity) {
         target.opacity = mix(
             0,
-            // (follow?.opacity as number) ?? 0,
             // TODO Reinstate this if only child
-            (lead.opacity as number) ?? 1,
+            lead.opacity !== undefined ? (lead.opacity as number) : 1,
             easeCrossfadeIn(progress)
         )
         target.opacityExit = mix(
-            (follow.opacity as number) ?? 1,
+            follow.opacity !== undefined ? (follow.opacity as number) : 1,
             0,
             easeCrossfadeOut(progress)
         )
     } else if (isOnlyMember) {
         target.opacity = mix(
-            (follow.opacity as number) ?? 1,
-            (lead.opacity as number) ?? 1,
+            follow.opacity !== undefined ? (follow.opacity as number) : 1,
+            lead.opacity !== undefined ? (lead.opacity as number) : 1,
             progress
         )
     }
@@ -89,7 +88,9 @@ export function mixValues(
 }
 
 function getRadius(values: ResolvedValues, radiusName: string) {
-    return values[radiusName] ?? values.borderRadius
+    return values[radiusName] !== undefined
+        ? values[radiusName]
+        : values.borderRadius
 }
 
 // /**
