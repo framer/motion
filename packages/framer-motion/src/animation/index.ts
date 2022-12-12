@@ -153,8 +153,8 @@ export const createMotionValueAnimation = (
         const element = visualElement && visualElement.current
 
         const canAccelerateAnimation =
-            acceleratedValues.has(valueName) &&
             supports.waapi() &&
+            acceleratedValues.has(valueName) &&
             !options.repeat &&
             options.damping !== 0 &&
             typeof options.ease !== "function" &&
