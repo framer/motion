@@ -1,4 +1,4 @@
-import sync, { cancelSync } from "../frameloop"
+import { sync, cancelSync } from "../frameloop"
 import { invariant } from "hey-listen"
 import { createElement } from "react"
 import { MotionConfigProps } from "../components/MotionConfig"

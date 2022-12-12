@@ -1,7 +1,7 @@
 import { render } from "../../../jest.setup"
 import { motion } from "../../"
 import * as React from "react"
-import sync from "../../frameloop"
+import { sync } from "../../frameloop"
 
 describe("transformTemplate", () => {
     it("applies transformTemplate on initial render", () => {

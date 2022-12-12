@@ -1,6 +1,7 @@
-import sync, { cancelSync, FrameData } from "../frameloop"
+import { sync, cancelSync } from "../frameloop"
 import { useContext, useEffect, useRef } from "react"
 import { MotionConfigContext } from "../context/MotionConfigContext"
+import { FrameData } from "../frameloop/types"
 
 export type FrameCallback = (timestamp: number, delta: number) => void
 

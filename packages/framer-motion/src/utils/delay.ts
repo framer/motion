@@ -1,4 +1,5 @@
-import sync, { cancelSync, FrameData } from "../frameloop"
+import { sync, cancelSync } from "../frameloop"
+import { FrameData } from "../frameloop/types"
 
 export type DelayedFunction = (overshoot: number) => void
 

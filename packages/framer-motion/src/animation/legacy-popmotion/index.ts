@@ -7,8 +7,9 @@ import {
 import { keyframes } from "./keyframes"
 import { spring } from "./spring"
 import { decay } from "./decay"
-import sync, { cancelSync, FrameData } from "../../frameloop"
+import { sync, cancelSync } from "../../frameloop"
 import { interpolate } from "../../utils/interpolate"
+import { FrameData } from "../../frameloop/types"
 
 const types = { decay, keyframes, spring }
 

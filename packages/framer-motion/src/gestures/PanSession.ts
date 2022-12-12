@@ -1,7 +1,7 @@
 import { EventInfo } from "../events/types"
 import { isTouchEvent, isMouseEvent } from "./utils/event-type"
 import { extractEventInfo } from "../events/event-info"
-import sync, { cancelSync } from "../frameloop"
+import { sync, cancelSync } from "../frameloop"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { addPointerEvent } from "../events/use-pointer-event"
 import { Point, TransformPoint } from "../projection/geometry/types"

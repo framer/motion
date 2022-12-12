@@ -1,4 +1,4 @@
-import sync, { cancelSync, flushSync } from ".."
+import { sync, cancelSync, flushSync } from ".."
 import { onNextFrame } from "../on-next-frame"
 
 describe("onNextFrame", () => {

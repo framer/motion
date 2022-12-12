@@ -1,4 +1,4 @@
-import sync, { cancelSync, flushSync, Process } from "../../frameloop"
+import { sync, cancelSync, flushSync } from "../../frameloop"
 import {
     animate,
     AnimationOptions,
@@ -44,6 +44,7 @@ import { MotionStyle } from "../../motion/types"
 import { globalProjectionState } from "./state"
 import { delay } from "../../utils/delay"
 import { mix } from "../../utils/mix"
+import { Process } from "../../frameloop/types"
 
 const transformAxes = ["", "X", "Y", "Z"]
 

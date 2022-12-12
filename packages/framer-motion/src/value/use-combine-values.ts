@@ -1,7 +1,7 @@
 import { MotionValue } from "."
 import { useMotionValue } from "./use-motion-value"
 import { useMultiOnChange } from "./use-on-change"
-import sync, { cancelSync } from "../frameloop"
+import { sync, cancelSync } from "../frameloop"
 
 export function useCombineMotionValues<R>(
     values: MotionValue[],

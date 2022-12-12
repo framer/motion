@@ -1,5 +1,6 @@
-import sync, { FrameData } from "../frameloop"
+import { sync } from "../frameloop"
 import { frameData } from "../frameloop/data"
+import { FrameData } from "../frameloop/types"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { velocityPerSecond } from "../utils/velocity-per-second"
 

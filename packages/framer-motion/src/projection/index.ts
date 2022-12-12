@@ -5,7 +5,7 @@ export { calcBoxDelta } from "./geometry/delta-calc"
 /**
  * For debugging purposes
  */
-import sync from "../frameloop"
+import { sync } from "../frameloop"
 import { mix } from "../utils/mix"
 import { animate } from "../animation/legacy-popmotion/index"
 export { sync, animate, mix }

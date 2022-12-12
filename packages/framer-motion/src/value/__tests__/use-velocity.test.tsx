@@ -3,7 +3,7 @@ import * as React from "react"
 import { useVelocity } from "../use-velocity"
 import { useMotionValue } from "../use-motion-value"
 import { animate } from "../../animation/animate"
-import sync from "../../frameloop"
+import { sync } from "../../frameloop"
 import { pipe } from "../../utils/pipe"
 import { frameData } from "../../frameloop/data"
 

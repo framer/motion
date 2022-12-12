@@ -1,14 +1,6 @@
 import { onNextFrame, defaultTimestep } from "./on-next-frame"
 import { createRenderStep } from "./create-render-step"
-import {
-    Process,
-    StepId,
-    FrameData,
-    CancelSync,
-    FlushSync,
-    Sync,
-    Steps,
-} from "./types"
+import { Process, StepId, CancelSync, FlushSync, Sync, Steps } from "./types"
 import { frameData } from "./data"
 
 const maxElapsed = 40
@@ -76,5 +68,4 @@ const startLoop = () => {
     if (!isProcessing) onNextFrame(processFrame)
 }
 
-export default sync
-export { cancelSync, flushSync, FrameData, Process }
+export { sync, cancelSync, flushSync }
