@@ -67,6 +67,7 @@ export const createMotionValueAnimation = (
         let options: AnimationOptions = {
             keyframes,
             velocity: value.getVelocity(),
+            ...valueTransition,
             elapsed,
             onUpdate: (v) => {
                 value.set(v)
@@ -76,7 +77,6 @@ export const createMotionValueAnimation = (
                 onComplete()
                 valueTransition.onComplete && valueTransition.onComplete()
             },
-            ...valueTransition,
         }
 
         if (
@@ -85,6 +85,7 @@ export const createMotionValueAnimation = (
             instantAnimationState.current ||
             valueTransition.type === false
         ) {
+            console.log(options, delay)
             /**
              * If we can't animate this value, or the global instant animation flag is set,
              * or this is simply defined as an instant transition, return an instant transition.

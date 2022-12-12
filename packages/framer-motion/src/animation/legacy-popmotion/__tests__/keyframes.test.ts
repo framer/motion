@@ -34,21 +34,28 @@ describe("convertOffsetToTimes", () => {
 
 describe("keyframes", () => {
     test("runs a default animation", () => {
-        expect(animateSync(keyframes({ to: 100 }), 20)).toEqual([
+        expect(animateSync(keyframes({ keyframes: [0, 100] }), 20)).toEqual([
             0, 1, 4, 8, 14, 22, 32, 44, 56, 68, 78, 86, 92, 96, 99, 100,
         ])
     })
 
     test("adjusts with duration defined", () => {
         expect(
-            animateSync(keyframes({ to: 100, duration: 100, ease: linear }), 20)
+            animateSync(
+                keyframes({ keyframes: [0, 100], duration: 100, ease: linear }),
+                20
+            )
         ).toEqual([0, 20, 40, 60, 80, 100])
     })
 
     test("animates through keyframes", () => {
         expect(
             animateSync(
-                keyframes({ to: [50, 100, -100], duration: 200, ease: linear }),
+                keyframes({
+                    keyframes: [50, 100, -100],
+                    duration: 200,
+                    ease: linear,
+                }),
                 20
             )
         ).toEqual([50, 60, 70, 80, 90, 100, 60, 20, -20, -60, -100])
@@ -58,7 +65,7 @@ describe("keyframes", () => {
         expect(
             animateSync(
                 keyframes({
-                    to: ["#fff", "#000"] as any,
+                    keyframes: ["#fff", "#000"] as any,
                     duration: 100,
                     ease: linear,
                 }),

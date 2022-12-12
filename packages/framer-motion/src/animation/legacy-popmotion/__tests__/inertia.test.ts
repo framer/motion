@@ -1,6 +1,6 @@
 import { syncDriver } from "./utils"
 import { inertia } from "../inertia"
-import { InertiaOptions } from "../types"
+import { InertiaOptions } from "../../types"
 
 async function testInertia(
     options: InertiaOptions,
@@ -10,6 +10,7 @@ async function testInertia(
     const output: number[] = []
 
     inertia({
+        keyframes: [0],
         driver: syncDriver(200),
         ...options,
         onUpdate: (v) => output.push(Math.round(v)),
@@ -23,14 +24,14 @@ async function testInertia(
 describe("inertia", () => {
     test("Stays still without velocity", async () => {
         return new Promise<void>((resolve) => {
-            testInertia({ from: 50 }, [50], resolve)
+            testInertia({ keyframes: [50] }, [50], resolve)
         })
     })
 
     test("Decays upwards with positive velocity", async () => {
         return new Promise<void>((resolve) => {
             testInertia(
-                { from: 50, velocity: 100 },
+                { keyframes: [50], velocity: 100 },
                 [
                     50, 69, 83, 94, 102, 109, 114, 118, 121, 123, 124, 126, 127,
                     128, 128, 129, 129, 130,
@@ -43,7 +44,7 @@ describe("inertia", () => {
     test("Decays downwards with negative velocity", async () => {
         return new Promise<void>((resolve) => {
             testInertia(
-                { from: 50, velocity: -100 },
+                { keyframes: [50], velocity: -100 },
                 [
                     50, 31, 17, 6, -2, -9, -14, -18, -21, -23, -24, -26, -27,
                     -28, -28, -29, -29, -30,
@@ -68,6 +69,7 @@ describe("inertia", () => {
                 timeConstant: 750,
                 velocity: 2970,
                 driver: syncDriver(20),
+                keyframes: [0],
                 onUpdate: (v) => positive.push(Math.round(v)),
                 onComplete: () => {
                     inertia({
@@ -80,6 +82,7 @@ describe("inertia", () => {
                         timeConstant: 750,
                         velocity: -2970,
                         driver: syncDriver(20),
+                        keyframes: [0],
                         onUpdate: (v) => negative.push(Math.round(v)),
                         onComplete: () => {
                             expect(negative.map(Math.abs)).toEqual(positive)
@@ -94,7 +97,7 @@ describe("inertia", () => {
     test("Springs towards min if encountered", async () => {
         return new Promise<void>((resolve) => {
             testInertia(
-                { from: 50, min: 0, velocity: -100 },
+                { keyframes: [50], min: 0, velocity: -100 },
                 [50, 31, 17, 6, -2, -2, 1, 0, 0],
                 resolve
             )
@@ -104,7 +107,7 @@ describe("inertia", () => {
     test("Springs towards max if encountered", async () => {
         return new Promise<void>((resolve) => {
             testInertia(
-                { from: 50, max: 100, velocity: 100 },
+                { keyframes: [50], max: 100, velocity: 100 },
                 [50, 69, 83, 94, 102, 102, 99, 100, 100],
                 resolve
             )
@@ -115,7 +118,7 @@ describe("inertia", () => {
         return new Promise<void>((resolve) => {
             testInertia(
                 {
-                    from: -100,
+                    keyframes: [-100],
                     bounceStiffness: 200,
                     min: 0,
                 },
@@ -129,7 +132,7 @@ describe("inertia", () => {
         return new Promise<void>((resolve) => {
             testInertia(
                 {
-                    from: 200,
+                    keyframes: [200],
                     bounceStiffness: 200,
                     max: 100,
                 },
@@ -142,7 +145,7 @@ describe("inertia", () => {
     test("Decays towards target returned from modifyTarget", async () => {
         return new Promise<void>((resolve) => {
             testInertia(
-                { from: 50, velocity: 100, modifyTarget: () => 100 },
+                { keyframes: [50], velocity: 100, modifyTarget: () => 100 },
                 [
                     50, 62, 71, 78, 83, 87, 90, 92, 94, 95, 97, 97, 98, 98, 99,
                     100,
@@ -158,7 +161,7 @@ describe("inertia", () => {
 
             const controls = inertia({
                 driver: syncDriver(200),
-                from: 200,
+                keyframes: [200],
                 bounceStiffness: 200,
                 max: 100,
                 onUpdate: (v) => {
@@ -180,7 +183,7 @@ describe("inertia", () => {
 
             const controls = inertia({
                 driver: syncDriver(200),
-                from: 200,
+                keyframes: [200],
                 bounceStiffness: 200,
                 onUpdate: (v: number) => {
                     output.push(Math.round(v) as number)

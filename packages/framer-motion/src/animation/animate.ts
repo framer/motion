@@ -1,7 +1,7 @@
+import { createMotionValueAnimation } from "."
 import { Spring, Tween } from "../types"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
-import { createMotionValueAnimation } from "."
 
 /**
  * @public

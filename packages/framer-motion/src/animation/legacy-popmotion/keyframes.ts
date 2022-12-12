@@ -1,4 +1,4 @@
-import { easeInOut, easeOut } from "../../easing/ease"
+import { easeInOut } from "../../easing/ease"
 import { EasingFunction } from "../../easing/types"
 import { interpolate } from "../../utils/interpolate"
 import { AnimationOptions } from "../types"
@@ -25,7 +25,7 @@ export function convertOffsetToTimes(offset: number[], duration: number) {
 
 export function keyframes({
     keyframes: keyframeValues,
-    ease = easeOut,
+    ease = easeInOut,
     times,
     duration = 300,
 }: AnimationOptions): Animation<number | string> {

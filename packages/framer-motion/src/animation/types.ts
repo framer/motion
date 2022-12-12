@@ -10,7 +10,7 @@ export interface VelocityOptions {
 }
 
 export interface AnimationLifecycleOptions<V> {
-    onUpdate: (v: V) => void
+    onUpdate?: (v: V) => void
     onComplete?: VoidFunction
     onPlay?: VoidFunction
     onRepeat?: VoidFunction
@@ -61,7 +61,6 @@ export interface AnimationOptions<V = any>
         KeyframeOptions {
     keyframes: V[]
     elapsed?: number
-    velocity: number
     driver?: Driver
     type?: "decay" | "spring" | "keyframes" | "tween"
     duration?: number

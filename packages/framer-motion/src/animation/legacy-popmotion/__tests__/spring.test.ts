@@ -1,16 +1,18 @@
+import { AnimationOptions } from "../../types"
 import { spring } from "../spring"
 import { animateSync } from "./utils"
 
 describe("spring", () => {
     test("Runs animations with default values ", () => {
-        expect(animateSync(spring({}), 200)).toEqual([0, 1, 1, 1])
+        expect(animateSync(spring({ keyframes: [0, 1] }), 200)).toEqual([
+            0, 1, 1, 1,
+        ])
     })
     test("Underdamped spring", () => {
         expect(
             animateSync(
                 spring({
-                    from: 100,
-                    to: 1000,
+                    keyframes: [100, 1000],
                     stiffness: 300,
                     restSpeed: 10,
                     restDelta: 0.5,
@@ -21,9 +23,8 @@ describe("spring", () => {
     })
 
     test("Velocity passed to underdamped spring", () => {
-        const settings = {
-            from: 100,
-            to: 1000,
+        const settings: AnimationOptions<number> = {
+            keyframes: [100, 1000],
             stiffness: 300,
             restSpeed: 10,
             restDelta: 0.5,
@@ -42,8 +43,7 @@ describe("spring", () => {
         expect(
             animateSync(
                 spring({
-                    from: 100,
-                    to: 1000,
+                    keyframes: [100, 1000],
                     stiffness: 100,
                     damping: 20,
                     restSpeed: 10,
@@ -56,8 +56,7 @@ describe("spring", () => {
 
     test("Velocity passed to critically spring", () => {
         const settings = {
-            from: 100,
-            to: 1000,
+            keyframes: [100, 1000],
             stiffness: 100,
             damping: 20,
             restSpeed: 10,
@@ -77,8 +76,7 @@ describe("spring", () => {
         expect(
             animateSync(
                 spring({
-                    from: 100,
-                    to: 1000,
+                    keyframes: [100, 1000],
                     stiffness: 300,
                     damping: 100,
                     restSpeed: 10,
@@ -87,19 +85,7 @@ describe("spring", () => {
                 200
             )
         ).toEqual([
-            100,
-            499,
-            731,
-            855,
-            922,
-            958,
-            977,
-            988,
-            993,
-            996,
-            998,
-            999,
-            999,
+            100, 499, 731, 855, 922, 958, 977, 988, 993, 996, 998, 999, 999,
             1000,
         ])
     })
@@ -107,8 +93,7 @@ describe("spring", () => {
         expect(
             animateSync(
                 spring({
-                    from: 100,
-                    to: 1000,
+                    keyframes: [100, 1000],
                     stiffness: 1000000,
                     damping: 10000000,
                     restDelta: 1,
@@ -121,8 +106,7 @@ describe("spring", () => {
 
     test("Velocity passed to overdamped spring", () => {
         const settings = {
-            from: 100,
-            to: 1000,
+            keyframes: [100, 1000],
             stiffness: 300,
             damping: 100,
             restSpeed: 10,
@@ -140,8 +124,7 @@ describe("spring", () => {
 
     test("Spring defined with bounce and duration is same as just bounce", () => {
         const settings = {
-            from: 100,
-            to: 1000,
+            keyframes: [100, 1000],
             bounce: 0.1,
         }
 
