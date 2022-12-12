@@ -8,7 +8,7 @@ export type DelayedFunction = (overshoot: number) => void
  */
 export function delay(callback: DelayedFunction, timeout: number) {
     const start = performance.now()
-    console.log("delay by", timeout)
+
     const checkElapsed = ({ timestamp }: FrameData) => {
         const elapsed = timestamp - start
 
