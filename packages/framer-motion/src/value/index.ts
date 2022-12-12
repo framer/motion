@@ -234,6 +234,12 @@ export class MotionValue<V = any> {
         }
     }
 
+    setWithVelocity(prev: V, current: V, delta: number) {
+        this.set(current)
+        this.prev = prev
+        this.timeDelta = delta
+    }
+
     updateAndNotify = (v: V, render = true) => {
         this.prev = this.current
         this.current = v

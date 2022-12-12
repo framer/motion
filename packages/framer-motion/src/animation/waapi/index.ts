@@ -6,7 +6,7 @@ export function animateStyle(
     element: Element,
     valueName: string,
     keyframes: string[] | number[],
-    { delay, duration, ease }: NativeAnimationOptions
+    { delay = 0, duration, ease }: NativeAnimationOptions = {}
 ): Animation | undefined {
     if (!supports.waapi()) return undefined
 

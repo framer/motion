@@ -64,6 +64,7 @@ export interface AnimationOptions<V = any>
     driver?: Driver
     type?: "decay" | "spring" | "keyframes" | "tween"
     duration?: number
+    autoplay?: boolean
 }
 
 /**

@@ -23,7 +23,7 @@ import { supports } from "./waapi/supports"
 /**
  * A list of values that can be hardware-accelerated.
  */
-const acceleratedValues = new Set<string>([])
+const acceleratedValues = new Set<string>(["opacity"])
 
 export const createMotionValueAnimation = (
     valueName: string,
@@ -149,21 +149,24 @@ export const createMotionValueAnimation = (
             options.repeatDelay = secondsToMilliseconds(options.repeatDelay)
         }
 
+        const visualElement = value.owner
+        const element = visualElement && visualElement.current
+
         const canAccelerateAnimation =
             acceleratedValues.has(valueName) &&
             supports.waapi() &&
-            value.owner &&
-            !value.owner.getProps().onUpdate &&
-            !options.repeat
+            !options.repeat &&
+            options.damping !== 0 &&
+            typeof options.ease !== "function" &&
+            visualElement &&
+            element instanceof HTMLElement &&
+            !visualElement.getProps().onUpdate
 
         if (canAccelerateAnimation) {
             /**
              * If this animation is capable of being run via WAAPI, then do so.
-             *
-             * TODO: Currently no values are hardware accelerated so this clause
-             * will never trigger. Animation to be added in subsequent PR.
              */
-            return createAcceleratedAnimation()
+            return createAcceleratedAnimation(value, valueName, options)
         } else {
             /**
              * Otherwise, fall back to the main thread.
