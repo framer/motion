@@ -23,9 +23,9 @@ export interface MotionValueEventCallbacks<V> {
     animationStart: () => void
     animationComplete: () => void
     animationCancel: () => void
-    change: (latest: V) => void
+    change: (latestValue: V) => void
     renderRequest: () => void
-    velocityChange: (latest: number) => void
+    velocityChange: (latestVelocity: number) => void
 }
 
 const isFloat = (value: any): value is string => {
