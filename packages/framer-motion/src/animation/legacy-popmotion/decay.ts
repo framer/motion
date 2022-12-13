@@ -2,6 +2,11 @@ import { DecayOptions } from "../types"
 import { Animation, AnimationState } from "./types"
 
 export function decay({
+    /**
+     * The decay animation dynamically calculates an end of the animation
+     * based on the initial keyframe, so we only need to define a single keyframe
+     * as default.
+     */
     keyframes = [0],
     velocity = 0,
     power = 0.8,
