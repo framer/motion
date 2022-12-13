@@ -14,6 +14,8 @@ import { setTarget } from "./setters"
 import { resolveVariant } from "./resolve-dynamic-variants"
 import { transformProps } from "../html/utils/transform"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
+import { handoffOptimizedAppearAnimation } from "../../animation/optimized-appear/handoff"
+import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/data-id"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -163,7 +165,7 @@ function animateTarget(
             continue
         }
 
-        let valueTransition = { delay, ...transition }
+        let valueTransition = { delay, elapsed: 0, ...transition }
 
         /**
          * Make animation instant if this is a transform prop and we should reduce motion.
@@ -174,6 +176,22 @@ function animateTarget(
                 type: false,
                 delay: 0,
             } as any
+        }
+
+        /**
+         * If this is the first time a value is being animated, check
+         * to see if we're handling off from an existing animation.
+         */
+        if (!value.hasAnimated) {
+            const appearId =
+                visualElement.getProps()[optimizedAppearDataAttribute]
+
+            if (appearId) {
+                valueTransition.elapsed = handoffOptimizedAppearAnimation(
+                    appearId,
+                    key
+                )
+            }
         }
 
         let animation = startAnimation(key, value, valueTarget, valueTransition)

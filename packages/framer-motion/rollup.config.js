@@ -56,6 +56,10 @@ const projection = Object.assign({}, config, {
         format: "umd",
         name: "Projection",
         exports: "named",
+        globals: {
+            react: "React",
+            "react-dom": "ReactDOM",
+        },
     },
     plugins: [resolve(), replaceSettings("development")],
     external: ["react", "react-dom"],

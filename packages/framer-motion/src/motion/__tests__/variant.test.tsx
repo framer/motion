@@ -649,7 +649,7 @@ describe("animate prop as variant", () => {
                     visible: {
                         opacity: 1,
                         transition: {
-                            duration: 0.01,
+                            duration: 0.0001,
                         },
                     },
                 }

@@ -3,6 +3,9 @@ import { FrameData } from "../frameloop/types"
 
 export type DelayedFunction = (overshoot: number) => void
 
+/**
+ * Timeout defined in ms
+ */
 export function delay(callback: DelayedFunction, timeout: number) {
     const start = performance.now()
 

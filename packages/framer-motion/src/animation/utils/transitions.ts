@@ -12,12 +12,10 @@ import { warning } from "hey-listen"
 import { getAnimatableNone } from "../../render/dom/value-types/animatable-none"
 import { instantAnimationState } from "../../utils/use-instant-transition-state"
 import { resolveFinalValueInKeyframes } from "../../utils/resolve-value"
-import { delay } from "../../utils/delay"
 import { AnimationOptions } from "../legacy-popmotion/types"
 import { inertia } from "../legacy-popmotion/inertia"
 import { animate } from "../legacy-popmotion"
-
-type StopAnimation = { stop: () => void }
+import { delay } from "../../utils/delay"
 
 /**
  * Decide whether a transition is defined on a given Transition.
@@ -142,6 +140,11 @@ function getAnimation(
     onComplete: () => void
 ) {
     const valueTransition = getValueTransition(transition, key) || {}
+
+    const { elapsed = 0 } = transition
+    valueTransition.elapsed =
+        elapsed - secondsToMilliseconds(transition.delay || 0)
+
     let origin =
         valueTransition.from !== undefined ? valueTransition.from : value.get()
 
@@ -170,7 +173,7 @@ function getAnimation(
         `You are trying to animate ${key} from "${origin}" to "${target}". ${origin} is not an animatable value - to enable this animation set ${origin} to a value animatable to ${target} via the \`style\` property.`
     )
 
-    function start(): StopAnimation {
+    function start() {
         const options = {
             from: origin,
             to: target,
@@ -179,41 +182,52 @@ function getAnimation(
             onUpdate: (v: Animatable) => value.set(v),
         }
 
-        return valueTransition.type === "inertia" ||
+        const animation =
+            valueTransition.type === "inertia" ||
             valueTransition.type === "decay"
-            ? inertia({ ...options, ...valueTransition })
-            : animate({
-                  ...getPopmotionAnimationOptions(
-                      valueTransition,
-                      options,
-                      key
-                  ),
-                  onUpdate: (v: any) => {
-                      options.onUpdate(v)
-                      valueTransition.onUpdate && valueTransition.onUpdate(v)
-                  },
-                  onComplete: () => {
-                      options.onComplete()
-                      valueTransition.onComplete && valueTransition.onComplete()
-                  },
-              })
+                ? inertia({ ...options, ...valueTransition })
+                : animate({
+                      ...getPopmotionAnimationOptions(
+                          valueTransition,
+                          options,
+                          key
+                      ),
+                      onUpdate: (v: any) => {
+                          options.onUpdate(v)
+                          valueTransition.onUpdate &&
+                              valueTransition.onUpdate(v)
+                      },
+                      onComplete: () => {
+                          options.onComplete()
+                          valueTransition.onComplete &&
+                              valueTransition.onComplete()
+                      },
+                  })
+
+        return () => animation.stop()
     }
 
-    function set(): StopAnimation {
+    function set() {
         const finalTarget = resolveFinalValueInKeyframes(target)
         value.set(finalTarget)
         onComplete()
 
         valueTransition.onUpdate && valueTransition.onUpdate(finalTarget)
         valueTransition.onComplete && valueTransition.onComplete()
-        return { stop: () => {} }
+
+        return () => {}
     }
 
-    return !isOriginAnimatable ||
+    const useInstantAnimation =
+        !isOriginAnimatable ||
         !isTargetAnimatable ||
         valueTransition.type === false
-        ? set
-        : start
+
+    return useInstantAnimation
+        ? valueTransition.elapsed
+            ? () => delay(set, -valueTransition.elapsed)
+            : set()
+        : start()
 }
 
 export function isZero(value: string | number) {
@@ -252,28 +266,12 @@ export function startAnimation(
     }
 
     return value.start((onComplete) => {
-        let controls: StopAnimation
-        const animation = getAnimation(
+        return getAnimation(
             key,
             value,
             target,
-            transition,
+            { ...transition, delay: getDelayFromTransition(transition, key) },
             onComplete
         )
-        const delayBy = getDelayFromTransition(transition, key)
-
-        const start = () => (controls = animation())
-
-        let cancelDelay: VoidFunction
-        if (delayBy) {
-            cancelDelay = delay(start, secondsToMilliseconds(delayBy))
-        } else {
-            start()
-        }
-
-        return () => {
-            cancelDelay && cancelDelay()
-            controls && controls.stop()
-        }
     })
 }

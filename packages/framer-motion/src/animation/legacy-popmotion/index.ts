@@ -125,7 +125,7 @@ export function animate<V = number>({
             isComplete = isForwardPlayback ? state.done : elapsed <= 0
         }
 
-        onUpdate?.(latest)
+        onUpdate && onUpdate(latest)
 
         if (isComplete) {
             if (repeatCount === 0) {
@@ -147,7 +147,7 @@ export function animate<V = number>({
     }
 
     function play() {
-        onPlay?.()
+        onPlay && onPlay()
         driverControls = driver(update)
         driverControls.start()
     }
@@ -156,7 +156,7 @@ export function animate<V = number>({
 
     return {
         stop: () => {
-            onStop?.()
+            onStop && onStop()
             driverControls.stop()
         },
     }
