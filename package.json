@@ -20,11 +20,7 @@
         "test": "turbo run test",
         "test-e2e": "turbo run test-e2e",
         "test-ci": "turbo run test-ci --no-cache",
-<<<<<<< HEAD
         "collect-appear-tests": "node ./dev/optimized-appear/collect-appear-tests.js",
-=======
-        "collect-appear-tests": "node ./dev/appear/collect-appear-tests.js",
->>>>>>> 91a97359 (Optimized appear effects)
         "collect-projection-tests": "node ./dev/projection/collect-projection-tests.js",
         "start-dev-server": "webpack serve --config dev/webpack/config.js --hot",
         "measure": "turbo run measure",
