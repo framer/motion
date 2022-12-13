@@ -24,6 +24,9 @@ export function handoffOptimizedAppearAnimation(
          *      it synchronously would prevent subsequent transforms from handing off.
          */
         sync.render(() => {
+            /**
+             * Animation.cancel() throws so it needs to be wrapped in a try/catch
+             */
             try {
                 animation.cancel()
                 MotionAppearAnimations.delete(animationId)
