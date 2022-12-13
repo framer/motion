@@ -412,7 +412,8 @@ export abstract class VisualElement<
     private bindToMotionValue(key: string, value: MotionValue) {
         const valueIsTransform = transformProps.has(key)
 
-        const removeOnChange = value.onChange(
+        const removeOnChange = value.on(
+            "change",
             (latestValue: string | number) => {
                 this.latestValues[key] = latestValue
                 this.props.onUpdate &&
@@ -424,7 +425,10 @@ export abstract class VisualElement<
             }
         )
 
-        const removeOnRenderRequest = value.onRenderRequest(this.scheduleRender)
+        const removeOnRenderRequest = value.on(
+            "renderRequest",
+            this.scheduleRender
+        )
 
         this.valueSubscriptions.set(key, () => {
             removeOnChange()

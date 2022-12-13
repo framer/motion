@@ -19,6 +19,15 @@ export type PassiveEffect<T> = (v: T, safeSetter: (v: T) => void) => void
 
 export type StartAnimation = (complete: () => void) => () => void
 
+export interface MotionValueEventCallbacks<V> {
+    animationStart: () => void
+    animationComplete: () => void
+    animationCancel: () => void
+    change: (latest: V) => void
+    renderRequest: () => void
+    velocityChange: (latest: number) => void
+}
+
 const isFloat = (value: any): value is string => {
     return !isNaN(parseFloat(value))
 }
@@ -72,29 +81,6 @@ export class MotionValue<V = any> {
      * @internal
      */
     private lastUpdated: number = 0
-
-    /**
-     * Functions to notify when the `MotionValue` updates.
-     *
-     * @internal
-     */
-    private updateSubscribers = new SubscriptionManager<Subscriber<V>>()
-
-    /**
-     * Functions to notify when the velocity updates.
-     *
-     * @internal
-     */
-    public velocityUpdateSubscribers = new SubscriptionManager<
-        Subscriber<number>
-    >()
-
-    /**
-     * Functions to notify when the `MotionValue` updates and `render` is set to `true`.
-     *
-     * @internal
-     */
-    private renderSubscribers = new SubscriptionManager<Subscriber<V>>()
 
     /**
      * Add a passive effect to this `MotionValue`.
@@ -159,8 +145,8 @@ export class MotionValue<V = any> {
      *       opacity.set(newOpacity)
      *     }
      *
-     *     const unsubscribeX = x.onChange(updateOpacity)
-     *     const unsubscribeY = y.onChange(updateOpacity)
+     *     const unsubscribeX = x.on("change", updateOpacity)
+     *     const unsubscribeY = y.on("change", updateOpacity)
      *
      *     return () => {
      *       unsubscribeX()
@@ -183,28 +169,34 @@ export class MotionValue<V = any> {
      * @param subscriber - A function that receives the latest value.
      * @returns A function that, when called, will cancel this subscription.
      *
-     * @public
+     * @deprecated
      */
     onChange(subscription: Subscriber<V>): () => void {
-        return this.updateSubscribers.add(subscription)
-    }
-
-    clearListeners() {
-        this.updateSubscribers.clear()
+        return this.on("change", subscription)
     }
 
     /**
-     * Adds a function that will be notified when the `MotionValue` requests a render.
-     *
-     * @param subscriber - A function that's provided the latest value.
-     * @returns A function that, when called, will cancel this subscription.
-     *
-     * @internal
+     * An object containing a SubscriptionManager for each active event.
      */
-    onRenderRequest(subscription: Subscriber<V>) {
-        // Render immediately
-        subscription(this.get())
-        return this.renderSubscribers.add(subscription)
+    private events: {
+        [key: string]: SubscriptionManager<any>
+    } = {}
+
+    on<EventName extends keyof MotionValueEventCallbacks<V>>(
+        eventName: EventName,
+        callback: MotionValueEventCallbacks<V>[EventName]
+    ) {
+        if (!this.events[eventName]) {
+            this.events[eventName] = new SubscriptionManager()
+        }
+
+        return this.events[eventName].add(callback)
+    }
+
+    clearListeners() {
+        for (const eventManagers in this.events) {
+            this.events[eventManagers].clear()
+        }
     }
 
     /**
@@ -258,18 +250,18 @@ export class MotionValue<V = any> {
         }
 
         // Update update subscribers
-        if (this.prev !== this.current) {
-            this.updateSubscribers.notify(this.current)
+        if (this.prev !== this.current && this.events.change) {
+            this.events.change.notify(this.current)
         }
 
         // Update velocity subscribers
-        if (this.velocityUpdateSubscribers.getSize()) {
-            this.velocityUpdateSubscribers.notify(this.getVelocity())
+        if (this.events.velocityChange) {
+            this.events.velocityChange.notify(this.getVelocity())
         }
 
         // Update render subscribers
-        if (render) {
-            this.renderSubscribers.notify(this.current)
+        if (render && this.events.renderRequest) {
+            this.events.renderRequest.notify(this.current)
         }
     }
 
@@ -332,7 +324,10 @@ export class MotionValue<V = any> {
     private velocityCheck = ({ timestamp }: FrameData) => {
         if (timestamp !== this.lastUpdated) {
             this.prev = this.current
-            this.velocityUpdateSubscribers.notify(this.getVelocity())
+
+            if (this.events.velocityChange) {
+                this.events.velocityChange.notify(this.getVelocity())
+            }
         }
     }
 
@@ -356,7 +351,16 @@ export class MotionValue<V = any> {
         return new Promise<void>((resolve) => {
             this.hasAnimated = true
             this.stopAnimation = animation(resolve)
-        }).then(() => this.clearAnimation())
+
+            if (this.events.animationStart) {
+                this.events.animationStart.notify()
+            }
+        }).then(() => {
+            if (this.events.animationComplete) {
+                this.events.animationComplete.notify()
+            }
+            this.clearAnimation()
+        })
     }
 
     /**
@@ -365,7 +369,12 @@ export class MotionValue<V = any> {
      * @public
      */
     stop() {
-        if (this.stopAnimation) this.stopAnimation()
+        if (this.stopAnimation) {
+            this.stopAnimation()
+            if (this.events.animationCancel) {
+                this.events.animationCancel.notify()
+            }
+        }
         this.clearAnimation()
     }
 
@@ -392,8 +401,7 @@ export class MotionValue<V = any> {
      * @public
      */
     destroy() {
-        this.updateSubscribers.clear()
-        this.renderSubscribers.clear()
+        this.clearListeners()
         this.stop()
     }
 }

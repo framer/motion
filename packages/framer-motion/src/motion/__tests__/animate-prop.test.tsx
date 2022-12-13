@@ -385,7 +385,7 @@ describe("animate prop as object", () => {
     test("respects repeatDelay prop", async () => {
         const promise = new Promise<number>((resolve) => {
             const x = motionValue(0)
-            x.onChange(() => {
+            x.on("change", () => {
                 setTimeout(() => resolve(x.get()), 50)
             })
             const Component = () => (
