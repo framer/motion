@@ -178,7 +178,6 @@ export function spring({
 
     return {
         next: (t: number) => {
-            console.log(t)
             const current = resolveSpring(t)
 
             if (!isResolvedFromDuration) {

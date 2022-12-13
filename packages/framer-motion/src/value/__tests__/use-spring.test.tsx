@@ -54,7 +54,7 @@ describe("useSpring", () => {
         expect(resolved).not.toBe(100)
     })
 
-    test.only("creates a spring that animates to the subscribed motion value", async () => {
+    test("creates a spring that animates to the subscribed motion value", async () => {
         const promise = new Promise((resolve) => {
             const output: number[] = []
             const Component = () => {
