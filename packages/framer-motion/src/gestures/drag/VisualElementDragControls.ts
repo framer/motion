@@ -30,11 +30,8 @@ import { LayoutUpdateData } from "../../projection/node/types"
 import { addDomEvent } from "../../events/use-dom-event"
 import { calcLength } from "../../projection/geometry/delta-calc"
 import { mix } from "../../utils/mix"
-<<<<<<< HEAD
 import { percent } from "../../value/types/numbers/units"
-=======
 import { createMotionValueAnimation } from "../../animation"
->>>>>>> faa95757 (Refactoring internal animation functions)
 
 export const elementDragControls = new WeakMap<
     VisualElement,
