@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.7.3] 2022-12-13
+
+### Fixed
+
+-   Fixed spring effect of `useSpring`.
+
 ## [7.7.2] 2022-12-12
 
 ### Removed

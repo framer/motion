@@ -53,6 +53,7 @@ export function useSpring(
                 from: value.get(),
                 to: v,
                 velocity: value.getVelocity(),
+                type: "spring",
                 ...config,
                 onUpdate: set,
             })
