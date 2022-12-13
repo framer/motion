@@ -43,7 +43,7 @@ It does all this:
 -   SVG paths
 -   Exit animations
 -   Server-side rendering
--   Hardware-accelerated animations where possible
+-   Hardware-accelerated animations
 -   Orchestrate animations across components
 -   CSS variables
 
