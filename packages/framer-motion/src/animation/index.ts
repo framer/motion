@@ -130,7 +130,8 @@ export const createMotionValueAnimation = (
         const canAccelerateAnimation =
             supports.waapi() &&
             acceleratedValues.has(valueName) &&
-            !options.repeat &&
+            !options.repeatDelay &&
+            options.repeatType !== "mirror" &&
             options.damping !== 0 &&
             typeof options.ease !== "function" &&
             visualElement &&
