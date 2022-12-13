@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.8.0] 2022-12-13
+
+### Added
+
+-   Added private APIs for starting initial animations before React hydration and handing off to the component after hydration.
+
 ## [7.7.3] 2022-12-13
 
 ### Fixed
