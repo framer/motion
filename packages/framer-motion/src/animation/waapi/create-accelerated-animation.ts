@@ -13,14 +13,7 @@ export function createAcceleratedAnimation(
     valueName: string,
     { onUpdate, onComplete, ...options }: AnimationOptions
 ) {
-    let {
-        keyframes,
-        duration = 0.3,
-        elapsed = 0,
-        ease,
-        repeat,
-        repeatType,
-    } = options
+    let { keyframes, duration = 0.3, elapsed = 0, ease } = options
 
     /**
      * If this is a spring animation, pre-generate keyframes and
@@ -51,6 +44,7 @@ export function createAcceleratedAnimation(
         valueName,
         keyframes,
         {
+            ...options,
             delay: -elapsed,
             duration,
             /**
@@ -62,8 +56,6 @@ export function createAcceleratedAnimation(
              * support the upcoming `linear()` easing function.
              */
             ease: ease as EasingDefinition,
-            repeat,
-            repeatType,
         }
     )
 
