@@ -161,6 +161,39 @@ describe("WAAPI animations", () => {
         )
     })
 
+    /**
+     * TODO: Wait for comments and either bump these back to the main thread,
+     * generate keyframes, or generate linear() easing.
+     */
+    test("Maps remaining easings to 'ease'", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                    ease: "anticipate",
+                }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { opacity: [0, 1], offset: undefined },
+            {
+                easing: "ease",
+                delay: -0,
+                duration: 0.3,
+                direction: "normal",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
     test("WAAPI is called with pre-generated spring keyframes", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
