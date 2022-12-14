@@ -163,7 +163,7 @@ describe("WAAPI animations", () => {
 
     /**
      * TODO: Wait for comments and either bump these back to the main thread,
-     * generate keyframes, or generate linear() easing.
+     * generate keyframes, generate linear() easing, or create similar cubic beziers.
      */
     test("Maps remaining easings to 'ease'", () => {
         const ref = createRef<HTMLDivElement>()
