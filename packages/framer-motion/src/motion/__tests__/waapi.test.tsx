@@ -161,11 +161,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    /**
-     * TODO: Wait for comments and either bump these back to the main thread,
-     * generate keyframes, generate linear() easing, or create similar cubic beziers.
-     */
-    test("Maps remaining easings to 'ease'", () => {
+    test("Maps 'circIn' to 'cubic-bezier(0, 0.65, 0.55, 1)'", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -173,7 +169,7 @@ describe("WAAPI animations", () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{
-                    ease: "anticipate",
+                    ease: "circIn",
                 }}
             />
         )
@@ -184,7 +180,94 @@ describe("WAAPI animations", () => {
         expect(ref.current!.animate).toBeCalledWith(
             { opacity: [0, 1], offset: undefined },
             {
-                easing: "ease",
+                easing: "cubic-bezier(0, 0.65, 0.55, 1)",
+                delay: -0,
+                duration: 0.3,
+                direction: "normal",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
+    test("Maps 'circOut' to 'cubic-bezier(0.55, 0, 1, 0.45)'", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                    ease: "circIn",
+                }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { opacity: [0, 1], offset: undefined },
+            {
+                easing: "cubic-bezier(0.55, 0, 1, 0.45)",
+                delay: -0,
+                duration: 0.3,
+                direction: "normal",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
+    test("Maps 'backIn' to 'cubic-bezier(0.31, 0.01, 0.66, -0.59)'", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                    ease: "backIn",
+                }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { opacity: [0, 1], offset: undefined },
+            {
+                easing: "cubic-bezier(0.31, 0.01, 0.66, -0.59)",
+                delay: -0,
+                duration: 0.3,
+                direction: "normal",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
+    test("Maps 'backOut' to 'cubic-bezier(0.33, 1.53, 0.69, 0.99)'", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                    ease: "backOut",
+                }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { opacity: [0, 1], offset: undefined },
+            {
+                easing: "cubic-bezier(0.33, 1.53, 0.69, 0.99)",
                 delay: -0,
                 duration: 0.3,
                 direction: "normal",
@@ -244,6 +327,70 @@ describe("WAAPI animations", () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.9 }}
                 transition={{ repeatDelay: 1 }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).not.toBeCalled()
+    })
+
+    test("Doesn't animate with WAAPI if ease is function", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.9 }}
+                transition={{ ease: (v) => v }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).not.toBeCalled()
+    })
+
+    test("Doesn't animate with WAAPI if ease is anticipate", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.9 }}
+                transition={{ ease: "anticipate" }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).not.toBeCalled()
+    })
+
+    test("Doesn't animate with WAAPI if ease is backInOut", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.9 }}
+                transition={{ ease: "backInOut" }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).not.toBeCalled()
+    })
+
+    test("Doesn't animate with WAAPI if ease is circInOut", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.9 }}
+                transition={{ ease: "circInOut" }}
             />
         )
         const { rerender } = render(<Component />)
