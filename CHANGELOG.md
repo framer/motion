@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.9.2] 2022-12-15
+
+### Fixed
+
+-   Adding support for `backIn`, `backOut`, `circIn` and `circOut` easing functions in WAAPI.
+
 ## [7.9.1] 2022-12-14
 
 ### Fixed
