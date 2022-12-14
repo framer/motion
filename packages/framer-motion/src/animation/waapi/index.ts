@@ -1,4 +1,4 @@
-import { cubicBezierAsString } from "./easing"
+import { mapEasingToNativeEasing } from "./easing"
 import { NativeAnimationOptions } from "./types"
 
 export function animateStyle(
@@ -19,7 +19,7 @@ export function animateStyle(
         {
             delay,
             duration,
-            easing: Array.isArray(ease) ? cubicBezierAsString(ease) : ease,
+            easing: mapEasingToNativeEasing(ease),
             fill: "both",
             iterations: repeat + 1,
             direction: repeatType === "reverse" ? "alternate" : "normal",

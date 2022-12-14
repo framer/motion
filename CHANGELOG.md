@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.9.1] 2022-12-14
+
+### Fixed
+
+-   Fixing mapping Framer Motion easing names to WAAPI.
+
 ## [7.9.0] 2022-12-14
 
 ### Added
