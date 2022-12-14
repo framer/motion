@@ -1,4 +1,5 @@
 import { EasingDefinition } from "../../easing/types"
+import { sync } from "../../frameloop"
 import type { VisualElement } from "../../render/VisualElement"
 import type { MotionValue } from "../../value"
 import { animate } from "../legacy-popmotion"
@@ -81,8 +82,6 @@ export function createAcceleratedAnimation(
      * Animation interrupt callback.
      */
     return () => {
-        animation.commitStyles()
-
         /**
          * WAAPI doesn't natively have any interruption capabilities.
          *
@@ -101,6 +100,6 @@ export function createAcceleratedAnimation(
             )
         }
 
-        animation.cancel()
+        sync.update(() => animation.cancel())
     }
 }
