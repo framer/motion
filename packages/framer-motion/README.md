@@ -43,6 +43,7 @@ It does all this:
 -   SVG paths
 -   Exit animations
 -   Server-side rendering
+-   Hardware-accelerated animations
 -   Orchestrate animations across components
 -   CSS variables
 
@@ -70,17 +71,17 @@ export const MyComponent = ({ isVisible }) => (
 
 ### 📚 Docs
 
-- Check out [our documentation](https://www.framer.com/docs/) for guides and a full API reference.
-- Or see [our examples](https://www.framer.com/docs/examples/) for inspiration.
+-   Check out [our documentation](https://www.framer.com/docs/) for guides and a full API reference.
+-   Or see [our examples](https://www.framer.com/docs/examples/) for inspiration.
 
 ### 💎 Contribute
 
-- Want to contribute to Framer Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
+-   Want to contribute to Framer Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
 
 ### 👩🏻‍⚖️ License
 
-- Framer Motion is MIT licensed.
+-   Framer Motion is MIT licensed.
 
 ### ✨ Framer
 
-- Design and publish sites that inspire. [Try Framer for free](https://www.framer.com/).
+-   Design and publish sites that inspire. [Try Framer for free](https://www.framer.com/).

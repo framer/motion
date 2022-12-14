@@ -3,7 +3,7 @@ import { ResolvedValueTarget, Transition } from "../types"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { instantAnimationState } from "../utils/use-instant-transition-state"
 import type { MotionValue, StartAnimation } from "../value"
-import { createAcceleratedAnimation } from "./create-accelerated-animation"
+import { createAcceleratedAnimation } from "./waapi/create-accelerated-animation"
 import { createInstantAnimation } from "./create-instant-animation"
 import { animate } from "./legacy-popmotion"
 import { inertia } from "./legacy-popmotion/inertia"
@@ -17,7 +17,7 @@ import { supports } from "./waapi/supports"
 /**
  * A list of values that can be hardware-accelerated.
  */
-const acceleratedValues = new Set<string>([])
+const acceleratedValues = new Set<string>(["opacity"])
 
 export const createMotionValueAnimation = (
     valueName: string,
@@ -124,21 +124,25 @@ export const createMotionValueAnimation = (
             options.repeatDelay = secondsToMilliseconds(options.repeatDelay)
         }
 
+        const visualElement = value.owner
+        const element = visualElement && visualElement.current
+
         const canAccelerateAnimation =
-            acceleratedValues.has(valueName) &&
             supports.waapi() &&
-            value.owner &&
-            !value.owner.getProps().onUpdate &&
-            !options.repeat
+            acceleratedValues.has(valueName) &&
+            !options.repeatDelay &&
+            options.repeatType !== "mirror" &&
+            options.damping !== 0 &&
+            typeof options.ease !== "function" &&
+            visualElement &&
+            element instanceof HTMLElement &&
+            !visualElement.getProps().onUpdate
 
         if (canAccelerateAnimation) {
             /**
              * If this animation is capable of being run via WAAPI, then do so.
-             *
-             * TODO: Currently no values are hardware accelerated so this clause
-             * will never trigger. Animation to be added in subsequent PR.
              */
-            return createAcceleratedAnimation()
+            return createAcceleratedAnimation(value, valueName, options)
         } else {
             /**
              * Otherwise, fall back to the main thread.

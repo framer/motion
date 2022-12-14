@@ -55,6 +55,7 @@ export function animate<V = number>({
     repeatType = "loop",
     repeatDelay = 0,
     keyframes,
+    autoplay = true,
     onPlay,
     onStop,
     onComplete,
@@ -157,12 +158,15 @@ export function animate<V = number>({
         driverControls.start()
     }
 
-    play()
+    autoplay && play()
 
     return {
         stop: () => {
             onStop && onStop()
             driverControls.stop()
+        },
+        sample: (t: number) => {
+            return animation.next(Math.max(0, t)).value
         },
     }
 }

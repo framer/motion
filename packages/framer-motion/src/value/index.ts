@@ -23,6 +23,10 @@ const isFloat = (value: any): value is string => {
     return !isNaN(parseFloat(value))
 }
 
+export interface MotionValueOptions {
+    owner?: VisualElement
+}
+
 /**
  * `MotionValue` is used to track the state and velocity of motion values.
  *
@@ -127,9 +131,10 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    constructor(init: V) {
+    constructor(init: V, options: MotionValueOptions = {}) {
         this.prev = this.current = init
         this.canTrackVelocity = isFloat(this.current)
+        this.owner = options.owner
     }
 
     /**
@@ -232,6 +237,12 @@ export class MotionValue<V = any> {
         } else {
             this.passiveEffect(v, this.updateAndNotify)
         }
+    }
+
+    setWithVelocity(prev: V, current: V, delta: number) {
+        this.set(current)
+        this.prev = prev
+        this.timeDelta = delta
     }
 
     updateAndNotify = (v: V, render = true) => {
@@ -387,6 +398,6 @@ export class MotionValue<V = any> {
     }
 }
 
-export function motionValue<V>(init: V) {
-    return new MotionValue<V>(init)
+export function motionValue<V>(init: V, options?: MotionValueOptions) {
+    return new MotionValue<V>(init, options)
 }

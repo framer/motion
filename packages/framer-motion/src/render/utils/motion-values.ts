@@ -42,7 +42,7 @@ export function updateMotionValuesFromProps(
              * If we're swapping from a motion value to a static value,
              * create a new motion value from that
              */
-            element.addValue(key, motionValue(nextValue))
+            element.addValue(key, motionValue(nextValue, { owner: element }))
 
             if (isWillChangeMotionValue(willChange)) {
                 willChange.remove(key)
