@@ -74,6 +74,93 @@ describe("WAAPI animations", () => {
         )
     })
 
+    test("Maps 'easeIn' to 'ease-in'", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                    ease: "easeIn",
+                }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { opacity: [0, 1], offset: undefined },
+            {
+                easing: "ease-in",
+                delay: -0,
+                duration: 0.3,
+                direction: "normal",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
+    test("Maps 'easeOut' to 'ease-out'", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                    ease: "easeOut",
+                }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { opacity: [0, 1], offset: undefined },
+            {
+                easing: "ease-out",
+                delay: -0,
+                duration: 0.3,
+                direction: "normal",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
+    test("Maps 'easeInOut' to 'ease-in-out'", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                    ease: "easeInOut",
+                }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { opacity: [0, 1], offset: undefined },
+            {
+                easing: "ease-in-out",
+                delay: -0,
+                duration: 0.3,
+                direction: "normal",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
     test("WAAPI is called with pre-generated spring keyframes", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
