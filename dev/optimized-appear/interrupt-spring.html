@@ -78,8 +78,7 @@
                 let t = 0
                 const keyframes = []
                 const springAnimation = spring({
-                    from,
-                    to,
+                    keyframes: [from, to],
                     stiffness,
                     damping,
                     mass,

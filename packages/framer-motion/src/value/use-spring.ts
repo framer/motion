@@ -4,11 +4,9 @@ import { isMotionValue } from "./utils/is-motion-value"
 import { useMotionValue } from "./use-motion-value"
 import { useOnChange } from "./use-on-change"
 import { MotionConfigContext } from "../context/MotionConfigContext"
-import {
-    PlaybackControls,
-    SpringOptions,
-} from "../animation/legacy-popmotion/types"
+import { PlaybackControls } from "../animation/legacy-popmotion/types"
 import { animate } from "../animation/legacy-popmotion"
+import { SpringOptions } from "../animation/types"
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
@@ -50,8 +48,7 @@ export function useSpring(
             }
 
             activeSpringAnimation.current = animate({
-                from: value.get(),
-                to: v,
+                keyframes: [value.get(), v],
                 velocity: value.getVelocity(),
                 type: "spring",
                 ...config,

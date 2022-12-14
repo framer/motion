@@ -46,9 +46,12 @@ export { useReducedMotionConfig } from "./utils/reduced-motion/use-reduced-motio
 /**
  * Utils
  */
-export { animationControls } from "./animation/animation-controls"
+export { animationControls } from "./animation/hooks/animation-controls"
 export { AnimationControls } from "./animation/types"
-export { useAnimation, useAnimationControls } from "./animation/use-animation"
+export {
+    useAnimation,
+    useAnimationControls,
+} from "./animation/hooks/use-animation"
 export { useAnimationFrame } from "./utils/use-animation-frame"
 export { animate } from "./animation/animate"
 export { animateVisualElement } from "./render/utils/animation"
@@ -168,5 +171,5 @@ export { IProjectionNode } from "./projection/node/types"
 /**
  * Deprecated
  */
-export { useAnimatedState as useDeprecatedAnimatedState } from "./animation/use-animated-state"
+export { useAnimatedState as useDeprecatedAnimatedState } from "./animation/hooks/use-animated-state"
 export { useInvertedScale as useDeprecatedInvertedScale } from "./value/use-inverted-scale"

@@ -1,15 +1,11 @@
-import {
-    InertiaOptions,
-    PlaybackControls,
-    AnimationOptions,
-    SpringOptions,
-} from "./types"
+import { PlaybackControls } from "./types"
 import { animate } from "."
 import { velocityPerSecond } from "../../utils/velocity-per-second"
 import { frameData } from "../../frameloop/data"
+import { AnimationOptions } from "../types"
 
 export function inertia({
-    from = 0,
+    keyframes,
     velocity = 0,
     min,
     max,
@@ -23,24 +19,27 @@ export function inertia({
     onUpdate,
     onComplete,
     onStop,
-}: InertiaOptions) {
+}: AnimationOptions) {
+    const origin = keyframes[0]
     let currentAnimation: PlaybackControls
 
     function isOutOfBounds(v: number) {
         return (min !== undefined && v < min) || (max !== undefined && v > max)
     }
 
-    function boundaryNearest(v: number) {
+    function findNearestBoundary(v: number) {
         if (min === undefined) return max
         if (max === undefined) return min
 
         return Math.abs(min - v) < Math.abs(max - v) ? min : max
     }
 
-    function startAnimation(options: AnimationOptions<number>) {
+    function startAnimation(options: Partial<AnimationOptions<number>>) {
         currentAnimation?.stop()
 
         currentAnimation = animate({
+            keyframes: [0, 1],
+            velocity: 0,
             ...options,
             driver,
             onUpdate: (v: number) => {
@@ -52,7 +51,7 @@ export function inertia({
         })
     }
 
-    function startSpring(options: SpringOptions) {
+    function startSpring(options: { velocity: number; keyframes: any }) {
         startAnimation({
             type: "spring",
             stiffness: bounceStiffness,
@@ -62,9 +61,12 @@ export function inertia({
         })
     }
 
-    if (isOutOfBounds(from)) {
+    if (isOutOfBounds(origin)) {
         // Start the animation with spring if outside the defined boundaries
-        startSpring({ from, velocity, to: boundaryNearest(from) })
+        startSpring({
+            velocity,
+            keyframes: [origin, findNearestBoundary(origin)],
+        })
     } else {
         /**
          * Or if the value is out of bounds, simulate the inertia movement
@@ -74,9 +76,9 @@ export function inertia({
          * If it is, we want to check per frame when to switch to a spring
          * animation
          */
-        let target = power * velocity + from
+        let target = power * velocity + origin
         if (typeof modifyTarget !== "undefined") target = modifyTarget(target)
-        const boundary = boundaryNearest(target)
+        const boundary = findNearestBoundary(target)
         const heading = boundary === min ? -1 : 1
         let prev: number
         let current: number
@@ -90,13 +92,13 @@ export function inertia({
                 (heading === 1 && v > boundary!) ||
                 (heading === -1 && v < boundary!)
             ) {
-                startSpring({ from: v, to: boundary, velocity })
+                startSpring({ keyframes: [v, boundary], velocity })
             }
         }
 
         startAnimation({
             type: "decay",
-            from,
+            keyframes: [origin, 0],
             velocity,
             timeConstant,
             power,

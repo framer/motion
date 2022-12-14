@@ -176,7 +176,7 @@ describe("animate prop as variant", () => {
                 hidden: { background: "#00f" },
                 visible: {
                     background: "#f00",
-                    transition: { to: "#555" },
+                    transition: { from: "#555", ease: () => 0.5 },
                 },
             }
             const background = motionValue("#00f")
@@ -187,7 +187,7 @@ describe("animate prop as variant", () => {
                     animate="visible"
                     variants={variants}
                     transition={{ type: false }}
-                    onAnimationComplete={onComplete}
+                    onUpdate={onComplete}
                     style={{ background }}
                 />
             )
@@ -196,7 +196,7 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        return expect(promise).resolves.toBe("rgba(85, 85, 85, 1)")
+        return expect(promise).resolves.toBe("rgba(190, 60, 60, 1)")
     })
 
     test("respects orchestration props in transition prop", async () => {

@@ -1,5 +1,70 @@
 import { TargetAndTransition, TargetResolver, Transition } from "../types"
 import type { VisualElement } from "../render/VisualElement"
+import { Driver } from "./legacy-popmotion/types"
+import { Easing } from "../easing/types"
+
+export interface VelocityOptions {
+    velocity?: number
+    restSpeed?: number
+    restDelta?: number
+}
+
+export interface AnimationLifecycleOptions<V> {
+    onUpdate?: (v: V) => void
+    onComplete?: VoidFunction
+    onPlay?: VoidFunction
+    onRepeat?: VoidFunction
+    onStop?: VoidFunction
+}
+
+export interface AnimationPlaybackOptions {
+    repeat?: number
+    repeatType?: "loop" | "reverse" | "mirror"
+    repeatDelay?: number
+}
+
+export interface DurationSpringOptions {
+    duration?: number
+    bounce?: number
+}
+
+export interface SpringOptions extends DurationSpringOptions, VelocityOptions {
+    stiffness?: number
+    damping?: number
+    mass?: number
+}
+
+export interface DecayOptions extends VelocityOptions {
+    keyframes?: number[]
+    power?: number
+    timeConstant?: number
+    modifyTarget?: (v: number) => number
+}
+
+export interface InertiaOptions extends DecayOptions {
+    bounceStiffness?: number
+    bounceDamping?: number
+    min?: number
+    max?: number
+}
+
+export interface KeyframeOptions {
+    ease?: Easing | Easing[]
+    times?: number[]
+}
+
+export interface AnimationOptions<V = any>
+    extends AnimationLifecycleOptions<V>,
+        AnimationPlaybackOptions,
+        Omit<SpringOptions, "keyframes">,
+        Omit<InertiaOptions, "keyframes">,
+        KeyframeOptions {
+    keyframes: V[]
+    elapsed?: number
+    driver?: Driver
+    type?: "decay" | "spring" | "keyframes" | "tween"
+    duration?: number
+}
 
 /**
  * @public
