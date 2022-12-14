@@ -14,7 +14,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Changed
 
--   Refactored animation pipeline to better accomodate WAAPI.
+-   Refactored animation pipeline to better accommodate WAAPI.
 
 ## [7.8.0] 2022-12-13
 
