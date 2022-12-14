@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.8.1] 2022-12-14
+
+### Changed
+
+-   Refactored animation pipeline to better accomodate WAAPI.
+
 ## [7.8.0] 2022-12-13
 
 ### Added
