@@ -139,7 +139,7 @@ export const createMotionValueAnimation = (
         if (
             typeof options.ease === "function" ||
             (typeof options.ease === "string" &&
-                supportedWaapiEasing[options.ease])
+                !supportedWaapiEasing[options.ease])
         ) {
             supportsEasing = false
         }
