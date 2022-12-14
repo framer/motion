@@ -27,7 +27,7 @@ export function inertia({
         return (min !== undefined && v < min) || (max !== undefined && v > max)
     }
 
-    function boundaryNearest(v: number) {
+    function findNearestBoundary(v: number) {
         if (min === undefined) return max
         if (max === undefined) return min
 
@@ -63,7 +63,10 @@ export function inertia({
 
     if (isOutOfBounds(origin)) {
         // Start the animation with spring if outside the defined boundaries
-        startSpring({ velocity, keyframes: [origin, boundaryNearest(origin)] })
+        startSpring({
+            velocity,
+            keyframes: [origin, findNearestBoundary(origin)],
+        })
     } else {
         /**
          * Or if the value is out of bounds, simulate the inertia movement
@@ -75,7 +78,7 @@ export function inertia({
          */
         let target = power * velocity + origin
         if (typeof modifyTarget !== "undefined") target = modifyTarget(target)
-        const boundary = boundaryNearest(target)
+        const boundary = findNearestBoundary(target)
         const heading = boundary === min ? -1 : 1
         let prev: number
         let current: number
