@@ -6,6 +6,11 @@ import { spring } from "../legacy-popmotion/spring"
 import { AnimationOptions } from "../types"
 import { animateStyle } from "./"
 
+/**
+ * 10ms is chosen here as it strikes a balance between smooth
+ * results (more than one keyframe per frame at 60fps) and
+ * keyframe quantity.
+ */
 const sampleDelta = 10 //ms
 
 export function createAcceleratedAnimation(
@@ -20,7 +25,7 @@ export function createAcceleratedAnimation(
      * record duration.
      *
      * TODO: When introducing support for values beyond opacity it
-     * might be better to use `animate.sampleAtT()`
+     * might be better to use `animate.sample()`
      */
     if (options.type === "spring") {
         const springAnimation = spring(options)
@@ -72,6 +77,9 @@ export function createAcceleratedAnimation(
         onComplete && onComplete()
     }
 
+    /**
+     * Animation interrupt callback.
+     */
     return () => {
         animation.commitStyles()
 
@@ -87,8 +95,8 @@ export function createAcceleratedAnimation(
         if (currentTime) {
             const sampleAnimation = animate(options)
             value.setWithVelocity(
-                sampleAnimation.sampleForT(currentTime - sampleDelta),
-                sampleAnimation.sampleForT(currentTime),
+                sampleAnimation.sample(currentTime - sampleDelta),
+                sampleAnimation.sample(currentTime),
                 sampleDelta
             )
         }

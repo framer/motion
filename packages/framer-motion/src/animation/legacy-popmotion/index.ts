@@ -165,7 +165,7 @@ export function animate<V = number>({
             onStop && onStop()
             driverControls.stop()
         },
-        sampleForT: (t: number) => {
+        sample: (t: number) => {
             return animation.next(Math.max(0, t)).value
         },
     }
