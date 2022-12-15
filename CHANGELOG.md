@@ -10,6 +10,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 -   `.on()` event method to `MotionValue`.
 -   `"animationStart"`, `"animationComplete"`, `"animationCancel"` and `"change"` events for `MotionValue`.
+-   `useMotionValueEvent` helper method for adding events.
 
 ## [7.9.0] 2022-12-14
 
