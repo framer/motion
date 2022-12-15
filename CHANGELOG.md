@@ -12,6 +12,12 @@ Undocumented APIs should be considered internal and may change without warning.
 -   `"animationStart"`, `"animationComplete"`, `"animationCancel"` and `"change"` events for `MotionValue`.
 -   `useMotionValueEvent` helper method for adding events.
 
+## [7.9.1] 2022-12-14
+
+### Fixed
+
+-   Fixing mapping Framer Motion easing names to WAAPI.
+
 ## [7.9.0] 2022-12-14
 
 ### Added
@@ -23,12 +29,6 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Changed
 
 -   Refactored animation pipeline to better accomodate WAAPI.
-
-## [7.9.1] 2022-12-14
-
-### Fixed
-
--   Fixing mapping Framer Motion easing names to WAAPI.
 
 ## [7.9.0] 2022-12-14
 
