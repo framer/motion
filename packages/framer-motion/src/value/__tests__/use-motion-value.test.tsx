@@ -52,8 +52,8 @@ describe("useMotionValue", () => {
         const onRenderRequest = jest.fn()
         const Component = () => {
             const x = useMotionValue(100)
-            x.onChange(onChange)
-            x.onRenderRequest(onRenderRequest)
+            x.on("change", onChange)
+            x.on("renderRequest", onRenderRequest)
 
             x.set(500)
 

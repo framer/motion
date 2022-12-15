@@ -46,13 +46,13 @@ describe("useVelocity", () => {
 
                 React.useEffect(() => {
                     const unsubscribe = pipe(
-                        x.onChange((v) => {
+                        x.on("change", (v) => {
                             output.push(Math.round(v))
                         }),
-                        xVelocity.onChange((v) => {
+                        xVelocity.on("change", (v) => {
                             outputVelocity.push(Math.round(v))
                         }),
-                        xAcceleration.onChange((v) => {
+                        xAcceleration.on("change", (v) => {
                             outputAcceleration.push(Math.round(v))
                         })
                     )

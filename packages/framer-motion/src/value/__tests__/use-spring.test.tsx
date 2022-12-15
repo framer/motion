@@ -13,7 +13,7 @@ describe("useSpring", () => {
                 const x = useSpring(0)
 
                 React.useEffect(() => {
-                    x.onChange((v) => resolve(v))
+                    x.on("change", (v) => resolve(v))
                     x.set(100)
                 })
 
@@ -37,7 +37,7 @@ describe("useSpring", () => {
                 const y = useSpring(x)
 
                 React.useEffect(() => {
-                    y.onChange((v) => resolve(v))
+                    y.on("change", (v) => resolve(v))
                     x.set(100)
                 })
 
@@ -64,7 +64,7 @@ describe("useSpring", () => {
                 } as any)
 
                 React.useEffect(() => {
-                    return y.onChange((v) => {
+                    return y.on("change", (v) => {
                         if (output.length >= 10) {
                             resolve(output)
                         } else {
@@ -105,6 +105,7 @@ describe("useSpring", () => {
         rerender(<Component target={a} />)
         rerender(<Component target={a} />)
 
-        expect(((a! as any).updateSubscribers! as any).getSize()).toBe(1)
+        // Cast to any here as `.events` is private API
+        expect((a as any).events.change.getSize()).toBe(1)
     })
 })

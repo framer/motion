@@ -9,7 +9,7 @@ export function useOnChange<T>(
     useIsomorphicLayoutEffect(() => {
         if (isMotionValue(value)) {
             callback(value.get())
-            return value.onChange(callback)
+            return value.on("change", callback)
         }
     }, [value, callback])
 }
@@ -20,7 +20,7 @@ export function useMultiOnChange(
     cleanup: () => void
 ) {
     useIsomorphicLayoutEffect(() => {
-        const subscriptions = values.map((value) => value.onChange(handler))
+        const subscriptions = values.map((value) => value.on("change", handler))
 
         return () => {
             subscriptions.forEach((unsubscribe) => unsubscribe())

@@ -44,7 +44,7 @@ export const App = () => {
     )
 
     useEffect(() => {
-        return transform.onChange(v => console.log(v))
+        return transform.on("change", (v) => console.log(v))
     })
 
     return (
@@ -54,7 +54,7 @@ export const App = () => {
                 _dragX={x}
                 _dragY={y}
                 dragConstraints={ref}
-                onMeasureDragConstraints={constraints => constraints}
+                onMeasureDragConstraints={(constraints) => constraints}
                 style={{
                     backgroundColor: color,
                     ...child,

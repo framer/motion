@@ -4,6 +4,25 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.10.0] 2022-12-15
+
+### Added
+
+-   `.on()` event method to `MotionValue`.
+-   `"animationStart"`, `"animationComplete"`, `"animationCancel"` and `"change"` events for `MotionValue`.
+
+## [7.9.0] 2022-12-14
+
+### Added
+
+-   Hardware-accelerated `opacity` animations.
+
+## [7.8.1] 2022-12-14
+
+### Changed
+
+-   Refactored animation pipeline to better accomodate WAAPI.
+
 ## [7.9.1] 2022-12-14
 
 ### Fixed

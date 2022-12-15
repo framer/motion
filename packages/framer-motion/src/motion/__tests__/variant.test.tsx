@@ -511,7 +511,7 @@ describe("animate prop as variant", () => {
 
                 React.useEffect(
                     () =>
-                        a.onChange((latest) => {
+                        a.on("change", (latest) => {
                             if (latest >= 1 && b.get() === 0) resolve(true)
                         }),
                     [a, b]
@@ -564,7 +564,7 @@ describe("animate prop as variant", () => {
 
                 React.useEffect(
                     () =>
-                        a.onChange((latest) => {
+                        a.on("change", (latest) => {
                             if (latest >= 1 && b.get() === 0) resolve(true)
                         }),
                     [a, b]
