@@ -35,17 +35,18 @@ It looks like this:
 
 It does all this:
 
--   Springs
--   Keyframes
--   Layout animations
--   Shared layout animations
--   Gestures (drag/tap/hover)
--   SVG paths
--   Exit animations
+-   [Springs](https://www.framer.com/docs/transition/#spring)
+-   [Keyframes](https://www.framer.com/docs/animation/##keyframes)
+-   [Layout animations](https://www.framer.com/docs/layout-animations/)
+-   [Shared layout animations](https://www.framer.com/docs/layout-animations/#shared-layout-animations)
+-   [Gestures (drag/tap/hover)](https://www.framer.com/docs/gestures/)
+-   [Scroll animations](https://www.framer.com/docs/scroll-animations)
+-   [SVG paths](https://www.framer.com/docs/component/###svg-line-drawing)
+-   [Exit animations](https://www.framer.com/docs/animate-presence/)
 -   Server-side rendering
--   Hardware-accelerated animations
--   Orchestrate animations across components
--   CSS variables
+-   [Hardware-accelerated animations](https://www.framer.com/docs/animation/#hardware-accelerated-animations)
+-   [Orchestrate animations across components](https://www.framer.com/docs/animation/##orchestration)
+-   [CSS variables](https://www.framer.com/docs/component/##css-variables)
 
 ...and a whole lot more.
 
