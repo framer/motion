@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.10.1] 2022-12-16
+
+### Fixed
+
+-   Fixed type inference of `useMotionValueEvent`.
+
 ## [7.10.0] 2022-12-15
 
 ### Added
