@@ -2,6 +2,12 @@ import { motionValue } from "../"
 import { animate } from "../../animation/animate"
 
 describe("motionValue", () => {
+    test("change event is type-inferred", () => {
+        const value = motionValue(0)
+
+        value.on("change", (latest) => latest / 2)
+    })
+
     test("change event fires when value changes", () => {
         const value = motionValue(0)
         const callback = jest.fn()
