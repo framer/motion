@@ -335,68 +335,133 @@ describe("WAAPI animations", () => {
         expect(ref.current!.animate).not.toBeCalled()
     })
 
-    test("Doesn't animate with WAAPI if ease is function", () => {
+    test("Pregenerates keyframes if ease is function", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
                 ref={ref}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.9 }}
-                transition={{ ease: (v) => v }}
+                transition={{ ease: () => 0.5, duration: 0.05 }}
             />
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
-        expect(ref.current!.animate).not.toBeCalled()
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                opacity: [0.45, 0.45, 0.45, 0.45, 0.45, 0.45],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                direction: "normal",
+                duration: 50,
+                easing: "linear",
+                fill: "both",
+                iterations: 1,
+            }
+        )
     })
 
-    test("Doesn't animate with WAAPI if ease is anticipate", () => {
+    test("Pregenerates keyframes if ease is anticipate", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
                 ref={ref}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.9 }}
-                transition={{ ease: "anticipate" }}
+                transition={{ ease: "anticipate", duration: 0.05 }}
             />
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
-        expect(ref.current!.animate).not.toBeCalled()
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                opacity: [
+                    -0.038019759996313955, 0.14036703066311026, 0.7875,
+                    0.89296875, 0.899560546875,
+                ],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                direction: "normal",
+                duration: 50,
+                easing: "linear",
+                fill: "both",
+                iterations: 1,
+            }
+        )
     })
 
-    test("Doesn't animate with WAAPI if ease is backInOut", () => {
+    test("Pregenerates keyframes if ease is backInOut", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
                 ref={ref}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.9 }}
-                transition={{ ease: "backInOut" }}
+                transition={{ ease: "backInOut", duration: 0.05 }}
             />
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
-        expect(ref.current!.animate).not.toBeCalled()
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                opacity: [
+                    0, -0.038019759996313955, 0.14036703066311026,
+                    0.7596329693368897, 0.9380197599963139, 0.9,
+                ],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                direction: "normal",
+                duration: 50,
+                easing: "linear",
+                fill: "both",
+                iterations: 1,
+            }
+        )
     })
 
-    test("Doesn't animate with WAAPI if ease is circInOut", () => {
+    test("Pregenerates keyframes if ease is circInOut", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
                 ref={ref}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.9 }}
-                transition={{ ease: "circInOut" }}
+                transition={{ ease: "circInOut", duration: 0.05 }}
             />
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
-        expect(ref.current!.animate).not.toBeCalled()
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                opacity: [
+                    0, 0.36000000000000004, 0.440908153700972,
+                    0.459091846299028, 0.5400000000000001, 0.9,
+                ],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                direction: "normal",
+                duration: 50,
+                easing: "linear",
+                fill: "both",
+                iterations: 1,
+            }
+        )
     })
 
     test("Doesn't animate with WAAPI if repeatType is defined as mirror", () => {
