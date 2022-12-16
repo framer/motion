@@ -3,9 +3,9 @@ import { sync } from "../../frameloop"
 import type { VisualElement } from "../../render/VisualElement"
 import type { MotionValue } from "../../value"
 import { animate } from "../legacy-popmotion"
-import { spring } from "../legacy-popmotion/spring"
 import { AnimationOptions } from "../types"
 import { animateStyle } from "./"
+import { isWaapiSupportedEasing } from "./easing"
 
 /**
  * 10ms is chosen here as it strikes a balance between smooth
@@ -22,25 +22,21 @@ export function createAcceleratedAnimation(
     let { keyframes, duration = 0.3, elapsed = 0, ease } = options
 
     /**
-     * If this is a spring animation, pre-generate keyframes and
-     * record duration.
-     *
-     * TODO: When introducing support for values beyond opacity it
-     * might be better to use `animate.sample()`
+     * If this animation needs pre-generated keyframes then generate.
      */
-    if (options.type === "spring") {
-        const springAnimation = spring(options)
+    if (options.type === "spring" || !isWaapiSupportedEasing(options.ease)) {
+        const sampleAnimation = animate(options)
         let state = { done: false, value: keyframes[0] }
-        const springKeyframes: number[] = []
+        const pregeneratedKeyframes: number[] = []
 
         let t = 0
         while (!state.done) {
-            state = springAnimation.next(t)
-            springKeyframes.push(state.value)
+            state = sampleAnimation.sample(t)
+            pregeneratedKeyframes.push(state.value)
             t += sampleDelta
         }
 
-        keyframes = springKeyframes
+        keyframes = pregeneratedKeyframes
         duration = t - sampleDelta
         ease = "linear"
     }
@@ -94,8 +90,8 @@ export function createAcceleratedAnimation(
         if (currentTime) {
             const sampleAnimation = animate(options)
             value.setWithVelocity(
-                sampleAnimation.sample(currentTime - sampleDelta),
-                sampleAnimation.sample(currentTime),
+                sampleAnimation.sample(currentTime - sampleDelta).value,
+                sampleAnimation.sample(currentTime).value,
                 sampleDelta
             )
         }

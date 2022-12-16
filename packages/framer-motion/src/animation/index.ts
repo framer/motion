@@ -133,7 +133,6 @@ export const createMotionValueAnimation = (
             !options.repeatDelay &&
             options.repeatType !== "mirror" &&
             options.damping !== 0 &&
-            typeof options.ease !== "function" &&
             visualElement &&
             element instanceof HTMLElement &&
             !visualElement.getProps().onUpdate

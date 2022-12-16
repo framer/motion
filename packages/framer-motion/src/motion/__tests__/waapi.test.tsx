@@ -161,11 +161,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    /**
-     * TODO: Wait for comments and either bump these back to the main thread,
-     * generate keyframes, generate linear() easing, or create similar cubic beziers.
-     */
-    test("Maps remaining easings to 'ease'", () => {
+    test("Maps 'circIn' to 'cubic-bezier(0, 0.65, 0.55, 1)'", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -173,7 +169,7 @@ describe("WAAPI animations", () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{
-                    ease: "anticipate",
+                    ease: "circIn",
                 }}
             />
         )
@@ -184,7 +180,94 @@ describe("WAAPI animations", () => {
         expect(ref.current!.animate).toBeCalledWith(
             { opacity: [0, 1], offset: undefined },
             {
-                easing: "ease",
+                easing: "cubic-bezier(0, 0.65, 0.55, 1)",
+                delay: -0,
+                duration: 0.3,
+                direction: "normal",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
+    test("Maps 'circOut' to 'cubic-bezier(0.55, 0, 1, 0.45)'", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                    ease: "circOut",
+                }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { opacity: [0, 1], offset: undefined },
+            {
+                easing: "cubic-bezier(0.55, 0, 1, 0.45)",
+                delay: -0,
+                duration: 0.3,
+                direction: "normal",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
+    test("Maps 'backIn' to 'cubic-bezier(0.31, 0.01, 0.66, -0.59)'", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                    ease: "backIn",
+                }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { opacity: [0, 1], offset: undefined },
+            {
+                easing: "cubic-bezier(0.31, 0.01, 0.66, -0.59)",
+                delay: -0,
+                duration: 0.3,
+                direction: "normal",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
+    test("Maps 'backOut' to 'cubic-bezier(0.33, 1.53, 0.69, 0.99)'", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                    ease: "backOut",
+                }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { opacity: [0, 1], offset: undefined },
+            {
+                easing: "cubic-bezier(0.33, 1.53, 0.69, 0.99)",
                 delay: -0,
                 duration: 0.3,
                 direction: "normal",
@@ -250,6 +333,135 @@ describe("WAAPI animations", () => {
         rerender(<Component />)
 
         expect(ref.current!.animate).not.toBeCalled()
+    })
+
+    test("Pregenerates keyframes if ease is function", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.9 }}
+                transition={{ ease: () => 0.5, duration: 0.05 }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                opacity: [0.45, 0.45, 0.45, 0.45, 0.45, 0.45],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                direction: "normal",
+                duration: 50,
+                easing: "linear",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
+    test("Pregenerates keyframes if ease is anticipate", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.9 }}
+                transition={{ ease: "anticipate", duration: 0.05 }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                opacity: [
+                    0, -0.038019759996313955, 0.14036703066311026, 0.7875,
+                    0.89296875, 0.899560546875,
+                ],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                direction: "normal",
+                duration: 50,
+                easing: "linear",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
+    test("Pregenerates keyframes if ease is backInOut", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.9 }}
+                transition={{ ease: "backInOut", duration: 0.05 }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                opacity: [
+                    0, -0.038019759996313955, 0.14036703066311026,
+                    0.7596329693368897, 0.9380197599963139, 0.9,
+                ],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                direction: "normal",
+                duration: 50,
+                easing: "linear",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
+    test("Pregenerates keyframes if ease is circInOut", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.9 }}
+                transition={{ ease: "circInOut", duration: 0.05 }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                opacity: [
+                    0, 0.36000000000000004, 0.440908153700972,
+                    0.459091846299028, 0.5400000000000001, 0.9,
+                ],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                direction: "normal",
+                duration: 50,
+                easing: "linear",
+                fill: "both",
+                iterations: 1,
+            }
+        )
     })
 
     test("Doesn't animate with WAAPI if repeatType is defined as mirror", () => {
