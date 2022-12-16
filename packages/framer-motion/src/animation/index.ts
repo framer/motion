@@ -13,7 +13,6 @@ import { isAnimatable } from "./utils/is-animatable"
 import { getKeyframes } from "./utils/keyframes"
 import { getValueTransition, isTransitionDefined } from "./utils/transitions"
 import { supports } from "./waapi/supports"
-import { supportedWaapiEasing } from "./waapi/easing"
 
 /**
  * A list of values that can be hardware-accelerated.
@@ -128,29 +127,12 @@ export const createMotionValueAnimation = (
         const visualElement = value.owner
         const element = visualElement && visualElement.current
 
-        /**
-         * WAAPI doesn't support all the same easings as Framer Motion. It doesn't
-         * support JavaScript functions. Otherwise, if defined as a string, we can
-         * only approximate some easings with cubic-bezier().
-         *
-         * In the future it will be possible to support these by approximating with linear().
-         */
-        let supportsEasing = true
-        if (
-            typeof options.ease === "function" ||
-            (typeof options.ease === "string" &&
-                !supportedWaapiEasing[options.ease])
-        ) {
-            supportsEasing = false
-        }
-
         const canAccelerateAnimation =
             supports.waapi() &&
             acceleratedValues.has(valueName) &&
             !options.repeatDelay &&
             options.repeatType !== "mirror" &&
             options.damping !== 0 &&
-            supportsEasing &&
             visualElement &&
             element instanceof HTMLElement &&
             !visualElement.getProps().onUpdate

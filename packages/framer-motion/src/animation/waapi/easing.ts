@@ -1,4 +1,12 @@
-import { BezierDefinition, EasingDefinition } from "../../easing/types"
+import { BezierDefinition, Easing, EasingDefinition } from "../../easing/types"
+
+export function isEasingSupported(easing?: Easing | Easing[]) {
+    return (
+        !easing ||
+        Array.isArray(easing) ||
+        (typeof easing === "string" && supportedWaapiEasing[easing])
+    )
+}
 
 export const cubicBezierAsString = ([a, b, c, d]: BezierDefinition) =>
     `cubic-bezier(${a}, ${b}, ${c}, ${d})`

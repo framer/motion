@@ -166,7 +166,7 @@ export function animate<V = number>({
             driverControls.stop()
         },
         sample: (t: number) => {
-            return animation.next(Math.max(0, t)).value
+            return animation.next(Math.max(0, t))
         },
     }
 }
