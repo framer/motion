@@ -5,7 +5,7 @@ import type { MotionValue } from "../../value"
 import { animate } from "../legacy-popmotion"
 import { AnimationOptions } from "../types"
 import { animateStyle } from "./"
-import { isEasingSupported } from "./easing"
+import { isWaapiSupportedEasing } from "./easing"
 
 /**
  * 10ms is chosen here as it strikes a balance between smooth
@@ -24,7 +24,7 @@ export function createAcceleratedAnimation(
     /**
      * If this animation needs pre-generated keyframes then generate.
      */
-    if (options.type === "spring" || !isEasingSupported(options.ease)) {
+    if (options.type === "spring" || !isWaapiSupportedEasing(options.ease)) {
         const sampleAnimation = animate(options)
         let state = { done: false, value: keyframes[0] }
         const pregeneratedKeyframes: number[] = []
