@@ -1,6 +1,6 @@
 import { BezierDefinition, Easing, EasingDefinition } from "../../easing/types"
 
-export function isEasingSupported(easing?: Easing | Easing[]) {
+export function isWaapiSupportedEasing(easing?: Easing | Easing[]) {
     return (
         !easing ||
         Array.isArray(easing) ||
