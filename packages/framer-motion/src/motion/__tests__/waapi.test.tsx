@@ -382,7 +382,7 @@ describe("WAAPI animations", () => {
         expect(ref.current!.animate).toBeCalledWith(
             {
                 opacity: [
-                    -0.038019759996313955, 0.14036703066311026, 0.7875,
+                    0, -0.038019759996313955, 0.14036703066311026, 0.7875,
                     0.89296875, 0.899560546875,
                 ],
                 offset: undefined,
