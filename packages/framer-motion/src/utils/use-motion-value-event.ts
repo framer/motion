@@ -5,7 +5,7 @@ export function useMotionValueEvent<
     V,
     EventName extends keyof MotionValueEventCallbacks<V>
 >(
-    value: MotionValue,
+    value: MotionValue<V>,
     event: EventName,
     callback: MotionValueEventCallbacks<V>[EventName]
 ) {
