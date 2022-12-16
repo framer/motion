@@ -2,8 +2,8 @@ import { BezierDefinition, Easing, EasingDefinition } from "../../easing/types"
 
 export function isWaapiSupportedEasing(easing?: Easing | Easing[]) {
     return (
-        !easing ||
-        Array.isArray(easing) ||
+        !easing || // Default easing
+        Array.isArray(easing) || // Bezier curve
         (typeof easing === "string" && supportedWaapiEasing[easing])
     )
 }
