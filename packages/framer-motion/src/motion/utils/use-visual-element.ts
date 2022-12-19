@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useContext, useEffect, useRef } from "react"
+import { useContext, useRef } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 import { MotionProps } from "../../motion/types"
 import { useVisualElementContext } from "../../context/MotionContext"
@@ -53,12 +53,7 @@ export function useVisualElement<Instance, RenderState>(
      * from a synchronous useLayoutEffect to ensure there's no flash of incorrectly
      * styled component in the event of a hydration error.
      */
-    const useAnimateChangesEffect =
-        typeof window !== "undefined" && window.MotionAppearAnimations
-            ? useIsomorphicLayoutEffect
-            : useEffect
-
-    useAnimateChangesEffect(() => {
+    useIsomorphicLayoutEffect(() => {
         if (visualElement && visualElement.animationState) {
             visualElement.animationState.animateChanges()
         }
