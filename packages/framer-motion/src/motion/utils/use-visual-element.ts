@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useContext, useEffect, useRef } from "react"
+import { useContext, useRef } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 import { MotionProps } from "../../motion/types"
 import { useVisualElementContext } from "../../context/MotionContext"
@@ -48,7 +48,12 @@ export function useVisualElement<Instance, RenderState>(
         visualElement && visualElement.render()
     })
 
-    useEffect(() => {
+    /**
+     * If we have optimised appear animations to handoff from, trigger animateChanges
+     * from a synchronous useLayoutEffect to ensure there's no flash of incorrectly
+     * styled component in the event of a hydration error.
+     */
+    useIsomorphicLayoutEffect(() => {
         if (visualElement && visualElement.animationState) {
             visualElement.animationState.animateChanges()
         }
