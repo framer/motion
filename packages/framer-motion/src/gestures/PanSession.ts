@@ -201,12 +201,6 @@ export class PanSession {
         this.lastMoveEvent = event
         this.lastMoveEventInfo = transformPoint(info, this.transformPagePoint)
 
-        // Because Safari doesn't trigger mouseup events when it's above a `<select>`
-        if (event.isPrimary) {
-            this.handlePointerUp(event, info)
-            return
-        }
-
         // Throttle mouse move event to once per frame
         sync.update(this.updatePoint, true)
     }
