@@ -10,7 +10,7 @@ describe("useDomEvent", () => {
         const handler = jest.fn()
         const Component = () => {
             const ref = useRef(null)
-            useDomEvent(ref, "pointerDown", handler)
+            useDomEvent(ref, "pointerdown", handler)
             return <div />
         }
         const { container, rerender } = render(<Component />)
@@ -22,7 +22,7 @@ describe("useDomEvent", () => {
         const handler = jest.fn()
         const Component = () => {
             const ref = useRef(null)
-            useDomEvent(ref, "pointerDown", handler)
+            useDomEvent(ref, "pointerdown", handler)
             return <div ref={ref} />
         }
         const { container, rerender } = render(<Component />)
@@ -36,7 +36,7 @@ describe("useDomEvent", () => {
         const promise = new Promise<void>((resolve) => {
             const Component = () => {
                 const ref = useRef(document.body)
-                useDomEvent(ref, "pointerDown", handler)
+                useDomEvent(ref, "pointerdown", handler)
                 useEffect(resolve)
                 return <div />
             }
@@ -52,7 +52,7 @@ describe("useDomEvent", () => {
         const promise = new Promise<void>((resolve) => {
             const Component = () => {
                 const ref = useRef(document.body)
-                useDomEvent(ref, "pointerDown", handler)
+                useDomEvent(ref, "pointerdown", handler)
                 return <div />
             }
             const { rerender, unmount } = render(<Component />)

@@ -5,6 +5,22 @@ import { fireEvent, getByTestId } from "@testing-library/dom"
 import { render as testRender, act } from "@testing-library/react"
 import * as React from "react"
 
+/**
+ * Stub PointerEvent - this is so we can pass through PointerEvent.isPrimary
+ */
+const pointerEventProps = ["isPrimary"]
+class PointerEventFake extends Event {
+    constructor(type: any, props: any) {
+        super(type, props)
+        pointerEventProps.forEach((prop) => {
+            if (props[prop] !== null) {
+                this[prop] = props[prop]
+            }
+        })
+    }
+}
+;(global as any).PointerEvent = PointerEventFake
+
 // Stub ResizeObserver
 if (!(global as any).ResizeObserver) {
     ;(global as any).ResizeObserver = class ResizeObserver {
@@ -28,11 +44,18 @@ export const pointerLeave = (element: Element) =>
     })
 export const pointerDown = (element: Element) =>
     act(() => {
-        fireEvent.pointerDown(element)
+        fireEvent.pointerDown(
+            element,
+            new PointerEventFake("pointerdown", { isPrimary: true })
+        )
     })
 export const pointerUp = (element: Element) =>
     act(() => {
         fireEvent.pointerUp(element)
+    })
+export const pointerMove = (element: Element) =>
+    act(() => {
+        fireEvent.pointerMove(element)
     })
 export const focus = (element: HTMLElement, testId: string) =>
     act(() => {

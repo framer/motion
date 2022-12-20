@@ -2,7 +2,7 @@ import * as React from "react"
 import { sync } from "../../../frameloop"
 import { MotionConfig } from "../../../components/MotionConfig"
 import { act } from "react-dom/test-utils"
-import { fireEvent } from "@testing-library/dom"
+import { pointerDown, pointerMove, pointerUp } from "../../../../jest.setup"
 
 export type Point = {
     x: number
@@ -34,7 +34,7 @@ export function deferred<T>(): Deferred<T> {
 export const drag = (element: any, triggerElement?: any) => {
     pos.x = 0
     pos.y = 0
-    fireEvent.pointerDown(triggerElement || element)
+    pointerDown(triggerElement || element)
 
     const controls = {
         to: async (x: number, y: number) => {
@@ -42,14 +42,14 @@ export const drag = (element: any, triggerElement?: any) => {
             pos.y = y
 
             await act(async () => {
-                fireEvent.mouseMove(document.body, { buttons: 1 })
+                pointerMove(document.body)
                 await frame.postRender()
             })
 
             return controls
         },
         end: () => {
-            fireEvent.pointerUp(element)
+            pointerUp(element)
         },
     }
 

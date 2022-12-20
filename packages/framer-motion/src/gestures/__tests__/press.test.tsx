@@ -1,6 +1,5 @@
 import * as React from "react"
 import { motion } from "../.."
-import { fireEvent } from "@testing-library/dom"
 import { motionValue } from "../../value"
 import {
     pointerDown,
@@ -19,8 +18,8 @@ describe("press", () => {
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
 
-        fireEvent.pointerDown(container.firstChild as Element)
-        fireEvent.pointerUp(container.firstChild as Element)
+        pointerDown(container.firstChild as Element)
+        pointerUp(container.firstChild as Element)
 
         expect(press).toBeCalledTimes(1)
     })
@@ -31,12 +30,12 @@ describe("press", () => {
             <motion.div onTap={() => press()} />
         )
         rerender(<motion.div onTap={() => press()} />)
-        fireEvent.pointerDown(container.firstChild as Element)
-        fireEvent.pointerUp(container.firstChild as Element)
+        pointerDown(container.firstChild as Element)
+        pointerUp(container.firstChild as Element)
         expect(press).toBeCalledTimes(1)
         rerender(<motion.div />)
-        fireEvent.pointerDown(container.firstChild as Element)
-        fireEvent.pointerUp(container.firstChild as Element)
+        pointerDown(container.firstChild as Element)
+        pointerUp(container.firstChild as Element)
         expect(press).toBeCalledTimes(1)
     })
 
@@ -59,13 +58,13 @@ describe("press", () => {
         const a = getByTestId("a")
         const b = getByTestId("b")
 
-        fireEvent.pointerDown(a)
-        fireEvent.pointerUp(a)
+        pointerDown(a)
+        pointerUp(a)
 
         expect(cancelA).not.toHaveBeenCalled()
 
-        fireEvent.pointerDown(b)
-        fireEvent.pointerUp(b)
+        pointerDown(b)
+        pointerUp(b)
         expect(cancelA).not.toHaveBeenCalled()
     })
 
@@ -80,8 +79,8 @@ describe("press", () => {
         const { getByTestId, rerender } = render(<Component />)
         rerender(<Component />)
 
-        fireEvent.pointerDown(getByTestId("child"))
-        fireEvent.pointerUp(getByTestId("child"))
+        pointerDown(getByTestId("child"))
+        pointerUp(getByTestId("child"))
 
         expect(press).toBeCalledTimes(1)
     })
@@ -97,8 +96,8 @@ describe("press", () => {
         const { container, getByTestId, rerender } = render(<Component />)
         rerender(<Component />)
 
-        fireEvent.pointerDown(getByTestId("child"))
-        fireEvent.pointerUp(container.firstChild as Element)
+        pointerDown(getByTestId("child"))
+        pointerUp(container.firstChild as Element)
 
         expect(press).toBeCalledTimes(1)
     })
@@ -114,8 +113,8 @@ describe("press", () => {
         const { container, getByTestId, rerender } = render(<Component />)
         rerender(<Component />)
 
-        fireEvent.pointerDown(container.firstChild as Element)
-        fireEvent.pointerUp(getByTestId("child"))
+        pointerDown(container.firstChild as Element)
+        pointerUp(getByTestId("child"))
 
         expect(press).toBeCalledTimes(1)
     })
@@ -134,8 +133,8 @@ describe("press", () => {
         const { container, getByTestId, rerender } = render(<Component />)
         rerender(<Component />)
 
-        fireEvent.pointerDown(getByTestId("child"))
-        fireEvent.pointerUp(container.firstChild as Element)
+        pointerDown(getByTestId("child"))
+        pointerUp(container.firstChild as Element)
 
         expect(pressCancel).toBeCalledTimes(1)
     })
@@ -193,17 +192,17 @@ describe("press", () => {
         rerender(<Component />)
         rerender(<Component />)
 
-        fireEvent.pointerDown(container.firstChild as Element)
-        fireEvent.pointerUp(container.firstChild as Element)
+        pointerDown(container.firstChild as Element)
+        pointerUp(container.firstChild as Element)
 
         rerender(<Component />)
         rerender(<Component />)
 
-        fireEvent.pointerDown(container.firstChild as Element)
-        fireEvent.pointerUp(container.firstChild as Element)
+        pointerDown(container.firstChild as Element)
+        pointerUp(container.firstChild as Element)
 
-        fireEvent.pointerDown(container.firstChild as Element)
-        fireEvent.pointerUp(container.firstChild as Element)
+        pointerDown(container.firstChild as Element)
+        pointerUp(container.firstChild as Element)
 
         expect(press).toBeCalledTimes(3)
     })
@@ -353,11 +352,11 @@ describe("press", () => {
     //         logOpacity() // 0.5
 
     //         // Trigger mouse down
-    //         fireEvent.pointerDown(getByTestId("child") as Element)
+    //         pointerDown(getByTestId("child") as Element)
     //         logOpacity() // 1
 
     //         // Trigger mouse up
-    //         fireEvent.pointerUp(getByTestId("child") as Element)
+    //         pointerUp(getByTestId("child") as Element)
     //         logOpacity() // 0.5
 
     //         resolve(opacityHistory)
@@ -391,11 +390,11 @@ describe("press", () => {
             logOpacity() // 0.75
 
             // Trigger mouse down
-            fireEvent.pointerDown(container.firstChild as Element)
+            pointerDown(container.firstChild as Element)
             logOpacity() // 1
 
             // Trigger mouse up
-            fireEvent.pointerUp(container.firstChild as Element)
+            pointerUp(container.firstChild as Element)
             logOpacity() // 0.75
 
             // Trigger hover end
@@ -407,7 +406,7 @@ describe("press", () => {
             logOpacity()
 
             // Trigger mouse down
-            fireEvent.pointerDown(container.firstChild as Element)
+            pointerDown(container.firstChild as Element)
             logOpacity()
 
             // Trigger hover end
@@ -415,7 +414,7 @@ describe("press", () => {
             logOpacity()
 
             // Trigger mouse up
-            fireEvent.pointerUp(container.firstChild as Element)
+            pointerUp(container.firstChild as Element)
             logOpacity()
 
             resolve(opacityHistory)
@@ -456,13 +455,13 @@ describe("press", () => {
             logOpacity() // 0.75
 
             // Trigger mouse down
-            fireEvent.pointerDown(container.firstChild as Element)
+            pointerDown(container.firstChild as Element)
             logOpacity() // 1
             rerender(<Component isActive={true} />)
             rerender(<Component isActive={true} />)
 
             // Trigger mouse up
-            fireEvent.pointerUp(container.firstChild as Element)
+            pointerUp(container.firstChild as Element)
             logOpacity() // 1
 
             // Trigger hover end
@@ -474,7 +473,7 @@ describe("press", () => {
             logOpacity() // 1
 
             // Trigger mouse down
-            fireEvent.pointerDown(container.firstChild as Element)
+            pointerDown(container.firstChild as Element)
             logOpacity() // 1
 
             // Trigger hover end
@@ -482,7 +481,7 @@ describe("press", () => {
             logOpacity() // 1
 
             // Trigger mouse up
-            fireEvent.pointerUp(container.firstChild as Element)
+            pointerUp(container.firstChild as Element)
             logOpacity() // 1
 
             resolve(opacityHistory)

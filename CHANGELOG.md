@@ -11,6 +11,10 @@ Undocumented APIs should be considered internal and may change without warning.
 -   Removed polyfilled support for mouse/touch events.
 -   Removed drag pointerup patch for Safari over `<select />` elements.
 
+### Changed
+
+-   `DragControls.start` now accepts `PointerEvent` only.
+
 ## [7.10.3] 2022-12-20
 
 ### Changed

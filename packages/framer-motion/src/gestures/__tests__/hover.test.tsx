@@ -1,7 +1,11 @@
-import { pointerEnter, pointerLeave, render } from "../../../jest.setup"
+import {
+    pointerDown,
+    pointerEnter,
+    pointerLeave,
+    render,
+} from "../../../jest.setup"
 import * as React from "react"
 import { motion } from "../../"
-import { fireEvent } from "@testing-library/react"
 import { motionValue } from "../../value"
 import { transformValues } from "../../motion/__tests__/util-transform-values"
 import { sync } from "../../frameloop"
@@ -161,7 +165,7 @@ describe("hover", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 
-            fireEvent.pointerDown(container.firstChild as Element)
+            pointerDown(container.firstChild as Element)
             pointerEnter(container.firstChild as Element)
 
             resolve([opacity.get(), scale.get()])

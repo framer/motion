@@ -20,6 +20,7 @@ describe("pan", () => {
                         onPanStart={() => {
                             count += increment
                             setIncrement(2)
+                            console.log("on pan start")
                         }}
                         onPan={() => (count += increment)}
                         onPanEnd={() => {

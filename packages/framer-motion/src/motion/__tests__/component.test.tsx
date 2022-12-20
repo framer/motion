@@ -85,20 +85,20 @@ describe("motion component rendering and styles", () => {
     })
 
     it("renders normal event listeners", () => {
-        const onMouseEnter = jest.fn()
-        const onMouseLeave = jest.fn()
+        const onPointerEnter = jest.fn()
+        const onPointerLeave = jest.fn()
         const { container } = render(
             <motion.div
-                onMouseEnter={() => onMouseEnter()}
-                onMouseLeave={() => onMouseLeave()}
+                onPointerEnter={() => onPointerEnter()}
+                onPointerLeave={() => onPointerLeave()}
             />
         )
 
         fireEvent.pointerEnter(container.firstChild as Element)
         fireEvent.pointerLeave(container.firstChild as Element)
 
-        expect(onMouseEnter).toBeCalled()
-        expect(onMouseLeave).toBeCalled()
+        expect(onPointerEnter).toBeCalled()
+        expect(onPointerLeave).toBeCalled()
     })
 
     it("renders custom component", async () => {
