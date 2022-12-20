@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.10.3] 2022-12-20
+
+### Changed
+
+-   Firing `animateChanges` in `useLayoutEffect` rather than `useEffect` to ensure optimised appear animations are handed off before paint.
+
 ## [7.10.2] 2022-12-16
 
 ### Fixed
