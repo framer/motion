@@ -190,7 +190,23 @@ export class MotionValue<V = any> {
             this.events[eventName] = new SubscriptionManager()
         }
 
-        return this.events[eventName].add(callback)
+        const unsubscribe = this.events[eventName].add(callback)
+
+        if (eventName === "change") {
+            return () => {
+                unsubscribe()
+
+                /**
+                 * If we have no more change listeners and an active
+                 * animation, stop the animation.
+                 */
+                if (!this.events.change.getSize() && this.stopAnimation) {
+                    this.stopAnimation()
+                }
+            }
+        }
+
+        return unsubscribe
     }
 
     clearListeners() {
