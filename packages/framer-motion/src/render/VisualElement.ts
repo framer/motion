@@ -691,11 +691,13 @@ export abstract class VisualElement<
      */
     addValue(key: string, value: MotionValue) {
         // Remove existing value if it exists
-        if (this.hasValue(key)) this.removeValue(key)
+        if (value !== this.values.get(key)) {
+            this.removeValue(key)
+            this.bindToMotionValue(key, value)
+        }
 
         this.values.set(key, value)
         this.latestValues[key] = value.get()
-        this.bindToMotionValue(key, value)
     }
 
     /**
@@ -720,7 +722,7 @@ export abstract class VisualElement<
      * Get a motion value for this key. If called with a default
      * value, we'll create one if none exists.
      */
-    getValue(key: string, defaultValue?: string | number) {
+    getValue(key: string, defaultValue?: string | number): MotionValue {
         if (this.props.values && this.props.values[key]) {
             return this.props.values[key]
         }

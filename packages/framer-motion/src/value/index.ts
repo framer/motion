@@ -386,7 +386,6 @@ export class MotionValue<V = any> {
     stop() {
         if (this.stopAnimation) {
             this.stopAnimation()
-            this.stopAnimation = undefined
             if (this.events.animationCancel) {
                 this.events.animationCancel.notify()
             }

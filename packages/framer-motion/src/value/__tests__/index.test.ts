@@ -87,11 +87,12 @@ describe("motionValue", () => {
 
         expect(value.isAnimating()).toEqual(true)
 
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             unsubscribeA()
             expect(value.isAnimating()).toEqual(true)
             unsubscribeB()
             expect(value.isAnimating()).toEqual(false)
+            resolve()
         })
     })
 })
