@@ -6,7 +6,11 @@ import { EventInfo } from "./types"
  */
 function filterPrimaryPointer(eventHandler: EventListener): EventListener {
     return (event: PointerEvent) => {
-        if (event.isPrimary) {
+        /**
+         * Specifically match against false here as incomplete versions of
+         * PointerEvents in very old browser might have it set as undefined.
+         */
+        if (event.isPrimary !== false) {
             eventHandler(event)
         }
     }
