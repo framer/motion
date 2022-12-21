@@ -7,6 +7,7 @@ import { Point, TransformPoint } from "../projection/geometry/types"
 import { pipe } from "../utils/pipe"
 import { distance2D } from "../utils/distance"
 import { frameData } from "../frameloop/data"
+import { isPrimaryPointer } from "../events/utils/is-primary-pointer"
 
 /**
  * Passed in to pan event handlers like `onPan` the `PanInfo` object contains
@@ -145,7 +146,7 @@ export class PanSession {
         { transformPagePoint }: PanSessionOptions = {}
     ) {
         // If we have more than one touch, don't start detecting this gesture
-        if (!event.isPrimary) return
+        if (!isPrimaryPointer(event)) return
 
         this.handlers = handlers
         this.transformPagePoint = transformPagePoint

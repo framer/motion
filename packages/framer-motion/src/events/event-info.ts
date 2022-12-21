@@ -1,20 +1,5 @@
 import { EventInfo } from "./types"
-
-/**
- * Filters out events not attached to the primary pointer (currently left mouse button)
- * @param eventHandler
- */
-function filterPrimaryPointer(eventHandler: EventListener): EventListener {
-    return (event: PointerEvent) => {
-        /**
-         * Specifically match against false here as incomplete versions of
-         * PointerEvents in very old browser might have it set as undefined.
-         */
-        if (event.isPrimary !== false) {
-            eventHandler(event)
-        }
-    }
-}
+import { isPrimaryPointer } from "./utils/is-primary-pointer"
 
 export type EventListenerWithPointInfo = (
     e: PointerEvent,
@@ -45,6 +30,6 @@ export const wrapHandler = (
         handler(event, extractEventInfo(event))
 
     return shouldFilterPrimaryPointer
-        ? filterPrimaryPointer(listener)
+        ? (event: PointerEvent) => isPrimaryPointer(event) && listener(event)
         : listener
 }
