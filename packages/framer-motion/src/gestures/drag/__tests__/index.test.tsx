@@ -1,8 +1,7 @@
 import * as React from "react"
-import { render } from "../../../../jest.setup"
+import { pointerDown, render } from "../../../../jest.setup"
 import { BoundingBox, motion, motionValue, MotionValue } from "../../../"
 import { MockDrag, drag, deferred, frame, Point, sleep } from "./utils"
-import { fireEvent } from "@testing-library/dom"
 
 describe("drag", () => {
     test("onDragStart fires", async () => {
@@ -823,7 +822,7 @@ describe("dragging", () => {
         pointer.end()
 
         lastX = x.get()
-        fireEvent.mouseDown(container.firstChild as Element)
+        pointerDown(container.firstChild as Element)
         await sleep(20)
 
         expect(x.get()).toBe(lastX)

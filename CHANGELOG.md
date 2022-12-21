@@ -4,6 +4,17 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.0.0] 2022-12-23
+
+### Removed
+
+-   Removed polyfilled support for mouse/touch events.
+-   Removed drag pointerup patch for Safari over `<select />` elements.
+
+### Changed
+
+-   `DragControls.start` now accepts `PointerEvent` only.
+
 ## [7.10.3] 2022-12-20
 
 ### Changed

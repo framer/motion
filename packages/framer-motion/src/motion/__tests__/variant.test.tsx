@@ -1,4 +1,9 @@
-import { mouseDown, mouseEnter, mouseUp, render } from "../../../jest.setup"
+import {
+    pointerDown,
+    pointerEnter,
+    pointerUp,
+    render,
+} from "../../../jest.setup"
 import { motion, MotionConfig, useMotionValue } from "../../"
 import * as React from "react"
 import { Variants } from "../../types"
@@ -969,14 +974,14 @@ describe("animate prop as variant", () => {
         const inner = getByTestId("inner")
         expect(inner).toHaveStyle("background-color: rgb(255,255,0)")
 
-        mouseEnter(getByTestId("parent"))
+        pointerEnter(getByTestId("parent"))
 
         await wait(20)
 
         expect(inner).toHaveStyle("background-color: rgb(150,150,0)")
 
-        mouseDown(getByTestId("variant-trigger"))
-        mouseUp(getByTestId("variant-trigger"))
+        pointerDown(getByTestId("variant-trigger"))
+        pointerUp(getByTestId("variant-trigger"))
 
         await wait(20)
 

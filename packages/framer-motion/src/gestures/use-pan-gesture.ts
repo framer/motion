@@ -2,7 +2,7 @@ import { useRef, useContext, useEffect } from "react"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { usePointerEvent } from "../events/use-pointer-event"
-import { PanSession, PanInfo, AnyPointerEvent } from "./PanSession"
+import { PanSession, PanInfo } from "./PanSession"
 import { FeatureProps } from "../motion/features/types"
 
 /**
@@ -47,7 +47,7 @@ export function usePanGesture({
         }
     })
 
-    function onPointerDown(event: AnyPointerEvent) {
+    function onPointerDown(event: PointerEvent) {
         panSession.current = new PanSession(event, handlers, {
             transformPagePoint,
         })
