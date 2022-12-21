@@ -76,4 +76,22 @@ describe("motionValue", () => {
             }, 100)
         })
     })
+
+    test("When all change listeners removed, stop animation", async () => {
+        const value = motionValue(0)
+
+        const unsubscribeA = value.on("change", (latest) => latest)
+        const unsubscribeB = value.on("change", (latest) => latest)
+
+        animate(value, 100)
+
+        expect(value.isAnimating()).toEqual(true)
+
+        return new Promise((resolve) => {
+            unsubscribeA()
+            expect(value.isAnimating()).toEqual(true)
+            unsubscribeB()
+            expect(value.isAnimating()).toEqual(false)
+        })
+    })
 })

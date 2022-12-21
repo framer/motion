@@ -197,11 +197,10 @@ export class MotionValue<V = any> {
                 unsubscribe()
 
                 /**
-                 * If we have no more change listeners and an active
-                 * animation, stop the animation.
+                 * If we have no more change listeners stop active animations.
                  */
-                if (!this.events.change.getSize() && this.stopAnimation) {
-                    this.stopAnimation()
+                if (!this.events.change.getSize()) {
+                    this.stop()
                 }
             }
         }
@@ -387,6 +386,7 @@ export class MotionValue<V = any> {
     stop() {
         if (this.stopAnimation) {
             this.stopAnimation()
+            this.stopAnimation = undefined
             if (this.events.animationCancel) {
                 this.events.animationCancel.notify()
             }
