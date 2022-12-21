@@ -4,11 +4,19 @@ import { motionValue } from "."
 import { useConstant } from "../utils/use-constant"
 import { useEffect } from "react"
 import { useIsomorphicLayoutEffect } from "../three-entry"
+import { warning } from "hey-listen"
 
 interface UseScrollOptions extends Omit<ScrollOptions, "container" | "target"> {
     container?: RefObject<HTMLElement>
     target?: RefObject<HTMLElement>
     layoutEffect?: boolean
+}
+
+function refWarning(name: string, ref?: RefObject<HTMLElement>) {
+    warning(
+        Boolean(!ref || ref.current),
+        `You have defined a ${name} options but the provided ref is not yet hydrated, probably because it's defined higher up the tree. Try calling useScroll() in the same component as the ref, or setting its \`layoutEffect: false\` option.`
+    )
 }
 
 const createScrollMotionValues = () => ({
@@ -31,6 +39,9 @@ export function useScroll({
         : useEffect
 
     useLifecycleEffect(() => {
+        refWarning("target", target)
+        refWarning("container", container)
+
         return scroll(
             ({ x, y }) => {
                 values.scrollX.set(x.current)
