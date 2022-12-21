@@ -145,27 +145,4 @@ describe("useSpring", () => {
         // Cast to any here as `.events` is private API
         expect((a as any).events.change.getSize()).toBe(1)
     })
-
-    test("can create a motion value from a number", async () => {
-        const promise = new Promise((resolve) => {
-            const Component = () => {
-                const x = useSpring(0)
-
-                React.useEffect(() => {
-                    x.on("change", (v) => resolve(v))
-                    x.set(100)
-                })
-
-                return null
-            }
-
-            const { rerender } = render(<Component />)
-            rerender(<Component />)
-        })
-
-        const resolved = await promise
-
-        expect(resolved).not.toBe(0)
-        expect(resolved).not.toBe(100)
-    })
 })
