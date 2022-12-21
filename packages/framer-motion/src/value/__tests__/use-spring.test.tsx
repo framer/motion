@@ -89,6 +89,43 @@ describe("useSpring", () => {
         expect(resolved).toEqual([0, 2, 4, 7, 10, 14, 19, 24, 29, 34])
     })
 
+    test.only("will not animate if immediate=true", async () => {
+        const promise = new Promise((resolve) => {
+            const output: number[] = []
+            const Component = () => {
+                const y = useSpring(0, {
+                    driver: syncDriver(10),
+                } as any)
+
+                React.useEffect(() => {
+                    return y.on("change", (v) => {
+                        if (output.length >= 10) {
+                        } else {
+                            output.push(Math.round(v))
+                        }
+                    })
+                })
+
+                React.useEffect(() => {
+                    y.set(100, true)
+
+                    setTimeout(() => {
+                        resolve(output)
+                    }, 100)
+                }, [])
+
+                return null
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        const resolved = await promise
+
+        expect(resolved).toEqual([100])
+    })
+
     test("unsubscribes when attached to a new value", () => {
         const a = motionValue(0)
         const b = motionValue(0)
@@ -107,5 +144,28 @@ describe("useSpring", () => {
 
         // Cast to any here as `.events` is private API
         expect((a as any).events.change.getSize()).toBe(1)
+    })
+
+    test("can create a motion value from a number", async () => {
+        const promise = new Promise((resolve) => {
+            const Component = () => {
+                const x = useSpring(0)
+
+                React.useEffect(() => {
+                    x.on("change", (v) => resolve(v))
+                    x.set(100)
+                })
+
+                return null
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        const resolved = await promise
+
+        expect(resolved).not.toBe(0)
+        expect(resolved).not.toBe(100)
     })
 })

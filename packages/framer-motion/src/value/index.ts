@@ -92,6 +92,7 @@ export class MotionValue<V = any> {
      * @internal
      */
     private passiveEffect?: PassiveEffect<V>
+    private stopPassiveEffect?: VoidFunction
 
     /**
      * A reference to the currently-controlling Popmotion animation
@@ -214,8 +215,9 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    attach(passiveEffect: PassiveEffect<V>) {
+    attach(passiveEffect: PassiveEffect<V>, stopPassiveEffect: VoidFunction) {
         this.passiveEffect = passiveEffect
+        this.stopPassiveEffect = stopPassiveEffect
     }
 
     /**
@@ -233,11 +235,16 @@ export class MotionValue<V = any> {
      *
      * @public
      */
-    set(v: V, render = true) {
-        if (!render || !this.passiveEffect) {
-            this.updateAndNotify(v, render)
+    set(v: V, immediate = false) {
+        if (immediate || !this.passiveEffect) {
+            this.updateAndNotify(v)
         } else {
             this.passiveEffect(v, this.updateAndNotify)
+        }
+
+        if (immediate) {
+            this.prev = v
+            if (this.stopPassiveEffect) this.stopPassiveEffect()
         }
     }
 
@@ -247,7 +254,7 @@ export class MotionValue<V = any> {
         this.timeDelta = delta
     }
 
-    updateAndNotify = (v: V, render = true) => {
+    updateAndNotify = (v: V) => {
         this.prev = this.current
         this.current = v
 
@@ -270,7 +277,7 @@ export class MotionValue<V = any> {
         }
 
         // Update render subscribers
-        if (render && this.events.renderRequest) {
+        if (this.events.renderRequest) {
             this.events.renderRequest.notify(this.current)
         }
     }
@@ -413,6 +420,10 @@ export class MotionValue<V = any> {
     destroy() {
         this.clearListeners()
         this.stop()
+
+        if (this.stopPassiveEffect) {
+            this.stopPassiveEffect()
+        }
     }
 }
 

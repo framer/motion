@@ -35,6 +35,12 @@ export function useSpring(
     const activeSpringAnimation = useRef<PlaybackControls | null>(null)
     const value = useMotionValue(isMotionValue(source) ? source.get() : source)
 
+    const stopAnimation = () => {
+        if (activeSpringAnimation.current) {
+            activeSpringAnimation.current.stop()
+        }
+    }
+
     useMemo(() => {
         return value.attach((v, set) => {
             /**
@@ -43,9 +49,7 @@ export function useSpring(
              */
             if (isStatic) return set(v)
 
-            if (activeSpringAnimation.current) {
-                activeSpringAnimation.current.stop()
-            }
+            stopAnimation()
 
             activeSpringAnimation.current = animate({
                 keyframes: [value.get(), v],
@@ -56,7 +60,7 @@ export function useSpring(
             })
 
             return value.get()
-        })
+        }, stopAnimation)
     }, [JSON.stringify(config)])
 
     useIsomorphicLayoutEffect(() => {
