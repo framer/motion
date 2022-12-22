@@ -231,7 +231,7 @@ export class MotionValue<V = any> {
      * ```
      *
      * @param latest - Latest value to set.
-     * @param render - Whether to notify render subscribers. Defaults to `true`
+     * @param immediate - If `true`, set immediately with zero velocity.
      *
      * @public
      */
