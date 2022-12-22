@@ -144,7 +144,7 @@ const convertChangedValueTypes = (
     changedKeys.forEach((key) => {
         // Restore styles to their **calculated computed style**, not their actual
         // originally set style. This allows us to animate between equivalent pixel units.
-        const value = visualElement.getValue(key) as MotionValue
+        const value = visualElement.getValue(key)
 
         value.set(origin[key], true)
         target[key] = positionalValues[key](targetBbox, elementComputedStyle)
