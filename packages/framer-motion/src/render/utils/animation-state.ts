@@ -60,7 +60,7 @@ export function createAnimationState(
     visualElement: VisualElement
 ): AnimationState {
     let animate = animateList(visualElement)
-    let state = createState()
+    const state = createState()
     let isInitialRender = true
 
     /**

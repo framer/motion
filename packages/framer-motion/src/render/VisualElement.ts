@@ -269,12 +269,6 @@ export abstract class VisualElement<
     private valueSubscriptions = new Map<string, VoidFunction>()
 
     /**
-     * A set of subscriptions to values provided via props. We don't
-     * need to respond to
-     */
-    private headlessValueSubscriptions?: Set<VoidFunction>
-
-    /**
      * A reference to the ReducedMotionConfig passed to the VisualElement's host React component.
      */
     private reducedMotionConfig: ReducedMotionConfig | undefined
@@ -406,7 +400,6 @@ export abstract class VisualElement<
         cancelSync.update(this.notifyUpdate)
         cancelSync.render(this.render)
         this.valueSubscriptions.forEach((remove) => remove())
-        this.headlessValueSubscriptions?.forEach((remove) => remove())
         this.removeFromVariantTree?.()
         this.parent?.children.delete(this)
         for (const key in this.events) {
@@ -609,21 +602,6 @@ export abstract class VisualElement<
         this.props = props
 
         /**
-         *
-         */
-        const prevValueSubscriptions = this.headlessValueSubscriptions
-        if (props.values) {
-            this.headlessValueSubscriptions = new Set()
-            for (const key in props.values) {
-                props.values[key] &&
-                    this.headlessValueSubscriptions.add(
-                        props.values[key].on("change", () => {})
-                    )
-            }
-        }
-        prevValueSubscriptions?.forEach((remove) => remove())
-
-        /**
          * Update prop event handlers ie onAnimationStart, onAnimationComplete
          */
         for (let i = 0; i < propEventHandlers.length; i++) {
@@ -743,7 +721,12 @@ export abstract class VisualElement<
      * Get a motion value for this key. If called with a default
      * value, we'll create one if none exists.
      */
-    getValue(key: string, defaultValue?: string | number): MotionValue {
+    getValue(key: string): MotionValue | undefined
+    getValue(key: string, defaultValue: string | number): MotionValue
+    getValue(
+        key: string,
+        defaultValue?: string | number
+    ): MotionValue | undefined {
         if (this.props.values && this.props.values[key]) {
             return this.props.values[key]
         }
@@ -755,7 +738,7 @@ export abstract class VisualElement<
             this.addValue(key, value)
         }
 
-        return value as MotionValue
+        return value
     }
 
     /**
