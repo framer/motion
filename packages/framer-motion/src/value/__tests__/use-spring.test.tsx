@@ -107,7 +107,7 @@ describe("useSpring", () => {
                 })
 
                 React.useEffect(() => {
-                    y.set(100, true)
+                    y.jump(100)
 
                     setTimeout(() => {
                         resolve(output)
