@@ -89,7 +89,7 @@ describe("useSpring", () => {
         expect(resolved).toEqual([0, 2, 4, 7, 10, 14, 19, 24, 29, 34])
     })
 
-    test("will not animate if immediate=true", async () => {
+    test.only("will not animate if immediate=true", async () => {
         const promise = new Promise((resolve) => {
             const output: number[] = []
             const Component = () => {

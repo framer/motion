@@ -4,7 +4,6 @@ import { sync } from "../frameloop"
 import type { VisualElement } from "../render/VisualElement"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { velocityPerSecond } from "../utils/velocity-per-second"
-import { warning } from "hey-listen"
 
 export type Transformer<T> = (v: T) => T
 
@@ -244,21 +243,21 @@ export class MotionValue<V = any> {
         }
     }
 
+    setWithVelocity(prev: V, current: V, delta: number) {
+        this.set(current)
+        this.prev = prev
+        this.timeDelta = delta
+    }
+
     /**
      * Set the state of the `MotionValue`, stopping any active animations,
      * effects, and resets velocity to `0`.
      */
     jump(v: V) {
-        this.set(v)
+        this.updateAndNotify(v)
         this.prev = v
         this.stop()
         if (this.stopPassiveEffect) this.stopPassiveEffect()
-    }
-
-    setWithVelocity(prev: V, current: V, delta: number) {
-        this.set(current)
-        this.prev = prev
-        this.timeDelta = delta
     }
 
     updateAndNotify = (v: V, render = true) => {
@@ -272,7 +271,8 @@ export class MotionValue<V = any> {
             this.lastUpdated = timestamp
             sync.postRender(this.scheduleVelocityCheck)
         }
-
+        console.trace()
+        console.log(this.prev, this.current, this.events.change)
         // Update update subscribers
         if (this.prev !== this.current && this.events.change) {
             this.events.change.notify(this.current)

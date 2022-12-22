@@ -1,4 +1,4 @@
-import { useRef, useMemo, useContext } from "react"
+import { useRef, useContext, useInsertionEffect } from "react"
 import { MotionValue } from "../value"
 import { isMotionValue } from "./utils/is-motion-value"
 import { useMotionValue } from "./use-motion-value"
@@ -41,7 +41,7 @@ export function useSpring(
         }
     }
 
-    useMemo(() => {
+    useInsertionEffect(() => {
         return value.attach((v, set) => {
             /**
              * A more hollistic approach to this might be to use isStatic to fix VisualElement animations
