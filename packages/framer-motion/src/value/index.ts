@@ -232,7 +232,7 @@ export class MotionValue<V = any> {
      * ```
      *
      * @param latest - Latest value to set.
-     * @param render - If `false`, skip rendering.
+     * @param render - Whether to notify render subscribers. Defaults to `true`
      *
      * @public
      */
