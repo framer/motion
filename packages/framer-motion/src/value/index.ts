@@ -231,21 +231,27 @@ export class MotionValue<V = any> {
      * ```
      *
      * @param latest - Latest value to set.
-     * @param immediate - If `true`, set immediately with zero velocity.
+     * @param render - If `false`, skip rendering.
      *
      * @public
      */
-    set(v: V, immediate = false) {
-        if (immediate || !this.passiveEffect) {
-            this.updateAndNotify(v)
+    set(v: V, render = true) {
+        if (!render || !this.passiveEffect) {
+            this.updateAndNotify(v, render)
         } else {
             this.passiveEffect(v, this.updateAndNotify)
         }
+    }
 
-        if (immediate) {
-            this.prev = v
-            if (this.stopPassiveEffect) this.stopPassiveEffect()
-        }
+    /**
+     * Set the state of the `MotionValue`, stopping any active animations,
+     * effects, and resets velocity to `0`.
+     */
+    jump(v: V) {
+        this.set(v)
+        this.prev = v
+        this.stop()
+        if (this.stopPassiveEffect) this.stopPassiveEffect()
     }
 
     setWithVelocity(prev: V, current: V, delta: number) {
@@ -254,7 +260,7 @@ export class MotionValue<V = any> {
         this.timeDelta = delta
     }
 
-    updateAndNotify = (v: V) => {
+    updateAndNotify = (v: V, render = true) => {
         this.prev = this.current
         this.current = v
 
@@ -277,7 +283,7 @@ export class MotionValue<V = any> {
         }
 
         // Update render subscribers
-        if (this.events.renderRequest) {
+        if (render && this.events.renderRequest) {
             this.events.renderRequest.notify(this.current)
         }
     }
