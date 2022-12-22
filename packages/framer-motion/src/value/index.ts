@@ -188,10 +188,11 @@ export class MotionValue<V = any> {
             return () => {
                 unsubscribe()
 
+                /**
+                 * If we have no more change listeners by the start
+                 * of the next frame, stop active animations.
+                 */
                 sync.read(() => {
-                    /**
-                     * If we have no more change listeners stop active animations.
-                     */
                     if (!this.events.change.getSize()) {
                         this.stop()
                     }
