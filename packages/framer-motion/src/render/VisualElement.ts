@@ -266,13 +266,13 @@ export abstract class VisualElement<
      * A map of every subscription that binds the provided or generated
      * motion values onChange listeners to this visual element.
      */
-    private renderValueSubscriptions = new Map<string, VoidFunction>()
+    private valueSubscriptions = new Map<string, VoidFunction>()
 
     /**
      * A set of subscriptions to values provided via props. We don't
      * need to respond to
      */
-    private valueSubscriptions?: Set<VoidFunction>
+    private headlessValueSubscriptions?: Set<VoidFunction>
 
     /**
      * A reference to the ReducedMotionConfig passed to the VisualElement's host React component.
@@ -405,8 +405,8 @@ export abstract class VisualElement<
         this.projection?.unmount()
         cancelSync.update(this.notifyUpdate)
         cancelSync.render(this.render)
-        this.renderValueSubscriptions.forEach((remove) => remove())
-        this.valueSubscriptions?.forEach((remove) => remove())
+        this.valueSubscriptions.forEach((remove) => remove())
+        this.headlessValueSubscriptions?.forEach((remove) => remove())
         this.removeFromVariantTree?.()
         this.parent?.children.delete(this)
         for (const key in this.events) {
@@ -436,7 +436,7 @@ export abstract class VisualElement<
             this.scheduleRender
         )
 
-        this.renderValueSubscriptions.set(key, () => {
+        this.valueSubscriptions.set(key, () => {
             removeOnChange()
             removeOnRenderRequest()
         })
@@ -611,12 +611,12 @@ export abstract class VisualElement<
         /**
          *
          */
-        const prevValueSubscriptions = this.valueSubscriptions
+        const prevValueSubscriptions = this.headlessValueSubscriptions
         if (props.values) {
-            this.valueSubscriptions = new Set()
+            this.headlessValueSubscriptions = new Set()
             for (const key in props.values) {
                 props.values[key] &&
-                    this.valueSubscriptions.add(
+                    this.headlessValueSubscriptions.add(
                         props.values[key].on("change", () => {})
                     )
             }
@@ -726,8 +726,8 @@ export abstract class VisualElement<
      */
     removeValue(key: string) {
         this.values.delete(key)
-        this.renderValueSubscriptions.get(key)?.()
-        this.renderValueSubscriptions.delete(key)
+        this.valueSubscriptions.get(key)?.()
+        this.valueSubscriptions.delete(key)
         delete this.latestValues[key]
         this.removeValueFromRenderState(key, this.renderState)
     }
