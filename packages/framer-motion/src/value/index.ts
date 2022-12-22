@@ -4,6 +4,7 @@ import { sync } from "../frameloop"
 import type { VisualElement } from "../render/VisualElement"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { velocityPerSecond } from "../utils/velocity-per-second"
+import { warning } from "hey-listen"
 
 export type Transformer<T> = (v: T) => T
 
