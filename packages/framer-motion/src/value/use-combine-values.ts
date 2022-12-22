@@ -33,7 +33,7 @@ export function useCombineMotionValues<R>(
     useIsomorphicLayoutEffect(() => {
         const scheduleUpdate = () => sync.update(updateValue, false, true)
         const subscriptions = values.map((v) => v.on("change", scheduleUpdate))
-        console.log(values)
+
         return () => {
             subscriptions.forEach((unsubscribe) => unsubscribe())
             cancelSync.update(updateValue)
