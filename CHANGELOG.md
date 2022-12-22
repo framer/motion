@@ -4,7 +4,14 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [8.0.3] 2022-12-28
+## [8.0.4] 2023-01-03
+
+### Fixed
+
+-   Cleaning up animations when a motion value has no active `"change"` subscribers.
+-   Changing `useMotionValueEvent` subscription to `useInsertionEffect`.
+
+## [8.0.3] 2023-01-03
 
 ### Fixed
 

@@ -2,6 +2,7 @@ import { render } from "../../../jest.setup"
 import {
     motion,
     motionValue,
+    pipe,
     useMotionTemplate,
     useMotionValue,
     useTransform,
@@ -123,6 +124,17 @@ describe("values prop", () => {
                 const scale = useMotionValue(2)
                 const transform = useMotionTemplate`scale(${scale}) translateX(${x}px)`
                 const ref = React.useRef<HTMLDivElement>(null)
+
+                React.useInsertionEffect(() => {
+                    return pipe(
+                        x.on("animationCancel", () => {
+                            // console.trace()
+                            console.log("cancel")
+                        }),
+                        x.on("animationStart", () => console.log("start")),
+                        x.on("animationComplete", () => console.log("complete"))
+                    ) as VoidFunction
+                })
 
                 return (
                     <motion.div

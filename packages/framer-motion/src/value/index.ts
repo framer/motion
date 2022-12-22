@@ -158,14 +158,6 @@ export class MotionValue<V = any> {
      * }
      * ```
      *
-     * @privateRemarks
-     *
-     * We could look into a `useOnChange` hook if the above lifecycle management proves confusing.
-     *
-     * ```jsx
-     * useOnChange(x, () => {})
-     * ```
-     *
      * @param subscriber - A function that receives the latest value.
      * @returns A function that, when called, will cancel this subscription.
      *

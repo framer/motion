@@ -59,10 +59,5 @@ export function useVisualElement<Instance, RenderState>(
         }
     })
 
-    useIsomorphicLayoutEffect(
-        () => () => visualElement && visualElement.notify("Unmount"),
-        []
-    )
-
     return visualElement
 }

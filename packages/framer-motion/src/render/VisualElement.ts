@@ -45,7 +45,6 @@ const propEventHandlers = [
     "AnimationStart",
     "AnimationComplete",
     "Update",
-    "Unmount",
     "BeforeLayoutMeasure",
     "LayoutMeasure",
     "LayoutAnimationStart",
@@ -267,7 +266,13 @@ export abstract class VisualElement<
      * A map of every subscription that binds the provided or generated
      * motion values onChange listeners to this visual element.
      */
-    private valueSubscriptions = new Map<string, VoidFunction>()
+    private renderValueSubscriptions = new Map<string, VoidFunction>()
+
+    /**
+     * A set of subscriptions to values provided via props. We don't
+     * need to respond to
+     */
+    private valueSubscriptions?: Set<VoidFunction>
 
     /**
      * A reference to the ReducedMotionConfig passed to the VisualElement's host React component.
@@ -400,7 +405,8 @@ export abstract class VisualElement<
         this.projection?.unmount()
         cancelSync.update(this.notifyUpdate)
         cancelSync.render(this.render)
-        this.valueSubscriptions.forEach((remove) => remove())
+        this.renderValueSubscriptions.forEach((remove) => remove())
+        this.valueSubscriptions?.forEach((remove) => remove())
         this.removeFromVariantTree?.()
         this.parent?.children.delete(this)
         for (const key in this.events) {
@@ -430,7 +436,7 @@ export abstract class VisualElement<
             this.scheduleRender
         )
 
-        this.valueSubscriptions.set(key, () => {
+        this.renderValueSubscriptions.set(key, () => {
             removeOnChange()
             removeOnRenderRequest()
         })
@@ -603,6 +609,21 @@ export abstract class VisualElement<
         this.props = props
 
         /**
+         *
+         */
+        const prevValueSubscriptions = this.valueSubscriptions
+        if (props.values) {
+            this.valueSubscriptions = new Set()
+            for (const key in props.values) {
+                props.values[key] &&
+                    this.valueSubscriptions.add(
+                        props.values[key].on("change", () => {})
+                    )
+            }
+        }
+        prevValueSubscriptions?.forEach((remove) => remove())
+
+        /**
          * Update prop event handlers ie onAnimationStart, onAnimationComplete
          */
         for (let i = 0; i < propEventHandlers.length; i++) {
@@ -705,8 +726,8 @@ export abstract class VisualElement<
      */
     removeValue(key: string) {
         this.values.delete(key)
-        this.valueSubscriptions.get(key)?.()
-        this.valueSubscriptions.delete(key)
+        this.renderValueSubscriptions.get(key)?.()
+        this.renderValueSubscriptions.delete(key)
         delete this.latestValues[key]
         this.removeValueFromRenderState(key, this.renderState)
     }

@@ -1,5 +1,5 @@
+import { useInsertionEffect } from "react"
 import { MotionValue, MotionValueEventCallbacks } from "../value"
-import { useIsomorphicLayoutEffect } from "./use-isomorphic-effect"
 
 export function useMotionValueEvent<
     V,
@@ -9,7 +9,7 @@ export function useMotionValueEvent<
     event: EventName,
     callback: MotionValueEventCallbacks<V>[EventName]
 ) {
-    useIsomorphicLayoutEffect(
+    useInsertionEffect(
         () => value.on(event, callback),
         [value, event, callback]
     )

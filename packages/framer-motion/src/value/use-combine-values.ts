@@ -1,7 +1,7 @@
 import { MotionValue } from "."
 import { useMotionValue } from "./use-motion-value"
-import { useMultiOnChange } from "./use-on-change"
 import { sync, cancelSync } from "../frameloop"
+import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
 
 export function useCombineMotionValues<R>(
     values: MotionValue[],
@@ -30,11 +30,15 @@ export function useCombineMotionValues<R>(
      * Subscribe to all motion values found within the template. Whenever any of them change,
      * schedule an update.
      */
-    useMultiOnChange(
-        values,
-        () => sync.update(updateValue, false, true),
-        () => cancelSync.update(updateValue)
-    )
+    useIsomorphicLayoutEffect(() => {
+        const scheduleUpdate = () => sync.update(updateValue, false, true)
+        const subscriptions = values.map((v) => v.on("change", scheduleUpdate))
+        console.log(values)
+        return () => {
+            subscriptions.forEach((unsubscribe) => unsubscribe())
+            cancelSync.update(updateValue)
+        }
+    })
 
     return value
 }

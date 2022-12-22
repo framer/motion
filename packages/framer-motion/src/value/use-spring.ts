@@ -2,11 +2,11 @@ import { useRef, useMemo, useContext } from "react"
 import { MotionValue } from "../value"
 import { isMotionValue } from "./utils/is-motion-value"
 import { useMotionValue } from "./use-motion-value"
-import { useOnChange } from "./use-on-change"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { PlaybackControls } from "../animation/legacy-popmotion/types"
 import { animate } from "../animation/legacy-popmotion"
 import { SpringOptions } from "../animation/types"
+import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
@@ -59,7 +59,11 @@ export function useSpring(
         })
     }, [JSON.stringify(config)])
 
-    useOnChange(source, (v) => value.set(parseFloat(v)))
+    useIsomorphicLayoutEffect(() => {
+        if (isMotionValue(source)) {
+            return source.on("change", (v) => value.set(parseFloat(v)))
+        }
+    }, [value])
 
     return value
 }
