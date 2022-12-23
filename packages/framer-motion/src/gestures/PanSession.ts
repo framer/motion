@@ -199,6 +199,8 @@ export class PanSession {
     }
 
     private handlePointerMove = (event: PointerEvent, info: EventInfo) => {
+        if (!isPrimaryPointer(event)) return
+
         this.lastMoveEvent = event
         this.lastMoveEventInfo = transformPoint(info, this.transformPagePoint)
 
@@ -207,6 +209,8 @@ export class PanSession {
     }
 
     private handlePointerUp = (event: PointerEvent, info: EventInfo) => {
+        if (!isPrimaryPointer(event)) return
+
         this.end()
 
         const { onEnd, onSessionEnd } = this.handlers

@@ -83,6 +83,6 @@ export function useTap(
             onPointerDown?.(event)
 
             onTapStart?.(event, info)
-        }, true),
+        }),
     }
 }

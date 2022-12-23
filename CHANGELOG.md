@@ -9,6 +9,7 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Fixed
 
 -   Use range for tslib dependency.
+-   Fixing multitouch with drag and pan gestures.
 
 ## [8.0.2] 2022-12-23
 

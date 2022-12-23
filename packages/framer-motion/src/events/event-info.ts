@@ -23,13 +23,8 @@ export function getViewportPointFromEvent(event: PointerEvent) {
 }
 
 export const wrapHandler = (
-    handler: EventListenerWithPointInfo,
-    shouldFilterPrimaryPointer = false
+    handler: EventListenerWithPointInfo
 ): EventListener => {
-    const listener: EventListener = (event: any) =>
-        handler(event, extractEventInfo(event))
-
-    return shouldFilterPrimaryPointer
-        ? (event: PointerEvent) => isPrimaryPointer(event) && listener(event)
-        : listener
+    return (event: PointerEvent) =>
+        isPrimaryPointer(event) && handler(event, extractEventInfo(event))
 }

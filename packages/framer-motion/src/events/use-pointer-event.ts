@@ -8,12 +8,7 @@ export function addPointerEvent(
     handler: EventListenerWithPointInfo,
     options?: AddEventListenerOptions
 ) {
-    return addDomEvent(
-        target,
-        eventName,
-        wrapHandler(handler, eventName === "pointerdown"),
-        options
-    )
+    return addDomEvent(target, eventName, wrapHandler(handler), options)
 }
 
 export function usePointerEvent(
@@ -22,10 +17,5 @@ export function usePointerEvent(
     handler?: EventListenerWithPointInfo | undefined,
     options?: AddEventListenerOptions
 ) {
-    return useDomEvent(
-        ref,
-        eventName,
-        handler && wrapHandler(handler, eventName === "pointerdown"),
-        options
-    )
+    return useDomEvent(ref, eventName, handler && wrapHandler(handler), options)
 }
