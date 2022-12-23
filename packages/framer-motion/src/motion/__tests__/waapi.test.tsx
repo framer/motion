@@ -25,7 +25,7 @@ afterEach(() => {
 })
 
 describe("WAAPI animations", () => {
-    test("opacity animates with WAAPI", () => {
+    test("opacity animates with WAAPI at default settings", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -38,6 +38,17 @@ describe("WAAPI animations", () => {
         rerender(<Component />)
 
         expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { opacity: [0, 1], offset: undefined },
+            {
+                delay: -0,
+                duration: 300,
+                easing: "linear",
+                iterations: 1,
+                direction: "normal",
+                fill: "both",
+            }
+        )
     })
 
     test("WAAPI is called with expected arguments", () => {
