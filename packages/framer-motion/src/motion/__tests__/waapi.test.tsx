@@ -25,7 +25,7 @@ afterEach(() => {
 })
 
 describe("WAAPI animations", () => {
-    test("opacity animates with WAAPI", () => {
+    test("opacity animates with WAAPI at default settings", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -38,6 +38,17 @@ describe("WAAPI animations", () => {
         rerender(<Component />)
 
         expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { opacity: [0, 1], offset: undefined },
+            {
+                delay: -0,
+                duration: 300,
+                easing: "linear",
+                iterations: 1,
+                direction: "normal",
+                fill: "both",
+            }
+        )
     })
 
     test("WAAPI is called with expected arguments", () => {
@@ -95,7 +106,7 @@ describe("WAAPI animations", () => {
             {
                 easing: "ease-in",
                 delay: -0,
-                duration: 0.3,
+                duration: 300,
                 direction: "normal",
                 fill: "both",
                 iterations: 1,
@@ -124,7 +135,7 @@ describe("WAAPI animations", () => {
             {
                 easing: "ease-out",
                 delay: -0,
-                duration: 0.3,
+                duration: 300,
                 direction: "normal",
                 fill: "both",
                 iterations: 1,
@@ -153,7 +164,7 @@ describe("WAAPI animations", () => {
             {
                 easing: "ease-in-out",
                 delay: -0,
-                duration: 0.3,
+                duration: 300,
                 direction: "normal",
                 fill: "both",
                 iterations: 1,
@@ -182,7 +193,7 @@ describe("WAAPI animations", () => {
             {
                 easing: "cubic-bezier(0, 0.65, 0.55, 1)",
                 delay: -0,
-                duration: 0.3,
+                duration: 300,
                 direction: "normal",
                 fill: "both",
                 iterations: 1,
@@ -211,7 +222,7 @@ describe("WAAPI animations", () => {
             {
                 easing: "cubic-bezier(0.55, 0, 1, 0.45)",
                 delay: -0,
-                duration: 0.3,
+                duration: 300,
                 direction: "normal",
                 fill: "both",
                 iterations: 1,
@@ -240,7 +251,7 @@ describe("WAAPI animations", () => {
             {
                 easing: "cubic-bezier(0.31, 0.01, 0.66, -0.59)",
                 delay: -0,
-                duration: 0.3,
+                duration: 300,
                 direction: "normal",
                 fill: "both",
                 iterations: 1,
@@ -269,7 +280,7 @@ describe("WAAPI animations", () => {
             {
                 easing: "cubic-bezier(0.33, 1.53, 0.69, 0.99)",
                 delay: -0,
-                duration: 0.3,
+                duration: 300,
                 direction: "normal",
                 fill: "both",
                 iterations: 1,

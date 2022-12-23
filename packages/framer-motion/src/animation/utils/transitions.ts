@@ -16,8 +16,9 @@ export function isTransitionDefined({
     repeatType,
     repeatDelay,
     from,
+    elapsed,
     ...transition
-}: Transition) {
+}: Transition & { elapsed?: number }) {
     return !!Object.keys(transition).length
 }
 

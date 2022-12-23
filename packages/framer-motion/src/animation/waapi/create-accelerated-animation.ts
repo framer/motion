@@ -19,7 +19,7 @@ export function createAcceleratedAnimation(
     valueName: string,
     { onUpdate, onComplete, ...options }: AnimationOptions
 ) {
-    let { keyframes, duration = 0.3, elapsed = 0, ease } = options
+    let { keyframes, duration = 300, elapsed = 0, ease } = options
 
     /**
      * If this animation needs pre-generated keyframes then generate.
