@@ -64,7 +64,7 @@
     "dependencies": {
         "@motionone/dom": "^10.15.3",
         "hey-listen": "^1.0.8",
-        "tslib": "2.4.0"
+        "tslib": "^2.4.0"
     },
     "optionalDependencies": {
         "@emotion/is-prop-valid": "^0.8.2"
