@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.0.3] 2022-12-28
+
+### Fixed
+
+-   Use range for tslib dependency.
+
 ## [8.0.2] 2022-12-23
 
 ### Fixed
