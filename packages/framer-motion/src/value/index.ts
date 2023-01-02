@@ -92,6 +92,7 @@ export class MotionValue<V = any> {
      * @internal
      */
     private passiveEffect?: PassiveEffect<V>
+    private stopPassiveEffect?: VoidFunction
 
     /**
      * A reference to the currently-controlling Popmotion animation
@@ -214,8 +215,9 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    attach(passiveEffect: PassiveEffect<V>) {
+    attach(passiveEffect: PassiveEffect<V>, stopPassiveEffect: VoidFunction) {
         this.passiveEffect = passiveEffect
+        this.stopPassiveEffect = stopPassiveEffect
     }
 
     /**
@@ -245,6 +247,17 @@ export class MotionValue<V = any> {
         this.set(current)
         this.prev = prev
         this.timeDelta = delta
+    }
+
+    /**
+     * Set the state of the `MotionValue`, stopping any active animations,
+     * effects, and resets velocity to `0`.
+     */
+    jump(v: V) {
+        this.updateAndNotify(v)
+        this.prev = v
+        this.stop()
+        if (this.stopPassiveEffect) this.stopPassiveEffect()
     }
 
     updateAndNotify = (v: V, render = true) => {
@@ -413,6 +426,10 @@ export class MotionValue<V = any> {
     destroy() {
         this.clearListeners()
         this.stop()
+
+        if (this.stopPassiveEffect) {
+            this.stopPassiveEffect()
+        }
     }
 }
 

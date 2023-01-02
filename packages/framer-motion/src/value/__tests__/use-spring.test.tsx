@@ -89,6 +89,43 @@ describe("useSpring", () => {
         expect(resolved).toEqual([0, 2, 4, 7, 10, 14, 19, 24, 29, 34])
     })
 
+    test("will not animate if immediate=true", async () => {
+        const promise = new Promise((resolve) => {
+            const output: number[] = []
+            const Component = () => {
+                const y = useSpring(0, {
+                    driver: syncDriver(10),
+                } as any)
+
+                React.useEffect(() => {
+                    return y.on("change", (v) => {
+                        if (output.length >= 10) {
+                        } else {
+                            output.push(Math.round(v))
+                        }
+                    })
+                })
+
+                React.useEffect(() => {
+                    y.jump(100)
+
+                    setTimeout(() => {
+                        resolve(output)
+                    }, 100)
+                }, [])
+
+                return null
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        const resolved = await promise
+
+        expect(resolved).toEqual([100])
+    })
+
     test("unsubscribes when attached to a new value", () => {
         const a = motionValue(0)
         const b = motionValue(0)

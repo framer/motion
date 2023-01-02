@@ -27,13 +27,6 @@ const hasPositionalKey = (target: TargetWithKeyframes) => {
     return Object.keys(target).some(isPositionalKey)
 }
 
-const setAndResetVelocity = (value: MotionValue, to: string | number) => {
-    // Looks odd but setting it twice doesn't render, it'll just
-    // set both prev and current to the latest value
-    value.set(to, false)
-    value.set(to)
-}
-
 const isNumOrPxType = (v?: ValueType): v is ValueType =>
     v === number || v === px
 
@@ -151,9 +144,9 @@ const convertChangedValueTypes = (
     changedKeys.forEach((key) => {
         // Restore styles to their **calculated computed style**, not their actual
         // originally set style. This allows us to animate between equivalent pixel units.
-        const value = visualElement.getValue(key) as MotionValue
+        const value = visualElement.getValue(key)
 
-        setAndResetVelocity(value, origin[key])
+        value && value.jump(origin[key])
         target[key] = positionalValues[key](targetBbox, elementComputedStyle)
     })
 
@@ -259,7 +252,7 @@ const checkAndConvertChangedValueTypes = (
                         ? transitionEnd[key]
                         : target[key]
 
-                setAndResetVelocity(value, to)
+                value.jump(to)
             }
         }
     })

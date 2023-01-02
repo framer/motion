@@ -1,4 +1,4 @@
-import { useRef, useMemo, useContext } from "react"
+import { useRef, useContext, useInsertionEffect } from "react"
 import { MotionValue } from "../value"
 import { isMotionValue } from "./utils/is-motion-value"
 import { useMotionValue } from "./use-motion-value"
@@ -35,7 +35,13 @@ export function useSpring(
     const activeSpringAnimation = useRef<PlaybackControls | null>(null)
     const value = useMotionValue(isMotionValue(source) ? source.get() : source)
 
-    useMemo(() => {
+    const stopAnimation = () => {
+        if (activeSpringAnimation.current) {
+            activeSpringAnimation.current.stop()
+        }
+    }
+
+    useInsertionEffect(() => {
         return value.attach((v, set) => {
             /**
              * A more hollistic approach to this might be to use isStatic to fix VisualElement animations
@@ -43,9 +49,7 @@ export function useSpring(
              */
             if (isStatic) return set(v)
 
-            if (activeSpringAnimation.current) {
-                activeSpringAnimation.current.stop()
-            }
+            stopAnimation()
 
             activeSpringAnimation.current = animate({
                 keyframes: [value.get(), v],
@@ -56,7 +60,7 @@ export function useSpring(
             })
 
             return value.get()
-        })
+        }, stopAnimation)
     }, [JSON.stringify(config)])
 
     useIsomorphicLayoutEffect(() => {
