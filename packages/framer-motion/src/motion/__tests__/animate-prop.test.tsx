@@ -676,4 +676,17 @@ describe("animate prop as object", () => {
 
         return expect(testFn).toHaveBeenCalled()
     })
+
+    test("doesn't error when provided unknown animation type", async () => {
+        const Component = () => {
+            return (
+                <motion.div
+                    animate={{ x: 100 }}
+                    transition={{ type: "test" } as any}
+                />
+            )
+        }
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+    })
 })
