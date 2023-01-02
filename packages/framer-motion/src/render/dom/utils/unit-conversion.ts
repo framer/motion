@@ -146,7 +146,7 @@ const convertChangedValueTypes = (
         // originally set style. This allows us to animate between equivalent pixel units.
         const value = visualElement.getValue(key)
 
-        value.jump(origin[key])
+        value && value.jump(origin[key])
         target[key] = positionalValues[key](targetBbox, elementComputedStyle)
     })
 
