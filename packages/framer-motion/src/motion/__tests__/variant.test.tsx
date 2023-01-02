@@ -987,6 +987,64 @@ describe("animate prop as variant", () => {
 
         expect(inner).toHaveStyle("background-color: rgb(0, 150,150)")
     })
+
+    test("child onAnimationComplete triggers from parent animations", async () => {
+        const variants: Variants = {
+            hidden: { opacity: 0, x: -100, transition: { type: false } },
+            visible: { opacity: 1, x: 100, transition: { type: false } },
+        }
+
+        const childVariants: Variants = {
+            hidden: { opacity: 0, x: -100, transition: { type: false } },
+            visible: { opacity: 1, x: 50, transition: { type: false } },
+        }
+
+        const promise = new Promise<boolean>((resolve) => {
+            const onStart = () => resolve(true)
+            const Component = () => (
+                <motion.div animate="visible" variants={variants}>
+                    <motion.div
+                        variants={childVariants}
+                        onAnimationStart={onStart}
+                    />
+                </motion.div>
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toBe(true)
+    })
+
+    test("child onAnimationComplete triggers from parent animations", async () => {
+        const variants: Variants = {
+            hidden: { opacity: 0, x: -100, transition: { type: false } },
+            visible: { opacity: 1, x: 100, transition: { type: false } },
+        }
+
+        const childVariants: Variants = {
+            hidden: { opacity: 0, x: -100, transition: { type: false } },
+            visible: { opacity: 1, x: 50, transition: { type: false } },
+        }
+
+        const promise = new Promise<boolean>((resolve) => {
+            const onComplete = () => resolve(true)
+            const Component = () => (
+                <motion.div animate="visible" variants={variants}>
+                    <motion.div
+                        variants={childVariants}
+                        onAnimationComplete={onComplete}
+                    />
+                </motion.div>
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toBe(true)
+    })
 })
 
 const wait = (duration: number) =>
