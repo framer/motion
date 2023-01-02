@@ -55,9 +55,9 @@ describe("Tabs demo", () => {
             .trigger("pointermove", -40, 10, { force: true }) // Gesture will start from first move past threshold
             .wait(20)
             .trigger("pointermove", -100, 300, { force: true })
-            .wait(50)
+            .wait(100)
             .trigger("pointerup", { force: true })
-            .wait(250)
+            .wait(350)
             .should(([$tab]: any) => {
                 const { left } = $tab.getBoundingClientRect()
                 expect(left).to.equal(265)
