@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.1.1] 2023-01-03
+
+### Fixed
+
+-   Fixing error when `Transition.type` is invalid.
+
 ## [8.1.0] 2023-01-03
 
 ### Added
