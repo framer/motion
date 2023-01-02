@@ -271,8 +271,7 @@ export class MotionValue<V = any> {
             this.lastUpdated = timestamp
             sync.postRender(this.scheduleVelocityCheck)
         }
-        console.trace()
-        console.log(this.prev, this.current, this.events.change)
+
         // Update update subscribers
         if (this.prev !== this.current && this.events.change) {
             this.events.change.notify(this.current)
