@@ -1000,7 +1000,7 @@ describe("animate prop as variant", () => {
         }
 
         const promise = new Promise<boolean>((resolve) => {
-            const onStart = () => resolve(true)
+            const onStart = (name: string) => resolve(name)
             const Component = () => (
                 <motion.div animate="visible" variants={variants}>
                     <motion.div
@@ -1014,7 +1014,7 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        return expect(promise).resolves.toBe(true)
+        return expect(promise).resolves.toBe("visible")
     })
 
     test("child onAnimationComplete triggers from parent animations", async () => {
@@ -1028,8 +1028,8 @@ describe("animate prop as variant", () => {
             visible: { opacity: 1, x: 50, transition: { type: false } },
         }
 
-        const promise = new Promise<boolean>((resolve) => {
-            const onComplete = () => resolve(true)
+        const promise = new Promise<string>((resolve) => {
+            const onComplete = (name: string) => resolve(name)
             const Component = () => (
                 <motion.div animate="visible" variants={variants}>
                     <motion.div
@@ -1043,7 +1043,7 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        return expect(promise).resolves.toBe(true)
+        return expect(promise).resolves.toBe("visible")
     })
 })
 
