@@ -73,7 +73,8 @@ export function animate<V = number>({
 
     let interpolateFromNumber: (t: number) => V
 
-    const animator = types[keyframes.length > 2 ? "keyframes" : type]
+    const animator =
+        types[keyframes.length > 2 ? "keyframes" : type] || keyframeAnimation
 
     const origin = keyframes[0]
     const target = keyframes[keyframes.length - 1]
