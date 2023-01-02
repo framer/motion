@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useContext, useRef } from "react"
+import { useContext, useEffect, useRef } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 import { MotionProps } from "../../motion/types"
 import { useVisualElementContext } from "../../context/MotionContext"
@@ -48,15 +48,33 @@ export function useVisualElement<Instance, RenderState>(
         visualElement && visualElement.render()
     })
 
-    /**
-     * If we have optimised appear animations to handoff from, trigger animateChanges
-     * from a synchronous useLayoutEffect to ensure there's no flash of incorrectly
-     * styled component in the event of a hydration error.
-     */
-    useIsomorphicLayoutEffect(() => {
+    const animateChanges = () => {
         if (visualElement && visualElement.animationState) {
             visualElement.animationState.animateChanges()
         }
+    }
+
+    const hasAnimated = useRef(false)
+    const skipInitialAnimation = useRef(false)
+
+    /**
+     * If we've encountered a hydration error, we need to animate initial changes
+     * from a synchronous useLayoutEffect to ensure there's no flash of incorrectly
+     * styled elements.
+     */
+    useIsomorphicLayoutEffect(() => {
+        console.log("error", window.FramerHydrationError)
+        if (window.FramerHydrationError) {
+            animateChanges()
+            skipInitialAnimation.current = true
+        }
+    }, [])
+
+    useEffect(() => {
+        if (hasAnimated.current || !skipInitialAnimation.current) {
+            animateChanges()
+        }
+        hasAnimated.current = true
     })
 
     return visualElement

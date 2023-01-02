@@ -6,7 +6,8 @@
                 margin: 0;
             }
 
-            #box {
+            #box,
+            #box-error {
                 width: 100px;
                 height: 100px;
                 background-color: #0077ff;
@@ -34,50 +35,52 @@
                 optimizedAppearDataAttribute,
                 motionValue,
             } = window.Motion
-            const { matchViewportBox } = window.Assert
+            const { matchOpacity } = window.Assert
             const root = document.getElementById("root")
 
             const duration = 1
-            const y = motionValue(0)
+            const opacity = motionValue(0)
 
-            y.onChange((latest) => {
-                if (latest < 50) {
+            opacity.onChange((v) => {
+                if (v < 0.5) {
                     showError(
                         document.getElementById("box"),
-                        `y transform should never be less than 50`
+                        "opacity should never be less than 0.5"
                     )
                 }
             })
 
+            let id = "box"
+
             // This is the tree to be rendered "server" and client-side.
-            const Component = React.createElement(motion.div, {
-                id: "box",
-                initial: { y: 0, scale: 1 },
-                animate: { y: 100, scale: 2 },
-                transition: { duration, ease: "linear" },
-                style: { y },
-                /**
-                 * On animation start, check the values we expect to see here
-                 */
-                onAnimationStart: () => {
-                    matchViewportBox(document.getElementById("box"), {
-                        bottom: 275,
-                        left: 75,
-                        right: 225,
-                        top: 125,
-                    })
-                },
-                [optimizedAppearDataAttribute]: "a",
-            })
+            const Component = () =>
+                React.createElement(motion.div, {
+                    id,
+                    initial: { opacity: 0 },
+                    animate: { opacity: 1 },
+                    transition: { duration, ease: "linear" },
+                    style: { opacity },
+                    /**
+                     * On animation start, check the values we expect to see here
+                     */
+                    onAnimationStart: () => {
+                        matchOpacity(document.getElementById("box"), 0.5)
+                    },
+                    [optimizedAppearDataAttribute]: "a",
+                })
 
             // Emulate server rendering of element
-            root.innerHTML = ReactDOMServer.renderToString(Component)
+            root.innerHTML = ReactDOMServer.renderToString(
+                React.createElement(Component)
+            )
+
+            id = "box-error"
 
             // Start Motion One animation
             const animation = startOptimizedAppearAnimation(
                 document.getElementById("box"),
-                "transform",
-                ["translateY(0px) scale(1)", "translateY(100px) scale(2)"],
+                "opacity",
+                [0, 1],
                 {
                     duration: duration * 1000,
                     ease: "linear",
@@ -95,7 +98,12 @@
                 }
 
                 // Hydrate root mid-way through animation
-                ReactDOM.hydrateRoot(root, Component)
+                try {
+                    ReactDOM.hydrateRoot(root, React.createElement(Component))
+                } catch (e) {
+                    console.log("hydration error")
+                    console.log(e)
+                }
             })
         </script>
     </body>
