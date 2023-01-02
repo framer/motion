@@ -1,6 +1,6 @@
 import { RefObject } from "react"
 import { useDomEvent, addDomEvent } from "./use-dom-event"
-import { wrapHandler, EventListenerWithPointInfo } from "./event-info"
+import { addPointerInfo, EventListenerWithPointInfo } from "./event-info"
 
 export function addPointerEvent(
     target: EventTarget,
@@ -8,12 +8,7 @@ export function addPointerEvent(
     handler: EventListenerWithPointInfo,
     options?: AddEventListenerOptions
 ) {
-    return addDomEvent(
-        target,
-        eventName,
-        wrapHandler(handler, eventName === "pointerdown"),
-        options
-    )
+    return addDomEvent(target, eventName, addPointerInfo(handler), options)
 }
 
 export function usePointerEvent(
@@ -25,7 +20,7 @@ export function usePointerEvent(
     return useDomEvent(
         ref,
         eventName,
-        handler && wrapHandler(handler, eventName === "pointerdown"),
+        handler && addPointerInfo(handler),
         options
     )
 }

@@ -3,7 +3,7 @@ import { useRef } from "react"
 import {
     addPointerEvent,
     isDragActive,
-    wrapHandler,
+    addPointerInfo,
     AnimationType,
     pipe,
 } from "framer-motion"
@@ -56,7 +56,7 @@ export function useTap(
     }
 
     return {
-        onPointerDown: wrapHandler((event: any, info) => {
+        onPointerDown: addPointerInfo((event: any, info) => {
             removePointerEndListener()
             if (isPressing.current) return
             isPressing.current = true
@@ -83,6 +83,6 @@ export function useTap(
             onPointerDown?.(event)
 
             onTapStart?.(event, info)
-        }, true),
+        }),
     }
 }
