@@ -130,11 +130,6 @@ export interface AnimationLifecycles {
      * ```
      */
     onAnimationComplete?(definition: AnimationDefinition): void
-
-    /**
-     * @internal
-     */
-    onUnmount?(): void
 }
 
 export type EventProps = LayoutLifecycles & AnimationLifecycles

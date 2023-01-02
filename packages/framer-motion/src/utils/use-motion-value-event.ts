@@ -1,5 +1,5 @@
+import { useInsertionEffect } from "react"
 import { MotionValue, MotionValueEventCallbacks } from "../value"
-import { useIsomorphicLayoutEffect } from "./use-isomorphic-effect"
 
 export function useMotionValueEvent<
     V,
@@ -9,7 +9,13 @@ export function useMotionValueEvent<
     event: EventName,
     callback: MotionValueEventCallbacks<V>[EventName]
 ) {
-    useIsomorphicLayoutEffect(
+    /**
+     * useInsertionEffect will create subscriptions before any other
+     * effects will run. Effects run upwards through the tree so it
+     * can be that binding a useLayoutEffect higher up the tree can
+     * miss changes from lower down the tree.
+     */
+    useInsertionEffect(
         () => value.on(event, callback),
         [value, event, callback]
     )

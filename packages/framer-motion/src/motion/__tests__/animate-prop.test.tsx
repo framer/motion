@@ -1,5 +1,10 @@
 import { render } from "../../../jest.setup"
-import { motion, motionValue } from "../../"
+import {
+    motion,
+    motionValue,
+    useMotionValue,
+    useMotionValueEvent,
+} from "../../"
 import * as React from "react"
 import { createRef } from "react"
 
@@ -648,5 +653,27 @@ describe("animate prop as object", () => {
         return expect(element).toHaveStyle(
             "background-color: rgba(0, 136, 255, 1)"
         )
+    })
+
+    test("animationStart event fires as expected", async () => {
+        const testFn = await new Promise<Function>((resolve) => {
+            const fn = jest.fn()
+            const Component = () => {
+                const x = useMotionValue(0)
+                useMotionValueEvent(x, "animationStart", fn)
+                return (
+                    <motion.div
+                        animate={{ x: 100 }}
+                        transition={{ duration: 0.01 }}
+                        style={{ x }}
+                        onUpdate={() => resolve(fn)}
+                    />
+                )
+            }
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(testFn).toHaveBeenCalled()
     })
 })

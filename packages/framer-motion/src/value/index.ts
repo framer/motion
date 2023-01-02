@@ -158,14 +158,6 @@ export class MotionValue<V = any> {
      * }
      * ```
      *
-     * @privateRemarks
-     *
-     * We could look into a `useOnChange` hook if the above lifecycle management proves confusing.
-     *
-     * ```jsx
-     * useOnChange(x, () => {})
-     * ```
-     *
      * @param subscriber - A function that receives the latest value.
      * @returns A function that, when called, will cancel this subscription.
      *
@@ -190,7 +182,25 @@ export class MotionValue<V = any> {
             this.events[eventName] = new SubscriptionManager()
         }
 
-        return this.events[eventName].add(callback)
+        const unsubscribe = this.events[eventName].add(callback)
+
+        if (eventName === "change") {
+            return () => {
+                unsubscribe()
+
+                /**
+                 * If we have no more change listeners by the start
+                 * of the next frame, stop active animations.
+                 */
+                sync.read(() => {
+                    if (!this.events.change.getSize()) {
+                        this.stop()
+                    }
+                })
+            }
+        }
+
+        return unsubscribe
     }
 
     clearListeners() {

@@ -1,5 +1,6 @@
 import { motionValue } from "../"
 import { animate } from "../../animation/animate"
+import { sync } from "../../frameloop"
 
 describe("motionValue", () => {
     test("change event is type-inferred", () => {
@@ -74,6 +75,28 @@ describe("motionValue", () => {
                 expect(callback).toBeCalledTimes(1)
                 resolve()
             }, 100)
+        })
+    })
+
+    test("When all change listeners removed, stop animation", async () => {
+        const value = motionValue(0)
+
+        const unsubscribeA = value.on("change", (latest) => latest)
+        const unsubscribeB = value.on("change", (latest) => latest)
+
+        animate(value, 100)
+
+        expect(value.isAnimating()).toEqual(true)
+
+        return new Promise<void>((resolve) => {
+            unsubscribeA()
+            expect(value.isAnimating()).toEqual(true)
+            unsubscribeB()
+
+            sync.postRender(() => {
+                expect(value.isAnimating()).toEqual(false)
+                resolve()
+            })
         })
     })
 })
