@@ -18,10 +18,6 @@ export function extractEventInfo(
     }
 }
 
-export function getViewportPointFromEvent(event: PointerEvent) {
-    return extractEventInfo(event, "client")
-}
-
 export const addPointerInfo = (
     handler: EventListenerWithPointInfo
 ): EventListener => {
