@@ -31,8 +31,6 @@ export function keyframes({
 }: AnimationOptions): Animation<number | string> {
     keyframeValues = [...keyframeValues]
 
-    const origin = keyframes[0]
-
     /**
      * Easing functions can be externally defined as strings. Here we convert them
      * into actual functions.
@@ -45,7 +43,10 @@ export function keyframes({
      * This is the Iterator-spec return value. We ensure it's mutable rather than using a generator
      * to reduce GC during animation.
      */
-    const state: AnimationState<typeof origin> = { done: false, value: origin }
+    const state: AnimationState<typeof origin> = {
+        done: false,
+        value: keyframeValues[0],
+    }
 
     /**
      * Create a times array based on the provided 0-1 offsets
@@ -53,7 +54,7 @@ export function keyframes({
     const absoluteTimes = convertOffsetToTimes(
         // Only use the provided offsets if they're the correct length
         // TODO Maybe we should warn here if there's a length mismatch
-        times && times.length === keyframes.length
+        times && times.length === keyframeValues.length
             ? times
             : defaultOffset(keyframeValues),
         duration
