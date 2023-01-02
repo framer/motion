@@ -10,6 +10,10 @@ import { LazyContext } from "../../context/LazyContext"
 import { MotionConfigProps } from "../../components/MotionConfig"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import type { VisualElement } from "../../render/VisualElement"
+import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/data-id"
+import { appearStoreId } from "../../animation/optimized-appear/store-id"
+
+let hydrationErrorDetected = false
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -63,8 +67,28 @@ export function useVisualElement<Instance, RenderState>(
      * styled elements.
      */
     useIsomorphicLayoutEffect(() => {
-        console.log("error", window.FramerHydrationError)
-        if (window.FramerHydrationError) {
+        if (
+            window.MotionAppearAnimations &&
+            props[optimizedAppearDataAttribute] &&
+            visualElement
+        ) {
+            const animation = window.MotionAppearAnimations.get(
+                appearStoreId(props[optimizedAppearDataAttribute], "opacity")
+            )
+
+            console.log(animation.effect.target, visualElement.current)
+            if (
+                animation &&
+                animation.effect &&
+                animation.effect.target &&
+                animation.effect.target !== visualElement.current
+            ) {
+                console.log("hydration error detected")
+                hydrationErrorDetected = true
+            }
+        }
+
+        if (hydrationErrorDetected) {
             animateChanges()
             skipInitialAnimation.current = true
         }
