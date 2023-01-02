@@ -4,6 +4,18 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.1.3] 2023-01-03
+
+### Fixed
+
+-   Fixed `times`.
+
+## [8.1.2] 2023-01-03
+
+### Fixed
+
+-   Fixed `extends` error in `LayoutCamera` and `LayoutOrthographicCamera` components.
+
 ## [8.1.1] 2023-01-03
 
 ### Fixed
