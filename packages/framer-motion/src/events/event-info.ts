@@ -22,7 +22,7 @@ export function getViewportPointFromEvent(event: PointerEvent) {
     return extractEventInfo(event, "client")
 }
 
-export const wrapHandler = (
+export const addPointerInfo = (
     handler: EventListenerWithPointInfo
 ): EventListener => {
     return (event: PointerEvent) =>
