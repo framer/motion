@@ -114,4 +114,26 @@ describe("keyframes transition", () => {
 
         expect(xResult).toBe(50)
     })
+
+    test("times works as expected", async () => {
+        const values = await new Promise<number[]>((resolve) => {
+            const output: number[] = []
+
+            const Component = () => (
+                <motion.div
+                    animate={{ x: [50, 100, 200, 300] }}
+                    transition={{ duration: 0.1, times: [0, 0.1, 0.9, 1] }}
+                    onUpdate={(latest) =>
+                        output.push(Math.round(latest.x as number))
+                    }
+                    onAnimationComplete={() => resolve(output)}
+                />
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        expect(values).toEqual([101, 119, 154, 186, 200, 300])
+    })
 })
