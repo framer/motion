@@ -37,6 +37,7 @@ import {
 import { isVariantLabel } from "./utils/is-variant-label"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
 import { resolveVariantFromProps } from "./utils/resolve-variants"
+import { warnOnce } from "../utils/warn-once"
 
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
@@ -390,6 +391,13 @@ export abstract class VisualElement<
                 : this.reducedMotionConfig === "always"
                 ? true
                 : prefersReducedMotion.current
+
+        if (env !== "production") {
+            warnOnce(
+                this.shouldReduceMotion !== true,
+                "You have Reduced Motion enabled on your device. Animations may not appear as expected."
+            )
+        }
 
         if (this.parent) this.parent.children.add(this)
         this.setProps(this.props)

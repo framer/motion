@@ -1,5 +1,7 @@
 import { useState } from "react"
 import { initPrefersReducedMotion } from "."
+import { env } from "../process"
+import { warnOnce } from "../warn-once"
 import { hasReducedMotionListener, prefersReducedMotion } from "./state"
 
 /**
@@ -35,6 +37,13 @@ export function useReducedMotion() {
     !hasReducedMotionListener.current && initPrefersReducedMotion()
 
     const [shouldReduceMotion] = useState(prefersReducedMotion.current)
+
+    if (env !== "production") {
+        warnOnce(
+            shouldReduceMotion !== true,
+            "You have Reduced Motion enabled on your device. Animations may not appear as expected."
+        )
+    }
 
     /**
      * TODO See if people miss automatically updating shouldReduceMotion setting

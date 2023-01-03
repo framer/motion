@@ -18,4 +18,29 @@ describe("custom properties", () => {
         expect(container.firstChild).not.toHaveAttribute("data-foo")
         expect(container.firstChild).toHaveAttribute("data-bar")
     })
+
+    test("reducedMotion warning fires in development mode", async () => {
+        const warn = jest.spyOn(console, "warn").mockImplementation(() => {})
+
+        await new Promise<void>((resolve) => {
+            const Component = () => {
+                return (
+                    <MotionConfig reducedMotion="always">
+                        <motion.div
+                            animate={{ opacity: 0.5 }}
+                            transition={{ type: false }}
+                            onAnimationComplete={() => resolve()}
+                        />
+                    </MotionConfig>
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        expect(warn).toHaveBeenCalled()
+
+        warn.mockReset()
+    })
 })
