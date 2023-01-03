@@ -4,44 +4,50 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [8.1.4] 2023-01-04
+## [8.1.5] 2023-01-03
+
+### Changed
+
+-   Display warning in development mode when Reduced Motion is enabled on device.
+
+## [8.1.4] 2023-01-03
 
 ### Fixed
 
 -   Ensuring child variant components fire `onAnimationStart` when an animation is triggered by a parent.
 
-## [8.1.3] 2023-01-03
+## [8.1.3] 2023-01-02
 
 ### Fixed
 
 -   Fixed `times`.
 
-## [8.1.2] 2023-01-03
+## [8.1.2] 2023-01-02
 
 ### Fixed
 
 -   Fixed `extends` error in `LayoutCamera` and `LayoutOrthographicCamera` components.
 
-## [8.1.1] 2023-01-03
+## [8.1.1] 2023-01-02
 
 ### Fixed
 
 -   Fixing error when `Transition.type` is invalid.
 
-## [8.1.0] 2023-01-03
+## [8.1.0] 2023-01-02
 
 ### Added
 
 -   `MotionValue.jump` can be used to "jump" a `MotionValue` to a new value, bypassing active springs, ending current animations and resetting to `velocity` to `0`.
 
-## [8.0.4] 2023-01-03
+## [8.0.4] 2023-01-02
 
 ### Fixed
 
 -   Cleaning up animations when a `MotionValue` has no active `"change"` subscribers.
 -   Changing `useMotionValueEvent` subscription to `useInsertionEffect`.
 
-## [8.0.3] 2023-01-03
+## [8.0.3] 2023-01-02
 
 ### Fixed
 
