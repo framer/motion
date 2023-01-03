@@ -21,7 +21,10 @@ export type VariantStateContext = {
     whileTap?: string | string[]
 }
 
-export type ScrapeMotionValuesFromProps = (props: MotionProps) => {
+export type ScrapeMotionValuesFromProps = (
+    props: MotionProps,
+    prevProps: MotionProps
+) => {
     [key: string]: MotionValue | string | number
 }
 

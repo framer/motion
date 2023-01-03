@@ -63,8 +63,8 @@ export class HTMLVisualElement extends DOMVisualElement<
         )
     }
 
-    scrapeMotionValuesFromProps(props: MotionProps) {
-        return scrapeMotionValuesFromProps(props)
+    scrapeMotionValuesFromProps(props: MotionProps, prevProps: MotionProps) {
+        return scrapeMotionValuesFromProps(props, prevProps)
     }
 
     renderInstance(

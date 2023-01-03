@@ -44,8 +44,8 @@ export class SVGVisualElement extends DOMVisualElement<
         return createBox()
     }
 
-    scrapeMotionValuesFromProps(props: MotionProps) {
-        return scrapeMotionValuesFromProps(props)
+    scrapeMotionValuesFromProps(props: MotionProps, prevProps: MotionProps) {
+        return scrapeMotionValuesFromProps(props, prevProps)
     }
 
     build(

@@ -101,4 +101,37 @@ describe("style prop", () => {
             "transform: translateX(0px) translateY(2px) translateZ(3px)"
         )
     })
+
+    test.only("should update when swapping between motion value and static value", async () => {
+        const Component = ({ useBackgroundColor = false }) => {
+            const backgroundColor = useMotionValue("#fff")
+
+            return (
+                <motion.div
+                    style={{
+                        backgroundColor: useBackgroundColor
+                            ? backgroundColor
+                            : "#000",
+                    }}
+                />
+            )
+        }
+
+        const { container, rerender } = render(<Component useBackgroundColor />)
+        expect(container.firstChild as Element).toHaveStyle(
+            "background-color: rgb(255, 255, 255)"
+        )
+
+        rerender(<Component />)
+
+        expect(container.firstChild as Element).toHaveStyle(
+            "background-color: rgb(0, 0, 0)"
+        )
+
+        rerender(<Component useBackgroundColor />)
+
+        expect(container.firstChild as Element).toHaveStyle(
+            "background-color: rgb(255, 255, 255)"
+        )
+    })
 })
