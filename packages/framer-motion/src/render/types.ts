@@ -28,6 +28,7 @@ export type ScrapeMotionValuesFromProps = (props: MotionProps) => {
 export type UseRenderState<RenderState = any> = () => RenderState
 
 export type VisualElementOptions<Instance, RenderState = any> = {
+    type: string
     visualState: VisualState<Instance, RenderState>
     parent?: VisualElement<unknown>
     variantParent?: VisualElement<unknown>
@@ -135,6 +136,5 @@ export interface AnimationLifecycles {
 export type EventProps = LayoutLifecycles & AnimationLifecycles
 
 export type CreateVisualElement<Instance> = (
-    Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
     options: VisualElementOptions<Instance>
 ) => VisualElement<Instance>

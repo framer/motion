@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import { motion } from "../.."
+import { motion, motionValue } from "../.."
 import * as React from "react"
 import { RefObject } from "react"
 import { MotionProps } from "../types"
@@ -65,5 +65,28 @@ describe("motion()", () => {
 
         expect(animate).toEqual({ x: 100 })
         expect(foo).toBe(true)
+    })
+
+    test("creates SVG component if svg: true", async () => {
+        const BaseComponent = React.forwardRef(
+            (_props: Props, ref: RefObject<SVGCircleElement>) => {
+                return <circle ref={ref} />
+            }
+        )
+
+        const MotionComponent = motion<Props>(BaseComponent, { svg: true })
+
+        const Component = () => (
+            <MotionComponent
+                foo
+                initial={{ cx: 1 }}
+                animate={{ cx: 5 }}
+                transition={{ type: false }}
+            />
+        )
+
+        const { container } = render(<Component />)
+        const element = container.firstChild as Element
+        expect(element).toHaveAttribute("cx", "5")
     })
 })

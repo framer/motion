@@ -1,4 +1,3 @@
-import * as React from "react"
 import { useContext, useRef } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 import { MotionProps } from "../../motion/types"
@@ -12,9 +11,9 @@ import { MotionConfigContext } from "../../context/MotionConfigContext"
 import type { VisualElement } from "../../render/VisualElement"
 
 export function useVisualElement<Instance, RenderState>(
-    Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
     visualState: VisualState<Instance, RenderState>,
     props: MotionProps & MotionConfigProps,
+    type: string,
     createVisualElement?: CreateVisualElement<Instance>
 ): VisualElement<Instance> | undefined {
     const parent = useVisualElementContext()
@@ -30,10 +29,11 @@ export function useVisualElement<Instance, RenderState>(
     createVisualElement = createVisualElement || lazyContext.renderer
 
     if (!visualElementRef.current && createVisualElement) {
-        visualElementRef.current = createVisualElement(Component, {
+        visualElementRef.current = createVisualElement({
             visualState,
             parent,
             props,
+            type,
             presenceId: presenceContext ? presenceContext.id : undefined,
             blockInitialAnimation: presenceContext
                 ? presenceContext.initial === false

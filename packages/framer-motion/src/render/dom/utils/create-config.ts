@@ -17,11 +17,12 @@ export function createDomMotionConfig<Props>(
     createVisualElement?: CreateVisualElement<any>,
     projectionNodeConstructor?: any
 ) {
-    const baseConfig =
-        svg || isSVGComponent(Component) ? svgMotionConfig : htmlMotionConfig
+    const type = svg || isSVGComponent(Component) ? "svg" : "html"
+    const baseConfig = type === "svg" ? svgMotionConfig : htmlMotionConfig
 
     return {
         ...baseConfig,
+        type,
         preloadedFeatures,
         useRender: createUseRender(forwardMotionProps),
         createVisualElement,

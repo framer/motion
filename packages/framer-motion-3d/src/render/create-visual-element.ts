@@ -75,5 +75,5 @@ export class ThreeVisualElement extends VisualElement<
     }
 }
 
-export const createVisualElement: CreateVisualElement<any> = (_, options) =>
-    new ThreeVisualElement(options, {})
+export const createVisualElement: CreateVisualElement<any> = (options) =>
+    new ThreeVisualElement({ ...options, type: "three" }, {})
