@@ -17,7 +17,6 @@ import { useMotionValue } from "../../value/use-motion-value"
 import { useTransform } from "../../value/use-transform"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 
-
 export interface Props<V> {
     /**
      * A HTML element to render this component as. Defaults to `"li"`.
@@ -76,7 +75,7 @@ export function ReorderItem<V>(
 
     invariant(Boolean(context), "Reorder.Item must be a child of Reorder.Group")
 
-    const { axis, isWrappingItems, registerItem, updateOrder } = context!
+    const { axis, isWrapping, registerItem, updateOrder } = context!
 
     useEffect(() => {
         registerItem(value, measuredLayout.current!)
@@ -84,7 +83,7 @@ export function ReorderItem<V>(
 
     return (
         <Component
-            drag={isWrappingItems ? true : axis}
+            drag={isWrapping ? true : axis}
             {...props}
             dragSnapToOrigin
             style={{ ...style, x: point.x, y: point.y, zIndex }}
@@ -103,7 +102,6 @@ export function ReorderItem<V>(
             }}
             ref={externalRef}
         >
-
             {children}
         </Component>
     )

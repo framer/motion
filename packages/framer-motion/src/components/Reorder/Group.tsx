@@ -3,7 +3,6 @@ import * as React from "react"
 import {
     forwardRef,
     FunctionComponent,
-    ReactElement,
     ReactHTML,
     useEffect,
     useMemo,
@@ -13,9 +12,9 @@ import { ReorderContext } from "../../context/ReorderContext"
 import { motion } from "../../render/dom/motion"
 import { HTMLMotionProps } from "../../render/html/types"
 import { useConstant } from "../../utils/use-constant"
-import { ItemData, ReorderContextProps } from "./types"
+import { ItemLayout, ReorderContextProps } from "./types"
 import { checkReorder } from "./utils/check-reorder"
-import {useOrderingParameters} from "./utils/useOrderingParameters";
+import { useOrderState } from "./utils/use-order-state"
 
 export interface Props<V> {
     /**
@@ -53,7 +52,6 @@ export interface Props<V> {
      * @public
      */
     values: V[]
-    children: ReactElement<any>[]
 }
 
 export function ReorderGroup<V>(
@@ -77,48 +75,40 @@ export function ReorderGroup<V>(
     const Component = useConstant(() => motion(as)) as FunctionComponent<
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
     >
-    const order: ItemData<V>[] = []
+    const itemLayouts = useConstant<ItemLayout<V>>(() => new Map())
     const isReordering = useRef(false)
 
-    const {axis, isWrappingItems, itemsPerAxis} = useOrderingParameters(ref)
+    const { axis, isWrapping, itemsPerAxis } = useOrderState(
+        ref,
+        values,
+        itemLayouts
+    )
 
     invariant(Boolean(values), "Reorder.Group must be provided a values prop")
 
     const context: ReorderContextProps<any> = {
         axis,
-        isWrappingItems,
-        registerItem: (value, layout) => {
-            /**
-             * Ensure entries can't add themselves more than once
-             */
-            if (
-                layout &&
-                order.findIndex((entry) => value === entry.value) === -1
-            ) {
-                order.push({ value, layout: { x: layout.x, y: layout.y } })
-                order.sort((a, b) => compareMin(a, b, axis, isWrappingItems))
-            }
-        },
+        isWrapping,
+        registerItem: (value, layout) => itemLayouts.set(value, layout),
         updateOrder: (id, offset, velocity) => {
             if (isReordering.current) return
 
-            const newOrder = checkReorder(
-                order,
+            const newValuesOrder = checkReorder(
+                values,
+                itemLayouts,
                 id,
                 offset,
                 velocity,
                 axis,
-                isWrappingItems,
-                itemsPerAxis.current
+                isWrapping,
+                itemsPerAxis
             )
 
-            if (order !== newOrder) {
+            console.log(newValuesOrder)
+
+            if (values !== newValuesOrder) {
                 isReordering.current = true
-                onReorder(
-                    newOrder
-                        .map(getValue)
-                        .filter((value) => values.indexOf(value) !== -1)
-                )
+                onReorder(newValuesOrder)
             }
         },
     }
@@ -136,18 +126,3 @@ export function ReorderGroup<V>(
 }
 
 export const Group = forwardRef(ReorderGroup)
-
-function getValue<V>(item: ItemData<V>) {
-    return item.value
-}
-
-function compareMin<V>(
-    a: ItemData<V>,
-    b: ItemData<V>,
-    axis: "x" | "y",
-    isWrappingItems = false
-) {
-    let comparedAxis = axis
-    if (isWrappingItems) comparedAxis = axis === "x" ? "y" : "x"
-    return a.layout[comparedAxis].min - b.layout[comparedAxis].min
-}

@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Reorder } from "framer-motion"
-import {useRef, useState} from "react"
+import { useRef, useState } from "react"
 
 export const App = () => {
     const externalRef = useRef<HTMLElement>()

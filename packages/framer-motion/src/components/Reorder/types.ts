@@ -1,8 +1,8 @@
-import { Axis, Box } from "../../projection/geometry/types"
+import { Box } from "../../projection/geometry/types"
 
 export interface ReorderContextProps<T> {
     axis: "x" | "y"
-    isWrappingItems: boolean
+    isWrapping: boolean
     registerItem: (id: T, layout: Box) => void
     updateOrder: (
         id: T,
@@ -11,7 +11,4 @@ export interface ReorderContextProps<T> {
     ) => void
 }
 
-export interface ItemData<T> {
-    value: T
-    layout: { x: Axis; y: Axis }
-}
+export type ItemLayout<T> = Map<T, Box>

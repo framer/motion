@@ -8,14 +8,13 @@ describe("Reorder", () => {
         const Component = () => (
             <Reorder.Group as="article" onReorder={() => {}} values={[]}>
                 <Reorder.Item as="main" value={0} />
-                <Reorder.Item as="main" value={1} />
             </Reorder.Group>
         )
 
         const staticMarkup = renderToStaticMarkup(<Component />)
         const string = renderToString(<Component />)
 
-        const expectedMarkup = `<article><main style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></main></article>`
+        const expectedMarkup = `<article><main style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-y" draggable="false"></main></article>`
 
         expect(staticMarkup).toBe(expectedMarkup)
         expect(string).toBe(expectedMarkup)
@@ -27,7 +26,6 @@ describe("Reorder", () => {
             return (
                 <Reorder.Group as="article" onReorder={setItems} values={[]}>
                     <Reorder.Item as="main" value={0} />
-                    <Reorder.Item as="main" value={1} />
                 </Reorder.Group>
             )
         }
@@ -35,7 +33,7 @@ describe("Reorder", () => {
         const staticMarkup = renderToStaticMarkup(<Component />)
         const string = renderToString(<Component />)
 
-        const expectedMarkup = `<article><main style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></main></article>`
+        const expectedMarkup = `<article><main style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-y" draggable="false"></main></article>`
 
         expect(staticMarkup).toBe(expectedMarkup)
         expect(string).toBe(expectedMarkup)
