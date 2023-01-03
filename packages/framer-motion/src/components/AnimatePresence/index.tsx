@@ -8,7 +8,6 @@ import {
     useContext,
 } from "react"
 import * as React from "react"
-import { env } from "../../utils/process"
 import { AnimatePresenceProps } from "./types"
 import { useForceUpdate } from "../../utils/use-force-update"
 import { useIsMounted } from "../../utils/use-is-mounted"
@@ -90,7 +89,9 @@ export const AnimatePresence: React.FunctionComponent<
     // Support deprecated exitBeforeEnter prop
     if (exitBeforeEnter) {
         mode = "wait"
-        warnOnce(false, "Replace exitBeforeEnter with mode='wait'")
+        if (process.env.NODE_ENV !== "production") {
+            warnOnce(false, "Replace exitBeforeEnter with mode='wait'")
+        }
     }
 
     // We want to force a re-render once all exiting animations have finished. We
@@ -242,7 +243,7 @@ export const AnimatePresence: React.FunctionComponent<
     })
 
     if (
-        env !== "production" &&
+        process.env.NODE_ENV !== "production" &&
         mode === "wait" &&
         childrenToRender.length > 1
     ) {

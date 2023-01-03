@@ -12,7 +12,6 @@ import { Box } from "../projection/geometry/types"
 import { IProjectionNode } from "../projection/node/types"
 import { TargetAndTransition } from "../types"
 import { isRefObject } from "../utils/is-ref-object"
-import { env } from "../utils/process"
 import { initPrefersReducedMotion } from "../utils/reduced-motion"
 import {
     hasReducedMotionListener,
@@ -392,7 +391,7 @@ export abstract class VisualElement<
                 ? true
                 : prefersReducedMotion.current
 
-        if (env !== "production") {
+        if (process.env.NODE_ENV !== "production") {
             warnOnce(
                 this.shouldReduceMotion !== true,
                 "You have Reduced Motion enabled on your device. Animations may not appear as expected."
@@ -474,7 +473,11 @@ export abstract class VisualElement<
          * If we're in development mode, check to make sure we're not rendering a motion component
          * as a child of LazyMotion, as this will break the file-size benefits of using it.
          */
-        if (env !== "production" && preloadedFeatures && isStrict) {
+        if (
+            process.env.NODE_ENV !== "production" &&
+            preloadedFeatures &&
+            isStrict
+        ) {
             invariant(
                 false,
                 "You have rendered a `motion` component within a `LazyMotion` component. This will break tree shaking. Import and render a `m` component instead."
