@@ -17,7 +17,7 @@ export function useOrderState<T>(
         isWrapping: false,
         itemsPerAxis: 0,
     })
-
+    console.log(items)
     useEffect(() => {
         if (!ref.current) return
 
@@ -51,7 +51,6 @@ export function useOrderState<T>(
 
             let itemsPerAxis = items.length
             let isWrapping = false
-
             for (let i = 1; i < items.length; i++) {
                 const itemLayout = itemLayouts.get(items[i])
                 const prevItemLayout = itemLayouts.get(items[i - 1])
@@ -76,7 +75,7 @@ export function useOrderState<T>(
         const observer = new ResizeObserver(analyzeItems)
         observer.observe(ref.current)
         return () => observer.disconnect()
-    }, [items])
+    }, [items, itemLayouts, ref])
 
     return state
 }

@@ -66,6 +66,7 @@ export function ReorderGroup<V>(
         React.PropsWithChildren<{}>,
     externalRef?: React.Ref<any>
 ) {
+    console.log(values)
     const internalRef = useRef<HTMLElement>()
     const ref = useMemo(
         () => externalRef || internalRef,
