@@ -3,6 +3,12 @@ import { moveItem } from "../../../utils/array"
 import { mix } from "../../../utils/mix"
 import { ItemLayout } from "../types"
 
+/**
+ * Check whether items should reorder.
+ *
+ * TODO: This currently only supports items with uniform sizes for
+ * multidimensional reordering.
+ */
 export function checkReorder<T>(
     order: T[],
     layouts: ItemLayout<T>,
@@ -14,21 +20,29 @@ export function checkReorder<T>(
     itemsPerAxis: number
 ): T[] {
     const crossAxis = axis === "x" ? "y" : "x"
+
+    /**
+     * If the pointer isn't moving then return existing order.
+     */
     if (!velocity[axis] && !velocity[crossAxis]) return order
 
+    /**
+     * If currently dragged item doesn't exist in the provided order then just return
+     * the existing order.
+     */
     const index = order.findIndex((item) => item === value)
     if (index === -1) return order
 
-    const nextOffsetMainAxis =
+    const nextAxisOffset =
         velocity[axis] === 0 ? 0 : velocity[axis] / Math.abs(velocity[axis])
-    const nextOffsetSecondaryAxis =
+    const nextCrossAxisOffset =
         velocity[crossAxis] === 0
             ? 0
             : velocity[crossAxis] / Math.abs(velocity[crossAxis])
 
-    const nextItemMainAxis = layouts.get(order[index + nextOffsetMainAxis])
+    const nextItemMainAxis = layouts.get(order[index + nextAxisOffset])
     const nextItemSecondaryAxis = layouts.get(
-        order[index + nextOffsetSecondaryAxis * itemsPerAxis]
+        order[index + nextCrossAxisOffset * itemsPerAxis]
     )
 
     const item = order[index]
@@ -43,19 +57,19 @@ export function checkReorder<T>(
         )
 
         if (
-            (nextOffsetMainAxis === 1 &&
+            (nextAxisOffset === 1 &&
                 itemLayout[axis].max + offset[axis] > nextItemCenterMainAxis &&
                 ((isWrappingItems &&
-                    (index + nextOffsetMainAxis) % itemsPerAxis !== 0) ||
+                    (index + nextAxisOffset) % itemsPerAxis !== 0) ||
                     !isWrappingItems)) ||
-            (nextOffsetMainAxis === -1 &&
+            (nextAxisOffset === -1 &&
                 itemLayout[axis].min + offset[axis] < nextItemCenterMainAxis &&
                 ((isWrappingItems &&
-                    (index + nextOffsetMainAxis) % itemsPerAxis !==
+                    (index + nextAxisOffset) % itemsPerAxis !==
                         itemsPerAxis - 1) ||
                     !isWrappingItems))
         ) {
-            return moveItem(order, index, index + nextOffsetMainAxis)
+            return moveItem(order, index, index + nextAxisOffset)
         }
     }
 
@@ -72,17 +86,17 @@ export function checkReorder<T>(
             0.5
         )
         if (
-            (nextOffsetSecondaryAxis === 1 &&
+            (nextCrossAxisOffset === 1 &&
                 itemLayout[crossAxis].max + offset[crossAxis] >
                     nextItemCenterSecondaryAxis) ||
-            (nextOffsetSecondaryAxis === -1 &&
+            (nextCrossAxisOffset === -1 &&
                 itemLayout[crossAxis].min + offset[crossAxis] <
                     nextItemCenterSecondaryAxis)
         ) {
             return moveItem(
                 order,
                 index,
-                index + nextOffsetSecondaryAxis * itemsPerAxis
+                index + nextCrossAxisOffset * itemsPerAxis
             )
         }
     }
