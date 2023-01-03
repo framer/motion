@@ -13,7 +13,7 @@ const Item = ({ item, axis }) => {
 
     useEffect(() => {
         let isActive = false
-        axisValue.onChange((latestY) => {
+        axisValue.on("change", (latestY) => {
             const wasActive = isActive
             if (latestY !== 0) {
                 isActive = true

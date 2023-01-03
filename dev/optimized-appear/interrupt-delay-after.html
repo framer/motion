@@ -1,0 +1,127 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 100px;
+                margin: 0;
+            }
+
+            #box {
+                width: 100px;
+                height: 100px;
+                background-color: #0077ff;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 1 !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script src="../../node_modules/react/umd/react.development.js"></script>
+        <script src="../../node_modules/react-dom/umd/react-dom.development.js"></script>
+        <script src="../../node_modules/react-dom/umd/react-dom-server-legacy.browser.development.js"></script>
+        <script src="../../packages/framer-motion/dist/framer-motion.dev.js"></script>
+        <script src="../projection/script-assert.js"></script>
+
+        <script>
+            const {
+                motion,
+                animateStyle,
+                startOptimizedAppearAnimation,
+                optimizedAppearDataAttribute,
+                motionValue,
+            } = window.Motion
+            const { matchOpacity } = window.Assert
+            const root = document.getElementById("root")
+
+            const duration = 1
+            const opacity = motionValue(0)
+            let opacityHasChanged = false
+
+            opacity.onChange((v) => {
+                if (!opacityHasChanged) {
+                    if (v > 0.3) {
+                        showError(
+                            document.getElementById("box"),
+                            `opacity should not start animating beyond 0.3 (started at ${v})`
+                        )
+                    }
+                }
+                opacityHasChanged = true
+                if (v < 0.25) {
+                    showError(
+                        document.getElementById("box"),
+                        "opacity should never be less than 0.25"
+                    )
+                }
+            })
+
+            // This is the tree to be rendered "server" and client-side.
+            const Component = React.createElement(motion.div, {
+                id: "box",
+                initial: { opacity: 0 },
+                animate: { opacity: 1 },
+                transition: { duration, ease: "linear", delay: 0.25 },
+                style: { opacity },
+                /**
+                 * On animation start, check the values we expect to see here
+                 */
+                onAnimationStart: () => {
+                    matchOpacity(document.getElementById("box"), 0.25)
+                },
+                [optimizedAppearDataAttribute]: "a",
+            })
+
+            // Emulate server rendering of element
+            root.innerHTML = ReactDOMServer.renderToString(Component)
+
+            // Start Motion One animation
+            const animation = startOptimizedAppearAnimation(
+                document.getElementById("box"),
+                "opacity",
+                [0, 1],
+                {
+                    duration: duration * 1000,
+                    ease: "linear",
+                    delay: 250,
+                }
+            )
+
+            const ready = animation.ready
+                ? animation.ready.then
+                : requestAnimationFrame
+            ready(() => {
+                /**
+                 * Set currentTime to 500ms - because of the delay this will cut
+                 * into the animation at 0.25
+                 */
+                if (animation) {
+                    animation.currentTime = (duration * 1000) / 2
+                    animation.pause()
+                }
+
+                // Hydrate root mid-way through animation
+                ReactDOM.hydrateRoot(root, Component)
+
+                /**
+                 * Check the animation isn't in its initial state
+                 */
+                setTimeout(() => {
+                    const { opacity: initialOpacity } = window.getComputedStyle(
+                        document.getElementById("box")
+                    )
+
+                    if (initialOpacity === "0") {
+                        showError(
+                            document.getElementById("box"),
+                            `opacity should have animated`
+                        )
+                    }
+                }, 100)
+            })
+        </script>
+    </body>
+</html>

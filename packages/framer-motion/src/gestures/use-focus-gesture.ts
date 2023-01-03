@@ -8,7 +8,10 @@ import { FeatureProps } from "../motion/features/types"
  * @param ref
  * @internal
  */
-export function useFocusGesture({ whileFocus, visualElement }: FeatureProps) {
+export function useFocusGesture({
+    whileFocus,
+    visualElement,
+}: FeatureProps<EventTarget>) {
     const { animationState } = visualElement
     const onFocus = () => {
         animationState && animationState.setActive(AnimationType.Focus, true)

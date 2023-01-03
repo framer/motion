@@ -1,3 +1,1 @@
-export function noop<T>(any: T): T {
-    return any
-}
+export const noop = <T>(any: T): T => any

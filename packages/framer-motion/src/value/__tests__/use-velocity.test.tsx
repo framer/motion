@@ -3,13 +3,13 @@ import * as React from "react"
 import { useVelocity } from "../use-velocity"
 import { useMotionValue } from "../use-motion-value"
 import { animate } from "../../animation/animate"
-import sync, { getFrameData } from "framesync"
-import { pipe } from "popmotion"
+import { sync } from "../../frameloop"
+import { pipe } from "../../utils/pipe"
+import { frameData } from "../../frameloop/data"
 
 const setFrameData = (interval: number, time: number) => {
-    const data = getFrameData()
-    data.timestamp = time
-    data.delta = interval
+    frameData.timestamp = time
+    frameData.delta = interval
 }
 
 const syncDriver =
@@ -46,13 +46,13 @@ describe("useVelocity", () => {
 
                 React.useEffect(() => {
                     const unsubscribe = pipe(
-                        x.onChange((v) => {
+                        x.on("change", (v) => {
                             output.push(Math.round(v))
                         }),
-                        xVelocity.onChange((v) => {
+                        xVelocity.on("change", (v) => {
                             outputVelocity.push(Math.round(v))
                         }),
-                        xAcceleration.onChange((v) => {
+                        xAcceleration.on("change", (v) => {
                             outputAcceleration.push(Math.round(v))
                         })
                     )

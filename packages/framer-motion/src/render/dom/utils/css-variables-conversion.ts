@@ -1,6 +1,6 @@
 import { Target, TargetWithKeyframes } from "../../../types"
 import { invariant } from "hey-listen"
-import { VisualElement } from "../../types"
+import type { VisualElement } from "../../VisualElement"
 
 function isCSSVariable(value: any): value is string {
     return typeof value === "string" && value.startsWith("var(--")
@@ -64,7 +64,7 @@ export function resolveCSSVariables(
     { ...target }: TargetWithKeyframes,
     transitionEnd: Target | undefined
 ): { target: TargetWithKeyframes; transitionEnd?: Target } {
-    const element = visualElement.getInstance()
+    const element = visualElement.current
     if (!(element instanceof Element)) return { target, transitionEnd }
 
     // If `transitionEnd` isn't `undefined`, clone it. We could clone `target` and `transitionEnd`
@@ -74,7 +74,7 @@ export function resolveCSSVariables(
     }
 
     // Go through existing `MotionValue`s and ensure any existing CSS variables are resolved
-    visualElement.forEachValue((value) => {
+    visualElement.values.forEach((value) => {
         const current = value.get()
         if (!isCSSVariable(current)) return
 

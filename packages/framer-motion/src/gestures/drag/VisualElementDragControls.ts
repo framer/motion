@@ -1,5 +1,5 @@
 import { invariant } from "hey-listen"
-import { PanSession, AnyPointerEvent, PanInfo } from "../../gestures/PanSession"
+import { PanSession, PanInfo } from "../../gestures/PanSession"
 import { ResolvedConstraints } from "./types"
 import { Lock, getGlobalLock } from "./utils/lock"
 import { isRefObject } from "../../utils/is-ref-object"
@@ -14,7 +14,7 @@ import {
     calcOrigin,
 } from "./utils/constraints"
 import { AnimationType } from "../../render/utils/types"
-import { VisualElement } from "../../render/types"
+import type { VisualElement } from "../../render/VisualElement"
 import { MotionProps } from "../../motion/types"
 import { Point } from "../../projection/geometry/types"
 import { createBox } from "../../projection/geometry/models"
@@ -22,16 +22,16 @@ import { eachAxis } from "../../projection/utils/each-axis"
 import { measurePageBox } from "../../projection/utils/measure"
 import { extractEventInfo } from "../../events/event-info"
 import { Transition } from "../../types"
-import { startAnimation } from "../../animation/utils/transitions"
 import {
     convertBoundingBoxToBox,
     convertBoxToBoundingBox,
 } from "../../projection/geometry/conversion"
 import { LayoutUpdateData } from "../../projection/node/types"
 import { addDomEvent } from "../../events/use-dom-event"
-import { mix } from "popmotion"
-import { percent } from "style-value-types"
 import { calcLength } from "../../projection/geometry/delta-calc"
+import { mix } from "../../utils/mix"
+import { percent } from "../../value/types/numbers/units"
+import { createMotionValueAnimation } from "../../animation"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -48,10 +48,10 @@ type DragDirection = "x" | "y"
 /**
  *
  */
-// let latestPointerEvent: AnyPointerEvent
+// let latestPointerEvent: PointerEvent
 
 export class VisualElementDragControls {
-    private visualElement: VisualElement
+    private visualElement: VisualElement<HTMLElement>
 
     private panSession?: PanSession
 
@@ -77,12 +77,12 @@ export class VisualElementDragControls {
      */
     private elastic = createBox()
 
-    constructor(visualElement: VisualElement) {
+    constructor(visualElement: VisualElement<HTMLElement>) {
         this.visualElement = visualElement
     }
 
     start(
-        originEvent: AnyPointerEvent,
+        originEvent: PointerEvent,
         { snapToCursor = false }: DragControlOptions = {}
     ) {
         /**
@@ -90,7 +90,7 @@ export class VisualElementDragControls {
          */
         if (this.visualElement.isPresent === false) return
 
-        const onSessionStart = (event: AnyPointerEvent) => {
+        const onSessionStart = (event: PointerEvent) => {
             // Stop any animations on both axis values immediately. This allows the user to throw and catch
             // the component.
             this.stopAnimation()
@@ -100,7 +100,7 @@ export class VisualElementDragControls {
             }
         }
 
-        const onStart = (event: AnyPointerEvent, info: PanInfo) => {
+        const onStart = (event: PointerEvent, info: PanInfo) => {
             // Attempt to grab the global drag gesture lock - maybe make this part of PanSession
             const { drag, dragPropagation, onDragStart } = this.getProps()
 
@@ -134,7 +134,7 @@ export class VisualElementDragControls {
                  */
                 if (percent.test(current)) {
                     const measuredAxis =
-                        this.visualElement.projection?.layout?.actual[axis]
+                        this.visualElement.projection?.layout?.layoutBox[axis]
 
                     if (measuredAxis) {
                         const length = calcLength(measuredAxis)
@@ -153,7 +153,7 @@ export class VisualElementDragControls {
             )
         }
 
-        const onMove = (event: AnyPointerEvent, info: PanInfo) => {
+        const onMove = (event: PointerEvent, info: PanInfo) => {
             // latestPointerEvent = event
 
             const {
@@ -189,16 +189,16 @@ export class VisualElementDragControls {
              * of a re-render we want to ensure the browser can read the latest
              * bounding box to ensure the pointer and element don't fall out of sync.
              */
-            this.visualElement.syncRender()
+            this.visualElement.render()
 
             /**
-             * This must fire after the syncRender call as it might trigger a state
+             * This must fire after the render call as it might trigger a state
              * change which itself might trigger a layout update.
              */
             onDrag?.(event, info)
         }
 
-        const onSessionEnd = (event: AnyPointerEvent, info: PanInfo) =>
+        const onSessionEnd = (event: PointerEvent, info: PanInfo) =>
             this.stop(event, info)
 
         this.panSession = new PanSession(
@@ -213,7 +213,7 @@ export class VisualElementDragControls {
         )
     }
 
-    private stop(event: AnyPointerEvent, info: PanInfo) {
+    private stop(event: PointerEvent, info: PanInfo) {
         const isDragging = this.isDragging
         this.cancel()
         if (!isDragging) return
@@ -275,7 +275,7 @@ export class VisualElementDragControls {
         } else {
             if (dragConstraints && layout) {
                 this.constraints = calcRelativeConstraints(
-                    layout.actual,
+                    layout.layoutBox,
                     dragConstraints
                 )
             } else {
@@ -298,7 +298,7 @@ export class VisualElementDragControls {
             eachAxis((axis) => {
                 if (this.getAxisMotionValue(axis)) {
                     this.constraints[axis] = rebaseAxisConstraints(
-                        layout.actual[axis],
+                        layout.layoutBox[axis],
                         this.constraints[axis]
                     )
                 }
@@ -330,7 +330,7 @@ export class VisualElementDragControls {
         )
 
         let measuredConstraints = calcViewportConstraints(
-            projection.layout.actual,
+            projection.layout.layoutBox,
             constraintsBox
         )
 
@@ -370,7 +370,7 @@ export class VisualElementDragControls {
                 return
             }
 
-            let transition = constraints?.[axis] ?? {}
+            let transition = constraints?.[axis] || {}
 
             if (dragSnapToOrigin) transition = { min: 0, max: 0 }
 
@@ -410,7 +410,9 @@ export class VisualElementDragControls {
         transition: Transition
     ) {
         const axisValue = this.getAxisMotionValue(axis)
-        return startAnimation(axis, axisValue, 0, transition)
+        return axisValue.start(
+            createMotionValueAnimation(axis, axisValue, 0, transition)
+        )
     }
 
     private stopAnimation() {
@@ -431,7 +433,7 @@ export class VisualElementDragControls {
             ? externalMotionValue
             : this.visualElement.getValue(
                   axis,
-                  this.visualElement.getProps().initial?.[axis] ?? 0
+                  this.visualElement.getProps().initial?.[axis] || 0
               )
     }
 
@@ -446,7 +448,7 @@ export class VisualElementDragControls {
             const axisValue = this.getAxisMotionValue(axis)
 
             if (projection && projection.layout) {
-                const { min, max } = projection.layout.actual[axis]
+                const { min, max } = projection.layout.layoutBox[axis]
 
                 axisValue.set(point[axis] - mix(min, max, 0.5))
             }
@@ -459,6 +461,8 @@ export class VisualElementDragControls {
      * relative to where it was before the resize.
      */
     scalePositionWithinConstraints() {
+        if (!this.visualElement.current) return
+
         const { drag, dragConstraints } = this.getProps()
         const { projection } = this.visualElement
         if (!isRefObject(dragConstraints) || !projection || !this.constraints)
@@ -490,7 +494,7 @@ export class VisualElementDragControls {
          * Update the layout of this element and resolve the latest drag constraints
          */
         const { transformTemplate } = this.visualElement.getProps()
-        this.visualElement.getInstance().style.transform = transformTemplate
+        this.visualElement.current.style.transform = transformTemplate
             ? transformTemplate({}, "")
             : "none"
         projection.root?.updateScroll()
@@ -514,8 +518,9 @@ export class VisualElementDragControls {
     }
 
     addListeners() {
+        if (!this.visualElement.current) return
         elementDragControls.set(this.visualElement, this)
-        const element = this.visualElement.getInstance()
+        const element = this.visualElement.current
 
         /**
          * Attach a pointerdown event listener on this DOM element to initiate drag tracking.
@@ -576,7 +581,7 @@ export class VisualElementDragControls {
                         )
                     })
 
-                    this.visualElement.syncRender()
+                    this.visualElement.render()
                 }
             }) as any
         )

@@ -31,7 +31,7 @@ export function useMotionValue<T>(initial: T): MotionValue<T> {
     const { isStatic } = useContext(MotionConfigContext)
     if (isStatic) {
         const [, setLatest] = useState(initial)
-        useEffect(() => value.onChange(setLatest), [])
+        useEffect(() => value.on("change", setLatest), [])
     }
 
     return value

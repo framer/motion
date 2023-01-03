@@ -1,4 +1,3 @@
-import { startAnimation } from "../../animation/utils/transitions"
 import { VariantLabels } from "../../motion/types"
 import {
     Target,
@@ -7,13 +6,16 @@ import {
     TargetWithKeyframes,
     Transition,
 } from "../../types"
-import { VisualElement } from "../types"
+import type { VisualElement } from "../VisualElement"
 import { AnimationTypeState } from "./animation-state"
 import { AnimationType } from "./types"
 import { setTarget } from "./setters"
 import { resolveVariant } from "./resolve-dynamic-variants"
 import { transformProps } from "../html/utils/transform"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
+import { handoffOptimizedAppearAnimation } from "../../animation/optimized-appear/handoff"
+import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/data-id"
+import { createMotionValueAnimation } from "../../animation"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -27,8 +29,8 @@ export type AnimationOptions = {
     type?: AnimationType
 }
 
-export type MakeTargetAnimatable = (
-    visualElement: VisualElement,
+export type MakeTargetAnimatable<T = unknown> = (
+    visualElement: VisualElement<T>,
     target: TargetWithKeyframes,
     origin?: Target,
     transitionEnd?: Target
@@ -42,7 +44,7 @@ export function animateVisualElement(
     definition: AnimationDefinition,
     options: AnimationOptions = {}
 ) {
-    visualElement.notifyAnimationStart(definition)
+    visualElement.notify("AnimationStart", definition)
     let animation: Promise<any>
 
     if (Array.isArray(definition)) {
@@ -61,7 +63,7 @@ export function animateVisualElement(
     }
 
     return animation.then(() =>
-        visualElement.notifyAnimationComplete(definition)
+        visualElement.notify("AnimationComplete", definition)
     )
 }
 
@@ -163,7 +165,7 @@ function animateTarget(
             continue
         }
 
-        let valueTransition = { delay, ...transition }
+        let valueTransition = { delay, elapsed: 0, ...transition }
 
         /**
          * Make animation instant if this is a transform prop and we should reduce motion.
@@ -176,7 +178,25 @@ function animateTarget(
             } as any
         }
 
-        let animation = startAnimation(key, value, valueTarget, valueTransition)
+        /**
+         * If this is the first time a value is being animated, check
+         * to see if we're handling off from an existing animation.
+         */
+        if (!value.hasAnimated) {
+            const appearId =
+                visualElement.getProps()[optimizedAppearDataAttribute]
+
+            if (appearId) {
+                valueTransition.elapsed = handoffOptimizedAppearAnimation(
+                    appearId,
+                    key
+                )
+            }
+        }
+
+        let animation = value.start(
+            createMotionValueAnimation(key, value, valueTarget, valueTransition)
+        )
 
         if (isWillChangeMotionValue(willChange)) {
             willChange.add(key)
@@ -213,11 +233,12 @@ function animateChildren(
     Array.from(visualElement.variantChildren!)
         .sort(sortByTreeOrder)
         .forEach((child, i) => {
+            child.notify("AnimationStart", variant)
             animations.push(
                 animateVariant(child, variant, {
                     ...options,
                     delay: delayChildren + generateStaggerDuration(i),
-                }).then(() => child.notifyAnimationComplete(variant))
+                }).then(() => child.notify("AnimationComplete", variant))
             )
         })
 
@@ -225,7 +246,7 @@ function animateChildren(
 }
 
 export function stopAnimation(visualElement: VisualElement) {
-    visualElement.forEachValue((value) => value.stop())
+    visualElement.values.forEach((value) => value.stop())
 }
 
 export function sortByTreeOrder(a: VisualElement, b: VisualElement) {

@@ -1,4 +1,4 @@
-import { VisualElement } from "../types"
+import type { VisualElement } from "../VisualElement"
 
 export interface WithDepth {
     depth: number

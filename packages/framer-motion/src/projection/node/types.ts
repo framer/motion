@@ -1,23 +1,28 @@
 import { Transition } from "../../types"
-import { ResolvedValues, VisualElement } from "../../render/types"
+import { ResolvedValues } from "../../render/types"
 import { Box, Delta, Point } from "../geometry/types"
 import { NodeStack } from "../shared/stack"
 import { AnimationPlaybackControls } from "../../animation/animate"
 import { FlatTree } from "../../render/utils/flat-tree"
 import { InitialPromotionConfig } from "../../context/SwitchLayoutGroupContext"
 import { MotionStyle } from "../../motion/types"
+import type { VisualElement } from "../../render/VisualElement"
 
-// TODO: Find more appropriate names for each snapshot
-export interface Snapshot {
-    measured: Box
-    layout: Box
+export interface Measurements {
+    animationId: number
+    measuredBox: Box
+    layoutBox: Box
     latestValues: ResolvedValues
-    isShared?: boolean
+    source: number
 }
 
-export interface Layout {
-    measured: Box
-    actual: Box // with scroll removed
+export type Phase = "snapshot" | "measure"
+
+export interface ScrollMeasurements {
+    animationId: number
+    phase: Phase
+    isRoot: boolean
+    offset: Point
 }
 
 export type LayoutEvents =
@@ -30,7 +35,9 @@ export type LayoutEvents =
     | "animationComplete"
 
 export interface IProjectionNode<I = unknown> {
-    id: number | undefined
+    id: number
+    elementId: number | undefined
+    animationId: number
     parent?: IProjectionNode
     relativeParent?: IProjectionNode
     root?: IProjectionNode
@@ -43,18 +50,20 @@ export interface IProjectionNode<I = unknown> {
     unmount: () => void
     options: ProjectionNodeOptions
     setOptions(options: ProjectionNodeOptions): void
-    layout?: Layout
-    snapshot?: Snapshot
+    layout?: Measurements
+    snapshot?: Measurements
     target?: Box
     relativeTarget?: Box
     targetDelta?: Delta
     targetWithTransforms?: Box
-    scroll?: Point
-    isScrollRoot?: boolean
+    scroll?: ScrollMeasurements
     treeScale?: Point
     projectionDelta?: Delta
+    projectionDeltaWithTransform?: Delta
     latestValues: ResolvedValues
     isLayoutDirty: boolean
+    isTransformDirty: boolean
+    isProjectionDirty: boolean
     shouldResetTransform: boolean
     prevTransformTemplateValue: string | undefined
     isUpdateBlocked(): boolean
@@ -67,11 +76,12 @@ export interface IProjectionNode<I = unknown> {
     startUpdate(): void
     willUpdate(notifyListeners?: boolean): void
     didUpdate(): void
-    measure(): Box
+    measure(removeTransform?: boolean): Measurements
+    measurePageBox(): Box
     updateLayout(): void
     updateSnapshot(): void
     clearSnapshot(): void
-    updateScroll(): void
+    updateScroll(phase?: Phase): void
     scheduleUpdateProjection(): void
     scheduleCheckAfterUnmount(): void
     checkUpdateFailed(): void
@@ -126,7 +136,7 @@ export interface IProjectionNode<I = unknown> {
 
 export interface LayoutUpdateData {
     layout: Box
-    snapshot: Snapshot
+    snapshot: Measurements
     delta: Delta
     layoutDelta: Delta
     hasLayoutChanged: boolean
@@ -152,7 +162,7 @@ export interface ProjectionNodeOptions {
     alwaysMeasureLayout?: boolean
     scheduleRender?: VoidFunction
     onExitComplete?: VoidFunction
-    animationType?: "size" | "position" | "both"
+    animationType?: "size" | "position" | "both" | "preserve-aspect"
     layoutId?: string
     layout?: boolean | string
     visualElement?: VisualElement

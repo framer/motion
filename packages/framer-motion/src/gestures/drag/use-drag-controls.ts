@@ -55,18 +55,12 @@ export class DragControls {
      * @public
      */
     start(
-        event:
-            | React.MouseEvent
-            | React.TouchEvent
-            | React.PointerEvent
-            | MouseEvent
-            | TouchEvent
-            | PointerEvent,
+        event: React.PointerEvent | PointerEvent,
         options?: DragControlOptions
     ) {
         this.componentControls.forEach((controls) => {
             controls.start(
-                (event as React.MouseEvent).nativeEvent || event,
+                (event as React.PointerEvent).nativeEvent || event,
                 options
             )
         })

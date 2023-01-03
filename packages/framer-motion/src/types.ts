@@ -1,4 +1,5 @@
 import { CSSProperties, SVGAttributes } from "react"
+import { Easing } from "./easing/types"
 import {
     TransformProperties,
     CustomStyles,
@@ -43,48 +44,6 @@ export type ValueTarget = SingleTarget | KeyframesTarget
  * @public
  */
 export type Props = { [key: string]: any }
-
-/**
- * A function that accepts a progress value between `0` and `1` and returns a
- * new one.
- *
- * ```jsx
- * <motion.div
- *   animate={{ opacity: 0 }}
- *   transition={{
- *     duration: 1,
- *     ease: progress => progress * progress
- *   }}
- * />
- * ```
- *
- * @public
- */
-export type EasingFunction = (v: number) => number
-
-/**
- * The easing function to use. Set as one of:
- *
- * - The name of an in-built easing function.
- * - An array of four numbers to define a cubic bezier curve.
- * - An easing function, that accepts and returns a progress value between `0` and `1`.
- *
- * @public
- */
-export type Easing =
-    | [number, number, number, number]
-    | "linear"
-    | "easeIn"
-    | "easeOut"
-    | "easeInOut"
-    | "circIn"
-    | "circOut"
-    | "circInOut"
-    | "backIn"
-    | "backOut"
-    | "backInOut"
-    | "anticipate"
-    | EasingFunction
 
 /**
  * Options for orchestrating the timing of animations.

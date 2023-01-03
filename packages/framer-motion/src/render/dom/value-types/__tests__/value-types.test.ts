@@ -1,18 +1,18 @@
 import "../../../../../jest.setup"
-import {
-    color,
-    degrees,
-    px,
-    number,
-    percent,
-    vw,
-    vh,
-    complex,
-} from "style-value-types"
 import { auto } from "../type-auto"
 import { findDimensionValueType } from "../dimensions"
 import { findValueType } from "../find"
 import { getValueAsType } from "../get-as-type"
+import { number } from "../../../../value/types/numbers"
+import {
+    degrees,
+    percent,
+    px,
+    vh,
+    vw,
+} from "../../../../value/types/numbers/units"
+import { color } from "../../../../value/types/color"
+import { complex } from "../../../../value/types/complex"
 
 describe("auto ValueType", () => {
     it("Correctly tests for auto", () => {

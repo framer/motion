@@ -1,14 +1,15 @@
 import * as React from "react"
-import { MutableRefObject, useContext, useEffect, useRef } from "react"
+import { useContext, useRef } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 import { MotionProps } from "../../motion/types"
 import { useVisualElementContext } from "../../context/MotionContext"
-import { CreateVisualElement, VisualElement } from "../../render/types"
+import { CreateVisualElement } from "../../render/types"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { VisualState } from "./use-visual-state"
 import { LazyContext } from "../../context/LazyContext"
 import { MotionConfigProps } from "../../components/MotionConfig"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
+import type { VisualElement } from "../../render/VisualElement"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -21,8 +22,7 @@ export function useVisualElement<Instance, RenderState>(
     const presenceContext = useContext(PresenceContext)
     const reducedMotionConfig = useContext(MotionConfigContext).reducedMotion
 
-    const visualElementRef: MutableRefObject<VisualElement | undefined> =
-        useRef(undefined)
+    const visualElementRef = useRef<VisualElement<Instance>>()
 
     /**
      * If we haven't preloaded a renderer, check to see if we have one lazy-loaded
@@ -45,19 +45,19 @@ export function useVisualElement<Instance, RenderState>(
     const visualElement = visualElementRef.current
 
     useIsomorphicLayoutEffect(() => {
-        visualElement && visualElement.syncRender()
+        visualElement && visualElement.render()
     })
 
-    useEffect(() => {
+    /**
+     * If we have optimised appear animations to handoff from, trigger animateChanges
+     * from a synchronous useLayoutEffect to ensure there's no flash of incorrectly
+     * styled component in the event of a hydration error.
+     */
+    useIsomorphicLayoutEffect(() => {
         if (visualElement && visualElement.animationState) {
             visualElement.animationState.animateChanges()
         }
     })
-
-    useIsomorphicLayoutEffect(
-        () => () => visualElement && visualElement.notifyUnmount(),
-        []
-    )
 
     return visualElement
 }

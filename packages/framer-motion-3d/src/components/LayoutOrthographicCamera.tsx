@@ -5,6 +5,9 @@ import { motion } from "../render/motion"
 import { LayoutCameraProps } from "./types"
 import { useLayoutCamera } from "./use-layout-camera"
 import { ThreeMotionProps } from "../types"
+import { extend } from "@react-three/fiber"
+
+extend({ OrthographicCamera: OrthographicCameraImpl })
 
 type Props = JSX.IntrinsicElements["orthographicCamera"] &
     LayoutCameraProps &

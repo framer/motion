@@ -1,4 +1,4 @@
-import { px } from "style-value-types"
+import { px } from "../../../value/types/numbers/units"
 import { SVGDimensions } from "../types"
 
 function calcOrigin(origin: number | string, offset: number, size: number) {

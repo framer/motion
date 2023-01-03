@@ -9,7 +9,14 @@ const transition = {
 export const App = () => {
     const params = new URLSearchParams(window.location.search)
     const type = params.get("type") || true
+    const size = params.get("size") || false
+    const move = params.get("move") || "yes"
     const [state, setState] = React.useState(false)
+
+    const bStyle = size ? aLarge : b
+    if (move === "no") {
+        bStyle.top = bStyle.left = 0
+    }
 
     return (
         <>
@@ -25,7 +32,8 @@ export const App = () => {
                 <motion.div
                     id="b"
                     layoutId="box"
-                    style={b}
+                    layout={type}
+                    style={bStyle}
                     transition={transition}
                     onClick={() => setState(!state)}
                 />
@@ -53,4 +61,12 @@ const b = {
     left: 200,
     width: 300,
     height: 300,
+}
+
+const aLarge = {
+    ...box,
+    top: 100,
+    left: 200,
+    width: 300,
+    height: 600,
 }

@@ -26,9 +26,12 @@ export interface LayoutProps {
      * If `layout` is set to `"size"`, the position of the component will change instantly and
      * only its size will animate.
      *
+     * If `layout` is set to `"preserve-aspect"`, the component will animate size & position if
+     * the aspect ratio remains the same between renders, and just position if the ratio changes.
+     *
      * @public
      */
-    layout?: boolean | "position" | "size"
+    layout?: boolean | "position" | "size" | "preserve-aspect"
 
     /**
      * Enable shared layout transitions between different components with the same `layoutId`.

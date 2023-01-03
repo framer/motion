@@ -24,8 +24,8 @@ export function measurePageBox(
     const { scroll } = rootProjectionNode
 
     if (scroll) {
-        translateAxis(viewportBox.x, scroll.x)
-        translateAxis(viewportBox.y, scroll.y)
+        translateAxis(viewportBox.x, scroll.offset.x)
+        translateAxis(viewportBox.y, scroll.offset.y)
     }
 
     return viewportBox

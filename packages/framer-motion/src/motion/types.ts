@@ -11,8 +11,7 @@ import {
 } from "../types"
 import { DraggableProps } from "../gestures/drag/types"
 import { LayoutProps } from "./features/layout/types"
-import { ResolvedValues } from "../render/types"
-import { VisualElementLifecycles } from "../render/utils/lifecycles"
+import { ResolvedValues, EventProps } from "../render/types"
 import {
     PanHandlers,
     TapHandlers,
@@ -265,6 +264,10 @@ export interface MotionAdvancedProps {
     inherit?: boolean
 }
 
+type ExternalMotionValues = {
+    [key: string]: MotionValue<number> | MotionValue<string>
+}
+
 /**
  * Props for `motion` components.
  *
@@ -272,7 +275,7 @@ export interface MotionAdvancedProps {
  */
 export interface MotionProps
     extends AnimationProps,
-        VisualElementLifecycles,
+        EventProps,
         PanHandlers,
         TapHandlers,
         HoverHandlers,
@@ -294,6 +297,13 @@ export interface MotionProps
      * ```
      */
     style?: MotionStyle
+
+    /**
+     * Provide a set of motion values to perform animations on.
+     *
+     * @internal
+     */
+    values?: ExternalMotionValues
 
     /**
      * By default, Framer Motion generates a `transform` property with a sensible transform order. `transformTemplate`

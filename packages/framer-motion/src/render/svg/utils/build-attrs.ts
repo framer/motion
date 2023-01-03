@@ -23,9 +23,21 @@ export function buildSVGAttrs(
         ...latest
     }: ResolvedValues,
     options: DOMVisualElementOptions,
+    isSVGTag: boolean,
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
     buildHTMLStyles(state, latest, options, transformTemplate)
+
+    /**
+     * For svg tags we just want to make sure viewBox is animatable and treat all the styles
+     * as normal HTML tags.
+     */
+    if (isSVGTag) {
+        if (state.style.viewBox) {
+            state.attrs.viewBox = state.style.viewBox
+        }
+        return
+    }
 
     state.attrs = state.style
     state.style = {}

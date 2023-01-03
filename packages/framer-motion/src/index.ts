@@ -36,6 +36,7 @@ export { useElementScroll } from "./value/scroll/use-element-scroll"
 export { useViewportScroll } from "./value/scroll/use-viewport-scroll"
 export { useTime } from "./value/use-time"
 export { useWillChange } from "./value/use-will-change"
+export { useMotionValueEvent } from "./utils/use-motion-value-event"
 
 /**
  * Accessibility
@@ -46,9 +47,12 @@ export { useReducedMotionConfig } from "./utils/reduced-motion/use-reduced-motio
 /**
  * Utils
  */
-export { animationControls } from "./animation/animation-controls"
+export { animationControls } from "./animation/hooks/animation-controls"
 export { AnimationControls } from "./animation/types"
-export { useAnimation, useAnimationControls } from "./animation/use-animation"
+export {
+    useAnimation,
+    useAnimationControls,
+} from "./animation/hooks/use-animation"
 export { useAnimationFrame } from "./utils/use-animation-frame"
 export { animate } from "./animation/animate"
 export { animateVisualElement } from "./render/utils/animation"
@@ -60,7 +64,7 @@ export {
     TapInfo,
 } from "./gestures/types"
 export { PanInfo } from "./gestures/PanSession"
-export { useCycle } from "./utils/use-cycle"
+export { useCycle, CycleState, Cycle } from "./utils/use-cycle"
 export { transform } from "./utils/transform"
 export { isValidMotionProp } from "./motion/utils/valid-prop"
 export {
@@ -74,12 +78,27 @@ export {
 } from "./gestures/drag/use-drag-controls"
 export { useDomEvent } from "./events/use-dom-event"
 export { createMotionComponent } from "./motion"
-export { visualElement } from "./render"
-export { VisualElement } from "./render/types"
+export { isMotionComponent } from "./motion/utils/is-motion-component"
+export { unwrapMotionComponent } from "./motion/utils/unwrap-motion-component"
+export { VisualElement } from "./render/VisualElement"
 export { addScaleCorrector } from "./projection/styles/scale-correction"
 export { useInstantTransition } from "./utils/use-instant-transition"
 export { useInstantLayoutTransition } from "./projection/use-instant-layout-transition"
 export { useResetProjection } from "./projection/use-reset-projection"
+export { buildTransform } from "./render/html/utils/build-transform"
+export { clamp } from "./utils/clamp"
+export * from "./utils/delay"
+export * from "./utils/distance"
+export { mix } from "./utils/mix"
+export { pipe } from "./utils/pipe"
+export { wrap } from "./utils/wrap"
+
+/**
+ * Appear animations
+ */
+export { startOptimizedAppearAnimation } from "./animation/optimized-appear/start"
+export { optimizedAppearDataAttribute } from "./animation/optimized-appear/data-id"
+export { spring } from "./animation/legacy-popmotion/spring"
 
 /**
  * Contexts
@@ -96,6 +115,7 @@ export { SwitchLayoutGroupContext } from "./context/SwitchLayoutGroupContext"
  */
 export { HTMLMotionProps, ForwardRefComponent } from "./render/html/types"
 export { SVGMotionProps, SVGAttributesAsMotionValues } from "./render/svg/types"
+export { AnimationLifecycles } from "./render/types"
 export {
     AnimationOptions,
     AnimationPlaybackControls,
@@ -120,7 +140,6 @@ export {
     Keyframes,
     Inertia,
     None,
-    EasingFunction,
     Target,
     TargetAndTransition,
     Transition,
@@ -134,8 +153,8 @@ export {
     Variant,
     Variants,
 } from "./types"
+export * from "./easing/types"
 export { EventInfo } from "./events/types"
-export { VisualElementLifecycles } from "./render/utils/lifecycles"
 export * from "./motion/features/types"
 export {
     DraggableProps,
@@ -147,10 +166,11 @@ export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { MotionConfigProps } from "./components/MotionConfig"
 export { LazyProps } from "./components/LazyMotion/types"
 export { FlatTree } from "./render/utils/flat-tree"
+export { CreateVisualElement } from "./render/types"
 export * from "./projection/geometry/types"
 export { IProjectionNode } from "./projection/node/types"
 /**
  * Deprecated
  */
-export { useAnimatedState as useDeprecatedAnimatedState } from "./animation/use-animated-state"
+export { useAnimatedState as useDeprecatedAnimatedState } from "./animation/hooks/use-animated-state"
 export { useInvertedScale as useDeprecatedInvertedScale } from "./value/use-inverted-scale"

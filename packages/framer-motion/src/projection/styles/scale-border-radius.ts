@@ -1,4 +1,4 @@
-import { px } from "style-value-types"
+import { px } from "../../value/types/numbers/units"
 import { Axis } from "../geometry/types"
 import { ScaleCorrectorDefinition } from "./types"
 

@@ -70,17 +70,13 @@
 
             sync.postRender(() => {
                 aProjection.willUpdate()
-
                 const b = document.createElement("div")
                 b.id = "b"
                 scroller.appendChild(b)
-
                 const bProjection = createNode(b, scrollerProjection, {
                     layoutId: "a",
                 })
-
                 aProjection.root.didUpdate()
-
                 sync.postRender(() => {
                     matchViewportBox(a, b.getBoundingClientRect())
                     matchViewportBox(a, {

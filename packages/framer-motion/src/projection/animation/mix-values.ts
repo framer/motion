@@ -1,7 +1,10 @@
-import { circOut, linear, mix, progress as calcProgress } from "popmotion"
-import { percent, px } from "style-value-types"
+import { circOut } from "../../easing/circ"
+import { EasingFunction } from "../../easing/types"
 import { ResolvedValues } from "../../render/types"
-import { EasingFunction } from "../../types"
+import { progress as calcProgress } from "../../utils/progress"
+import { mix } from "../../utils/mix"
+import { noop } from "../../utils/noop"
+import { percent, px } from "../../value/types/numbers/units"
 
 const borders = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"]
 const numBorders = borders.length
@@ -23,20 +26,19 @@ export function mixValues(
     if (shouldCrossfadeOpacity) {
         target.opacity = mix(
             0,
-            // (follow?.opacity as number) ?? 0,
             // TODO Reinstate this if only child
-            (lead.opacity as number) ?? 1,
+            lead.opacity !== undefined ? (lead.opacity as number) : 1,
             easeCrossfadeIn(progress)
         )
         target.opacityExit = mix(
-            (follow.opacity as number) ?? 1,
+            follow.opacity !== undefined ? (follow.opacity as number) : 1,
             0,
             easeCrossfadeOut(progress)
         )
     } else if (isOnlyMember) {
         target.opacity = mix(
-            (follow.opacity as number) ?? 1,
-            (lead.opacity as number) ?? 1,
+            follow.opacity !== undefined ? (follow.opacity as number) : 1,
+            lead.opacity !== undefined ? (lead.opacity as number) : 1,
             progress
         )
     }
@@ -86,7 +88,9 @@ export function mixValues(
 }
 
 function getRadius(values: ResolvedValues, radiusName: string) {
-    return values[radiusName] ?? values.borderRadius
+    return values[radiusName] !== undefined
+        ? values[radiusName]
+        : values.borderRadius
 }
 
 // /**
@@ -114,7 +118,7 @@ function getRadius(values: ResolvedValues, radiusName: string) {
 // }
 
 const easeCrossfadeIn = compress(0, 0.5, circOut)
-const easeCrossfadeOut = compress(0.5, 0.95, linear)
+const easeCrossfadeOut = compress(0.5, 0.95, noop)
 
 function compress(
     min: number,

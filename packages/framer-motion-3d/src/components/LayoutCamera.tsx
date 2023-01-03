@@ -5,6 +5,9 @@ import { LayoutCameraProps } from "./types"
 import { motion } from "../render/motion"
 import { useLayoutCamera } from "./use-layout-camera"
 import { ThreeMotionProps } from "../types"
+import { extend } from "@react-three/fiber"
+
+extend({ PerspectiveCamera: PerspectiveCameraImpl })
 
 type Props = JSX.IntrinsicElements["perspectiveCamera"] &
     LayoutCameraProps &

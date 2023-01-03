@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "7.2.1",
+    "version": "8.1.4",
     "description": "A simple and powerful React animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -40,13 +40,15 @@
         "test": "yarn test-server && yarn test-client",
         "test-ci": "yarn test",
         "test-client": "jest --config jest.config.json --max-workers=2",
-        "test-server": "jest --config jest.config.ssr.json",
+        "test-server": "jest --config jest.config.ssr.json ",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov --config jest.config.json",
+        "test-appear": "yarn run collect-appear-tests && start-server-and-test 'pushd ../../; python -m SimpleHTTPServer; popd' http://0.0.0.0:8000 'cypress run -s cypress/integration/appear.chrome.ts --config baseUrl=http://localhost:8000/'",
         "test-projection": "yarn run collect-projection-tests && start-server-and-test 'pushd ../../; python -m SimpleHTTPServer; popd' http://0.0.0.0:8000 'cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
         "test-e2e-chrome": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --browser chrome  --spec \"cypress/integration/layout-relative.chrome.ts\"'",
         "test-e2e-electron": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
-        "test-e2e": "yarn test-projection && yarn test-e2e-electron",
+        "test-e2e": "yarn test-appear && yarn test-projection && yarn test-e2e-electron",
         "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/while-in-view.ts\"'",
+        "collect-appear-tests": "node ../../dev/optimized-appear/collect-appear-tests.js",
         "collect-projection-tests": "node ../../dev/projection/collect-projection-tests.js",
         "prettier": "prettier ./src/* --write",
         "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
@@ -60,12 +62,9 @@
         "react-dom": "^18.0.0"
     },
     "dependencies": {
-        "@motionone/dom": "10.13.1",
-        "framesync": "6.1.2",
+        "@motionone/dom": "^10.15.3",
         "hey-listen": "^1.0.8",
-        "popmotion": "11.0.5",
-        "style-value-types": "5.1.2",
-        "tslib": "2.4.0"
+        "tslib": "^2.4.0"
     },
     "optionalDependencies": {
         "@emotion/is-prop-valid": "^0.8.2"
@@ -73,31 +72,32 @@
     "bundlesize": [
         {
             "path": "./dist/size-rollup-motion.js",
-            "maxSize": "29.1 kB"
+            "maxSize": "29.31 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
-            "maxSize": "4.67 kB"
+            "maxSize": "4.74 kB"
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
-            "maxSize": "16.75 kB"
+            "maxSize": "14.56 kB"
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
-            "maxSize": "27.2 kB"
+            "maxSize": "25.25 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",
-            "maxSize": "4.9 kB"
+            "maxSize": "4.96 kB"
         },
         {
             "path": "./dist/size-webpack-dom-animation.js",
-            "maxSize": "19.1 kB"
+            "maxSize": "18.72 kB"
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "30.15kB"
+            "maxSize": "30.28kB"
         }
-    ]
+    ],
+    "gitHead": "8b08013ec1f35c33a98cad63286c2e092b97bda7"
 }

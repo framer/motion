@@ -1,9 +1,7 @@
 import * as React from "react"
 import { useState, useMemo, useEffect, useRef } from "react"
 import { render } from "react-dom"
-import { motion, useMotionValue, useSpring } from "framer-motion"
-import { distance } from "popmotion"
-import { spring } from "popmotion"
+import { distance2D, motion, useMotionValue, useSpring } from "framer-motion"
 
 //const grid = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
 const grid = [[0]]
@@ -14,7 +12,7 @@ const pushFactor = 0.4
 const Square = ({ active, setActive, colIndex, rowIndex, itemIndex, x, y }) => {
     const isDragging = colIndex === active.col && rowIndex === active.row
     const diagonalIndex = (360 / 6) * (colIndex + rowIndex)
-    const d = distance(
+    const d = distance2D(
         { x: active.col, y: active.row },
         { x: colIndex, y: rowIndex }
     )

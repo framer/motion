@@ -1,8 +1,8 @@
 import { createContext, useContext } from "react"
-import { VisualElement } from "../../render/types"
+import type { VisualElement } from "../../render/VisualElement"
 
-export interface MotionContextProps {
-    visualElement?: VisualElement
+export interface MotionContextProps<Instance = unknown> {
+    visualElement?: VisualElement<Instance>
     initial?: false | string | string[]
     animate?: string | string[]
 }

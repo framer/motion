@@ -8,7 +8,7 @@ import { FeatureProps } from "../../motion/features/types"
  *
  * @internal
  */
-export function useDrag(props: FeatureProps) {
+export function useDrag(props: FeatureProps<HTMLElement>) {
     const { dragControls: groupDragControls, visualElement } = props
 
     const dragControls = useConstant(

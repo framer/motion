@@ -6,7 +6,7 @@
  * @param child - Element to test against parent
  */
 export const isNodeOrChild = (
-    parent: Element,
+    parent: Element | null,
     child?: Element | null
 ): boolean => {
     if (!child) {

@@ -70,7 +70,7 @@
             scroll.scrollLeft = scrollDistance
 
             boxProjection.setValue("scale", 2)
-            boxProjection.options.visualElement.syncRender()
+            boxProjection.options.visualElement.render()
 
             const boxOrigin = box.getBoundingClientRect()
             const buttonOrigin = button.getBoundingClientRect()

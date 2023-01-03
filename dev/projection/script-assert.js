@@ -1,9 +1,16 @@
 history.scrollRestoration = "manual"
 
+const messages = new Set()
+
 function showError(element, msg) {
     element.dataset.layoutCorrect = "false"
-    console.error(msg)
-    document.body.innerHTML += `<p style="color: black;z-index: 1000;position: absolute;">${msg}</p>`
+
+    // Prevent the same error flagging more than once
+    if (!messages.has(msg)) {
+        messages.add(msg)
+        console.error(msg)
+        document.body.innerHTML += `<p style="color: black;z-index: 1000;position: absolute;">${msg}</p>`
+    }
 }
 
 window.Assert = {
@@ -30,8 +37,9 @@ window.Assert = {
         }
     },
     matchOpacity: (element, expected) => {
+        const computedOpacity = window.getComputedStyle(element).opacity
         const elementOpacity =
-            element.style.opacity === "" ? 1 : parseFloat(element.style.opacity)
+            computedOpacity === "" ? 1 : parseFloat(computedOpacity)
 
         if (elementOpacity !== expected) {
             showError(

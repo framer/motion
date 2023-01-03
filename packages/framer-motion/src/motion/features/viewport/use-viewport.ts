@@ -1,6 +1,6 @@
 import { env } from "../../../utils/process"
 import { useEffect, useRef } from "react"
-import { VisualElement } from "../../../render/types"
+import type { VisualElement } from "../../../render/VisualElement"
 import { AnimationType } from "../../../render/utils/types"
 import { warnOnce } from "../../../utils/warn-once"
 import { FeatureProps } from "../types"
@@ -13,7 +13,7 @@ export function useViewport({
     onViewportEnter,
     onViewportLeave,
     viewport = {},
-}: FeatureProps) {
+}: FeatureProps<HTMLElement>) {
     const state = useRef<ViewportState>({
         hasEnteredView: false,
         isInView: false,
@@ -41,11 +41,11 @@ const thresholdNames = {
 function useIntersectionObserver(
     shouldObserve: boolean,
     state: ViewportState,
-    visualElement: VisualElement,
+    visualElement: VisualElement<HTMLElement>,
     { root, margin: rootMargin, amount = "some", once }: ViewportOptions
 ) {
     useEffect(() => {
-        if (!shouldObserve) return
+        if (!shouldObserve || !visualElement.current) return
 
         const options = {
             root: root?.current,
@@ -93,7 +93,7 @@ function useIntersectionObserver(
         }
 
         return observeIntersection(
-            visualElement.getInstance(),
+            visualElement.current,
             options,
             intersectionCallback
         )

@@ -1,4 +1,3 @@
-import { complex } from "style-value-types"
 import {
     Target,
     TargetAndTransition,
@@ -10,9 +9,11 @@ import { isNumericalString } from "../../utils/is-numerical-string"
 import { isZeroValueString } from "../../utils/is-zero-value-string"
 import { resolveFinalValueInKeyframes } from "../../utils/resolve-value"
 import { motionValue } from "../../value"
+import { complex } from "../../value/types/complex"
 import { getAnimatableNone } from "../dom/value-types/animatable-none"
 import { findValueType } from "../dom/value-types/find"
-import { ResolvedValues, VisualElement } from "../types"
+import { ResolvedValues } from "../types"
+import type { VisualElement } from "../VisualElement"
 import { AnimationDefinition } from "./animation"
 import { resolveVariant } from "./resolve-dynamic-variants"
 
@@ -128,11 +129,14 @@ export function checkTargetForNewValues(
             value = getAnimatableNone(key, targetValue)
         }
 
-        visualElement.addValue(key, motionValue(value))
+        visualElement.addValue(
+            key,
+            motionValue(value, { owner: visualElement })
+        )
         if (origin[key] === undefined) {
             origin[key] = value as number | string
         }
-        visualElement.setBaseTarget(key, value)
+        if (value !== null) visualElement.setBaseTarget(key, value)
     }
 }
 

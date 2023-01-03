@@ -1,7 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, addScaleCorrector } from "framer-motion"
-import { mix } from "popmotion"
+import { mix, motion, addScaleCorrector } from "framer-motion"
 import styled from "styled-components"
 
 /**

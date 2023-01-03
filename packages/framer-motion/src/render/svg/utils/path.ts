@@ -1,4 +1,4 @@
-import { px } from "style-value-types"
+import { px } from "../../../value/types/numbers/units"
 import { ResolvedValues } from "../../types"
 
 const dashKeys = {

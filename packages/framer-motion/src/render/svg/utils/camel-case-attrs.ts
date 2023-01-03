@@ -22,4 +22,7 @@ export const camelCaseAttributes = new Set([
     "viewBox",
     "gradientTransform",
     "pathLength",
+    "startOffset",
+    "textLength",
+    "lengthAdjust",
 ])

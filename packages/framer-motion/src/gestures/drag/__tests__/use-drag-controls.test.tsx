@@ -11,7 +11,7 @@ describe("useDragControls", () => {
             return (
                 <MockDrag>
                     <div
-                        onMouseDown={e => dragControls.start(e)}
+                        onPointerDown={(e) => dragControls.start(e)}
                         data-testid="drag-handle"
                     />
                     <motion.div
@@ -44,7 +44,7 @@ describe("useDragControls", () => {
             return (
                 <MockDrag>
                     <div
-                        onMouseDown={e => dragControls.start(e)}
+                        onPointerDown={(e) => dragControls.start(e)}
                         data-testid="drag-handle"
                     >
                         <motion.div

@@ -1,7 +1,5 @@
 import * as React from "react"
-import { render } from "react-dom"
-import { Frame, useCycle, useAnimation } from "framer-motion"
-import { wrap, distance } from "popmotion"
+import { useAnimation, distance2D, wrap } from "framer-motion"
 import { motion } from "framer-motion"
 
 const count = 100
@@ -48,7 +46,7 @@ export const App = () => {
 const Cell = ({ center, i, onClick }) => {
     const x = col(i)
     const y = row(i)
-    const d = distance({ x, y }, center)
+    const d = distance2D({ x, y }, center)
     const n = Math.max(d / max, 0.05) // normalized
 
     const animation = useAnimation()

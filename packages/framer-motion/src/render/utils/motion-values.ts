@@ -3,7 +3,7 @@ import { MotionStyle } from "../../motion/types"
 import { warnOnce } from "../../utils/warn-once"
 import { motionValue } from "../../value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
-import { VisualElement } from "../types"
+import type { VisualElement } from "../VisualElement"
 
 export function updateMotionValuesFromProps(
     element: VisualElement,
@@ -42,7 +42,7 @@ export function updateMotionValuesFromProps(
              * If we're swapping from a motion value to a static value,
              * create a new motion value from that
              */
-            element.addValue(key, motionValue(nextValue))
+            element.addValue(key, motionValue(nextValue, { owner: element }))
 
             if (isWillChangeMotionValue(willChange)) {
                 willChange.remove(key)

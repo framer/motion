@@ -3,7 +3,7 @@ import { isKeyframesTarget } from "../../animation/utils/is-keyframes-target"
 import { VariantLabels } from "../../motion/types"
 import { TargetAndTransition } from "../../types"
 import { shallowCompare } from "../../utils/shallow-compare"
-import { VisualElement } from "../types"
+import type { VisualElement } from "../VisualElement"
 import {
     animateVisualElement,
     AnimationDefinition,
@@ -140,7 +140,7 @@ export function createAnimationState(
         for (let i = 0; i < numAnimationTypes; i++) {
             const type = reversePriorityOrder[i]
             const typeState = state[type]
-            const prop = props[type] ?? context[type]
+            const prop = props[type] !== undefined ? props[type] : context[type]
             const propIsVariant = isVariantLabel(prop)
 
             /**

@@ -1,15 +1,15 @@
 import React from "react"
 import { MotionConfigProps } from "../.."
-import { VisualElement } from "../../render/types"
+import type { VisualElement } from "../../render/VisualElement"
 import { MotionProps } from "../types"
 
-interface Props {
-    visualElement?: VisualElement
+interface Props<Instance> {
+    visualElement?: VisualElement<Instance>
     props: MotionProps & MotionConfigProps
 }
 
-export class VisualElementHandler extends React.Component<
-    React.PropsWithChildren<Props>
+export class VisualElementHandler<Instance> extends React.Component<
+    React.PropsWithChildren<Props<Instance>>
 > {
     /**
      * Update visual element props as soon as we know this update is going to be commited.

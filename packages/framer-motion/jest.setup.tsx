@@ -1,9 +1,25 @@
 import "@testing-library/jest-dom"
 // Get fireEvent from the native testing library
-// because @testing-library/react one switches out mouseEnter and mouseLeave
+// because @testing-library/react one switches out pointerEnter and pointerLeave
 import { fireEvent, getByTestId } from "@testing-library/dom"
 import { render as testRender, act } from "@testing-library/react"
 import * as React from "react"
+
+/**
+ * Stub PointerEvent - this is so we can pass through PointerEvent.isPrimary
+ */
+const pointerEventProps = ["isPrimary"]
+class PointerEventFake extends Event {
+    constructor(type: any, props: any) {
+        super(type, props)
+        pointerEventProps.forEach((prop) => {
+            if (props[prop] !== null) {
+                this[prop] = props[prop]
+            }
+        })
+    }
+}
+;(global as any).PointerEvent = PointerEventFake
 
 // Stub ResizeObserver
 if (!(global as any).ResizeObserver) {
@@ -18,21 +34,28 @@ export const click = (element: Element) =>
     act(() => {
         fireEvent.click(element)
     })
-export const mouseEnter = (element: Element) =>
+export const pointerEnter = (element: Element) =>
     act(() => {
-        fireEvent.mouseEnter(element)
+        fireEvent.pointerEnter(element)
     })
-export const mouseLeave = (element: Element) =>
+export const pointerLeave = (element: Element) =>
     act(() => {
-        fireEvent.mouseLeave(element)
+        fireEvent.pointerLeave(element)
     })
-export const mouseDown = (element: Element) =>
+export const pointerDown = (element: Element) =>
     act(() => {
-        fireEvent.mouseDown(element)
+        fireEvent.pointerDown(
+            element,
+            new PointerEventFake("pointerdown", { isPrimary: true })
+        )
     })
-export const mouseUp = (element: Element) =>
+export const pointerUp = (element: Element) =>
     act(() => {
-        fireEvent.mouseUp(element)
+        fireEvent.pointerUp(element)
+    })
+export const pointerMove = (element: Element) =>
+    act(() => {
+        fireEvent.pointerMove(element)
     })
 export const focus = (element: HTMLElement, testId: string) =>
     act(() => {

@@ -60,6 +60,16 @@ describe("SVG", () => {
         render(<Component />)
     })
 
+    test("doesn't calculate transformOrigin for <svg /> elements", () => {
+        const Component = () => {
+            return <motion.svg animate={{ rotate: 100 }} />
+        }
+        const { container } = render(<Component />)
+        expect(container.firstChild as Element).not.toHaveStyle(
+            "transform-origin: 0px 0px"
+        )
+    })
+
     // // https://github.com/framer/motion/issues/216
     test("doesn't throw if animating unencounterd value", () => {
         const animation = {
@@ -76,5 +86,39 @@ describe("SVG", () => {
             )
         }
         render(<Component />)
+    })
+
+    test("doesn't read viewBox as '0 0 0 0'", () => {
+        const Component = () => {
+            return (
+                <motion.svg
+                    viewBox="0 0 100 100"
+                    transition={{ delay: 1 }}
+                    animate={{ viewBox: "100 100 200 200" }}
+                />
+            )
+        }
+        const { container } = render(<Component />)
+        expect(container.firstChild as Element).toHaveAttribute(
+            "viewBox",
+            "0 0 100 100"
+        )
+    })
+
+    test("animates viewBox", () => {
+        const Component = () => {
+            return (
+                <motion.svg
+                    viewBox="0 0 100 100"
+                    transition={{ type: false }}
+                    animate={{ viewBox: "100 100 200 200" }}
+                />
+            )
+        }
+        const { container } = render(<Component />)
+        expect(container.firstChild as Element).toHaveAttribute(
+            "viewBox",
+            "100 100 200 200"
+        )
     })
 })

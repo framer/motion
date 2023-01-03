@@ -1,5 +1,5 @@
-import { mix } from "popmotion"
 import { ResolvedValues } from "../../render/types"
+import { mix } from "../../utils/mix"
 import { IProjectionNode } from "../node/types"
 import { hasTransform } from "../utils/has-transform"
 import { Axis, Box, Delta, Point } from "./types"
@@ -97,7 +97,10 @@ export function applyTreeDeltas(
             node.scroll &&
             node !== node.root
         ) {
-            transformBox(box, { x: -node.scroll.x, y: -node.scroll.y })
+            transformBox(box, {
+                x: -node.scroll.offset.x,
+                y: -node.scroll.offset.y,
+            })
         }
 
         if (delta) {
@@ -113,6 +116,18 @@ export function applyTreeDeltas(
             transformBox(box, node.latestValues)
         }
     }
+
+    /**
+     * Snap tree scale back to 1 if it's within a non-perceivable threshold.
+     * This will help reduce useless scales getting rendered.
+     */
+    treeScale.x = snapToDefault(treeScale.x)
+    treeScale.y = snapToDefault(treeScale.y)
+}
+
+function snapToDefault(scale: number): number {
+    if (Number.isInteger(scale)) return scale
+    return scale > 1.0000000000001 || scale < 0.999999999999 ? scale : 1
 }
 
 export function translateAxis(axis: Axis, distance: number) {

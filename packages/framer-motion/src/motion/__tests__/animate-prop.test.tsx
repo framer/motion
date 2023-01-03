@@ -1,6 +1,12 @@
 import { render } from "../../../jest.setup"
-import { motion, motionValue } from "../../"
+import {
+    motion,
+    motionValue,
+    useMotionValue,
+    useMotionValueEvent,
+} from "../../"
 import * as React from "react"
+import { createRef } from "react"
 
 describe("animate prop as object", () => {
     test("animates to set prop", async () => {
@@ -22,19 +28,20 @@ describe("animate prop as object", () => {
     test("accepts custom transition prop", async () => {
         const promise = new Promise((resolve) => {
             const x = motionValue(0)
-            const onComplete = () => resolve(x.get())
             const Component = () => (
                 <motion.div
                     animate={{ x: 20 }}
-                    transition={{ x: { type: "tween", to: 50 } }}
+                    transition={{
+                        x: { type: "tween", from: 10, ease: () => 0.5 },
+                    }}
+                    onUpdate={() => resolve(x.get())}
                     style={{ x }}
-                    onAnimationComplete={onComplete}
                 />
             )
             const { rerender } = render(<Component />)
             rerender(<Component />)
         })
-        return expect(promise).resolves.toBe(50)
+        return expect(promise).resolves.toBe(15)
     })
     test("fires onAnimationStart when animation begins", async () => {
         const promise = new Promise((resolve) => {
@@ -263,19 +270,135 @@ describe("animate prop as object", () => {
         })
         return expect(promise).resolves.toHaveStyle("z-index: 100")
     })
+
+    test("when value is removed from animate, animates back to value originally defined in initial prop", async () => {
+        return new Promise<void>((resolve) => {
+            const ref = createRef()
+
+            const props: any = {
+                ref,
+                initial: { opacity: 0 },
+                animate: { opacity: 1 },
+                transition: { type: false },
+            }
+
+            const { rerender } = render(<motion.div {...props} />)
+
+            rerender(<motion.div {...props} />)
+
+            expect(ref.current).toHaveStyle("opacity: 1")
+
+            rerender(<motion.div {...props} animate={{}} />)
+            rerender(<motion.div {...props} animate={{}} />)
+
+            expect(ref.current).toHaveStyle("opacity: 0")
+
+            resolve()
+        })
+    })
+
+    test("when value is removed from animate, animates back to value currently defined in initial prop", async () => {
+        return new Promise<void>((resolve) => {
+            const ref = createRef()
+
+            const props: any = {
+                ref,
+                initial: { opacity: 0 },
+                animate: { opacity: 1 },
+                transition: { type: false },
+            }
+
+            const { rerender } = render(<motion.div {...props} />)
+
+            rerender(<motion.div {...props} />)
+
+            expect(ref.current).toHaveStyle("opacity: 1")
+
+            rerender(
+                <motion.div
+                    {...props}
+                    initial={{ opacity: 0.5 }}
+                    animate={{}}
+                />
+            )
+            rerender(
+                <motion.div
+                    {...props}
+                    initial={{ opacity: 0.5 }}
+                    animate={{}}
+                />
+            )
+
+            expect(ref.current).toHaveStyle("opacity: 0.5")
+
+            resolve()
+        })
+    })
+
+    test("when value is removed from both animate and initial, perform no animation", async () => {
+        return new Promise<void>((resolve) => {
+            const ref = createRef()
+
+            const props: any = {
+                ref,
+                initial: { opacity: 0 },
+                animate: { opacity: 1 },
+                transition: { type: false },
+            }
+
+            const { rerender } = render(<motion.div {...props} />)
+
+            rerender(<motion.div {...props} />)
+
+            expect(ref.current).toHaveStyle("opacity: 1")
+
+            rerender(<motion.div {...props} initial={{}} animate={{}} />)
+            rerender(<motion.div {...props} initial={{}} animate={{}} />)
+
+            expect(ref.current).toHaveStyle("opacity: 1")
+
+            resolve()
+        })
+    })
+
+    test("when value is removed from animate, animate back to value read from DOM", async () => {
+        return new Promise<void>((resolve) => {
+            const ref = createRef()
+
+            const props: any = {
+                ref,
+                style: { opacity: 0.5 },
+                animate: { opacity: 1 },
+                transition: { type: false },
+            }
+
+            const { rerender } = render(<motion.div {...props} />)
+
+            rerender(<motion.div {...props} />)
+
+            expect(ref.current).toHaveStyle("opacity: 1")
+
+            rerender(<motion.div {...props} animate={{}} />)
+            rerender(<motion.div {...props} animate={{}} />)
+
+            expect(ref.current).toHaveStyle("opacity: 0.5")
+
+            resolve()
+        })
+    })
+
     test("respects repeatDelay prop", async () => {
         const promise = new Promise<number>((resolve) => {
             const x = motionValue(0)
-            x.onChange(() => {
+            x.on("change", () => {
                 setTimeout(() => resolve(x.get()), 50)
             })
             const Component = () => (
                 <motion.div
-                    animate={{ x: 20 }}
+                    animate={{ x: [0, 20] }}
                     transition={{
                         x: {
                             type: "tween",
-                            to: 50,
                             duration: 0,
                             repeatDelay: 0.1,
                             repeat: 1,
@@ -288,7 +411,7 @@ describe("animate prop as object", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
         })
-        return expect(promise).resolves.toBe(50)
+        return expect(promise).resolves.toBe(20)
     })
     test("animates previously unseen properties", () => {
         const Component = ({ animate }: any) => (
@@ -530,5 +653,40 @@ describe("animate prop as object", () => {
         return expect(element).toHaveStyle(
             "background-color: rgba(0, 136, 255, 1)"
         )
+    })
+
+    test("animationStart event fires as expected", async () => {
+        const testFn = await new Promise<Function>((resolve) => {
+            const fn = jest.fn()
+            const Component = () => {
+                const x = useMotionValue(0)
+                useMotionValueEvent(x, "animationStart", fn)
+                return (
+                    <motion.div
+                        animate={{ x: 100 }}
+                        transition={{ duration: 0.01 }}
+                        style={{ x }}
+                        onUpdate={() => resolve(fn)}
+                    />
+                )
+            }
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(testFn).toHaveBeenCalled()
+    })
+
+    test("doesn't error when provided unknown animation type", async () => {
+        const Component = () => {
+            return (
+                <motion.div
+                    animate={{ x: 100 }}
+                    transition={{ type: "test" } as any}
+                />
+            )
+        }
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
     })
 })

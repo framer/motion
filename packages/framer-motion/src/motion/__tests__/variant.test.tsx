@@ -1,4 +1,9 @@
-import { mouseDown, mouseEnter, mouseUp, render } from "../../../jest.setup"
+import {
+    pointerDown,
+    pointerEnter,
+    pointerUp,
+    render,
+} from "../../../jest.setup"
 import { motion, MotionConfig, useMotionValue } from "../../"
 import * as React from "react"
 import { Variants } from "../../types"
@@ -176,7 +181,7 @@ describe("animate prop as variant", () => {
                 hidden: { background: "#00f" },
                 visible: {
                     background: "#f00",
-                    transition: { to: "#555" },
+                    transition: { from: "#555", ease: () => 0.5 },
                 },
             }
             const background = motionValue("#00f")
@@ -187,7 +192,7 @@ describe("animate prop as variant", () => {
                     animate="visible"
                     variants={variants}
                     transition={{ type: false }}
-                    onAnimationComplete={onComplete}
+                    onUpdate={onComplete}
                     style={{ background }}
                 />
             )
@@ -196,7 +201,7 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        return expect(promise).resolves.toBe("rgba(85, 85, 85, 1)")
+        return expect(promise).resolves.toBe("rgba(190, 60, 60, 1)")
     })
 
     test("respects orchestration props in transition prop", async () => {
@@ -511,7 +516,7 @@ describe("animate prop as variant", () => {
 
                 React.useEffect(
                     () =>
-                        a.onChange((latest) => {
+                        a.on("change", (latest) => {
                             if (latest >= 1 && b.get() === 0) resolve(true)
                         }),
                     [a, b]
@@ -564,7 +569,7 @@ describe("animate prop as variant", () => {
 
                 React.useEffect(
                     () =>
-                        a.onChange((latest) => {
+                        a.on("change", (latest) => {
                             if (latest >= 1 && b.get() === 0) resolve(true)
                         }),
                     [a, b]
@@ -649,7 +654,7 @@ describe("animate prop as variant", () => {
                     visible: {
                         opacity: 1,
                         transition: {
-                            duration: 0.01,
+                            duration: 0.000001,
                         },
                     },
                 }
@@ -969,18 +974,76 @@ describe("animate prop as variant", () => {
         const inner = getByTestId("inner")
         expect(inner).toHaveStyle("background-color: rgb(255,255,0)")
 
-        mouseEnter(getByTestId("parent"))
+        pointerEnter(getByTestId("parent"))
 
         await wait(20)
 
         expect(inner).toHaveStyle("background-color: rgb(150,150,0)")
 
-        mouseDown(getByTestId("variant-trigger"))
-        mouseUp(getByTestId("variant-trigger"))
+        pointerDown(getByTestId("variant-trigger"))
+        pointerUp(getByTestId("variant-trigger"))
 
         await wait(20)
 
         expect(inner).toHaveStyle("background-color: rgb(0, 150,150)")
+    })
+
+    test("child onAnimationComplete triggers from parent animations", async () => {
+        const variants: Variants = {
+            hidden: { opacity: 0, x: -100, transition: { type: false } },
+            visible: { opacity: 1, x: 100, transition: { type: false } },
+        }
+
+        const childVariants: Variants = {
+            hidden: { opacity: 0, x: -100, transition: { type: false } },
+            visible: { opacity: 1, x: 50, transition: { type: false } },
+        }
+
+        const promise = new Promise<string>((resolve) => {
+            const onStart = (name: string) => resolve(name)
+            const Component = () => (
+                <motion.div animate="visible" variants={variants}>
+                    <motion.div
+                        variants={childVariants}
+                        onAnimationStart={onStart}
+                    />
+                </motion.div>
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toBe("visible")
+    })
+
+    test("child onAnimationComplete triggers from parent animations", async () => {
+        const variants: Variants = {
+            hidden: { opacity: 0, x: -100, transition: { type: false } },
+            visible: { opacity: 1, x: 100, transition: { type: false } },
+        }
+
+        const childVariants: Variants = {
+            hidden: { opacity: 0, x: -100, transition: { type: false } },
+            visible: { opacity: 1, x: 50, transition: { type: false } },
+        }
+
+        const promise = new Promise<string>((resolve) => {
+            const onComplete = (name: string) => resolve(name)
+            const Component = () => (
+                <motion.div animate="visible" variants={variants}>
+                    <motion.div
+                        variants={childVariants}
+                        onAnimationComplete={onComplete}
+                    />
+                </motion.div>
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toBe("visible")
     })
 })
 

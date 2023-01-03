@@ -4,7 +4,6 @@ import { MotionProps } from "./types"
 import { RenderComponent, FeatureBundle } from "./features/types"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { MotionContext } from "../context/MotionContext"
-import { CreateVisualElement } from "../render/types"
 import { useVisualElement } from "./utils/use-visual-element"
 import { UseVisualState } from "./utils/use-visual-state"
 import { useMotionRef } from "./utils/use-motion-ref"
@@ -17,6 +16,8 @@ import { LayoutGroupContext } from "../context/LayoutGroupContext"
 import { VisualElementHandler } from "./utils/VisualElementHandler"
 import { LazyContext } from "../context/LazyContext"
 import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
+import { motionComponentSymbol } from "./utils/symbol"
+import { CreateVisualElement } from "../render/types"
 
 export interface MotionComponentConfig<Instance, RenderState> {
     preloadedFeatures?: FeatureBundle
@@ -59,7 +60,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
 
         let features: JSX.Element[] | null = null
 
-        const context = useCreateMotionContext(props)
+        const context = useCreateMotionContext<Instance>(props)
 
         /**
          * Create a unique projection ID for this component. If a new component is added
@@ -86,7 +87,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
              * providing a way of rendering to these APIs outside of the React render loop
              * for more performant animations and interactions
              */
-            context.visualElement = useVisualElement(
+            context.visualElement = useVisualElement<Instance, RenderState>(
                 Component,
                 visualState,
                 configAndProps,
@@ -103,7 +104,8 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
             )
             if (context.visualElement) {
                 features = context.visualElement.loadFeatures(
-                    props,
+                    // Note: Pass the full new combined props to correctly re-render dynamic feature components.
+                    configAndProps,
                     lazyStrictMode,
                     preloadedFeatures,
                     projectionId,
@@ -129,7 +131,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                         Component,
                         props,
                         projectionId,
-                        useMotionRef(
+                        useMotionRef<Instance, RenderState>(
                             visualState,
                             context.visualElement,
                             externalRef
@@ -143,7 +145,9 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
         )
     }
 
-    return forwardRef(MotionComponent)
+    const ForwardRefComponent = forwardRef(MotionComponent)
+    ForwardRefComponent[motionComponentSymbol] = Component
+    return ForwardRefComponent
 }
 
 function useLayoutId({ layoutId }: MotionProps) {

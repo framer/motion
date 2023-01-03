@@ -1,10 +1,12 @@
-import { useRef, useMemo, useContext } from "react"
-import { animate, PlaybackControls, SpringOptions } from "popmotion"
+import { useRef, useContext, useInsertionEffect } from "react"
 import { MotionValue } from "../value"
 import { isMotionValue } from "./utils/is-motion-value"
 import { useMotionValue } from "./use-motion-value"
-import { useOnChange } from "./use-on-change"
 import { MotionConfigContext } from "../context/MotionConfigContext"
+import { PlaybackControls } from "../animation/legacy-popmotion/types"
+import { animate } from "../animation/legacy-popmotion"
+import { SpringOptions } from "../animation/types"
+import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
@@ -33,7 +35,13 @@ export function useSpring(
     const activeSpringAnimation = useRef<PlaybackControls | null>(null)
     const value = useMotionValue(isMotionValue(source) ? source.get() : source)
 
-    useMemo(() => {
+    const stopAnimation = () => {
+        if (activeSpringAnimation.current) {
+            activeSpringAnimation.current.stop()
+        }
+    }
+
+    useInsertionEffect(() => {
         return value.attach((v, set) => {
             /**
              * A more hollistic approach to this might be to use isStatic to fix VisualElement animations
@@ -41,23 +49,25 @@ export function useSpring(
              */
             if (isStatic) return set(v)
 
-            if (activeSpringAnimation.current) {
-                activeSpringAnimation.current.stop()
-            }
+            stopAnimation()
 
             activeSpringAnimation.current = animate({
-                from: value.get(),
-                to: v,
+                keyframes: [value.get(), v],
                 velocity: value.getVelocity(),
+                type: "spring",
                 ...config,
                 onUpdate: set,
             })
 
             return value.get()
-        })
+        }, stopAnimation)
     }, [JSON.stringify(config)])
 
-    useOnChange(source, (v) => value.set(parseFloat(v)))
+    useIsomorphicLayoutEffect(() => {
+        if (isMotionValue(source)) {
+            return source.on("change", (v) => value.set(parseFloat(v)))
+        }
+    }, [value])
 
     return value
 }

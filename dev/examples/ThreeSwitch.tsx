@@ -114,7 +114,7 @@ export function useAnimatedText(target, textTransition) {
     useEffect(() => {
         ref.current.innerText = target.toFixed(2)
 
-        return value.onChange((v) => {
+        return value.on("change", (v) => {
             ref.current.innerText = v.toFixed(2)
         })
     })

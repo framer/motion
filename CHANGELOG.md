@@ -4,6 +4,370 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.1.4] 2023-01-04
+
+### Fixed
+
+-   Ensuring child variant components fire `onAnimationStart` when an animation is triggered by a parent.
+
+## [8.1.3] 2023-01-03
+
+### Fixed
+
+-   Fixed `times`.
+
+## [8.1.2] 2023-01-03
+
+### Fixed
+
+-   Fixed `extends` error in `LayoutCamera` and `LayoutOrthographicCamera` components.
+
+## [8.1.1] 2023-01-03
+
+### Fixed
+
+-   Fixing error when `Transition.type` is invalid.
+
+## [8.1.0] 2023-01-03
+
+### Added
+
+-   `MotionValue.jump` can be used to "jump" a `MotionValue` to a new value, bypassing active springs, ending current animations and resetting to `velocity` to `0`.
+
+## [8.0.4] 2023-01-03
+
+### Fixed
+
+-   Cleaning up animations when a `MotionValue` has no active `"change"` subscribers.
+-   Changing `useMotionValueEvent` subscription to `useInsertionEffect`.
+
+## [8.0.3] 2023-01-03
+
+### Fixed
+
+-   Use range for tslib dependency.
+-   Fixing multitouch with drag and pan gestures.
+
+## [8.0.2] 2022-12-23
+
+### Fixed
+
+-   Fixing defaults for hardware-accelerated animations.
+
+## [8.0.1] 2022-12-21
+
+### Added
+
+-   Warning for unhydrated refs passed to `useScroll()` options.
+
+## [8.0.0] 2022-12-21
+
+### Removed
+
+-   Removed polyfilled support for mouse/touch events.
+-   Removed drag pointerup patch for Safari over `<select />` elements.
+
+### Changed
+
+-   `DragControls.start` now accepts `PointerEvent` only.
+
+## [7.10.3] 2022-12-20
+
+### Changed
+
+-   Firing `animateChanges` in `useLayoutEffect` rather than `useEffect` to ensure optimised appear animations are handed off before paint.
+
+## [7.10.2] 2022-12-16
+
+### Fixed
+
+-   Adding support for all easing functions with WAAPI.
+
+## [7.10.1] 2022-12-16
+
+### Fixed
+
+-   Fixed type inference of `useMotionValueEvent`.
+
+## [7.10.0] 2022-12-15
+
+### Added
+
+-   `.on()` event method to `MotionValue`.
+-   `"animationStart"`, `"animationComplete"`, `"animationCancel"` and `"change"` events for `MotionValue`.
+-   `useMotionValueEvent` helper method for adding events.
+
+## [7.9.1] 2022-12-14
+
+### Fixed
+
+-   Fixing mapping Framer Motion easing names to WAAPI.
+
+## [7.9.0] 2022-12-14
+
+### Added
+
+-   Hardware-accelerated `opacity` animations.
+
+## [7.8.1] 2022-12-14
+
+### Changed
+
+-   Refactored animation pipeline to better accomodate WAAPI.
+
+## [7.9.0] 2022-12-14
+
+### Added
+
+-   Hardware-accelerated `opacity` animations.
+
+## [7.8.1] 2022-12-14
+
+### Changed
+
+-   Refactored animation pipeline to better accommodate WAAPI.
+
+## [7.8.0] 2022-12-13
+
+### Added
+
+-   Added private APIs for starting initial animations before React hydration and handing off to the component after hydration.
+
+## [7.7.3] 2022-12-13
+
+### Fixed
+
+-   Fixed spring effect of `useSpring`.
+
+## [7.7.2] 2022-12-12
+
+### Removed
+
+-   Reduced `??` operators to reduce bundlesize.
+
+## [7.7.1] 2022-12-12
+
+### Changed
+
+-   Removed `style-value-types` and `framesync` as external dependencies.
+
+## [7.7.0] 2022-12-12
+
+### Added
+
+-   Added support for `"startOffset"`, `"textLength"` and `"lengthAdjust"` SVG attributes.
+
+### Removed
+
+-   Removed ability to define `"inertia"` animation as `"decay"` (officially removed in `3.0.0`).
+
+### Removed
+
+-   Removed legacy repeat options (officially removed in `3.0.0`).
+
+## [7.6.19] 2022-12-05
+
+### Fixed
+
+-   Animation of `viewBox` for SVG elements.
+
+## [7.6.18] 2022-12-02
+
+### Changed
+
+-   Removed `popmotion` as external dependency.
+
+## [7.6.17] 2022-12-01
+
+### Fixed
+
+-   Manually firing callback with latest callback when `useOnChange` is provided new motion value (affects `useSpring`).
+
+## [7.6.16] 2022-12-01
+
+### Fixed
+
+-   Fixing `useOnChange` to resubscribe when provided a new motion value (affects `useSpring`).
+
+## [7.6.15] 2022-11-28
+
+### Fixed
+
+-   Rounding tree scale to `1` to prevent unnecessary `scale` transforms.
+
+## [7.6.14] 2022-11-28
+
+### Fixed
+
+-   Nothing to see here.
+
+## [7.6.12] 2022-11-24
+
+### Fixed
+
+-   `isTransformDirty` node skipping logic.
+
+## [7.6.11] 2022-11-24
+
+### Fixed
+
+-   Treat `<motion.svg />` components as HTML.
+
+### Updated
+
+-   Further layout animation performance enhancements.
+
+## [7.6.10] 2022-11-24
+
+### Updated
+
+-   Removing read of (currently unused) `position` style as it's erroneously breaking a test in Framer.
+
+## [7.6.9] 2022-11-22
+
+### Updated
+
+-   Only updating projection calculations for dirty nodes.
+
+## [7.6.8] 2022-11-22
+
+### Updated
+
+-   Reducing number of scroll reads during layout animations.
+
+## [7.6.7] 2022-11-15
+
+### Fixed
+
+-   Removed instantiation of externally-provided motion values.
+
+## [7.6.6] 2022-11-11
+
+### Fixed
+
+-   Minor layout animation refactors.
+
+## [7.6.5] 2022-11-07
+
+### Fixed
+
+-   `VisualElement` changed to `class` implementation.
+-   Fixed issue with relative layout animations when switching relative parents.
+
+## [7.6.4] 2022-11-01
+
+### Fixed
+
+-   Updated `buildTransform` types to only expect required arguments.
+
+## [7.6.3] 2022-11-01
+
+### Added
+
+-   Exposing `buildTransform` for internal use.
+
+## [7.6.2] 2022-10-27
+
+### Added
+
+-   Internal option for `useScroll` to use `useEffect` instead of `useLayoutEffect`.
+
+## [7.6.1] 2022-10-18
+
+### Fixed
+
+-   Exporting `CycleState` and `Cycle` types.
+
+## [7.6.0] 2022-10-18
+
+### Added
+
+-   `delay()`: An alternative to `window.setTimeout()` that is locked to the animation framerate.
+
+## [7.5.4] 2022-10-17
+
+### Fixed
+
+-   Fixed bug relative layout animations within rotated layers.
+-   Fixed bug with `layout="preserve-aspect"` where layers that do change size but aren't moved are reprojected to the old size and stay there.
+
+## [7.5.3] 2022-10-04
+
+### Fixed
+
+-   If the initial style was derived from the `initial` prop, and that style is removed from `animate`, while **also** being removed from `initial`, it won't animate back to the originally-defined value.
+
+## [7.5.2] 2022-10-04
+
+### Fixed
+
+-   Gracefully handle `undefined` values in `values` prop.
+
+## [7.5.1] 2022-09-30
+
+### Fixed
+
+-   `useTransform` correctly cleans up any scheduled animation frames when it unmounts.
+
+## [7.5.0] 2022-09-27
+
+### Added
+
+-   `useAnimationFrame` now passes `delta` to provided callbacks as the second argument.
+
+## [7.4.0] 2022-09-26
+
+### Added
+
+-   Added internal `values` prop that allows the provision of motion values to use exclusively for performing animations on.
+
+## [7.3.6] 2022-09-20
+
+### Fixed
+
+-   Increasing threshold for what's considered a similar aspect ratio in `"preserve-ratio"` layout animations.
+
+## [7.3.5] 2022-09-14
+
+### Fixed
+
+-   `isMotionValue` no longer crashing when provided `null`.
+
+## [7.3.4] 2022-09-13
+
+### Fixed
+
+-   Run feature detection based on rendered props.
+
+## [7.3.3] 2022-09-13
+
+### Fixed
+
+-   Ensuring children dynamic components re-render when context changes.
+
+## [7.3.2] 2022-09-07
+
+### Added
+
+-   `isMotionComponent` returns true if the provided component is a `motion` component.
+-   `unwrapMotionComponent` returns the rendered component.
+
+## [7.3.1] 2022-09-07
+
+### Fixed
+
+-   Fixing application of `rotateZ`.
+
+## [7.3.0] 2022-09-06
+
+### Added
+
+-   `layout="preserve-ratio"` performs a position-only transition if the aspect ratio has changed.
+
+### Fixed
+
+-   `layout="position"` now works with shared element transitions.
+
 ## [7.2.1] 2022-08-23
 
 ### Added

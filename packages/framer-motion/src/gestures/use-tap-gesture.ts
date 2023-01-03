@@ -3,10 +3,10 @@ import { EventInfo } from "../events/types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
-import { pipe } from "popmotion"
 import { AnimationType } from "../render/utils/types"
 import { isDragActive } from "./drag/utils/lock"
 import { FeatureProps } from "../motion/features/types"
+import { pipe } from "../utils/pipe"
 
 /**
  * @param handlers -
@@ -18,7 +18,7 @@ export function useTapGesture({
     onTapCancel,
     whileTap,
     visualElement,
-}: FeatureProps) {
+}: FeatureProps<HTMLElement>) {
     const hasPressListeners = onTap || onTapStart || onTapCancel || whileTap
     const isPressing = useRef(false)
     const cancelPointerEndListeners = useRef<Function | null>(null)
@@ -50,7 +50,7 @@ export function useTapGesture({
          * We only count this as a tap gesture if the event.target is the same
          * as, or a child of, this component's element
          */
-        !isNodeOrChild(visualElement.getInstance(), event.target as Element)
+        !isNodeOrChild(visualElement.current, event.target as Element)
             ? onTapCancel && onTapCancel(event, info)
             : onTap && onTap(event, info)
     }

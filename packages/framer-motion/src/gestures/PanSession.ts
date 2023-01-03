@@ -1,13 +1,13 @@
 import { EventInfo } from "../events/types"
-import { isTouchEvent, isMouseEvent } from "./utils/event-type"
 import { extractEventInfo } from "../events/event-info"
-import sync, { getFrameData, cancelSync } from "framesync"
+import { sync, cancelSync } from "../frameloop"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { addPointerEvent } from "../events/use-pointer-event"
-import { distance, pipe } from "popmotion"
 import { Point, TransformPoint } from "../projection/geometry/types"
-
-export type AnyPointerEvent = MouseEvent | TouchEvent | PointerEvent
+import { pipe } from "../utils/pipe"
+import { distance2D } from "../utils/distance"
+import { frameData } from "../frameloop/data"
+import { isPrimaryPointer } from "../events/utils/is-primary-pointer"
 
 /**
  * Passed in to pan event handlers like `onPan` the `PanInfo` object contains
@@ -113,12 +113,12 @@ export class PanSession {
     /**
      * @internal
      */
-    private startEvent: AnyPointerEvent | null = null
+    private startEvent: PointerEvent | null = null
 
     /**
      * @internal
      */
-    private lastMoveEvent: AnyPointerEvent | null = null
+    private lastMoveEvent: PointerEvent | null = null
 
     /**
      * @internal
@@ -141,12 +141,12 @@ export class PanSession {
     private removeListeners: Function
 
     constructor(
-        event: AnyPointerEvent,
+        event: PointerEvent,
         handlers: Partial<PanSessionHandlers>,
         { transformPagePoint }: PanSessionOptions = {}
     ) {
         // If we have more than one touch, don't start detecting this gesture
-        if (isTouchEvent(event) && event.touches.length > 1) return
+        if (!isPrimaryPointer(event)) return
 
         this.handlers = handlers
         this.transformPagePoint = transformPagePoint
@@ -155,7 +155,7 @@ export class PanSession {
         const initialInfo = transformPoint(info, this.transformPagePoint)
         const { point } = initialInfo
 
-        const { timestamp } = getFrameData()
+        const { timestamp } = frameData
 
         this.history = [{ ...point, timestamp }]
 
@@ -180,12 +180,12 @@ export class PanSession {
         // any larger than this we'll want to reset the pointer history
         // on the first update to avoid visual snapping to the cursoe.
         const isDistancePastThreshold =
-            distance(info.offset, { x: 0, y: 0 }) >= 3
+            distance2D(info.offset, { x: 0, y: 0 }) >= 3
 
         if (!isPanStarted && !isDistancePastThreshold) return
 
         const { point } = info
-        const { timestamp } = getFrameData()
+        const { timestamp } = frameData
         this.history.push({ ...point, timestamp })
 
         const { onStart, onMove } = this.handlers
@@ -198,21 +198,15 @@ export class PanSession {
         onMove && onMove(this.lastMoveEvent, info)
     }
 
-    private handlePointerMove = (event: AnyPointerEvent, info: EventInfo) => {
+    private handlePointerMove = (event: PointerEvent, info: EventInfo) => {
         this.lastMoveEvent = event
         this.lastMoveEventInfo = transformPoint(info, this.transformPagePoint)
-
-        // Because Safari doesn't trigger mouseup events when it's above a `<select>`
-        if (isMouseEvent(event) && event.buttons === 0) {
-            this.handlePointerUp(event, info)
-            return
-        }
 
         // Throttle mouse move event to once per frame
         sync.update(this.updatePoint, true)
     }
 
-    private handlePointerUp = (event: AnyPointerEvent, info: EventInfo) => {
+    private handlePointerUp = (event: PointerEvent, info: EventInfo) => {
         this.end()
 
         const { onEnd, onSessionEnd } = this.handlers

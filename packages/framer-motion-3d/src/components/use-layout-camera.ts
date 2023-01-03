@@ -5,8 +5,7 @@ import { LayoutCameraProps } from "./types"
 import { useVisualElementContext } from "framer-motion"
 import { MotionCanvasContext } from "./MotionCanvasContext"
 import { invariant } from "hey-listen"
-import { calcLength } from "framer-motion"
-import { clamp } from "popmotion"
+import { calcLength, clamp } from "framer-motion"
 
 const calcBoxSize = ({ x, y }: Box) => ({
     width: calcLength(x),
@@ -86,11 +85,11 @@ export function useLayoutCamera<CameraType>(
         const removeAnimationCompleteListener = projection.addEventListener(
             "animationComplete",
             () => {
-                const { actual } = projection.layout || {}
+                const { layoutBox } = projection.layout || {}
 
-                if (actual) {
+                if (layoutBox) {
                     setTimeout(() => {
-                        const newSize = calcBoxSize(actual)
+                        const newSize = calcBoxSize(layoutBox)
                         updateCamera(newSize)
 
                         dimensions.current = { size: newSize }
