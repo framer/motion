@@ -233,6 +233,7 @@ function animateChildren(
     Array.from(visualElement.variantChildren!)
         .sort(sortByTreeOrder)
         .forEach((child, i) => {
+            child.notify("AnimationStart", variant)
             animations.push(
                 animateVariant(child, variant, {
                     ...options,

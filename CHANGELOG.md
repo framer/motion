@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.1.4] 2023-01-04
+
+### Fixed
+
+-   Ensuring child variant components fire `onAnimationStart` when an animation is triggered by a parent.
+
 ## [8.1.3] 2023-01-03
 
 ### Fixed
