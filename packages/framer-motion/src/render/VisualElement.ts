@@ -392,10 +392,12 @@ export abstract class VisualElement<
                 ? true
                 : prefersReducedMotion.current
 
-        warnOnce(
-            this.shouldReduceMotion !== true,
-            "You have Reduced Motion enabled on your device. Animations may not appear as expected."
-        )
+        if (env !== "production") {
+            warnOnce(
+                this.shouldReduceMotion !== true,
+                "You have Reduced Motion enabled on your device. Animations may not appear as expected."
+            )
+        }
 
         if (this.parent) this.parent.children.add(this)
         this.setProps(this.props)
