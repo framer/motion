@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Reorder } from "framer-motion"
-import { useRef, useState } from "react"
+import { useState } from "react"
 
 export const App = () => {
     const [verticalGridItems, setVerticalGridItems] = useState([
@@ -11,9 +11,7 @@ export const App = () => {
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
     ])
     const [verticalItems, setVerticalItems] = useState([0, 1, 2, 3, 4])
-    const [horizontalItems, setHorizontalItems] = useState([
-        0, 1, 2, 3, 4, 5, 6,
-    ])
+    const [horizontalItems, setHorizontalItems] = useState([0, 1])
 
     const [reorderType, setReorderType] = useState("row-grid")
 
@@ -65,7 +63,11 @@ export const App = () => {
                 onReorder={setHorizontalItems}
             >
                 {horizontalItems.map((item) => (
-                    <ReorderItem item={item} key={item} />
+                    <ReorderItem
+                        item={item}
+                        key={item}
+                        style={{ width: 100 * (item + 1) }}
+                    />
                 ))}
             </Reorder.Group>
         ),
@@ -114,7 +116,13 @@ export const App = () => {
     )
 }
 
-const ReorderItem = ({ item }: { item: number }) => (
+const ReorderItem = ({
+    item,
+    style,
+}: {
+    item: number
+    style?: React.CSSProperties
+}) => (
     <Reorder.Item
         as="div"
         style={{
@@ -122,6 +130,7 @@ const ReorderItem = ({ item }: { item: number }) => (
             width: "50px",
             height: "50px",
             margin: "10px",
+            ...style,
         }}
         key={item}
         value={item}

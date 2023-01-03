@@ -24,6 +24,14 @@ export interface Props<V> {
      */
     as?: keyof ReactHTML
 
+    /**
+     * The axis to reorder along. By default, items will be draggable on this axis.
+     * To make draggable on both axes, set `<Reorder.Item drag />`
+     *
+     * @public
+     */
+    axis?: "x" | "y"
+
     // TODO: This would be better typed as V, but that doesn't seem
     // to correctly infer type from values
     /**
@@ -58,6 +66,7 @@ export function ReorderGroup<V>(
     {
         children,
         as = "ul",
+        axis: axisOverride,
         onReorder,
         values,
         ...props
@@ -82,7 +91,8 @@ export function ReorderGroup<V>(
     const { axis, isWrapping, itemsPerAxis } = useOrderState(
         ref,
         values,
-        itemLayouts
+        itemLayouts,
+        axisOverride
     )
 
     invariant(Boolean(values), "Reorder.Group must be provided a values prop")
