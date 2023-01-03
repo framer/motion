@@ -25,8 +25,10 @@ export interface Props<V> {
     as?: keyof ReactHTML
 
     /**
-     * The axis to reorder along. By default, items will be draggable on this axis.
-     * To make draggable on both axes, set `<Reorder.Item drag />`
+     * The axis to reorder along. By default, this is calculated dynamically.
+     *
+     * Items will visually drag only along the reorder axis if no items wrap.
+     * This can be overridden by setting `<Reorder.Item drag />`
      *
      * @public
      */
@@ -75,7 +77,6 @@ export function ReorderGroup<V>(
         React.PropsWithChildren<{}>,
     externalRef?: React.Ref<any>
 ) {
-    console.log(values)
     const internalRef = useRef<HTMLElement>()
     const ref = useMemo(
         () => externalRef || internalRef,
@@ -115,8 +116,6 @@ export function ReorderGroup<V>(
                 itemsPerAxis
             )
 
-            console.log(newValuesOrder)
-
             if (values !== newValuesOrder) {
                 isReordering.current = true
                 onReorder(newValuesOrder)
@@ -127,6 +126,7 @@ export function ReorderGroup<V>(
     useEffect(() => {
         isReordering.current = false
     })
+
     return (
         <Component {...props} ref={ref}>
             <ReorderContext.Provider value={context}>

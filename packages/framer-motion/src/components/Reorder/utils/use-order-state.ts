@@ -13,7 +13,7 @@ export function useOrderState<T>(
     ref: React.MutableRefObject<any>,
     items: T[],
     itemLayouts: ItemLayout<T>,
-    axisOverride: "x" | "y"
+    axisOverride?: "x" | "y"
 ): OrderState {
     const [state, setState] = useState<OrderState>({
         axis: "x",
