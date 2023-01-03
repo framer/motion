@@ -102,7 +102,7 @@ describe("style prop", () => {
         )
     })
 
-    test.only("should update when swapping between motion value and static value", async () => {
+    test("should update when swapping between motion value and static value", async () => {
         const Component = ({ useBackgroundColor = false }) => {
             const backgroundColor = useMotionValue("#fff")
 
