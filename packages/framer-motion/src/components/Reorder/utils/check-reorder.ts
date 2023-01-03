@@ -9,24 +9,22 @@ export function checkReorder<T>(
     value: T,
     offset: Point,
     velocity: Point,
-    mainAxis: "x" | "y",
+    axis: "x" | "y",
     isWrappingItems: boolean,
     itemsPerAxis: number
 ): T[] {
-    const secondaryAxis = mainAxis === "x" ? "y" : "x"
-    if (!velocity[mainAxis] && !velocity[secondaryAxis]) return order
+    const crossAxis = axis === "x" ? "y" : "x"
+    if (!velocity[axis] && !velocity[crossAxis]) return order
 
     const index = order.findIndex((item) => item === value)
     if (index === -1) return order
 
     const nextOffsetMainAxis =
-        velocity[mainAxis] === 0
-            ? 0
-            : velocity[mainAxis] / Math.abs(velocity[mainAxis])
+        velocity[axis] === 0 ? 0 : velocity[axis] / Math.abs(velocity[axis])
     const nextOffsetSecondaryAxis =
-        velocity[secondaryAxis] === 0
+        velocity[crossAxis] === 0
             ? 0
-            : velocity[secondaryAxis] / Math.abs(velocity[secondaryAxis])
+            : velocity[crossAxis] / Math.abs(velocity[crossAxis])
 
     const nextItemMainAxis = layouts.get(order[index + nextOffsetMainAxis])
     const nextItemSecondaryAxis = layouts.get(
@@ -36,8 +34,8 @@ export function checkReorder<T>(
     const item = order[index]
     const itemLayout = layouts.get(item)
 
-    if (nextItemMainAxis && itemLayout && velocity[mainAxis]) {
-        const nextLayoutMainAxis = nextItemMainAxis[mainAxis]
+    if (nextItemMainAxis && itemLayout && velocity[axis]) {
+        const nextLayoutMainAxis = nextItemMainAxis[axis]
         const nextItemCenterMainAxis = mix(
             nextLayoutMainAxis.min,
             nextLayoutMainAxis.max,
@@ -46,14 +44,12 @@ export function checkReorder<T>(
 
         if (
             (nextOffsetMainAxis === 1 &&
-                itemLayout[mainAxis].max + offset[mainAxis] >
-                    nextItemCenterMainAxis &&
+                itemLayout[axis].max + offset[axis] > nextItemCenterMainAxis &&
                 ((isWrappingItems &&
                     (index + nextOffsetMainAxis) % itemsPerAxis !== 0) ||
                     !isWrappingItems)) ||
             (nextOffsetMainAxis === -1 &&
-                itemLayout[mainAxis].min + offset[mainAxis] <
-                    nextItemCenterMainAxis &&
+                itemLayout[axis].min + offset[axis] < nextItemCenterMainAxis &&
                 ((isWrappingItems &&
                     (index + nextOffsetMainAxis) % itemsPerAxis !==
                         itemsPerAxis - 1) ||
@@ -66,10 +62,10 @@ export function checkReorder<T>(
     if (
         itemLayout &&
         nextItemSecondaryAxis &&
-        velocity[secondaryAxis] &&
+        velocity[crossAxis] &&
         isWrappingItems
     ) {
-        const nextLayoutSecondaryAxis = nextItemSecondaryAxis[secondaryAxis]
+        const nextLayoutSecondaryAxis = nextItemSecondaryAxis[crossAxis]
         const nextItemCenterSecondaryAxis = mix(
             nextLayoutSecondaryAxis.min,
             nextLayoutSecondaryAxis.max,
@@ -77,10 +73,10 @@ export function checkReorder<T>(
         )
         if (
             (nextOffsetSecondaryAxis === 1 &&
-                itemLayout[secondaryAxis].max + offset[secondaryAxis] >
+                itemLayout[crossAxis].max + offset[crossAxis] >
                     nextItemCenterSecondaryAxis) ||
             (nextOffsetSecondaryAxis === -1 &&
-                itemLayout[secondaryAxis].min + offset[secondaryAxis] <
+                itemLayout[crossAxis].min + offset[crossAxis] <
                     nextItemCenterSecondaryAxis)
         ) {
             return moveItem(
