@@ -999,7 +999,7 @@ describe("animate prop as variant", () => {
             visible: { opacity: 1, x: 50, transition: { type: false } },
         }
 
-        const promise = new Promise<boolean>((resolve) => {
+        const promise = new Promise<string>((resolve) => {
             const onStart = (name: string) => resolve(name)
             const Component = () => (
                 <motion.div animate="visible" variants={variants}>
