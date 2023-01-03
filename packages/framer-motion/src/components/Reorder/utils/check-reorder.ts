@@ -1,3 +1,4 @@
+import { Point } from "../../../projection/geometry/types"
 import { moveItem } from "../../../utils/array"
 import { mix } from "../../../utils/mix"
 import { ItemLayout } from "../types"
@@ -6,8 +7,8 @@ export function checkReorder<T>(
     order: T[],
     layouts: ItemLayout<T>,
     value: T,
-    offset: { x: number; y: number },
-    velocity: { x: number; y: number },
+    offset: Point,
+    velocity: Point,
     mainAxis: "x" | "y",
     isWrappingItems: boolean,
     itemsPerAxis: number

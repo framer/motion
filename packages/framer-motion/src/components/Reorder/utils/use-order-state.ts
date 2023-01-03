@@ -1,5 +1,7 @@
+import { invariant } from "hey-listen"
 import { useEffect, useState } from "react"
 import { ItemLayout } from "../types"
+import { detectAxis } from "./detect-axis"
 
 export interface OrderState {
     axis: "x" | "y"
@@ -35,18 +37,15 @@ export function useOrderState<T>(
                 return
             }
 
-            /**
-             * Auto-detect a
-             */
-            const firstItem = itemLayouts.get(items[0])
-            const secondItem = itemLayouts.get(items[1])
+            const firstItemLayout = itemLayouts.get(items[0])
+            const secondItemLayout = itemLayouts.get(items[1])
 
-            if (!firstItem || !secondItem) {
-                return
-            }
+            invariant(
+                Boolean(firstItemLayout && secondItemLayout),
+                "No measurements detected. Do all values passed to Reorder.Group match with Reorder.Item components?"
+            )
 
-            const axis = firstItem.x.min === secondItem.x.min ? "y" : "x"
-
+            const axis = detectAxis(firstItemLayout!, secondItemLayout!)
             const crossAxis = axis === "x" ? "y" : "x"
 
             let itemsPerAxis = items.length
@@ -55,10 +54,14 @@ export function useOrderState<T>(
                 const itemLayout = itemLayouts.get(items[i])
                 const prevItemLayout = itemLayouts.get(items[i - 1])
 
-                // TODO Warn
-                if (!itemLayout || !prevItemLayout) break
+                invariant(
+                    Boolean(itemLayout && prevItemLayout),
+                    "Missing item measurements. Do all values passed to Reorder.Group match with Reorder.Item components?"
+                )
 
-                if (itemLayout[crossAxis].min > prevItemLayout[crossAxis].min) {
+                if (
+                    itemLayout![crossAxis].min > prevItemLayout![crossAxis].min
+                ) {
                     itemsPerAxis = i // Should this not be + 1?
                     isWrapping = true
                     break

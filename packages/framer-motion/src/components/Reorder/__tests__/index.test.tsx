@@ -30,7 +30,6 @@ describe("Reorder", () => {
                     values={[]}
                 >
                     <Reorder.Item as="main" ref={itemRef} value={0} />
-                    <Reorder.Item as="main" value={1} />
                 </Reorder.Group>
             )
         }
