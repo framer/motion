@@ -4,11 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [8.1.5] 2023-01-03
+## [8.1.6] 2023-01-04
 
 ### Fixed
 
--   Minification of `process.env`.
+-   Minification of `process.env.NODE_ENV`.
+
+## [8.1.5] 2023-01-03
 
 ### Changed
 
