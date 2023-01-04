@@ -6,6 +6,10 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ## [8.1.5] 2023-01-03
 
+### Fixed
+
+-   Minification of `process.env`.
+
 ### Changed
 
 -   Display warning in development mode when Reduced Motion is enabled on device.
