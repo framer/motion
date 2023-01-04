@@ -1,7 +1,7 @@
 import { animationControls } from "./animation-controls"
 import { AnimationControls } from "../types"
-import { useEffect } from "react"
 import { useConstant } from "../../utils/use-constant"
+import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 
 /**
  * Creates `AnimationControls`, which can be used to manually start, stop
@@ -35,7 +35,7 @@ import { useConstant } from "../../utils/use-constant"
 export function useAnimationControls(): AnimationControls {
     const controls = useConstant(animationControls)
 
-    useEffect(controls.mount, [])
+    useIsomorphicLayoutEffect(controls.mount, [])
 
     return controls
 }

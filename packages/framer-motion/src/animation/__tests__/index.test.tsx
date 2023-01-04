@@ -4,7 +4,6 @@ import { useEffect } from "react"
 import { motion } from "../.."
 import { useAnimation } from "../hooks/use-animation"
 import { useMotionValue } from "../../value/use-motion-value"
-import { motionValue } from "../../value"
 
 describe("useAnimation", () => {
     test("animates on mount", async () => {
@@ -20,25 +19,6 @@ describe("useAnimation", () => {
                 useEffect(() => {
                     animation.start({ x: 100 }).then(() => resolve(x.get()))
                 }, [])
-
-                return <motion.div animate={animation} style={{ x }} />
-            }
-
-            const { rerender } = render(<Component />)
-            rerender(<Component />)
-        })
-
-        await expect(promise).resolves.toBe(100)
-    })
-
-    test("doesn't fire a pre-mount animation callback until the animation has finished", async () => {
-        const promise = new Promise((resolve) => {
-            const Component = () => {
-                const animation = useAnimation()
-
-                const x = useMotionValue(0)
-
-                animation.start({ x: 100 }).then(() => resolve(x.get()))
 
                 return <motion.div animate={animation} style={{ x }} />
             }
@@ -291,40 +271,22 @@ describe("useAnimation", () => {
         return await expect(promise).resolves.toEqual("rgba(255, 255, 255, 1)")
     })
 
-    test("animates on mount", () => {
-        const x = motionValue(0)
-        const Component = () => {
-            const controls = useAnimation()
-            const variants = {
-                test: { x: 100 },
-            }
-
-            controls.start("test", { type: false })
-            return (
-                <motion.div
-                    style={{ x }}
-                    variants={variants}
-                    animate={controls}
-                />
-            )
-        }
-        const { rerender } = render(<Component />)
-        rerender(<Component />)
-        expect(x.get()).toBe(100)
-    })
-
     test("accepts array of variants", async () => {
         const promise = new Promise((resolve) => {
             const Component = () => {
                 const animation = useAnimation()
-                animation.start(["a", "b"])
+
+                useEffect(() => {
+                    animation.start(["a", "b"])
+
+                    resolve(true)
+                }, [])
+
                 return <motion.div animate={animation} />
             }
 
             const { rerender } = render(<Component />)
             rerender(<Component />)
-
-            resolve(true)
         })
 
         await expect(promise).resolves.not.toThrowError()
