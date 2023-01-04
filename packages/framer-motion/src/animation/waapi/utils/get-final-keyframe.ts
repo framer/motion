@@ -1,4 +1,4 @@
-import { Repeat } from "../../../../types"
+import { Repeat } from "../../../types"
 
 export function getFinalKeyframe<T>(
     keyframes: T[],
