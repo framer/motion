@@ -695,9 +695,9 @@ describe("animate", () => {
             ease: noop,
         })
 
-        expect(animation.sample(0)).toEqual(0)
-        expect(animation.sample(500)).toEqual(0.5)
-        expect(animation.sample(1000)).toEqual(1)
+        expect(animation.sample(0).value).toEqual(0)
+        expect(animation.sample(500).value).toEqual(0.5)
+        expect(animation.sample(1000).value).toEqual(1)
     })
 
     test("Correctly samples with duration: 0", () => {
@@ -708,7 +708,7 @@ describe("animate", () => {
             ease: noop,
         })
 
-        expect(animation.sample(0)).toEqual(1)
+        expect(animation.sample(0).value).toEqual(1)
     })
 
     test("Correctly samples with custom negative elapsed (delay)", () => {
@@ -720,10 +720,10 @@ describe("animate", () => {
             ease: noop,
         })
 
-        expect(animation.sample(0)).toEqual(0)
-        expect(animation.sample(500)).toEqual(0)
-        expect(animation.sample(1000)).toEqual(0.5)
-        expect(animation.sample(1500)).toEqual(1)
+        expect(animation.sample(0).value).toEqual(0)
+        expect(animation.sample(500).value).toEqual(0)
+        expect(animation.sample(1000).value).toEqual(0.5)
+        expect(animation.sample(1500).value).toEqual(1)
     })
 
     test("Correctly samples repeating animation", () => {
@@ -735,7 +735,7 @@ describe("animate", () => {
             ease: noop,
         })
 
-        expect(animation.sample(1500)).toEqual(0.5)
+        expect(animation.sample(1500).value).toEqual(0.5)
     })
 
     test("Correctly samples repeating animation with delay", () => {
@@ -748,7 +748,7 @@ describe("animate", () => {
             ease: noop,
         })
 
-        expect(animation.sample(2000)).toEqual(0.5)
+        expect(animation.sample(2000).value).toEqual(0.5)
     })
 
     test("Correctly samples with positive elapsed", () => {
@@ -761,7 +761,7 @@ describe("animate", () => {
             ease: noop,
         })
 
-        expect(animation.sample(0)).toEqual(0.5)
-        expect(animation.sample(250)).toEqual(0.75)
+        expect(animation.sample(0).value).toEqual(0.5)
+        expect(animation.sample(250).value).toEqual(0.75)
     })
 })
