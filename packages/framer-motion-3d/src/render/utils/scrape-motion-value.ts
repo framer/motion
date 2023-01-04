@@ -30,7 +30,11 @@ export const scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps = (
         } else if (Array.isArray(prop)) {
             for (let i = 0; i < prop.length; i++) {
                 const value = prop[i]
-                if (isMotionValue(value)) {
+                if (
+                    isMotionValue(value) ||
+                    (Array.isArray(prevProps[key]) &&
+                        isMotionValue(prevProps[key][i]))
+                ) {
                     const name = valueMap[key + "-" + axes[i]]
                     motionValues[name] = value
                 }

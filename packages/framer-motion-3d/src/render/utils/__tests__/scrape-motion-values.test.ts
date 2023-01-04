@@ -22,9 +22,11 @@ describe("scrapeMotionValuesFromProps", () => {
                     rotation: [rotateX, 0, rotateZ],
                     color,
                     prev: 1,
+                    prevArray: [1, 2, 3],
                 } as any,
                 {
                     prev: motionValue(0),
+                    prevArray: [1, motionValue(2), 3],
                 } as any
             )
         ).toEqual({
@@ -36,6 +38,7 @@ describe("scrapeMotionValuesFromProps", () => {
             rotateZ,
             color,
             prev: 1,
+            prevArray: [1, 2, 3],
         })
     })
 })
