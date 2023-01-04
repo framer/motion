@@ -12,15 +12,21 @@ describe("scrapeMotionValuesFromProps", () => {
         const color = motionValue("#fff")
 
         expect(
-            scrapeMotionValuesFromProps({
-                "position-x": x,
-                scale,
-                "position-y": 100,
-                "scale-z": scaleZ,
-                position: [0, 0, z],
-                rotation: [rotateX, 0, rotateZ],
-                color,
-            } as any)
+            scrapeMotionValuesFromProps(
+                {
+                    "position-x": x,
+                    scale,
+                    "position-y": 100,
+                    "scale-z": scaleZ,
+                    position: [0, 0, z],
+                    rotation: [rotateX, 0, rotateZ],
+                    color,
+                    prev: 1,
+                } as any,
+                {
+                    prev: motionValue(0),
+                } as any
+            )
         ).toEqual({
             x,
             z,
@@ -29,6 +35,7 @@ describe("scrapeMotionValuesFromProps", () => {
             rotateX,
             rotateZ,
             color,
+            prev: 1,
         })
     })
 })

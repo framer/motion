@@ -17,19 +17,24 @@ const valueMap = {
 }
 
 export const scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps = (
-    props: ThreeMotionProps
+    props: ThreeMotionProps,
+    prevProps: ThreeMotionProps
 ) => {
     const motionValues = {}
 
     for (const key in props) {
         const prop = props[key]
 
-        if (isMotionValue(prop)) {
+        if (isMotionValue(prop) || isMotionValue(prevProps[key])) {
             motionValues[valueMap[key] || key] = prop
         } else if (Array.isArray(prop)) {
             for (let i = 0; i < prop.length; i++) {
                 const value = prop[i]
-                if (isMotionValue(value)) {
+                if (
+                    isMotionValue(value) ||
+                    (Array.isArray(prevProps[key]) &&
+                        isMotionValue(prevProps[key][i]))
+                ) {
                     const name = valueMap[key + "-" + axes[i]]
                     motionValues[name] = value
                 }

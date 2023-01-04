@@ -55,8 +55,8 @@ export class ThreeVisualElement extends VisualElement<
         return createBox()
     }
 
-    scrapeMotionValuesFromProps(props: MotionProps) {
-        return scrapeMotionValuesFromProps(props)
+    scrapeMotionValuesFromProps(props: MotionProps, prevProps: MotionProps) {
+        return scrapeMotionValuesFromProps(props, prevProps)
     }
 
     build(state: ThreeRenderState, latestValues: ResolvedValues) {

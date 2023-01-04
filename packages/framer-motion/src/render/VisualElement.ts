@@ -152,7 +152,10 @@ export abstract class VisualElement<
      * This isn't an abstract method as it needs calling in the constructor, but it is
      * intended to be one.
      */
-    scrapeMotionValuesFromProps(_props: MotionProps): {
+    scrapeMotionValuesFromProps(
+        _props: MotionProps,
+        _prevProps: MotionProps
+    ): {
         [key: string]: MotionValue | string | number
     } {
         return {}
@@ -352,7 +355,7 @@ export abstract class VisualElement<
          * more a reflection of the test.
          */
         const { willChange, ...initialMotionValues } =
-            this.scrapeMotionValuesFromProps(props)
+            this.scrapeMotionValuesFromProps(props, {})
 
         for (const key in initialMotionValues) {
             const value = initialMotionValues[key]
@@ -610,6 +613,7 @@ export abstract class VisualElement<
             this.scheduleRender()
         }
 
+        const prevProps = this.props
         this.props = props
 
         /**
@@ -630,7 +634,7 @@ export abstract class VisualElement<
 
         this.prevMotionValues = updateMotionValuesFromProps(
             this,
-            this.scrapeMotionValuesFromProps(props),
+            this.scrapeMotionValuesFromProps(props, prevProps),
             this.prevMotionValues
         )
     }

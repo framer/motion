@@ -81,7 +81,7 @@ function makeLatestValues(
 ) {
     const values: ResolvedValues = {}
 
-    const motionValues = scrapeMotionValues(props)
+    const motionValues = scrapeMotionValues(props, {})
     for (const key in motionValues) {
         values[key] = resolveMotionValue(motionValues[key])
     }
