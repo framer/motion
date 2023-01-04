@@ -700,6 +700,17 @@ describe("animate", () => {
         expect(animation.sample(1000)).toEqual(1)
     })
 
+    test("Correctly samples with duration: 0", () => {
+        const animation = animate({
+            keyframes: [0, 1],
+            duration: 0,
+            autoplay: false,
+            ease: noop,
+        })
+
+        expect(animation.sample(0)).toEqual(1)
+    })
+
     test("Correctly samples with custom negative elapsed (delay)", () => {
         const animation = animate({
             keyframes: [0, 1],

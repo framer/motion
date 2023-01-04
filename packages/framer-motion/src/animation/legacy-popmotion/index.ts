@@ -174,11 +174,15 @@ export function animate<V = number>({
          */
         sample: (t: number): V => {
             elapsed = initialElapsed
+            console.log({ duration })
             const sampleResolution =
-                typeof duration === "number" ? duration * 0.5 : 50
+                duration && typeof duration === "number"
+                    ? Math.max(duration * 0.5, 50)
+                    : 50
 
             let sampleElapsed = 0
             update(0)
+
             while (sampleElapsed <= t) {
                 const remaining = t - sampleElapsed
                 update(Math.min(remaining, sampleResolution))
