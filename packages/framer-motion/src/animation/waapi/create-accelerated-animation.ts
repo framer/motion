@@ -6,6 +6,7 @@ import { animate } from "../legacy-popmotion"
 import { AnimationOptions } from "../types"
 import { animateStyle } from "./"
 import { isWaapiSupportedEasing } from "./easing"
+import { getFinalKeyframe } from "./utils/get-final-keyframe"
 
 /**
  * 10ms is chosen here as it strikes a balance between smooth
@@ -70,7 +71,7 @@ export function createAcceleratedAnimation(
      * be removed from the element which would then revert to its old styles.
      */
     animation.onfinish = () => {
-        value.set(keyframes[keyframes.length - 1])
+        value.set(getFinalKeyframe(keyframes, options))
         onComplete && onComplete()
     }
 

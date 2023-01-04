@@ -183,7 +183,6 @@ export function animate<V = number>({
                 const remaining = t - sampleElapsed
                 update(Math.min(remaining, sampleResolution))
                 sampleElapsed += sampleResolution
-                console.log(latest, elapsed)
             }
 
             return latest

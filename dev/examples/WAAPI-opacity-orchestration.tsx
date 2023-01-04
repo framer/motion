@@ -42,10 +42,10 @@ export const App = () => {
                     show: { opacity: 1 },
                     hover: {
                         opacity: 0,
-                        // transition: {
-                        //     repeat: 1,
-                        //     repeatType: "reverse",
-                        // },
+                        transition: {
+                            repeat: 1,
+                            repeatType: "reverse",
+                        },
                     },
                 }}
             />
