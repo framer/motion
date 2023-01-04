@@ -88,7 +88,7 @@ export function createAcceleratedAnimation(
          */
         const { currentTime } = animation
         if (currentTime) {
-            const sampleAnimation = animate(options)
+            const sampleAnimation = animate({ ...options, autoplay: false })
             value.setWithVelocity(
                 sampleAnimation.sample(currentTime - sampleDelta).value,
                 sampleAnimation.sample(currentTime).value,

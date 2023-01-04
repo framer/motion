@@ -686,4 +686,71 @@ describe("animate", () => {
             })
         })
     })
+
+    test("Correctly samples", () => {
+        const animation = animate({
+            keyframes: [0, 1],
+            duration: 1000,
+            autoplay: false,
+            ease: noop,
+        })
+
+        expect(animation.sample(0)).toEqual(0)
+        expect(animation.sample(500)).toEqual(0.5)
+        expect(animation.sample(1000)).toEqual(1)
+    })
+
+    test("Correctly samples with custom negative elapsed (delay)", () => {
+        const animation = animate({
+            keyframes: [0, 1],
+            duration: 1000,
+            autoplay: false,
+            elapsed: -500,
+            ease: noop,
+        })
+
+        expect(animation.sample(0)).toEqual(0)
+        expect(animation.sample(500)).toEqual(0)
+        expect(animation.sample(1000)).toEqual(0.5)
+        expect(animation.sample(1500)).toEqual(1)
+    })
+
+    test("Correctly samples repeating animation", () => {
+        const animation = animate({
+            keyframes: [0, 1],
+            duration: 1000,
+            repeat: 1,
+            autoplay: false,
+            ease: noop,
+        })
+
+        expect(animation.sample(1500)).toEqual(0.5)
+    })
+
+    test("Correctly samples repeating animation with delay", () => {
+        const animation = animate({
+            keyframes: [0, 1],
+            duration: 1000,
+            repeat: 1,
+            autoplay: false,
+            elapsed: -500,
+            ease: noop,
+        })
+
+        expect(animation.sample(2000)).toEqual(0.5)
+    })
+
+    test("Correctly samples with positive elapsed", () => {
+        const animation = animate({
+            keyframes: [0, 1],
+            duration: 1000,
+            repeat: 1,
+            autoplay: false,
+            elapsed: 500,
+            ease: noop,
+        })
+
+        expect(animation.sample(0)).toEqual(0.5)
+        expect(animation.sample(250)).toEqual(0.75)
+    })
 })

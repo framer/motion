@@ -64,7 +64,8 @@ export function animate<V = number>({
     type = "keyframes",
     ...options
 }: AnimationOptions<V>) {
-    let driverControls: DriverControls
+    const initialElapsed = elapsed
+    let driverControls: DriverControls | undefined
     let repeatCount = 0
     let computedDuration: number | undefined = duration
     let latest: V
@@ -113,7 +114,7 @@ export function animate<V = number>({
     }
 
     function complete() {
-        driverControls.stop()
+        driverControls && driverControls.stop()
         onComplete && onComplete()
     }
 
@@ -164,10 +165,28 @@ export function animate<V = number>({
     return {
         stop: () => {
             onStop && onStop()
-            driverControls.stop()
+            driverControls && driverControls.stop()
         },
-        sample: (t: number) => {
-            return animation.next(Math.max(0, t))
+        /**
+         * animate() can't yet be sampled for time, instead it
+         * consumes time. So to sample it we have to run a low
+         * temporal-resolution version.
+         */
+        sample: (t: number): V => {
+            elapsed = initialElapsed
+            const sampleResolution =
+                typeof duration === "number" ? duration * 0.5 : 50
+
+            let sampleElapsed = 0
+            update(0)
+            while (sampleElapsed <= t) {
+                const remaining = t - sampleElapsed
+                update(Math.min(remaining, sampleResolution))
+                sampleElapsed += sampleResolution
+                console.log(latest, elapsed)
+            }
+
+            return latest
         },
     }
 }
