@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import { useCallback, useRef } from "react"
 import { EventInfo } from "../events/types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
@@ -61,35 +61,38 @@ export function useTapGesture({
         onTapCancel && onTapCancel(event, info)
     }
 
-    function onPointerDown(event: PointerEvent, info: EventInfo) {
-        removePointerEndListener()
+    const startPress = useCallback(
+        (event: PointerEvent, info: EventInfo) => {
+            removePointerEndListener()
 
-        if (isPressing.current) return
-        isPressing.current = true
+            if (isPressing.current) return
+            isPressing.current = true
 
-        cancelPointerEndListeners.current = pipe(
-            addPointerEvent(window, "pointerup", onPointerUp, eventOptions),
-            addPointerEvent(
-                window,
-                "pointercancel",
-                onPointerCancel,
-                eventOptions
+            cancelPointerEndListeners.current = pipe(
+                addPointerEvent(window, "pointerup", onPointerUp, eventOptions),
+                addPointerEvent(
+                    window,
+                    "pointercancel",
+                    onPointerCancel,
+                    eventOptions
+                )
             )
-        )
 
-        /**
-         * Ensure we trigger animations before firing event callback
-         */
-        visualElement.animationState &&
-            visualElement.animationState.setActive(AnimationType.Tap, true)
+            /**
+             * Ensure we trigger animations before firing event callback
+             */
+            visualElement.animationState &&
+                visualElement.animationState.setActive(AnimationType.Tap, true)
 
-        onTapStart && onTapStart(event, info)
-    }
+            onTapStart && onTapStart(event, info)
+        },
+        [onTapStart, visualElement]
+    )
 
     usePointerEvent(
         visualElement,
         "pointerdown",
-        hasPressListeners ? onPointerDown : undefined,
+        hasPressListeners ? startPress : undefined,
         eventOptions
     )
 
