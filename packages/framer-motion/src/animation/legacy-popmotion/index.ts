@@ -64,10 +64,10 @@ export function animate<V = number>({
     type = "keyframes",
     ...options
 }: AnimationOptions<V>) {
-    let driverControls: DriverControls
+    const initialElapsed = elapsed
+    let driverControls: DriverControls | undefined
     let repeatCount = 0
     let computedDuration: number | undefined = duration
-    let latest: V
     let isComplete = false
     let isForwardPlayback = true
 
@@ -78,6 +78,8 @@ export function animate<V = number>({
 
     const origin = keyframes[0]
     const target = keyframes[keyframes.length - 1]
+
+    let state = { done: false, value: origin }
 
     if ((animator as any).needsInterpolation?.(origin, target)) {
         interpolateFromNumber = interpolate([0, 100], [origin, target], {
@@ -113,7 +115,7 @@ export function animate<V = number>({
     }
 
     function complete() {
-        driverControls.stop()
+        driverControls && driverControls.stop()
         onComplete && onComplete()
     }
 
@@ -123,16 +125,15 @@ export function animate<V = number>({
         elapsed += delta
 
         if (!isComplete) {
-            const state = animation.next(Math.max(0, elapsed))
-            latest = state.value as any
+            state = animation.next(Math.max(0, elapsed)) as any
 
             if (interpolateFromNumber)
-                latest = interpolateFromNumber(latest as any)
+                state.value = interpolateFromNumber(state.value as any)
 
             isComplete = isForwardPlayback ? state.done : elapsed <= 0
         }
 
-        onUpdate && onUpdate(latest)
+        onUpdate && onUpdate(state.value)
 
         if (isComplete) {
             if (repeatCount === 0) {
@@ -164,10 +165,30 @@ export function animate<V = number>({
     return {
         stop: () => {
             onStop && onStop()
-            driverControls.stop()
+            driverControls && driverControls.stop()
         },
+        /**
+         * animate() can't yet be sampled for time, instead it
+         * consumes time. So to sample it we have to run a low
+         * temporal-resolution version.
+         */
         sample: (t: number) => {
-            return animation.next(Math.max(0, t))
+            elapsed = initialElapsed
+            const sampleResolution =
+                duration && typeof duration === "number"
+                    ? Math.max(duration * 0.5, 50)
+                    : 50
+
+            let sampleElapsed = 0
+            update(0)
+
+            while (sampleElapsed <= t) {
+                const remaining = t - sampleElapsed
+                update(Math.min(remaining, sampleResolution))
+                sampleElapsed += sampleResolution
+            }
+
+            return state
         },
     }
 }

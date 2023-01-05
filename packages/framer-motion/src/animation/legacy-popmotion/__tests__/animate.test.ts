@@ -686,4 +686,82 @@ describe("animate", () => {
             })
         })
     })
+
+    test("Correctly samples", () => {
+        const animation = animate({
+            keyframes: [0, 1],
+            duration: 1000,
+            autoplay: false,
+            ease: noop,
+        })
+
+        expect(animation.sample(0).value).toEqual(0)
+        expect(animation.sample(500).value).toEqual(0.5)
+        expect(animation.sample(1000).value).toEqual(1)
+    })
+
+    test("Correctly samples with duration: 0", () => {
+        const animation = animate({
+            keyframes: [0, 1],
+            duration: 0,
+            autoplay: false,
+            ease: noop,
+        })
+
+        expect(animation.sample(0).value).toEqual(1)
+    })
+
+    test("Correctly samples with custom negative elapsed (delay)", () => {
+        const animation = animate({
+            keyframes: [0, 1],
+            duration: 1000,
+            autoplay: false,
+            elapsed: -500,
+            ease: noop,
+        })
+
+        expect(animation.sample(0).value).toEqual(0)
+        expect(animation.sample(500).value).toEqual(0)
+        expect(animation.sample(1000).value).toEqual(0.5)
+        expect(animation.sample(1500).value).toEqual(1)
+    })
+
+    test("Correctly samples repeating animation", () => {
+        const animation = animate({
+            keyframes: [0, 1],
+            duration: 1000,
+            repeat: 1,
+            autoplay: false,
+            ease: noop,
+        })
+
+        expect(animation.sample(1500).value).toEqual(0.5)
+    })
+
+    test("Correctly samples repeating animation with delay", () => {
+        const animation = animate({
+            keyframes: [0, 1],
+            duration: 1000,
+            repeat: 1,
+            autoplay: false,
+            elapsed: -500,
+            ease: noop,
+        })
+
+        expect(animation.sample(2000).value).toEqual(0.5)
+    })
+
+    test("Correctly samples with positive elapsed", () => {
+        const animation = animate({
+            keyframes: [0, 1],
+            duration: 1000,
+            repeat: 1,
+            autoplay: false,
+            elapsed: 500,
+            ease: noop,
+        })
+
+        expect(animation.sample(0).value).toEqual(0.5)
+        expect(animation.sample(250).value).toEqual(0.75)
+    })
 })

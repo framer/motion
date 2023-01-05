@@ -30,6 +30,10 @@ if (!(global as any).ResizeObserver) {
     } as any
 }
 
+// Stub scrollTo
+const noop = () => {}
+Object.defineProperty(global, "scrollTo", { value: noop, writable: true })
+
 export const click = (element: Element) =>
     act(() => {
         fireEvent.click(element)
