@@ -1,43 +1,8 @@
 import type { Animation, AnimationState } from "./types"
-import { calcAngularFreq, findSpring } from "./find-spring"
+import { calcAngularFreq } from "./utils/find-spring"
+import { getSpringOptions } from "./utils/get-spring-options"
 import { velocityPerSecond } from "../../utils/velocity-per-second"
-import { AnimationOptions, SpringOptions } from "../types"
-
-const durationKeys = ["duration", "bounce"]
-const physicsKeys = ["stiffness", "damping", "mass"]
-
-function isSpringType(options: SpringOptions, keys: string[]) {
-    return keys.some((key) => (options as any)[key] !== undefined)
-}
-
-function getSpringOptions(options: SpringOptions) {
-    let springOptions = {
-        velocity: 0.0,
-        stiffness: 100,
-        damping: 10,
-        mass: 1.0,
-        isResolvedFromDuration: false,
-        ...options,
-    }
-
-    // stiffness/damping/mass overrides duration/bounce
-    if (
-        !isSpringType(options, physicsKeys) &&
-        isSpringType(options, durationKeys)
-    ) {
-        const derived = findSpring(options)
-
-        springOptions = {
-            ...springOptions,
-            ...derived,
-            velocity: 0.0,
-            mass: 1.0,
-        }
-        springOptions.isResolvedFromDuration = true
-    }
-
-    return springOptions
-}
+import { AnimationOptions } from "../types"
 
 const velocitySampleDuration = 5
 

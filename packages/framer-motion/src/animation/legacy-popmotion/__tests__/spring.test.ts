@@ -1,4 +1,4 @@
-import { AnimationOptions } from "../../types"
+import { AnimationOptions, SpringOptions } from "../../types"
 import { spring } from "../spring"
 import { animateSync } from "./utils"
 
@@ -122,20 +122,29 @@ describe("spring", () => {
         expect(noVelocity).not.toEqual(velocity)
     })
 
-    test("Spring defined with bounce and duration is same as just bounce", () => {
-        const settings = {
-            keyframes: [100, 1000],
-            bounce: 0.1,
+    test("Spring defined with bounce should affect dampingRatio", () => {
+        const testBounce = (options: SpringOptions = {}) => {
+            const output = animateSync(
+                spring({
+                    keyframes: [100, 1000],
+                    bounce: 0,
+                    restSpeed: 10,
+                    restDelta: 0.5,
+                    ...options,
+                }),
+                200
+            )
+
+            for (let i = 0; i < output.length; i++) {
+                expect(output[i]).toBeLessThanOrEqual(1000)
+            }
         }
 
-        const withoutDuration = animateSync(spring(settings), 200)
-        const withDuration = animateSync(
-            spring({ ...settings, duration: 800 }),
-            200
-        )
-
-        expect(withoutDuration).toEqual(withDuration)
-        // Check duration order of magnitude is correct
-        expect(withoutDuration.length).toBeGreaterThan(4)
+        testBounce()
+        testBounce({ velocity: 10000 })
+        testBounce({ duration: 1, velocity: 10000 })
+        testBounce({ duration: 1, velocity: 10000, mass: 0.1 })
+        testBounce({ stiffness: 100000 })
+        testBounce({ stiffness: 100000, velocity: 10000, mass: 0.1 })
     })
 })
