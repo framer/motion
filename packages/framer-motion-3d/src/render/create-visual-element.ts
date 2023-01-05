@@ -43,10 +43,11 @@ export class ThreeVisualElement extends VisualElement<
 
     makeTargetAnimatableFromInstance({
         transition,
+        transitionEnd,
         ...target
     }: TargetAndTransition) {
         checkTargetForNewValues(this, target, {})
-        return target
+        return { ...target, transition, transitionEnd }
     }
 
     removeValueFromRenderState() {}
