@@ -27,7 +27,7 @@ export function getSpringOptions(options: SpringOptions) {
             }
         } else {
             /**
-             * Otherwise, use bounce to override
+             * Otherwise, use bounce to override just damping.
              */
             springOptions.damping =
                 (1 - bounce) *
@@ -36,7 +36,9 @@ export function getSpringOptions(options: SpringOptions) {
         }
 
         /**
-         * Velocity
+         * Velocity needs to be set as 0 when resolving from bounce. We resolve
+         * dampingRatio from bounce and if this is critically damped (no bounce)
+         * and initial velocity is non-zero, there will still be an unwanted bounce.
          */
         springOptions.velocity = 0.0
     }
