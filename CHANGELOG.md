@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.1.8] 2023-01-05
+
+### Fixed
+
+-   Sampling of animations with delay/repeat settings when interrupting WAAPI animations.
+
 ## [8.1.7] 2023-01-04
 
 ### Fixed
