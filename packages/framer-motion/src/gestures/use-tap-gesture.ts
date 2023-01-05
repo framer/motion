@@ -18,6 +18,7 @@ export function useTapGesture({
     onTapCancel,
     whileTap,
     visualElement,
+    ...props
 }: FeatureProps<HTMLElement>) {
     const hasPressListeners = onTap || onTapStart || onTapCancel || whileTap
     const isPressing = useRef(false)
@@ -27,7 +28,12 @@ export function useTapGesture({
      * Only set listener to passive if there are no external listeners.
      */
     const eventOptions = {
-        passive: !(onTapStart || onTap || onTapCancel || onPointerDown),
+        passive: !(
+            onTapStart ||
+            onTap ||
+            onTapCancel ||
+            props["onPointerDown"]
+        ),
     }
 
     function removePointerEndListener() {
