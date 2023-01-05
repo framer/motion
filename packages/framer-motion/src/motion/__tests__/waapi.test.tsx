@@ -522,4 +522,20 @@ describe("WAAPI animations", () => {
 
         expect(ref.current!.animate).not.toBeCalled()
     })
+
+    test("Doesn't animate with WAAPI if repeat is Infinity and we need to generate keyframes", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.8 }}
+                transition={{ repeat: Infinity, type: "spring" }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).not.toBeCalled()
+    })
 })

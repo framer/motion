@@ -6,7 +6,13 @@ import { animate } from "../legacy-popmotion"
 import { AnimationOptions } from "../types"
 import { animateStyle } from "./"
 import { isWaapiSupportedEasing } from "./easing"
+import { supports } from "./supports"
 import { getFinalKeyframe } from "./utils/get-final-keyframe"
+
+/**
+ * A list of values that can be hardware-accelerated.
+ */
+const acceleratedValues = new Set<string>(["opacity"])
 
 /**
  * 10ms is chosen here as it strikes a balance between smooth
@@ -20,18 +26,37 @@ export function createAcceleratedAnimation(
     valueName: string,
     { onUpdate, onComplete, ...options }: AnimationOptions
 ) {
+    const canAccelerateAnimation =
+        supports.waapi() &&
+        acceleratedValues.has(valueName) &&
+        !options.repeatDelay &&
+        options.repeatType !== "mirror" &&
+        options.damping !== 0
+
+    if (!canAccelerateAnimation) return false
+
     let { keyframes, duration = 300, elapsed = 0, ease } = options
 
     /**
      * If this animation needs pre-generated keyframes then generate.
      */
     if (options.type === "spring" || !isWaapiSupportedEasing(options.ease)) {
+        /**
+         * If we need to pre-generate keyframes and repeat is infinite then
+         * early return as this will lock the thread.
+         */
+        if (options.repeat === Infinity) return
+
         const sampleAnimation = animate(options)
         let state = { done: false, value: keyframes[0] }
         const pregeneratedKeyframes: number[] = []
 
+        /**
+         * Bail after 20 seconds of pre-generated keyframes as it's likely
+         * we're heading for an infinite loop.
+         */
         let t = 0
-        while (!state.done) {
+        while (!state.done && t < 20000) {
             state = sampleAnimation.sample(t)
             pregeneratedKeyframes.push(state.value)
             t += sampleDelta

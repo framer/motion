@@ -12,12 +12,6 @@ import { getDefaultTransition } from "./utils/default-transitions"
 import { isAnimatable } from "./utils/is-animatable"
 import { getKeyframes } from "./utils/keyframes"
 import { getValueTransition, isTransitionDefined } from "./utils/transitions"
-import { supports } from "./waapi/supports"
-
-/**
- * A list of values that can be hardware-accelerated.
- */
-const acceleratedValues = new Set<string>(["opacity"])
 
 export const createMotionValueAnimation = (
     valueName: string,
@@ -127,28 +121,27 @@ export const createMotionValueAnimation = (
         const visualElement = value.owner
         const element = visualElement && visualElement.current
 
-        const canAccelerateAnimation =
-            supports.waapi() &&
-            acceleratedValues.has(valueName) &&
-            !options.repeatDelay &&
-            options.repeatType !== "mirror" &&
-            options.damping !== 0 &&
+        /**
+         * Animate via WAAPI if possible.
+         */
+        if (
             visualElement &&
             element instanceof HTMLElement &&
-            !visualElement.getProps().onUpdate
+            !visualElement?.getProps().onUpdate
+        ) {
+            const acceleratedAnimation = createAcceleratedAnimation(
+                value,
+                valueName,
+                options
+            )
 
-        if (canAccelerateAnimation) {
-            /**
-             * If this animation is capable of being run via WAAPI, then do so.
-             */
-            return createAcceleratedAnimation(value, valueName, options)
-        } else {
-            /**
-             * Otherwise, fall back to the main thread.
-             */
-            const animation = animate(options)
-
-            return () => animation.stop()
+            if (acceleratedAnimation) return acceleratedAnimation
         }
+
+        /**
+         * If we didn't create an accelerated animation, create a JS animation
+         */
+        const animation = animate(options)
+        return () => animation.stop()
     }
 }

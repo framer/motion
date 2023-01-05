@@ -764,4 +764,18 @@ describe("animate", () => {
         expect(animation.sample(0).value).toEqual(0.5)
         expect(animation.sample(250).value).toEqual(0.75)
     })
+
+    test("Correctly samples with infinite repeat", () => {
+        const animation = animate({
+            keyframes: [0, 1],
+            duration: 1000,
+            repeat: Infinity,
+            autoplay: false,
+            elapsed: 500,
+            ease: noop,
+        })
+
+        expect(animation.sample(0).value).toEqual(0.5)
+        expect(animation.sample(250).value).toEqual(0.75)
+    })
 })
