@@ -22,7 +22,10 @@ export function getSpringOptions(options: SpringOptions) {
              */
             springOptions = {
                 ...springOptions,
-                ...findSpring(options),
+                ...findSpring({
+                    ...options,
+                    velocity: -(options.velocity / 1000),
+                }),
                 isResolvedFromDuration: true,
             }
         } else {
@@ -40,7 +43,7 @@ export function getSpringOptions(options: SpringOptions) {
          * dampingRatio from bounce and if this is critically damped (no bounce)
          * and initial velocity is non-zero, there will still be an unwanted bounce.
          */
-        springOptions.velocity = 0.0
+        // springOptions.velocity = 0.0
     }
 
     return springOptions

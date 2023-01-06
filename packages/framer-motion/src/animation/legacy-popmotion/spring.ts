@@ -13,6 +13,7 @@ export function spring({
     keyframes,
     restSpeed = 2,
     restDelta = 0.01,
+    velocity = 0.0,
     ...options
 }: AnimationOptions<number>): Animation<number> {
     let origin = keyframes[0]
@@ -24,17 +25,12 @@ export function spring({
      */
     const state: AnimationState<number> = { done: false, value: origin }
 
-    const {
-        stiffness,
-        damping,
-        mass,
-        velocity,
-        duration,
-        isResolvedFromDuration,
-    } = getSpringOptions(options)
+    let initialVelocity = velocity ? -(velocity / 1000) : 0.0
+
+    const { stiffness, damping, mass, duration, isResolvedFromDuration } =
+        getSpringOptions({ ...options, velocity: -initialVelocity })
 
     let resolveSpring = zero
-    let initialVelocity = velocity ? -(velocity / 1000) : 0.0
     const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass))
 
     function createSpring() {

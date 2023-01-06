@@ -81,6 +81,9 @@ export function findSpring({
     const undampedFreq = approximateRoot(envelope, derivative, initialGuess)
 
     duration = duration * 1000
+
+    console.log(undampedFreq, velocity)
+
     if (isNaN(undampedFreq)) {
         return {
             stiffness: 100,
