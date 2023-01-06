@@ -211,4 +211,39 @@ describe("motion for three", () => {
         expect(b.get()).toEqual(5)
         expect(c.get()).toEqual(90)
     })
+
+    test("transitions work in variants", async () => {
+        const result = await new Promise<number[]>((resolve) => {
+            const x = motionValue(0)
+            const y = motionValue(0)
+            function Component() {
+                return (
+                    <motion.mesh
+                        position-x={x}
+                        position-y={y}
+                        initial="off"
+                        animate="on"
+                        variants={{
+                            on: {
+                                x: 100,
+                                y: 100,
+                                transition: { x: { type: false } },
+                            },
+                            off: {
+                                x: 0,
+                                y: 0,
+                                transition: { x: { type: false } },
+                            },
+                        }}
+                    />
+                )
+            }
+
+            ReactThreeTestRenderer.create(<Component />)
+            setTimeout(() => resolve([x.get(), y.get()]), 5)
+        })
+
+        expect(result[0]).toEqual(100)
+        expect(result[1]).toEqual(0)
+    })
 })
