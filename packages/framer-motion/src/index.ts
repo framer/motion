@@ -111,6 +111,15 @@ export { DeprecatedLayoutGroupContext } from "./context/DeprecatedLayoutGroupCon
 export { SwitchLayoutGroupContext } from "./context/SwitchLayoutGroupContext"
 
 /**
+ * Easing functions
+ */
+export * from "./easing/anticipate"
+export * from "./easing/back"
+export * from "./easing/circ"
+export * from "./easing/ease"
+export * from "./easing/cubic-bezier"
+
+/**
  * Types
  */
 export { HTMLMotionProps, ForwardRefComponent } from "./render/html/types"
