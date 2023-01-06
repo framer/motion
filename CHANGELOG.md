@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.2.1] 2023-01-06
+
+### Fixed
+
+-   Variant `transition` fixed in Framer Motion 3D.
+
 ## [8.2.0] 2023-01-06
 
 ### Added
