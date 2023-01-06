@@ -79,14 +79,6 @@ export type ControlsAnimationDefinition =
 /**
  * @public
  */
-export type PendingAnimations = {
-    animation: [ControlsAnimationDefinition, Transition | undefined]
-    resolve: () => void
-}
-
-/**
- * @public
- */
 export interface AnimationControls {
     /**
      * Subscribes a component's animation controls to this.
