@@ -1,6 +1,7 @@
 import { AnimationType } from "../render/utils/types"
 import { useDomEvent } from "../events/use-dom-event"
 import { FeatureProps } from "../motion/features/types"
+import { useCallback } from "react"
 
 /**
  *
@@ -13,13 +14,14 @@ export function useFocusGesture({
     visualElement,
 }: FeatureProps<EventTarget>) {
     const { animationState } = visualElement
-    const onFocus = () => {
-        animationState && animationState.setActive(AnimationType.Focus, true)
-    }
 
-    const onBlur = () => {
+    const onFocus = useCallback(() => {
+        animationState && animationState.setActive(AnimationType.Focus, true)
+    }, [animationState])
+
+    const onBlur = useCallback(() => {
         animationState && animationState.setActive(AnimationType.Focus, false)
-    }
+    }, [animationState])
 
     useDomEvent(visualElement, "focus", whileFocus ? onFocus : undefined)
     useDomEvent(visualElement, "blur", whileFocus ? onBlur : undefined)

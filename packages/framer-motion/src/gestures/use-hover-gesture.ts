@@ -4,6 +4,7 @@ import { usePointerEvent } from "../events/use-pointer-event"
 import type { VisualElement } from "../render/VisualElement"
 import { FeatureProps } from "../motion/features/types"
 import { isDragActive } from "./drag/utils/lock"
+import { useMemo } from "react"
 
 function isMouseEvent(event: PointerEvent) {
     return event.type !== "pen" && event.type !== "touch"
@@ -39,18 +40,22 @@ export function useHoverGesture({
     usePointerEvent(
         visualElement,
         "pointerenter",
-        onHoverStart || whileHover
-            ? createHoverEvent(visualElement, true, onHoverStart)
-            : undefined,
+        useMemo(() => {
+            return onHoverStart || whileHover
+                ? createHoverEvent(visualElement, true, onHoverStart)
+                : undefined
+        }, [onHoverStart, Boolean(whileHover), visualElement]),
         { passive: !onHoverStart }
     )
 
     usePointerEvent(
         visualElement,
         "pointerleave",
-        onHoverEnd || whileHover
-            ? createHoverEvent(visualElement, false, onHoverEnd)
-            : undefined,
+        useMemo(() => {
+            return onHoverEnd || whileHover
+                ? createHoverEvent(visualElement, false, onHoverEnd)
+                : undefined
+        }, [onHoverStart, Boolean(whileHover), visualElement]),
         { passive: !onHoverEnd }
     )
 }
