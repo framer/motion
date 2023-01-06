@@ -343,6 +343,8 @@ export interface MotionProps
      * @param values -
      */
     transformValues?<V extends ResolvedValues>(values: V): V
+
+    children?: React.ReactNode | MotionValue<number> | MotionValue<string>
 }
 
 export type TransformTemplate = (

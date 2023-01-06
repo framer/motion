@@ -661,6 +661,7 @@ describe("animate prop as object", () => {
             const Component = () => {
                 const x = useMotionValue(0)
                 useMotionValueEvent(x, "animationStart", fn)
+
                 return (
                     <motion.div
                         animate={{ x: 100 }}

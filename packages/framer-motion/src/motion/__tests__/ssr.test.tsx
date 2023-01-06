@@ -1,6 +1,6 @@
 import * as React from "react"
 import { renderToString, renderToStaticMarkup } from "react-dom/server"
-import { motion } from "../../"
+import { motion, useMotionValue } from "../../"
 import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
 import { Reorder } from "../../components/Reorder"
@@ -167,6 +167,18 @@ function runTests(render: (components: any) => string) {
         expect(div).toBe(
             `<div><div style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></div></div>`
         )
+    })
+
+    test("renders motion value child", () => {
+        function Component() {
+            const value = useMotionValue(5)
+
+            return <motion.div>{value}</motion.div>
+        }
+
+        const string = render(<Component />)
+
+        expect(string).toBe("<div>5</div>")
     })
 }
 

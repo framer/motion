@@ -7,14 +7,13 @@ import { CreateVisualElement } from "../../render/types"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { VisualState } from "./use-visual-state"
 import { LazyContext } from "../../context/LazyContext"
-import { MotionConfigProps } from "../../components/MotionConfig"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import type { VisualElement } from "../../render/VisualElement"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
     visualState: VisualState<Instance, RenderState>,
-    props: MotionProps & MotionConfigProps,
+    props: MotionProps & Partial<MotionConfigContext>,
     createVisualElement?: CreateVisualElement<Instance>
 ): VisualElement<Instance> | undefined {
     const parent = useVisualElementContext()
