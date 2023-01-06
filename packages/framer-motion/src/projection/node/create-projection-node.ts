@@ -1629,7 +1629,7 @@ export function createProjectionNode<I>({
                  * Only apply scale correction to the value if we have an
                  * active projection transform. Otherwise these values become
                  * vulnerable to distortion if the element changes size without
-                 * a corressponding layout animation.
+                 * a corresponding layout animation.
                  */
                 const corrected =
                     styles.transform === "none"
