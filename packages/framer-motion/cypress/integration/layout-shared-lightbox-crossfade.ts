@@ -89,7 +89,7 @@ function runScriptCrossfade(args: string) {
         .wait(50)
         .get("#item-parent")
         .should(([$box]: any) => {
-            expect(window.getComputedStyle($box).borderRadius).to.equal("0%")
+            expect(window.getComputedStyle($box).borderRadius).to.equal("0px")
             expect(window.getComputedStyle($box).opacity).to.equal("1")
             expectBbox($box, {
                 top: 40,
@@ -100,7 +100,7 @@ function runScriptCrossfade(args: string) {
         })
         .get("#item-child")
         .should(([$box]: any) => {
-            expect(window.getComputedStyle($box).borderRadius).to.equal("50%")
+            expect(window.getComputedStyle($box).borderRadius).to.equal("25px")
             expect(window.getComputedStyle($box).opacity).to.equal("0.5")
             expectBbox($box, {
                 top: 305,
