@@ -1624,7 +1624,17 @@ export function createProjectionNode<I>({
                 if (valuesToRender[key] === undefined) continue
 
                 const { correct, applyTo } = scaleCorrectors[key]
-                const corrected = correct(valuesToRender[key], lead)
+
+                /**
+                 * Only apply scale correction to the value if we have an
+                 * active projection transform. Otherwise these values become
+                 * vulnerable to distortion if the element changes size without
+                 * a corressponding layout animation.
+                 */
+                const corrected =
+                    styles.transform === "none"
+                        ? valuesToRender[key]
+                        : correct(valuesToRender[key], lead)
 
                 if (applyTo) {
                     const num = applyTo.length
