@@ -87,8 +87,13 @@
                 matchOpacity(box, 0)
                 matchOpacity(newBox, 1)
 
+                /**
+                 * First box has an active transform applied whereas the second
+                 * box doesn't. As such only the first box needs a border-radius that
+                 * corrects for scale distortion.
+                 */
                 matchBorderRadius(box, "10% / 6.66667%")
-                matchBorderRadius(newBox, "10% / 6.66667%")
+                matchBorderRadius(newBox, "20px")
             }, 150)
         </script>
     </body>
