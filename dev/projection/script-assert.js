@@ -50,7 +50,7 @@ window.Assert = {
     },
     matchBorderRadius: (element, expected) => {
         let radius = element.style.borderRadius
-        console.log(radius)
+
         // Different browsers might return borders to a different accuracy
         if (typeof expected === "string") {
             expected = roundBorder(expected)
