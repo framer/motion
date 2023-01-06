@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.2.2] 2023-01-06
+
+### Fixed
+
+-   Removed ability to trigger animations via `useAnimationControls()` during render lifecycle. This would be a source of silent or subtle errors.
+
 ## [8.2.1] 2023-01-06
 
 ### Fixed
