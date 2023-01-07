@@ -192,7 +192,7 @@ export interface Orchestration {
      *   show: {
      *     opacity: 1,
      *     transition: {
-     *       delayChildren: 0.5,
+     *       staggerChildren: 0.5,
      *       staggerDirection: -1
      *     }
      *   }
