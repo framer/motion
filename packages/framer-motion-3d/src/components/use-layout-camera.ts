@@ -1,11 +1,10 @@
 import type { Box } from "framer-motion"
+import { calcLength, clamp, useVisualElementContext } from "framer-motion"
 import { RefObject, useContext, useLayoutEffect, useRef } from "react"
 import { Size, useThree } from "@react-three/fiber"
 import { LayoutCameraProps } from "./types"
-import { useVisualElementContext } from "framer-motion"
 import { MotionCanvasContext } from "./MotionCanvasContext"
 import { invariant } from "hey-listen"
-import { calcLength, clamp } from "framer-motion"
 
 const calcBoxSize = ({ x, y }: Box) => ({
     width: calcLength(x),

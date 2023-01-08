@@ -17,6 +17,7 @@ export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<
 
 export interface CustomMotionComponentConfig {
     forwardMotionProps?: boolean
+    svg?: boolean
 }
 
 export type CreateConfig = <Instance, RenderState, Props>(

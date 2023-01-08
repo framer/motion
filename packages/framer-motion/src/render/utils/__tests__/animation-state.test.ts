@@ -17,6 +17,7 @@ function createTest(
                 latestValues: {},
                 renderState: createHtmlRenderState(),
             },
+            type: "state",
         },
         {
             initialState: {},

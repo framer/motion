@@ -20,6 +20,7 @@ import { motionComponentSymbol } from "./utils/symbol"
 import { CreateVisualElement } from "../render/types"
 
 export interface MotionComponentConfig<Instance, RenderState> {
+    type: string
     preloadedFeatures?: FeatureBundle
     createVisualElement?: CreateVisualElement<Instance>
     projectionNodeConstructor?: any
@@ -44,6 +45,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
     useRender,
     useVisualState,
     Component,
+    type,
 }: MotionComponentConfig<Instance, RenderState>) {
     preloadedFeatures && loadFeatures(preloadedFeatures)
 
@@ -88,9 +90,9 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
              * for more performant animations and interactions
              */
             context.visualElement = useVisualElement<Instance, RenderState>(
-                Component,
                 visualState,
                 configAndProps,
+                type,
                 createVisualElement
             )
 

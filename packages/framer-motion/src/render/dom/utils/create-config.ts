@@ -12,17 +12,17 @@ import { CustomMotionComponentConfig } from "../motion-proxy"
 
 export function createDomMotionConfig<Props>(
     Component: string | React.ComponentType<React.PropsWithChildren<Props>>,
-    { forwardMotionProps = false }: CustomMotionComponentConfig,
+    { forwardMotionProps = false, svg }: CustomMotionComponentConfig,
     preloadedFeatures?: FeatureComponents,
     createVisualElement?: CreateVisualElement<any>,
     projectionNodeConstructor?: any
 ) {
-    const baseConfig = isSVGComponent(Component)
-        ? svgMotionConfig
-        : htmlMotionConfig
+    const type = svg || isSVGComponent(Component) ? "svg" : "html"
+    const baseConfig = type === "svg" ? svgMotionConfig : htmlMotionConfig
 
     return {
         ...baseConfig,
+        type,
         preloadedFeatures,
         useRender: createUseRender(forwardMotionProps),
         createVisualElement,

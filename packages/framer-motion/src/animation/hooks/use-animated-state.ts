@@ -73,7 +73,7 @@ export function useAnimatedState(initialState: any) {
 
     const element = useConstant(() => {
         return new StateVisualElement(
-            { props: {}, visualState },
+            { props: {}, visualState, type: "state" },
             { initialState }
         )
     })
