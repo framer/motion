@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.3.1] 2023-01-09
+
+### Fixed
+
+-   Memoisation of tap callbacks.
+
 ## [8.3.0] 2023-01-09
 
 ### Added
