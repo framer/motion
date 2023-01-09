@@ -6,17 +6,13 @@ import { FeatureProps } from "../motion/features/types"
 import { isDragActive } from "./drag/utils/lock"
 import { useMemo } from "react"
 
-function isMouseEvent(event: PointerEvent) {
-    return event.type !== "pen" && event.type !== "touch"
-}
-
 function createHoverEvent(
     visualElement: VisualElement,
     isActive: boolean,
     callback?: (event: PointerEvent, info: EventInfo) => void
 ) {
     return (event: PointerEvent, info: EventInfo) => {
-        if (!isMouseEvent(event) || isDragActive()) return
+        if (event.type === "touch" || isDragActive()) return
 
         /**
          * Ensure we trigger animations before firing event callback

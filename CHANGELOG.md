@@ -8,7 +8,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Allow `useMotionValueTemplate` to accept static values.
+-   Allow `useMotionTemplate` to accept static values.
 
 ## [8.3.1] 2023-01-09
 
