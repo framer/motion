@@ -57,14 +57,14 @@ export function useTapGesture({
          * as, or a child of, this component's element
          */
         !isNodeOrChild(visualElement.current, event.target as Element)
-            ? onTapCancel && onTapCancel(event, info)
-            : onTap && onTap(event, info)
+            ? visualElement.getProps().onTapCancel?.(event, info)
+            : visualElement.getProps().onTap?.(event, info)
     }
 
     function onPointerCancel(event: PointerEvent, info: EventInfo) {
         if (!checkPointerEnd()) return
 
-        onTapCancel && onTapCancel(event, info)
+        visualElement.getProps().onTapCancel?.(event, info)
     }
 
     const startPress = useCallback(
@@ -90,9 +90,9 @@ export function useTapGesture({
             visualElement.animationState &&
                 visualElement.animationState.setActive(AnimationType.Tap, true)
 
-            onTapStart && onTapStart(event, info)
+            visualElement.getProps().onTapStart?.(event, info)
         },
-        [onTapStart, visualElement]
+        [Boolean(onTapStart), visualElement]
     )
 
     usePointerEvent(
