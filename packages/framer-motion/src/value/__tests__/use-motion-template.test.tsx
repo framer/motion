@@ -64,4 +64,22 @@ describe("useMotionTemplate", () => {
 
         expect(container.firstChild).toHaveStyle(`transform: translateX(2px)`)
     })
+
+    test("respects static values", async () => {
+        const Component = ({ y }: { y: number }) => {
+            const x = useMotionValue(1)
+            const transform = useMotionTemplate`translateX(${x}px) translateY(${y}px)`
+            return <motion.div style={{ transform }} />
+        }
+
+        const { container, rerender } = render(<Component y={1} />)
+
+        expect(container.firstChild).toHaveStyle(
+            `transform: translateX(1px) translateY(1px)`
+        )
+        rerender(<Component y={2} />)
+        expect(container.firstChild).toHaveStyle(
+            `transform: translateX(1px) translateY(2px)`
+        )
+    })
 })
