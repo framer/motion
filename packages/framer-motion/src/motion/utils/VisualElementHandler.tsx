@@ -1,11 +1,11 @@
 import React from "react"
-import { MotionConfigProps } from "../.."
+import { MotionConfigContext } from "../../context/MotionConfigContext"
 import type { VisualElement } from "../../render/VisualElement"
 import { MotionProps } from "../types"
 
 interface Props<Instance> {
     visualElement?: VisualElement<Instance>
-    props: MotionProps & MotionConfigProps
+    props: MotionProps & Partial<MotionConfigContext>
 }
 
 export class VisualElementHandler<Instance> extends React.Component<

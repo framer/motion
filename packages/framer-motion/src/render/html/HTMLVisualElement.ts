@@ -8,10 +8,12 @@ import { renderHTML } from "./utils/render"
 import { getDefaultValueType } from "../dom/value-types/defaults"
 import { measureViewportBox } from "../../projection/utils/measure"
 import { MotionProps, MotionStyle } from "../../motion/types"
-import { MotionConfigProps } from "../../components/MotionConfig"
 import { Box } from "../../projection/geometry/types"
-import { IProjectionNode, ResolvedValues } from "../.."
 import { DOMVisualElement } from "../dom/DOMVisualElement"
+import { MotionConfigContext } from "../../context/MotionConfigContext"
+import { isMotionValue } from "../../value/utils/is-motion-value"
+import type { ResolvedValues } from "../types"
+import type { IProjectionNode } from "../../projection/node/types"
 
 export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)
@@ -44,7 +46,7 @@ export class HTMLVisualElement extends DOMVisualElement<
 
     measureInstanceViewportBox(
         instance: HTMLElement,
-        { transformPagePoint }: MotionProps & MotionConfigProps
+        { transformPagePoint }: MotionProps & Partial<MotionConfigContext>
     ): Box {
         return measureViewportBox(instance, transformPagePoint)
     }
@@ -65,6 +67,21 @@ export class HTMLVisualElement extends DOMVisualElement<
 
     scrapeMotionValuesFromProps(props: MotionProps, prevProps: MotionProps) {
         return scrapeMotionValuesFromProps(props, prevProps)
+    }
+
+    childSubscription?: VoidFunction
+    handleChildMotionValue() {
+        if (this.childSubscription) {
+            this.childSubscription()
+            delete this.childSubscription
+        }
+
+        const { children } = this.props
+        if (isMotionValue(children)) {
+            this.childSubscription = children.on("change", (latest) => {
+                if (this.current) this.current.textContent = `${latest}`
+            })
+        }
     }
 
     renderInstance(

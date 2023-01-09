@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import { motion } from "../.."
+import { motion, useMotionValue } from "../.."
 import * as React from "react"
 import { RefObject } from "react"
 import { MotionProps } from "../types"
@@ -48,7 +48,10 @@ describe("motion()", () => {
         let animate: any
         let foo: boolean = false
         const BaseComponent = React.forwardRef(
-            (props: Props & MotionProps, ref: RefObject<HTMLDivElement>) => {
+            (
+                props: React.PropsWithChildren<Props & MotionProps>,
+                ref: RefObject<HTMLDivElement>
+            ) => {
                 animate = props.animate
                 foo = props.foo
                 return <div ref={ref} />
@@ -65,5 +68,28 @@ describe("motion()", () => {
 
         expect(animate).toEqual({ x: 100 })
         expect(foo).toBe(true)
+    })
+
+    test("forwards MotionValue children as raw values", () => {
+        let children: number
+        const BaseComponent = React.forwardRef(
+            (
+                props: React.PropsWithChildren<Props & MotionProps>,
+                ref: RefObject<HTMLDivElement>
+            ) => {
+                children = props.children as any
+                return <div ref={ref} />
+            }
+        )
+
+        const MotionComponent = motion<Props>(BaseComponent)
+
+        const Component = () => (
+            <MotionComponent foo>{useMotionValue(5)}</MotionComponent>
+        )
+
+        render(<Component />)
+
+        expect(children!).toEqual(5)
     })
 })

@@ -1,4 +1,4 @@
-import { createElement } from "react"
+import { createElement, useMemo } from "react"
 import { useHTMLProps } from "../html/use-props"
 import { filterProps } from "./utils/filter-props"
 import { isSVGComponent } from "./utils/is-svg-component"
@@ -6,6 +6,7 @@ import { useSVGProps } from "../svg/use-props"
 import { RenderComponent } from "../../motion/features/types"
 import { HTMLRenderState } from "../html/types"
 import { SVGRenderState } from "../svg/types"
+import { isMotionValue } from "../../value/utils/is-motion-value"
 
 export function createUseRender(forwardMotionProps = false) {
     const useRender: RenderComponent<
@@ -33,11 +34,25 @@ export function createUseRender(forwardMotionProps = false) {
             ref,
         }
 
+        /**
+         * If component has been handed a motion value as its child,
+         * memoise its initial value and render that. Subsequent updates
+         * will be handled by the onChange handler
+         */
+        const { children } = props
+        const renderedChildren = useMemo(
+            () => (isMotionValue(children) ? children.get() : children),
+            [children]
+        )
+
         if (projectionId) {
             elementProps["data-projection-id"] = projectionId
         }
 
-        return createElement<any>(Component, elementProps)
+        return createElement<any>(Component, {
+            ...elementProps,
+            children: renderedChildren,
+        })
     }
 
     return useRender

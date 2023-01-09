@@ -1,8 +1,10 @@
 import { sync, cancelSync } from "../frameloop"
 import { invariant } from "hey-listen"
 import { createElement } from "react"
-import { MotionConfigProps } from "../components/MotionConfig"
-import { ReducedMotionConfig } from "../context/MotionConfigContext"
+import {
+    MotionConfigContext,
+    ReducedMotionConfig,
+} from "../context/MotionConfigContext"
 import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
 import { featureDefinitions } from "../motion/features/definitions"
 import { FeatureBundle, FeatureDefinition } from "../motion/features/types"
@@ -88,7 +90,7 @@ export abstract class VisualElement<
      */
     abstract measureInstanceViewportBox(
         instance: Instance,
-        props: MotionProps & MotionConfigProps
+        props: MotionProps & Partial<MotionConfigContext>
     ): Box
 
     /**
@@ -144,6 +146,12 @@ export abstract class VisualElement<
         styleProp?: MotionStyle,
         projection?: IProjectionNode
     ): void
+
+    /**
+     * If the component child is provided as a motion value, handle subscriptions
+     * with the renderer-specific VisualElement.
+     */
+    handleChildMotionValue?(): void
 
     /**
      * This method takes React props and returns found MotionValues. For example, HTML
@@ -263,7 +271,7 @@ export abstract class VisualElement<
     /**
      * A reference to the latest props provided to the VisualElement's host React component.
      */
-    private props: MotionProps
+    protected props: MotionProps
 
     /**
      * A map of every subscription that binds the provided or generated
@@ -463,7 +471,7 @@ export abstract class VisualElement<
     }
 
     loadFeatures(
-        renderedProps: MotionProps,
+        { children, ...renderedProps }: MotionProps,
         isStrict?: boolean,
         preloadedFeatures?: FeatureBundle,
         projectionId?: number,
@@ -637,6 +645,10 @@ export abstract class VisualElement<
             this.scrapeMotionValuesFromProps(props, prevProps),
             this.prevMotionValues
         )
+
+        if (this.handleChildMotionValue) {
+            this.handleChildMotionValue()
+        }
     }
 
     getProps() {
