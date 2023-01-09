@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.3.3] 2023-01-09
+
+### Fixed
+
+-   Stop filtering `pen` hover events.
+
 ## [8.3.2] 2023-01-09
 
 ### Fixed
