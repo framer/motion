@@ -4,6 +4,18 @@ test("mixColor hex", () => {
     expect(mixColor("#fff", "#000")(0.5)).toBe("rgba(180, 180, 180, 1)")
 })
 
+test("mixColor hex with alpha", () => {
+    expect(mixColor("#ffffff00", "#000000ff")(0.5)).toBe(
+        "rgba(180, 180, 180, 0.5)"
+    )
+})
+
+test("mixColor hex with some alpha", () => {
+    expect(mixColor("#ffffff00", "#000000")(0.5)).toBe(
+        "rgba(180, 180, 180, 0.5)"
+    )
+})
+
 test("mixColor rgba", () => {
     expect(mixColor("rgba(0, 0, 0, 0)", "rgba(255, 255, 255, 1)")(0.5)).toBe(
         "rgba(180, 180, 180, 0.5)"
