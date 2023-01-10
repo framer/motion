@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.3.4] 2023-01-10
+
+### Fixed
+
+-   Detection of hex colors with alpha values within complex strings.
+
 ## [8.3.3] 2023-01-09
 
 ### Fixed
