@@ -19,7 +19,8 @@ const sampleDelta = 10 //ms
 export function createAcceleratedAnimation(
     value: MotionValue,
     valueName: string,
-    { onUpdate, onComplete, ...options }: AnimationOptions
+    { onUpdate, onComplete, ...options }: AnimationOptions,
+    canInterpolate: boolean
 ) {
     const canAccelerateAnimation =
         supports.waapi() &&
@@ -36,31 +37,37 @@ export function createAcceleratedAnimation(
      * If this animation needs pre-generated keyframes then generate.
      */
     if (options.type === "spring" || !isWaapiSupportedEasing(options.ease)) {
-        /**
-         * If we need to pre-generate keyframes and repeat is infinite then
-         * early return as this will lock the thread.
-         */
-        if (options.repeat === Infinity) return
+        if (canInterpolate) {
+            /**
+             * If we need to pre-generate keyframes and repeat is infinite then
+             * early return as this will lock the thread.
+             */
+            if (options.repeat === Infinity) return
 
-        const sampleAnimation = animate(options)
-        let state = { done: false, value: keyframes[0] }
-        const pregeneratedKeyframes: number[] = []
+            const sampleAnimation = animate(options)
+            let state = { done: false, value: keyframes[0] }
+            const pregeneratedKeyframes: number[] = []
 
-        /**
-         * Bail after 20 seconds of pre-generated keyframes as it's likely
-         * we're heading for an infinite loop.
-         */
-        let t = 0
-        while (!state.done && t < 20000) {
-            state = sampleAnimation.sample(t)
-            pregeneratedKeyframes.push(state.value)
-            t += sampleDelta
+            /**
+             * Bail after 20 seconds of pre-generated keyframes as it's likely
+             * we're heading for an infinite loop.
+             */
+            let t = 0
+            while (!state.done && t < 20000) {
+                state = sampleAnimation.sample(t)
+                pregeneratedKeyframes.push(state.value)
+                t += sampleDelta
+            }
+
+            keyframes = pregeneratedKeyframes
+            duration = t - sampleDelta
+            ease = "linear"
+        } else {
+            // Run 0-100 spring and generate linear easing or use ease
         }
-
-        keyframes = pregeneratedKeyframes
-        duration = t - sampleDelta
-        ease = "linear"
     }
+
+    value.isTrusted = canInterpolate
 
     const animation = animateStyle(
         (value.owner as VisualElement<HTMLElement>).current!,
@@ -99,22 +106,26 @@ export function createAcceleratedAnimation(
      * Animation interrupt callback.
      */
     return () => {
-        /**
-         * WAAPI doesn't natively have any interruption capabilities.
-         *
-         * Rather than read commited styles back out of the DOM, we can
-         * create a renderless JS animation and sample it twice to calculate
-         * its current value, "previous" value, and therefore allow
-         * Motion to calculate velocity for any subsequent animation.
-         */
-        const { currentTime } = animation
-        if (currentTime) {
-            const sampleAnimation = animate({ ...options, autoplay: false })
-            value.setWithVelocity(
-                sampleAnimation.sample(currentTime - sampleDelta).value,
-                sampleAnimation.sample(currentTime).value,
-                sampleDelta
-            )
+        if (canInterpolate) {
+            /**
+             * WAAPI doesn't natively have any interruption capabilities.
+             *
+             * Rather than read commited styles back out of the DOM, we can
+             * create a renderless JS animation and sample it twice to calculate
+             * its current value, "previous" value, and therefore allow
+             * Motion to calculate velocity for any subsequent animation.
+             */
+            const { currentTime } = animation
+            if (currentTime) {
+                const sampleAnimation = animate({ ...options, autoplay: false })
+                value.setWithVelocity(
+                    sampleAnimation.sample(currentTime - sampleDelta).value,
+                    sampleAnimation.sample(currentTime).value,
+                    sampleDelta
+                )
+            }
+        } else {
+            animation.commitStyles()
         }
 
         sync.update(() => animation.cancel())

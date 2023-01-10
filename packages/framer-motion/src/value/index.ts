@@ -110,6 +110,8 @@ export class MotionValue<V = any> {
      */
     private canTrackVelocity = false
 
+    isTrusted = true
+
     /**
      * @param init - The initiating value
      * @param config - Optional configuration options
@@ -261,6 +263,7 @@ export class MotionValue<V = any> {
     }
 
     updateAndNotify = (v: V, render = true) => {
+        this.isTrusted = true
         this.prev = this.current
         this.current = v
 

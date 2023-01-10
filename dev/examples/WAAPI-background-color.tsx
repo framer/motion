@@ -13,10 +13,10 @@ export const App = () => {
 
     return (
         <motion.div
-            initial={{ backgroundColor: "#00f" }}
-            animate={{ backgroundColor: state ? "#00f" : "#f00" }}
+            initial={{ backgroundColor: "blue" }}
+            animate={{ backgroundColor: state ? "blue" : "red" }}
             onClick={() => setState(!state)}
-            transition={{ duration: 1 }}
+            transition={{ duration: 2 }}
             style={style}
         />
     )

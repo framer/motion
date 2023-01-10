@@ -1,7 +1,7 @@
 import { getAnimatableNone } from "../../render/dom/value-types/animatable-none"
 import { ResolvedValueTarget, Transition } from "../../types"
 import { MotionValue } from "../../value"
-import { isAnimatable } from "./is-animatable"
+import { canInterpolate } from "./can-interpolate"
 import { getZeroUnit, isZero } from "./transitions"
 
 export function getKeyframes(
@@ -10,10 +10,14 @@ export function getKeyframes(
     target: ResolvedValueTarget,
     transition: Transition
 ) {
-    const isTargetAnimatable = isAnimatable(valueName, target)
+    const canInterpolateTarget = canInterpolate(valueName, target)
     let origin = transition.from !== undefined ? transition.from : value.get()
 
-    if (origin === "none" && isTargetAnimatable && typeof target === "string") {
+    if (
+        origin === "none" &&
+        canInterpolateTarget &&
+        typeof target === "string"
+    ) {
         /**
          * If we're trying to animate from "none", try and get an animatable version
          * of the target. This could be improved to work both ways.

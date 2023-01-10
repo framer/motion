@@ -5,6 +5,7 @@ import { VisualElement } from "../VisualElement"
 import { MotionProps } from "../../motion/types"
 import { MotionValue } from "../../value"
 import { TargetAndTransition } from "../.."
+import { resolveAcceleratedAnimations } from "../utils/resolve-accelerated-animations"
 import { HTMLRenderState } from "../html/types"
 
 export abstract class DOMVisualElement<
@@ -54,7 +55,7 @@ export abstract class DOMVisualElement<
         }
 
         if (isMounted) {
-            resolveAcceleratedAnimations(this, target)
+            resolveAcceleratedAnimations(this, target as any)
 
             checkTargetForNewValues(this, target, origin as any)
 

@@ -10,7 +10,7 @@ import { complex } from "../../value/types/complex"
  *
  * @internal
  */
-export const isAnimatable = (key: string, value: ResolvedValueTarget) => {
+export const canInterpolate = (key: string, value: ResolvedValueTarget) => {
     // If the list of keys tat might be non-animatable grows, replace with Set
     if (key === "zIndex") return false
 

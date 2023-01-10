@@ -9,7 +9,7 @@ import { animate } from "./legacy-popmotion"
 import { inertia } from "./legacy-popmotion/inertia"
 import { AnimationOptions } from "./types"
 import { getDefaultTransition } from "./utils/default-transitions"
-import { isAnimatable } from "./utils/is-animatable"
+import { canInterpolate } from "./utils/can-interpolate"
 import { getKeyframes } from "./utils/keyframes"
 import { getValueTransition, isTransitionDefined } from "./utils/transitions"
 
@@ -43,21 +43,6 @@ export const createMotionValueAnimation = (
             valueTransition
         )
 
-        /**
-         * Check if we're able to animate between the start and end keyframes,
-         * and throw a warning if we're attempting to animate between one that's
-         * animatable and another that isn't.
-         */
-        const originKeyframe = keyframes[0]
-        const targetKeyframe = keyframes[keyframes.length - 1]
-        const isOriginAnimatable = isAnimatable(valueName, originKeyframe)
-        const isTargetAnimatable = isAnimatable(valueName, targetKeyframe)
-
-        warning(
-            isOriginAnimatable === isTargetAnimatable,
-            `You are trying to animate ${valueName} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`
-        )
-
         let options: AnimationOptions = {
             keyframes,
             velocity: value.getVelocity(),
@@ -73,18 +58,11 @@ export const createMotionValueAnimation = (
             },
         }
 
-        if (
-            !isOriginAnimatable ||
-            !isTargetAnimatable ||
-            instantAnimationState.current ||
-            valueTransition.type === false
-        ) {
-            /**
-             * If we can't animate this value, or the global instant animation flag is set,
-             * or this is simply defined as an instant transition, return an instant transition.
-             */
+        if (instantAnimationState.current || valueTransition.type === false) {
             return createInstantAnimation(options)
-        } else if (valueTransition.type === "inertia") {
+        }
+
+        if (valueTransition.type === "inertia") {
             /**
              * If this is an inertia animation, we currently don't support pre-generating
              * keyframes for this as such it must always run on the main thread.
@@ -118,6 +96,16 @@ export const createMotionValueAnimation = (
             options.repeatDelay = secondsToMilliseconds(options.repeatDelay)
         }
 
+        /**
+         * Check if we're able to animate between the start and end keyframes,
+         * and throw a warning if we're attempting to animate between one that's
+         * animatable and another that isn't.
+         */
+        const originKeyframe = keyframes[0]
+        const targetKeyframe = keyframes[keyframes.length - 1]
+        const canInterpolateOrigin = canInterpolate(valueName, originKeyframe)
+        const canInterpolateTarget = canInterpolate(valueName, targetKeyframe)
+
         const visualElement = value.owner
         const element = visualElement && visualElement.current
 
@@ -132,10 +120,20 @@ export const createMotionValueAnimation = (
             const acceleratedAnimation = createAcceleratedAnimation(
                 value,
                 valueName,
-                options
+                options,
+                canInterpolateOrigin && canInterpolateTarget
             )
 
             if (acceleratedAnimation) return acceleratedAnimation
+        }
+
+        warning(
+            canInterpolateOrigin === canInterpolateTarget,
+            `You are trying to animate ${valueName} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`
+        )
+
+        if (!canInterpolateOrigin || !canInterpolateTarget) {
+            return createInstantAnimation(options)
         }
 
         /**
