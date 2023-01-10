@@ -92,6 +92,8 @@ export * from "./utils/distance"
 export { mix } from "./utils/mix"
 export { pipe } from "./utils/pipe"
 export { wrap } from "./utils/wrap"
+export { sync } from "./frameloop"
+export { frameData } from "./frameloop/data"
 
 /**
  * Appear animations
