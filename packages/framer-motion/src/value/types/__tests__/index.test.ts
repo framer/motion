@@ -15,8 +15,12 @@ const MIXED = "0px 0px 0px rgba(161, 0, 246, 0)"
 
 describe("regex", () => {
     it("should correctly identify values", () => {
+        expect(singleColorRegex.test("#fff")).toBe(true)
         expect(singleColorRegex.test("#fff000")).toBe(true)
         expect(singleColorRegex.test("#fff000aa")).toBe(true)
+        expect(singleColorRegex.test("#AAA")).toBe(true)
+        expect(singleColorRegex.test("#FFf000")).toBe(true)
+        expect(singleColorRegex.test("#fff000AA")).toBe(true)
         expect(singleColorRegex.test("rgba(161, 0, 246, 0)")).toBe(true)
         expect(singleColorRegex.test("rgba(161 0 246 / 0)")).toBe(true)
         expect(singleColorRegex.test("rgba(161 0 246/0)")).toBe(true)
@@ -89,6 +93,24 @@ describe("complex value type", () => {
             0,
             0,
         ])
+        expect(complex.parse("0px 0px 0px #F00")).toEqual([
+            { red: 255, green: 0, blue: 0, alpha: 1 },
+            0,
+            0,
+            0,
+        ])
+        expect(complex.parse("0px 0px 0px #F000")).toEqual([
+            { red: 255, green: 0, blue: 0, alpha: 0 },
+            0,
+            0,
+            0,
+        ])
+        expect(complex.parse("0px 0px 0px #00FF0000")).toEqual([
+            { red: 0, green: 255, blue: 0, alpha: 0 },
+            0,
+            0,
+            0,
+        ])
     })
 
     it("createTransformer returns a transformer function that correctly inserts values", () => {
@@ -156,10 +178,12 @@ const hslaOutOfRange = {
 
 describe("hex()", () => {
     it("should correctly test for colors", () => {
+        expect(hex.test("#f0")).toEqual(false)
         expect(hex.test("#f00")).toEqual(true)
         expect(hex.test("#f00a")).toEqual(true)
         expect(hex.test("#f000aa")).toEqual(true)
         expect(hex.test("#f000aa00")).toEqual(true)
+        expect(hex.test("#F000AA00")).toEqual(true)
         expect(hex.test("#f00 0px")).toEqual(false)
         expect(hex.test(red)).toEqual(false)
     })

@@ -8,6 +8,9 @@ test("mixComplex", () => {
             "10px, rgba(255, 255, 255, 1)"
         )(0.5)
     ).toBe("15px, rgba(180, 180, 180, 0.5)")
+    expect(mixComplex("20px, #0000", "10px, #ffff")(0.5)).toBe(
+        "15px, rgba(180, 180, 180, 0.5)"
+    )
 })
 
 test("mixComplex gracefully handles numbers", () => {
