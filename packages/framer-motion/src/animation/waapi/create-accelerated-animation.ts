@@ -6,13 +6,8 @@ import { animate } from "../legacy-popmotion"
 import { AnimationOptions } from "../types"
 import { animateStyle } from "./"
 import { isWaapiSupportedEasing } from "./easing"
-import { supports } from "./supports"
+import { acceleratedValues, supports } from "./supports"
 import { getFinalKeyframe } from "./utils/get-final-keyframe"
-
-/**
- * A list of values that can be hardware-accelerated.
- */
-const acceleratedValues = new Set<string>(["opacity"])
 
 /**
  * 10ms is chosen here as it strikes a balance between smooth
