@@ -209,10 +209,13 @@ export class PanSession {
     private handlePointerUp = (event: PointerEvent, info: EventInfo) => {
         this.end()
 
-        const { onEnd, onSessionEnd } = this.handlers
+        if (!(this.lastMoveEvent && this.lastMoveEventInfo)) return
 
+        const { onEnd, onSessionEnd } = this.handlers
         const panInfo = getPanInfo(
-            transformPoint(info, this.transformPagePoint),
+            event.type === "pointercancel"
+                ? this.lastMoveEventInfo
+                : transformPoint(info, this.transformPagePoint),
             this.history
         )
 
