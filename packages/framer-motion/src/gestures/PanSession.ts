@@ -247,7 +247,7 @@ function subtractPoint(a: Point, b: Point): Point {
     return { x: a.x - b.x, y: a.y - b.y }
 }
 
-export function getPanInfo({ point }: EventInfo, history: TimestampedPoint[]) {
+function getPanInfo({ point }: EventInfo, history: TimestampedPoint[]) {
     return {
         point,
         delta: subtractPoint(point, lastDevicePoint(history)),
