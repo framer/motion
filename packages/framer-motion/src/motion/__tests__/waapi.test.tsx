@@ -85,7 +85,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test.only("WAAPI is called with expected arguments with pre-generated keyframes", () => {
+    test("WAAPI is called with expected arguments with pre-generated keyframes", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
