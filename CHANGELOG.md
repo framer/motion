@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.4.1] 2023-01-10
+
+### Fixed
+
+-   `delay` no longer getting doubled with pregenerated WAAPI keyframes.
+
 ## [8.4.0] 2023-01-10
 
 ### Added
