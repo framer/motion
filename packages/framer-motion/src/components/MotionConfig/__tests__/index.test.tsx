@@ -56,6 +56,7 @@ describe("reducedMotion", () => {
                     <MotionConfig reducedMotion="always">
                         <motion.div
                             animate={{ opacity: 1, x: 100 }}
+                            transition={{ duration: 2 }}
                             style={{ x, opacity }}
                         />
                     </MotionConfig>
