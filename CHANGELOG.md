@@ -4,7 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [8.4.1] 2023-01-10
+## [8.4.2] 2023-01-11
+
+### Fixed
+
+-   Events sourced from `pointercancel` no longer being added to pan gesture history.
+
+## [8.4.1] 2023-01-11
 
 ### Fixed
 
