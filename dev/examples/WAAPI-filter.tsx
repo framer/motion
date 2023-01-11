@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 const style = {
     width: 100,
     height: 100,
-    background: "white",
+    background: "red",
 }
 
 export const App = () => {
@@ -13,8 +13,8 @@ export const App = () => {
 
     return (
         <motion.div
-            initial={{ backgroundColor: "#00f" }}
-            animate={{ backgroundColor: state ? "#00f" : "#f00" }}
+            initial={{ filter: "hue-rotate(0deg)" }}
+            animate={{ filter: "hue-rotate(180deg)" }}
             onClick={() => setState(!state)}
             transition={{ duration: 1 }}
             style={style}
