@@ -209,10 +209,13 @@ export class PanSession {
     private handlePointerUp = (event: PointerEvent, info: EventInfo) => {
         this.end()
 
-        const { onEnd, onSessionEnd } = this.handlers
+        if (!(this.lastMoveEvent && this.lastMoveEventInfo)) return
 
+        const { onEnd, onSessionEnd } = this.handlers
         const panInfo = getPanInfo(
-            transformPoint(info, this.transformPagePoint),
+            event.type === "pointercancel"
+                ? this.lastMoveEventInfo
+                : transformPoint(info, this.transformPagePoint),
             this.history
         )
 
@@ -244,7 +247,7 @@ function subtractPoint(a: Point, b: Point): Point {
     return { x: a.x - b.x, y: a.y - b.y }
 }
 
-function getPanInfo({ point }: EventInfo, history: TimestampedPoint[]) {
+export function getPanInfo({ point }: EventInfo, history: TimestampedPoint[]) {
     return {
         point,
         delta: subtractPoint(point, lastDevicePoint(history)),
