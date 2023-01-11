@@ -85,6 +85,37 @@ describe("WAAPI animations", () => {
         )
     })
 
+    test.only("WAAPI is called with expected arguments with pre-generated keyframes", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                    duration: 0.05,
+                    delay: 2,
+                    ease: () => 0.5,
+                }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { opacity: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5], offset: undefined },
+            {
+                delay: 2000,
+                duration: 50,
+                direction: "normal",
+                easing: "linear",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
     test("Maps 'easeIn' to 'ease-in'", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (

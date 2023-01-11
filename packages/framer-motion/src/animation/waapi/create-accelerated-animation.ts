@@ -47,7 +47,7 @@ export function createAcceleratedAnimation(
          */
         if (options.repeat === Infinity) return
 
-        const sampleAnimation = animate(options)
+        const sampleAnimation = animate({ ...options, elapsed: 0 })
         let state = { done: false, value: keyframes[0] }
         const pregeneratedKeyframes: number[] = []
 
