@@ -45,6 +45,12 @@ export function filterProps(
     const filteredProps = {}
 
     for (const key in props) {
+        /**
+         * values is considered a valid prop by Emotion, so if it's present
+         * this will be rendered out to the DOM unless explicitly filtered.
+         */
+        if (key === "values") continue
+
         if (
             shouldForward(key) ||
             (forwardMotionProps === true && isValidMotionProp(key)) ||
