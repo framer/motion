@@ -48,8 +48,11 @@ export function filterProps(
         /**
          * values is considered a valid prop by Emotion, so if it's present
          * this will be rendered out to the DOM unless explicitly filtered.
+         *
+         * We check the type as it could be used with the `feColorMatrix`
+         * element, which we support.
          */
-        if (key === "values") continue
+        if (key === "values" && typeof props.values === "object") continue
 
         if (
             shouldForward(key) ||
