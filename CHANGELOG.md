@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.4.3] 2023-01-13
+
+### Fixed
+
+-   When in Reduced Motion mode, `transition` no longer overrides instant transitions.
+
 ## [8.4.2] 2023-01-11
 
 ### Fixed
