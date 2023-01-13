@@ -2,6 +2,7 @@ import { render } from "../../../../jest.setup"
 import { motion } from "../../../render/dom/motion"
 import { MotionConfig } from "../"
 import * as React from "react"
+import { motionValue } from "../../../value"
 
 describe("custom properties", () => {
     test("renders", () => {
@@ -18,7 +19,9 @@ describe("custom properties", () => {
         expect(container.firstChild).not.toHaveAttribute("data-foo")
         expect(container.firstChild).toHaveAttribute("data-bar")
     })
+})
 
+describe("reducedMotion", () => {
     test("reducedMotion warning fires in development mode", async () => {
         const warn = jest.spyOn(console, "warn").mockImplementation(() => {})
 
@@ -42,5 +45,30 @@ describe("custom properties", () => {
         expect(warn).toHaveBeenCalled()
 
         warn.mockReset()
+    })
+
+    test("reducedMotion makes transforms animate instantly", async () => {
+        const result = await new Promise<[number, number]>((resolve) => {
+            const x = motionValue(0)
+            const opacity = motionValue(0)
+            const Component = () => {
+                return (
+                    <MotionConfig reducedMotion="always">
+                        <motion.div
+                            animate={{ opacity: 1, x: 100 }}
+                            transition={{ duration: 2 }}
+                            style={{ x, opacity }}
+                        />
+                    </MotionConfig>
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+            resolve([x.get(), opacity.get()])
+        })
+
+        expect(result[0]).toEqual(100)
+        expect(result[1]).not.toEqual(1)
     })
 })

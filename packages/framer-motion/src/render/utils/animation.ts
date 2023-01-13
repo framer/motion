@@ -165,18 +165,7 @@ function animateTarget(
             continue
         }
 
-        let valueTransition = { delay, elapsed: 0, ...transition }
-
-        /**
-         * Make animation instant if this is a transform prop and we should reduce motion.
-         */
-        if (visualElement.shouldReduceMotion && transformProps.has(key)) {
-            valueTransition = {
-                ...valueTransition,
-                type: false,
-                delay: 0,
-            } as any
-        }
+        const valueTransition = { delay, elapsed: 0, ...transition }
 
         /**
          * If this is the first time a value is being animated, check
@@ -195,7 +184,14 @@ function animateTarget(
         }
 
         let animation = value.start(
-            createMotionValueAnimation(key, value, valueTarget, valueTransition)
+            createMotionValueAnimation(
+                key,
+                value,
+                valueTarget,
+                visualElement.shouldReduceMotion && transformProps.has(key)
+                    ? { type: false }
+                    : valueTransition
+            )
         )
 
         if (isWillChangeMotionValue(willChange)) {
