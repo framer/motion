@@ -178,7 +178,8 @@ function animateTarget(
             if (appearId) {
                 valueTransition.elapsed = handoffOptimizedAppearAnimation(
                     appearId,
-                    key
+                    key,
+                    value
                 )
             }
         }

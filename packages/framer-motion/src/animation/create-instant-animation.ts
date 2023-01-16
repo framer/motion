@@ -10,9 +10,7 @@ export function createInstantAnimation<V>({
     const setValue = () => {
         onUpdate && onUpdate(keyframes[keyframes.length - 1])
         onComplete && onComplete()
-
-        return () => {}
     }
 
-    return elapsed ? delay(setValue, -elapsed) : setValue()
+    return elapsed ? { stop: delay(setValue, -elapsed) } : setValue()
 }

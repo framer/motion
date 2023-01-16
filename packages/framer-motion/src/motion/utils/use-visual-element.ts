@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useContext, useRef } from "react"
+import { useContext, useRef, useEffect } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 import { MotionProps } from "../../motion/types"
 import { useVisualElementContext } from "../../context/MotionContext"
@@ -48,11 +48,19 @@ export function useVisualElement<Instance, RenderState>(
     })
 
     /**
-     * If we have optimised appear animations to handoff from, trigger animateChanges
-     * from a synchronous useLayoutEffect to ensure there's no flash of incorrectly
-     * styled component in the event of a hydration error.
+     * Ideally this function would always run in a useEffect.
+     *
+     * However, if we have optimised appear animations to handoff from,
+     * it needs to happen synchronously to ensure there's no flash of
+     * incorrect styles in the event of a hydration error.
+     *
+     * So if we detect a situtation where optimised appear animations
+     * are running, we use useLayoutEffect to trigger animations.
      */
-    useIsomorphicLayoutEffect(() => {
+    const useAnimateChangesEffect = window.MotionAppearAnimations
+        ? useIsomorphicLayoutEffect
+        : useEffect
+    useAnimateChangesEffect(() => {
         if (visualElement && visualElement.animationState) {
             visualElement.animationState.animateChanges()
         }

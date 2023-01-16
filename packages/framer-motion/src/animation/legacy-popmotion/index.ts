@@ -168,6 +168,25 @@ export function animate<V = number>({
             driverControls && driverControls.stop()
         },
         /**
+         * Set the current time of the animation. This is purposefully
+         * mirroring the WAAPI animation API to make them interchanagable.
+         * Going forward this file should be ported more towards
+         * https://github.com/motiondivision/motionone/blob/main/packages/animation/src/Animation.ts
+         * Which behaviourally adheres to WAAPI as far as possible.
+         *
+         * WARNING: This is not safe to use for most animations. We currently
+         * only use it for handoff from WAAPI within Framer.
+         *
+         * This animation function consumes time every frame rather than being sampled for time.
+         * So the sample() method performs some headless frames to ensure
+         * repeats are handled correctly. Ideally in the future we will replace
+         * that method with this, once repeat calculations are pure.
+         */
+        set currentTime(t: number) {
+            elapsed = initialElapsed
+            update(t)
+        },
+        /**
          * animate() can't yet be sampled for time, instead it
          * consumes time. So to sample it we have to run a low
          * temporal-resolution version.
