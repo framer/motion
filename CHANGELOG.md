@@ -4,6 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.4.5] 2023-01-17
+
+### Fixed
+
+-   Only trigger `animateChanges` in a `useLayoutEffect` when optimised appear animations are present.
+-   Resync optimised appear handoff animations before cancelling WAAPI animations to ensure seamless visual handoff.
+
 ## [8.4.4] 2023-01-17
 
 ### Fixed

@@ -4,6 +4,7 @@ import { sync } from "../frameloop"
 import type { VisualElement } from "../render/VisualElement"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { velocityPerSecond } from "../utils/velocity-per-second"
+import { PlaybackControls } from "../animation/types"
 
 export type Transformer<T> = (v: T) => T
 
@@ -17,7 +18,7 @@ export type Subscriber<T> = (v: T) => void
  */
 export type PassiveEffect<T> = (v: T, safeSetter: (v: T) => void) => void
 
-export type StartAnimation = (complete: () => void) => () => void
+export type StartAnimation = (complete: () => void) => PlaybackControls | void
 
 export interface MotionValueEventCallbacks<V> {
     animationStart: () => void
@@ -99,7 +100,7 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    private stopAnimation?: null | (() => void)
+    animation?: null | PlaybackControls
 
     /**
      * Tracks whether this value can output a velocity. Currently this is only true
@@ -368,12 +369,12 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    start(animation: StartAnimation) {
+    start(startAnimation: StartAnimation) {
         this.stop()
 
         return new Promise<void>((resolve) => {
             this.hasAnimated = true
-            this.stopAnimation = animation(resolve)
+            this.animation = startAnimation(resolve)
 
             if (this.events.animationStart) {
                 this.events.animationStart.notify()
@@ -392,8 +393,8 @@ export class MotionValue<V = any> {
      * @public
      */
     stop() {
-        if (this.stopAnimation) {
-            this.stopAnimation()
+        if (this.animation) {
+            this.animation.stop()
             if (this.events.animationCancel) {
                 this.events.animationCancel.notify()
             }
@@ -407,11 +408,11 @@ export class MotionValue<V = any> {
      * @public
      */
     isAnimating() {
-        return !!this.stopAnimation
+        return !!this.animation
     }
 
     private clearAnimation() {
-        this.stopAnimation = null
+        this.animation = null
     }
 
     /**
