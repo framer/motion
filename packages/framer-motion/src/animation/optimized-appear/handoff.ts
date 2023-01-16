@@ -33,7 +33,6 @@ export function handoffOptimizedAppearAnimation(
          * Here, we resync the two animations before the optimised WAAPI animation is cancelled.
          */
         sync.update(() => {
-            console.log("setting to", performance.now() - sampledTime)
             if (value.animation) {
                 value.animation.currentTime = performance.now() - sampledTime
             }
@@ -56,7 +55,7 @@ export function handoffOptimizedAppearAnimation(
                 animation.cancel()
             } catch (e) {}
         })
-        console.log(animation.currentTime)
+
         return animation.currentTime || 0
     } else {
         return 0

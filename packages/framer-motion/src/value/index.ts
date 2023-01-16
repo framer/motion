@@ -374,7 +374,7 @@ export class MotionValue<V = any> {
 
         return new Promise<void>((resolve) => {
             this.hasAnimated = true
-            this.animation = startAnimation(resolve)
+            this.animation = startAnimation(resolve) || null
 
             if (this.events.animationStart) {
                 this.events.animationStart.notify()
