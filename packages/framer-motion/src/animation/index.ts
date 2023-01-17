@@ -89,9 +89,7 @@ export const createMotionValueAnimation = (
              * If this is an inertia animation, we currently don't support pre-generating
              * keyframes for this as such it must always run on the main thread.
              */
-            const animation = inertia(options)
-
-            return () => animation.stop()
+            return inertia(options)
         }
 
         /**
@@ -141,7 +139,6 @@ export const createMotionValueAnimation = (
         /**
          * If we didn't create an accelerated animation, create a JS animation
          */
-        const animation = animate(options)
-        return () => animation.stop()
+        return animate(options)
     }
 }

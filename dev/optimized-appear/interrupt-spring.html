@@ -137,8 +137,8 @@
             )
 
             const ready = animation.ready
-                ? animation.ready.then
-                : requestAnimationFrame
+                ? (callback) => animation.ready.then(callback)
+                : (callback) => requestAnimationFrame(callback)
             ready(() => {
                 // TODO: Dont manipulate animation until ready
                 if (animation) {

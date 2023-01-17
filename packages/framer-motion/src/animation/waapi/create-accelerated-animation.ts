@@ -103,25 +103,33 @@ export function createAcceleratedAnimation(
     /**
      * Animation interrupt callback.
      */
-    return () => {
-        /**
-         * WAAPI doesn't natively have any interruption capabilities.
-         *
-         * Rather than read commited styles back out of the DOM, we can
-         * create a renderless JS animation and sample it twice to calculate
-         * its current value, "previous" value, and therefore allow
-         * Motion to calculate velocity for any subsequent animation.
-         */
-        const { currentTime } = animation
-        if (currentTime) {
-            const sampleAnimation = animate({ ...options, autoplay: false })
-            value.setWithVelocity(
-                sampleAnimation.sample(currentTime - sampleDelta).value,
-                sampleAnimation.sample(currentTime).value,
-                sampleDelta
-            )
-        }
+    return {
+        get currentTime() {
+            return animation.currentTime || 0
+        },
+        set currentTime(t: number) {
+            animation.currentTime = t
+        },
+        stop: () => {
+            /**
+             * WAAPI doesn't natively have any interruption capabilities.
+             *
+             * Rather than read commited styles back out of the DOM, we can
+             * create a renderless JS animation and sample it twice to calculate
+             * its current value, "previous" value, and therefore allow
+             * Motion to calculate velocity for any subsequent animation.
+             */
+            const { currentTime } = animation
+            if (currentTime) {
+                const sampleAnimation = animate({ ...options, autoplay: false })
+                value.setWithVelocity(
+                    sampleAnimation.sample(currentTime - sampleDelta).value,
+                    sampleAnimation.sample(currentTime).value,
+                    sampleDelta
+                )
+            }
 
-        sync.update(() => animation.cancel())
+            sync.update(() => animation.cancel())
+        },
     }
 }

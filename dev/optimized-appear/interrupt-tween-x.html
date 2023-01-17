@@ -85,8 +85,8 @@
             )
 
             const ready = animation.ready
-                ? animation.ready.then
-                : requestAnimationFrame
+                ? (callback) => animation.ready.then(callback)
+                : (callback) => requestAnimationFrame(callback)
             ready(() => {
                 // Manually set start time to half way through the animation
                 if (animation) {
