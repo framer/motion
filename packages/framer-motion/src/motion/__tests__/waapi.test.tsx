@@ -51,6 +51,32 @@ describe("WAAPI animations", () => {
         )
     })
 
+    test("opacity animates with WAAPI when no value is originally provided via initial", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                animate={{ opacity: 1 }}
+                style={{ opacity: 0 }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { opacity: [0, 1], offset: undefined },
+            {
+                delay: -0,
+                duration: 300,
+                easing: "linear",
+                iterations: 1,
+                direction: "normal",
+                fill: "both",
+            }
+        )
+    })
+
     test("WAAPI is called with expected arguments", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (

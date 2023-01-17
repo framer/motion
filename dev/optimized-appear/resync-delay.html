@@ -1,0 +1,107 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 100px;
+                margin: 0;
+            }
+
+            #box {
+                width: 100px;
+                height: 100px;
+                background-color: #0077ff;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 1 !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script src="../../node_modules/react/umd/react.development.js"></script>
+        <script src="../../node_modules/react-dom/umd/react-dom.development.js"></script>
+        <script src="../../node_modules/react-dom/umd/react-dom-server-legacy.browser.development.js"></script>
+        <script src="../../packages/framer-motion/dist/framer-motion.dev.js"></script>
+        <script src="../projection/script-assert.js"></script>
+
+        <script>
+            const {
+                motion,
+                animateStyle,
+                startOptimizedAppearAnimation,
+                optimizedAppearDataAttribute,
+                motionValue,
+            } = window.Motion
+            const { matchViewportBox } = window.Assert
+            const root = document.getElementById("root")
+
+            const delay = 0.5
+            const duration = 2
+            const x = motionValue(0)
+
+            x.onChange((latest) => {
+                if (latest < 50) {
+                    showError(
+                        document.getElementById("box"),
+                        `x transform should never be less than 50`
+                    )
+                }
+            })
+
+            // This is the tree to be rendered "server" and client-side.
+            const Component = React.createElement(() => {
+                React.useLayoutEffect(() => {
+                    const startTime = performance.now()
+                    while (performance.now() - startTime < 500) {}
+                })
+
+                return React.createElement(motion.div, {
+                    id: "box",
+                    initial: { x: 0 },
+                    animate: { x: 100 },
+                    transition: { delay, duration, ease: "linear" },
+                    style: { x },
+                    /**
+                     * On animation start, check the values we expect to see here
+                     */
+                    onAnimationStart: () => {
+                        // matchViewportBox(document.getElementById("box"), {
+                        //     top: 100,
+                        //     right: 250,
+                        //     left: 150,
+                        //     bottom: 200,
+                        // })
+                    },
+                    [optimizedAppearDataAttribute]: "a",
+                })
+            })
+
+            // Emulate server rendering of element
+            root.innerHTML = ReactDOMServer.renderToString(Component)
+
+            // Start WAAPI animations
+            const animation = startOptimizedAppearAnimation(
+                document.getElementById("box"),
+                "transform",
+                ["translateX(0px)", "translateX(100px)"],
+                {
+                    delay: delay * 1000,
+                    duration: duration * 1000,
+                    ease: "linear",
+                }
+            )
+
+            const ready = animation.ready
+                ? (callback) => animation.ready.then(callback)
+                : (callback) => requestAnimationFrame(callback)
+
+            ready(() => {
+                setTimeout(() => {
+                    ReactDOM.hydrateRoot(root, Component)
+                }, duration * 1000)
+            })
+        </script>
+    </body>
+</html>
