@@ -9,6 +9,7 @@ import { useMemo } from "react"
 function createHoverEvent(
     visualElement: VisualElement,
     isActive: boolean,
+    applyVariants: boolean,
     callback?: (event: PointerEvent, info: EventInfo) => void
 ) {
     return (event: PointerEvent, info: EventInfo) => {
@@ -17,7 +18,7 @@ function createHoverEvent(
         /**
          * Ensure we trigger animations before firing event callback
          */
-        if (visualElement.animationState) {
+        if (applyVariants && visualElement.animationState) {
             visualElement.animationState.setActive(
                 AnimationType.Hover,
                 isActive
@@ -38,7 +39,12 @@ export function useHoverGesture({
         "pointerenter",
         useMemo(() => {
             return onHoverStart || whileHover
-                ? createHoverEvent(visualElement, true, onHoverStart)
+                ? createHoverEvent(
+                      visualElement,
+                      true,
+                      Boolean(whileHover),
+                      onHoverStart
+                  )
                 : undefined
         }, [onHoverStart, Boolean(whileHover), visualElement]),
         { passive: !onHoverStart }
@@ -49,7 +55,12 @@ export function useHoverGesture({
         "pointerleave",
         useMemo(() => {
             return onHoverEnd || whileHover
-                ? createHoverEvent(visualElement, false, onHoverEnd)
+                ? createHoverEvent(
+                      visualElement,
+                      false,
+                      Boolean(whileHover),
+                      onHoverEnd
+                  )
                 : undefined
         }, [onHoverStart, Boolean(whileHover), visualElement]),
         { passive: !onHoverEnd }

@@ -62,7 +62,8 @@ export function updateMotionValuesFromProps(
                 element.addValue(
                     key,
                     motionValue(
-                        latestValue !== undefined ? latestValue : nextValue
+                        latestValue !== undefined ? latestValue : nextValue,
+                        { owner: element }
                     )
                 )
             }
