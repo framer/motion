@@ -30,6 +30,7 @@ function runTests(render: (components: any) => string) {
                     animate={{ x: 50 }}
                     style={{ y }}
                     exit={{ x: 0 }}
+                    values={{ customValue: y }}
                 />
             </AnimatePresence>
         )
