@@ -44,8 +44,11 @@ export function useTapGesture({
     function checkPointerEnd() {
         removePointerEndListener()
         isPressing.current = false
-        visualElement.animationState &&
+
+        const latestProps = visualElement.getProps()
+        if (latestProps.whileTap && visualElement.animationState) {
             visualElement.animationState.setActive(AnimationType.Tap, false)
+        }
         return !isDragActive()
     }
 
@@ -84,13 +87,16 @@ export function useTapGesture({
                 )
             )
 
+            const latestProps = visualElement.getProps()
+
             /**
              * Ensure we trigger animations before firing event callback
              */
-            visualElement.animationState &&
+            if (latestProps.whileTap && visualElement.animationState) {
                 visualElement.animationState.setActive(AnimationType.Tap, true)
+            }
 
-            visualElement.getProps().onTapStart?.(event, info)
+            latestProps.onTapStart?.(event, info)
         },
         [Boolean(onTapStart), visualElement]
     )

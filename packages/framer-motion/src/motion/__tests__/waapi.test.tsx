@@ -1,4 +1,10 @@
-import { render } from "../../../jest.setup"
+import {
+    pointerDown,
+    pointerEnter,
+    pointerLeave,
+    pointerUp,
+    render,
+} from "../../../jest.setup"
 import { motion, useMotionValue } from "../../"
 import * as React from "react"
 import { createRef } from "react"
@@ -64,17 +70,94 @@ describe("WAAPI animations", () => {
         rerender(<Component />)
 
         expect(ref.current!.animate).toBeCalled()
-        expect(ref.current!.animate).toBeCalledWith(
-            { opacity: [0, 1], offset: undefined },
-            {
-                delay: -0,
-                duration: 300,
-                easing: "linear",
-                iterations: 1,
-                direction: "normal",
-                fill: "both",
-            }
+    })
+
+    test("opacity animates with WAAPI at default settings with no initial value set", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                animate={{ opacity: 1 }}
+                style={{ opacity: 0 }}
+            />
         )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+    })
+
+    test("opacity animates with WAAPI at default settings when layout is enabled", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                animate={{ opacity: 1 }}
+                style={{ opacity: 0 }}
+                layout
+                layoutId="a"
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+    })
+
+    test("WAAPI only receives expected number of calls in Framer configuration with hover gestures enabled", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => {
+            const [isHovered, setIsHovered] = React.useState(false)
+
+            return (
+                <motion.div
+                    initial="none"
+                    animate={isHovered ? "hover" : "none"}
+                    onHoverStart={() => setIsHovered(true)}
+                    onHoverEnd={() => setIsHovered(false)}
+                >
+                    <motion.div
+                        ref={ref}
+                        style={{ opacity: 0.5 }}
+                        variants={{ hover: { opacity: 1 } }}
+                    />
+                </motion.div>
+            )
+        }
+        const { container, rerender } = render(<Component />)
+        pointerEnter(container.firstChild as Element)
+        pointerLeave(container.firstChild as Element)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalledTimes(2)
+    })
+
+    test("WAAPI only receives expected number of calls in Framer configuration with tap gestures enabled", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => {
+            const [isPressed, setIsPressed] = React.useState(false)
+
+            return (
+                <motion.div
+                    initial="none"
+                    animate={isPressed ? "press" : "none"}
+                    onTapStart={() => setIsPressed(true)}
+                    onTap={() => setIsPressed(false)}
+                >
+                    <motion.div
+                        ref={ref}
+                        style={{ opacity: 0.5 }}
+                        variants={{ press: { opacity: 1 } }}
+                    />
+                </motion.div>
+            )
+        }
+        const { container, rerender } = render(<Component />)
+        pointerDown(container.firstChild as Element)
+        pointerUp(container.firstChild as Element)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalledTimes(2)
     })
 
     test("WAAPI is called with expected arguments", () => {
