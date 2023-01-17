@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.4.4] 2023-01-17
+
+### Fixed
+
+-   Filtering `values` prop.
+
 ## [8.4.3] 2023-01-13
 
 ### Fixed
