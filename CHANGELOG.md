@@ -4,6 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.4.6] 2023-01-17
+
+### Fixed
+
+-   Fixed WAAPI deoptimisation with layout animations.
+-   Reduced number of animations triggered for components that have gesture event handlers but no corresponding `while-` props.
+
 ## [8.4.5] 2023-01-17
 
 ### Fixed
