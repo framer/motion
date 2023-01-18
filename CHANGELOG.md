@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.4.7] 2023-01-18
+
+### Fixed
+
+-   Fixed right-click filtering.
+
 ## [8.4.6] 2023-01-17
 
 ### Fixed
