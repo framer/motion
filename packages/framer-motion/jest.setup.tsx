@@ -40,11 +40,17 @@ export const click = (element: Element) =>
     })
 export const pointerEnter = (element: Element) =>
     act(() => {
-        fireEvent.pointerEnter(element)
+        fireEvent.pointerEnter(
+            element,
+            new PointerEventFake("pointerenter", { type: "mouse", button: -1 })
+        )
     })
 export const pointerLeave = (element: Element) =>
     act(() => {
-        fireEvent.pointerLeave(element)
+        fireEvent.pointerLeave(
+            element,
+            new PointerEventFake("pointerleave", { type: "mouse", button: -1 })
+        )
     })
 export const pointerDown = (element: Element) =>
     act(() => {
@@ -55,11 +61,17 @@ export const pointerDown = (element: Element) =>
     })
 export const pointerUp = (element: Element) =>
     act(() => {
-        fireEvent.pointerUp(element)
+        fireEvent.pointerUp(
+            element,
+            new PointerEventFake("pointerup", { isPrimary: true })
+        )
     })
 export const pointerMove = (element: Element) =>
     act(() => {
-        fireEvent.pointerMove(element)
+        fireEvent.pointerMove(
+            element,
+            new PointerEventFake("pointermove", { isPrimary: true })
+        )
     })
 export const focus = (element: HTMLElement, testId: string) =>
     act(() => {
