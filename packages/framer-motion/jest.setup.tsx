@@ -42,6 +42,7 @@ export const pointerEnter = (element: Element) =>
     act(() => {
         fireEvent.pointerEnter(
             element,
+            // Emulate buttonless pointer event for enter/leave
             new PointerEventFake("pointerenter", { type: "mouse", button: -1 })
         )
     })
