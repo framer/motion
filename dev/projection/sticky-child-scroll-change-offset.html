@@ -10,12 +10,24 @@
                 width: 100px;
                 height: 100px;
                 background-color: #00cc88;
-                position: sticky;
-                top: 0px;
             }
 
             #size {
                 height: 100px;
+            }
+
+            #overlay {
+                background-color: black;
+                position: sticky;
+                top: 0px;
+                height: 200px;
+                width: 200px;
+            }
+
+            #overlay.b #box {
+                position: relative;
+                left: 300px;
+                top: 300px;
             }
 
             #trigger-overflow {
@@ -34,7 +46,9 @@
     </head>
     <body>
         <div id="size"></div>
-        <div id="box"></div>
+        <div id="overlay">
+            <div id="box"></div>
+        </div>
         <div id="trigger-overflow"></div>
 
         <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
@@ -44,26 +58,27 @@
             const { createNode } = window.Undo
             const { matchViewportBox, addPageScroll } = window.Assert
 
+            const overlay = document.getElementById("overlay")
+            const overlayProjection = createNode(overlay, undefined, {
+                layoutRoot: true,
+                layout: true,
+            })
+
             const box = document.getElementById("box")
-            const boxProjection = createNode(box, undefined, {
-                layoutScroll: true,
-            })
+            const boxProjection = createNode(box, overlayProjection)
 
-            requestAnimationFrame(() => {
-                boxProjection.willUpdate()
+            const boxOrigin = box.getBoundingClientRect()
 
-                const scrollOffset = [50, 150]
-                window.scrollTo(...scrollOffset)
+            boxProjection.willUpdate()
 
-                boxProjection.root.didUpdate()
+            overlay.classList.add("b")
 
-                matchViewportBox(box, {
-                    top: 0,
-                    left: -50,
-                    bottom: 100,
-                    right: 50,
-                })
-            })
+            const scrollOffset = [50, 150]
+            window.scrollTo(...scrollOffset)
+
+            boxProjection.root.didUpdate()
+
+            matchViewportBox(box, { top: 0, left: -50, bottom: 100, right: 50 })
         </script>
     </body>
 </html>

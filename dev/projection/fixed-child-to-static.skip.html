@@ -6,38 +6,26 @@
                 margin: 0;
             }
 
-            #position {
-                width: 1px;
-                height: 200px;
+            #container {
+                width: 100px;
+                height: 100px;
             }
 
-            #scroller {
-                width: 200px;
-                height: 200px;
-                overflow: scroll;
-                margin-left: 100px;
-            }
-
-            #sticky {
-                position: sticky;
+            #fixed {
+                position: fixed;
                 top: 0;
                 left: 0;
-                width: 100%;
-                height: 50px;
-                background: #0088ff;
+                width: 500px;
+                height: 100px;
+                background: #00cc88;
                 display: flex;
                 align-items: flex-start;
             }
 
             #child {
-                width: 50px;
-                height: 50px;
-                background: #00cc88;
-            }
-
-            #content {
-                width: 100%;
-                height: 400px;
+                width: 100px;
+                height: 100px;
+                background: #0077ff;
             }
 
             #trigger-overflow {
@@ -55,12 +43,10 @@
         </style>
     </head>
     <body>
-        <div id="position"></div>
-        <div id="scroller">
-            <div id="sticky">
+        <div id="container">
+            <div id="fixed">
                 <div id="child"></div>
             </div>
-            <div id="content"></div>
         </div>
         <div id="trigger-overflow"></div>
 
@@ -76,24 +62,35 @@
                 addPageScroll,
             } = window.Assert
 
-            const scroller = document.getElementById("scroller")
-            const scrollerProjection = createNode(scroller, undefined, {
+            const fixed = document.getElementById("fixed")
+            const fixedProjection = createNode(fixed, undefined, {
                 layoutScroll: true,
+                layout: true,
             })
+            const fixedOrigin = fixed.getBoundingClientRect()
 
-            const sticky = document.getElementById("sticky")
-            const stickyProjection = createNode(sticky, scrollerProjection)
+            const child = document.getElementById("child")
+            const childProjection = createNode(child, fixedProjection)
+            const childOrigin = child.getBoundingClientRect()
 
-            const stickyOrigin = sticky.getBoundingClientRect()
+            childProjection.willUpdate()
+            fixedProjection.willUpdate()
 
-            stickyProjection.willUpdate()
+            const scrollDistance = 100
+            window.scrollTo(scrollDistance, scrollDistance)
+            fixed.style.position = "static"
+            fixed.style.justifyContent = "flex-end"
 
-            scroller.scrollTo(0, 100)
-
-            stickyProjection.root.didUpdate()
+            fixedProjection.root.didUpdate()
 
             setTimeout(() => {
-                matchViewportBox(sticky, stickyOrigin)
+                matchViewportBox(fixed, fixedOrigin)
+                matchViewportBox(child, {
+                    top: 0,
+                    left: 0,
+                    right: 100,
+                    bottom: 100,
+                })
             }, 50)
         </script>
     </body>

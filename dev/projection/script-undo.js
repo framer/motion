@@ -73,7 +73,11 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
             node.resumingFrom.resumingFrom = undefined
         }
         // hasLayoutChanged && // or existing delta is not nothing - this needs to be reinstated to fix breaking tests
-        if ((node.resumeFrom && node.resumeFrom.instance) || hasLayoutChanged) {
+        if (
+            (node.resumeFrom && node.resumeFrom.instance) ||
+            hasLayoutChanged ||
+            node.options.layoutRoot
+        ) {
             node.setAnimationOrigin(delta)
         }
     })

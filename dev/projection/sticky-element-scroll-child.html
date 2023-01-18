@@ -86,7 +86,9 @@
             })
 
             const sticky = document.getElementById("sticky")
-            const stickyProjection = createNode(sticky, scrollerProjection)
+            const stickyProjection = createNode(sticky, scrollerProjection, {
+                layoutRoot: true,
+            })
 
             const child = document.getElementById("child")
             const childProjection = createNode(child, stickyProjection)

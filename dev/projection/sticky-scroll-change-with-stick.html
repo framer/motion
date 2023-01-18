@@ -10,11 +10,12 @@
                 width: 100px;
                 height: 100px;
                 background-color: #00cc88;
-            }
-
-            #overlay {
                 position: sticky;
                 top: 0px;
+            }
+
+            #size {
+                height: 100px;
             }
 
             #trigger-overflow {
@@ -32,9 +33,8 @@
         </style>
     </head>
     <body>
-        <div id="overlay">
-            <div id="box"></div>
-        </div>
+        <div id="size"></div>
+        <div id="box"></div>
         <div id="trigger-overflow"></div>
 
         <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
@@ -44,30 +44,26 @@
             const { createNode } = window.Undo
             const { matchViewportBox, addPageScroll } = window.Assert
 
-            const overlay = document.getElementById("overlay")
-            const overlayProjection = createNode(overlay, undefined, {
-                layoutScroll: true,
-                layout: false,
+            const box = document.getElementById("box")
+            const boxProjection = createNode(box, undefined, {
+                layoutRoot: true,
             })
 
-            const box = document.getElementById("box")
-            const boxProjection = createNode(
-                box,
-                overlayProjection
-                // undefined,
-                // { duration: 2 }
-            )
+            requestAnimationFrame(() => {
+                boxProjection.willUpdate()
 
-            const boxOrigin = box.getBoundingClientRect()
+                const scrollOffset = [50, 150]
+                window.scrollTo(...scrollOffset)
 
-            boxProjection.willUpdate()
+                boxProjection.root.didUpdate()
 
-            const scrollOffset = [50, 100]
-            window.scrollTo(...scrollOffset)
-
-            boxProjection.root.didUpdate()
-
-            matchViewportBox(box, { top: 0, left: -50, bottom: 100, right: 50 })
+                matchViewportBox(box, {
+                    top: 0,
+                    left: -50,
+                    bottom: 100,
+                    right: 50,
+                })
+            })
         </script>
     </body>
 </html>

@@ -54,6 +54,7 @@ export interface IProjectionNode<I = unknown> {
     snapshot?: Measurements
     target?: Box
     relativeTarget?: Box
+    relativeTargetOrigin?: Box
     targetDelta?: Delta
     targetWithTransforms?: Box
     scroll?: ScrollMeasurements
@@ -159,6 +160,7 @@ export interface ProjectionNodeConfig<I> {
 export interface ProjectionNodeOptions {
     animate?: boolean
     layoutScroll?: boolean
+    layoutRoot?: boolean
     alwaysMeasureLayout?: boolean
     scheduleRender?: VoidFunction
     onExitComplete?: VoidFunction
