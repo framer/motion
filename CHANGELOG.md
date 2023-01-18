@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.5.0] 2023-01-18
+
+### Added
+
+-   `layoutRoot` prop. When component has `layout` and `layoutRoot` props, it will perform layout animations instantly but all children will perform layout animations relative to it.
+
 ## [8.4.7] 2023-01-18
 
 ### Fixed
