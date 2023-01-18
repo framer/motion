@@ -799,17 +799,7 @@ export function createProjectionNode<I>({
                 layoutBox,
                 latestValues: {},
                 source: this.id,
-                position: this.readPosition(),
             }
-        }
-
-        readPosition(): Position {
-            const positionStyle =
-                this.options.visualElement?.readValue("position")
-
-            return positionStyle === "fixed" || positionStyle === "sticky"
-                ? positionStyle
-                : "static"
         }
 
         measurePageBox() {
