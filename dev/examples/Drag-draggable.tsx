@@ -23,6 +23,12 @@ export const App = () => {
             ref={ref}
             dragElastic={0}
             whileTap={{ scale: 0.95 }}
+            onTap={() => setTap(false)}
+            onTapStart={() => setTap(true)}
+            onTapCancel={() => setTap(false)}
+            onDrag={() => setDragCount(dragCount + 1)}
+            onDragStart={() => setDrag(true)}
+            onDragEnd={() => setDrag(false)}
             onHoverStart={() => {
                 console.log("hover start")
                 setHover(true)
