@@ -104,7 +104,7 @@ describe("inertia", () => {
         })
     })
 
-    test.only("Springs towards max if encountered", async () => {
+    test("Springs towards max if encountered", async () => {
         return new Promise<void>((resolve) => {
             testInertia(
                 { keyframes: [50], max: 100, velocity: 100 },
