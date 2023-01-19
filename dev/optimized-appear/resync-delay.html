@@ -81,8 +81,7 @@
             // Emulate server rendering of element
             root.innerHTML = ReactDOMServer.renderToString(Component)
 
-            // Start WAAPI animations
-            const animation = startOptimizedAppearAnimation(
+            startOptimizedAppearAnimation(
                 document.getElementById("box"),
                 "transform",
                 ["translateX(0px)", "translateX(100px)"],
@@ -90,18 +89,13 @@
                     delay: delay * 1000,
                     duration: duration * 1000,
                     ease: "linear",
+                },
+                (animation) => {
+                    setTimeout(() => {
+                        ReactDOM.hydrateRoot(root, Component)
+                    }, duration * 1000)
                 }
             )
-
-            const ready = animation.ready
-                ? (callback) => animation.ready.then(callback)
-                : (callback) => requestAnimationFrame(callback)
-
-            ready(() => {
-                setTimeout(() => {
-                    ReactDOM.hydrateRoot(root, Component)
-                }, duration * 1000)
-            })
         </script>
     </body>
 </html>

@@ -71,8 +71,7 @@
             // Emulate server rendering of element
             root.innerHTML = ReactDOMServer.renderToString(Component)
 
-            // Start Motion One animation
-            const animation = startOptimizedAppearAnimation(
+            startOptimizedAppearAnimation(
                 document.getElementById("box"),
                 "opacity",
                 [0, 1],
@@ -80,25 +79,21 @@
                     duration: duration * 1000,
                     ease: "linear",
                     delay: 250,
+                },
+                (animation) => {
+                    /**
+                     * Set currentTime to 500ms - because of the delay this will cut
+                     * into the animation at 0.25
+                     */
+                    if (animation) {
+                        animation.currentTime = 200
+                        animation.pause()
+                    }
+
+                    // Hydrate root mid-way through animation
+                    ReactDOM.hydrateRoot(root, Component)
                 }
             )
-
-            const ready = animation.ready
-                ? (callback) => animation.ready.then(callback)
-                : (callback) => requestAnimationFrame(callback)
-            ready(() => {
-                /**
-                 * Set currentTime to 500ms - because of the delay this will cut
-                 * into the animation at 0.25
-                 */
-                if (animation) {
-                    animation.currentTime = 200
-                    animation.pause()
-                }
-
-                // Hydrate root mid-way through animation
-                ReactDOM.hydrateRoot(root, Component)
-            })
         </script>
     </body>
 </html>

@@ -7,7 +7,8 @@ export function startOptimizedAppearAnimation(
     element: HTMLElement,
     name: string,
     keyframes: string[] | number[],
-    options: NativeAnimationOptions
+    options: NativeAnimationOptions,
+    onReady?: (animation: Animation) => void
 ): Animation | undefined {
     window.MotionAppearAnimations ||= new Map()
 
@@ -37,6 +38,8 @@ export function startOptimizedAppearAnimation(
     const startAnimation = () => {
         const animation = animateStyle(element, name, keyframes, options)
         window.MotionAppearAnimations!.set(storeId, { animation, ready: true })
+
+        if (onReady) onReady(animation)
     }
 
     if (readyAnimation.ready) {
