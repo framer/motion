@@ -98,7 +98,7 @@ describe("inertia", () => {
         return new Promise<void>((resolve) => {
             testInertia(
                 { keyframes: [50], min: 0, velocity: -100 },
-                [50, 31, 17, 6, -2, -2, 1, 0, 0, -0, 0, 0, -0, -0],
+                [50, 31, 17, 6, -2, -2, 1, 0, -0, 0, 0, -0, -0, 0],
                 resolve
             )
         })
