@@ -46,8 +46,8 @@ const velocitySampleDuration = 5
  */
 export function spring({
     keyframes,
-    restSpeed = 2,
-    restDelta = 0.01,
+    restDelta,
+    restSpeed,
     ...options
 }: AnimationOptions<number>): Animation<number> {
     let origin = keyframes[0]
@@ -77,12 +77,15 @@ export function spring({
         const undampedAngularFreq = Math.sqrt(stiffness / mass) / 1000
 
         /**
-         * If we're working within what looks like a 0-1 range, change the default restDelta
-         * to 0.01
+         * If we're working on a granular scale, use smaller defaults for determining
+         * when the spring is finished.
+         *
+         * These defaults have been selected emprically based on what strikes a good
+         * ratio between feeling good and finishing as soon as changes are imperceptible.
          */
-        if (restDelta === undefined) {
-            restDelta = Math.min(Math.abs(target - origin) / 100, 0.4)
-        }
+        const isGranularScale = Math.abs(initialDelta) < 5
+        restSpeed ||= isGranularScale ? 0.01 : 2
+        restDelta ||= isGranularScale ? 0.005 : 0.25
 
         if (dampingRatio < 1) {
             const angularFreq = calcAngularFreq(
@@ -169,9 +172,10 @@ export function spring({
                 }
 
                 const isBelowVelocityThreshold =
-                    Math.abs(currentVelocity) <= restSpeed
+                    Math.abs(currentVelocity) <= restSpeed!
                 const isBelowDisplacementThreshold =
-                    Math.abs(target - current) <= restDelta
+                    Math.abs(target - current) <= restDelta!
+
                 state.done =
                     isBelowVelocityThreshold && isBelowDisplacementThreshold
             } else {
@@ -179,6 +183,7 @@ export function spring({
             }
 
             state.value = state.done ? target : current
+
             return state
         },
         flipTarget: () => {
