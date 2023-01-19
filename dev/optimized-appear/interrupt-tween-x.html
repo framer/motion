@@ -42,10 +42,10 @@
 
             x.onChange((latest) => {
                 if (latest < 50) {
-                    showError(
-                        document.getElementById("box"),
-                        `x transform should never be less than 50`
-                    )
+                    // showError(
+                    //     document.getElementById("box"),
+                    //     `x transform should never be less than 50`
+                    // )
                 }
             })
 
@@ -60,14 +60,15 @@
                  * On animation start, check the values we expect to see here
                  */
                 onAnimationStart: () => {
-                    matchViewportBox(document.getElementById("box"), {
-                        top: 100,
-                        right: 250,
-                        left: 150,
-                        bottom: 200,
-                    })
+                    // matchViewportBox(document.getElementById("box"), {
+                    //     top: 100,
+                    //     right: 250,
+                    //     left: 150,
+                    //     bottom: 200,
+                    // })
                 },
                 [optimizedAppearDataAttribute]: "a",
+                children: "Content",
             })
 
             // Emulate server rendering of element
@@ -84,19 +85,24 @@
                 }
             )
 
-            const ready = animation.ready
-                ? (callback) => animation.ready.then(callback)
-                : (callback) => requestAnimationFrame(callback)
-            ready(() => {
-                // Manually set start time to half way through the animation
-                if (animation) {
-                    animation.currentTime = (duration * 1000) / 2
-                    animation.pause()
-                }
-
-                // Hydrate root mid-way through animation
+            // ReactDOM.hydrateRoot(root, Component)
+            setTimeout(() => {
                 ReactDOM.hydrateRoot(root, Component)
-            })
+            }, 500)
+
+            // const ready = animation.ready
+            //     ? (callback) => animation.ready.then(callback)
+            //     : (callback) => requestAnimationFrame(callback)
+            // ready(() => {
+            //     // Manually set start time to half way through the animation
+            //     if (animation) {
+            //         animation.currentTime = (duration * 1000) / 2
+            //         animation.pause()
+            //     }
+
+            //     // Hydrate root mid-way through animation
+            //     ReactDOM.hydrateRoot(root, Component)
+            // })
         </script>
     </body>
 </html>

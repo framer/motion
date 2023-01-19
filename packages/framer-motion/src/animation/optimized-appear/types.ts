@@ -1,4 +1,10 @@
-export type MotionAppearAnimations = Map<string, Animation>
+export type MotionAppearAnimations = Map<
+    string,
+    {
+        ready: boolean
+        animation: Animation
+    }
+>
 
 /**
  * The window global object acts as a bridge between our inline script

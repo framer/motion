@@ -15,10 +15,24 @@ export function handoffOptimizedAppearAnimation(
         transformProps.has(name) ? "transform" : name
     )
 
-    const animation =
-        MotionAppearAnimations && MotionAppearAnimations.get(animationId)
+    const { animation, ready } =
+        (MotionAppearAnimations && MotionAppearAnimations.get(animationId)) ||
+        {}
 
-    if (animation) {
+    if (!animation) return 0
+
+    const cancelOptimisedAnimation = () => {
+        MotionAppearAnimations!.delete(animationId)
+
+        /**
+         * Animation.cancel() throws so it needs to be wrapped in a try/catch
+         */
+        try {
+            animation.cancel()
+        } catch (e) {}
+    }
+
+    if (ready) {
         const sampledTime = performance.now()
 
         /**
@@ -45,19 +59,11 @@ export function handoffOptimizedAppearAnimation(
          *   2. As all independent transforms share a single transform animation, stopping
          *      it synchronously would prevent subsequent transforms from handing off.
          */
-        sync.render(() => {
-            MotionAppearAnimations.delete(animationId)
-
-            /**
-             * Animation.cancel() throws so it needs to be wrapped in a try/catch
-             */
-            try {
-                animation.cancel()
-            } catch (e) {}
-        })
-
+        sync.render(cancelOptimisedAnimation)
+        console.log(animation.currentTime)
         return animation.currentTime || 0
     } else {
+        cancelOptimisedAnimation()
         return 0
     }
 }
