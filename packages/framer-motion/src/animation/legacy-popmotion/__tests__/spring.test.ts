@@ -5,7 +5,7 @@ import { animateSync } from "./utils"
 describe("spring", () => {
     test("Runs animations with default values ", () => {
         expect(animateSync(spring({ keyframes: [0, 1] }), 200)).toEqual([
-            0, 1, 1, 1,
+            0, 1, 1, 1, 1, 1, 1, 1,
         ])
     })
     test("Underdamped spring", () => {

@@ -85,7 +85,7 @@ export function spring({
          */
         const isGranularScale = Math.abs(initialDelta) < 5
         restSpeed ||= isGranularScale ? 0.01 : 2
-        restDelta ||= isGranularScale ? 0.005 : 0.25
+        restDelta ||= isGranularScale ? 0.005 : 0.5
 
         if (dampingRatio < 1) {
             const angularFreq = calcAngularFreq(

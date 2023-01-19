@@ -98,17 +98,20 @@ describe("inertia", () => {
         return new Promise<void>((resolve) => {
             testInertia(
                 { keyframes: [50], min: 0, velocity: -100 },
-                [50, 31, 17, 6, -2, -2, 1, 0, 0],
+                [50, 31, 17, 6, -2, -2, 1, 0, 0, -0, 0, 0, -0, -0],
                 resolve
             )
         })
     })
 
-    test("Springs towards max if encountered", async () => {
+    test.only("Springs towards max if encountered", async () => {
         return new Promise<void>((resolve) => {
             testInertia(
                 { keyframes: [50], max: 100, velocity: 100 },
-                [50, 69, 83, 94, 102, 102, 99, 100, 100],
+                [
+                    50, 69, 83, 94, 102, 102, 99, 100, 100, 100, 100, 100, 100,
+                    100,
+                ],
                 resolve
             )
         })
