@@ -11,7 +11,7 @@ export function startOptimizedAppearAnimation(
     keyframes: string[] | number[],
     options: NativeAnimationOptions,
     onReady?: (animation: Animation) => void
-): Animation | undefined {
+): void {
     const id = element.dataset[optimizedAppearDataId]
 
     if (!id) return
