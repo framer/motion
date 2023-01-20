@@ -1,28 +1,33 @@
-import { sync } from "../../frameloop"
+import { Sync } from "../../frameloop/types"
 import { transformProps } from "../../render/html/utils/transform"
-import { MotionValue } from "../../value"
+import type { MotionValue } from "../../value"
+import { appearAnimationStore } from "./store"
 import { appearStoreId } from "./store-id"
 
 export function handoffOptimizedAppearAnimation(
     id: string,
     name: string,
-    value: MotionValue
+    value: MotionValue,
+    /**
+     * This function is loaded via window by startOptimisedAnimation.
+     * By accepting `sync` as an argument, rather than using it via
+     * import, it can be kept out of the first-load Framer bundle,
+     * while also allowing this function to not be included in
+     * Framer Motion bundles where it's not needed.
+     */
+    sync: Sync
 ): number {
-    const { MotionAppearAnimations } = window
-
-    const animationId = appearStoreId(
+    const storeId = appearStoreId(
         id,
         transformProps.has(name) ? "transform" : name
     )
 
-    const { animation, ready } =
-        (MotionAppearAnimations && MotionAppearAnimations.get(animationId)) ||
-        {}
+    const { animation, ready } = appearAnimationStore.get(storeId) || {}
 
     if (!animation) return 0
 
     const cancelOptimisedAnimation = () => {
-        MotionAppearAnimations!.delete(animationId)
+        appearAnimationStore.delete(storeId)
 
         /**
          * Animation.cancel() throws so it needs to be wrapped in a try/catch
@@ -60,7 +65,7 @@ export function handoffOptimizedAppearAnimation(
          *      it synchronously would prevent subsequent transforms from handing off.
          */
         sync.render(cancelOptimisedAnimation)
-        console.log(animation.currentTime)
+
         return animation.currentTime || 0
     } else {
         cancelOptimisedAnimation()

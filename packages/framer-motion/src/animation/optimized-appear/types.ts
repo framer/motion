@@ -1,10 +1,5 @@
-export type MotionAppearAnimations = Map<
-    string,
-    {
-        ready: boolean
-        animation: Animation
-    }
->
+import { Sync } from "../../frameloop/types"
+import { MotionValue } from "../../value"
 
 /**
  * The window global object acts as a bridge between our inline script
@@ -12,6 +7,11 @@ export type MotionAppearAnimations = Map<
  */
 declare global {
     interface Window {
-        MotionAppearAnimations?: MotionAppearAnimations
+        HandoffAppearAnimations?: (
+            storeId: string,
+            valueName: string,
+            value: MotionValue,
+            sync: Sync
+        ) => number
     }
 }

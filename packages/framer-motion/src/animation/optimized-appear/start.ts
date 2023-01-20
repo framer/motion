@@ -2,6 +2,8 @@ import { appearStoreId } from "./store-id"
 import { animateStyle } from "../waapi"
 import { NativeAnimationOptions } from "../waapi/types"
 import { optimizedAppearDataId } from "./data-id"
+import { handoffOptimizedAppearAnimation } from "./handoff"
+import { appearAnimationStore } from "./store"
 
 export function startOptimizedAppearAnimation(
     element: HTMLElement,
@@ -10,11 +12,11 @@ export function startOptimizedAppearAnimation(
     options: NativeAnimationOptions,
     onReady?: (animation: Animation) => void
 ): Animation | undefined {
-    window.MotionAppearAnimations ||= new Map()
-
     const id = element.dataset[optimizedAppearDataId]
 
     if (!id) return
+
+    window.HandoffAppearAnimations = handoffOptimizedAppearAnimation
 
     const storeId = appearStoreId(id, name)
 
@@ -30,14 +32,14 @@ export function startOptimizedAppearAnimation(
         { duration: 1 }
     )
 
-    window.MotionAppearAnimations!.set(storeId, {
+    appearAnimationStore.set(storeId, {
         animation: readyAnimation,
         ready: false,
     })
 
     const startAnimation = () => {
         const animation = animateStyle(element, name, keyframes, options)
-        window.MotionAppearAnimations!.set(storeId, { animation, ready: true })
+        appearAnimationStore.set(storeId, { animation, ready: true })
 
         if (onReady) onReady(animation)
     }
