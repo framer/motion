@@ -38,10 +38,10 @@ export function startOptimizedAppearAnimation(
     })
 
     const startAnimation = () => {
-        const animation = animateStyle(element, name, keyframes, options)
-        appearAnimationStore.set(storeId, { animation, ready: true })
+        const appearAnimation = animateStyle(element, name, keyframes, options)
+        appearAnimationStore.set(storeId, { animation: appearAnimation, ready: true })
 
-        if (onReady) onReady(animation)
+        if (onReady) onReady(appearAnimation)
     }
 
     if (readyAnimation.ready) {
