@@ -66,7 +66,7 @@ export function handoffOptimizedAppearAnimation(
          */
         sync.render(cancelOptimisedAnimation)
 
-        console.log("handing off from", animation.currentTime)
+        console.log("handing off from", animation, animation.currentTime)
 
         return animation.currentTime || 0
     } else {

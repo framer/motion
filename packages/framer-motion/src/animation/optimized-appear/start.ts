@@ -43,6 +43,11 @@ export function startOptimizedAppearAnimation(
         const appearAnimation = animateStyle(element, name, keyframes, options)
         if (document.timeline) {
             appearAnimation.startTime = document.timeline.currentTime
+            console.log(
+                appearAnimation.startTime,
+                appearAnimation.currentTime,
+                performance.now()
+            )
         }
 
         appearAnimationStore.set(storeId, {
