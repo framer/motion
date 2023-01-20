@@ -38,21 +38,23 @@ export function startOptimizedAppearAnimation(
     })
 
     const startAnimation = () => {
+        readyAnimation.cancel()
+
         const appearAnimation = animateStyle(element, name, keyframes, options)
-        const current = document.timeline?.currentTime
-        if (current) {
-            appearAnimation.startTime = current
+        if (document.timeline) {
+            appearAnimation.startTime = document.timeline.currentTime
         }
-        appearAnimationStore.set(storeId, { animation: appearAnimation, ready: true })
+
+        appearAnimationStore.set(storeId, {
+            animation: appearAnimation,
+            ready: true,
+        })
 
         if (onReady) onReady(appearAnimation)
     }
 
     if (readyAnimation.ready) {
-        readyAnimation.ready.then(() => {
-            readyAnimation.cancel()
-            startAnimation()
-        })
+        readyAnimation.ready.then(startAnimation)
     } else {
         startAnimation()
     }

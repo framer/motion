@@ -26,8 +26,7 @@
         "measure": "turbo run measure",
         "prepare": "turbo run build measure test test-e2e",
         "new": "lerna publish from-package",
-        "new-alpha": "npm run prepare && lerna publish from-package --canary --preid alpha",
-        "new-beta": "npm run prepare && lerna publish from-package --canary --preid beta"
+        "new-alpha": "turbo run build && lerna publish from-package --canary --preid alpha"
     },
     "devDependencies": {
         "@cypress/webpack-preprocessor": "^4.1.0",
