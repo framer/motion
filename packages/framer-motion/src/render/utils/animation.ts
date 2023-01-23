@@ -13,9 +13,9 @@ import { setTarget } from "./setters"
 import { resolveVariant } from "./resolve-dynamic-variants"
 import { transformProps } from "../html/utils/transform"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
-import { handoffOptimizedAppearAnimation } from "../../animation/optimized-appear/handoff"
 import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/data-id"
 import { createMotionValueAnimation } from "../../animation"
+import { sync } from "../../frameloop"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -171,15 +171,16 @@ function animateTarget(
          * If this is the first time a value is being animated, check
          * to see if we're handling off from an existing animation.
          */
-        if (!value.hasAnimated) {
+        if (window.HandoffAppearAnimations && !value.hasAnimated) {
             const appearId =
                 visualElement.getProps()[optimizedAppearDataAttribute]
 
             if (appearId) {
-                valueTransition.elapsed = handoffOptimizedAppearAnimation(
+                valueTransition.elapsed = window.HandoffAppearAnimations(
                     appearId,
                     key,
-                    value
+                    value,
+                    sync
                 )
             }
         }

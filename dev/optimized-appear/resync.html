@@ -97,18 +97,13 @@
                 {
                     duration: duration * 1000,
                     ease: "linear",
+                },
+                () => {
+                    setTimeout(() => {
+                        ReactDOM.hydrateRoot(root, Component)
+                    }, (duration * 1000) / 2)
                 }
             )
-
-            const ready = animation.ready
-                ? (callback) => animation.ready.then(callback)
-                : (callback) => requestAnimationFrame(callback)
-
-            ready(() => {
-                setTimeout(() => {
-                    ReactDOM.hydrateRoot(root, Component)
-                }, (duration * 1000) / 2)
-            })
         </script>
     </body>
 </html>

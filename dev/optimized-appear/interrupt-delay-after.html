@@ -78,8 +78,7 @@
             // Emulate server rendering of element
             root.innerHTML = ReactDOMServer.renderToString(Component)
 
-            // Start Motion One animation
-            const animation = startOptimizedAppearAnimation(
+            startOptimizedAppearAnimation(
                 document.getElementById("box"),
                 "opacity",
                 [0, 1],
@@ -87,41 +86,36 @@
                     duration: duration * 1000,
                     ease: "linear",
                     delay: 250,
-                }
-            )
-
-            const ready = animation.ready
-                ? (callback) => animation.ready.then(callback)
-                : (callback) => requestAnimationFrame(callback)
-            ready(() => {
-                /**
-                 * Set currentTime to 500ms - because of the delay this will cut
-                 * into the animation at 0.25
-                 */
-                if (animation) {
+                },
+                (animation) => {
+                    /**
+                     * Set currentTime to 500ms - because of the delay this will cut
+                     * into the animation at 0.25
+                     */
                     animation.currentTime = (duration * 1000) / 2
                     animation.pause()
+
+                    // Hydrate root mid-way through animation
+                    ReactDOM.hydrateRoot(root, Component)
+
+                    /**
+                     * Check the animation isn't in its initial state
+                     */
+                    setTimeout(() => {
+                        const { opacity: initialOpacity } =
+                            window.getComputedStyle(
+                                document.getElementById("box")
+                            )
+
+                        if (initialOpacity === "0") {
+                            showError(
+                                document.getElementById("box"),
+                                `opacity should have animated`
+                            )
+                        }
+                    }, 100)
                 }
-
-                // Hydrate root mid-way through animation
-                ReactDOM.hydrateRoot(root, Component)
-
-                /**
-                 * Check the animation isn't in its initial state
-                 */
-                setTimeout(() => {
-                    const { opacity: initialOpacity } = window.getComputedStyle(
-                        document.getElementById("box")
-                    )
-
-                    if (initialOpacity === "0") {
-                        showError(
-                            document.getElementById("box"),
-                            `opacity should have animated`
-                        )
-                    }
-                }, 100)
-            })
+            )
         </script>
     </body>
 </html>

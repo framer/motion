@@ -2,21 +2,66 @@ import { appearStoreId } from "./store-id"
 import { animateStyle } from "../waapi"
 import { NativeAnimationOptions } from "../waapi/types"
 import { optimizedAppearDataId } from "./data-id"
+import { handoffOptimizedAppearAnimation } from "./handoff"
+import { appearAnimationStore } from "./store"
 
 export function startOptimizedAppearAnimation(
     element: HTMLElement,
     name: string,
     keyframes: string[] | number[],
-    options: NativeAnimationOptions
-): Animation | undefined {
-    window.MotionAppearAnimations ||= new Map()
-
+    options: NativeAnimationOptions,
+    onReady?: (animation: Animation) => void
+): void {
     const id = element.dataset[optimizedAppearDataId]
-    const animation = animateStyle(element, name, keyframes, options)
 
-    if (id && animation) {
-        window.MotionAppearAnimations.set(appearStoreId(id, name), animation)
+    if (!id) return
+
+    window.HandoffAppearAnimations = handoffOptimizedAppearAnimation
+
+    const storeId = appearStoreId(id, name)
+
+    /**
+     * Use a dummy animation to detect when Chrome is ready to start
+     * painting the page and hold off from triggering the real animation
+     * until then.
+     *
+     * https://bugs.chromium.org/p/chromium/issues/detail?id=1406850
+     */
+    const readyAnimation = animateStyle(
+        element,
+        name,
+        [keyframes[0] as number, keyframes[0] as number],
+        /**
+         * 10 secs is basically just a super-safe duration to give Chrome
+         * long enough to get the animation ready.
+         */
+        { duration: 10000, ease: "linear" }
+    )
+
+    appearAnimationStore.set(storeId, {
+        animation: readyAnimation,
+        ready: false,
+    })
+
+    const startAnimation = () => {
+        readyAnimation.cancel()
+
+        const appearAnimation = animateStyle(element, name, keyframes, options)
+        if (document.timeline) {
+            appearAnimation.startTime = document.timeline.currentTime
+        }
+
+        appearAnimationStore.set(storeId, {
+            animation: appearAnimation,
+            ready: true,
+        })
+
+        if (onReady) onReady(appearAnimation)
     }
 
-    return animation
+    if (readyAnimation.ready) {
+        readyAnimation.ready.then(startAnimation)
+    } else {
+        startAnimation()
+    }
 }

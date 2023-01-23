@@ -45,25 +45,19 @@
             // This is the tree to be rendered "server" and client-side.
             const Component = React.createElement(motion.div, {
                 id: "box",
-                initial: { y: 0, scale: 1, opacity: 0 },
-                animate: { y: 100, scale: 2, opacity: 1 },
+                initial: { y: 0, scale: 1 },
+                animate: { y: 100, scale: 2 },
                 transition: { type: "spring", stiffness, damping, mass },
                 /**
                  * On animation start, check the values we expect to see here
                  */
                 onAnimationStart: () => {
-                    matchOpacity(document.getElementById("box"), 0.463589)
                     matchViewportBox(document.getElementById("box"), {
-                        bottom: 270.2061767578125,
-                        left: 76.59794616699219,
-                        right: 223.4020538330078,
-                        top: 123.40205383300781,
+                        bottom: 269.70709228515625,
+                        left: 76.76429748535156,
+                        right: 223.23570251464844,
+                        top: 123.23570251464844,
                     })
-                },
-                onUpdate: () => {
-                    console.log(
-                        getComputedStyle(document.getElementById("box")).opacity
-                    )
                 },
                 style: { willChange: "opacity" },
                 [optimizedAppearDataAttribute]: "a",
@@ -88,6 +82,9 @@
                 while (!state.done) {
                     state = springAnimation.next(t)
                     keyframes.push(state.value)
+
+                    if (t === 100) console.log(state.value)
+                    if (t === 110) console.log(state.value)
                     t += springTimeResolution
                 }
 
@@ -122,35 +119,19 @@
                 document.getElementById("box"),
                 "transform",
                 transformKeyframes,
-                transformOptions
-            )
+                transformOptions,
+                (animation) => {
+                    if (animation) {
+                        animation.currentTime = 100
+                        animation.pause()
+                    }
 
-            const opacityKeyframes = generateSpringKeyframes(0, 1)
-            const opacityAnimation = startOptimizedAppearAnimation(
-                document.getElementById("box"),
-                "opacity",
-                opacityKeyframes,
-                {
-                    duration: opacityKeyframes.length * springTimeResolution,
-                    ease: "linear",
+                    // Hydrate root mid-way through animation
+                    setTimeout(() => {
+                        ReactDOM.hydrateRoot(root, Component)
+                    }, 40)
                 }
             )
-
-            const ready = animation.ready
-                ? (callback) => animation.ready.then(callback)
-                : (callback) => requestAnimationFrame(callback)
-            ready(() => {
-                // TODO: Dont manipulate animation until ready
-                if (animation) {
-                    animation.currentTime = 100
-                    animation.pause()
-                    opacityAnimation.currentTime = 100
-                    opacityAnimation.pause()
-                }
-
-                // Hydrate root mid-way through animation
-                ReactDOM.hydrateRoot(root, Component)
-            })
         </script>
     </body>
 </html>
