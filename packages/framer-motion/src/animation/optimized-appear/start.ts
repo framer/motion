@@ -29,7 +29,7 @@ export function startOptimizedAppearAnimation(
         element,
         name,
         [keyframes[0] as number, keyframes[0] as number],
-        { duration: 1 }
+        { duration: 10000, ease: "linear" }
     )
 
     appearAnimationStore.set(storeId, {
@@ -43,11 +43,6 @@ export function startOptimizedAppearAnimation(
         const appearAnimation = animateStyle(element, name, keyframes, options)
         if (document.timeline) {
             appearAnimation.startTime = document.timeline.currentTime
-            console.log(
-                appearAnimation.startTime,
-                appearAnimation.currentTime,
-                performance.now()
-            )
         }
 
         appearAnimationStore.set(storeId, {

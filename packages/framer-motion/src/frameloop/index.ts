@@ -44,7 +44,7 @@ const processStep = (stepId: StepId) => steps[stepId].process(frameData)
 
 const processFrame = (timestamp: number) => {
     runNextFrame = false
-
+    console.log(useDefaultElapsed, timestamp - frameData.timestamp)
     frameData.delta = useDefaultElapsed
         ? defaultTimestep
         : Math.max(Math.min(timestamp - frameData.timestamp, maxElapsed), 1)
