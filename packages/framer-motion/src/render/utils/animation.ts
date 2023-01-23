@@ -171,7 +171,7 @@ function animateTarget(
          * If this is the first time a value is being animated, check
          * to see if we're handling off from an existing animation.
          */
-        if (!value.hasAnimated && window.HandoffAppearAnimations) {
+        if (window.HandoffAppearAnimations && !value.hasAnimated) {
             const appearId =
                 visualElement.getProps()[optimizedAppearDataAttribute]
 
