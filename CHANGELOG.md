@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.5.2] 2023-01-23
+
+### Fixed
+
+-   Updated optimised appear animations to defer animations until Chrome releases paint holding.
+
 ## [8.5.1] 2023-01-19
 
 ### Fixed
