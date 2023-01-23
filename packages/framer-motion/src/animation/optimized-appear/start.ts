@@ -24,11 +24,17 @@ export function startOptimizedAppearAnimation(
      * Use a dummy animation to detect when Chrome is ready to start
      * painting the page and hold off from triggering the real animation
      * until then.
+     *
+     * https://bugs.chromium.org/p/chromium/issues/detail?id=1406850
      */
     const readyAnimation = animateStyle(
         element,
         name,
         [keyframes[0] as number, keyframes[0] as number],
+        /**
+         * 10 secs is basically just a super-safe duration to give Chrome
+         * long enough to get the animation ready.
+         */
         { duration: 10000, ease: "linear" }
     )
 
