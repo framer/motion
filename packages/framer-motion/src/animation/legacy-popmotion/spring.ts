@@ -1,7 +1,7 @@
 import type { Animation, AnimationState } from "./types"
-import { calcAngularFreq, findSpring } from "./find-spring"
 import { velocityPerSecond } from "../../utils/velocity-per-second"
 import { AnimationOptions, SpringOptions } from "../types"
+import { clamp } from "../../utils/clamp"
 
 const durationKeys = ["duration", "bounce"]
 const physicsKeys = ["stiffness", "damping", "mass"]
@@ -10,33 +10,60 @@ function isSpringType(options: SpringOptions, keys: string[]) {
     return keys.some((key) => (options as any)[key] !== undefined)
 }
 
-function getSpringOptions(options: SpringOptions) {
-    let springOptions = {
-        velocity: 0.0,
-        stiffness: 100,
-        damping: 10,
-        mass: 1.0,
-        isResolvedFromDuration: false,
-        ...options,
-    }
+function calcAngularFreq(undampedFreq: number, dampingRatio: number) {
+    return undampedFreq * Math.sqrt(1 - dampingRatio * dampingRatio)
+}
 
-    // stiffness/damping/mass overrides duration/bounce
-    if (
-        !isSpringType(options, physicsKeys) &&
-        isSpringType(options, durationKeys)
-    ) {
-        const derived = findSpring(options)
+const precision = 0.05
+const maxIterations = 40
 
-        springOptions = {
-            ...springOptions,
-            ...derived,
-            velocity: 0.0,
-            mass: 1.0,
+// TODO Tidy getSpringOptions
+// TODO Pass restSpeed and restDelta?
+export function findSpring({
+    duration = 800,
+    bounce = 1,
+    mass = 1,
+    ...options
+}: AnimationOptions<number>) {
+    const dampingRatio = clamp(0.05, 1, 1 - bounce)
+
+    let hasFoundUpperBound = false
+    let lowerBound = 0.0
+    let upperBound = 800.0
+    let stiffness = 0.0
+    let damping = 0.0
+    let searchArea = 0.0
+    let i = 0
+
+    do {
+        searchArea = upperBound - lowerBound
+        stiffness = lowerBound + searchArea / 2
+        damping = dampingRatio * 2 * Math.sqrt(mass * stiffness)
+
+        const { done } = spring({
+            stiffness,
+            damping,
+            mass,
+            ...options,
+        }).next(duration)
+        console.log({
+            searchArea,
+            upperBound,
+            lowerBound,
+            hasFoundUpperBound,
+            stiffness,
+        })
+        if (done) {
+            upperBound = stiffness
+            hasFoundUpperBound = true
+        } else {
+            lowerBound = stiffness
+
+            if (!hasFoundUpperBound) upperBound *= 2
         }
-        springOptions.isResolvedFromDuration = true
-    }
+    } while (Math.abs(searchArea) > precision && ++i < maxIterations)
 
-    return springOptions
+    return { stiffness, damping, isResolvedFromDuration: true }
 }
 
 const velocitySampleDuration = 5
@@ -44,14 +71,8 @@ const velocitySampleDuration = 5
 /**
  * This is based on the spring implementation of Wobble https://github.com/skevy/wobble
  */
-export function spring({
-    keyframes,
-    restDelta,
-    restSpeed,
-    ...options
-}: AnimationOptions<number>): Animation<number> {
-    let origin = keyframes[0]
-    let target = keyframes[keyframes.length - 1]
+export function spring(options: AnimationOptions<number>): Animation<number> {
+    let [origin, target] = options.keyframes
 
     /**
      * This is the Iterator-spec return value. We ensure it's mutable rather than using a generator
@@ -59,14 +80,23 @@ export function spring({
      */
     const state: AnimationState<number> = { done: false, value: origin }
 
-    const {
-        stiffness,
-        damping,
-        mass,
-        velocity,
-        duration,
-        isResolvedFromDuration,
-    } = getSpringOptions(options)
+    if (
+        !isSpringType(options, physicsKeys) &&
+        isSpringType(options, durationKeys)
+    ) {
+        options = { ...options, ...findSpring(options) }
+    }
+
+    let {
+        stiffness = 100,
+        damping = 10,
+        mass = 1,
+        velocity = 0,
+        duration = 1,
+        restDelta,
+        restSpeed,
+        isResolvedFromDuration = false,
+    } = options as any
 
     let resolveSpring = zero
     let initialVelocity = velocity ? -(velocity / 1000) : 0.0
