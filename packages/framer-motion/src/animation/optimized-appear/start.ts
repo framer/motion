@@ -56,6 +56,13 @@ export function startOptimizedAppearAnimation(
             appearAnimation.startTime = document.timeline.currentTime
         }
 
+        console.log(
+            "starting optimised animation",
+            name,
+            performance.now(),
+            document.timeline
+        )
+
         appearAnimationStore.set(storeId, {
             animation: appearAnimation,
             ready: true,

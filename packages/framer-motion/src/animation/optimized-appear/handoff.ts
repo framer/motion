@@ -40,6 +40,11 @@ export function handoffOptimizedAppearAnimation(
     if (ready) {
         const sampledTime = performance.now()
 
+        console.log("handing off", {
+            sampledTime,
+            currentTime: animation.currentTime,
+        })
+
         /**
          * Resync handoff animation with optimised animation.
          *
@@ -52,6 +57,7 @@ export function handoffOptimizedAppearAnimation(
          * Here, we resync the two animations before the optimised WAAPI animation is cancelled.
          */
         sync.update(() => {
+            console.log("resync after ", performance.now() - sampledTime)
             if (value.animation) {
                 value.animation.currentTime = performance.now() - sampledTime
             }
@@ -68,6 +74,7 @@ export function handoffOptimizedAppearAnimation(
 
         return animation.currentTime || 0
     } else {
+        console.log("animation not ready")
         cancelOptimisedAnimation()
         return 0
     }
