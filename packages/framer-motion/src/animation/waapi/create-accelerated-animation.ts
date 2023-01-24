@@ -129,7 +129,14 @@ export function createAcceleratedAnimation(
                 )
             }
 
-            sync.update(() => animation.cancel())
+            sync.update(() => {
+                /**
+                 * Animation.cancel() throws so it needs to be wrapped in a try/catch
+                 */
+                try {
+                    animation.cancel()
+                } catch (e) {}
+            })
         },
     }
 }

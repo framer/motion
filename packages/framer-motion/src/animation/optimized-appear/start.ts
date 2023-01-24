@@ -44,7 +44,12 @@ export function startOptimizedAppearAnimation(
     })
 
     const startAnimation = () => {
-        readyAnimation.cancel()
+        /**
+         * Animation.cancel() throws so it needs to be wrapped in a try/catch
+         */
+        try {
+            readyAnimation.cancel()
+        } catch (e) {}
 
         const appearAnimation = animateStyle(element, name, keyframes, options)
         if (document.timeline) {
