@@ -68,6 +68,12 @@ export function handoffOptimizedAppearAnimation(
          */
         sync.render(cancelOptimisedAnimation)
 
+        /**
+         * We use main thread timings vs those returned by Animation.currentTime as it
+         * can be the case, particularly in Firefox, that currentTime doesn't return
+         * an updated value for several frames, even as the animation plays smoothly via
+         * the GPU.
+         */
         return sampledTime - startTime || 0
     } else {
         cancelOptimisedAnimation()
