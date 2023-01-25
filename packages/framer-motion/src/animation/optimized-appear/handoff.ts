@@ -68,7 +68,7 @@ export function handoffOptimizedAppearAnimation(
          */
         sync.render(cancelOptimisedAnimation)
 
-        return startTime - performance.now() || 0
+        return sampledTime - startTime || 0
     } else {
         cancelOptimisedAnimation()
         return 0
