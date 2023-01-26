@@ -37,21 +37,21 @@
             const { matchOpacity } = window.Assert
             const root = document.getElementById("root")
 
-            const duration = 1
+            const duration = 0.5
             const opacity = motionValue(0)
             let opacityHasChanged = false
 
-            opacity.onChange((v) => {
+            opacity.on("render", (v) => {
                 if (!opacityHasChanged) {
-                    if (v > 0.3) {
+                    if (v > 0.6) {
                         showError(
                             document.getElementById("box"),
-                            `opacity should not start animating beyond 0.3 (started at ${v})`
+                            `opacity should not start animating beyond 0.6 (started at ${v})`
                         )
                     }
                 }
                 opacityHasChanged = true
-                if (v < 0.25) {
+                if (v < 0.5) {
                     showError(
                         document.getElementById("box"),
                         "opacity should never be less than 0.25"
@@ -66,20 +66,18 @@
                 animate: { opacity: 1 },
                 transition: { duration, ease: "linear", delay: 0.25 },
                 style: { opacity },
-                /**
-                 * On animation start, check the values we expect to see here
-                 */
-                onAnimationStart: () => {
-                    matchOpacity(document.getElementById("box"), 0.25)
-                },
                 [optimizedAppearDataAttribute]: "a",
             })
 
             // Emulate server rendering of element
             root.innerHTML = ReactDOMServer.renderToString(Component)
 
+            const box = document.getElementById("box")
+
+            function checkOpacity() {}
+
             startOptimizedAppearAnimation(
-                document.getElementById("box"),
+                box,
                 "opacity",
                 [0, 1],
                 {
@@ -88,32 +86,16 @@
                     delay: 250,
                 },
                 (animation) => {
-                    /**
-                     * Set currentTime to 500ms - because of the delay this will cut
-                     * into the animation at 0.25
-                     */
-                    animation.currentTime = (duration * 1000) / 2
-                    animation.pause()
-
                     // Hydrate root mid-way through animation
-                    ReactDOM.hydrateRoot(root, Component)
-
-                    /**
-                     * Check the animation isn't in its initial state
-                     */
                     setTimeout(() => {
-                        const { opacity: initialOpacity } =
-                            window.getComputedStyle(
-                                document.getElementById("box")
-                            )
+                        ReactDOM.hydrateRoot(root, Component)
 
+                        const { opacity: initialOpacity } =
+                            window.getComputedStyle(box)
                         if (initialOpacity === "0") {
-                            showError(
-                                document.getElementById("box"),
-                                `opacity should have animated`
-                            )
+                            showError(box, `opacity should have animated`)
                         }
-                    }, 100)
+                    }, 500)
                 }
             )
         </script>

@@ -1,6 +1,6 @@
 export interface AppearStoreEntry {
     animation: Animation
-    ready: boolean
+    startTime: number | null
 }
 
 export const appearAnimationStore = new Map<string, AppearStoreEntry>()

@@ -41,7 +41,7 @@ export function startOptimizedAppearAnimation(
 
     appearAnimationStore.set(storeId, {
         animation: readyAnimation,
-        ready: false,
+        startTime: null,
     })
 
     const startAnimation = () => {
@@ -54,7 +54,7 @@ export function startOptimizedAppearAnimation(
 
         appearAnimationStore.set(storeId, {
             animation: appearAnimation,
-            ready: true,
+            startTime: performance.now(),
         })
 
         if (onReady) onReady(appearAnimation)

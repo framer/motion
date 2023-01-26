@@ -52,12 +52,13 @@
                  * On animation start, check the values we expect to see here
                  */
                 onAnimationStart: () => {
-                    matchViewportBox(document.getElementById("box"), {
-                        bottom: 269.70709228515625,
-                        left: 76.76429748535156,
-                        right: 223.23570251464844,
-                        top: 123.23570251464844,
-                    })
+                    const { top, left } = document
+                        .getElementById("box")
+                        .getBoundingClientRect()
+
+                    if (top < 110 || top > 140 || left < 60 || left > 90) {
+                        showError(box, `unexpected viewport box`)
+                    }
                 },
                 style: { willChange: "opacity" },
                 [optimizedAppearDataAttribute]: "a",
@@ -82,9 +83,6 @@
                 while (!state.done) {
                     state = springAnimation.next(t)
                     keyframes.push(state.value)
-
-                    if (t === 100) console.log(state.value)
-                    if (t === 110) console.log(state.value)
                     t += springTimeResolution
                 }
 
@@ -121,15 +119,10 @@
                 transformKeyframes,
                 transformOptions,
                 (animation) => {
-                    if (animation) {
-                        animation.currentTime = 100
-                        animation.pause()
-                    }
-
                     // Hydrate root mid-way through animation
                     setTimeout(() => {
                         ReactDOM.hydrateRoot(root, Component)
-                    }, 40)
+                    }, 100)
                 }
             )
         </script>

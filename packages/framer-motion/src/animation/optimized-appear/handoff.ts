@@ -22,9 +22,11 @@ export function handoffOptimizedAppearAnimation(
         transformProps.has(name) ? "transform" : name
     )
 
-    const { animation, ready } = appearAnimationStore.get(storeId) || {}
+    const appearAnimation = appearAnimationStore.get(storeId)
 
-    if (!animation) return 0
+    if (!appearAnimation) return 0
+
+    const { animation, startTime } = appearAnimation
 
     const cancelOptimisedAnimation = () => {
         appearAnimationStore.delete(storeId)
@@ -37,7 +39,7 @@ export function handoffOptimizedAppearAnimation(
         } catch (e) {}
     }
 
-    if (ready) {
+    if (startTime !== null) {
         const sampledTime = performance.now()
 
         /**
@@ -66,7 +68,13 @@ export function handoffOptimizedAppearAnimation(
          */
         sync.render(cancelOptimisedAnimation)
 
-        return animation.currentTime || 0
+        /**
+         * We use main thread timings vs those returned by Animation.currentTime as it
+         * can be the case, particularly in Firefox, that currentTime doesn't return
+         * an updated value for several frames, even as the animation plays smoothly via
+         * the GPU.
+         */
+        return sampledTime - startTime || 0
     } else {
         cancelOptimisedAnimation()
         return 0
