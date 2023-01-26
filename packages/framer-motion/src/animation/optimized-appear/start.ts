@@ -4,6 +4,7 @@ import { NativeAnimationOptions } from "../waapi/types"
 import { optimizedAppearDataId } from "./data-id"
 import { handoffOptimizedAppearAnimation } from "./handoff"
 import { appearAnimationStore } from "./store"
+import { noop } from "../../utils/noop"
 
 export function startOptimizedAppearAnimation(
     element: HTMLElement,
@@ -60,7 +61,7 @@ export function startOptimizedAppearAnimation(
     }
 
     if (readyAnimation.ready) {
-        readyAnimation.ready.then(startAnimation)
+        readyAnimation.ready.then(startAnimation).catch(noop)
     } else {
         startAnimation()
     }
