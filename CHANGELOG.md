@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.5.3] 2023-01-26
+
+### Fixed
+
+-   Manually recording optimised appear `startTime` to fix inaccuracies of Firefox's `Animation.currentTime`.
+
 ## [8.5.2] 2023-01-23
 
 ### Fixed
