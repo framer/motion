@@ -37,7 +37,7 @@
             const { matchOpacity } = window.Assert
             const root = document.getElementById("root")
 
-            const duration = 1
+            const duration = 0.5
             const opacity = motionValue(0)
 
             opacity.onChange((v) => {
@@ -80,18 +80,13 @@
                     ease: "linear",
                 },
                 (animation) => {
-                    // Manually set start time to half way through the animation
-                    if (animation) {
-                        animation.currentTime = duration * 1000
-                    }
-
                     /**
                      * Give it time to commit the finished animation
                      */
                     setTimeout(() => {
                         // Hydrate root mid-way through animation
                         ReactDOM.hydrateRoot(root, Component)
-                    }, 50)
+                    }, duration * 1000 + 1000)
                 }
             )
         </script>

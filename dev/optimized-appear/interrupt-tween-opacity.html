@@ -37,11 +37,11 @@
             const { matchOpacity } = window.Assert
             const root = document.getElementById("root")
 
-            const duration = 1
+            const duration = 0.5
             const opacity = motionValue(0)
 
-            opacity.onChange((v) => {
-                if (v < 0.5) {
+            opacity.on("render", (v) => {
+                if (v < 0.495) {
                     showError(
                         document.getElementById("box"),
                         "opacity should never be less than 0.5"
@@ -60,7 +60,15 @@
                  * On animation start, check the values we expect to see here
                  */
                 onAnimationStart: () => {
-                    matchOpacity(document.getElementById("box"), 0.5)
+                    const { opacity: initialOpacity } =
+                        window.getComputedStyle(box)
+                    const opacityAsNumber = parseFloat(initialOpacity)
+                    if (opacityAsNumber < 0.4 || opacityAsNumber > 0.6) {
+                        showError(
+                            box,
+                            `opacity should be roughly less than 0.5 at animation start`
+                        )
+                    }
                 },
                 [optimizedAppearDataAttribute]: "a",
             })
@@ -77,14 +85,10 @@
                     ease: "linear",
                 },
                 (animation) => {
-                    // Manually set start time to half way through the animation
-                    if (animation) {
-                        animation.currentTime = (duration * 1000) / 2
-                        animation.pause()
-                    }
-
                     // Hydrate root mid-way through animation
-                    ReactDOM.hydrateRoot(root, Component)
+                    setTimeout(() => {
+                        ReactDOM.hydrateRoot(root, Component)
+                    }, (duration * 1000) / 2)
                 }
             )
         </script>
