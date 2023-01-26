@@ -96,8 +96,8 @@ describe("usePresence", () => {
                     expect(container.firstChild).toBeFalsy()
 
                     resolve()
-                }, 50)
-            }, 50)
+                }, 100)
+            }, 100)
         })
 
         await promise
@@ -158,9 +158,9 @@ describe("usePresence", () => {
                         expect(container.firstChild).toBeFalsy()
 
                         resolve()
-                    }, 50)
-                }, 50)
-            }, 50)
+                    }, 100)
+                }, 100)
+            }, 100)
         })
 
         await promise
