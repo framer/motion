@@ -65,6 +65,7 @@ export interface IProjectionNode<I = unknown> {
     isLayoutDirty: boolean
     isTransformDirty: boolean
     isProjectionDirty: boolean
+    isParentProjectionDirty: boolean
     shouldResetTransform: boolean
     prevTransformTemplateValue: string | undefined
     isUpdateBlocked(): boolean
@@ -107,6 +108,7 @@ export interface IProjectionNode<I = unknown> {
     clearMeasurements(): void
     resetTree(): void
 
+    isProjecting(): boolean
     animationValues?: ResolvedValues
     currentAnimation?: AnimationPlaybackControls
     isTreeAnimating?: boolean
