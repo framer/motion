@@ -37,7 +37,7 @@ export function findSpring({
 
     do {
         searchArea = upperBound - lowerBound
-        stiffness = lowerBound + searchArea / 2
+        stiffness = lowerBound + searchArea / 4
         damping = dampingRatio * 2 * Math.sqrt(mass * stiffness)
 
         const { done } = spring({
@@ -52,6 +52,7 @@ export function findSpring({
             lowerBound,
             hasFoundUpperBound,
             stiffness,
+            i,
         })
         if (done) {
             upperBound = stiffness
@@ -59,7 +60,7 @@ export function findSpring({
         } else {
             lowerBound = stiffness
 
-            if (!hasFoundUpperBound) upperBound *= 2
+            if (!hasFoundUpperBound) upperBound *= 4
         }
     } while (Math.abs(searchArea) > precision && ++i < maxIterations)
 
@@ -208,7 +209,17 @@ export function spring(options: AnimationOptions<number>): Animation<number> {
 
                 state.done =
                     isBelowVelocityThreshold && isBelowDisplacementThreshold
+                state.done &&
+                    console.log({
+                        origin,
+                        target,
+                        currentVelocity,
+                        current,
+                        isBelowVelocityThreshold,
+                        isBelowDisplacementThreshold,
+                    })
             } else {
+                console.log({ t, duration })
                 state.done = t >= duration!
             }
 

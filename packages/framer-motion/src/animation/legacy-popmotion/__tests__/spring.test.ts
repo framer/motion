@@ -143,13 +143,33 @@ describe("spring", () => {
 describe("findSpring", () => {
     test.only("find spring", () => {
         const testFindSpring = (options: AnimationOptions<number>) => {
-            const foundSpring = findSpring(options)
-            console.log("looking for", options, "found", foundSpring)
+            console.log("looking for", options)
+
+            const { isResolvedFromDuration, ...foundSpring } =
+                findSpring(options)
+            console.log("found", foundSpring)
 
             const { bounce, duration = 500, ...originalOptions } = options
             const testSpring = spring({ ...originalOptions, ...foundSpring })
 
-            const timeAccuracy = 50 //ms
+            const timeAccuracy = Math.max(50, options.duration! * 0.05) //ms
+
+            let i = 0
+            let foundDuration: null | number = null
+            while (foundDuration === null) {
+                i++
+                const state = testSpring.next(i * 10)
+                if (state.done) foundDuration = i * 10
+            }
+            console.log({ foundDuration })
+            console.log(
+                duration - timeAccuracy,
+                testSpring.next(duration - timeAccuracy).done
+            )
+            console.log(
+                duration + timeAccuracy,
+                testSpring.next(duration + timeAccuracy).done
+            )
 
             // Aim to hit the done threshold with specific accuracy
             expect(testSpring.next(duration - timeAccuracy).done).toEqual(false)
