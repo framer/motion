@@ -79,7 +79,7 @@ export function findSpring({
 
     const initialGuess = 5 / duration
     const undampedFreq = approximateRoot(envelope, derivative, initialGuess)
-
+    console.log(undampedFreq)
     duration = duration * 1000
     if (isNaN(undampedFreq)) {
         return {
@@ -97,14 +97,17 @@ export function findSpring({
     }
 }
 
-const rootIterations = 12
+// const maxAccuracy = 0.1
+const maxRootIterations = 12
 function approximateRoot(
     envelope: Resolver,
     derivative: Resolver,
     initialGuess: number
 ): number {
     let result = initialGuess
-    for (let i = 1; i < rootIterations; i++) {
+
+    for (let i = 1; i < maxRootIterations; i++) {
+        console.log(envelope(result), derivative(result))
         result = result - envelope(result) / derivative(result)
     }
     return result

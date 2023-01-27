@@ -1,42 +1,18 @@
 import type { Animation, AnimationState } from "../../legacy-popmotion/types"
-import { calcAngularFreq, findSpring } from "./find-spring"
+import { findSpring } from "./find"
 import { velocityPerSecond } from "../../../utils/velocity-per-second"
 import { AnimationOptions, SpringOptions } from "../../types"
+import {
+    criticallyDampedSpring,
+    overdampedSpring,
+    underdampedSpring,
+} from "./resolvers"
 
 const durationKeys = ["duration", "bounce"]
 const physicsKeys = ["stiffness", "damping", "mass"]
 
 function isSpringType(options: SpringOptions, keys: string[]) {
     return keys.some((key) => (options as any)[key] !== undefined)
-}
-
-function getSpringOptions(options: SpringOptions) {
-    let springOptions = {
-        velocity: 0.0,
-        stiffness: 100,
-        damping: 10,
-        mass: 1.0,
-        isResolvedFromDuration: false,
-        ...options,
-    }
-
-    // stiffness/damping/mass overrides duration/bounce
-    if (
-        !isSpringType(options, physicsKeys) &&
-        isSpringType(options, durationKeys)
-    ) {
-        const derived = findSpring(options)
-
-        springOptions = {
-            ...springOptions,
-            ...derived,
-            velocity: 0.0,
-            mass: 1.0,
-        }
-        springOptions.isResolvedFromDuration = true
-    }
-
-    return springOptions
 }
 
 const velocitySampleDuration = 5
@@ -46,8 +22,6 @@ const velocitySampleDuration = 5
  */
 export function spring({
     keyframes,
-    restDelta,
-    restSpeed,
     ...options
 }: AnimationOptions<number>): Animation<number> {
     let origin = keyframes[0]
@@ -59,22 +33,33 @@ export function spring({
      */
     const state: AnimationState<number> = { done: false, value: origin }
 
-    const {
-        stiffness,
-        damping,
-        mass,
-        velocity,
-        duration,
-        isResolvedFromDuration,
-    } = getSpringOptions(options)
+    if (
+        !isSpringType(options, physicsKeys) &&
+        isSpringType(options, durationKeys)
+    ) {
+        options = { ...options, ...findSpring(options) }
+    }
 
-    let resolveSpring = zero
+    let {
+        stiffness = 100,
+        damping = 10,
+        mass = 1,
+        velocity = 0,
+        duration = 1,
+        restDelta,
+        restSpeed,
+        isResolvedFromDuration = false,
+    } = options as any
+
+    let resolveSpring = underdampedSpring
     let initialVelocity = velocity ? -(velocity / 1000) : 0.0
+    let undampedAngularFreq = 0
+    let initialDelta = 0
     const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass))
 
     function createSpring() {
-        const initialDelta = target - origin
-        const undampedAngularFreq = Math.sqrt(stiffness / mass) / 1000
+        initialDelta = target - origin
+        undampedAngularFreq = Math.sqrt(stiffness / mass) / 1000
 
         /**
          * If we're working on a granular scale, use smaller defaults for determining
@@ -88,60 +73,11 @@ export function spring({
         restDelta ||= isGranularScale ? 0.005 : 0.5
 
         if (dampingRatio < 1) {
-            const angularFreq = calcAngularFreq(
-                undampedAngularFreq,
-                dampingRatio
-            )
-
-            // Underdamped spring
-            resolveSpring = (t: number) => {
-                const envelope = Math.exp(
-                    -dampingRatio * undampedAngularFreq * t
-                )
-
-                return (
-                    target -
-                    envelope *
-                        (((initialVelocity +
-                            dampingRatio * undampedAngularFreq * initialDelta) /
-                            angularFreq) *
-                            Math.sin(angularFreq * t) +
-                            initialDelta * Math.cos(angularFreq * t))
-                )
-            }
+            resolveSpring = underdampedSpring
         } else if (dampingRatio === 1) {
-            // Critically damped spring
-            resolveSpring = (t: number) =>
-                target -
-                Math.exp(-undampedAngularFreq * t) *
-                    (initialDelta +
-                        (initialVelocity + undampedAngularFreq * initialDelta) *
-                            t)
+            resolveSpring = criticallyDampedSpring
         } else {
-            // Overdamped spring
-            const dampedAngularFreq =
-                undampedAngularFreq * Math.sqrt(dampingRatio * dampingRatio - 1)
-
-            resolveSpring = (t: number) => {
-                const envelope = Math.exp(
-                    -dampingRatio * undampedAngularFreq * t
-                )
-
-                // When performing sinh or cosh values can hit Infinity so we cap them here
-                const freqForT = Math.min(dampedAngularFreq * t, 300)
-
-                return (
-                    target -
-                    (envelope *
-                        ((initialVelocity +
-                            dampingRatio * undampedAngularFreq * initialDelta) *
-                            Math.sinh(freqForT) +
-                            dampedAngularFreq *
-                                initialDelta *
-                                Math.cosh(freqForT))) /
-                        dampedAngularFreq
-                )
-            }
+            resolveSpring = overdampedSpring
         }
     }
 
@@ -149,7 +85,14 @@ export function spring({
 
     return {
         next: (t: number) => {
-            const current = resolveSpring(t)
+            const current = resolveSpring(
+                target,
+                initialDelta,
+                initialVelocity,
+                dampingRatio,
+                undampedAngularFreq,
+                t
+            )
 
             if (!isResolvedFromDuration) {
                 let currentVelocity = initialVelocity
@@ -163,7 +106,15 @@ export function spring({
                     if (dampingRatio < 1) {
                         const prevT = Math.max(0, t - velocitySampleDuration)
                         currentVelocity = velocityPerSecond(
-                            current - resolveSpring(prevT),
+                            current -
+                                resolveSpring(
+                                    target,
+                                    initialDelta,
+                                    initialVelocity,
+                                    dampingRatio,
+                                    undampedAngularFreq,
+                                    prevT
+                                ),
                             t - prevT
                         )
                     } else {
@@ -196,5 +147,3 @@ export function spring({
 
 spring.needsInterpolation = (a: any, b: any) =>
     typeof a === "string" || typeof b === "string"
-
-const zero = (_t: number) => 0

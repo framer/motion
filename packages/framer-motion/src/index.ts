@@ -100,7 +100,7 @@ export { frameData } from "./frameloop/data"
  */
 export { startOptimizedAppearAnimation } from "./animation/optimized-appear/start"
 export { optimizedAppearDataAttribute } from "./animation/optimized-appear/data-id"
-export { spring } from "./animation/legacy-popmotion/spring"
+export { spring } from "./animation/generators/spring"
 
 /**
  * Contexts

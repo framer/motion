@@ -1,6 +1,6 @@
 import { Driver, DriverControls } from "./types"
 import { keyframes as keyframeAnimation } from "./keyframes"
-import { spring } from "./spring"
+import { spring } from "../generators/spring"
 import { decay } from "./decay"
 import { sync, cancelSync } from "../../frameloop"
 import { interpolate } from "../../utils/interpolate"

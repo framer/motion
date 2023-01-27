@@ -1,17 +1,20 @@
-import { findSpring } from "../find-spring"
-import { spring } from "../spring"
+import { findSpring } from "../find"
+import { spring } from "../"
 
 describe("findSpring", () => {
     test.only("find spring", () => {
         const testFindSpring = (options: any) => {
             console.log("looking for", options)
 
-            const foundSpring = findSpring(options)
+            const { duration: _d, ...foundSpring } = findSpring(options)
             console.log("found", foundSpring)
 
             const { bounce, duration = 500, ...originalOptions } = options
             const testSpring = spring({ ...originalOptions, ...foundSpring })
-
+            console.log("making test spring", {
+                ...originalOptions,
+                ...foundSpring,
+            })
             const timeAccuracy = Math.max(50, options.duration! * 0.05) //ms
 
             let i = 0
@@ -43,24 +46,21 @@ describe("findSpring", () => {
             [300, -100],
             [0, 0.5],
         ]
-        const velocityFactors = [0, 2, -2]
         const masses = [0.5, 1, 3]
 
         for (let b = 0; b < bounces.length; b++) {
             for (let d = 0; d < durations.length; d++) {
                 for (let k = 0; k < keyframes.length; k++) {
-                    for (let v = 0; v < velocityFactors.length; v++) {
-                        for (let m = 0; m < masses.length; m++) {
-                            testFindSpring({
-                                bounce: bounces[b],
-                                keyframes: keyframes[k],
-                                velocity:
-                                    velocityFactors[v] *
-                                    (keyframes[k][0] - keyframes[k][1]),
-                                mass: masses[m],
-                                duration: durations[d],
-                            })
-                        }
+                    for (let m = 0; m < masses.length; m++) {
+                        testFindSpring({
+                            bounce: bounces[b],
+                            keyframes: keyframes[k],
+                            // velocity:
+                            //     velocityFactors[v] *
+                            //     (keyframes[k][0] - keyframes[k][1]),
+                            mass: masses[m],
+                            duration: durations[d],
+                        })
                     }
                 }
             }
