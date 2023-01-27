@@ -1,7 +1,7 @@
-import type { Animation, AnimationState } from "./types"
+import type { Animation, AnimationState } from "../../legacy-popmotion/types"
 import { calcAngularFreq, findSpring } from "./find-spring"
-import { velocityPerSecond } from "../../utils/velocity-per-second"
-import { AnimationOptions, SpringOptions } from "../types"
+import { velocityPerSecond } from "../../../utils/velocity-per-second"
+import { AnimationOptions, SpringOptions } from "../../types"
 
 const durationKeys = ["duration", "bounce"]
 const physicsKeys = ["stiffness", "damping", "mass"]
