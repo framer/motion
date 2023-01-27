@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "8.5.3",
+    "version": "8.5.4",
     "description": "A simple and powerful React animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -72,11 +72,11 @@
     "bundlesize": [
         {
             "path": "./dist/size-rollup-motion.js",
-            "maxSize": "29.66 kB"
+            "maxSize": "29.6 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
-            "maxSize": "4.81 kB"
+            "maxSize": "4.75 kB"
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
@@ -88,7 +88,7 @@
         },
         {
             "path": "./dist/size-webpack-m.js",
-            "maxSize": "5.02 kB"
+            "maxSize": "4.97 kB"
         },
         {
             "path": "./dist/size-webpack-dom-animation.js",

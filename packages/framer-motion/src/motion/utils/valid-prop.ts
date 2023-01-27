@@ -1,26 +1,5 @@
 import { MotionProps } from "../types"
 
-const animationProps = [
-    "animate",
-    "exit",
-    "variants",
-    "whileHover",
-    "whileTap",
-    "whileFocus",
-    "whileDrag",
-    "whileInView",
-]
-const tapProps = ["whileTap", "onTap", "onTapStart", "onTapCancel"]
-
-const panProps = ["onPan", "onPanStart", "onPanSessionStart", "onPanEnd"]
-
-const inViewProps = [
-    "whileInView",
-    "onViewportEnter",
-    "onViewportLeave",
-    "viewport",
-]
-
 /**
  * A list of all valid MotionProps.
  *
@@ -28,6 +7,9 @@ const inViewProps = [
  * This doesn't throw if a `MotionProp` name is missing - it should.
  */
 const validMotionProps = new Set<keyof MotionProps>([
+    "animate",
+    "exit",
+    "variants",
     "initial",
     "style",
     "values",
@@ -37,11 +19,6 @@ const validMotionProps = new Set<keyof MotionProps>([
     "transformValues",
     "custom",
     "inherit",
-    "layout",
-    "layoutId",
-    "layoutDependency",
-    "layoutScroll",
-    "layoutRoot",
     "onLayoutAnimationStart",
     "onLayoutAnimationComplete",
     "onLayoutMeasure",
@@ -55,24 +32,13 @@ const validMotionProps = new Set<keyof MotionProps>([
     "onMeasureDragConstraints",
     "onDirectionLock",
     "onDragTransitionEnd",
-    "drag",
-    "dragControls",
-    "dragListener",
-    "dragConstraints",
-    "dragDirectionLock",
-    "dragSnapToOrigin",
     "_dragX",
     "_dragY",
-    "dragElastic",
-    "dragMomentum",
-    "dragPropagation",
-    "dragTransition",
     "onHoverStart",
     "onHoverEnd",
-    ...(inViewProps as any),
-    ...(tapProps as any),
-    ...(animationProps as any),
-    ...(panProps as any),
+    "onViewportEnter",
+    "onViewportLeave",
+    "viewport",
 ])
 
 /**
@@ -84,5 +50,12 @@ const validMotionProps = new Set<keyof MotionProps>([
  * @public
  */
 export function isValidMotionProp(key: string) {
-    return validMotionProps.has(key as keyof MotionProps)
+    return (
+        key.startsWith("while") ||
+        (key.startsWith("drag") && key !== "draggable") ||
+        key.startsWith("layout") ||
+        key.startsWith("onTap") ||
+        key.startsWith("onPan") ||
+        validMotionProps.has(key as keyof MotionProps)
+    )
 }
