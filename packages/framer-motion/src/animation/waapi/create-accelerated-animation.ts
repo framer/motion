@@ -97,6 +97,7 @@ export function createAcceleratedAnimation(
      */
     animation.onfinish = () => {
         value.set(getFinalKeyframe(keyframes, options))
+        sync.update(() => animation.cancel())
         onComplete && onComplete()
     }
 
@@ -128,7 +129,6 @@ export function createAcceleratedAnimation(
                     sampleDelta
                 )
             }
-
             sync.update(() => animation.cancel())
         },
     }
