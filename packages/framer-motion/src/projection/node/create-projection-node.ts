@@ -56,8 +56,6 @@ const animationTarget = 1000
 
 let id = 0
 
-let skipped = 0
-
 export function createProjectionNode<I>({
     attachResizeListener,
     defaultParent,
@@ -227,23 +225,17 @@ export function createProjectionNode<I>({
          */
         isLayoutDirty = false
 
-        isTransformDirty = false
-
         /**
          * Flag to true if we think the projection calculations for this node needs
          * recalculating as a result of an updated transform or layout animation.
-         *
-         * TODO: We will want to propagate this throughout the whole children from shared element transitions
          */
         isProjectionDirty = false
 
         /**
-         * Flag to true if this node's nearest projection parent is dirty, as this node will then
-         * need to recalculate a new corrective transform.
-         *
-         * TODO: We only need to set this if the parent has actually changed.
+         * Flag to true if the layout *or* transform has changed. This then gets propagated
+         * throughout the projection tree, forcing any element below to recalculate on the next frame.
          */
-        isParentProjectionDirty = false
+        isSharedProjectionDirty = false
 
         /**
          * Block layout updates for instant layout transitions throughout the tree.
@@ -688,12 +680,10 @@ export function createProjectionNode<I>({
          * the next step.
          */
         updateProjection = () => {
-            skipped = 0
-            const frameStart = performance.now()
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
-            console.log(performance.now() - frameStart)
+            this.nodes!.forEach(cleanDirtyNodes)
         }
 
         /**
@@ -982,15 +972,14 @@ export function createProjectionNode<I>({
              */
             const lead = this.getLead()
             this.isProjectionDirty ||= lead.isProjectionDirty
-            this.isTransformDirty ||= lead.isTransformDirty
+            this.isSharedProjectionDirty ||= lead.isSharedProjectionDirty
 
             /**
              * We don't use transform for this step of processing so we don't
              * need to check whether any nodes have changed transform.
              */
             if (
-                !this.isProjectionDirty &&
-                !this.isParentProjectionDirty &&
+                !(this.isProjectionDirty || this.parent?.isProjectionDirty) &&
                 !this.attemptToResolveRelativeTarget
             ) {
                 return
@@ -1134,26 +1123,24 @@ export function createProjectionNode<I>({
         hasProjected: boolean = false
 
         calcProjection() {
-            const {
-                isProjectionDirty,
-                isParentProjectionDirty,
-                isTransformDirty,
-            } = this
-
-            this.isProjectionDirty =
-                this.isParentProjectionDirty =
-                this.isTransformDirty =
-                    false
-
             const lead = this.getLead()
             const isShared = Boolean(this.resumingFrom) || this !== lead
 
             let canSkip = true
 
-            if (isProjectionDirty || isParentProjectionDirty) canSkip = false
-            if (isShared && isTransformDirty) canSkip = false
+            /**
+             * If this is a normal layout animation and neither this node nor its nearest projecting
+             * is dirty then we can't skip.
+             */
+            if (this.isProjectionDirty || this.parent?.isProjectionDirty) {
+                canSkip = false
+            }
 
-            if (canSkip) skipped++
+            /**
+             * If this is a shared layout animation and this node's shared projection is dirty then
+             * we can't skip.
+             */
+            if (isShared && this.isSharedProjectionDirty) canSkip = false
 
             if (canSkip) return
 
@@ -1862,22 +1849,28 @@ function notifyLayoutUpdate(node: IProjectionNode) {
 }
 
 export function propagateDirtyNodes(node: IProjectionNode) {
+    if (!node.parent) return
+
     /**
-     * Propagate isProjectionDirty. Nodes are ordered by depth, so if the parent here
-     * is dirty we can simply pass this forward.
+     * If this node isn't projecting, propagate isProjectionDirty. It will have
+     * no performance impact but it will allow the next child that *is* projecting
+     * but *isn't* dirty to just check its parent to see if *any* ancestor needs
+     * correcting.
      */
     if (!node.isProjecting()) {
-        node.isProjectionDirty = node.parent?.isProjectionDirty || false
+        node.isProjectionDirty = node.parent.isProjectionDirty
     }
 
-    node.isParentProjectionDirty = node.parent?.isProjectionDirty || false
-
     /**
-     * Propagate isTransformDirty.
+     * Propagate isSharedProjectionDirty throughout the whole tree.
      */
-    node.isTransformDirty ||= Boolean(
-        node.parent && node.parent.isTransformDirty
+    node.isSharedProjectionDirty ||= Boolean(
+        node.isProjectionDirty || node.parent.isSharedProjectionDirty
     )
+}
+
+function cleanDirtyNodes(node: IProjectionNode) {
+    node.isProjectionDirty = node.isSharedProjectionDirty = false
 }
 
 function clearSnapshot(node: IProjectionNode) {

@@ -63,9 +63,8 @@ export interface IProjectionNode<I = unknown> {
     projectionDeltaWithTransform?: Delta
     latestValues: ResolvedValues
     isLayoutDirty: boolean
-    isTransformDirty: boolean
     isProjectionDirty: boolean
-    isParentProjectionDirty: boolean
+    isSharedProjectionDirty: boolean
     shouldResetTransform: boolean
     prevTransformTemplateValue: string | undefined
     isUpdateBlocked(): boolean

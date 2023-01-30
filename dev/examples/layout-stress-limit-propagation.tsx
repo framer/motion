@@ -3,15 +3,18 @@ import * as React from "react"
 import { useState } from "react"
 import styled from "styled-components"
 
-const Container = styled.div`
+const Container = styled(motion.div)`
     --width: 200px;
     --height: 200px;
     --offset: 0px;
     width: 1000px;
     height: 4000px;
     overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
     &.expanded {
-        --width: 500px;
+        width: 500px;
         --offset: 100px;
     }
     .a {
@@ -117,6 +120,7 @@ export const App = () => {
                 onClick={() => {
                     setExpanded(!expanded)
                 }}
+                layout
             >
                 <Group>
                     <Group />
