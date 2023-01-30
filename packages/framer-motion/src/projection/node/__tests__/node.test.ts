@@ -1,5 +1,5 @@
 import { createTestNode } from "./TestProjectionNode"
-import { propagateDirtyNodes } from "../create-projection-node"
+import { propagateDirtyNodes, cleanDirtyNodes } from "../create-projection-node"
 import { IProjectionNode } from "../types"
 
 describe("node", () => {
@@ -197,16 +197,32 @@ describe("node", () => {
 
         // Check isProjectionDirty is propagated from child to grandChild
         expect(parent.isProjectionDirty).toEqual(false)
+        expect(parent.isSharedProjectionDirty).toEqual(false)
         expect(child.isProjectionDirty).toEqual(true)
-        expect(grandChild.isProjectionDirty).toEqual(true)
+        expect(child.isSharedProjectionDirty).toEqual(true)
+        expect(grandChild.isProjectionDirty).toEqual(false)
+        expect(grandChild.isSharedProjectionDirty).toEqual(true)
 
         parent.calcProjection()
         child.calcProjection()
         grandChild.calcProjection()
 
+        parent.calcProjection()
+        child.calcProjection()
+        grandChild.calcProjection()
+
+        cleanDirtyNodes(parent as IProjectionNode)
+        cleanDirtyNodes(child as IProjectionNode)
+        cleanDirtyNodes(grandChild as IProjectionNode)
+
         // Check isProjectionDirty is cleaned up after projections are calculated
-        expect(parent.isProjectionDirty).toEqual(false)
-        expect(child.isProjectionDirty).toEqual(false)
-        expect(grandChild.isProjectionDirty).toEqual(false)
+        expect(
+            parent.isProjectionDirty ||
+                parent.isSharedProjectionDirty ||
+                child.isProjectionDirty ||
+                child.isSharedProjectionDirty ||
+                grandChild.isProjectionDirty ||
+                grandChild.isSharedProjectionDirty
+        ).toEqual(false)
     })
 })
