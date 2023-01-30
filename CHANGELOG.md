@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.5.5] 2023-01-30
+
+### Fixed
+
+-   Ensuring `Animation.cancel()` is called on finished WAAPI animations.
+
 ## [8.5.4] 2023-01-27
 
 ### Fixed
