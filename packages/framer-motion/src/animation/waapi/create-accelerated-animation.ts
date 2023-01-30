@@ -96,7 +96,7 @@ export function createAcceleratedAnimation(
      * be removed from the element which would then revert to its old styles.
      */
     animation.onfinish = () => {
-        value.set(getFinalKeyframe(keyframes, options))
+        value.jump(getFinalKeyframe(keyframes, options))
         sync.update(() => animation.cancel())
         onComplete && onComplete()
     }
