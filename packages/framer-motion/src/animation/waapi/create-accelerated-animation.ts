@@ -96,7 +96,7 @@ export function createAcceleratedAnimation(
      * be removed from the element which would then revert to its old styles.
      */
     animation.onfinish = () => {
-        value.jump(getFinalKeyframe(keyframes, options))
+        value.set(getFinalKeyframe(keyframes, options))
         sync.update(() => animation.cancel())
         onComplete && onComplete()
     }
@@ -129,7 +129,6 @@ export function createAcceleratedAnimation(
                     sampleDelta
                 )
             }
-
             sync.update(() => animation.cancel())
         },
     }
