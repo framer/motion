@@ -1865,7 +1865,9 @@ export function propagateDirtyNodes(node: IProjectionNode) {
      * Propagate isSharedProjectionDirty throughout the whole tree.
      */
     node.isSharedProjectionDirty ||= Boolean(
-        node.isProjectionDirty || node.parent.isSharedProjectionDirty
+        node.isProjectionDirty ||
+            node.parent.isProjectionDirty ||
+            node.parent.isSharedProjectionDirty
     )
 }
 
