@@ -1869,7 +1869,7 @@ export function propagateDirtyNodes(node: IProjectionNode) {
     )
 }
 
-function cleanDirtyNodes(node: IProjectionNode) {
+export function cleanDirtyNodes(node: IProjectionNode) {
     node.isProjectionDirty = node.isSharedProjectionDirty = false
 }
 
