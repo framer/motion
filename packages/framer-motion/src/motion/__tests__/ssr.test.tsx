@@ -108,6 +108,18 @@ function runTests(render: (components: any) => string) {
         )
     })
 
+    test("sets tabindex='0' if onTap is set", () => {
+        const div = render(<motion.div onTap={() => {}} />)
+
+        expect(div).toBe(`<div tabindex="0"></div>`)
+    })
+
+    test("sets tabindex='0' if onTapStart is set", () => {
+        const div = render(<motion.div onTap={() => {}} />)
+
+        expect(div).toBe(`<div tabindex="0"></div>`)
+    })
+
     test("initial correctly overrides style with keyframes and initial={false}", () => {
         const div = render(
             <motion.div

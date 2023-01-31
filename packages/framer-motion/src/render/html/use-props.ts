@@ -82,6 +82,10 @@ export function useHTMLProps(
                 : `pan-${props.drag === "x" ? "y" : "x"}`
     }
 
+    if (props.onTap || props.onTapStart) {
+        htmlProps.tabIndex = 0
+    }
+
     htmlProps.style = style
 
     return htmlProps

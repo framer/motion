@@ -7,6 +7,14 @@ import { AnimationType } from "../render/utils/types"
 import { isDragActive } from "./drag/utils/lock"
 import { FeatureProps } from "../motion/features/types"
 import { pipe } from "../utils/pipe"
+import { addDomEvent, useDomEvent } from "../events/use-dom-event"
+import { extractEventInfo } from "../events/event-info"
+
+function fireSyntheticPointerEvent(name: string, handler?: any) {
+    if (!handler) return
+    const syntheticPointerEvent = new PointerEvent("pointer" + name)
+    handler(syntheticPointerEvent, extractEventInfo(syntheticPointerEvent))
+}
 
 /**
  * @param handlers -
@@ -70,42 +78,97 @@ export function useTapGesture({
         visualElement.getProps().onTapCancel?.(event, info)
     }
 
-    const startPress = useCallback(
-        (event: PointerEvent, info: EventInfo) => {
-            removePointerEndListener()
+    function onPointerStart(event: PointerEvent, info: EventInfo) {
+        const latestProps = visualElement.getProps()
 
-            if (isPressing.current) return
-            isPressing.current = true
+        /**
+         * Ensure we trigger animations before firing event callback
+         */
+        if (latestProps.whileTap && visualElement.animationState) {
+            visualElement.animationState.setActive(AnimationType.Tap, true)
+        }
 
-            cancelPointerEndListeners.current = pipe(
-                addPointerEvent(window, "pointerup", onPointerUp, eventOptions),
-                addPointerEvent(
-                    window,
-                    "pointercancel",
-                    onPointerCancel,
-                    eventOptions
-                )
+        latestProps.onTapStart?.(event, info)
+    }
+
+    const callbackDependencies = [
+        Boolean(onTapStart),
+        Boolean(onTap),
+        Boolean(whileTap),
+        visualElement,
+    ]
+
+    const startPress = useCallback((event: PointerEvent, info: EventInfo) => {
+        removePointerEndListener()
+
+        if (isPressing.current) return
+        isPressing.current = true
+
+        cancelPointerEndListeners.current = pipe(
+            addPointerEvent(window, "pointerup", onPointerUp, eventOptions),
+            addPointerEvent(
+                window,
+                "pointercancel",
+                onPointerCancel,
+                eventOptions
             )
+        )
 
-            const latestProps = visualElement.getProps()
-
-            /**
-             * Ensure we trigger animations before firing event callback
-             */
-            if (latestProps.whileTap && visualElement.animationState) {
-                visualElement.animationState.setActive(AnimationType.Tap, true)
-            }
-
-            latestProps.onTapStart?.(event, info)
-        },
-        [Boolean(onTapStart), visualElement]
-    )
+        onPointerStart(event, info)
+    }, callbackDependencies)
 
     usePointerEvent(
         visualElement,
         "pointerdown",
         hasPressListeners ? startPress : undefined,
         eventOptions
+    )
+
+    const startAccessiblePress = useCallback(() => {
+        const stopKeydownListener = addDomEvent(
+            visualElement.current!,
+            "keydown",
+            (event: KeyboardEvent) => {
+                if (event.key !== "Enter" || isPressing.current) return
+
+                isPressing.current = true
+
+                cancelPointerEndListeners.current = addDomEvent(
+                    visualElement.current!,
+                    "keyup",
+                    () => {
+                        if (event.key !== "Enter" || !checkPointerEnd()) return
+
+                        fireSyntheticPointerEvent(
+                            "up",
+                            visualElement.getProps().onTap
+                        )
+                    },
+                    eventOptions
+                )
+
+                fireSyntheticPointerEvent("down", onPointerStart)
+            }
+        )
+
+        const stopBlurListener = addDomEvent(
+            visualElement.current!,
+            "blur",
+            () => {
+                stopKeydownListener()
+                stopBlurListener()
+
+                if (isPressing.current) {
+                    fireSyntheticPointerEvent("cancel", onPointerCancel)
+                }
+            }
+        )
+    }, callbackDependencies)
+
+    useDomEvent(
+        visualElement,
+        "focus",
+        hasPressListeners ? startAccessiblePress : undefined
     )
 
     useUnmountEffect(removePointerEndListener)

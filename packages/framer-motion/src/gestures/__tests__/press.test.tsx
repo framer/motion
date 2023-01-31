@@ -9,6 +9,11 @@ import {
     render,
 } from "../../../jest.setup"
 import { drag, MockDrag } from "../drag/__tests__/utils"
+import { fireEvent } from "@testing-library/dom"
+
+const enterKey = {
+    key: "Enter",
+}
 
 describe("press", () => {
     test("press event listeners fire", () => {
@@ -22,6 +27,88 @@ describe("press", () => {
         pointerUp(container.firstChild as Element)
 
         expect(press).toBeCalledTimes(1)
+    })
+
+    test("press event listeners fire via keyboard", () => {
+        const press = jest.fn()
+        const pressStart = jest.fn()
+        const pressCancel = jest.fn()
+        const Component = () => (
+            <motion.div
+                onTapStart={pressStart}
+                onTap={press}
+                onTapCancel={pressCancel}
+            />
+        )
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+
+        fireEvent.focus(container.firstChild as Element)
+        fireEvent.keyDown(container.firstChild as Element, enterKey)
+
+        expect(pressStart).toBeCalledTimes(1)
+
+        fireEvent.keyUp(container.firstChild as Element, enterKey)
+
+        expect(pressStart).toBeCalledTimes(1)
+        expect(press).toBeCalledTimes(1)
+        expect(pressCancel).toBeCalledTimes(0)
+    })
+
+    test("press cancel event listeners fire via keyboard", () => {
+        const press = jest.fn()
+        const pressStart = jest.fn()
+        const pressCancel = jest.fn()
+        const Component = () => (
+            <motion.div
+                onTapStart={pressStart}
+                onTap={press}
+                onTapCancel={pressCancel}
+            />
+        )
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+
+        fireEvent.focus(container.firstChild as Element)
+        fireEvent.keyDown(container.firstChild as Element, enterKey)
+
+        expect(pressStart).toBeCalledTimes(1)
+
+        fireEvent.blur(container.firstChild as Element)
+
+        expect(pressStart).toBeCalledTimes(1)
+        expect(press).toBeCalledTimes(0)
+        expect(pressCancel).toBeCalledTimes(1)
+    })
+
+    test("press cancel event listeners not fired via keyboard after keyUp", () => {
+        const press = jest.fn()
+        const pressStart = jest.fn()
+        const pressCancel = jest.fn()
+        const Component = () => (
+            <motion.div
+                onTapStart={pressStart}
+                onTap={press}
+                onTapCancel={pressCancel}
+            />
+        )
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+
+        fireEvent.focus(container.firstChild as Element)
+        fireEvent.keyDown(container.firstChild as Element, enterKey)
+        fireEvent.keyUp(container.firstChild as Element, enterKey)
+
+        expect(pressStart).toBeCalledTimes(1)
+
+        fireEvent.blur(container.firstChild as Element)
+
+        expect(press).toBeCalledTimes(1)
+        expect(pressStart).toBeCalledTimes(1)
+        expect(pressCancel).toBeCalledTimes(0)
     })
 
     test("press event listeners are cleaned up", () => {
@@ -232,6 +319,70 @@ describe("press", () => {
 
             // Trigger mouse up
             pointerUp(container.firstChild as Element)
+            logOpacity() // 0.5
+
+            resolve(opacityHistory)
+        })
+
+        return expect(promise).resolves.toEqual([0.5, 1, 0.5])
+    })
+
+    test("press gesture variant applies and unapplies via keyboard", () => {
+        const promise = new Promise((resolve) => {
+            const opacityHistory: number[] = []
+            const opacity = motionValue(0.5)
+            const logOpacity = () => opacityHistory.push(opacity.get())
+            const Component = () => (
+                <motion.div
+                    initial={{ opacity: 0.5 }}
+                    transition={{ type: false }}
+                    whileTap={{ opacity: 1 }}
+                    style={{ opacity }}
+                />
+            )
+
+            const { container } = render(<Component />)
+
+            logOpacity() // 0.5
+
+            fireEvent.focus(container.firstChild as Element)
+            fireEvent.keyDown(container.firstChild as Element, enterKey)
+
+            logOpacity() // 1
+
+            fireEvent.keyUp(container.firstChild as Element, enterKey)
+            logOpacity() // 0.5
+
+            resolve(opacityHistory)
+        })
+
+        return expect(promise).resolves.toEqual([0.5, 1, 0.5])
+    })
+
+    test("press gesture variant applies and unapplies via blur cancel", () => {
+        const promise = new Promise((resolve) => {
+            const opacityHistory: number[] = []
+            const opacity = motionValue(0.5)
+            const logOpacity = () => opacityHistory.push(opacity.get())
+            const Component = () => (
+                <motion.div
+                    initial={{ opacity: 0.5 }}
+                    transition={{ type: false }}
+                    whileTap={{ opacity: 1 }}
+                    style={{ opacity }}
+                />
+            )
+
+            const { container } = render(<Component />)
+
+            logOpacity() // 0.5
+
+            fireEvent.focus(container.firstChild as Element)
+            fireEvent.keyDown(container.firstChild as Element, enterKey)
+
+            logOpacity() // 1
+
+            fireEvent.blur(container.firstChild as Element)
             logOpacity() // 0.5
 
             resolve(opacityHistory)

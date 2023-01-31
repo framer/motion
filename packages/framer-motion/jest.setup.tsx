@@ -12,6 +12,7 @@ const pointerEventProps = ["isPrimary"]
 class PointerEventFake extends Event {
     constructor(type: any, props: any) {
         super(type, props)
+        if (!props) return
         pointerEventProps.forEach((prop) => {
             if (props[prop] !== null) {
                 this[prop] = props[prop]
