@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { HTMLProps, useMemo } from "react"
 import { MotionProps } from "../../motion/types"
 import { isForcedMotionValue } from "../../motion/utils/is-forced-motion-value"
 import { MotionValue } from "../../value"
@@ -57,7 +57,7 @@ function useStyle(
 }
 
 export function useHTMLProps(
-    props: MotionProps,
+    props: MotionProps & HTMLProps<HTMLElement>,
     visualState: ResolvedValues,
     isStatic: boolean
 ) {
@@ -82,7 +82,10 @@ export function useHTMLProps(
                 : `pan-${props.drag === "x" ? "y" : "x"}`
     }
 
-    if (props.onTap || props.onTapStart) {
+    if (
+        props.tabIndex === undefined &&
+        (props.onTap || props.onTapStart || props.whileTap)
+    ) {
         htmlProps.tabIndex = 0
     }
 

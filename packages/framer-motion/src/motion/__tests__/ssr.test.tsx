@@ -120,6 +120,18 @@ function runTests(render: (components: any) => string) {
         expect(div).toBe(`<div tabindex="0"></div>`)
     })
 
+    test("sets tabindex='0' if whileTap is set", () => {
+        const div = render(<motion.div whileTap={{ scale: 2 }} />)
+
+        expect(div).toBe(`<div tabindex="0"></div>`)
+    })
+
+    test("doesn't override tabindex", () => {
+        const div = render(<motion.div tabIndex={2} whileTap={{ scale: 2 }} />)
+
+        expect(div).toBe(`<div tabindex="2"></div>`)
+    })
+
     test("initial correctly overrides style with keyframes and initial={false}", () => {
         const div = render(
             <motion.div
