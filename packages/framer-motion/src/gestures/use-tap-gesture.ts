@@ -8,9 +8,15 @@ import { isDragActive } from "./drag/utils/lock"
 import { FeatureProps } from "../motion/features/types"
 import { pipe } from "../utils/pipe"
 import { addDomEvent, useDomEvent } from "../events/use-dom-event"
-import { extractEventInfo } from "../events/event-info"
+import {
+    EventListenerWithPointInfo,
+    extractEventInfo,
+} from "../events/event-info"
 
-function fireSyntheticPointerEvent(name: string, handler?: any) {
+function fireSyntheticPointerEvent(
+    name: string,
+    handler?: EventListenerWithPointInfo
+) {
     if (!handler) return
     const syntheticPointerEvent = new PointerEvent("pointer" + name)
     handler(syntheticPointerEvent, extractEventInfo(syntheticPointerEvent))
