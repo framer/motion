@@ -18,7 +18,7 @@ export function createUseRender(forwardMotionProps = false) {
             : useHTMLProps
 
         const visualProps = useVisualProps(
-            props,
+            props as any,
             latestValues,
             isStatic,
             Component
