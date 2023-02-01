@@ -4,6 +4,16 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [9.0.0] 2023-02-01
+
+### Added
+
+-   Tap events are now keyboard accessible.
+
+### Changed
+
+-   `whileFocus` only triggers according to `focus-visible` rules.
+
 ## [8.5.5] 2023-01-30
 
 ### Fixed
