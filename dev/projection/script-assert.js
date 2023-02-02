@@ -13,6 +13,15 @@ function showError(element, msg) {
     }
 }
 
+window.ProjectionFrames = []
+window.MotionDebug = {
+    record: (action) => {
+        if (action.type === "projectionFrame") {
+            window.ProjectionFrames.push({ ...action })
+        }
+    },
+}
+
 window.Assert = {
     matchViewportBox: (element, expected, threshold = 0.01) => {
         const bbox = element.getBoundingClientRect()
@@ -81,6 +90,32 @@ window.Assert = {
             right: right - x,
             bottom: bottom - y,
             left: left - x,
+        }
+    },
+    checkFrames(element, frameIndex, expected) {
+        const frame = window.ProjectionFrames[frameIndex]
+
+        if (!frame) showError(element, "No frame found for given index")
+
+        if (frame.totalNodes !== expected.totalNodes) {
+            showError(
+                element,
+                `Expected ${expected.totalNodes} nodes. Found ${frame.totalNodes}.`
+            )
+        }
+
+        if (frame.resolvedTargetDeltas !== expected.resolvedTargetDeltas) {
+            showError(
+                element,
+                `Expected ${expected.resolvedTargetDeltas} nodes to resolve target deltas. Found ${frame.resolvedTargetDeltas}.`
+            )
+        }
+
+        if (frame.totalNodes !== expected.totalNodes) {
+            showError(
+                element,
+                `Expected ${expected.totalNodes} nodes to recalculate projection transform. Found ${frame.totalNodes}.`
+            )
         }
     },
 }

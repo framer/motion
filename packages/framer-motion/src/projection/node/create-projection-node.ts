@@ -45,6 +45,8 @@ import { globalProjectionState } from "./state"
 import { delay } from "../../utils/delay"
 import { mix } from "../../utils/mix"
 import { Process } from "../../frameloop/types"
+import { ProjectionFrame } from "../../debug/types"
+import { record } from "../../debug/record"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -55,6 +57,17 @@ const transformAxes = ["", "X", "Y", "Z"]
 const animationTarget = 1000
 
 let id = 0
+
+/**
+ * Use a mutable data object for debug data so as to not create a new
+ * object every frame.
+ */
+const projectionFrameData: ProjectionFrame = {
+    type: "projectionFrame",
+    totalNodes: 0,
+    resolvedTargetDeltas: 0,
+    recalculatedProjection: 0,
+}
 
 export function createProjectionNode<I>({
     attachResizeListener,
@@ -680,10 +693,18 @@ export function createProjectionNode<I>({
          * the next step.
          */
         updateProjection = () => {
+            // Reset projection frame data
+            projectionFrameData.totalNodes =
+                projectionFrameData.resolvedTargetDeltas =
+                projectionFrameData.recalculatedProjection =
+                    0
+
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
             this.nodes!.forEach(cleanDirtyNodes)
+
+            record(projectionFrameData)
         }
 
         /**
@@ -933,13 +954,10 @@ export function createProjectionNode<I>({
             return boxWithoutTransform
         }
 
-        /**
-         *
-         */
         setTargetDelta(delta: Delta) {
             this.targetDelta = delta
-            this.isProjectionDirty = true
             this.root.scheduleUpdateProjection()
+            this.isProjectionDirty = true
         }
 
         setOptions(options: ProjectionNodeOptions) {
@@ -1093,6 +1111,8 @@ export function createProjectionNode<I>({
                     this.relativeParent = this.relativeTarget = undefined
                 }
             }
+
+            projectionFrameData.resolvedTargetDeltas++
         }
 
         getClosestProjectingParent() {
@@ -1179,6 +1199,7 @@ export function createProjectionNode<I>({
             )
 
             const { target } = lead
+
             if (!target) return
 
             if (!this.projectionDelta) {
@@ -1221,6 +1242,8 @@ export function createProjectionNode<I>({
 
                 this.notifyListeners("projectionUpdate", target)
             }
+
+            projectionFrameData.recalculatedProjection++
         }
 
         isVisible = true
@@ -1849,6 +1872,8 @@ function notifyLayoutUpdate(node: IProjectionNode) {
 }
 
 export function propagateDirtyNodes(node: IProjectionNode) {
+    projectionFrameData.totalNodes++
+
     if (!node.parent) return
 
     /**

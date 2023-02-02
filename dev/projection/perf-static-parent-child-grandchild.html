@@ -1,0 +1,107 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #parent {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+            }
+
+            #child {
+                width: 50px;
+                height: 50px;
+                background-color: #0077ff;
+            }
+
+            #parent.b {
+                width: 200px;
+                position: absolute;
+                top: 100px;
+                left: 200px;
+                padding: 20px;
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            #grandChild {
+                width: 100px;
+                height: 100px;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="parent">
+            <div id="child"><div id="grandChild"></div></div>
+        </div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode, relativeEase } = window.Animate
+            const { matchViewportBox, checkFrames } = window.Assert
+
+            const parent = document.getElementById("parent")
+            const parentProjection = createNode(
+                parent,
+                undefined,
+                {},
+                { type: false }
+            )
+
+            const child = document.getElementById("child")
+            const childProjection = createNode(
+                child,
+                parentProjection,
+                {},
+                { duration: 0.1 }
+            )
+
+            const grandChild = document.getElementById("grandChild")
+            const grandChildProjection = createNode(
+                grandChild,
+                childProjection,
+                {},
+                { duration: 0.1 }
+            )
+
+            parentProjection.willUpdate()
+            childProjection.willUpdate()
+            grandChildProjection.willUpdate()
+
+            parent.classList.add("b")
+
+            parentProjection.root.didUpdate()
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    console.log(window.ProjectionFrames)
+                    checkFrames(parent, 1, {
+                        totalNodes: 4,
+                        resolvedTargetDeltas: 2,
+                        recalculatedProjection: 2,
+                    })
+                })
+            })
+        </script>
+    </body>
+</html>
