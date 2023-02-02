@@ -37,7 +37,6 @@ export function useTapGesture({
     const hasPressListeners = onTap || onTapStart || onTapCancel || whileTap
     const isPressing = useRef(false)
     const cancelPointerEndListeners = useRef<Function | null>(null)
-    const suspendedTabIndex = useRef<string | null>(null)
 
     /**
      * Only set listener to passive if there are no external listeners.
@@ -63,13 +62,6 @@ export function useTapGesture({
         const latestProps = visualElement.getProps()
         if (latestProps.whileTap && visualElement.animationState) {
             visualElement.animationState.setActive(AnimationType.Tap, false)
-        }
-
-        if (suspendedTabIndex.current !== null) {
-            visualElement.current!.setAttribute(
-                "tabindex",
-                suspendedTabIndex.current
-            )
         }
 
         return !isDragActive()
@@ -118,11 +110,6 @@ export function useTapGesture({
 
         if (isPressing.current) return
         isPressing.current = true
-
-        suspendedTabIndex.current =
-            visualElement.current!.getAttribute("tabindex")
-
-        visualElement.current!.setAttribute("tabindex", "-1")
 
         cancelPointerEndListeners.current = pipe(
             addPointerEvent(window, "pointerup", onPointerUp, eventOptions),

@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [9.0.1] 2023-02-02
+
+### Removed
+
+-   Tap events no longer suspend `tabindex` attribute for the duration of the gesture.
+
 ## [9.0.0] 2023-02-01
 
 ### Added
