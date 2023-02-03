@@ -11,6 +11,7 @@ import {
 import { ReorderContext } from "../../context/ReorderContext"
 import { Box } from "../../projection/geometry/types"
 import { motion } from "../../render/dom/motion"
+import { m } from "../../render/dom/motion-minimal"
 import { HTMLMotionProps } from "../../render/html/types"
 import { useConstant } from "../../utils/use-constant"
 import { useMotionValue } from "../../value/use-motion-value"
@@ -39,6 +40,13 @@ export interface Props<V> {
      * @default true
      */
     layout?: true | "position"
+
+    /**
+     * The motion component to use. Defaults to `motion`.
+     *
+     * @public
+     */
+    motionComponent?: typeof motion | typeof m
 }
 
 function useDefaultMotionValue(value: any, defaultValue: number = 0) {
@@ -53,11 +61,12 @@ export function ReorderItem<V>(
         as = "li",
         onDrag,
         layout = true,
+        motionComponent = motion,
         ...props
     }: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
     externalRef?: React.Ref<any>
 ) {
-    const Component = useConstant(() => motion(as)) as FunctionComponent<
+    const Component = useConstant(() => motionComponent(as)) as FunctionComponent<
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
     >
 

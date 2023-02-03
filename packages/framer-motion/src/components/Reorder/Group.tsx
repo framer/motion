@@ -7,6 +7,7 @@ import {
     useEffect,
     useRef,
 } from "react"
+import { m } from "render/dom/motion-minimal"
 import { ReorderContext } from "../../context/ReorderContext"
 import { motion } from "../../render/dom/motion"
 import { HTMLMotionProps } from "../../render/html/types"
@@ -58,6 +59,13 @@ export interface Props<V> {
      * @public
      */
     values: V[]
+
+    /**
+     * The motion component to use. Defaults to `motion`.
+     *
+     * @public
+     */
+    motionComponent?: typeof motion | typeof m
 }
 
 export function ReorderGroup<V>(
@@ -67,13 +75,14 @@ export function ReorderGroup<V>(
         axis = "y",
         onReorder,
         values,
+        motionComponent = motion,
         ...props
     }: Props<V> &
         Omit<HTMLMotionProps<any>, "values"> &
         React.PropsWithChildren<{}>,
     externalRef?: React.Ref<any>
 ) {
-    const Component = useConstant(() => motion(as)) as FunctionComponent<
+    const Component = useConstant(() => motionComponent(as)) as FunctionComponent<
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
     >
 
