@@ -5,14 +5,16 @@ import {
     FunctionComponent,
     ReactHTML,
     useEffect,
+    useMemo,
     useRef,
 } from "react"
 import { ReorderContext } from "../../context/ReorderContext"
 import { motion } from "../../render/dom/motion"
 import { HTMLMotionProps } from "../../render/html/types"
 import { useConstant } from "../../utils/use-constant"
-import { ItemData, ReorderContextProps } from "./types"
+import { ItemLayout, ReorderContextProps } from "./types"
 import { checkReorder } from "./utils/check-reorder"
+import { useOrderState } from "./utils/use-order-state"
 
 export interface Props<V> {
     /**
@@ -23,8 +25,10 @@ export interface Props<V> {
     as?: keyof ReactHTML
 
     /**
-     * The axis to reorder along. By default, items will be draggable on this axis.
-     * To make draggable on both axes, set `<Reorder.Item drag />`
+     * The axis to reorder along. By default, this is calculated dynamically.
+     *
+     * Items will visually drag only along the reorder axis if no items wrap.
+     * This can be overridden by setting `<Reorder.Item drag />`
      *
      * @public
      */
@@ -64,7 +68,7 @@ export function ReorderGroup<V>(
     {
         children,
         as = "ul",
-        axis = "y",
+        axis: axisOverride,
         onReorder,
         values,
         ...props
@@ -73,41 +77,48 @@ export function ReorderGroup<V>(
         React.PropsWithChildren<{}>,
     externalRef?: React.Ref<any>
 ) {
+    const internalRef = useRef<HTMLElement>()
+    const ref = useMemo(
+        () => externalRef || internalRef,
+        [externalRef, internalRef]
+    ) as React.MutableRefObject<any>
+
     const Component = useConstant(() => motion(as)) as FunctionComponent<
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
     >
-
-    const order: ItemData<V>[] = []
+    const itemLayouts = useConstant<ItemLayout<V>>(() => new Map())
     const isReordering = useRef(false)
+
+    const { axis, isWrapping, itemsPerAxis } = useOrderState(
+        ref,
+        values,
+        itemLayouts,
+        axisOverride
+    )
 
     invariant(Boolean(values), "Reorder.Group must be provided a values prop")
 
     const context: ReorderContextProps<any> = {
         axis,
-        registerItem: (value, layout) => {
-            /**
-             * Ensure entries can't add themselves more than once
-             */
-            if (
-                layout &&
-                order.findIndex((entry) => value === entry.value) === -1
-            ) {
-                order.push({ value, layout: layout[axis] })
-                order.sort(compareMin)
-            }
-        },
+        isWrapping,
+        registerItem: (value, layout) => itemLayouts.set(value, layout),
         updateOrder: (id, offset, velocity) => {
             if (isReordering.current) return
 
-            const newOrder = checkReorder(order, id, offset, velocity)
+            const newValuesOrder = checkReorder(
+                values,
+                itemLayouts,
+                id,
+                offset,
+                velocity,
+                axis,
+                isWrapping,
+                itemsPerAxis
+            )
 
-            if (order !== newOrder) {
+            if (values !== newValuesOrder) {
                 isReordering.current = true
-                onReorder(
-                    newOrder
-                        .map(getValue)
-                        .filter((value) => values.indexOf(value) !== -1)
-                )
+                onReorder(newValuesOrder)
             }
         },
     }
@@ -117,7 +128,7 @@ export function ReorderGroup<V>(
     })
 
     return (
-        <Component {...props} ref={externalRef}>
+        <Component {...props} ref={ref}>
             <ReorderContext.Provider value={context}>
                 {children}
             </ReorderContext.Provider>
@@ -126,11 +137,3 @@ export function ReorderGroup<V>(
 }
 
 export const Group = forwardRef(ReorderGroup)
-
-function getValue<V>(item: ItemData<V>) {
-    return item.value
-}
-
-function compareMin<V>(a: ItemData<V>, b: ItemData<V>) {
-    return a.layout.min - b.layout.min
-}
