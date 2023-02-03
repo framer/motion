@@ -1004,14 +1004,12 @@ export function createProjectionNode<I>({
              * We don't use transform for this step of processing so we don't
              * need to check whether any nodes have changed transform.
              */
-            let canSkip = true
-
-            if (isShared && this.isSharedProjectionDirty) canSkip = false
-            if (this.isProjectionDirty || this.parent?.isProjectionDirty)
-                canSkip = false
-
-            if (this.attemptToResolveRelativeTarget) canSkip = false
-
+            const canSkip = !(
+                (isShared && this.isSharedProjectionDirty) ||
+                this.isProjectionDirty ||
+                this.parent?.isProjectionDirty ||
+                this.attemptToResolveRelativeTarget
+            )
             if (canSkip) return
 
             const { layout, layoutId } = this.options
