@@ -1875,7 +1875,7 @@ export function propagateDirtyNodes(node: IProjectionNode) {
     projectionFrameData.totalNodes++
 
     if (!node.parent) return
-
+    console.log(node.id, node.isProjecting())
     /**
      * If this node isn't projecting, propagate isProjectionDirty. It will have
      * no performance impact but it will allow the next child that *is* projecting

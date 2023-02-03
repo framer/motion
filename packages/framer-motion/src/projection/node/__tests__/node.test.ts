@@ -127,102 +127,126 @@ describe("node", () => {
     })
 
     test("Subtrees with updated targets propagate isProjectionDirty to children", () => {
-        const parent = createTestNode(undefined, {})
+        const a = createTestNode(undefined, {})
 
-        const parentInstance = {
-            id: "parent",
+        const aInstance = {
+            id: "a",
             resetTransform: jest.fn(),
             box: {
                 x: { min: 0, max: 100 },
                 y: { min: 0, max: 100 },
             },
         }
-        parent.mount(parentInstance)
+        a.mount(aInstance)
 
-        const child = createTestNode(parent)
-        const childInstance = {
-            id: "child",
+        const b = createTestNode(a)
+        const bInstance = {
+            id: "b",
             resetTransform: jest.fn(),
             box: {
                 x: { min: 0, max: 50 },
                 y: { min: 0, max: 50 },
             },
         }
-        child.mount(childInstance)
+        b.mount(bInstance)
 
-        const grandChild = createTestNode(child)
-        const grandChildInstance = {
-            id: "grandchild",
+        const c = createTestNode(b)
+        const cInstance = {
+            id: "c",
             resetTransform: jest.fn(),
             box: {
                 x: { min: 0, max: 50 },
                 y: { min: 0, max: 50 },
             },
         }
-        grandChild.mount(childInstance)
+        c.mount(bInstance)
 
-        parent.willUpdate()
-        child.willUpdate()
-        grandChild.willUpdate()
+        const d = createTestNode(c)
+        const dInstance = {
+            id: "d",
+            resetTransform: jest.fn(),
+            box: {
+                x: { min: 0, max: 50 },
+                y: { min: 0, max: 50 },
+            },
+        }
+        d.mount(dInstance)
 
-        parentInstance.box = {
+        a.willUpdate()
+        b.willUpdate()
+        c.willUpdate()
+        d.willUpdate()
+
+        aInstance.box = {
             x: { min: 100, max: 200 },
             y: { min: 100, max: 200 },
         }
 
-        childInstance.box = {
+        bInstance.box = {
             x: { min: 150, max: 200 },
             y: { min: 150, max: 200 },
         }
 
-        grandChildInstance.box = {
+        cInstance.box = {
             x: { min: 150, max: 200 },
             y: { min: 150, max: 200 },
         }
 
-        child.root.didUpdate()
+        dInstance.box = {
+            x: { min: 100, max: 200 },
+            y: { min: 100, max: 200 },
+        }
 
-        child.setTargetDelta({
+        b.root.didUpdate()
+
+        b.setTargetDelta({
             x: { translate: 200, scale: 2, origin: 0.5, originPoint: 100 },
             y: { translate: 200, scale: 2, origin: 0.5, originPoint: 100 },
         })
 
-        propagateDirtyNodes(parent as IProjectionNode)
-        propagateDirtyNodes(child as IProjectionNode)
-        propagateDirtyNodes(grandChild as IProjectionNode)
+        // This hacks c into being considered "projecting" and propagation should stop here
+        c.relativeTarget = { x: { min: 0, max: 100 }, y: { min: 0, max: 100 } }
 
-        parent.resolveTargetDelta()
-        child.resolveTargetDelta()
-        grandChild.resolveTargetDelta()
+        propagateDirtyNodes(a as IProjectionNode)
+        propagateDirtyNodes(b as IProjectionNode)
+        propagateDirtyNodes(c as IProjectionNode)
+        propagateDirtyNodes(d as IProjectionNode)
 
         // Check isProjectionDirty is propagated from child to grandChild
-        expect(parent.isProjectionDirty).toEqual(false)
-        expect(parent.isSharedProjectionDirty).toEqual(false)
-        expect(child.isProjectionDirty).toEqual(true)
-        expect(child.isSharedProjectionDirty).toEqual(true)
-        expect(grandChild.isProjectionDirty).toEqual(false)
-        expect(grandChild.isSharedProjectionDirty).toEqual(true)
+        expect(a.isProjectionDirty).toEqual(false)
+        expect(a.isSharedProjectionDirty).toEqual(false)
+        expect(b.isProjectionDirty).toEqual(true)
+        expect(b.isSharedProjectionDirty).toEqual(true)
+        expect(c.isProjectionDirty).toEqual(false)
+        expect(c.isSharedProjectionDirty).toEqual(true)
+        expect(d.isProjectionDirty).toEqual(false)
+        expect(d.isSharedProjectionDirty).toEqual(true)
 
-        parent.calcProjection()
-        child.calcProjection()
-        grandChild.calcProjection()
+        a.resolveTargetDelta()
+        b.resolveTargetDelta()
+        c.resolveTargetDelta()
+        d.resolveTargetDelta()
 
-        parent.calcProjection()
-        child.calcProjection()
-        grandChild.calcProjection()
+        a.calcProjection()
+        b.calcProjection()
+        c.calcProjection()
+        d.calcProjection()
 
-        cleanDirtyNodes(parent as IProjectionNode)
-        cleanDirtyNodes(child as IProjectionNode)
-        cleanDirtyNodes(grandChild as IProjectionNode)
+        cleanDirtyNodes(a as IProjectionNode)
+        cleanDirtyNodes(b as IProjectionNode)
+        cleanDirtyNodes(c as IProjectionNode)
+        cleanDirtyNodes(d as IProjectionNode)
 
         // Check isProjectionDirty is cleaned up after projections are calculated
         expect(
-            parent.isProjectionDirty ||
-                parent.isSharedProjectionDirty ||
-                child.isProjectionDirty ||
-                child.isSharedProjectionDirty ||
-                grandChild.isProjectionDirty ||
-                grandChild.isSharedProjectionDirty
+            a.isProjectionDirty ||
+                a.isSharedProjectionDirty ||
+                b.isProjectionDirty ||
+                b.isSharedProjectionDirty ||
+                c.isProjectionDirty ||
+                c.isSharedProjectionDirty ||
+                d.isProjectionDirty ||
+                d.isSharedProjectionDirty
         ).toEqual(false)
     })
 })
