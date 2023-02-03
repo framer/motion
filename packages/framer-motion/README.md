@@ -3,7 +3,7 @@
 </p>
 <h1 align="center">Framer Motion</h1>
 <h3 align="center">
-  An open source motion library for React, <a href="https://www.framer.com">made by Framer</a>.
+  An open source motion library for React, <a href="https://www.framer.com/?utm_source=motion-readme">made by Framer</a>.
 </h3>
 
 <br>
@@ -85,4 +85,4 @@ export const MyComponent = ({ isVisible }) => (
 
 ### ✨ Framer
 
--   Design and publish sites that inspire. [Try Framer for free](https://www.framer.com/).
+-   Design and publish sites that inspire. [Try Framer for free](https://www.framer.com/?utm_source=motion-readme).
