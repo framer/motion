@@ -1,0 +1,139 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #a {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+            }
+
+            #b {
+                width: 200px;
+                height: 200px;
+                background-color: #0077ff;
+                position: absolute;
+                top: 50px;
+                left: 50px;
+            }
+
+            #a-2,
+            #b-2 {
+                width: 50px;
+                height: 50px;
+                background-color: #fff;
+            }
+
+            #a-3,
+            #b-3 {
+                width: 25px;
+                height: 25px;
+                background-color: #000;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="a">
+            <div id="a-2"><div id="a-3"></div></div>
+        </div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode } = window.Animate
+            const { matchViewportBox, checkFrames } = window.Assert
+            const duration = 10
+
+            const a = document.getElementById("a")
+            const aProjection = createNode(
+                a,
+                undefined,
+                { layoutId: "box" },
+                { duration }
+            )
+            const a2 = document.getElementById("a-2")
+            const a2Projection = createNode(
+                a2,
+                aProjection,
+                { layoutId: "2" },
+                { duration }
+            )
+            const a3 = document.getElementById("a-3")
+            const a3Projection = createNode(
+                a3,
+                a2Projection,
+                { layoutId: "3" },
+                { duration }
+            )
+
+            aProjection.willUpdate()
+            a2Projection.willUpdate()
+            a3Projection.willUpdate()
+
+            const b = document.createElement("div")
+            b.id = "b"
+            document.body.appendChild(b)
+            const bProjection = createNode(
+                b,
+                undefined,
+                { layoutId: "box" },
+                { duration }
+            )
+            const b2 = document.createElement("div")
+            b2.id = "b-2"
+            b.appendChild(b2)
+            const b2Projection = createNode(
+                b2,
+                bProjection,
+                { layoutId: "2" },
+                { duration }
+            )
+            const b3 = document.createElement("div")
+            b3.id = "b-3"
+            b2.appendChild(b3)
+            const b3Projection = createNode(
+                b3,
+                b2Projection,
+                { layoutId: "3" },
+                { duration }
+            )
+
+            aProjection.root.didUpdate()
+
+            /**
+             * Shared element transition nodes are currently all recalculated,
+             * it would be good to investigate in the future if there's further
+             * safe optimisations we can make here.
+             */
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    console.log(window.ProjectionFrames)
+                    checkFrames(a, 1, {
+                        totalNodes: 7,
+                        resolvedTargetDeltas: 3,
+                        recalculatedProjection: 6,
+                    })
+                })
+            })
+        </script>
+    </body>
+</html>

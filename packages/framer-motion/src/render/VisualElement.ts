@@ -451,7 +451,7 @@ export abstract class VisualElement<
                     sync.update(this.notifyUpdate, false, true)
 
                 if (valueIsTransform && this.projection) {
-                    this.projection.isSharedProjectionDirty = true
+                    this.projection.isTransformDirty = true
                 }
             }
         )

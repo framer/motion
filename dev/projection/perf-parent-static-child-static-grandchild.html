@@ -31,6 +31,7 @@
             #grandChild {
                 width: 100px;
                 height: 100px;
+                background-color: black;
             }
 
             #trigger-overflow {
@@ -65,7 +66,7 @@
                 parent,
                 undefined,
                 {},
-                { duration: 0.1 }
+                { duration: 10 }
             )
 
             const child = document.getElementById("child")
@@ -73,7 +74,7 @@
                 child,
                 parentProjection,
                 {},
-                { type: false }
+                { duration: 0.0001 }
             )
 
             const grandChild = document.getElementById("grandChild")
@@ -81,7 +82,7 @@
                 grandChild,
                 childProjection,
                 {},
-                { type: false }
+                { duration: 0.0001 }
             )
 
             parentProjection.willUpdate()
@@ -95,7 +96,7 @@
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     console.log(window.ProjectionFrames)
-                    checkFrames(parent, 1, {
+                    checkFrames(parent, 2, {
                         totalNodes: 4,
                         resolvedTargetDeltas: 2,
                         recalculatedProjection: 2,

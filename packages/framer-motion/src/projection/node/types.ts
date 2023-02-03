@@ -65,6 +65,7 @@ export interface IProjectionNode<I = unknown> {
     isLayoutDirty: boolean
     isProjectionDirty: boolean
     isSharedProjectionDirty: boolean
+    isTransformDirty: boolean
     shouldResetTransform: boolean
     prevTransformTemplateValue: string | undefined
     isUpdateBlocked(): boolean
