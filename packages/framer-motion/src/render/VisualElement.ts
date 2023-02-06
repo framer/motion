@@ -1,5 +1,5 @@
 import { sync, cancelSync } from "../frameloop"
-import { invariant } from "hey-listen"
+import { invariant, warning } from "hey-listen"
 import { createElement } from "react"
 import {
     MotionConfigContext,
@@ -472,7 +472,7 @@ export abstract class VisualElement<
 
     loadFeatures(
         { children, ...renderedProps }: MotionProps,
-        isStrict?: boolean,
+        { isStrict, warn }: { isStrict?: boolean, warn?: boolean },
         preloadedFeatures?: FeatureBundle,
         projectionId?: number,
         ProjectionNodeConstructor?: any,
@@ -489,10 +489,8 @@ export abstract class VisualElement<
             preloadedFeatures &&
             isStrict
         ) {
-            invariant(
-                false,
-                "You have rendered a `motion` component within a `LazyMotion` component. This will break tree shaking. Import and render a `m` component instead."
-            )
+            const strictMessage = "You have rendered a `motion` component within a `LazyMotion` component. This will break tree shaking. Import and render a `m` component instead.";
+            warn ? warning(false, strictMessage) : invariant(false, strictMessage)
         }
 
         for (let i = 0; i < numFeatures; i++) {
