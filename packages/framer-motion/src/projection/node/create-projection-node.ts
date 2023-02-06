@@ -996,6 +996,7 @@ export function createProjectionNode<I>({
              */
             const lead = this.getLead()
             this.isProjectionDirty ||= lead.isProjectionDirty
+            this.isTransformDirty ||= lead.isTransformDirty
             this.isSharedProjectionDirty ||= lead.isSharedProjectionDirty
 
             const isShared = Boolean(this.resumingFrom) || this !== lead
