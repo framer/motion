@@ -1919,7 +1919,9 @@ export function propagateDirtyNodes(node: IProjectionNode) {
     }
 
     /**
-     * Propagate isSharedProjectionDirty throughout the whole tree.
+     * Propagate isSharedProjectionDirty and isTransformDirty
+     * throughout the whole tree. A future revision can take another look at
+     * this but for safety we still recalcualte shared nodes.
      */
     node.isSharedProjectionDirty ||= Boolean(
         node.isProjectionDirty ||
