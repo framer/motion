@@ -7,7 +7,11 @@ import {
 } from "../context/MotionConfigContext"
 import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
 import { featureDefinitions } from "../motion/features/definitions"
-import { FeatureBundle, FeatureDefinition } from "../motion/features/types"
+import {
+    FeatureBundle,
+    FeatureDefinition,
+    FeatureNames,
+} from "../motion/features/types"
 import { MotionProps, MotionStyle } from "../motion/types"
 import { createBox } from "../projection/geometry/models"
 import { Box } from "../projection/geometry/types"
@@ -274,6 +278,13 @@ export abstract class VisualElement<
     protected props: MotionProps
 
     /**
+     * Cleanup functions for active features (hover/tap/exit etc)
+     */
+    private activeFeatures: {
+        [K in keyof FeatureNames]?: VoidFunction
+    } = {}
+
+    /**
      * A map of every subscription that binds the provided or generated
      * motion values onChange listeners to this visual element.
      */
@@ -414,6 +425,7 @@ export abstract class VisualElement<
     }
 
     unmount() {
+        this.notify("Unmount")
         this.projection?.unmount()
         cancelSync.update(this.notifyUpdate)
         cancelSync.render(this.render)
@@ -498,7 +510,7 @@ export abstract class VisualElement<
 
         for (let i = 0; i < numFeatures; i++) {
             const name = featureNames[i]
-            const { isEnabled, Component } = featureDefinitions[
+            const { type, isEnabled, feature } = featureDefinitions[
                 name
             ] as FeatureDefinition
 
@@ -507,14 +519,18 @@ export abstract class VisualElement<
              * dynamically request functionality. In initial tests this
              * was producing a lot of duplication amongst bundles.
              */
-            if (isEnabled(renderedProps) && Component) {
-                features.push(
-                    createElement(Component, {
-                        key: name,
-                        ...renderedProps,
-                        visualElement: this,
-                    })
-                )
+            if (isEnabled(renderedProps) && feature) {
+                if (type === "react") {
+                    features.push(
+                        createElement(feature, {
+                            key: name,
+                            ...renderedProps,
+                            visualElement: this,
+                        })
+                    )
+                } else if (type === "vanilla" && !this.activeFeatures[name]) {
+                    this.activeFeatures[name] = feature(this)
+                }
             }
         }
 
@@ -839,6 +855,17 @@ export abstract class VisualElement<
         }
 
         return this.events[eventName].add(callback)
+    }
+
+    once<EventName extends keyof VisualElementEventCallbacks>(
+        eventName: EventName,
+        callback: VisualElementEventCallbacks[EventName]
+    ) {
+        const unsubscribe = this.on(eventName, (...args: any) => {
+            unsubscribe()
+            ;(callback as any)(...args)
+        })
+        return unsubscribe
     }
 
     notify<EventName extends keyof VisualElementEventCallbacks>(

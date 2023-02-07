@@ -52,13 +52,15 @@ export interface VisualElementEventCallbacks {
     LayoutMeasure: (layout: Box, prevLayout?: Box) => void
     LayoutUpdate: (layout: Axis, prevLayout: Axis) => void
     Update: (latest: ResolvedValues) => void
-    Render: () => void
     AnimationStart: (definition: AnimationDefinition) => void
     AnimationComplete: (definition: AnimationDefinition) => void
     LayoutAnimationStart: () => void
     LayoutAnimationComplete: () => void
     SetAxisTarget: () => void
     Unmount: () => void
+    InsertionEffect: () => void
+    LayoutEffect: () => void
+    Effect: () => void
 }
 
 export interface LayoutLifecycles {
