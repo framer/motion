@@ -8,7 +8,7 @@
 <br/>
 <p align="center">
   <a href="https://www.framer.com?utm_source=motion">
-    <img src="https://framerusercontent.com/images/atXqxn4JhKm4LXVncdNjkKV7yCU.png" width="140" alt="Framer Button" />
+    <img src="https://framerusercontent.com/images/atXqxn4JhKm4LXVncdNjkKV7yCU.png" width="140" alt="Start for free" />
   </a>
 </p>
 <br/>
