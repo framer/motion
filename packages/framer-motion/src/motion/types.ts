@@ -262,6 +262,12 @@ export interface MotionAdvancedProps {
      * Set to `false` to prevent inheriting variant changes from its parent.
      */
     inherit?: boolean
+
+    /**
+     * @public
+     * Set to `false` to prevent throwing an error when a `motion` component is used within a `LazyMotion` set to strict.
+     */
+    ignoreStrict?: boolean
 }
 
 type ExternalMotionValues = {

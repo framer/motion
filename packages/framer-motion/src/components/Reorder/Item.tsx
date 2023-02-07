@@ -99,6 +99,7 @@ export function ReorderItem<V>(
                 measuredLayout.current = measured
             }}
             ref={externalRef}
+            ignoreStrict
         >
             {children}
         </Component>

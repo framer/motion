@@ -117,7 +117,7 @@ export function ReorderGroup<V>(
     })
 
     return (
-        <Component {...props} ref={externalRef}>
+        <Component {...props} ref={externalRef} ignoreStrict>
             <ReorderContext.Provider value={context}>
                 {children}
             </ReorderContext.Provider>
