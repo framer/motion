@@ -6,7 +6,10 @@ export function loadFeatures(features: FeatureComponents) {
         if (key === "projectionNodeConstructor") {
             featureDefinitions.projectionNodeConstructor = features[key]
         } else {
-            featureDefinitions[key].Component = features[key]
+            featureDefinitions[key] = {
+                ...features[key],
+                ...featureDefinitions[key],
+            }
         }
     }
 }

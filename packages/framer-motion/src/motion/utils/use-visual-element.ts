@@ -44,8 +44,12 @@ export function useVisualElement<Instance, RenderState>(
     const visualElement = visualElementRef.current
 
     useIsomorphicLayoutEffect(() => {
-        visualElement && visualElement.render()
+        if (!visualElement) return
+        visualElement.notify("LayoutEffect")
+        visualElement.render()
     })
+
+    useEffect(() => visualElement?.notify("Effect"))
 
     /**
      * Ideally this function would always run in a useEffect.

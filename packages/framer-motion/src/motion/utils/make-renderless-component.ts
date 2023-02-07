@@ -1,8 +1,11 @@
-import { FeatureProps } from "../features/types"
+import { FeatureProps, ReactFeatureDefinition } from "../features/types"
 
-export const makeRenderlessComponent = <P = FeatureProps>(hook: Function) => (
-    props: P
-) => {
-    hook(props)
-    return null
-}
+export const makeRenderlessComponent = (
+    hook: Function
+): ReactFeatureDefinition => ({
+    type: "react",
+    feature: (props: FeatureProps) => {
+        hook(props)
+        return null
+    },
+})

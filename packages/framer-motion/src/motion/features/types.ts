@@ -27,24 +27,35 @@ export type FeatureComponent = React.ComponentType<
     React.PropsWithChildren<FeatureProps>
 >
 
+export type Feature = (visualElement: VisualElement<any>) => VoidFunction
+
+export interface ReactFeatureDefinition {
+    type?: "react"
+    feature?: FeatureComponent
+}
+
+export interface VanillaFeatureDefinition {
+    type?: "vanilla"
+    feature?: Feature
+}
+
 /**
  * @public
  */
-export interface FeatureDefinition {
+export type FeatureDefinition = {
     isEnabled: (props: MotionProps) => boolean
-    Component?: FeatureComponent
-}
+} & (ReactFeatureDefinition | VanillaFeatureDefinition)
 
 export interface FeatureComponents {
-    animation?: FeatureComponent
-    exit?: FeatureComponent
-    drag?: FeatureComponent
-    tap?: FeatureComponent
-    focus?: FeatureComponent
-    hover?: FeatureComponent
-    pan?: FeatureComponent
-    inView?: FeatureComponent
-    measureLayout?: FeatureComponent
+    animation?: ReactFeatureDefinition
+    exit?: ReactFeatureDefinition
+    drag?: ReactFeatureDefinition
+    tap?: ReactFeatureDefinition
+    focus?: VanillaFeatureDefinition
+    hover?: VanillaFeatureDefinition
+    pan?: ReactFeatureDefinition
+    inView?: ReactFeatureDefinition
+    measureLayout?: ReactFeatureDefinition
 }
 
 export interface FeatureBundle extends FeatureComponents {
