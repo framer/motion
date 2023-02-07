@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [9.0.2] 2023-02-07
+
+### Changed
+
+-   `Reorder.Item` no longer throws an error within `MotionConfig strict`.
+
 ## [9.0.1] 2023-02-02
 
 ### Removed
