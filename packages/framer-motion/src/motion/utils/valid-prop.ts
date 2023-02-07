@@ -38,6 +38,7 @@ const validMotionProps = new Set<keyof MotionProps>([
     "onHoverEnd",
     "onViewportEnter",
     "onViewportLeave",
+    "ignoreStrict",
     "viewport",
 ])
 

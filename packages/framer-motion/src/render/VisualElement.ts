@@ -472,7 +472,7 @@ export abstract class VisualElement<
 
     loadFeatures(
         { children, ...renderedProps }: MotionProps,
-        { isStrict, warn }: { isStrict?: boolean, warn?: boolean },
+        isStrict: boolean,
         preloadedFeatures?: FeatureBundle,
         projectionId?: number,
         ProjectionNodeConstructor?: any,
@@ -489,8 +489,11 @@ export abstract class VisualElement<
             preloadedFeatures &&
             isStrict
         ) {
-            const strictMessage = "You have rendered a `motion` component within a `LazyMotion` component. This will break tree shaking. Import and render a `m` component instead.";
-            warn ? warning(false, strictMessage) : invariant(false, strictMessage)
+            const strictMessage =
+                "You have rendered a `motion` component within a `LazyMotion` component. This will break tree shaking. Import and render a `m` component instead."
+            renderedProps.ignoreStrict
+                ? warning(false, strictMessage)
+                : invariant(false, strictMessage)
         }
 
         for (let i = 0; i < numFeatures; i++) {

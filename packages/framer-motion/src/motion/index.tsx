@@ -98,7 +98,6 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
              * Load Motion gesture and animation features. These are rendered as renderless
              * components so each feature can optionally make use of React lifecycle methods.
              */
-            const lazyStrictMode = useContext(LazyContext).strict
             const initialLayoutGroupConfig = useContext(
                 SwitchLayoutGroupContext
             )
@@ -106,7 +105,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                 features = context.visualElement.loadFeatures(
                     // Note: Pass the full new combined props to correctly re-render dynamic feature components.
                     configAndProps,
-                    { isStrict: lazyStrictMode, warn: props.ignoreStrict },
+                    useContext(LazyContext).strict,
                     preloadedFeatures,
                     projectionId,
                     projectionNodeConstructor ||
