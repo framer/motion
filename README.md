@@ -3,11 +3,17 @@
 </p>
 <h1 align="center">Framer Motion</h1>
 <h3 align="center">
-  An open source motion library for React, <a href="https://www.framer.com">made by Framer</a>. Motion powers Framer, the web builder for creative pros. Design and ship your dream site. Zero code, maximum speed. <a href="https://www.framer.com/r/signup/">Start for free</a>.
+  An open source motion library for React, made by Framer. Motion powers Framer, the web builder for creative pros. Design and ship your dream site. Zero code, maximum speed. <a href="https://www.framer.com/r/signup/">Start for free</a>.
 </h3>
-
+<br/>
 <p align="center">
-  <a href="https://www.framer.com">
+  <a href="https://www.framer.com?utm_source=motion">
+    <img src="https://framerusercontent.com/images/atXqxn4JhKm4LXVncdNjkKV7yCU.png" width="140" alt="Framer Button" />
+  </a>
+</p>
+<br/>
+<p align="center">
+  <a href="https://www.framer.com?utm_source=motion">
     <img src="https://framerusercontent.com/images/pMSOmGP2V8sSaZRV2D7i4HTBTe4.png" width="1000" alt="Framer Banner" />
   </a>
 </p>
