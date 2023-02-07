@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://www.framer.com">
-    <img src="https://framerusercontent.com/images/pMSOmGP2V8sSaZRV2D7i4HTBTe4.png" width="1000" height="500" alt="Framer Banner" />
+    <img src="https://framerusercontent.com/images/pMSOmGP2V8sSaZRV2D7i4HTBTe4.png" width="1000" alt="Framer Banner" />
   </a>
 </p>
 
