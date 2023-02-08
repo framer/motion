@@ -7,11 +7,13 @@ import { animations } from "../../motion/features/animations"
 import { drag } from "../../motion/features/drag"
 import { createDomVisualElement } from "./create-visual-element"
 import { FeaturePackages } from "../../motion/features/types"
+import { layout } from "../../motion/features/layout"
 
 const preloadedFeatures: FeaturePackages = {
     ...animations,
     ...gestureAnimations,
     ...drag,
+    ...layout,
 }
 
 /**
