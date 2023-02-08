@@ -1,15 +1,11 @@
 import { featureDefinitions } from "./definitions"
-import { FeatureComponents } from "./types"
+import { FeaturePackages } from "./types"
 
-export function loadFeatures(features: FeatureComponents) {
+export function loadFeatures(features: FeaturePackages) {
     for (const key in features) {
-        if (key === "projectionNodeConstructor") {
-            featureDefinitions.projectionNodeConstructor = features[key]
-        } else {
-            featureDefinitions[key] = {
-                ...features[key],
-                ...featureDefinitions[key],
-            }
+        featureDefinitions[key] = {
+            ...featureDefinitions[key],
+            ...features[key],
         }
     }
 }

@@ -4,7 +4,7 @@ import { MotionValue } from "../value"
 import { ReducedMotionConfig } from "../context/MotionConfigContext"
 import { AnimationDefinition } from "./utils/animation"
 import { Axis, Box } from "../projection/geometry/types"
-import type { VisualElement } from "./VisualElement"
+import type { MotionNodeProps, VisualElement } from "./VisualElement"
 
 export interface MotionPoint {
     x: MotionValue<number>
@@ -35,7 +35,7 @@ export type VisualElementOptions<Instance, RenderState = any> = {
     parent?: VisualElement<unknown>
     variantParent?: VisualElement<unknown>
     presenceId?: string | undefined
-    props: MotionProps
+    props: MotionNodeProps
     blockInitialAnimation?: boolean
     reducedMotionConfig?: ReducedMotionConfig
 }

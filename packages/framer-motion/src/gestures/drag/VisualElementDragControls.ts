@@ -1,5 +1,5 @@
 import { invariant } from "hey-listen"
-import { PanSession, PanInfo } from "../../gestures/PanSession"
+import { PanSession, PanInfo } from "../pan/PanSession"
 import { ResolvedConstraints } from "./types"
 import { Lock, getGlobalLock } from "./utils/lock"
 import { isRefObject } from "../../utils/is-ref-object"
@@ -88,7 +88,7 @@ export class VisualElementDragControls {
         /**
          * Don't start dragging if this component is exiting
          */
-        if (this.visualElement.isPresent === false) return
+        if (this.visualElement.getProps().isPresent === false) return
 
         const onSessionStart = (event: PointerEvent) => {
             // Stop any animations on both axis values immediately. This allows the user to throw and catch

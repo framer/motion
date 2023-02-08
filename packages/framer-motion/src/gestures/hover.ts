@@ -1,12 +1,11 @@
 import { addPointerEvent } from "../events/use-pointer-event"
 import { AnimationType } from "../render/utils/types"
-import { noop } from "../utils/noop"
 import { pipe } from "../utils/pipe"
 import { isDragActive } from "./drag/utils/lock"
 import { EventInfo } from "../events/types"
-
-// TODO: Rename VisualElement as MotionNode in subsequent PR
 import type { VisualElement as MotionNode } from "../render/VisualElement"
+import { Feature } from "../motion/features/Feature"
+import { noop } from "../utils/noop"
 
 function addHoverEvent(node: MotionNode<Element>, isActive: boolean) {
     const eventName = "pointer" + (isActive ? "enter" : "leave")
@@ -31,24 +30,17 @@ function addHoverEvent(node: MotionNode<Element>, isActive: boolean) {
     })
 }
 
-export function hover(node: MotionNode<Element>) {
-    let cleanEvents: Function = noop
+export class HoverGesture extends Feature<Element> {
+    private removeEventListeners: Function = noop
 
-    const cleanListeners = pipe(
-        node.once("Effect", () => {
-            cleanEvents = pipe(
-                addHoverEvent(node, true),
-                addHoverEvent(node, false)
-            )
-        }),
-        node.once("Unmount", () => {
-            cleanEvents()
-            cleanListeners()
-        })
-    )
+    mount() {
+        this.removeEventListeners = pipe(
+            addHoverEvent(this.node, true),
+            addHoverEvent(this.node, false)
+        )
+    }
 
-    return () => {
-        cleanEvents()
-        cleanListeners()
+    unmount() {
+        this.removeEventListeners()
     }
 }

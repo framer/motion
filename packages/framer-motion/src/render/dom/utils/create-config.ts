@@ -1,5 +1,4 @@
 import * as React from "react"
-import { FeatureComponents } from "../../../motion/features/types"
 import { isSVGComponent } from "./is-svg-component"
 import { MotionComponentConfig } from "../../../motion"
 import { createUseRender } from "../use-render"
@@ -9,13 +8,13 @@ import { svgMotionConfig } from "../../svg/config-motion"
 import { htmlMotionConfig } from "../../html/config-motion"
 import { CreateVisualElement } from "../../types"
 import { CustomMotionComponentConfig } from "../motion-proxy"
+import { FeaturePackages } from "../../../motion/features/types"
 
 export function createDomMotionConfig<Props>(
     Component: string | React.ComponentType<React.PropsWithChildren<Props>>,
     { forwardMotionProps = false }: CustomMotionComponentConfig,
-    preloadedFeatures?: FeatureComponents,
-    createVisualElement?: CreateVisualElement<any>,
-    projectionNodeConstructor?: any
+    preloadedFeatures?: FeaturePackages,
+    createVisualElement?: CreateVisualElement<any>
 ) {
     const baseConfig = isSVGComponent(Component)
         ? svgMotionConfig
@@ -26,7 +25,6 @@ export function createDomMotionConfig<Props>(
         preloadedFeatures,
         useRender: createUseRender(forwardMotionProps),
         createVisualElement,
-        projectionNodeConstructor,
         Component,
     } as
         | MotionComponentConfig<SVGElement, SVGRenderState>

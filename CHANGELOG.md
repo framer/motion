@@ -4,6 +4,14 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+### Updated
+
+-   Refactored `motion` component features to load without React components.
+
+### Removed
+
+-   Fallback support for `IntersectionObserver`.
+
 ## [9.0.1] 2023-02-02
 
 ### Removed
