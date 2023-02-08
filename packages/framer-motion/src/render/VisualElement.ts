@@ -1,17 +1,11 @@
 import { sync, cancelSync } from "../frameloop"
 import { invariant, warning } from "hey-listen"
-import { createElement } from "react"
 import {
     MotionConfigContext,
     ReducedMotionConfig,
 } from "../context/MotionConfigContext"
 import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
-import { featureDefinitions } from "../motion/features/definitions"
-import {
-    FeatureBundle,
-    FeatureDefinition,
-    FeatureNames,
-} from "../motion/features/types"
+import { FeatureBundle, FeatureDefinitions } from "../motion/features/types"
 import { MotionProps, MotionStyle } from "../motion/types"
 import { createBox } from "../projection/geometry/models"
 import { Box } from "../projection/geometry/types"
@@ -43,6 +37,15 @@ import { isVariantLabel } from "./utils/is-variant-label"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
 import { resolveVariantFromProps } from "./utils/resolve-variants"
 import { warnOnce } from "../utils/warn-once"
+import { featureDefinitions } from "../motion/features/definitions"
+import { Feature } from "../motion/features/Feature"
+import { SafeToRemove } from "../components/AnimatePresence/use-presence"
+
+export type MotionNodeProps = MotionProps & {
+    safeToRemove?: SafeToRemove | null
+    presenceCustomData?: any
+    isPresent?: boolean
+}
 
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
@@ -256,12 +259,6 @@ export abstract class VisualElement<
     values = new Map<string, MotionValue>()
 
     /**
-     * Tracks whether this VisualElement's React component is currently present
-     * within the defined React tree.
-     */
-    isPresent = true
-
-    /**
      * The AnimationState, this is hydrated by the animation Feature.
      */
     animationState?: AnimationState
@@ -272,16 +269,18 @@ export abstract class VisualElement<
      */
     private readonly options: Options
 
+    private prevProps?: MotionNodeProps
+
     /**
      * A reference to the latest props provided to the VisualElement's host React component.
      */
-    protected props: MotionProps
+    protected props: MotionNodeProps
 
     /**
      * Cleanup functions for active features (hover/tap/exit etc)
      */
-    private activeFeatures: {
-        [K in keyof FeatureNames]?: VoidFunction
+    private features: {
+        [K in keyof FeatureDefinitions]?: Feature<Instance>
     } = {}
 
     /**
@@ -425,7 +424,6 @@ export abstract class VisualElement<
     }
 
     unmount() {
-        this.notify("Unmount")
         this.projection?.unmount()
         cancelSync.update(this.notifyUpdate)
         cancelSync.render(this.render)
@@ -434,6 +432,9 @@ export abstract class VisualElement<
         this.parent?.children.delete(this)
         for (const key in this.events) {
             this.events[key].clear()
+        }
+        for (const key in this.features) {
+            this.features[key].unmount()
         }
         this.current = null
     }
@@ -473,8 +474,9 @@ export abstract class VisualElement<
             !this.current ||
             !this.sortInstanceNodePosition ||
             this.type !== other.type
-        )
+        ) {
             return 0
+        }
 
         return this.sortInstanceNodePosition(
             this.current as Instance,
@@ -487,10 +489,10 @@ export abstract class VisualElement<
         isStrict: boolean,
         preloadedFeatures?: FeatureBundle,
         projectionId?: number,
-        ProjectionNodeConstructor?: any,
         initialLayoutGroupConfig?: SwitchLayoutGroupContext
     ) {
-        const features: JSX.Element[] = []
+        let ProjectionNodeConstructor: any
+        let MeasureLayout: undefined | React.ComponentType<MotionProps>
 
         /**
          * If we're in development mode, check to make sure we're not rendering a motion component
@@ -510,27 +512,21 @@ export abstract class VisualElement<
 
         for (let i = 0; i < numFeatures; i++) {
             const name = featureNames[i]
-            const { type, isEnabled, feature } = featureDefinitions[
-                name
-            ] as FeatureDefinition
+            const {
+                isEnabled,
+                Feature: FeatureConstructor,
+                ProjectionNode,
+                MeasureLayoutComponent,
+            } = featureDefinitions[name]
 
-            /**
-             * It might be possible in the future to use this moment to
-             * dynamically request functionality. In initial tests this
-             * was producing a lot of duplication amongst bundles.
-             */
-            if (isEnabled(renderedProps) && feature) {
-                if (type === "react") {
-                    features.push(
-                        createElement(feature, {
-                            key: name,
-                            ...renderedProps,
-                            visualElement: this,
-                        })
-                    )
-                } else if (type === "vanilla" && !this.activeFeatures[name]) {
-                    this.activeFeatures[name] = feature(this)
+            if (ProjectionNode) ProjectionNodeConstructor = ProjectionNode
+
+            if (isEnabled(renderedProps)) {
+                if (!this.features[name] && FeatureConstructor) {
+                    this.features[name] = new (FeatureConstructor as any)(this)
                 }
+                if (MeasureLayoutComponent)
+                    MeasureLayout = MeasureLayoutComponent
             }
         }
 
@@ -571,7 +567,26 @@ export abstract class VisualElement<
             })
         }
 
-        return features
+        return MeasureLayout
+    }
+
+    updateFeatures() {
+        for (const key in this.features) {
+            const feature = this.features[key]
+            if (feature.isMounted) {
+                feature.update(this.props, this.prevProps)
+            } else {
+                feature.mount()
+                feature.isMounted = true
+            }
+        }
+
+        /**
+         * If we have an exit animation but no
+         */
+        if (this.props.safeToRemove && !this.props.exit) {
+            this.props.safeToRemove()
+        }
     }
 
     notifyUpdate = () => this.notify("Update", this.latestValues)
@@ -640,12 +655,12 @@ export abstract class VisualElement<
      * Update the provided props. Ensure any newly-added motion values are
      * added to our map, old ones removed, and listeners updated.
      */
-    setProps(props: MotionProps) {
+    setProps(props: MotionNodeProps) {
         if (props.transformTemplate || this.props.transformTemplate) {
             this.scheduleRender()
         }
 
-        const prevProps = this.props
+        this.prevProps = this.props
         this.props = props
 
         /**
@@ -666,7 +681,7 @@ export abstract class VisualElement<
 
         this.prevMotionValues = updateMotionValuesFromProps(
             this,
-            this.scrapeMotionValuesFromProps(props, prevProps),
+            this.scrapeMotionValuesFromProps(props, this.prevProps),
             this.prevMotionValues
         )
 
@@ -855,17 +870,6 @@ export abstract class VisualElement<
         }
 
         return this.events[eventName].add(callback)
-    }
-
-    once<EventName extends keyof VisualElementEventCallbacks>(
-        eventName: EventName,
-        callback: VisualElementEventCallbacks[EventName]
-    ) {
-        const unsubscribe = this.on(eventName, (...args: any) => {
-            unsubscribe()
-            ;(callback as any)(...args)
-        })
-        return unsubscribe
     }
 
     notify<EventName extends keyof VisualElementEventCallbacks>(

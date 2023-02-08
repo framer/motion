@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useContext, useRef, useEffect } from "react"
+import { useContext, useRef, useEffect, useInsertionEffect } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 import { MotionProps } from "../../motion/types"
 import { useVisualElementContext } from "../../context/MotionContext"
@@ -9,6 +9,7 @@ import { VisualState } from "./use-visual-state"
 import { LazyContext } from "../../context/LazyContext"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import type { VisualElement } from "../../render/VisualElement"
+import { usePresence } from "../../components/AnimatePresence/use-presence"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -19,9 +20,17 @@ export function useVisualElement<Instance, RenderState>(
     const parent = useVisualElementContext()
     const lazyContext = useContext(LazyContext)
     const presenceContext = useContext(PresenceContext)
+    const [isPresent, safeToRemove] = usePresence()
     const reducedMotionConfig = useContext(MotionConfigContext).reducedMotion
 
     const visualElementRef = useRef<VisualElement<Instance>>()
+
+    const motionNodeProps = {
+        ...props,
+        isPresent,
+        safeToRemove,
+        presenceCustomData: presenceContext?.custom,
+    }
 
     /**
      * If we haven't preloaded a renderer, check to see if we have one lazy-loaded
@@ -32,7 +41,7 @@ export function useVisualElement<Instance, RenderState>(
         visualElementRef.current = createVisualElement(Component, {
             visualState,
             parent,
-            props,
+            props: motionNodeProps,
             presenceId: presenceContext ? presenceContext.id : undefined,
             blockInitialAnimation: presenceContext
                 ? presenceContext.initial === false
@@ -43,13 +52,20 @@ export function useVisualElement<Instance, RenderState>(
 
     const visualElement = visualElementRef.current
 
+    useInsertionEffect(() => {
+        if (!visualElement) return
+        visualElement.setProps(motionNodeProps)
+    })
+
     useIsomorphicLayoutEffect(() => {
         if (!visualElement) return
-        visualElement.notify("LayoutEffect")
         visualElement.render()
     })
 
-    useEffect(() => visualElement?.notify("Effect"))
+    useEffect(() => {
+        if (!visualElement) return
+        visualElement.updateFeatures()
+    })
 
     /**
      * Ideally this function would always run in a useEffect.

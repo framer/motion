@@ -114,19 +114,23 @@ describe("dragging", () => {
         const onDragEnd = deferred()
         const Component = () => {
             const [increment, setIncrement] = React.useState(1)
+            console.log("rerender")
             return (
                 <MockDrag>
                     <motion.div
                         drag
                         onDragStart={() => {
                             count += increment
+                            console.log("start", { increment })
                             setIncrement(2)
                         }}
                         onDrag={() => {
+                            console.log({ increment })
                             count += increment
                         }}
                         onDragEnd={() => {
                             count += increment + 1
+                            console.log("end", { increment })
                             onDragEnd.resolve()
                         }}
                     />

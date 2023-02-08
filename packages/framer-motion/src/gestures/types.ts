@@ -2,7 +2,7 @@ import { EventInfo } from "../events/types"
 import { VariantLabels } from "../motion/types"
 import { Point } from "../projection/geometry/types"
 import { TargetAndTransition } from "../types"
-import { PanInfo } from "./PanSession"
+import { PanInfo } from "./pan/PanSession"
 
 export type RemoveEvent = () => void
 
@@ -148,7 +148,7 @@ export interface PanHandlers {
      *   - `offset`: Offset from the original pan event.
      *   - `velocity`: Current velocity of the pointer.
      */
-    onPan?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void
+    onPan?(event: PointerEvent, info: PanInfo): void
 
     /**
      * Callback function that fires when the pan gesture begins on this element.
@@ -169,10 +169,7 @@ export interface PanHandlers {
      *   - `offset`: Offset from the original pan event.
      *   - `velocity`: Current velocity of the pointer.
      */
-    onPanStart?(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: PanInfo
-    ): void
+    onPanStart?(event: PointerEvent, info: PanInfo): void
 
     /**
      * Callback function that fires when we begin detecting a pan gesture. This
@@ -192,10 +189,7 @@ export interface PanHandlers {
      *   - `point`: Relative to the device or page.
      */
 
-    onPanSessionStart?(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: EventInfo
-    ): void
+    onPanSessionStart?(event: PointerEvent, info: EventInfo): void
 
     /**
      * Callback function that fires when the pan gesture ends on this element.
@@ -216,10 +210,7 @@ export interface PanHandlers {
      *   - `offset`: Offset from the original pan event.
      *   - `velocity`: Current velocity of the pointer.
      */
-    onPanEnd?(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: PanInfo
-    ): void
+    onPanEnd?(event: PointerEvent, info: PanInfo): void
 }
 
 /**

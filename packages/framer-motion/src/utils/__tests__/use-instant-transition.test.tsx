@@ -14,6 +14,7 @@ describe("useInstantTransition", () => {
 
             const Parent = () => {
                 const [state, setState] = React.useState(false)
+                console.log({ state })
                 return (
                     <motion.div
                         initial={false}
@@ -30,7 +31,12 @@ describe("useInstantTransition", () => {
                 const startInstantTransition = useInstantTransition()
 
                 useEffect(() => {
-                    startInstantTransition(() => act(() => setState(true)))
+                    startInstantTransition(() =>
+                        act(() => {
+                            console.log("setting state to true")
+                            setState(true)
+                        })
+                    )
 
                     const timeout = setTimeout(() => {
                         resolve([xParent.get(), xComponent.get(), xChild.get()])

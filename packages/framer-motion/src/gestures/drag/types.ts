@@ -1,5 +1,5 @@
 import { RefObject } from "react"
-import { PanInfo } from "../PanSession"
+import { PanInfo } from "../pan/PanSession"
 import { Inertia, TargetAndTransition } from "../../types"
 import { DragControls } from "./use-drag-controls"
 import { MotionValue } from "../../value"

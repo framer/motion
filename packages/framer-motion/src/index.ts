@@ -65,7 +65,7 @@ export {
     FocusHandlers,
     TapInfo,
 } from "./gestures/types"
-export { PanInfo } from "./gestures/PanSession"
+export { PanInfo } from "./gestures/pan/PanSession"
 export { useCycle, CycleState, Cycle } from "./utils/use-cycle"
 export { transform } from "./utils/transform"
 export { isValidMotionProp } from "./motion/utils/valid-prop"
