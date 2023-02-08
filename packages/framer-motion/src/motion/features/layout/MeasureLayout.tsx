@@ -57,7 +57,6 @@ class MeasureLayoutWithContext extends React.Component<MeasureProps> {
     }
 
     getSnapshotBeforeUpdate(prevProps: MeasureProps) {
-        console.log("get snapshot before update")
         const { layoutDependency, visualElement, drag, isPresent } = this.props
         const projection = visualElement.projection
 

@@ -18,11 +18,11 @@ export class DragGesture extends Feature<HTMLElement> {
         // subscribe this component to it on mount.
         const { dragControls } = this.node.getProps()
         this.removeGroupControls = dragControls?.subscribe(this.controls)
-
         this.removeListeners = this.controls.addListeners()
     }
 
     unmount() {
+        console.log("unmount drag")
         this.removeGroupControls?.()
         this.removeListeners?.()
     }
