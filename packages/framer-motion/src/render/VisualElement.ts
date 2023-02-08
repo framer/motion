@@ -520,7 +520,7 @@ export abstract class VisualElement<
             } = featureDefinitions[name]
 
             if (ProjectionNode) ProjectionNodeConstructor = ProjectionNode
-            console.log(name, isEnabled(renderedProps))
+
             if (isEnabled(renderedProps)) {
                 if (!this.features[name] && FeatureConstructor) {
                     this.features[name] = new (FeatureConstructor as any)(this)
