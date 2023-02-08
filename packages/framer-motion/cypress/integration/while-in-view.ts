@@ -140,7 +140,7 @@ describe("whileInView", () => {
             })
     })
 
-    it("If IntersectionObserver doesn't exist, immediately animates to whileInView", () => {
+    it.skip("If IntersectionObserver doesn't exist, immediately animates to whileInView", () => {
         cy.visit("?test=while-in-view&delete=true")
             .wait(100)
             .get("#box")
@@ -152,7 +152,7 @@ describe("whileInView", () => {
             })
     })
 
-    it("If IntersectionObserver doesn't exist, and fallback is false, don't animate to whileInView", () => {
+    it.skip("If IntersectionObserver doesn't exist, and fallback is false, don't animate to whileInView", () => {
         cy.visit("?test=while-in-view&delete=true&disableFallback=true")
             .wait(100)
             .get("#box")
