@@ -1,5 +1,4 @@
 import { AnimationType } from "../../../render/utils/types"
-import { VisualElementProps } from "../../../render/VisualElement"
 import { noop } from "../../../utils/noop"
 import { Feature } from "../Feature"
 
@@ -10,23 +9,20 @@ export class ExitAnimationFeature extends Feature<unknown> {
 
     private removePresenceSubscription: Function = noop
 
-    update(
-        {
-            onExitComplete,
-            isPresent,
-            custom,
-            presenceCustomData,
-        }: VisualElementProps,
-        prevProps: VisualElementProps = {}
-    ) {
-        if (!this.node.animationState || isPresent === prevProps.isPresent) {
+    update() {
+        if (!this.node.presenceContext) return
+
+        const { isPresent, onExitComplete, custom } = this.node.presenceContext
+        const { isPresent: prevIsPresent } = this.node.prevPresenceContext || {}
+
+        if (!this.node.animationState || isPresent === prevIsPresent) {
             return
         }
 
         const exitAnimation = this.node.animationState.setActive(
             AnimationType.Exit,
             !isPresent,
-            { custom: presenceCustomData ?? custom }
+            { custom: custom ?? this.node.getProps().custom }
         )
 
         if (onExitComplete && !isPresent) {
@@ -35,10 +31,10 @@ export class ExitAnimationFeature extends Feature<unknown> {
     }
 
     mount() {
-        const { registerPresence } = this.node.getProps()
+        const { register } = this.node.presenceContext || {}
 
-        if (registerPresence) {
-            this.removePresenceSubscription = registerPresence(this.id)
+        if (register) {
+            this.removePresenceSubscription = register(this.id)
         }
     }
 

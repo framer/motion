@@ -8,10 +8,7 @@ import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { VisualState } from "./use-visual-state"
 import { LazyContext } from "../../context/LazyContext"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
-import type {
-    VisualElement,
-    VisualElementProps,
-} from "../../render/VisualElement"
+import type { VisualElement } from "../../render/VisualElement"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -26,23 +23,6 @@ export function useVisualElement<Instance, RenderState>(
 
     const visualElementRef = useRef<VisualElement<Instance>>()
 
-    let visualElementProps: VisualElementProps = props
-    if (presenceContext) {
-        const {
-            register: registerPresence,
-            isPresent,
-            onExitComplete,
-            custom: presenceCustomData,
-        } = presenceContext
-        visualElementProps = {
-            ...props,
-            registerPresence,
-            isPresent,
-            onExitComplete,
-            presenceCustomData,
-        }
-    }
-
     /**
      * If we haven't preloaded a renderer, check to see if we have one lazy-loaded
      */
@@ -52,8 +32,8 @@ export function useVisualElement<Instance, RenderState>(
         visualElementRef.current = createVisualElement(Component, {
             visualState,
             parent,
-            props: visualElementProps,
-            presenceId: presenceContext ? presenceContext.id : undefined,
+            props,
+            presenceContext,
             blockInitialAnimation: presenceContext
                 ? presenceContext.initial === false
                 : false,
@@ -65,7 +45,7 @@ export function useVisualElement<Instance, RenderState>(
 
     useInsertionEffect(() => {
         if (!visualElement) return
-        visualElement.setProps(visualElementProps)
+        visualElement.update(props, presenceContext)
     })
 
     useIsomorphicLayoutEffect(() => {

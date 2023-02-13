@@ -1,5 +1,5 @@
 import { AnimationType } from "../../../render/utils/types"
-import { VisualElementProps } from "../../../render/VisualElement"
+import { MotionProps } from "../../types"
 import { Feature } from "../Feature"
 import { observeIntersection } from "./observers"
 
@@ -75,7 +75,8 @@ export class InViewFeature extends Feature<Element> {
         this.startObserver()
     }
 
-    update(props: VisualElementProps, prevProps: VisualElementProps) {
+    update() {
+        const { props, prevProps } = this.node
         const hasOptionsChanged = ["amount", "margin", "root"].some(
             hasViewportOptionChanged(props, prevProps)
         )
@@ -91,8 +92,8 @@ export class InViewFeature extends Feature<Element> {
 }
 
 function hasViewportOptionChanged(
-    { viewport = {} }: VisualElementProps,
-    { viewport: prevViewport = {} }: VisualElementProps
+    { viewport = {} }: MotionProps,
+    { viewport: prevViewport = {} }: MotionProps = {}
 ) {
     return (name: string) => viewport[name] !== prevViewport[name]
 }

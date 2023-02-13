@@ -73,7 +73,7 @@ export function useAnimatedState(initialState: any) {
 
     const element = useConstant(() => {
         return new StateVisualElement(
-            { props: {}, visualState },
+            { props: {}, visualState, presenceContext: null },
             { initialState }
         )
     })
@@ -84,11 +84,14 @@ export function useAnimatedState(initialState: any) {
     }, [element])
 
     useEffect(() => {
-        element.setProps({
-            onUpdate: (v) => {
-                setAnimationState({ ...v })
+        element.update(
+            {
+                onUpdate: (v) => {
+                    setAnimationState({ ...v })
+                },
             },
-        })
+            null
+        )
     }, [setAnimationState, element])
 
     const startAnimation = useConstant(

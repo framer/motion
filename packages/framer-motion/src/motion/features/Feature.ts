@@ -1,7 +1,4 @@
-import type {
-    VisualElement,
-    VisualElementProps,
-} from "../../render/VisualElement"
+import type { VisualElement } from "../../render/VisualElement"
 
 export abstract class Feature<T> {
     isMounted = false
@@ -16,8 +13,5 @@ export abstract class Feature<T> {
 
     abstract unmount(): void
 
-    update(
-        _newProps: VisualElementProps,
-        _prevProps?: VisualElementProps
-    ): void {}
+    update(): void {}
 }

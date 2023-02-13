@@ -41,13 +41,6 @@ import { featureDefinitions } from "../motion/features/definitions"
 import { Feature } from "../motion/features/Feature"
 import type { PresenceContextProps } from "../context/PresenceContext"
 
-export type VisualElementProps = MotionProps & {
-    registerPresence?: PresenceContextProps["register"]
-    isPresent?: PresenceContextProps["isPresent"]
-    onExitComplete?: PresenceContextProps["onExitComplete"]
-    presenceCustomData?: PresenceContextProps["custom"]
-}
-
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
 
@@ -270,12 +263,14 @@ export abstract class VisualElement<
      */
     private readonly options: Options
 
-    private prevProps?: VisualElementProps
-
     /**
      * A reference to the latest props provided to the VisualElement's host React component.
      */
-    protected props: VisualElementProps
+    props: MotionProps
+    prevProps?: MotionProps
+
+    presenceContext: PresenceContextProps | null
+    prevPresenceContext?: PresenceContextProps | null
 
     /**
      * Cleanup functions for active features (hover/tap/exit etc)
@@ -339,6 +334,7 @@ export abstract class VisualElement<
         {
             parent,
             props,
+            presenceContext,
             reducedMotionConfig,
             visualState,
         }: VisualElementOptions<Instance, RenderState>,
@@ -351,6 +347,7 @@ export abstract class VisualElement<
         this.renderState = renderState
         this.parent = parent
         this.props = props
+        this.presenceContext = presenceContext
         this.depth = parent ? parent.depth + 1 : 0
         this.reducedMotionConfig = reducedMotionConfig
         this.options = options
@@ -421,7 +418,7 @@ export abstract class VisualElement<
         }
 
         if (this.parent) this.parent.children.add(this)
-        this.setProps(this.props)
+        this.update(this.props, this.presenceContext)
     }
 
     unmount() {
@@ -650,13 +647,16 @@ export abstract class VisualElement<
      * Update the provided props. Ensure any newly-added motion values are
      * added to our map, old ones removed, and listeners updated.
      */
-    setProps(props: VisualElementProps) {
+    update(props: MotionProps, presenceContext: PresenceContextProps | null) {
         if (props.transformTemplate || this.props.transformTemplate) {
             this.scheduleRender()
         }
 
         this.prevProps = this.props
         this.props = props
+
+        this.prevPresenceContext = this.presenceContext
+        this.presenceContext = presenceContext
 
         /**
          * Update prop event handlers ie onAnimationStart, onAnimationComplete

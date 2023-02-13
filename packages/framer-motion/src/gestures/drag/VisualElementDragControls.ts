@@ -88,7 +88,7 @@ export class VisualElementDragControls {
         /**
          * Don't start dragging if this component is exiting
          */
-        if (this.visualElement.getProps().isPresent === false) return
+        if (this.visualElement.presenceContext?.isPresent === false) return
 
         const onSessionStart = (event: PointerEvent) => {
             // Stop any animations on both axis values immediately. This allows the user to throw and catch
