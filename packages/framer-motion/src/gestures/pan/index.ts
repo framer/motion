@@ -1,5 +1,5 @@
 import { PanInfo, PanSession } from "./PanSession"
-import { addPointerEvent } from "../../events/add-pointer-event"
+import { addPointerEvent } from "../../events/use-pointer-event"
 import { Feature } from "../../motion/features/Feature"
 
 export class PanGesture extends Feature<Element> {
@@ -7,7 +7,7 @@ export class PanGesture extends Feature<Element> {
 
     private removePointerDownListener: Function
 
-    onPointerDown = (pointerDownEvent: PointerEvent) => {
+    onPointerDown(pointerDownEvent: PointerEvent) {
         this.session = new PanSession(
             pointerDownEvent,
             this.createPanHandlers(),
@@ -34,7 +34,7 @@ export class PanGesture extends Feature<Element> {
         this.removePointerDownListener = addPointerEvent(
             this.node.current!,
             "pointerdown",
-            this.onPointerDown
+            (event: PointerEvent) => this.onPointerDown(event)
         )
     }
 
