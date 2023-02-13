@@ -11,6 +11,6 @@ export const drag: FeaturePackages = {
     drag: {
         Feature: DragGesture,
         ProjectionNode: HTMLProjectionNode,
-        MeasureLayout: MeasureLayout,
+        MeasureLayout,
     },
 }
