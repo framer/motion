@@ -126,7 +126,7 @@ const m = Object.assign({}, es, {
         preserveModules: false,
         dir: undefined,
     }),
-    plugins: [...sizePlugins],
+    plugins: [...sizePlugins, visualizer()],
     external: ["react", "react-dom"],
 })
 
@@ -143,7 +143,7 @@ const domAnimation = Object.assign({}, es, {
         chunkFileNames: "size-rollup-dom-animation-assets.js",
         dir: `dist`,
     },
-    plugins: [...sizePlugins, visualizer()],
+    plugins: [...sizePlugins],
     external: ["react", "react-dom"],
 })
 
