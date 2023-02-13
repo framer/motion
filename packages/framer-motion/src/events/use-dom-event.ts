@@ -1,15 +1,5 @@
-import { useEffect, RefObject } from "react"
-
-export function addDomEvent(
-    target: EventTarget,
-    eventName: string,
-    handler: EventListener,
-    options: AddEventListenerOptions = { passive: true }
-) {
-    target.addEventListener(eventName, handler, options)
-
-    return () => target.removeEventListener(eventName, handler)
-}
+import { RefObject, useEffect } from "react"
+import { addDomEvent } from "./add-dom-event"
 
 /**
  * Attaches an event listener directly to the provided DOM element.

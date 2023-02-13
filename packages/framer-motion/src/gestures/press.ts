@@ -3,8 +3,8 @@ import {
     extractEventInfo,
 } from "../events/event-info"
 import { EventInfo } from "../events/types"
-import { addDomEvent } from "../events/use-dom-event"
-import { addPointerEvent } from "../events/use-pointer-event"
+import { addDomEvent } from "../events/add-dom-event"
+import { addPointerEvent } from "../events/add-pointer-event"
 import { Feature } from "../motion/features/Feature"
 import { AnimationType } from "../render/utils/types"
 import { pipe } from "../utils/pipe"

@@ -12,7 +12,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Removed
 
--   Fallback support for `IntersectionObserver`.
+-   Fallback behavior for missing `IntersectionObserver`.
 
 ## [9.0.2] 2023-02-07
 

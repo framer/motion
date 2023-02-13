@@ -1,4 +1,4 @@
-import { addDomEvent } from "../events/use-dom-event"
+import { addDomEvent } from "../events/add-dom-event"
 import { Feature } from "../motion/features/Feature"
 import { AnimationType } from "../render/utils/types"
 import { noop } from "../utils/noop"

@@ -1,4 +1,4 @@
-import { addPointerEvent } from "../events/use-pointer-event"
+import { addPointerEvent } from "../events/add-pointer-event"
 import { AnimationType } from "../render/utils/types"
 import { pipe } from "../utils/pipe"
 import { isDragActive } from "./drag/utils/lock"

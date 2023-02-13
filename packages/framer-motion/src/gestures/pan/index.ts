@@ -1,5 +1,5 @@
 import { PanInfo, PanSession } from "./PanSession"
-import { addPointerEvent } from "../../events/use-pointer-event"
+import { addPointerEvent } from "../../events/add-pointer-event"
 import { Feature } from "../../motion/features/Feature"
 
 export class PanGesture extends Feature<Element> {

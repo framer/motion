@@ -3,7 +3,7 @@ import { PanSession, PanInfo } from "../pan/PanSession"
 import { ResolvedConstraints } from "./types"
 import { Lock, getGlobalLock } from "./utils/lock"
 import { isRefObject } from "../../utils/is-ref-object"
-import { addPointerEvent } from "../../events/use-pointer-event"
+import { addPointerEvent } from "../../events/add-pointer-event"
 import {
     calcRelativeConstraints,
     calcViewportConstraints,
@@ -27,7 +27,7 @@ import {
     convertBoxToBoundingBox,
 } from "../../projection/geometry/conversion"
 import { LayoutUpdateData } from "../../projection/node/types"
-import { addDomEvent } from "../../events/use-dom-event"
+import { addDomEvent } from "../../events/add-dom-event"
 import { calcLength } from "../../projection/geometry/delta-calc"
 import { mix } from "../../utils/mix"
 import { percent } from "../../value/types/numbers/units"
