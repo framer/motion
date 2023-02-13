@@ -26,9 +26,21 @@ export function useVisualElement<Instance, RenderState>(
 
     const visualElementRef = useRef<VisualElement<Instance>>()
 
-    const visualElementProps: VisualElementProps = {
-        ...props,
-        ...presenceContext,
+    let visualElementProps: VisualElementProps = props
+    if (presenceContext) {
+        const {
+            register: registerPresence,
+            isPresent,
+            onExitComplete,
+            custom: presenceCustomData,
+        } = presenceContext
+        visualElementProps = {
+            ...props,
+            registerPresence,
+            isPresent,
+            onExitComplete,
+            presenceCustomData,
+        }
     }
 
     /**
