@@ -41,7 +41,7 @@ import { featureDefinitions } from "../motion/features/definitions"
 import { Feature } from "../motion/features/Feature"
 import { SafeToRemove } from "../components/AnimatePresence/use-presence"
 
-export type MotionNodeProps = MotionProps & {
+export type VisualElementProps = MotionProps & {
     safeToRemove?: SafeToRemove | null
     presenceCustomData?: any
     isPresent?: boolean
@@ -269,12 +269,12 @@ export abstract class VisualElement<
      */
     private readonly options: Options
 
-    private prevProps?: MotionNodeProps
+    private prevProps?: VisualElementProps
 
     /**
      * A reference to the latest props provided to the VisualElement's host React component.
      */
-    protected props: MotionNodeProps
+    protected props: VisualElementProps
 
     /**
      * Cleanup functions for active features (hover/tap/exit etc)
@@ -656,7 +656,7 @@ export abstract class VisualElement<
      * Update the provided props. Ensure any newly-added motion values are
      * added to our map, old ones removed, and listeners updated.
      */
-    setProps(props: MotionNodeProps) {
+    setProps(props: VisualElementProps) {
         if (props.transformTemplate || this.props.transformTemplate) {
             this.scheduleRender()
         }

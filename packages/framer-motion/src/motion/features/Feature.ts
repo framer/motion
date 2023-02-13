@@ -1,14 +1,14 @@
 import type {
-    VisualElement as MotionNode,
-    MotionNodeProps,
+    VisualElement,
+    VisualElementProps,
 } from "../../render/VisualElement"
 
 export abstract class Feature<T> {
     isMounted = false
 
-    node: MotionNode<T>
+    node: VisualElement<T>
 
-    constructor(node: MotionNode<T>) {
+    constructor(node: VisualElement<T>) {
         this.node = node
     }
 
@@ -16,5 +16,8 @@ export abstract class Feature<T> {
 
     abstract unmount(): void
 
-    update(_newProps: MotionNodeProps, _prevProps?: MotionNodeProps): void {}
+    update(
+        _newProps: VisualElementProps,
+        _prevProps?: VisualElementProps
+    ): void {}
 }

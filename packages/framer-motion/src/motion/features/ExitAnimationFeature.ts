@@ -1,5 +1,5 @@
 import { AnimationType } from "../../render/utils/types"
-import { MotionNodeProps } from "../../render/VisualElement"
+import { VisualElementProps } from "../../render/VisualElement"
 import { Feature } from "./Feature"
 
 export class ExitAnimationFeature extends Feature<unknown> {
@@ -9,8 +9,8 @@ export class ExitAnimationFeature extends Feature<unknown> {
             isPresent,
             custom,
             presenceCustomData,
-        }: MotionNodeProps,
-        prevProps: MotionNodeProps = {}
+        }: VisualElementProps,
+        prevProps: VisualElementProps = {}
     ) {
         if (!this.node.animationState || isPresent === prevProps.isPresent) {
             return
