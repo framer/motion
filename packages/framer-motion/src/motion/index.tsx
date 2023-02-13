@@ -73,8 +73,6 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
          * case we could mount in a scale-correction mode. This wouldn't be enough for
          * shared element transitions however. Perhaps for those we could revert to a root node
          * that gets forceRendered and layout animations are triggered on its layout effect.
-         *
-         * TODO: Possible to replace this with useInsertionEffect?
          */
         const projectionId = isStatic ? undefined : useProjectionId()
 

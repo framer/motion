@@ -58,9 +58,6 @@ export interface VisualElementEventCallbacks {
     LayoutAnimationComplete: () => void
     SetAxisTarget: () => void
     Unmount: () => void
-    InsertionEffect: () => void
-    LayoutEffect: () => void
-    Effect: () => void
 }
 
 export interface LayoutLifecycles {

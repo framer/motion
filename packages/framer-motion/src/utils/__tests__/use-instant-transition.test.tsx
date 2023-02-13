@@ -31,12 +31,7 @@ describe("useInstantTransition", () => {
                 const startInstantTransition = useInstantTransition()
 
                 useEffect(() => {
-                    startInstantTransition(() =>
-                        act(() => {
-                            console.log("setting state to true")
-                            setState(true)
-                        })
-                    )
+                    startInstantTransition(() => act(() => setState(true)))
 
                     const timeout = setTimeout(() => {
                         resolve([xParent.get(), xComponent.get(), xChild.get()])
