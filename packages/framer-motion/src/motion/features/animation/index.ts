@@ -1,8 +1,8 @@
-import { isAnimationControls } from "../../animation/utils/is-animation-controls"
-import { createAnimationState } from "../../render/utils/animation-state"
-import { VisualElement } from "../../render/VisualElement"
-import { noop } from "../../utils/noop"
-import { Feature } from "./Feature"
+import { isAnimationControls } from "../../../animation/utils/is-animation-controls"
+import { createAnimationState } from "../../../render/utils/animation-state"
+import { VisualElement } from "../../../render/VisualElement"
+import { noop } from "../../../utils/noop"
+import { Feature } from "../Feature"
 
 export class AnimationFeature extends Feature<unknown> {
     removeAnimationControlsSubscription: Function = noop

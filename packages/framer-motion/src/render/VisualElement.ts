@@ -39,12 +39,13 @@ import { resolveVariantFromProps } from "./utils/resolve-variants"
 import { warnOnce } from "../utils/warn-once"
 import { featureDefinitions } from "../motion/features/definitions"
 import { Feature } from "../motion/features/Feature"
-import { SafeToRemove } from "../components/AnimatePresence/use-presence"
+import type { PresenceContextProps } from "../context/PresenceContext"
 
 export type VisualElementProps = MotionProps & {
-    safeToRemove?: SafeToRemove | null
-    presenceCustomData?: any
-    isPresent?: boolean
+    registerPresence?: PresenceContextProps["register"]
+    isPresent?: PresenceContextProps["isPresent"]
+    onExitComplete?: PresenceContextProps["onExitComplete"]
+    presenceCustomData?: PresenceContextProps["custom"]
 }
 
 const featureNames = Object.keys(featureDefinitions)
@@ -580,13 +581,6 @@ export abstract class VisualElement<
                 feature.mount()
                 feature.isMounted = true
             }
-        }
-
-        /**
-         * If we have an exit animation but no
-         */
-        if (this.props.safeToRemove && !this.props.exit) {
-            this.props.safeToRemove()
         }
     }
 

@@ -8,8 +8,10 @@ import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { VisualState } from "./use-visual-state"
 import { LazyContext } from "../../context/LazyContext"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
-import type { VisualElement } from "../../render/VisualElement"
-import { usePresence } from "../../components/AnimatePresence/use-presence"
+import type {
+    VisualElement,
+    VisualElementProps,
+} from "../../render/VisualElement"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -20,16 +22,13 @@ export function useVisualElement<Instance, RenderState>(
     const parent = useVisualElementContext()
     const lazyContext = useContext(LazyContext)
     const presenceContext = useContext(PresenceContext)
-    const [isPresent, safeToRemove] = usePresence()
     const reducedMotionConfig = useContext(MotionConfigContext).reducedMotion
 
     const visualElementRef = useRef<VisualElement<Instance>>()
 
-    const motionNodeProps = {
+    const visualElementProps: VisualElementProps = {
         ...props,
-        isPresent,
-        safeToRemove,
-        presenceCustomData: presenceContext?.custom,
+        ...presenceContext,
     }
 
     /**
@@ -41,7 +40,7 @@ export function useVisualElement<Instance, RenderState>(
         visualElementRef.current = createVisualElement(Component, {
             visualState,
             parent,
-            props: motionNodeProps,
+            props: visualElementProps,
             presenceId: presenceContext ? presenceContext.id : undefined,
             blockInitialAnimation: presenceContext
                 ? presenceContext.initial === false
@@ -54,7 +53,7 @@ export function useVisualElement<Instance, RenderState>(
 
     useInsertionEffect(() => {
         if (!visualElement) return
-        visualElement.setProps(motionNodeProps)
+        visualElement.setProps(visualElementProps)
     })
 
     useIsomorphicLayoutEffect(() => {

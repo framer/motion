@@ -1,5 +1,5 @@
-import { AnimationFeature } from "./AnimationFeature"
-import { ExitAnimationFeature } from "./ExitAnimationFeature"
+import { AnimationFeature } from "./animation"
+import { ExitAnimationFeature } from "./animation/exit"
 import { FeaturePackages } from "./types"
 
 export const animations: FeaturePackages = {

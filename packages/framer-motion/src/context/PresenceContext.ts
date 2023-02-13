@@ -7,8 +7,8 @@ import { VariantLabels } from "../motion/types"
 export interface PresenceContextProps {
     id: string
     isPresent: boolean
-    register: (id: string) => () => void
-    onExitComplete?: (id: string) => void
+    register: (id: string | number) => () => void
+    onExitComplete?: (id: string | number) => void
     initial?: false | VariantLabels
     custom?: any
 }
