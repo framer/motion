@@ -1,4 +1,5 @@
 import { AnimationType } from "../../../render/utils/types"
+import { VisualElementProps } from "../../../render/VisualElement"
 import { Feature } from "../Feature"
 import { observeIntersection } from "./observers"
 
@@ -15,9 +16,6 @@ export class InViewFeature extends Feature<Element> {
     private removeObserver?: Function
 
     private startObserver() {
-        // TODD Diff  root, rootMargin, amount before blindly restarting
-        // Double check we dont already do this in observers.ts
-
         this.removeObserver?.()
 
         const { viewport = {} } = this.node.getProps()
@@ -77,11 +75,24 @@ export class InViewFeature extends Feature<Element> {
         this.startObserver()
     }
 
-    update() {
-        this.startObserver()
+    update(props: VisualElementProps, prevProps: VisualElementProps) {
+        const hasOptionsChanged = ["amount", "margin", "root"].some(
+            hasViewportOptionChanged(props, prevProps)
+        )
+
+        if (hasOptionsChanged) {
+            this.startObserver()
+        }
     }
 
     unmount() {
         this.removeObserver?.()
     }
+}
+
+function hasViewportOptionChanged(
+    { viewport = {} }: VisualElementProps,
+    { viewport: prevViewport = {} }: VisualElementProps
+) {
+    return (name: string) => viewport[name] !== prevViewport[name]
 }
