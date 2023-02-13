@@ -13,6 +13,7 @@ function createTest(
         {
             props,
             parent,
+            presenceContext: null,
             visualState: {
                 latestValues: {},
                 renderState: createHtmlRenderState(),
@@ -30,13 +31,13 @@ function createTest(
         element: element,
         state: {
             ...element.animationState,
-            setProps(
+            update(
                 newProps: any,
                 options: any,
                 type: any,
                 animateChanges = true
             ): any {
-                element.setProps(newProps)
+                element.update(newProps, null)
                 return animateChanges === true
                     ? element.animationState?.animateChanges(options, type)
                     : undefined
@@ -60,7 +61,7 @@ describe("Animation state - Initiating props", () => {
         const { state } = createTest()
 
         const animate = mockAnimate(state)
-        state.setProps({
+        state.update({
             animate: { opacity: 1 },
         })
 
@@ -74,7 +75,7 @@ describe("Animation state - Initiating props", () => {
         const { state } = createTest()
 
         const animate = mockAnimate(state)
-        state.setProps({
+        state.update({
             animate: "test",
             variants: {
                 test: { opacity: 1 },
@@ -91,7 +92,7 @@ describe("Animation state - Initiating props", () => {
         const { state } = createTest()
 
         const animate = mockAnimate(state)
-        state.setProps({
+        state.update({
             animate: ["test", "heyoo"],
             variants: {
                 test: { opacity: 1 },
@@ -112,7 +113,7 @@ describe("Animation state - Initiating props", () => {
         child.manuallyAnimateOnMount = false
 
         const animate = mockAnimate(state)
-        state.setProps({
+        state.update({
             variants: {
                 test: { opacity: 1 },
             },
@@ -128,7 +129,7 @@ describe("Animation state - Initiating props", () => {
         const { state } = createTest()
 
         const animate = mockAnimate(state)
-        state.setProps({
+        state.update({
             initial: false,
             animate: { opacity: 1 },
         })
@@ -143,7 +144,7 @@ describe("Animation state - Initiating props", () => {
         const { state } = createTest()
 
         const animate = mockAnimate(state)
-        state.setProps({
+        state.update({
             initial: false,
             animate: "test",
             variants: {
@@ -161,7 +162,7 @@ describe("Animation state - Initiating props", () => {
         const { state } = createTest()
 
         const animate = mockAnimate(state)
-        state.setProps({
+        state.update({
             initial: false,
             animate: ["test", "heyoo"],
             variants: {
@@ -180,13 +181,13 @@ describe("Animation state - Setting props", () => {
     test("No change, target", () => {
         const { state } = createTest()
 
-        state.setProps({
+        state.update({
             animate: { opacity: 1 },
         })
 
         const animate = mockAnimate(state)
 
-        state.setProps({
+        state.update({
             animate: { opacity: 1 },
         })
 
@@ -198,13 +199,13 @@ describe("Animation state - Setting props", () => {
     test("No change, target keyframes", () => {
         const { state } = createTest()
 
-        state.setProps({
+        state.update({
             animate: { opacity: [0, 1] },
         })
 
         const animate = mockAnimate(state)
 
-        state.setProps({
+        state.update({
             animate: { opacity: [0, 1] },
         })
 
@@ -217,7 +218,7 @@ describe("Animation state - Setting props", () => {
     test("No change, variant", () => {
         const { state } = createTest()
 
-        state.setProps({
+        state.update({
             animate: "test",
             variants: {
                 test: { opacity: 1 },
@@ -226,7 +227,7 @@ describe("Animation state - Setting props", () => {
 
         const animate = mockAnimate(state)
 
-        state.setProps({
+        state.update({
             animate: "test",
             variants: {
                 test: { opacity: 1 },
@@ -242,7 +243,7 @@ describe("Animation state - Setting props", () => {
     test("No change, variant list", () => {
         const { state } = createTest()
 
-        state.setProps({
+        state.update({
             animate: ["test", "test2"],
             variants: {
                 test: { opacity: 1 },
@@ -251,7 +252,7 @@ describe("Animation state - Setting props", () => {
 
         const animate = mockAnimate(state)
 
-        state.setProps({
+        state.update({
             animate: ["test", "test2"],
             variants: {
                 test: { opacity: 1 },
@@ -267,13 +268,13 @@ describe("Animation state - Setting props", () => {
     test("Change single value, target", () => {
         const { state } = createTest()
 
-        state.setProps({
+        state.update({
             animate: { opacity: 1 },
         })
 
         const animate = mockAnimate(state)
 
-        state.setProps({
+        state.update({
             animate: { opacity: 0 },
         })
 
@@ -286,13 +287,13 @@ describe("Animation state - Setting props", () => {
     test("Change single value, keyframes", () => {
         const { state } = createTest()
 
-        state.setProps({
+        state.update({
             animate: { opacity: [0, 1] },
         })
 
         const animate = mockAnimate(state)
 
-        state.setProps({
+        state.update({
             animate: { opacity: [0.5, 1] },
         })
 
@@ -305,7 +306,7 @@ describe("Animation state - Setting props", () => {
     test("Change single value, variant", () => {
         const { state } = createTest()
 
-        state.setProps({
+        state.update({
             animate: "a",
             variants: {
                 a: { opacity: 0 },
@@ -315,7 +316,7 @@ describe("Animation state - Setting props", () => {
 
         const animate = mockAnimate(state)
 
-        state.setProps({
+        state.update({
             animate: "b",
             variants: {
                 a: { opacity: 0 },
@@ -332,7 +333,7 @@ describe("Animation state - Setting props", () => {
     test("Change single value, variant list", () => {
         const { state } = createTest()
 
-        state.setProps({
+        state.update({
             animate: ["a"],
             variants: {
                 a: { opacity: 0 },
@@ -342,7 +343,7 @@ describe("Animation state - Setting props", () => {
 
         const animate = mockAnimate(state)
 
-        state.setProps({
+        state.update({
             animate: ["b"],
             variants: {
                 a: { opacity: 0 },
@@ -359,14 +360,14 @@ describe("Animation state - Setting props", () => {
     test("Swap between value in target and transitionEnd, target", () => {
         const { state } = createTest()
 
-        state.setProps({
+        state.update({
             style: { opacity: 0.1 },
             animate: { opacity: 0.2 },
         })
 
         let animate = mockAnimate(state)
 
-        state.setProps({
+        state.update({
             style: { opacity: 0.1 },
             animate: { transitionEnd: { opacity: 0.3 } },
         })
@@ -378,7 +379,7 @@ describe("Animation state - Setting props", () => {
 
         animate = mockAnimate(state)
 
-        state.setProps({
+        state.update({
             style: { opacity: 0.1 },
             animate: { opacity: 0.2 },
         })
@@ -391,13 +392,13 @@ describe("Animation state - Setting props", () => {
     test("Change single value, target, with unchanging values", () => {
         const { state } = createTest()
 
-        state.setProps({
+        state.update({
             animate: { opacity: 1, x: 0 },
         })
 
         let animate = mockAnimate(state)
 
-        state.setProps({
+        state.update({
             animate: { opacity: 0, x: 0 },
         })
 
@@ -408,7 +409,7 @@ describe("Animation state - Setting props", () => {
 
         animate = mockAnimate(state)
 
-        state.setProps({
+        state.update({
             animate: { opacity: 0, x: 100 },
         })
 
@@ -421,13 +422,13 @@ describe("Animation state - Setting props", () => {
     test("Removing values, target changed", () => {
         const { state } = createTest()
 
-        state.setProps({
+        state.update({
             animate: { opacity: 1 },
         })
 
         const animate = mockAnimate(state)
 
-        state.setProps({
+        state.update({
             style: { opacity: 0 },
             animate: {},
         })
@@ -441,13 +442,13 @@ describe("Animation state - Setting props", () => {
     test("Removing values, target undefined", () => {
         const { state } = createTest()
 
-        state.setProps({
+        state.update({
             animate: { opacity: 1 },
         })
 
         const animate = mockAnimate(state)
 
-        state.setProps({
+        state.update({
             style: { opacity: 0 },
             animate: undefined,
         })
@@ -461,7 +462,7 @@ describe("Animation state - Setting props", () => {
     test("Removing values, variant changed", () => {
         const { state } = createTest()
 
-        state.setProps({
+        state.update({
             animate: "a",
             variants: {
                 a: { opacity: 0 },
@@ -471,7 +472,7 @@ describe("Animation state - Setting props", () => {
 
         const animate = mockAnimate(state)
 
-        state.setProps({
+        state.update({
             style: { opacity: 1 },
             animate: "b",
             variants: {
@@ -490,7 +491,7 @@ describe("Animation state - Setting props", () => {
         const { element: parent } = createTest({ animate: "a" })
         const { state } = createTest({}, parent)
 
-        state.setProps({
+        state.update({
             variants: {
                 a: { opacity: 0 },
                 b: { x: 1 },
@@ -498,14 +499,17 @@ describe("Animation state - Setting props", () => {
         })
 
         const animate = mockAnimate(state)
-        parent.setProps({ animate: "b" })
-        state.setProps({
-            style: { opacity: 1 },
-            variants: {
-                a: { opacity: 0 },
-                b: { x: 1 },
+        parent.update({ animate: "b" }, null)
+        state.update(
+            {
+                style: { opacity: 1 },
+                variants: {
+                    a: { opacity: 0 },
+                    b: { x: 1 },
+                },
             },
-        })
+            null
+        )
 
         expect(animate).toBeCalledWith([{ opacity: 1 }])
         expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
@@ -519,7 +523,7 @@ describe("Animation state - Setting props", () => {
         })
         const { element: child, state: childState } = createTest({}, parent)
         child.manuallyAnimateOnMount = false
-        childState.setProps(
+        childState.update(
             {
                 style: { opacity: 0 },
                 variants: {
@@ -535,7 +539,7 @@ describe("Animation state - Setting props", () => {
         let parentAnimate = mockAnimate(parentState)
         let childAnimate = mockAnimate(childState)
 
-        childState.setProps(
+        childState.update(
             {
                 style: { opacity: 0 },
                 variants: {
@@ -547,7 +551,7 @@ describe("Animation state - Setting props", () => {
             undefined,
             false
         )
-        parentState.setProps({ animate: "a" }, undefined, undefined, false)
+        parentState.update({ animate: "a" }, undefined, undefined, false)
         child.animationState!.animateChanges()
         parent.animationState!.animateChanges()
 
@@ -560,7 +564,7 @@ describe("Animation state - Setting props", () => {
         parentAnimate = mockAnimate(parentState)
         childAnimate = mockAnimate(childState)
 
-        childState.setProps(
+        childState.update(
             {
                 style: { opacity: 0 },
                 variants: {
@@ -572,7 +576,7 @@ describe("Animation state - Setting props", () => {
             undefined,
             false
         )
-        parentState.setProps({ animate: "b" }, undefined, undefined, false)
+        parentState.update({ animate: "b" }, undefined, undefined, false)
 
         child.animationState!.animateChanges()
         parent.animationState!.animateChanges()
@@ -585,7 +589,7 @@ describe("Animation state - Setting props", () => {
         parentAnimate = mockAnimate(parentState)
         childAnimate = mockAnimate(childState)
 
-        childState.setProps(
+        childState.update(
             {
                 style: { opacity: 0 },
                 variants: {
@@ -597,7 +601,7 @@ describe("Animation state - Setting props", () => {
             undefined,
             false
         )
-        parentState.setProps({ animate: "" }, undefined, undefined, false)
+        parentState.update({ animate: "" }, undefined, undefined, false)
 
         child.animationState!.animateChanges()
         parent.animationState!.animateChanges()
@@ -613,7 +617,7 @@ describe("Animation state - Set active", () => {
     test("Change active state while props are the same", () => {
         const { state } = createTest()
 
-        state.setProps({
+        state.update({
             style: { opacity: 0 },
             animate: { opacity: 1 },
             whileHover: { opacity: 0.5 },
@@ -667,7 +671,7 @@ describe("Animation state - Set active", () => {
          */
         const { state } = createTest()
 
-        state.setProps({
+        state.update({
             animate: "a",
             whileHover: "b",
         })
