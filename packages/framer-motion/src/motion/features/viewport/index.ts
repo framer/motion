@@ -20,7 +20,7 @@ export class InViewFeature extends Feature<Element> {
         const { root, margin: rootMargin, amount = "some", once } = viewport
 
         const options = {
-            root: root?.current,
+            root: root ? root.current : undefined,
             rootMargin,
             threshold:
                 typeof amount === "number" ? amount : thresholdNames[amount],

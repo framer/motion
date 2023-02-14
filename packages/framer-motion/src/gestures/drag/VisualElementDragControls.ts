@@ -437,7 +437,7 @@ export class VisualElementDragControls {
             ? externalMotionValue
             : this.visualElement.getValue(
                   axis,
-                  (props.initial && props.initial[axis]) || 0
+                  (props.initial ? props.initial[axis] : undefined) || 0
               )
     }
 

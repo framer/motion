@@ -425,8 +425,8 @@ export function createProjectionNode<I>({
 
                         // TODO: Check here if an animation exists
                         const layoutTransition =
-                            this.options.transition ??
-                            visualElement.getDefaultTransition() ??
+                            this.options.transition ||
+                            visualElement.getDefaultTransition() ||
                             defaultLayoutTransition
 
                         const {
@@ -579,8 +579,9 @@ export function createProjectionNode<I>({
             if (layoutId === undefined && !layout) return
 
             const transformTemplate = this.getTransformTemplate()
-            this.prevTransformTemplateValue =
-                transformTemplate && transformTemplate(this.latestValues, "")
+            this.prevTransformTemplateValue = transformTemplate
+                ? transformTemplate(this.latestValues, "")
+                : undefined
 
             this.updateSnapshot()
             shouldNotifyListeners && this.notifyListeners("willUpdate")
@@ -1212,7 +1213,10 @@ export function createProjectionNode<I>({
 
         scheduleRender(notifyAll = true) {
             this.options.scheduleRender && this.options.scheduleRender()
-            notifyAll && this.getStack()?.scheduleRender()
+            if (notifyAll) {
+                const stack = this.getStack()
+                stack && stack.scheduleRender()
+            }
             if (this.resumingFrom && !this.resumingFrom.instance) {
                 this.resumingFrom = undefined
             }
@@ -1232,7 +1236,9 @@ export function createProjectionNode<I>({
             hasOnlyRelativeTargetChanged: boolean = false
         ) {
             const snapshot = this.snapshot
-            const snapshotLatestValues = snapshot?.latestValues || {}
+            const snapshotLatestValues = snapshot
+                ? snapshot.latestValues
+                : undefined || {}
             const mixedValues = { ...this.latestValues }
 
             const targetDelta = createDelta()
@@ -1268,7 +1274,8 @@ export function createProjectionNode<I>({
                     this.relativeTarget &&
                     this.relativeTargetOrigin &&
                     this.layout &&
-                    this.relativeParent?.layout
+                    this.relativeParent &&
+                    this.relativeParent.layout
                 ) {
                     calcRelativePosition(
                         relativeLayout,
@@ -1308,7 +1315,7 @@ export function createProjectionNode<I>({
         startAnimation(options: AnimationOptions<number>) {
             this.notifyListeners("animationStart")
 
-            this.currentAnimation?.stop()
+            this.currentAnimation && this.currentAnimation.stop()
             if (this.resumingFrom) {
                 this.resumingFrom.currentAnimation?.stop()
             }
@@ -1328,10 +1335,10 @@ export function createProjectionNode<I>({
                     ...(options as any),
                     onUpdate: (latest: number) => {
                         this.mixTargetDelta(latest)
-                        options.onUpdate?.(latest)
+                        options.onUpdate && options.onUpdate(latest)
                     },
                     onComplete: () => {
-                        options.onComplete?.()
+                        options.onComplete && options.onComplete()
                         this.completeAnimation()
                     },
                 })
@@ -1350,7 +1357,8 @@ export function createProjectionNode<I>({
                 this.resumingFrom.preserveOpacity = undefined
             }
 
-            this.getStack()?.exitAnimationComplete()
+            const stack = this.getStack()
+            stack && stack.exitAnimationComplete()
             this.resumingFrom =
                 this.currentAnimation =
                 this.animationValues =
@@ -1361,7 +1369,7 @@ export function createProjectionNode<I>({
 
         finishAnimation() {
             if (this.currentAnimation) {
-                this.mixTargetDelta?.(animationTarget)
+                this.mixTargetDelta && this.mixTargetDelta(animationTarget)
                 this.currentAnimation.stop()
             }
 
@@ -1533,7 +1541,7 @@ export function createProjectionNode<I>({
 
             // Force a render of this element to apply the transform with all rotations
             // set to 0.
-            visualElement?.render()
+            visualElement.render()
 
             // Put back all the values we reset
             for (const key in resetValues) {
@@ -1803,7 +1811,8 @@ function notifyLayoutUpdate(node: IProjectionNode) {
             hasRelativeTargetChanged,
         })
     } else if (node.isLead()) {
-        node.options.onExitComplete?.()
+        const { onExitComplete } = node.options
+        onExitComplete && onExitComplete()
     }
 
     /**
@@ -1841,7 +1850,7 @@ function clearMeasurements(node: IProjectionNode) {
 
 function resetTransformStyle(node: IProjectionNode) {
     const { visualElement } = node.options
-    if (visualElement?.getProps().onBeforeLayoutMeasure) {
+    if (visualElement && visualElement.getProps().onBeforeLayoutMeasure) {
         visualElement.notify("BeforeLayoutMeasure")
     }
 
