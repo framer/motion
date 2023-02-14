@@ -49,7 +49,7 @@ describe("WAAPI animations", () => {
             {
                 delay: -0,
                 duration: 300,
-                easing: "linear",
+                easing: "cubic-bezier(0.25, 0.1, 0.35, 1)",
                 iterations: 1,
                 direction: "normal",
                 fill: "both",
@@ -78,7 +78,7 @@ describe("WAAPI animations", () => {
             {
                 delay: -0,
                 duration: 300,
-                easing: "ease-out",
+                easing: "cubic-bezier(0.25, 0.1, 0.35, 1)",
                 iterations: 1,
                 direction: "normal",
                 fill: "both",
@@ -107,7 +107,7 @@ describe("WAAPI animations", () => {
             {
                 delay: -0,
                 duration: 300,
-                easing: "ease-out",
+                easing: "cubic-bezier(0.25, 0.1, 0.35, 1)",
                 iterations: 1,
                 direction: "normal",
                 fill: "both",
