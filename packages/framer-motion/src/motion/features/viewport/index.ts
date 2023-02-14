@@ -13,10 +13,8 @@ export class InViewFeature extends Feature<Element> {
 
     private isInView = false
 
-    private removeObserver?: Function
-
     private startObserver() {
-        this.removeObserver?.()
+        this.unmount()
 
         const { viewport = {} } = this.node.getProps()
         const { root, margin: rootMargin, amount = "some", once } = viewport
@@ -86,9 +84,7 @@ export class InViewFeature extends Feature<Element> {
         }
     }
 
-    unmount() {
-        this.removeObserver?.()
-    }
+    unmount() {}
 }
 
 function hasViewportOptionChanged(

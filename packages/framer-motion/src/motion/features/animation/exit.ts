@@ -1,13 +1,10 @@
 import { AnimationType } from "../../../render/utils/types"
-import { noop } from "../../../utils/noop"
 import { Feature } from "../Feature"
 
 let id = 0
 
 export class ExitAnimationFeature extends Feature<unknown> {
     private id: number = id++
-
-    private removePresenceSubscription: Function = noop
 
     update() {
         if (!this.node.presenceContext) return
@@ -34,13 +31,9 @@ export class ExitAnimationFeature extends Feature<unknown> {
         const { register } = this.node.presenceContext || {}
 
         if (register) {
-            this.removePresenceSubscription = register(this.id)
+            this.unmount = register(this.id)
         }
     }
 
-    unmount() {
-        if (this.removePresenceSubscription) {
-            this.removePresenceSubscription()
-        }
-    }
+    unmount() {}
 }

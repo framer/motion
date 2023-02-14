@@ -99,11 +99,13 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
             const initialLayoutGroupConfig = useContext(
                 SwitchLayoutGroupContext
             )
+            const isStrict = useContext(LazyContext).strict
+
             if (context.visualElement) {
                 MeasureLayout = context.visualElement.loadFeatures(
                     // Note: Pass the full new combined props to correctly re-render dynamic feature components.
                     configAndProps,
-                    useContext(LazyContext).strict,
+                    isStrict,
                     preloadedFeatures,
                     projectionId,
                     initialLayoutGroupConfig

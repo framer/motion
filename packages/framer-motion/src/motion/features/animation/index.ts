@@ -1,12 +1,9 @@
 import { isAnimationControls } from "../../../animation/utils/is-animation-controls"
 import { createAnimationState } from "../../../render/utils/animation-state"
 import { VisualElement } from "../../../render/VisualElement"
-import { noop } from "../../../utils/noop"
 import { Feature } from "../Feature"
 
 export class AnimationFeature extends Feature<unknown> {
-    removeAnimationControlsSubscription: Function = noop
-
     /**
      * We dynamically generate the AnimationState manager as it contains a reference
      * to the underlying animation library. We only want to load that if we load this,
@@ -18,14 +15,10 @@ export class AnimationFeature extends Feature<unknown> {
     }
 
     updateAnimationControlsSubscription() {
-        this.unmount()
-
-        // TODO: Check if controls have changed
         const { animate } = this.node.getProps()
+        this.unmount()
         if (isAnimationControls(animate)) {
-            this.removeAnimationControlsSubscription = animate.subscribe(
-                this.node
-            )
+            this.unmount = animate.subscribe(this.node)
         }
     }
 
@@ -36,7 +29,13 @@ export class AnimationFeature extends Feature<unknown> {
         this.updateAnimationControlsSubscription()
     }
 
-    unmount() {
-        this.removeAnimationControlsSubscription()
+    update() {
+        const { animate } = this.node.getProps()
+        const { animate: prevAnimate } = this.node.prevProps || {}
+        if (animate !== prevAnimate) {
+            this.updateAnimationControlsSubscription()
+        }
     }
+
+    unmount() {}
 }

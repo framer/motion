@@ -10,6 +10,7 @@ import { AnimationType } from "../render/utils/types"
 import { pipe } from "../utils/pipe"
 import { isDragActive } from "./drag/utils/lock"
 import { isNodeOrChild } from "./utils/is-node-or-child"
+import { noop } from "../utils/noop"
 
 function fireSyntheticPointerEvent(
     name: string,
@@ -23,27 +24,27 @@ function fireSyntheticPointerEvent(
 export class PressGesture extends Feature<Element> {
     private isPressing: boolean
 
-    private removeStartListeners?: Function
-    private removeEndListeners?: Function
-    private removeAccessibleListeners?: Function
+    private removeStartListeners: Function = noop
+    private removeEndListeners: Function = noop
+    private removeAccessibleListeners: Function = noop
 
     private startPress(event: PointerEvent, info: EventInfo) {
         this.isPressing = true
 
-        const props = this.node.getProps()
+        const { onTapStart, whileTap } = this.node.getProps()
 
         /**
          * Ensure we trigger animations before firing event callback
          */
-        if (props.whileTap && this.node.animationState) {
+        if (whileTap && this.node.animationState) {
             this.node.animationState.setActive(AnimationType.Tap, true)
         }
 
-        props.onTapStart?.(event, info)
+        onTapStart && onTapStart(event, info)
     }
 
     private checkPressEnd() {
-        this.removeEndListeners?.()
+        this.removeEndListeners()
         this.isPressing = false
 
         const props = this.node.getProps()
@@ -59,7 +60,7 @@ export class PressGesture extends Feature<Element> {
         startEvent: PointerEvent,
         startInfo: EventInfo
     ) => {
-        this.removeEndListeners?.()
+        this.removeEndListeners()
 
         if (this.isPressing) return
 
@@ -78,8 +79,8 @@ export class PressGesture extends Feature<Element> {
              * as, or a child of, this component's element
              */
             !isNodeOrChild(this.node.current, endEvent.target as Element)
-                ? onTapCancel?.(endEvent, endInfo)
-                : onTap?.(endEvent, endInfo)
+                ? onTapCancel && onTapCancel(endEvent, endInfo)
+                : onTap && onTap(endEvent, endInfo)
         }
 
         const removePointerUpListener = addPointerEvent(
@@ -108,7 +109,8 @@ export class PressGesture extends Feature<Element> {
     private cancelPress(event: PointerEvent, info: EventInfo) {
         if (!this.checkPressEnd()) return
 
-        this.node.getProps().onTapCancel?.(event, info)
+        const { onTapCancel } = this.node.getProps()
+        onTapCancel && onTapCancel(event, info)
     }
 
     private startAccessiblePress = () => {
@@ -121,7 +123,7 @@ export class PressGesture extends Feature<Element> {
                 fireSyntheticPointerEvent("up", this.node.getProps().onTap)
             }
 
-            this.removeEndListeners?.()
+            this.removeEndListeners()
             this.removeEndListeners = addDomEvent(
                 this.node.current!,
                 "keyup",
@@ -182,8 +184,8 @@ export class PressGesture extends Feature<Element> {
     }
 
     unmount() {
-        this.removeStartListeners?.()
-        this.removeEndListeners?.()
-        this.removeAccessibleListeners?.()
+        this.removeStartListeners()
+        this.removeEndListeners()
+        this.removeAccessibleListeners()
     }
 }

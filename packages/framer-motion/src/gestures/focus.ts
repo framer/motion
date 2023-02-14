@@ -1,13 +1,10 @@
 import { addDomEvent } from "../events/add-dom-event"
 import { Feature } from "../motion/features/Feature"
 import { AnimationType } from "../render/utils/types"
-import { noop } from "../utils/noop"
 import { pipe } from "../utils/pipe"
 
 export class FocusGesture extends Feature<Element> {
     private isActive = false
-
-    private removeEventListeners: Function = noop
 
     onFocus() {
         let isFocusVisible = false
@@ -37,13 +34,11 @@ export class FocusGesture extends Feature<Element> {
     }
 
     mount() {
-        this.removeEventListeners = pipe(
+        this.unmount = pipe(
             addDomEvent(this.node.current!, "focus", () => this.onFocus()),
             addDomEvent(this.node.current!, "blur", () => this.onBlur())
-        )
+        ) as VoidFunction
     }
 
-    unmount() {
-        this.removeEventListeners()
-    }
+    unmount() {}
 }

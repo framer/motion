@@ -5,7 +5,6 @@ import { isDragActive } from "./drag/utils/lock"
 import { EventInfo } from "../events/types"
 import type { VisualElement } from "../render/VisualElement"
 import { Feature } from "../motion/features/Feature"
-import { noop } from "../utils/noop"
 
 function addHoverEvent(node: VisualElement<Element>, isActive: boolean) {
     const eventName = "pointer" + (isActive ? "enter" : "leave")
@@ -31,16 +30,12 @@ function addHoverEvent(node: VisualElement<Element>, isActive: boolean) {
 }
 
 export class HoverGesture extends Feature<Element> {
-    private removeEventListeners: Function = noop
-
     mount() {
-        this.removeEventListeners = pipe(
+        this.unmount = pipe(
             addHoverEvent(this.node, true),
             addHoverEvent(this.node, false)
-        )
+        ) as VoidFunction
     }
 
-    unmount() {
-        this.removeEventListeners()
-    }
+    unmount() {}
 }
