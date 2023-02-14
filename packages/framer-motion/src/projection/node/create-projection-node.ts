@@ -699,7 +699,10 @@ export function createProjectionNode<I>({
          * the next step.
          */
         updateProjection = () => {
-            // Reset projection frame data
+            /**
+             * Reset debug counts. Manually resetting rather than creating a new
+             * object each frame.
+             */
             projectionFrameData.totalNodes =
                 projectionFrameData.resolvedTargetDeltas =
                 projectionFrameData.recalculatedProjection =
@@ -1122,6 +1125,9 @@ export function createProjectionNode<I>({
                 }
             }
 
+            /**
+             * Increase debug counter for resolved target deltas
+             */
             projectionFrameData.resolvedTargetDeltas++
         }
 
@@ -1258,6 +1264,9 @@ export function createProjectionNode<I>({
                 this.notifyListeners("projectionUpdate", target)
             }
 
+            /**
+             * Increase debug counter for recalculated projections
+             */
             projectionFrameData.recalculatedProjection++
         }
 
@@ -1904,6 +1913,9 @@ function notifyLayoutUpdate(node: IProjectionNode) {
 }
 
 export function propagateDirtyNodes(node: IProjectionNode) {
+    /**
+     * Increase debug counter for nodes encountered this frame
+     */
     projectionFrameData.totalNodes++
 
     if (!node.parent) return
