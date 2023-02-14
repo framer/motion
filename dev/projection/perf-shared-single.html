@@ -44,7 +44,7 @@
         <script src="./script-animate.js"></script>
         <script>
             const { createNode } = window.Animate
-            const { matchViewportBox, checkFrames } = window.Assert
+            const { matchViewportBox, checkFrame } = window.Assert
 
             const a = document.getElementById("a")
             const aProjection = createNode(
@@ -71,7 +71,7 @@
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     console.log(window.ProjectionFrames)
-                    checkFrames(a, 1, {
+                    checkFrame(a, 1, {
                         totalNodes: 3,
                         resolvedTargetDeltas: 1, // We only need to resolve a target for the lead node
                         recalculatedProjection: 2, // But recalculate a projection for both

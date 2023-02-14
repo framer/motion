@@ -92,7 +92,7 @@ window.Assert = {
             left: left - x,
         }
     },
-    checkFrames(element, frameIndex, expected) {
+    checkFrame(element, frameIndex, expected) {
         const frame = window.ProjectionFrames[frameIndex]
 
         if (!frame) showError(element, "No frame found for given index")

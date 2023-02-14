@@ -60,7 +60,7 @@
         <script src="./script-animate.js"></script>
         <script>
             const { createNode } = window.Animate
-            const { matchViewportBox, checkFrames } = window.Assert
+            const { matchViewportBox, checkFrame } = window.Assert
             const duration = 10
 
             const a = document.getElementById("a")
@@ -127,7 +127,7 @@
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     console.log(window.ProjectionFrames)
-                    checkFrames(a, 1, {
+                    checkFrame(a, 1, {
                         totalNodes: 7,
                         resolvedTargetDeltas: 3,
                         recalculatedProjection: 6,
