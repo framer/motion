@@ -116,16 +116,13 @@ export const createMotionValueAnimation = (
             options.repeatDelay = secondsToMilliseconds(options.repeatDelay)
         }
 
-        const visualElement = value.owner
-        const element = visualElement && visualElement.current
-
         /**
          * Animate via WAAPI if possible.
          */
         if (
-            visualElement &&
-            element instanceof HTMLElement &&
-            !visualElement?.getProps().onUpdate
+            value.owner &&
+            value.owner.current instanceof HTMLElement &&
+            !value.owner.getProps().onUpdate
         ) {
             const acceleratedAnimation = createAcceleratedAnimation(
                 value,

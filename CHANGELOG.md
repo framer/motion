@@ -14,6 +14,10 @@ Undocumented APIs should be considered internal and may change without warning.
 
 -   Fallback behavior for missing `IntersectionObserver`.
 
+### Changed
+
+-   No longer making `ProjectionNode` for `display: contents` nodes.
+
 ## [9.0.2] 2023-02-07
 
 ### Changed

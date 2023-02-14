@@ -24,7 +24,7 @@ export class StateVisualElement extends VisualElement<
     }
 
     getBaseTargetFromProps(props: MotionProps, key: string) {
-        return props.style?.[key]
+        return props.style ? props.style[key] : undefined
     }
 
     readValueFromInstance(

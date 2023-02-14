@@ -91,7 +91,8 @@ class MeasureLayoutWithContext extends React.Component<MeasureProps> {
                  * be in charge of the safe to remove. Otherwise we call it here.
                  */
                 sync.postRender(() => {
-                    if (!projection.getStack()?.members.length) {
+                    const stack = projection.getStack()
+                    if (!stack || !stack.members.length) {
                         this.safeToRemove()
                     }
                 })
@@ -121,15 +122,16 @@ class MeasureLayoutWithContext extends React.Component<MeasureProps> {
 
         if (projection) {
             projection.scheduleCheckAfterUnmount()
-            if (layoutGroup?.group) layoutGroup.group.remove(projection)
-            if (promoteContext?.deregister)
+            if (layoutGroup && layoutGroup.group)
+                layoutGroup.group.remove(projection)
+            if (promoteContext && promoteContext.deregister)
                 promoteContext.deregister(projection)
         }
     }
 
     safeToRemove() {
         const { safeToRemove } = this.props
-        safeToRemove?.()
+        safeToRemove && safeToRemove()
     }
 
     render() {

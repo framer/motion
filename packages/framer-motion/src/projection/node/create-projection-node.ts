@@ -343,7 +343,7 @@ export function createProjectionNode<I>({
 
         notifyListeners(name: LayoutEvents, ...args: any) {
             const subscriptionManager = this.eventHandlers.get(name)
-            subscriptionManager?.notify(...args)
+            subscriptionManager && subscriptionManager.notify(...args)
         }
 
         hasListeners(name: LayoutEvents) {
@@ -373,7 +373,7 @@ export function createProjectionNode<I>({
             }
 
             this.root.nodes!.add(this)
-            this.parent?.children.add(this)
+            this.parent && this.parent.children.add(this)
             this.elementId && this.root.potentialNodes.delete(this.elementId)
 
             if (isLayoutDirty && (layout || layoutId)) {
@@ -453,7 +453,7 @@ export function createProjectionNode<I>({
 
                         if (
                             this.options.layoutRoot ||
-                            this.resumeFrom?.instance ||
+                            (this.resumeFrom && this.resumeFrom.instance) ||
                             hasOnlyRelativeTargetChanged ||
                             (hasLayoutChanged &&
                                 (targetChanged || !this.currentAnimation))
@@ -499,7 +499,9 @@ export function createProjectionNode<I>({
                                 finishAnimation(this)
                             }
 
-                            this.isLead() && this.options.onExitComplete?.()
+                            if (this.isLead() && this.options.onExitComplete) {
+                                this.options.onExitComplete()
+                            }
                         }
 
                         this.targetLayout = newLayout
@@ -511,8 +513,9 @@ export function createProjectionNode<I>({
         unmount() {
             this.options.layoutId && this.willUpdate()
             this.root.nodes!.remove(this)
-            this.getStack()?.remove(this)
-            this.parent?.children.delete(this)
+            const stack = this.getStack()
+            stack && stack.remove(this)
+            this.parent && this.parent.children.delete(this)
             ;(this.instance as any) = undefined
 
             cancelSync.preRender(this.updateProjection)
@@ -534,7 +537,7 @@ export function createProjectionNode<I>({
         isTreeAnimationBlocked() {
             return (
                 this.isAnimationBlocked ||
-                this.parent?.isTreeAnimationBlocked() ||
+                (this.parent && this.parent.isTreeAnimationBlocked()) ||
                 false
             )
         }
@@ -543,17 +546,18 @@ export function createProjectionNode<I>({
         startUpdate() {
             if (this.isUpdateBlocked()) return
             this.isUpdating = true
-            this.nodes?.forEach(resetRotation)
+            this.nodes && this.nodes.forEach(resetRotation)
             this.animationId++
         }
 
         getTransformTemplate() {
-            return this.options.visualElement?.getProps().transformTemplate
+            const { visualElement } = this.options
+            return visualElement && visualElement.getProps().transformTemplate
         }
 
         willUpdate(shouldNotifyListeners = true) {
             if (this.root.isUpdateBlocked()) {
-                this.options.onExitComplete?.()
+                this.options.onExitComplete && this.options.onExitComplete()
                 return
             }
             !this.root.isUpdating && this.root.startUpdate()
@@ -574,10 +578,9 @@ export function createProjectionNode<I>({
             const { layoutId, layout } = this.options
             if (layoutId === undefined && !layout) return
 
-            this.prevTransformTemplateValue = this.getTransformTemplate()?.(
-                this.latestValues,
-                ""
-            )
+            const transformTemplate = this.getTransformTemplate()
+            this.prevTransformTemplateValue =
+                transformTemplate && transformTemplate(this.latestValues, "")
 
             this.updateSnapshot()
             shouldNotifyListeners && this.notifyListeners("willUpdate")
@@ -721,11 +724,13 @@ export function createProjectionNode<I>({
             this.projectionDelta = undefined
             this.notifyListeners("measure", this.layout.layoutBox)
 
-            this.options.visualElement?.notify(
-                "LayoutMeasure",
-                this.layout.layoutBox,
-                prevLayout?.layoutBox
-            )
+            const { visualElement } = this.options
+            visualElement &&
+                visualElement.notify(
+                    "LayoutMeasure",
+                    this.layout.layoutBox,
+                    prevLayout ? prevLayout.layoutBox : undefined
+                )
         }
 
         updateScroll(phase: Phase = "measure") {
@@ -908,7 +913,7 @@ export function createProjectionNode<I>({
                 removeBoxTransforms(
                     boxWithoutTransform,
                     node.latestValues,
-                    node.snapshot?.layoutBox,
+                    node.snapshot ? node.snapshot.layoutBox : undefined,
                     sourceBox
                 )
             }
@@ -1019,7 +1024,8 @@ export function createProjectionNode<I>({
             if (
                 this.relativeTarget &&
                 this.relativeTargetOrigin &&
-                this.relativeParent?.target
+                this.relativeParent &&
+                this.relativeParent.target
             ) {
                 calcRelativeBox(
                     this.target,
@@ -1205,7 +1211,7 @@ export function createProjectionNode<I>({
         }
 
         scheduleRender(notifyAll = true) {
-            this.options.scheduleRender?.()
+            this.options.scheduleRender && this.options.scheduleRender()
             notifyAll && this.getStack()?.scheduleRender()
             if (this.resumingFrom && !this.resumingFrom.instance) {
                 this.resumingFrom = undefined

@@ -35,7 +35,7 @@ export function inertia({
     }
 
     function startAnimation(options: Partial<AnimationOptions<number>>) {
-        currentAnimation?.stop()
+        currentAnimation && currentAnimation.stop()
 
         currentAnimation = animate({
             keyframes: [0, 1],
@@ -43,8 +43,8 @@ export function inertia({
             ...options,
             driver,
             onUpdate: (v: number) => {
-                onUpdate?.(v)
-                options.onUpdate?.(v)
+                onUpdate && onUpdate(v)
+                options.onUpdate && options.onUpdate(v)
             },
             onComplete,
             onStop,
@@ -109,6 +109,6 @@ export function inertia({
     }
 
     return {
-        stop: () => currentAnimation?.stop(),
+        stop: () => currentAnimation && currentAnimation.stop(),
     }
 }

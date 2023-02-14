@@ -394,7 +394,7 @@ export abstract class VisualElement<
         }
 
         if (this.parent && this.isVariantNode && !this.isControllingVariants) {
-            this.removeFromVariantTree = this.parent?.addVariantChild(this)
+            this.removeFromVariantTree = this.parent.addVariantChild(this)
         }
 
         this.values.forEach((value, key) => this.bindToMotionValue(key, value))
@@ -422,12 +422,12 @@ export abstract class VisualElement<
     }
 
     unmount() {
-        this.projection?.unmount()
+        this.projection && this.projection.unmount()
         cancelSync.update(this.notifyUpdate)
         cancelSync.render(this.render)
         this.valueSubscriptions.forEach((remove) => remove())
-        this.removeFromVariantTree?.()
-        this.parent?.children.delete(this)
+        this.removeFromVariantTree && this.removeFromVariantTree()
+        this.parent && this.parent.children.delete(this)
         for (const key in this.events) {
             this.events[key].clear()
         }
@@ -693,7 +693,7 @@ export abstract class VisualElement<
      * Returns the variant definition with a given name.
      */
     getVariant(name: string) {
-        return this.props.variants?.[name]
+        return this.props.variants ? this.props.variants[name] : undefined
     }
 
     /**
@@ -708,11 +708,17 @@ export abstract class VisualElement<
     }
 
     getClosestVariantNode(): VisualElement | undefined {
-        return this.isVariantNode ? this : this.parent?.getClosestVariantNode()
+        return this.isVariantNode
+            ? this
+            : this.parent
+            ? this.parent.getClosestVariantNode()
+            : undefined
     }
 
     getVariantContext(startAtParent = false): undefined | VariantStateContext {
-        if (startAtParent) return this.parent?.getVariantContext()
+        if (startAtParent) {
+            return this.parent ? this.parent.getVariantContext() : undefined
+        }
 
         if (!this.isControllingVariants) {
             const context = this.parent?.getVariantContext() || {}
@@ -741,7 +747,8 @@ export abstract class VisualElement<
     addVariantChild(child: VisualElement) {
         const closestVariantNode = this.getClosestVariantNode()
         if (closestVariantNode) {
-            closestVariantNode.variantChildren?.add(child)
+            closestVariantNode.variantChildren &&
+                closestVariantNode.variantChildren.add(child)
             return () => closestVariantNode.variantChildren!.delete(child)
         }
     }
@@ -765,8 +772,11 @@ export abstract class VisualElement<
      */
     removeValue(key: string) {
         this.values.delete(key)
-        this.valueSubscriptions.get(key)?.()
-        this.valueSubscriptions.delete(key)
+        const unsubscribe = this.valueSubscriptions.get(key)
+        if (unsubscribe) {
+            unsubscribe()
+            this.valueSubscriptions.delete(key)
+        }
         delete this.latestValues[key]
         this.removeValueFromRenderState(key, this.renderState)
     }
@@ -871,7 +881,9 @@ export abstract class VisualElement<
         eventName: EventName,
         ...args: any
     ) {
-        this.events[eventName]?.notify(...args)
+        if (this.events[eventName]) {
+            this.events[eventName].notify(...args)
+        }
     }
 }
 

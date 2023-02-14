@@ -158,10 +158,15 @@ export function getOrigin(
 
     for (const key in target) {
         const transitionOrigin = getOriginFromTransition(key, transition)
-        origin[key] =
-            transitionOrigin !== undefined
-                ? transitionOrigin
-                : visualElement.getValue(key)?.get()
+
+        if (transitionOrigin !== undefined) {
+            origin[key] = transitionOrigin
+        } else {
+            const value = visualElement.getValue(key)
+            if (value) {
+                origin[key] = value.get()
+            }
+        }
     }
 
     return origin
