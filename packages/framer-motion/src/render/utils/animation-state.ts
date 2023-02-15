@@ -373,9 +373,12 @@ export function createAnimationState(
         if (state[type].isActive === isActive) return Promise.resolve()
 
         // Propagate active change to children
-        visualElement.variantChildren?.forEach((child) =>
-            child.animationState?.setActive(type, isActive)
-        )
+        if (visualElement.variantChildren) {
+            visualElement.variantChildren.forEach((child) => {
+                child.animationState &&
+                    child.animationState.setActive(type, isActive)
+            })
+        }
 
         state[type].isActive = isActive
 

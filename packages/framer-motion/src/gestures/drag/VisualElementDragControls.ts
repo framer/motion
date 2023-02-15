@@ -1,9 +1,9 @@
 import { invariant } from "hey-listen"
-import { PanSession, PanInfo } from "../../gestures/PanSession"
+import { PanSession, PanInfo } from "../pan/PanSession"
 import { ResolvedConstraints } from "./types"
 import { Lock, getGlobalLock } from "./utils/lock"
 import { isRefObject } from "../../utils/is-ref-object"
-import { addPointerEvent } from "../../events/use-pointer-event"
+import { addPointerEvent } from "../../events/add-pointer-event"
 import {
     calcRelativeConstraints,
     calcViewportConstraints,
@@ -27,7 +27,7 @@ import {
     convertBoxToBoundingBox,
 } from "../../projection/geometry/conversion"
 import { LayoutUpdateData } from "../../projection/node/types"
-import { addDomEvent } from "../../events/use-dom-event"
+import { addDomEvent } from "../../events/add-dom-event"
 import { calcLength } from "../../projection/geometry/delta-calc"
 import { mix } from "../../utils/mix"
 import { percent } from "../../value/types/numbers/units"
@@ -88,7 +88,8 @@ export class VisualElementDragControls {
         /**
          * Don't start dragging if this component is exiting
          */
-        if (this.visualElement.isPresent === false) return
+        const { presenceContext } = this.visualElement
+        if (presenceContext && presenceContext.isPresent === false) return
 
         const onSessionStart = (event: PointerEvent) => {
             // Stop any animations on both axis values immediately. This allows the user to throw and catch
@@ -133,12 +134,15 @@ export class VisualElementDragControls {
                  * If the MotionValue is a percentage value convert to px
                  */
                 if (percent.test(current)) {
-                    const measuredAxis =
-                        this.visualElement.projection?.layout?.layoutBox[axis]
+                    const { projection } = this.visualElement
 
-                    if (measuredAxis) {
-                        const length = calcLength(measuredAxis)
-                        current = length * (parseFloat(current) / 100)
+                    if (projection && projection.layout) {
+                        const measuredAxis = projection.layout.layoutBox[axis]
+
+                        if (measuredAxis) {
+                            const length = calcLength(measuredAxis)
+                            current = length * (parseFloat(current) / 100)
+                        }
                     }
                 }
 
@@ -146,11 +150,9 @@ export class VisualElementDragControls {
             })
 
             // Fire onDragStart event
-            onDragStart?.(event, info)
-            this.visualElement.animationState?.setActive(
-                AnimationType.Drag,
-                true
-            )
+            onDragStart && onDragStart(event, info)
+            const { animationState } = this.visualElement
+            animationState && animationState.setActive(AnimationType.Drag, true)
         }
 
         const onMove = (event: PointerEvent, info: PanInfo) => {
@@ -173,7 +175,7 @@ export class VisualElementDragControls {
 
                 // If we've successfully set a direction, notify listener
                 if (this.currentDirection !== null) {
-                    onDirectionLock?.(this.currentDirection)
+                    onDirectionLock && onDirectionLock(this.currentDirection)
                 }
 
                 return
@@ -195,7 +197,7 @@ export class VisualElementDragControls {
              * This must fire after the render call as it might trigger a state
              * change which itself might trigger a layout update.
              */
-            onDrag?.(event, info)
+            onDrag && onDrag(event, info)
         }
 
         const onSessionEnd = (event: PointerEvent, info: PanInfo) =>
@@ -222,15 +224,16 @@ export class VisualElementDragControls {
         this.startAnimation(velocity)
 
         const { onDragEnd } = this.getProps()
-        onDragEnd?.(event, info)
+        onDragEnd && onDragEnd(event, info)
     }
 
     private cancel() {
         this.isDragging = false
-        if (this.visualElement.projection) {
-            this.visualElement.projection.isAnimationBlocked = false
+        const { projection, animationState } = this.visualElement
+        if (projection) {
+            projection.isAnimationBlocked = false
         }
-        this.panSession?.end()
+        this.panSession && this.panSession.end()
         this.panSession = undefined
 
         const { dragPropagation } = this.getProps()
@@ -239,7 +242,7 @@ export class VisualElementDragControls {
             this.openGlobalLock = null
         }
 
-        this.visualElement.animationState?.setActive(AnimationType.Drag, false)
+        animationState && animationState.setActive(AnimationType.Drag, false)
     }
 
     private updateAxis(axis: DragDirection, _point: Point, offset?: Point) {
@@ -370,7 +373,7 @@ export class VisualElementDragControls {
                 return
             }
 
-            let transition = constraints?.[axis] || {}
+            let transition = (constraints && constraints[axis]) || {}
 
             if (dragSnapToOrigin) transition = { min: 0, max: 0 }
 
@@ -427,13 +430,14 @@ export class VisualElementDragControls {
      */
     private getAxisMotionValue(axis: DragDirection) {
         const dragKey = "_drag" + axis.toUpperCase()
-        const externalMotionValue = this.visualElement.getProps()[dragKey]
+        const props = this.visualElement.getProps()
+        const externalMotionValue = props[dragKey]
 
         return externalMotionValue
             ? externalMotionValue
             : this.visualElement.getValue(
                   axis,
-                  this.visualElement.getProps().initial?.[axis] || 0
+                  (props.initial ? props.initial[axis] : undefined) || 0
               )
     }
 
@@ -497,7 +501,7 @@ export class VisualElementDragControls {
         this.visualElement.current.style.transform = transformTemplate
             ? transformTemplate({}, "")
             : "none"
-        projection.root?.updateScroll()
+        projection.root && projection.root.updateScroll()
         projection.updateLayout()
         this.resolveConstraints()
 
@@ -549,7 +553,7 @@ export class VisualElementDragControls {
         )
 
         if (projection && !projection!.layout) {
-            projection.root?.updateScroll()
+            projection.root && projection.root.updateScroll()
             projection.updateLayout()
         }
 
@@ -590,7 +594,7 @@ export class VisualElementDragControls {
             stopResizeListener()
             stopPointerListener()
             stopMeasureLayoutListener()
-            stopLayoutUpdateListener?.()
+            stopLayoutUpdateListener && stopLayoutUpdateListener()
         }
     }
 

@@ -1,9 +1,16 @@
-import { useDrag } from "../../gestures/drag/use-drag"
-import { usePanGesture } from "../../gestures/use-pan-gesture"
-import { makeRenderlessComponent } from "../utils/make-renderless-component"
-import { FeatureComponents } from "./types"
+import { DragGesture } from "../../gestures/drag"
+import { PanGesture } from "../../gestures/pan"
+import { HTMLProjectionNode } from "../../projection"
+import { MeasureLayout } from "./layout/MeasureLayout"
+import { FeaturePackages } from "./types"
 
-export const drag: FeatureComponents = {
-    pan: makeRenderlessComponent(usePanGesture),
-    drag: makeRenderlessComponent(useDrag),
+export const drag: FeaturePackages = {
+    pan: {
+        Feature: PanGesture,
+    },
+    drag: {
+        Feature: DragGesture,
+        ProjectionNode: HTMLProjectionNode,
+        MeasureLayout,
+    },
 }

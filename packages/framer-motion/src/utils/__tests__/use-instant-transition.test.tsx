@@ -14,6 +14,7 @@ describe("useInstantTransition", () => {
 
             const Parent = () => {
                 const [state, setState] = React.useState(false)
+
                 return (
                     <motion.div
                         initial={false}

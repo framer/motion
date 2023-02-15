@@ -25,7 +25,7 @@ export abstract class DOMVisualElement<
         props: MotionProps,
         key: string
     ): string | number | MotionValue<any> | undefined {
-        return props.style?.[key]
+        return props.style ? props.style[key] : undefined
     }
 
     removeValueFromRenderState(

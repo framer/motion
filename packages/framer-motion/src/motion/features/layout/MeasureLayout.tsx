@@ -10,7 +10,8 @@ import { globalProjectionState } from "../../../projection/node/state"
 import { correctBorderRadius } from "../../../projection/styles/scale-border-radius"
 import { correctBoxShadow } from "../../../projection/styles/scale-box-shadow"
 import { addScaleCorrector } from "../../../projection/styles/scale-correction"
-import { FeatureProps } from "../types"
+import { MotionProps } from "../../types"
+import { VisualElement } from "../../../render/VisualElement"
 
 interface MeasureContextProps {
     layoutGroup: LayoutGroupContextProps
@@ -19,9 +20,10 @@ interface MeasureContextProps {
     safeToRemove?: VoidFunction | null
 }
 
-class MeasureLayoutWithContext extends React.Component<
-    FeatureProps & MeasureContextProps
-> {
+type MeasureProps = MotionProps &
+    MeasureContextProps & { visualElement: VisualElement }
+
+class MeasureLayoutWithContext extends React.Component<MeasureProps> {
     /**
      * This only mounts projection nodes for components that
      * need measuring, we might want to do it for all components
@@ -54,7 +56,7 @@ class MeasureLayoutWithContext extends React.Component<
         globalProjectionState.hasEverUpdated = true
     }
 
-    getSnapshotBeforeUpdate(prevProps: FeatureProps & MeasureContextProps) {
+    getSnapshotBeforeUpdate(prevProps: MeasureProps) {
         const { layoutDependency, visualElement, drag, isPresent } = this.props
         const projection = visualElement.projection
 
@@ -89,7 +91,8 @@ class MeasureLayoutWithContext extends React.Component<
                  * be in charge of the safe to remove. Otherwise we call it here.
                  */
                 sync.postRender(() => {
-                    if (!projection.getStack()?.members.length) {
+                    const stack = projection.getStack()
+                    if (!stack || !stack.members.length) {
                         this.safeToRemove()
                     }
                 })
@@ -119,15 +122,16 @@ class MeasureLayoutWithContext extends React.Component<
 
         if (projection) {
             projection.scheduleCheckAfterUnmount()
-            if (layoutGroup?.group) layoutGroup.group.remove(projection)
-            if (promoteContext?.deregister)
+            if (layoutGroup && layoutGroup.group)
+                layoutGroup.group.remove(projection)
+            if (promoteContext && promoteContext.deregister)
                 promoteContext.deregister(projection)
         }
     }
 
     safeToRemove() {
         const { safeToRemove } = this.props
-        safeToRemove?.()
+        safeToRemove && safeToRemove()
     }
 
     render() {
@@ -135,7 +139,9 @@ class MeasureLayoutWithContext extends React.Component<
     }
 }
 
-export function MeasureLayout(props: FeatureProps) {
+export function MeasureLayout(
+    props: MotionProps & { visualElement: VisualElement }
+) {
     const [isPresent, safeToRemove] = usePresence()
     const layoutGroup = useContext(LayoutGroupContext)
 

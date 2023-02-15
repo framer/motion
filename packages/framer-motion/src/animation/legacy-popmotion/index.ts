@@ -81,7 +81,12 @@ export function animate<V = number>({
 
     let state = { done: false, value: origin }
 
-    if ((animator as any).needsInterpolation?.(origin, target)) {
+    /**
+     * If this value needs interpolation (ie is non-numerical), set up an interpolator.
+     * TODO: Keyframes animation also performs this step. This could be removed so it only happens here.
+     */
+    const { needsInterpolation } = animator as any
+    if (needsInterpolation && needsInterpolation(origin, target)) {
         interpolateFromNumber = interpolate([0, 100], [origin, target], {
             clamp: false,
         }) as (t: number) => V

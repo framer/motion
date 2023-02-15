@@ -5,6 +5,7 @@ import { ReducedMotionConfig } from "../context/MotionConfigContext"
 import { AnimationDefinition } from "./utils/animation"
 import { Axis, Box } from "../projection/geometry/types"
 import type { VisualElement } from "./VisualElement"
+import { PresenceContextProps } from "../context/PresenceContext"
 
 export interface MotionPoint {
     x: MotionValue<number>
@@ -34,7 +35,7 @@ export type VisualElementOptions<Instance, RenderState = any> = {
     visualState: VisualState<Instance, RenderState>
     parent?: VisualElement<unknown>
     variantParent?: VisualElement<unknown>
-    presenceId?: string | undefined
+    presenceContext: PresenceContextProps | null
     props: MotionProps
     blockInitialAnimation?: boolean
     reducedMotionConfig?: ReducedMotionConfig
@@ -52,7 +53,6 @@ export interface VisualElementEventCallbacks {
     LayoutMeasure: (layout: Box, prevLayout?: Box) => void
     LayoutUpdate: (layout: Axis, prevLayout: Axis) => void
     Update: (latest: ResolvedValues) => void
-    Render: () => void
     AnimationStart: (definition: AnimationDefinition) => void
     AnimationComplete: (definition: AnimationDefinition) => void
     LayoutAnimationStart: () => void

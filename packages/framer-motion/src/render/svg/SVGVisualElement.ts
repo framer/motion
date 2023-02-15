@@ -34,7 +34,8 @@ export class SVGVisualElement extends DOMVisualElement<
 
     readValueFromInstance(instance: SVGElement, key: string) {
         if (transformProps.has(key)) {
-            return getDefaultValueType(key)?.default || 0
+            const defaultType = getDefaultValueType(key)
+            return defaultType ? defaultType.default || 0 : 0
         }
         key = !camelCaseAttributes.has(key) ? camelToDash(key) : key
         return instance.getAttribute(key)

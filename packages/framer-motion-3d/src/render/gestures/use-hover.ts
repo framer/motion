@@ -21,11 +21,11 @@ export function useHover(
     return {
         onPointerOver: (event: ThreeEvent<any>) => {
             visualElement.animationState?.setActive(AnimationType.Hover, true)
-            onPointerOver?.(event)
+            onPointerOver && onPointerOver(event)
         },
         onPointerOut: (event: ThreeEvent<any>) => {
             visualElement.animationState?.setActive(AnimationType.Hover, false)
-            onPointerOut?.(event)
+            onPointerOut && onPointerOut(event)
         },
     }
 }

@@ -93,24 +93,25 @@ function animateVariant(
      * If we have children, create a callback that runs all their animations.
      * Otherwise, we resolve a Promise immediately for a composable no-op.
      */
-    const getChildAnimations = visualElement.variantChildren?.size
-        ? (forwardDelay = 0) => {
-              const {
-                  delayChildren = 0,
-                  staggerChildren,
-                  staggerDirection,
-              } = transition
+    const getChildAnimations =
+        visualElement.variantChildren && visualElement.variantChildren.size
+            ? (forwardDelay = 0) => {
+                  const {
+                      delayChildren = 0,
+                      staggerChildren,
+                      staggerDirection,
+                  } = transition
 
-              return animateChildren(
-                  visualElement,
-                  variant,
-                  delayChildren + forwardDelay,
-                  staggerChildren,
-                  staggerDirection,
-                  options
-              )
-          }
-        : () => Promise.resolve()
+                  return animateChildren(
+                      visualElement,
+                      variant,
+                      delayChildren + forwardDelay,
+                      staggerChildren,
+                      staggerDirection,
+                      options
+                  )
+              }
+            : () => Promise.resolve()
 
     /**
      * If the transition explicitly defines a "when" option, we need to resolve either
@@ -150,7 +151,9 @@ function animateTarget(
     const animations: Promise<any>[] = []
 
     const animationTypeState =
-        type && visualElement.animationState?.getState()[type]
+        type &&
+        visualElement.animationState &&
+        visualElement.animationState.getState()[type]
 
     for (const key in target) {
         const value = visualElement.getValue(key)

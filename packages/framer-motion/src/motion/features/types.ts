@@ -3,64 +3,54 @@ import { MotionProps } from "../types"
 import { VisualState } from "../utils/use-visual-state"
 import { VisualElement } from "../../render/VisualElement"
 import { CreateVisualElement } from "../../render/types"
+import type { Feature } from "./Feature"
+import { MeasureLayout } from "./layout/MeasureLayout"
 
-/**
- * @public
- */
-export interface FeatureProps<T = unknown> extends MotionProps {
-    visualElement: VisualElement<T>
-}
-
-export type FeatureNames = {
-    animation: true
-    exit: true
-    drag: true
-    tap: true
-    focus: true
-    hover: true
-    pan: true
-    inView: true
-    measureLayout: true
-}
-
-export type FeatureComponent = React.ComponentType<
-    React.PropsWithChildren<FeatureProps>
->
-
-/**
- * @public
- */
-export interface FeatureDefinition {
+export type HydratedFeatureDefinition = {
     isEnabled: (props: MotionProps) => boolean
-    Component?: FeatureComponent
+    Feature: typeof Feature<any>
+    ProjectionNode?: any
+    MeasureLayout?: typeof MeasureLayout
 }
 
-export interface FeatureComponents {
-    animation?: FeatureComponent
-    exit?: FeatureComponent
-    drag?: FeatureComponent
-    tap?: FeatureComponent
-    focus?: FeatureComponent
-    hover?: FeatureComponent
-    pan?: FeatureComponent
-    inView?: FeatureComponent
-    measureLayout?: FeatureComponent
+export interface HydratedFeatureDefinitions {
+    animation?: HydratedFeatureDefinition
+    exit?: HydratedFeatureDefinition
+    drag?: HydratedFeatureDefinition
+    tap?: HydratedFeatureDefinition
+    focus?: HydratedFeatureDefinition
+    hover?: HydratedFeatureDefinition
+    pan?: HydratedFeatureDefinition
+    inView?: HydratedFeatureDefinition
+    layout?: HydratedFeatureDefinition
 }
 
-export interface FeatureBundle extends FeatureComponents {
+export type FeatureDefinition = {
+    isEnabled: HydratedFeatureDefinition["isEnabled"]
+    Feature?: HydratedFeatureDefinition["Feature"]
+    ProjectionNode?: HydratedFeatureDefinition["ProjectionNode"]
+    MeasureLayout?: HydratedFeatureDefinition["MeasureLayout"]
+}
+
+export type FeatureDefinitions = {
+    [K in keyof HydratedFeatureDefinition]: FeatureDefinition
+}
+
+export type FeaturePackage = {
+    Feature?: HydratedFeatureDefinition["Feature"]
+    ProjectionNode?: HydratedFeatureDefinition["ProjectionNode"]
+    MeasureLayout?: HydratedFeatureDefinition["MeasureLayout"]
+}
+
+export type FeaturePackages = {
+    [K in keyof HydratedFeatureDefinitions]: FeaturePackage
+}
+
+export interface FeatureBundle extends FeaturePackages {
     renderer: CreateVisualElement<any>
-    projectionNodeConstructor?: any
 }
 
 export type LazyFeatureBundle = () => Promise<FeatureBundle>
-
-export type FeatureDefinitions = {
-    [K in keyof FeatureNames]: FeatureDefinition
-}
-
-export type LoadedFeatures = FeatureDefinitions & {
-    projectionNodeConstructor?: any
-}
 
 export type RenderComponent<Instance, RenderState> = (
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,

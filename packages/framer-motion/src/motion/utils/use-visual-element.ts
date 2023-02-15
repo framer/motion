@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useContext, useRef, useEffect } from "react"
+import { useContext, useRef, useEffect, useInsertionEffect } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 import { MotionProps } from "../../motion/types"
 import { useVisualElementContext } from "../../context/MotionContext"
@@ -33,7 +33,7 @@ export function useVisualElement<Instance, RenderState>(
             visualState,
             parent,
             props,
-            presenceId: presenceContext ? presenceContext.id : undefined,
+            presenceContext,
             blockInitialAnimation: presenceContext
                 ? presenceContext.initial === false
                 : false,
@@ -43,8 +43,16 @@ export function useVisualElement<Instance, RenderState>(
 
     const visualElement = visualElementRef.current
 
+    useInsertionEffect(() => {
+        visualElement && visualElement.update(props, presenceContext)
+    })
+
     useIsomorphicLayoutEffect(() => {
         visualElement && visualElement.render()
+    })
+
+    useEffect(() => {
+        visualElement && visualElement.updateFeatures()
     })
 
     /**

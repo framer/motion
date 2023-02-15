@@ -1,13 +1,11 @@
 import { sync, cancelSync } from "../frameloop"
 import { invariant, warning } from "hey-listen"
-import { createElement } from "react"
 import {
     MotionConfigContext,
     ReducedMotionConfig,
 } from "../context/MotionConfigContext"
 import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
-import { featureDefinitions } from "../motion/features/definitions"
-import { FeatureBundle, FeatureDefinition } from "../motion/features/types"
+import { FeatureBundle, FeatureDefinitions } from "../motion/features/types"
 import { MotionProps, MotionStyle } from "../motion/types"
 import { createBox } from "../projection/geometry/models"
 import { Box } from "../projection/geometry/types"
@@ -39,6 +37,9 @@ import { isVariantLabel } from "./utils/is-variant-label"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
 import { resolveVariantFromProps } from "./utils/resolve-variants"
 import { warnOnce } from "../utils/warn-once"
+import { featureDefinitions } from "../motion/features/definitions"
+import { Feature } from "../motion/features/Feature"
+import type { PresenceContextProps } from "../context/PresenceContext"
 
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
@@ -252,12 +253,6 @@ export abstract class VisualElement<
     values = new Map<string, MotionValue>()
 
     /**
-     * Tracks whether this VisualElement's React component is currently present
-     * within the defined React tree.
-     */
-    isPresent = true
-
-    /**
      * The AnimationState, this is hydrated by the animation Feature.
      */
     animationState?: AnimationState
@@ -271,7 +266,18 @@ export abstract class VisualElement<
     /**
      * A reference to the latest props provided to the VisualElement's host React component.
      */
-    protected props: MotionProps
+    props: MotionProps
+    prevProps?: MotionProps
+
+    presenceContext: PresenceContextProps | null
+    prevPresenceContext?: PresenceContextProps | null
+
+    /**
+     * Cleanup functions for active features (hover/tap/exit etc)
+     */
+    private features: {
+        [K in keyof FeatureDefinitions]?: Feature<Instance>
+    } = {}
 
     /**
      * A map of every subscription that binds the provided or generated
@@ -328,6 +334,7 @@ export abstract class VisualElement<
         {
             parent,
             props,
+            presenceContext,
             reducedMotionConfig,
             visualState,
         }: VisualElementOptions<Instance, RenderState>,
@@ -340,6 +347,7 @@ export abstract class VisualElement<
         this.renderState = renderState
         this.parent = parent
         this.props = props
+        this.presenceContext = presenceContext
         this.depth = parent ? parent.depth + 1 : 0
         this.reducedMotionConfig = reducedMotionConfig
         this.options = options
@@ -386,7 +394,7 @@ export abstract class VisualElement<
         }
 
         if (this.parent && this.isVariantNode && !this.isControllingVariants) {
-            this.removeFromVariantTree = this.parent?.addVariantChild(this)
+            this.removeFromVariantTree = this.parent.addVariantChild(this)
         }
 
         this.values.forEach((value, key) => this.bindToMotionValue(key, value))
@@ -410,18 +418,21 @@ export abstract class VisualElement<
         }
 
         if (this.parent) this.parent.children.add(this)
-        this.setProps(this.props)
+        this.update(this.props, this.presenceContext)
     }
 
     unmount() {
-        this.projection?.unmount()
+        this.projection && this.projection.unmount()
         cancelSync.update(this.notifyUpdate)
         cancelSync.render(this.render)
         this.valueSubscriptions.forEach((remove) => remove())
-        this.removeFromVariantTree?.()
-        this.parent?.children.delete(this)
+        this.removeFromVariantTree && this.removeFromVariantTree()
+        this.parent && this.parent.children.delete(this)
         for (const key in this.events) {
             this.events[key].clear()
+        }
+        for (const key in this.features) {
+            this.features[key].unmount()
         }
         this.current = null
     }
@@ -461,8 +472,9 @@ export abstract class VisualElement<
             !this.current ||
             !this.sortInstanceNodePosition ||
             this.type !== other.type
-        )
+        ) {
             return 0
+        }
 
         return this.sortInstanceNodePosition(
             this.current as Instance,
@@ -475,10 +487,10 @@ export abstract class VisualElement<
         isStrict: boolean,
         preloadedFeatures?: FeatureBundle,
         projectionId?: number,
-        ProjectionNodeConstructor?: any,
         initialLayoutGroupConfig?: SwitchLayoutGroupContext
     ) {
-        const features: JSX.Element[] = []
+        let ProjectionNodeConstructor: any
+        let MeasureLayout: undefined | React.ComponentType<MotionProps>
 
         /**
          * If we're in development mode, check to make sure we're not rendering a motion component
@@ -498,23 +510,22 @@ export abstract class VisualElement<
 
         for (let i = 0; i < numFeatures; i++) {
             const name = featureNames[i]
-            const { isEnabled, Component } = featureDefinitions[
-                name
-            ] as FeatureDefinition
+            const {
+                isEnabled,
+                Feature: FeatureConstructor,
+                ProjectionNode,
+                MeasureLayout: MeasureLayoutComponent,
+            } = featureDefinitions[name]
 
-            /**
-             * It might be possible in the future to use this moment to
-             * dynamically request functionality. In initial tests this
-             * was producing a lot of duplication amongst bundles.
-             */
-            if (isEnabled(renderedProps) && Component) {
-                features.push(
-                    createElement(Component, {
-                        key: name,
-                        ...renderedProps,
-                        visualElement: this,
-                    })
-                )
+            if (ProjectionNode) ProjectionNodeConstructor = ProjectionNode
+
+            if (isEnabled(renderedProps)) {
+                if (!this.features[name] && FeatureConstructor) {
+                    this.features[name] = new (FeatureConstructor as any)(this)
+                }
+                if (MeasureLayoutComponent) {
+                    MeasureLayout = MeasureLayoutComponent
+                }
             }
         }
 
@@ -555,7 +566,19 @@ export abstract class VisualElement<
             })
         }
 
-        return features
+        return MeasureLayout
+    }
+
+    updateFeatures() {
+        for (const key in this.features) {
+            const feature = this.features[key]
+            if (feature.isMounted) {
+                feature.update(this.props, this.prevProps)
+            } else {
+                feature.mount()
+                feature.isMounted = true
+            }
+        }
     }
 
     notifyUpdate = () => this.notify("Update", this.latestValues)
@@ -624,13 +647,16 @@ export abstract class VisualElement<
      * Update the provided props. Ensure any newly-added motion values are
      * added to our map, old ones removed, and listeners updated.
      */
-    setProps(props: MotionProps) {
+    update(props: MotionProps, presenceContext: PresenceContextProps | null) {
         if (props.transformTemplate || this.props.transformTemplate) {
             this.scheduleRender()
         }
 
-        const prevProps = this.props
+        this.prevProps = this.props
         this.props = props
+
+        this.prevPresenceContext = this.presenceContext
+        this.presenceContext = presenceContext
 
         /**
          * Update prop event handlers ie onAnimationStart, onAnimationComplete
@@ -650,7 +676,7 @@ export abstract class VisualElement<
 
         this.prevMotionValues = updateMotionValuesFromProps(
             this,
-            this.scrapeMotionValuesFromProps(props, prevProps),
+            this.scrapeMotionValuesFromProps(props, this.prevProps),
             this.prevMotionValues
         )
 
@@ -667,7 +693,7 @@ export abstract class VisualElement<
      * Returns the variant definition with a given name.
      */
     getVariant(name: string) {
-        return this.props.variants?.[name]
+        return this.props.variants ? this.props.variants[name] : undefined
     }
 
     /**
@@ -682,14 +708,22 @@ export abstract class VisualElement<
     }
 
     getClosestVariantNode(): VisualElement | undefined {
-        return this.isVariantNode ? this : this.parent?.getClosestVariantNode()
+        return this.isVariantNode
+            ? this
+            : this.parent
+            ? this.parent.getClosestVariantNode()
+            : undefined
     }
 
     getVariantContext(startAtParent = false): undefined | VariantStateContext {
-        if (startAtParent) return this.parent?.getVariantContext()
+        if (startAtParent) {
+            return this.parent ? this.parent.getVariantContext() : undefined
+        }
 
         if (!this.isControllingVariants) {
-            const context = this.parent?.getVariantContext() || {}
+            const context = this.parent
+                ? this.parent.getVariantContext() || {}
+                : {}
             if (this.props.initial !== undefined) {
                 context.initial = this.props.initial as any
             }
@@ -715,7 +749,8 @@ export abstract class VisualElement<
     addVariantChild(child: VisualElement) {
         const closestVariantNode = this.getClosestVariantNode()
         if (closestVariantNode) {
-            closestVariantNode.variantChildren?.add(child)
+            closestVariantNode.variantChildren &&
+                closestVariantNode.variantChildren.add(child)
             return () => closestVariantNode.variantChildren!.delete(child)
         }
     }
@@ -739,8 +774,11 @@ export abstract class VisualElement<
      */
     removeValue(key: string) {
         this.values.delete(key)
-        this.valueSubscriptions.get(key)?.()
-        this.valueSubscriptions.delete(key)
+        const unsubscribe = this.valueSubscriptions.get(key)
+        if (unsubscribe) {
+            unsubscribe()
+            this.valueSubscriptions.delete(key)
+        }
         delete this.latestValues[key]
         this.removeValueFromRenderState(key, this.renderState)
     }
@@ -845,7 +883,9 @@ export abstract class VisualElement<
         eventName: EventName,
         ...args: any
     ) {
-        this.events[eventName]?.notify(...args)
+        if (this.events[eventName]) {
+            this.events[eventName].notify(...args)
+        }
     }
 }
 

@@ -15,7 +15,7 @@ export {
     VisualState,
 } from "./motion/utils/use-visual-state"
 export { isDragActive } from "./gestures/drag/utils/lock"
-export { addPointerEvent } from "./events/use-pointer-event"
+export { addPointerEvent } from "./events/add-pointer-event"
 export { addPointerInfo } from "./events/event-info"
 export { isMotionValue } from "./value/utils/is-motion-value"
 export { isBrowser } from "./utils/is-browser"

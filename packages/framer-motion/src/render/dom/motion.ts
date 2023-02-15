@@ -6,15 +6,14 @@ import { gestureAnimations } from "../../motion/features/gestures"
 import { animations } from "../../motion/features/animations"
 import { drag } from "../../motion/features/drag"
 import { createDomVisualElement } from "./create-visual-element"
-import { layoutFeatures } from "../../motion/features/layout"
-import { HTMLProjectionNode } from "../../projection/node/HTMLProjectionNode"
-import { FeatureBundle } from "../../motion/features/types"
+import { FeaturePackages } from "../../motion/features/types"
+import { layout } from "../../motion/features/layout"
 
-const featureBundle: Partial<FeatureBundle> = {
+const preloadedFeatures: FeaturePackages = {
     ...animations,
     ...gestureAnimations,
     ...drag,
-    ...layoutFeatures,
+    ...layout,
 }
 
 /**
@@ -28,9 +27,8 @@ export const motion = /*@__PURE__*/ createMotionProxy(
         createDomMotionConfig(
             Component,
             config,
-            featureBundle,
-            createDomVisualElement,
-            HTMLProjectionNode
+            preloadedFeatures,
+            createDomVisualElement
         ) as any
 )
 
@@ -56,9 +54,8 @@ export function createDomMotionComponent<T extends keyof DOMMotionComponents>(
         createDomMotionConfig(
             key,
             { forwardMotionProps: false },
-            featureBundle,
-            createDomVisualElement,
-            HTMLProjectionNode
+            preloadedFeatures,
+            createDomVisualElement
         ) as any
     ) as DOMMotionComponents[T]
 }

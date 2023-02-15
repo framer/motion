@@ -8,12 +8,10 @@ import { useVisualElement } from "./utils/use-visual-element"
 import { UseVisualState } from "./utils/use-visual-state"
 import { useMotionRef } from "./utils/use-motion-ref"
 import { useCreateMotionContext } from "../context/MotionContext/create"
-import { featureDefinitions } from "./features/definitions"
 import { loadFeatures } from "./features/load-features"
 import { isBrowser } from "../utils/is-browser"
 import { useProjectionId } from "../projection/node/id"
 import { LayoutGroupContext } from "../context/LayoutGroupContext"
-import { VisualElementHandler } from "./utils/VisualElementHandler"
 import { LazyContext } from "../context/LazyContext"
 import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
 import { motionComponentSymbol } from "./utils/symbol"
@@ -22,7 +20,6 @@ import { CreateVisualElement } from "../render/types"
 export interface MotionComponentConfig<Instance, RenderState> {
     preloadedFeatures?: FeatureBundle
     createVisualElement?: CreateVisualElement<Instance>
-    projectionNodeConstructor?: any
     useRender: RenderComponent<Instance, RenderState>
     useVisualState: UseVisualState<Instance, RenderState>
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>
@@ -40,7 +37,6 @@ export interface MotionComponentConfig<Instance, RenderState> {
 export function createMotionComponent<Props extends {}, Instance, RenderState>({
     preloadedFeatures,
     createVisualElement,
-    projectionNodeConstructor,
     useRender,
     useVisualState,
     Component,
@@ -51,14 +47,19 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
         props: Props & MotionProps,
         externalRef?: React.Ref<Instance>
     ) {
+        /**
+         * If we need to measure the element we load this functionality in a
+         * separate class component in order to gain access to getSnapshotBeforeUpdate.
+         */
+        let MeasureLayout: undefined | React.ComponentType<MotionProps>
+
         const configAndProps = {
             ...useContext(MotionConfigContext),
             ...props,
             layoutId: useLayoutId(props),
         }
-        const { isStatic } = configAndProps
 
-        let features: JSX.Element[] | null = null
+        const { isStatic } = configAndProps
 
         const context = useCreateMotionContext<Instance>(props)
 
@@ -75,9 +76,6 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
          */
         const projectionId = isStatic ? undefined : useProjectionId()
 
-        /**
-         *
-         */
         const visualState = useVisualState(props, isStatic)
 
         if (!isStatic && isBrowser) {
@@ -101,15 +99,15 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
             const initialLayoutGroupConfig = useContext(
                 SwitchLayoutGroupContext
             )
+            const isStrict = useContext(LazyContext).strict
+
             if (context.visualElement) {
-                features = context.visualElement.loadFeatures(
+                MeasureLayout = context.visualElement.loadFeatures(
                     // Note: Pass the full new combined props to correctly re-render dynamic feature components.
                     configAndProps,
-                    useContext(LazyContext).strict,
+                    isStrict,
                     preloadedFeatures,
                     projectionId,
-                    projectionNodeConstructor ||
-                        featureDefinitions.projectionNodeConstructor,
                     initialLayoutGroupConfig
                 )
             }
@@ -120,27 +118,27 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
          * is hydrated by the time features fire their effects.
          */
         return (
-            <VisualElementHandler
-                visualElement={context.visualElement}
-                props={configAndProps}
-            >
-                {features}
-                <MotionContext.Provider value={context}>
-                    {useRender(
-                        Component,
-                        props,
-                        projectionId,
-                        useMotionRef<Instance, RenderState>(
-                            visualState,
-                            context.visualElement,
-                            externalRef
-                        ),
+            <MotionContext.Provider value={context}>
+                {MeasureLayout && context.visualElement ? (
+                    <MeasureLayout
+                        visualElement={context.visualElement}
+                        {...configAndProps}
+                    />
+                ) : null}
+                {useRender(
+                    Component,
+                    props,
+                    projectionId,
+                    useMotionRef<Instance, RenderState>(
                         visualState,
-                        isStatic,
-                        context.visualElement
-                    )}
-                </MotionContext.Provider>
-            </VisualElementHandler>
+                        context.visualElement,
+                        externalRef
+                    ),
+                    visualState,
+                    isStatic,
+                    context.visualElement
+                )}
+            </MotionContext.Provider>
         )
     }
 

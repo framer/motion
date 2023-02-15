@@ -5,5 +5,5 @@ export function checkShouldInheritVariant({
     variants,
     inherit,
 }: MotionProps): boolean {
-    return inherit ?? (!!variants && !animate)
+    return inherit !== undefined ? inherit : !!variants && !animate
 }

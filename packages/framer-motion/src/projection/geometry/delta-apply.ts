@@ -89,7 +89,19 @@ export function applyTreeDeltas(
     for (let i = 0; i < treeLength; i++) {
         node = treePath[i]
         delta = node.projectionDelta
-        if ((node.instance as any)?.style?.display === "contents") continue
+
+        /**
+         * TODO: Prefer to remove this, but currently we have motion components with
+         * display: contents in Framer.
+         */
+        const instance = node.instance as any
+        if (
+            instance &&
+            instance.style &&
+            instance.style.display === "contents"
+        ) {
+            continue
+        }
 
         if (
             isSharedTransition &&

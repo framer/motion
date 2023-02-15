@@ -1,13 +1,8 @@
 import { MotionProps } from "../types"
-import { LoadedFeatures } from "./types"
+import { FeatureDefinitions } from "./types"
 
-const createDefinition = (propNames: string[]) => ({
-    isEnabled: (props: MotionProps) => propNames.some((name) => !!props[name]),
-})
-
-export const featureDefinitions: LoadedFeatures = {
-    measureLayout: createDefinition(["layout", "layoutId", "drag"]),
-    animation: createDefinition([
+const featureProps = {
+    animation: [
         "animate",
         "exit",
         "variants",
@@ -16,21 +11,22 @@ export const featureDefinitions: LoadedFeatures = {
         "whileFocus",
         "whileDrag",
         "whileInView",
-    ]),
-    exit: createDefinition(["exit"]),
-    drag: createDefinition(["drag", "dragControls"]),
-    focus: createDefinition(["whileFocus"]),
-    hover: createDefinition(["whileHover", "onHoverStart", "onHoverEnd"]),
-    tap: createDefinition(["whileTap", "onTap", "onTapStart", "onTapCancel"]),
-    pan: createDefinition([
-        "onPan",
-        "onPanStart",
-        "onPanSessionStart",
-        "onPanEnd",
-    ]),
-    inView: createDefinition([
-        "whileInView",
-        "onViewportEnter",
-        "onViewportLeave",
-    ]),
+    ],
+    exit: ["exit"],
+    drag: ["drag", "dragControls"],
+    focus: ["whileFocus"],
+    hover: ["whileHover", "onHoverStart", "onHoverEnd"],
+    tap: ["whileTap", "onTap", "onTapStart", "onTapCancel"],
+    pan: ["onPan", "onPanStart", "onPanSessionStart", "onPanEnd"],
+    inView: ["whileInView", "onViewportEnter", "onViewportLeave"],
+    layout: ["layout", "layoutId"],
+}
+
+export const featureDefinitions: Partial<FeatureDefinitions> = {}
+
+for (const key in featureProps) {
+    featureDefinitions[key] = {
+        isEnabled: (props: MotionProps) =>
+            featureProps[key].some((name: string) => !!props[name]),
+    }
 }

@@ -1,13 +1,20 @@
-import { useFocusGesture } from "../../gestures/use-focus-gesture"
-import { useHoverGesture } from "../../gestures/use-hover-gesture"
-import { useTapGesture } from "../../gestures/use-tap-gesture"
-import { useViewport } from "./viewport/use-viewport"
-import { makeRenderlessComponent } from "../utils/make-renderless-component"
-import { FeatureComponents } from "./types"
+import { HoverGesture } from "../../gestures/hover"
+import { FocusGesture } from "../../gestures/focus"
+import { PressGesture } from "../../gestures/press"
+import { InViewFeature } from "./viewport"
+import { FeaturePackages } from "./types"
 
-export const gestureAnimations: FeatureComponents = {
-    inView: makeRenderlessComponent(useViewport),
-    tap: makeRenderlessComponent(useTapGesture),
-    focus: makeRenderlessComponent(useFocusGesture),
-    hover: makeRenderlessComponent(useHoverGesture),
+export const gestureAnimations: FeaturePackages = {
+    inView: {
+        Feature: InViewFeature,
+    },
+    tap: {
+        Feature: PressGesture,
+    },
+    focus: {
+        Feature: FocusGesture,
+    },
+    hover: {
+        Feature: HoverGesture,
+    },
 }

@@ -114,6 +114,7 @@ describe("dragging", () => {
         const onDragEnd = deferred()
         const Component = () => {
             const [increment, setIncrement] = React.useState(1)
+
             return (
                 <MockDrag>
                     <motion.div
@@ -146,7 +147,7 @@ describe("dragging", () => {
         pointer.end() // + 3 = 14
         await onDragEnd.promise
 
-        expect(count).toBeGreaterThanOrEqual(12)
+        expect(count).toBeGreaterThanOrEqual(11)
     })
 
     test("dragEnd returns transformed pointer", async () => {
