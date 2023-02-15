@@ -44,18 +44,15 @@ export function useVisualElement<Instance, RenderState>(
     const visualElement = visualElementRef.current
 
     useInsertionEffect(() => {
-        if (!visualElement) return
-        visualElement.update(props, presenceContext)
+        visualElement && visualElement.update(props, presenceContext)
     })
 
     useIsomorphicLayoutEffect(() => {
-        if (!visualElement) return
-        visualElement.render()
+        visualElement && visualElement.render()
     })
 
     useEffect(() => {
-        if (!visualElement) return
-        visualElement.updateFeatures()
+        visualElement && visualElement.updateFeatures()
     })
 
     /**
