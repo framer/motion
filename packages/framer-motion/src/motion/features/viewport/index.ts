@@ -13,11 +13,41 @@ export class InViewFeature extends Feature<Element> {
 
     private isInView = false
 
+    /**
+     * TODO: Remove this in 10.0
+     */
+    private viewportFallback() {
+        /**
+         * Fire this in an rAF because, at this point, the animation state
+         * won't have flushed for the first time and there's certain logic in
+         * there that behaves differently on the initial animation.
+         */
+        requestAnimationFrame(() => {
+            this.hasEnteredView = true
+            const { onViewportEnter } = this.node.getProps()
+            onViewportEnter && onViewportEnter(null)
+            if (this.node.animationState) {
+                this.node.animationState.setActive(AnimationType.InView, true)
+            }
+        })
+    }
+
     private startObserver() {
         this.unmount()
 
         const { viewport = {} } = this.node.getProps()
-        const { root, margin: rootMargin, amount = "some", once } = viewport
+        const {
+            root,
+            margin: rootMargin,
+            amount = "some",
+            once,
+            fallback = true,
+        } = viewport
+
+        if (typeof IntersectionObserver === "undefined") {
+            if (fallback) this.viewportFallback()
+            return
+        }
 
         const options = {
             root: root ? root.current : undefined,
@@ -74,6 +104,8 @@ export class InViewFeature extends Feature<Element> {
     }
 
     update() {
+        if (typeof IntersectionObserver === "undefined") return
+
         const { props, prevProps } = this.node
         const hasOptionsChanged = ["amount", "margin", "root"].some(
             hasViewportOptionChanged(props, prevProps)

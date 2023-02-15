@@ -9,14 +9,7 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Updated
 
 -   Refactored `motion` component features to load without React components.
-
-### Removed
-
--   Fallback behavior for missing `IntersectionObserver`.
-
-### Changed
-
--   No longer making `ProjectionNode` for `display: contents` nodes.
+-   Deprecated fallback behavior for missing `IntersectionObserver`.
 
 ## [9.0.2] 2023-02-07
 
