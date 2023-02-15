@@ -765,12 +765,14 @@ export function createProjectionNode<I>({
             const hasProjection =
                 this.projectionDelta && !isDeltaZero(this.projectionDelta)
 
-            const transformTemplateValue = this.getTransformTemplate()?.(
-                this.latestValues,
-                ""
-            )
+            const transformTemplate = this.getTransformTemplate()
+            const transformTemplateValue = transformTemplate
+                ? transformTemplate(this.latestValues, "")
+                : undefined
+
             const transformTemplateHasChanged =
                 transformTemplateValue !== this.prevTransformTemplateValue
+
             if (
                 isResetRequested &&
                 (hasProjection ||
@@ -1129,7 +1131,7 @@ export function createProjectionNode<I>({
              * delete our target sources for the following frame.
              */
             this.isTreeAnimating = Boolean(
-                this.parent?.isTreeAnimating ||
+                (this.parent && this.parent.isTreeAnimating) ||
                     this.currentAnimation ||
                     this.pendingAnimation
             )
@@ -1252,9 +1254,11 @@ export function createProjectionNode<I>({
 
             const relativeLayout = createBox()
 
-            const isSharedLayoutAnimation =
-                snapshot?.source !== this.layout?.source
-            const isOnlyMember = (this.getStack()?.members.length || 0) <= 1
+            const snapshotSource = snapshot ? snapshot.source : undefined
+            const layoutSource = this.layout ? this.layout.source : undefined
+            const isSharedLayoutAnimation = snapshotSource !== layoutSource
+            const stack = this.getStack()
+            const isOnlyMember = !stack || stack.members.length <= 1
             const shouldCrossfadeOpacity = Boolean(
                 isSharedLayoutAnimation &&
                     !isOnlyMember &&
@@ -1316,8 +1320,8 @@ export function createProjectionNode<I>({
             this.notifyListeners("animationStart")
 
             this.currentAnimation && this.currentAnimation.stop()
-            if (this.resumingFrom) {
-                this.resumingFrom.currentAnimation?.stop()
+            if (this.resumingFrom && this.resumingFrom.currentAnimation) {
+                this.resumingFrom.currentAnimation.stop()
             }
             if (this.pendingAnimation) {
                 cancelSync.update(this.pendingAnimation)
@@ -1444,12 +1448,13 @@ export function createProjectionNode<I>({
             const stack = this.sharedNodes.get(layoutId)!
             stack.add(node)
 
+            const config = node.options.initialPromotionConfig
             node.promote({
-                transition: node.options.initialPromotionConfig?.transition,
+                transition: config ? config.transition : undefined,
                 preserveFollowOpacity:
-                    node.options.initialPromotionConfig?.shouldPreserveFollowOpacity?.(
-                        node
-                    ),
+                    config && config.shouldPreserveFollowOpacity
+                        ? config.shouldPreserveFollowOpacity(node)
+                        : undefined,
             })
         }
 

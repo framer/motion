@@ -73,7 +73,7 @@ export class NodeStack {
                     prevLead.animationValues || prevLead.latestValues
             }
 
-            if (node.root?.isUpdating) {
+            if (node.root && node.root.isUpdating) {
                 node.isLayoutDirty = true
             }
 
@@ -99,8 +99,14 @@ export class NodeStack {
 
     exitAnimationComplete() {
         this.members.forEach((node) => {
-            node.options.onExitComplete?.()
-            node.resumingFrom?.options.onExitComplete?.()
+            const { options, resumingFrom } = node
+
+            options.onExitComplete && options.onExitComplete()
+
+            if (resumingFrom) {
+                resumingFrom.options.onExitComplete &&
+                    resumingFrom.options.onExitComplete()
+            }
         })
     }
 

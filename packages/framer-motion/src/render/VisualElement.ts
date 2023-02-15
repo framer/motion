@@ -721,7 +721,9 @@ export abstract class VisualElement<
         }
 
         if (!this.isControllingVariants) {
-            const context = this.parent?.getVariantContext() || {}
+            const context = this.parent
+                ? this.parent.getVariantContext() || {}
+                : {}
             if (this.props.initial !== undefined) {
                 context.initial = this.props.initial as any
             }

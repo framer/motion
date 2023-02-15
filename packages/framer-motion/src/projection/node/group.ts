@@ -25,8 +25,11 @@ export function nodeGroup(): NodeGroup {
         },
         remove: (node) => {
             nodes.delete(node)
-            subscriptions.get(node)?.()
-            subscriptions.delete(node)
+            const unsubscribe = subscriptions.get(node)
+            if (unsubscribe) {
+                unsubscribe()
+                subscriptions.delete(node)
+            }
             dirtyAll()
         },
         dirty: dirtyAll,
