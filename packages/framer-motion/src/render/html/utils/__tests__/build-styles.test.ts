@@ -132,7 +132,6 @@ interface BuildProps {
     vars: ResolvedValues
     transform: ResolvedValues
     transformOrigin: TransformOrigin
-    transformKeys: string[]
     config: DOMVisualElementOptions & { transformTemplate?: any }
 }
 
@@ -143,7 +142,6 @@ function build(
         vars = {},
         transform = {},
         transformOrigin = {},
-        transformKeys = [],
         config = {
             enableHardwareAcceleration: true,
             allowTransformNone: true,
@@ -156,7 +154,6 @@ function build(
             vars,
             transform,
             transformOrigin,
-            transformKeys,
         },
         latest,
         config,

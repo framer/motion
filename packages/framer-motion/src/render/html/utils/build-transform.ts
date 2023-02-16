@@ -10,11 +10,7 @@ const translateAlias = {
     transformPerspective: "perspective",
 }
 
-/**
- * A function to use with Array.sort to sort transform keys by their default order.
- */
-const sortTransformProps = (a: string, b: string) =>
-    transformPropOrder.indexOf(a) - transformPropOrder.indexOf(b)
+const numTransforms = transformPropOrder.length
 
 /**
  * Build a CSS transform style from individual x/y/scale etc properties.
@@ -23,10 +19,7 @@ const sortTransformProps = (a: string, b: string) =>
  * providing a transformTemplate function.
  */
 export function buildTransform(
-    {
-        transform,
-        transformKeys,
-    }: Pick<HTMLRenderState, "transform" | "transformKeys">,
+    transform: HTMLRenderState["transform"],
     {
         enableHardwareAcceleration = true,
         allowTransformNone = true,
@@ -37,12 +30,16 @@ export function buildTransform(
     // The transform string we're going to build into.
     let transformString = ""
 
-    // Transform keys into their default order - this will determine the output order.
-    transformKeys.sort(sortTransformProps)
-
-    // Loop over each transform and build them into transformString
-    for (const key of transformKeys) {
-        transformString += `${translateAlias[key] || key}(${transform[key]}) `
+    /**
+     * Loop over all possible transforms in order, adding the ones that
+     * are present to the transform string.
+     */
+    for (let i = 0; i < numTransforms; i++) {
+        const key = transformPropOrder[i]
+        if (transform[key] !== undefined) {
+            const transformName = translateAlias[key] || key
+            transformString += `${transformName}(${transform[key]}) `
+        }
     }
 
     if (enableHardwareAcceleration && !transform.z) {
