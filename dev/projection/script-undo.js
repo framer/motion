@@ -36,7 +36,6 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
             latestValues,
             renderState: {
                 transformOrigin: {},
-                transformKeys: [],
                 transform: {},
                 style: {},
                 vars: {},

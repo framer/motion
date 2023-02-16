@@ -41,7 +41,6 @@ Animate.createNode = (
             latestValues,
             renderState: {
                 transformOrigin: {},
-                transformKeys: [],
                 transform: {},
                 style: {},
                 vars: {},
