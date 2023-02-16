@@ -27,14 +27,14 @@ export const createMotionValueAnimation = (
          * transitions. In the future it'd be nicer to blend these transitions. But for now
          * delay actually does inherit from the root transition if not value-specific.
          */
-        const delay = valueTransition.delay || transition.delay || 0
+        const delayBy = valueTransition.delay || transition.delay || 0
 
         /**
          * Elapsed isn't a public transition option but can be passed through from
          * optimized appear effects in milliseconds.
          */
         let { elapsed = 0 } = transition
-        elapsed = elapsed - secondsToMilliseconds(delay)
+        elapsed = elapsed - secondsToMilliseconds(delayBy)
 
         const keyframes = getKeyframes(
             value,
@@ -122,6 +122,7 @@ export const createMotionValueAnimation = (
         if (
             value.owner &&
             value.owner.current instanceof HTMLElement &&
+            value.owner.canOptimiseTransform &&
             !value.owner.getProps().onUpdate
         ) {
             const acceleratedAnimation = createAcceleratedAnimation(
@@ -130,7 +131,17 @@ export const createMotionValueAnimation = (
                 options
             )
 
-            if (acceleratedAnimation) return acceleratedAnimation
+            /**
+             * TODO: Return the animation we used to pregenerate the keyframes
+             */
+            if (acceleratedAnimation === true) {
+                return animate({
+                    duration: 100,
+                    keyframes: [0, 0],
+                })
+            } else if (acceleratedAnimation) {
+                return acceleratedAnimation
+            }
         }
 
         /**

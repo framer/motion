@@ -57,6 +57,28 @@ describe("WAAPI animations", () => {
         )
     })
 
+    test("single independent transform animates with WAAPI via transform", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div ref={ref} initial={{ x: 0 }} animate={{ x: 100 }} />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { transform: ["translateX() translateZ(0)"], offset: undefined },
+            {
+                delay: -0,
+                duration: 300,
+                easing: "linear",
+                iterations: 1,
+                direction: "normal",
+                fill: "both",
+            }
+        )
+    })
+
     test("opacity animates with WAAPI when no value is originally provided via initial", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (

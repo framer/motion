@@ -261,7 +261,7 @@ export abstract class VisualElement<
      * The options used to create this VisualElement. The Options type is defined
      * by the inheriting VisualElement and is passed straight through to the render functions.
      */
-    private readonly options: Options
+    options: Options
 
     /**
      * A reference to the latest props provided to the VisualElement's host React component.
@@ -313,6 +313,8 @@ export abstract class VisualElement<
      * Create an object of the values we initially animated from (if initial prop present).
      */
     private initialValues: ResolvedValues
+
+    canOptimiseTransform = true
 
     /**
      * An object containing a SubscriptionManager for each active event.

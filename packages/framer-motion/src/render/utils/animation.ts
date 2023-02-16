@@ -16,6 +16,11 @@ import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/data-id"
 import { createMotionValueAnimation } from "../../animation"
 import { sync } from "../../frameloop"
+import { sampleDelta } from "../../animation/waapi/create-accelerated-animation"
+import { buildTransform } from "../html/utils/build-transform"
+import { ResolvedValues } from "../types"
+import { getValueAsType } from "../dom/value-types/get-as-type"
+import { numberValueTypes } from "../dom/value-types/number"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -155,6 +160,8 @@ function animateTarget(
         visualElement.animationState &&
         visualElement.animationState.getState()[type]
 
+    const collectedTransforms: string[] = []
+
     for (const key in target) {
         const value = visualElement.getValue(key)
         const valueTarget = target[key]
@@ -167,6 +174,10 @@ function animateTarget(
         ) {
             continue
         }
+
+        value.keyframes = undefined
+
+        const isTransform = transformProps.has(key)
 
         const valueTransition = { delay, elapsed: 0, ...transition }
 
@@ -193,7 +204,7 @@ function animateTarget(
                 key,
                 value,
                 valueTarget,
-                visualElement.shouldReduceMotion && transformProps.has(key)
+                visualElement.shouldReduceMotion && isTransform
                     ? { type: false }
                     : valueTransition
             )
@@ -206,6 +217,56 @@ function animateTarget(
         }
 
         animations.push(animation)
+
+        if (value.keyframes) {
+            collectedTransforms.push(key)
+        }
+    }
+
+    if (collectedTransforms.length) {
+        const maxKeyframes = collectedTransforms.reduce(
+            (max, valueName) =>
+                Math.max(
+                    max,
+                    visualElement.getValue(valueName)!.keyframes.length
+                ),
+            0
+        )
+
+        const transformKeyframes: string[] = []
+        const transform: ResolvedValues = {}
+
+        for (let i = 0; i < maxKeyframes; i++) {
+            for (let k = 0; k < collectedTransforms.length; k++) {
+                const key = collectedTransforms[k]
+                const valueType = numberValueTypes[key]
+                // TODO Get last keyframe if undefined
+                const value = visualElement.getValue(key)!.keyframes![i]
+                transform[collectedTransforms[k]] = getValueAsType(
+                    value,
+                    valueType
+                )
+            }
+            transformKeyframes.push(
+                buildTransform(
+                    { transform, transformKeys: collectedTransforms },
+                    visualElement.options,
+                    false,
+                    visualElement.getProps().transformTemplate
+                )
+            )
+        }
+
+        visualElement.getValue("transform", transformKeyframes[0])
+        animations.push(
+            animateTarget(visualElement, {
+                transform: transformKeyframes,
+                transition: {
+                    duration: (maxKeyframes * sampleDelta) / 1000,
+                    ease: "linear",
+                },
+            })
+        )
     }
 
     return Promise.all(animations).then(() => {

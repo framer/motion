@@ -96,11 +96,13 @@ export class MotionValue<V = any> {
     private stopPassiveEffect?: VoidFunction
 
     /**
-     * A reference to the currently-controlling Popmotion animation
+     * A reference to the current animation
      *
      * @internal
      */
     animation?: null | PlaybackControls
+
+    keyframes: any
 
     /**
      * Tracks whether this value can output a velocity. Currently this is only true

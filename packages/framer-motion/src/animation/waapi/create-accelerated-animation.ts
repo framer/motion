@@ -1,5 +1,6 @@
 import { EasingDefinition } from "../../easing/types"
 import { sync } from "../../frameloop"
+import { transformProps } from "../../render/html/utils/transform"
 import type { VisualElement } from "../../render/VisualElement"
 import type { MotionValue } from "../../value"
 import { animate } from "../legacy-popmotion"
@@ -12,14 +13,37 @@ import { getFinalKeyframe } from "./utils/get-final-keyframe"
 /**
  * A list of values that can be hardware-accelerated.
  */
-const acceleratedValues = new Set<string>(["opacity"])
+const acceleratedValues = new Set<string>([
+    "opacity",
+    "transform",
+    ...transformProps,
+])
 
 /**
  * 10ms is chosen here as it strikes a balance between smooth
  * results (more than one keyframe per frame at 60fps) and
  * keyframe quantity.
  */
-const sampleDelta = 10 //ms
+export const sampleDelta = 10 //ms
+
+function generateKeyframes(options: AnimationOptions) {
+    const sampleAnimation = animate({ ...options, elapsed: 0 })
+    let state = { done: false, value: options.keyframes[0] }
+    const pregeneratedKeyframes: number[] = []
+
+    /**
+     * Bail after 20 seconds of pre-generated keyframes as it's likely
+     * we're heading for an infinite loop.
+     */
+    let t = 0
+    while (!state.done && t < 20000) {
+        state = sampleAnimation.sample(t)
+        pregeneratedKeyframes.push(state.value)
+        t += sampleDelta
+    }
+
+    return pregeneratedKeyframes
+}
 
 export function createAcceleratedAnimation(
     value: MotionValue,
@@ -37,36 +61,32 @@ export function createAcceleratedAnimation(
 
     let { keyframes, duration = 300, elapsed = 0, ease } = options
 
+    const isTransform = transformProps.has(valueName)
+
     /**
      * If this animation needs pre-generated keyframes then generate.
      */
-    if (options.type === "spring" || !isWaapiSupportedEasing(options.ease)) {
+    if (
+        options.type === "spring" ||
+        !isWaapiSupportedEasing(options.ease) ||
+        isTransform
+    ) {
         /**
          * If we need to pre-generate keyframes and repeat is infinite then
          * early return as this will lock the thread.
          */
         if (options.repeat === Infinity) return
 
-        const sampleAnimation = animate({ ...options, elapsed: 0 })
-        let state = { done: false, value: keyframes[0] }
-        const pregeneratedKeyframes: number[] = []
-
-        /**
-         * Bail after 20 seconds of pre-generated keyframes as it's likely
-         * we're heading for an infinite loop.
-         */
-        let t = 0
-        while (!state.done && t < 20000) {
-            state = sampleAnimation.sample(t)
-            pregeneratedKeyframes.push(state.value)
-            t += sampleDelta
-        }
-
-        keyframes = pregeneratedKeyframes
-        duration = t - sampleDelta
+        keyframes = generateKeyframes(options)
+        duration = sampleDelta * keyframes.length
         ease = "linear"
-    }
 
+        if (isTransform) {
+            value.keyframes = keyframes
+            return true
+        }
+    }
+    console.log("animating", valueName, keyframes, duration, ease)
     const animation = animateStyle(
         (value.owner as VisualElement<HTMLElement>).current!,
         valueName,
