@@ -30,9 +30,12 @@ export function buildTransform(
     // The transform string we're going to build into.
     let transformString = ""
 
+    /**
+     * Loop over all possible transforms in order, adding the ones that
+     * are present to the transform string.
+     */
     for (let i = 0; i < numTransforms; i++) {
         const key = transformPropOrder[i]
-        console.log(key, transform[key])
         if (transform[key] !== undefined) {
             const transformName = translateAlias[key] || key
             transformString += `${transformName}(${transform[key]}) `
