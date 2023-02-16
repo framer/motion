@@ -32,6 +32,7 @@ export function buildTransform(
 
     for (let i = 0; i < numTransforms; i++) {
         const key = transformPropOrder[i]
+        console.log(key, transform[key])
         if (transform[key] !== undefined) {
             const transformName = translateAlias[key] || key
             transformString += `${transformName}(${transform[key]}) `
