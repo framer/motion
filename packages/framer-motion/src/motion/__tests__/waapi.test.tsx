@@ -115,6 +115,35 @@ describe("WAAPI animations", () => {
         )
     })
 
+    test("transform animates with WAAPI at default settings", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ transform: "translateX(0px)" }}
+                animate={{ transform: "translateX(100px)" }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                transform: ["translateX(0px)", "translateX(100px)"],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                duration: 300,
+                easing: "cubic-bezier(0.25, 0.1, 0.35, 1)",
+                iterations: 1,
+                direction: "normal",
+                fill: "both",
+            }
+        )
+    })
+
     test("opacity animates with WAAPI when no value is originally provided via initial", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
