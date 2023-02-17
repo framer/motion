@@ -6,6 +6,7 @@ const style = {
     width: 100,
     height: 100,
     background: "white",
+    borderRadius: 20,
 }
 
 export const App = () => {
@@ -13,10 +14,11 @@ export const App = () => {
 
     return (
         <motion.div
-            initial={{ x: 0 }}
-            animate={{ x: 100 }}
+            initial={{ rotate: 0 }}
+            animate={{ rotate: 720 }}
+            whileHover={{ scale: 2 }}
             onClick={() => setState(!state)}
-            transition={{ duration: 3 }}
+            transition={{ default: { duration: 10 }, scale: { duration: 0.5 } }}
             style={style}
         />
     )

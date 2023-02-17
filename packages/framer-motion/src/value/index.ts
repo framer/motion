@@ -5,6 +5,8 @@ import type { VisualElement } from "../render/VisualElement"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { velocityPerSecond } from "../utils/velocity-per-second"
 import { PlaybackControls } from "../animation/types"
+// TODO: Move sampleDelta to its own file
+import { sampleDelta } from "../animation/waapi/create-accelerated-animation"
 
 export type Transformer<T> = (v: T) => T
 
@@ -101,7 +103,7 @@ export class MotionValue<V = any> {
      * @internal
      */
     animation?: null | PlaybackControls
-
+    startedAt?: number
     keyframes: any
 
     /**
@@ -299,6 +301,16 @@ export class MotionValue<V = any> {
      * @public
      */
     get() {
+        if (this.keyframes && this.startedAt) {
+            const elapsed = performance.now() - this.startedAt
+            const idealIndex = Math.ceil(elapsed / sampleDelta)
+            const keyframeIndex = Math.min(
+                idealIndex,
+                this.keyframes.length - 1
+            )
+            return this.keyframes[keyframeIndex]
+        }
+
         return this.current
     }
 

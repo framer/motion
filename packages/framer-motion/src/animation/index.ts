@@ -3,7 +3,10 @@ import { ResolvedValueTarget, Transition } from "../types"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { instantAnimationState } from "../utils/use-instant-transition-state"
 import type { MotionValue, StartAnimation } from "../value"
-import { createAcceleratedAnimation } from "./waapi/create-accelerated-animation"
+import {
+    createAcceleratedAnimation,
+    sampleDelta,
+} from "./waapi/create-accelerated-animation"
 import { createInstantAnimation } from "./create-instant-animation"
 import { animate } from "./legacy-popmotion"
 import { inertia } from "./legacy-popmotion/inertia"
@@ -136,8 +139,29 @@ export const createMotionValueAnimation = (
              */
             if (acceleratedAnimation === true) {
                 return animate({
-                    duration: 100,
+                    duration: value.keyframes.length * sampleDelta,
                     keyframes: [0, 0],
+                    onStop: () => {
+                        console.log("stopping ", valueName)
+                        // console.log(
+                        //     valueName,
+                        //     "current keyframes",
+                        //     value.keyframes
+                        // )
+                        // const keyframeIndex = Math.round(
+                        //     (performance.now() - value.startedAt!) / sampleDelta
+                        // )
+                        // console.log(
+                        //     valueName,
+                        //     value.keyframes,
+                        //     keyframeIndex,
+                        //     value.keyframes![keyframeIndex]
+                        // )
+                        // value.set(value.keyframes![keyframeIndex])
+                    },
+                    onComplete: () => {
+                        value.set(value.keyframes![value.keyframes.length - 1])
+                    },
                 })
             } else if (acceleratedAnimation) {
                 return acceleratedAnimation

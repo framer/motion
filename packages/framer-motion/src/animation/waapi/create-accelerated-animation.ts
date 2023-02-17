@@ -27,7 +27,7 @@ const acceleratedValues = new Set<string>([
 export const sampleDelta = 10 //ms
 
 function generateKeyframes(options: AnimationOptions) {
-    const sampleAnimation = animate({ ...options, elapsed: 0 })
+    const sampleAnimation = animate({ ...options, autoplay: false, elapsed: 0 })
     let state = { done: false, value: options.keyframes[0] }
     const pregeneratedKeyframes: number[] = []
 
@@ -83,10 +83,11 @@ export function createAcceleratedAnimation(
 
         if (isTransform) {
             value.keyframes = keyframes
+            value.startedAt = performance.now()
             return true
         }
     }
-    console.log("animating", valueName, keyframes, duration, ease)
+
     const animation = animateStyle(
         (value.owner as VisualElement<HTMLElement>).current!,
         valueName,

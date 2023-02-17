@@ -11,7 +11,7 @@ import { AnimationTypeState } from "./animation-state"
 import { AnimationType } from "./types"
 import { setTarget } from "./setters"
 import { resolveVariant } from "./resolve-dynamic-variants"
-import { transformProps } from "../html/utils/transform"
+import { transformPropOrder, transformProps } from "../html/utils/transform"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/data-id"
 import { createMotionValueAnimation } from "../../animation"
@@ -162,6 +162,8 @@ function animateTarget(
 
     const collectedTransforms: string[] = []
 
+    const startTime = performance.now()
+
     for (const key in target) {
         const value = visualElement.getValue(key)
         const valueTarget = target[key]
@@ -174,8 +176,6 @@ function animateTarget(
         ) {
             continue
         }
-
-        value.keyframes = undefined
 
         const isTransform = transformProps.has(key)
 
@@ -224,35 +224,55 @@ function animateTarget(
     }
 
     if (collectedTransforms.length) {
-        const maxKeyframes = collectedTransforms.reduce(
-            (max, valueName) =>
-                Math.max(
-                    max,
-                    visualElement.getValue(valueName)!.keyframes.length
-                ),
-            0
-        )
+        let maxKeyframes = 0
+        const frameTransform: ResolvedValues = {}
+        const valueKeyframeOffset: ResolvedValues = {}
+
+        for (let i = 0; i < transformPropOrder.length; i++) {
+            const transformName = transformPropOrder[i]
+            const value = visualElement.getValue(transformName)
+
+            if (!value) continue
+
+            const keyframeOffset =
+                collectedTransforms.indexOf(transformName) === -1
+                    ? Math.round((startTime - value.startedAt!) / sampleDelta)
+                    : 0
+
+            maxKeyframes = Math.max(
+                maxKeyframes,
+                value.keyframes.length - keyframeOffset
+            )
+            valueKeyframeOffset[transformName] = keyframeOffset
+        }
 
         const transformKeyframes: string[] = []
-        const transform: ResolvedValues = {}
-
         for (let i = 0; i < maxKeyframes; i++) {
-            for (let k = 0; k < collectedTransforms.length; k++) {
-                const key = collectedTransforms[k]
+            for (const key in valueKeyframeOffset) {
+                const keyframeOffset = valueKeyframeOffset[key]
+                const value = visualElement.getValue(key)
                 const valueType = numberValueTypes[key]
-                // TODO Get last keyframe if undefined
-                const value = visualElement.getValue(key)!.keyframes![i]
-                transform[collectedTransforms[k]] = getValueAsType(
-                    value,
-                    valueType
-                )
+
+                if (value!.keyframes) {
+                    const keyframeIndex = Math.min(
+                        value!.keyframes.length - 1,
+                        (keyframeOffset as number) + i
+                    )
+                    frameTransform[key] = getValueAsType(
+                        value!.keyframes[keyframeIndex],
+                        valueType
+                    )
+                } else {
+                    frameTransform[key] = value?.get()
+                }
+                // console.log(key, value!.keyframes[keyframeIndex], keyframeIndex)
             }
             transformKeyframes.push(
                 buildTransform(
-                    { transform, transformKeys: collectedTransforms },
+                    frameTransform,
                     visualElement.options,
                     false,
-                    visualElement.getProps().transformTemplate
+                    visualElement.props.transformTemplate
                 )
             )
         }
@@ -262,7 +282,7 @@ function animateTarget(
             animateTarget(visualElement, {
                 transform: transformKeyframes,
                 transition: {
-                    duration: (maxKeyframes * sampleDelta) / 1000,
+                    duration: ((maxKeyframes - 1) * sampleDelta) / 1000,
                     ease: "linear",
                 },
             })
