@@ -1,4 +1,4 @@
-import { animate } from ".."
+import { animateValue } from ".."
 import { easeOut } from "../../../easing/ease"
 import { noop } from "../../../utils/noop"
 import { AnimationOptions } from "../../types"
@@ -12,7 +12,7 @@ function testAnimate<V>(
     resolve: () => void
 ) {
     const output: V[] = []
-    animate({
+    animateValue({
         driver: syncDriver(20),
         duration: 100,
         ease: linear,
@@ -40,7 +40,7 @@ describe("animate", () => {
         const output: number[] = []
 
         return new Promise<void>((resolve) => {
-            const animation = animate({
+            const animation = animateValue({
                 keyframes: [0, 100],
                 driver: syncDriver(20),
                 duration: 100,
@@ -63,7 +63,7 @@ describe("animate", () => {
         return new Promise<void>((resolve) => {
             const numeric: number[] = []
             const string: number[] = []
-            animate({
+            animateValue({
                 driver: syncDriver(20),
                 duration: 100,
                 ease: linear,
@@ -72,7 +72,7 @@ describe("animate", () => {
                 onComplete: () => {
                     expect(numeric).toEqual([0, 40, 80, 120, 160, 200])
 
-                    animate({
+                    animateValue({
                         driver: syncDriver(20),
                         duration: 100,
                         ease: linear,
@@ -92,7 +92,7 @@ describe("animate", () => {
         return new Promise<void>((resolve) => {
             const numeric: number[] = []
             const string: number[] = []
-            animate({
+            animateValue({
                 type: "spring",
                 driver: syncDriver(50),
                 keyframes: [0, 200],
@@ -106,7 +106,7 @@ describe("animate", () => {
                         201, 201, 200,
                     ])
 
-                    animate({
+                    animateValue({
                         driver: syncDriver(50),
                         duration: 100,
                         ease: linear,
@@ -127,7 +127,7 @@ describe("animate", () => {
     test("Correctly uses a spring if type is defined explicitly", async () => {
         return new Promise<void>((resolve) => {
             const output: unknown[] = []
-            animate({
+            animateValue({
                 keyframes: [0, 100],
                 driver: syncDriver(20),
                 duration: 100,
@@ -303,7 +303,7 @@ describe("animate", () => {
                 1050, 1046, 1018, 991, 980, 984, 996, 1005, 1008, 1005, 1001,
                 998, 997, 998, 1000, 1001, 1001, 1001, 1000, 1000,
             ]
-            animate({
+            animateValue({
                 keyframes: [100, 1000],
                 type: "spring",
                 stiffness: 300,
@@ -325,7 +325,7 @@ describe("animate", () => {
             const expected = [
                 100, 571, 802, 909, 958, 981, 991, 996, 998, 999, 1000,
             ]
-            animate({
+            animateValue({
                 keyframes: [100, 1000],
                 type: "spring",
                 stiffness: 300,
@@ -349,7 +349,7 @@ describe("animate", () => {
                 100, 181, 338, 498, 635, 741, 821, 878, 918, 945, 964, 976, 984,
                 990, 993, 996, 997, 998, 999, 999, 1000,
             ]
-            animate({
+            animateValue({
                 keyframes: [100, 1000],
                 type: "spring",
                 stiffness: 100,
@@ -393,7 +393,7 @@ describe("animate", () => {
                 "rgba(0, 0, 255, 1)",
                 "rgba(0, 0, 255, 1)",
             ]
-            animate({
+            animateValue({
                 keyframes: ["#f00", "#00f"],
                 type: "spring",
                 stiffness: 300,
@@ -420,7 +420,7 @@ describe("animate", () => {
                 991, 980, 984, 996, 1005, 1008, 1005, 1001, 998, 997, 998, 1000,
                 1001, 1001, 1001, 1000, 1000,
             ]
-            animate({
+            animateValue({
                 keyframes: [100, 1000],
                 stiffness: 300,
                 driver: syncDriver(50),
@@ -452,7 +452,7 @@ describe("animate", () => {
                 984, 996, 1005, 1008, 1005, 1001, 998, 997, 998, 1000, 1001,
                 1001, 1001, 1000, 1000,
             ]
-            animate({
+            animateValue({
                 keyframes: [100, 1000],
                 type: "spring",
                 stiffness: 300,
@@ -481,7 +481,7 @@ describe("animate", () => {
                 984, 980, 991, 1018, 1046, 1050, 1011, 937, 873, 883, 1006,
                 1204, 1343, 1259, 884, 371, 100,
             ]
-            animate({
+            animateValue({
                 keyframes: [100, 1000],
                 stiffness: 300,
                 driver: syncDriver(50),
@@ -509,7 +509,7 @@ describe("animate", () => {
                 100, 100, 100, 100, 884, 1343, 1006, 873, 1011, 1046, 991, 984,
                 1005, 1005, 998, 998, 1001, 1001, 1000,
             ]
-            animate({
+            animateValue({
                 keyframes: [100, 1000],
                 stiffness: 300,
                 driver: syncDriver(100),
@@ -539,7 +539,7 @@ describe("animate", () => {
                 116, 104, 95, 92, 95, 99, 102, 103, 102, 100, 99, 99, 99, 100,
                 100,
             ]
-            animate({
+            animateValue({
                 keyframes: [100, 1000],
                 type: "spring",
                 stiffness: 300,
@@ -567,7 +567,7 @@ describe("animate", () => {
                 100, 884, 1343, 1006, 873, 1011, 1046, 991, 984, 1005, 1005,
                 998, 998, 1001, 1001, 1000,
             ]
-            animate({
+            animateValue({
                 keyframes: [100, 1000],
                 type: "spring",
                 stiffness: 300,
@@ -588,7 +588,7 @@ describe("animate", () => {
 
     test("Finishes springs with explicit velocity", async () => {
         return new Promise<void>((resolve) => {
-            animate({
+            animateValue({
                 keyframes: [100, 1000],
                 type: "spring",
                 stiffness: 300,
@@ -609,7 +609,7 @@ describe("animate", () => {
         return new Promise<void>((resolve) => {
             const output: number[] = []
             const expected = [100]
-            animate({
+            animateValue({
                 keyframes: [100],
                 velocity: 0,
                 power: 0.8,
@@ -629,7 +629,7 @@ describe("animate", () => {
         return new Promise<void>((resolve) => {
             const output: number[] = []
             const expected = [100, 135, 154, 166, 172, 175, 177, 179, 179, 180]
-            animate({
+            animateValue({
                 keyframes: [100],
                 velocity: 100,
                 power: 0.8,
@@ -651,7 +651,7 @@ describe("animate", () => {
                 100, 213, 277, 313, 334, 345, 352, 355, 357, 358, 359, 360,
             ]
 
-            animate({
+            animateValue({
                 keyframes: [100],
                 velocity: 100,
                 power: 0.8,
@@ -671,7 +671,7 @@ describe("animate", () => {
         return new Promise<void>((resolve) => {
             const output: number[] = []
             const expected = [135, 154, 166, 172, 175, 177, 179, 179, 180]
-            animate({
+            animateValue({
                 keyframes: [100],
                 velocity: 100,
                 power: 0.8,
@@ -688,7 +688,7 @@ describe("animate", () => {
     })
 
     test("Correctly samples", () => {
-        const animation = animate({
+        const animation = animateValue({
             keyframes: [0, 1],
             duration: 1000,
             autoplay: false,
@@ -701,7 +701,7 @@ describe("animate", () => {
     })
 
     test("Correctly samples with duration: 0", () => {
-        const animation = animate({
+        const animation = animateValue({
             keyframes: [0, 1],
             duration: 0,
             autoplay: false,
@@ -712,7 +712,7 @@ describe("animate", () => {
     })
 
     test("Correctly samples with custom negative elapsed (delay)", () => {
-        const animation = animate({
+        const animation = animateValue({
             keyframes: [0, 1],
             duration: 1000,
             autoplay: false,
@@ -727,7 +727,7 @@ describe("animate", () => {
     })
 
     test("Correctly samples repeating animation", () => {
-        const animation = animate({
+        const animation = animateValue({
             keyframes: [0, 1],
             duration: 1000,
             repeat: 1,
@@ -739,7 +739,7 @@ describe("animate", () => {
     })
 
     test("Correctly samples repeating animation with delay", () => {
-        const animation = animate({
+        const animation = animateValue({
             keyframes: [0, 1],
             duration: 1000,
             repeat: 1,
@@ -752,7 +752,7 @@ describe("animate", () => {
     })
 
     test("Correctly samples with positive elapsed", () => {
-        const animation = animate({
+        const animation = animateValue({
             keyframes: [0, 1],
             duration: 1000,
             repeat: 1,
@@ -766,7 +766,7 @@ describe("animate", () => {
     })
 
     test("Correctly samples with infinite repeat", () => {
-        const animation = animate({
+        const animation = animateValue({
             keyframes: [0, 1],
             duration: 1000,
             repeat: Infinity,
