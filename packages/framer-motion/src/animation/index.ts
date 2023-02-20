@@ -5,7 +5,7 @@ import { instantAnimationState } from "../utils/use-instant-transition-state"
 import type { MotionValue, StartAnimation } from "../value"
 import { createAcceleratedAnimation } from "./waapi/create-accelerated-animation"
 import { createInstantAnimation } from "./create-instant-animation"
-import { animate } from "./legacy-popmotion"
+import { animateValue } from "./legacy-popmotion"
 import { inertia } from "./legacy-popmotion/inertia"
 import { AnimationOptions } from "./types"
 import { getDefaultTransition } from "./utils/default-transitions"
@@ -136,6 +136,6 @@ export const createMotionValueAnimation = (
         /**
          * If we didn't create an accelerated animation, create a JS animation
          */
-        return animate(options)
+        return animateValue(options)
     }
 }

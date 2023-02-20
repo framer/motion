@@ -1,5 +1,5 @@
 import { PlaybackControls } from "./types"
-import { animate } from "."
+import { animateValue } from "."
 import { velocityPerSecond } from "../../utils/velocity-per-second"
 import { frameData } from "../../frameloop/data"
 import { AnimationOptions } from "../types"
@@ -37,7 +37,7 @@ export function inertia({
     function startAnimation(options: Partial<AnimationOptions<number>>) {
         currentAnimation && currentAnimation.stop()
 
-        currentAnimation = animate({
+        currentAnimation = animateValue({
             keyframes: [0, 1],
             velocity: 0,
             ...options,

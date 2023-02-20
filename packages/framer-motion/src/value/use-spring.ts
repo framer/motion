@@ -4,7 +4,7 @@ import { isMotionValue } from "./utils/is-motion-value"
 import { useMotionValue } from "./use-motion-value"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { PlaybackControls } from "../animation/legacy-popmotion/types"
-import { animate } from "../animation/legacy-popmotion"
+import { animateValue } from "../animation/legacy-popmotion"
 import { SpringOptions } from "../animation/types"
 import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
 
@@ -51,7 +51,7 @@ export function useSpring(
 
             stopAnimation()
 
-            activeSpringAnimation.current = animate({
+            activeSpringAnimation.current = animateValue({
                 keyframes: [value.get(), v],
                 velocity: value.getVelocity(),
                 type: "spring",
