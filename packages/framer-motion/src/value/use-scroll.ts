@@ -4,7 +4,7 @@ import { motionValue } from "."
 import { useConstant } from "../utils/use-constant"
 import { useEffect } from "react"
 import { useIsomorphicLayoutEffect } from "../three-entry"
-import { warning } from "hey-listen"
+import { warning } from "../utils/errors"
 
 interface UseScrollOptions extends Omit<ScrollOptions, "container" | "target"> {
     container?: RefObject<HTMLElement>

@@ -1,4 +1,4 @@
-import { warning } from "hey-listen"
+import { warning } from "../../utils/errors"
 import { clamp } from "../../utils/clamp"
 import { SpringOptions } from "../types"
 

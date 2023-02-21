@@ -1,5 +1,5 @@
 import { Target, TargetWithKeyframes } from "../../../types"
-import { invariant } from "hey-listen"
+import { invariant } from "../../../utils/errors"
 import type { VisualElement } from "../../VisualElement"
 
 function isCSSVariable(value: any): value is string {

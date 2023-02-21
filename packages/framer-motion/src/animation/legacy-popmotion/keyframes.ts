@@ -1,6 +1,8 @@
 import { easeInOut } from "../../easing/ease"
 import { EasingFunction } from "../../easing/types"
 import { interpolate } from "../../utils/interpolate"
+import { defaultOffset } from "../../utils/offsets/default"
+import { convertOffsetToTimes } from "../../utils/offsets/time"
 import { AnimationOptions } from "../types"
 import { easingDefinitionToFunction, isEasingArray } from "../utils/easing"
 import { Animation, AnimationState } from "./types"
@@ -10,17 +12,6 @@ export function defaultEasing(
     easing?: EasingFunction
 ): EasingFunction[] {
     return values.map(() => easing || easeInOut).splice(0, values.length - 1)
-}
-
-export function defaultOffset(values: any[]): number[] {
-    const numValues = values.length
-    return values.map((_value: number, i: number): number =>
-        i !== 0 ? i / (numValues - 1) : 0
-    )
-}
-
-export function convertOffsetToTimes(offset: number[], duration: number) {
-    return offset.map((o) => o * duration)
 }
 
 export function keyframes({
@@ -56,7 +47,7 @@ export function keyframes({
         // TODO Maybe we should warn here if there's a length mismatch
         times && times.length === keyframeValues.length
             ? times
-            : defaultOffset(keyframeValues),
+            : defaultOffset(keyframeValues.length),
         duration
     )
 

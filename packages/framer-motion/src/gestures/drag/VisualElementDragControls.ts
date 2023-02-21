@@ -1,4 +1,4 @@
-import { invariant } from "hey-listen"
+import { invariant } from "../../utils/errors"
 import { PanSession, PanInfo } from "../pan/PanSession"
 import { ResolvedConstraints } from "./types"
 import { Lock, getGlobalLock } from "./utils/lock"

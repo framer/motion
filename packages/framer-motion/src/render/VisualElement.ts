@@ -1,5 +1,5 @@
 import { sync, cancelSync } from "../frameloop"
-import { invariant, warning } from "hey-listen"
+import { invariant, warning } from "../utils/errors"
 import {
     MotionConfigContext,
     ReducedMotionConfig,

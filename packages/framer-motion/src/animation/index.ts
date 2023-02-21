@@ -1,4 +1,4 @@
-import { warning } from "hey-listen"
+import { warning } from "../utils/errors"
 import { ResolvedValueTarget, Transition } from "../types"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { instantAnimationState } from "../utils/use-instant-transition-state"

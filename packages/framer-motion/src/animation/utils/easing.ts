@@ -1,4 +1,4 @@
-import { invariant } from "hey-listen"
+import { invariant } from "../../utils/errors"
 import { cubicBezier } from "../../easing/cubic-bezier"
 import { noop } from "../../utils/noop"
 import { easeIn, easeInOut, easeOut } from "../../easing/ease"

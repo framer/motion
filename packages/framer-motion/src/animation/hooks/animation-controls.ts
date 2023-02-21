@@ -1,4 +1,4 @@
-import { invariant } from "hey-listen"
+import { invariant } from "../../utils/errors"
 import {
     animateVisualElement,
     stopAnimation,

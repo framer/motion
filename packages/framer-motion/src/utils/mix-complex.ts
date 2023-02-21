@@ -1,7 +1,7 @@
 import { mix } from "./mix"
 import { mixColor } from "./mix-color"
 import { pipe } from "./pipe"
-import { warning } from "hey-listen"
+import { warning } from "../utils/errors"
 import { HSLA, RGBA } from "../value/types/types"
 import { color } from "../value/types/color"
 import { analyseComplexValue, complex } from "../value/types/complex"
