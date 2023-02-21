@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [9.0.5] 2023-02-21
+
+### Added
+
+-   Adding legacy Popmotion exports for internal Framer use.
+
 ## [9.0.4] 2023-02-16
 
 ### Updated
