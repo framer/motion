@@ -47,7 +47,7 @@ const framesync: Driver = (update) => {
     }
 }
 
-export function animate<V = number>({
+export function animateValue<V = number>({
     duration,
     driver = framesync,
     elapsed = 0,

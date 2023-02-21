@@ -2,7 +2,7 @@ import { EasingDefinition } from "../../easing/types"
 import { sync } from "../../frameloop"
 import type { VisualElement } from "../../render/VisualElement"
 import type { MotionValue } from "../../value"
-import { animate } from "../legacy-popmotion"
+import { animateValue } from "../legacy-popmotion"
 import { AnimationOptions } from "../types"
 import { animateStyle } from "./"
 import { isWaapiSupportedEasing } from "./easing"
@@ -47,7 +47,7 @@ export function createAcceleratedAnimation(
          */
         if (options.repeat === Infinity) return
 
-        const sampleAnimation = animate({ ...options, elapsed: 0 })
+        const sampleAnimation = animateValue({ ...options, elapsed: 0 })
         let state = { done: false, value: keyframes[0] }
         const pregeneratedKeyframes: number[] = []
 
@@ -122,7 +122,10 @@ export function createAcceleratedAnimation(
              */
             const { currentTime } = animation
             if (currentTime) {
-                const sampleAnimation = animate({ ...options, autoplay: false })
+                const sampleAnimation = animateValue({
+                    ...options,
+                    autoplay: false,
+                })
                 value.setWithVelocity(
                     sampleAnimation.sample(currentTime - sampleDelta).value,
                     sampleAnimation.sample(currentTime).value,
