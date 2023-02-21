@@ -1,4 +1,4 @@
-import { Color } from "../types"
+import { Color, HSLA, RGBA } from "../types"
 import { floatRegex, isString, singleColorRegex } from "../utils"
 
 /**
@@ -13,8 +13,9 @@ export const isColorString = (type: string, testProp?: string) => (v: any) => {
 }
 
 export const splitColor =
-    (aName: string, bName: string, cName: string) => (v: string | Color) => {
-        if (!isString(v)) return v
+    <V extends RGBA | HSLA>(aName: string, bName: string, cName: string) =>
+    (v: string | Color): V => {
+        if (!isString(v)) return v as any
 
         const [a, b, c, alpha] = v.match(floatRegex) as any
 
@@ -23,5 +24,5 @@ export const splitColor =
             [bName]: parseFloat(b),
             [cName]: parseFloat(c),
             alpha: alpha !== undefined ? parseFloat(alpha) : 1,
-        }
+        } as V
     }

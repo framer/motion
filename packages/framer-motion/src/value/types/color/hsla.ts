@@ -6,7 +6,7 @@ import { isColorString, splitColor } from "./utils"
 
 export const hsla = {
     test: isColorString("hsl", "hue"),
-    parse: splitColor("hue", "saturation", "lightness"),
+    parse: splitColor<HSLA>("hue", "saturation", "lightness"),
     transform: ({ hue, saturation, lightness, alpha = 1 }: HSLA) => {
         return (
             "hsla(" +

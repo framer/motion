@@ -12,7 +12,7 @@ export const rgbUnit = {
 
 export const rgba = {
     test: isColorString("rgb", "red"),
-    parse: splitColor("red", "green", "blue"),
+    parse: splitColor<RGBA>("red", "green", "blue"),
     transform: ({ red, green, blue, alpha = 1 }: RGBA) =>
         "rgba(" +
         rgbUnit.transform(red) +
