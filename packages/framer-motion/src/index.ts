@@ -50,7 +50,6 @@ export { useReducedMotionConfig } from "./utils/reduced-motion/use-reduced-motio
  * Utils
  */
 export { animationControls } from "./animation/hooks/animation-controls"
-export { AnimationControls } from "./animation/types"
 export {
     useAnimation,
     useAnimationControls,
@@ -190,6 +189,8 @@ export { FlatTree } from "./render/utils/flat-tree"
 export { CreateVisualElement } from "./render/types"
 export * from "./projection/geometry/types"
 export { IProjectionNode } from "./projection/node/types"
+export * from "./animation/types"
+
 /**
  * Deprecated
  */
