@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [9.0.7] 2023-02-21
+
+### Fixed
+
+-   Improving types of `color.parse()`.
+
 ## [9.0.6] 2023-02-21
 
 ### Added
