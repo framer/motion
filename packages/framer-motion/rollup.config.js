@@ -73,7 +73,7 @@ const umdProd = Object.assign({}, umd, {
         resolve(),
         replaceSettings("production"),
         pureClass,
-        terser({ output: { comments: false } }),
+        // terser({ output: { comments: false } }),
     ],
 })
 
@@ -105,7 +105,7 @@ const es = Object.assign({}, config, {
 const sizePlugins = [
     resolve(),
     replaceSettings("production"),
-    terser({ output: { comments: false } }),
+    // terser({ output: { comments: false } }),
 ]
 
 const motion = Object.assign({}, es, {
