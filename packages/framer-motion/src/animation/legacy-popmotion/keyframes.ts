@@ -47,7 +47,7 @@ export function keyframes({
         // TODO Maybe we should warn here if there's a length mismatch
         times && times.length === keyframeValues.length
             ? times
-            : defaultOffset(keyframeValues.length),
+            : defaultOffset(keyframeValues),
         duration
     )
 

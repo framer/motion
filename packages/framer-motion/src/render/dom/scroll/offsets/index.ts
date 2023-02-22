@@ -69,7 +69,7 @@ export function resolveOffsets(
     if (hasChanged) {
         info[axis].interpolate = interpolate(
             info[axis].offset,
-            defaultOffset(numOffsets)
+            defaultOffset(offsetDefinition)
         )
 
         info[axis].interpolatorOffsets = [...info[axis].offset]
