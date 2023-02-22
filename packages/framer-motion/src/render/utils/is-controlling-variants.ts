@@ -1,17 +1,7 @@
 import { isAnimationControls } from "../../animation/utils/is-animation-controls"
 import { MotionProps } from "../../motion/types"
 import { isVariantLabel } from "./is-variant-label"
-
-const variantProps = [
-    "initial",
-    "animate",
-    "exit",
-    "whileHover",
-    "whileDrag",
-    "whileTap",
-    "whileFocus",
-    "whileInView",
-]
+import { variantProps } from "./variant-props"
 
 export function isControllingVariants(props: MotionProps) {
     return (

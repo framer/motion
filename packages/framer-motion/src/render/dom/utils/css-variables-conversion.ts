@@ -1,10 +1,7 @@
 import { Target, TargetWithKeyframes } from "../../../types"
 import { invariant } from "../../../utils/errors"
 import type { VisualElement } from "../../VisualElement"
-
-function isCSSVariable(value: any): value is string {
-    return typeof value === "string" && value.startsWith("var(--")
-}
+import { CSSVariable, isCSSVariable } from "./is-css-variable"
 
 /**
  * Parse Framer's special CSS variable format into a CSS token and a fallback.
@@ -27,7 +24,7 @@ export function parseCSSVariable(current: string) {
 
 const maxDepth = 4
 function getVariableValue(
-    current: string,
+    current: CSSVariable,
     element: Element,
     depth = 1
 ): string | undefined {
