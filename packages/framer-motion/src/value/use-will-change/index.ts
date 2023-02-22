@@ -1,4 +1,4 @@
-import { isCSSVariable } from "../../render/dom/utils/is-css-variable"
+import { isCSSVariableName } from "../../render/dom/utils/is-css-variable"
 import { transformProps } from "../../render/html/utils/transform"
 import { addUniqueItem, removeItem } from "../../utils/array"
 import { useConstant } from "../../utils/use-constant"
@@ -18,7 +18,7 @@ export class WillChangeMotionValue extends MotionValue implements WillChange {
             memberName = "transform"
         } else if (
             !name.startsWith("origin") &&
-            !isCSSVariable(name) &&
+            !isCSSVariableName(name) &&
             name !== "willChange"
         ) {
             memberName = camelToDash(name)

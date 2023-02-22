@@ -1,7 +1,7 @@
 import { Target, TargetWithKeyframes } from "../../../types"
 import { invariant } from "../../../utils/errors"
 import type { VisualElement } from "../../VisualElement"
-import { CSSVariable, isCSSVariable } from "./is-css-variable"
+import { isCSSVariableToken, CSSVariableToken } from "./is-css-variable"
 
 /**
  * Parse Framer's special CSS variable format into a CSS token and a fallback.
@@ -24,7 +24,7 @@ export function parseCSSVariable(current: string) {
 
 const maxDepth = 4
 function getVariableValue(
-    current: CSSVariable,
+    current: CSSVariableToken,
     element: Element,
     depth = 1
 ): string | undefined {
@@ -43,7 +43,7 @@ function getVariableValue(
 
     if (resolved) {
         return resolved.trim()
-    } else if (isCSSVariable(fallback)) {
+    } else if (isCSSVariableToken(fallback)) {
         // The fallback might itself be a CSS variable, in which case we attempt to resolve it too.
         return getVariableValue(fallback, element, depth + 1)
     } else {
@@ -73,7 +73,7 @@ export function resolveCSSVariables(
     // Go through existing `MotionValue`s and ensure any existing CSS variables are resolved
     visualElement.values.forEach((value) => {
         const current = value.get()
-        if (!isCSSVariable(current)) return
+        if (!isCSSVariableToken(current)) return
 
         const resolved = getVariableValue(current, element)
         if (resolved) value.set(resolved)
@@ -83,7 +83,7 @@ export function resolveCSSVariables(
     // we only read single-var properties like `var(--foo)`, not `calc(var(--foo) + 20px)`
     for (const key in target) {
         const current = target[key]
-        if (!isCSSVariable(current)) continue
+        if (!isCSSVariableToken(current)) continue
 
         const resolved = getVariableValue(current, element)
         if (!resolved) continue
