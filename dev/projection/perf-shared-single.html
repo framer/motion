@@ -1,0 +1,83 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #a {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+            }
+
+            #b {
+                width: 200px;
+                height: 200px;
+                background-color: #0077ff;
+                position: absolute;
+                top: 50px;
+                left: 50px;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="a"></div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode } = window.Animate
+            const { matchViewportBox, checkFrame } = window.Assert
+
+            const a = document.getElementById("a")
+            const aProjection = createNode(
+                a,
+                undefined,
+                { layoutId: "box" },
+                { duration: 0.1 }
+            )
+
+            aProjection.willUpdate()
+
+            const b = document.createElement("b")
+            b.id = "b"
+            document.body.appendChild(b)
+            const bProjection = createNode(
+                b,
+                undefined,
+                { layoutId: "box" },
+                { duration: 0.1 }
+            )
+
+            aProjection.root.didUpdate()
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    console.log(window.ProjectionFrames)
+                    checkFrame(a, 1, {
+                        totalNodes: 3,
+                        resolvedTargetDeltas: 1, // We only need to resolve a target for the lead node
+                        recalculatedProjection: 2, // But recalculate a projection for both
+                    })
+                })
+            })
+        </script>
+    </body>
+</html>

@@ -1,0 +1,109 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            .box {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .box.open {
+                height: 200px;
+            }
+
+            .b {
+                width: 50px;
+                height: 50px;
+                background-color: white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .c {
+                width: 25px;
+                height: 25px;
+                background-color: #00cc88;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="top" class="box"></div>
+        <div id="bottom" class="box">
+            <div class="b"><div class="c"></div></div>
+        </div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode, relativeEase } = window.Animate
+            const { matchViewportBox, checkFrame } = window.Assert
+            const duration = 10
+
+            const topEl = document.getElementById("top")
+            const topProjection = createNode(topEl, undefined, {}, { duration })
+
+            const bottom = document.getElementById("bottom")
+            const bottomProjection = createNode(
+                bottom,
+                undefined,
+                {},
+                { duration }
+            )
+
+            const b = document.querySelector(".b")
+            const bProjection = createNode(
+                b,
+                bottomProjection,
+                {},
+                { duration }
+            )
+
+            const c = document.querySelector(".c")
+            const cProjection = createNode(c, bProjection, {}, { duration })
+
+            topProjection.willUpdate()
+            bottomProjection.willUpdate()
+            bProjection.willUpdate()
+            cProjection.willUpdate()
+
+            topEl.classList.add("open")
+
+            topProjection.root.didUpdate()
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    console.log(window.ProjectionFrames)
+                    checkFrame(topEl, 2, {
+                        totalNodes: 5,
+                        resolvedTargetDeltas: 3,
+                        recalculatedProjection: 3,
+                    })
+                })
+            })
+        </script>
+    </body>
+</html>

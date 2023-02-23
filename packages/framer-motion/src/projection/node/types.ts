@@ -63,8 +63,9 @@ export interface IProjectionNode<I = unknown> {
     projectionDeltaWithTransform?: Delta
     latestValues: ResolvedValues
     isLayoutDirty: boolean
-    isTransformDirty: boolean
     isProjectionDirty: boolean
+    isSharedProjectionDirty: boolean
+    isTransformDirty: boolean
     shouldResetTransform: boolean
     prevTransformTemplateValue: string | undefined
     isUpdateBlocked(): boolean
@@ -107,6 +108,7 @@ export interface IProjectionNode<I = unknown> {
     clearMeasurements(): void
     resetTree(): void
 
+    isProjecting(): boolean
     animationValues?: ResolvedValues
     currentAnimation?: AnimationPlaybackControls
     isTreeAnimating?: boolean

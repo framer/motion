@@ -45,6 +45,8 @@ import { globalProjectionState } from "./state"
 import { delay } from "../../utils/delay"
 import { mix } from "../../utils/mix"
 import { Process } from "../../frameloop/types"
+import { ProjectionFrame } from "../../debug/types"
+import { record } from "../../debug/record"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -55,6 +57,17 @@ const transformAxes = ["", "X", "Y", "Z"]
 const animationTarget = 1000
 
 let id = 0
+
+/**
+ * Use a mutable data object for debug data so as to not create a new
+ * object every frame.
+ */
+const projectionFrameData: ProjectionFrame = {
+    type: "projectionFrame",
+    totalNodes: 0,
+    resolvedTargetDeltas: 0,
+    recalculatedProjection: 0,
+}
 
 export function createProjectionNode<I>({
     attachResizeListener,
@@ -225,13 +238,23 @@ export function createProjectionNode<I>({
          */
         isLayoutDirty = false
 
-        isTransformDirty = false
-
         /**
-         * Flag to true if we think the projection calculations for this or any
-         * child might need recalculating as a result of an updated transform or layout animation.
+         * Flag to true if we think the projection calculations for this node needs
+         * recalculating as a result of an updated transform or layout animation.
          */
         isProjectionDirty = false
+
+        /**
+         * Flag to true if the layout *or* transform has changed. This then gets propagated
+         * throughout the projection tree, forcing any element below to recalculate on the next frame.
+         */
+        isSharedProjectionDirty = false
+
+        /**
+         * Flag transform dirty. This gets propagated throughout the whole tree but is only
+         * respected by shared nodes.
+         */
+        isTransformDirty = false
 
         /**
          * Block layout updates for instant layout transitions throughout the tree.
@@ -676,9 +699,21 @@ export function createProjectionNode<I>({
          * the next step.
          */
         updateProjection = () => {
+            /**
+             * Reset debug counts. Manually resetting rather than creating a new
+             * object each frame.
+             */
+            projectionFrameData.totalNodes =
+                projectionFrameData.resolvedTargetDeltas =
+                projectionFrameData.recalculatedProjection =
+                    0
+
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
+            this.nodes!.forEach(cleanDirtyNodes)
+
+            record(projectionFrameData)
         }
 
         /**
@@ -928,13 +963,10 @@ export function createProjectionNode<I>({
             return boxWithoutTransform
         }
 
-        /**
-         *
-         */
         setTargetDelta(delta: Delta) {
             this.targetDelta = delta
-            this.isProjectionDirty = true
             this.root.scheduleUpdateProjection()
+            this.isProjectionDirty = true
         }
 
         setOptions(options: ProjectionNodeOptions) {
@@ -968,13 +1000,21 @@ export function createProjectionNode<I>({
             const lead = this.getLead()
             this.isProjectionDirty ||= lead.isProjectionDirty
             this.isTransformDirty ||= lead.isTransformDirty
+            this.isSharedProjectionDirty ||= lead.isSharedProjectionDirty
+
+            const isShared = Boolean(this.resumingFrom) || this !== lead
 
             /**
              * We don't use transform for this step of processing so we don't
              * need to check whether any nodes have changed transform.
              */
-            if (!this.isProjectionDirty && !this.attemptToResolveRelativeTarget)
-                return
+            const canSkip = !(
+                (isShared && this.isSharedProjectionDirty) ||
+                this.isProjectionDirty ||
+                this.parent?.isProjectionDirty ||
+                this.attemptToResolveRelativeTarget
+            )
+            if (canSkip) return
 
             const { layout, layoutId } = this.options
 
@@ -1084,6 +1124,11 @@ export function createProjectionNode<I>({
                     this.relativeParent = this.relativeTarget = undefined
                 }
             }
+
+            /**
+             * Increase debug counter for resolved target deltas
+             */
+            projectionFrameData.resolvedTargetDeltas++
         }
 
         getClosestProjectingParent() {
@@ -1095,32 +1140,48 @@ export function createProjectionNode<I>({
                 return undefined
             }
 
-            if (
-                (this.parent.relativeTarget ||
-                    this.parent.targetDelta ||
-                    this.parent.options.layoutRoot) &&
-                this.parent.layout
-            ) {
+            if (this.parent.isProjecting()) {
                 return this.parent
             } else {
                 return this.parent.getClosestProjectingParent()
             }
         }
 
+        isProjecting() {
+            return Boolean(
+                (this.relativeTarget ||
+                    this.targetDelta ||
+                    this.options.layoutRoot) &&
+                    this.layout
+            )
+        }
+
         hasProjected: boolean = false
 
         calcProjection() {
-            const { isProjectionDirty, isTransformDirty } = this
-
-            this.isProjectionDirty = this.isTransformDirty = false
-
             const lead = this.getLead()
             const isShared = Boolean(this.resumingFrom) || this !== lead
 
             let canSkip = true
 
-            if (isProjectionDirty) canSkip = false
-            if (isShared && isTransformDirty) canSkip = false
+            /**
+             * If this is a normal layout animation and neither this node nor its nearest projecting
+             * is dirty then we can't skip.
+             */
+            if (this.isProjectionDirty || this.parent?.isProjectionDirty) {
+                canSkip = false
+            }
+
+            /**
+             * If this is a shared layout animation and this node's shared projection is dirty then
+             * we can't skip.
+             */
+            if (
+                isShared &&
+                (this.isSharedProjectionDirty || this.isTransformDirty)
+            ) {
+                canSkip = false
+            }
 
             if (canSkip) return
 
@@ -1159,6 +1220,7 @@ export function createProjectionNode<I>({
             )
 
             const { target } = lead
+
             if (!target) return
 
             if (!this.projectionDelta) {
@@ -1201,6 +1263,11 @@ export function createProjectionNode<I>({
 
                 this.notifyListeners("projectionUpdate", target)
             }
+
+            /**
+             * Increase debug counter for recalculated projections
+             */
+            projectionFrameData.recalculatedProjection++
         }
 
         isVisible = true
@@ -1267,6 +1334,9 @@ export function createProjectionNode<I>({
             )
 
             this.animationProgress = 0
+
+            let prevRelativeTarget: Box
+
             this.mixTargetDelta = (latest: number) => {
                 const progress = latest / 1000
 
@@ -1292,6 +1362,20 @@ export function createProjectionNode<I>({
                         relativeLayout,
                         progress
                     )
+
+                    /**
+                     * If this is an unchanged relative target we can consider the
+                     * projection not dirty.
+                     */
+                    if (
+                        prevRelativeTarget &&
+                        boxEquals(this.relativeTarget, prevRelativeTarget)
+                    ) {
+                        this.isProjectionDirty = false
+                    }
+
+                    if (!prevRelativeTarget) prevRelativeTarget = createBox()
+                    copyBoxInto(prevRelativeTarget, this.relativeTarget)
                 }
 
                 if (isSharedLayoutAnimation) {
@@ -1830,19 +1914,41 @@ function notifyLayoutUpdate(node: IProjectionNode) {
 
 export function propagateDirtyNodes(node: IProjectionNode) {
     /**
-     * Propagate isProjectionDirty. Nodes are ordered by depth, so if the parent here
-     * is dirty we can simply pass this forward.
+     * Increase debug counter for nodes encountered this frame
      */
-    node.isProjectionDirty ||= Boolean(
-        node.parent && node.parent.isProjectionDirty
-    )
+    projectionFrameData.totalNodes++
+
+    if (!node.parent) return
 
     /**
-     * Propagate isTransformDirty.
+     * If this node isn't projecting, propagate isProjectionDirty. It will have
+     * no performance impact but it will allow the next child that *is* projecting
+     * but *isn't* dirty to just check its parent to see if *any* ancestor needs
+     * correcting.
      */
-    node.isTransformDirty ||= Boolean(
-        node.parent && node.parent.isTransformDirty
+    if (!node.isProjecting()) {
+        node.isProjectionDirty = node.parent.isProjectionDirty
+    }
+
+    /**
+     * Propagate isSharedProjectionDirty and isTransformDirty
+     * throughout the whole tree. A future revision can take another look at
+     * this but for safety we still recalcualte shared nodes.
+     */
+    node.isSharedProjectionDirty ||= Boolean(
+        node.isProjectionDirty ||
+            node.parent.isProjectionDirty ||
+            node.parent.isSharedProjectionDirty
     )
+
+    node.isTransformDirty ||= node.parent.isTransformDirty
+}
+
+export function cleanDirtyNodes(node: IProjectionNode) {
+    node.isProjectionDirty =
+        node.isSharedProjectionDirty =
+        node.isTransformDirty =
+            false
 }
 
 function clearSnapshot(node: IProjectionNode) {
