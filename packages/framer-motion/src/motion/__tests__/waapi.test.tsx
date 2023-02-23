@@ -57,6 +57,64 @@ describe("WAAPI animations", () => {
         )
     })
 
+    test("filter animates with WAAPI at default settings", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ filter: "brightness(0%)" }}
+                animate={{ filter: "brightness(50%)" }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                filter: ["brightness(0%)", "brightness(50%)"],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                duration: 300,
+                easing: "ease-out",
+                iterations: 1,
+                direction: "normal",
+                fill: "both",
+            }
+        )
+    })
+
+    test("clipPath animates with WAAPI at default settings", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ clipPath: "inset(100%)" }}
+                animate={{ clipPath: "inset(0%)" }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                clipPath: ["inset(100%)", "inset(0%)"],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                duration: 300,
+                easing: "ease-out",
+                iterations: 1,
+                direction: "normal",
+                fill: "both",
+            }
+        )
+    })
+
     test("opacity animates with WAAPI when no value is originally provided via initial", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (

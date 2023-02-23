@@ -12,7 +12,7 @@ import { getFinalKeyframe } from "./utils/get-final-keyframe"
 /**
  * A list of values that can be hardware-accelerated.
  */
-const acceleratedValues = new Set<string>(["opacity"])
+const acceleratedValues = new Set<string>(["opacity", "clipPath", "filter"])
 
 /**
  * 10ms is chosen here as it strikes a balance between smooth

@@ -1,23 +1,20 @@
+import { transformProps } from "../../render/html/utils/transform"
 import { AnimationOptions } from "../types"
 
-export const underDampedSpring = () => ({
+const underDampedSpring: Partial<AnimationOptions> = {
     type: "spring",
     stiffness: 500,
     damping: 25,
     restSpeed: 10,
-})
+}
 
-export const criticallyDampedSpring = (target: unknown) => ({
+const criticallyDampedSpring = (
+    target: unknown
+): Partial<AnimationOptions> => ({
     type: "spring",
     stiffness: 550,
     damping: target === 0 ? 2 * Math.sqrt(550) : 30,
     restSpeed: 10,
-})
-
-export const linearTween = () => ({
-    type: "keyframes",
-    ease: "linear",
-    duration: 0.3,
 })
 
 const keyframesTransition: Partial<AnimationOptions> = {
@@ -25,21 +22,14 @@ const keyframesTransition: Partial<AnimationOptions> = {
     duration: 0.8,
 }
 
-const defaultTransitions = {
-    x: underDampedSpring,
-    y: underDampedSpring,
-    z: underDampedSpring,
-    rotate: underDampedSpring,
-    rotateX: underDampedSpring,
-    rotateY: underDampedSpring,
-    rotateZ: underDampedSpring,
-    scaleX: criticallyDampedSpring,
-    scaleY: criticallyDampedSpring,
-    scale: criticallyDampedSpring,
-    opacity: linearTween,
-    backgroundColor: linearTween,
-    color: linearTween,
-    default: criticallyDampedSpring,
+/**
+ * Default easing curve is a slightly shallower version of
+ * the default browser easing curve.
+ */
+const ease: Partial<AnimationOptions> = {
+    type: "keyframes",
+    ease: [0.25, 0.1, 0.35, 1],
+    duration: 0.3,
 }
 
 export const getDefaultTransition = (
@@ -48,9 +38,11 @@ export const getDefaultTransition = (
 ): Partial<AnimationOptions> => {
     if (keyframes.length > 2) {
         return keyframesTransition
-    } else {
-        const factory =
-            defaultTransitions[valueKey] || defaultTransitions.default
-        return factory(keyframes[1])
+    } else if (transformProps.has(valueKey)) {
+        return valueKey.startsWith("scale")
+            ? criticallyDampedSpring(keyframes[1])
+            : underDampedSpring
     }
+
+    return ease
 }
