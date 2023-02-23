@@ -18,16 +18,6 @@ export function inView(
     onStart: (entry: IntersectionObserverEntry) => void | ViewChangeHandler,
     { root, margin: rootMargin, amount = "any" }: InViewOptions = {}
 ): VoidFunction {
-    /**
-     * If this browser doesn't support IntersectionObserver, return a dummy stop function.
-     * Default triggering of onStart is tricky - it could be used for starting/stopping
-     * videos, lazy loading content etc. We could provide an option to enable a fallback, or
-     * provide a fallback callback option.
-     */
-    if (typeof IntersectionObserver === "undefined") {
-        return () => {}
-    }
-
     const elements = resolveElements(elementOrSelector)
 
     const activeIntersections = new WeakMap<Element, ViewChangeHandler>()
