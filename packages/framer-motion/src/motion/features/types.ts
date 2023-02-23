@@ -8,7 +8,7 @@ import { MeasureLayout } from "./layout/MeasureLayout"
 
 export type HydratedFeatureDefinition = {
     isEnabled: (props: MotionProps) => boolean
-    Feature: typeof Feature<any>
+    Feature: typeof Feature<unknown>
     ProjectionNode?: any
     MeasureLayout?: typeof MeasureLayout
 }
