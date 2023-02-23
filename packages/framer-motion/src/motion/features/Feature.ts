@@ -1,6 +1,6 @@
 import type { VisualElement } from "../../render/VisualElement"
 
-export abstract class Feature<T> {
+export abstract class Feature<T extends any = any> {
     isMounted = false
 
     node: VisualElement<T>
