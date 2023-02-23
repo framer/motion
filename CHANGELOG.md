@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [9.1.5] 2023-02-23
+
+### Fixed
+
+-   Changing `Feature<any>` to `Feature<unknown>`.
+
 ## [9.1.4] 2023-02-23
 
 ### Fixed
