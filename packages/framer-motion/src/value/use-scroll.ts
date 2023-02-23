@@ -5,6 +5,7 @@ import { useEffect } from "react"
 import { useIsomorphicLayoutEffect } from "../three-entry"
 import { warning } from "../utils/errors"
 import { scroll } from "../render/dom/scroll"
+import { ScrollOptions } from "../render/dom/scroll/types"
 
 interface UseScrollOptions extends Omit<ScrollOptions, "container" | "target"> {
     container?: RefObject<HTMLElement>
