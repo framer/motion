@@ -56,6 +56,7 @@ export {
 } from "./animation/hooks/use-animation"
 export { useAnimationFrame } from "./utils/use-animation-frame"
 export { animate } from "./animation/animate"
+export { scroll } from "./render/dom/scroll"
 export { animateVisualElement } from "./render/utils/animation"
 export {
     HoverHandlers,
