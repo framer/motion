@@ -1,13 +1,13 @@
 import { AnimationType } from "./types"
 
-export const variantPriorityOrder = [
-    AnimationType.Animate,
-    AnimationType.InView,
-    AnimationType.Focus,
-    AnimationType.Hover,
-    AnimationType.Tap,
-    AnimationType.Drag,
-    AnimationType.Exit,
+export const variantPriorityOrder: AnimationType[] = [
+    "animate",
+    "whileInView",
+    "whileFocus",
+    "whileHover",
+    "whileTap",
+    "whileDrag",
+    "exit",
 ]
 
 export const variantProps = ["initial", ...variantPriorityOrder]

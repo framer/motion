@@ -1,4 +1,3 @@
-import { AnimationType } from "../../../render/utils/types"
 import { Feature } from "../Feature"
 
 let id = 0
@@ -17,7 +16,7 @@ export class ExitAnimationFeature extends Feature<unknown> {
         }
 
         const exitAnimation = this.node.animationState.setActive(
-            AnimationType.Exit,
+            "exit",
             !isPresent,
             { custom: custom ?? this.node.getProps().custom }
         )

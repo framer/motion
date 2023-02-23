@@ -13,7 +13,6 @@ import {
     defaultElastic,
     calcOrigin,
 } from "./utils/constraints"
-import { AnimationType } from "../../render/utils/types"
 import type { VisualElement } from "../../render/VisualElement"
 import { MotionProps } from "../../motion/types"
 import { Point } from "../../projection/geometry/types"
@@ -152,7 +151,7 @@ export class VisualElementDragControls {
             // Fire onDragStart event
             onDragStart && onDragStart(event, info)
             const { animationState } = this.visualElement
-            animationState && animationState.setActive(AnimationType.Drag, true)
+            animationState && animationState.setActive("whileDrag", true)
         }
 
         const onMove = (event: PointerEvent, info: PanInfo) => {
@@ -242,7 +241,7 @@ export class VisualElementDragControls {
             this.openGlobalLock = null
         }
 
-        animationState && animationState.setActive(AnimationType.Drag, false)
+        animationState && animationState.setActive("whileDrag", false)
     }
 
     private updateAxis(axis: DragDirection, _point: Point, offset?: Point) {

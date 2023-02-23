@@ -4,7 +4,6 @@ import {
     addPointerEvent,
     isDragActive,
     addPointerInfo,
-    AnimationType,
     pipe,
 } from "framer-motion"
 import type { VisualElement, EventInfo } from "framer-motion"
@@ -35,7 +34,7 @@ export function useTap(
     function checkPointerEnd() {
         removePointerEndListener()
         isPressing.current = false
-        visualElement!.animationState?.setActive(AnimationType.Tap, false)
+        visualElement!.animationState?.setActive("whileTap", false)
         return !isDragActive()
     }
 
@@ -78,7 +77,7 @@ export function useTap(
                 )
             )
 
-            visualElement.animationState?.setActive(AnimationType.Tap, true)
+            visualElement.animationState?.setActive("whileTap", true)
 
             onPointerDown?.(event)
 
