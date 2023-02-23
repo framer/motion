@@ -3,7 +3,7 @@ import { HTMLRenderState } from "../types"
 import { ResolvedValues } from "../../types"
 import { DOMVisualElementOptions } from "../../dom/types"
 import { buildTransform } from "./build-transform"
-import { isCSSVariable } from "../../dom/utils/is-css-variable"
+import { isCSSVariableName } from "../../dom/utils/is-css-variable"
 import { transformProps } from "./transform"
 import { getValueAsType } from "../../dom/value-types/get-as-type"
 import { numberValueTypes } from "../../dom/value-types/number"
@@ -35,7 +35,7 @@ export function buildHTMLStyles(
         /**
          * If this is a CSS variable we don't do any further processing.
          */
-        if (isCSSVariable(key)) {
+        if (isCSSVariableName(key)) {
             vars[key] = value
             continue
         }

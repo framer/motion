@@ -1,5 +1,5 @@
 import { mix } from "./mix"
-import { invariant } from "hey-listen"
+import { invariant } from "../utils/errors"
 import { hslaToRgba } from "./hsla-to-rgba"
 import { hex } from "../value/types/color/hex"
 import { rgba } from "../value/types/color/rgba"

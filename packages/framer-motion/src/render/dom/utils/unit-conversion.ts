@@ -1,6 +1,6 @@
 import { Target, TargetWithKeyframes } from "../../../types"
 import { isKeyframesTarget } from "../../../animation/utils/is-keyframes-target"
-import { invariant } from "hey-listen"
+import { invariant } from "../../../utils/errors"
 import { MotionValue } from "../../../value"
 import { transformPropOrder } from "../../html/utils/transform"
 import { ResolvedValues } from "../../types"

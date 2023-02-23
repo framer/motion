@@ -1,12 +1,12 @@
-import { warning } from "hey-listen"
+import { warning } from "../utils/errors"
 import * as React from "react"
 import { useConstant } from "../utils/use-constant"
 import { LayoutGroup } from "./LayoutGroup"
 
 let id = 0
-export const AnimateSharedLayout: React.FunctionComponent<React.PropsWithChildren<unknown>> = ({
-    children,
-}: React.PropsWithChildren<{}>) => {
+export const AnimateSharedLayout: React.FunctionComponent<
+    React.PropsWithChildren<unknown>
+> = ({ children }: React.PropsWithChildren<{}>) => {
     React.useEffect(() => {
         warning(
             false,

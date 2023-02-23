@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useState } from "react"
-import { inView, InViewOptions } from "@motionone/dom"
+import { inView, InViewOptions } from "../render/dom/viewport"
 
 interface Options extends Omit<InViewOptions, "root" | "amount"> {
     root?: RefObject<Element>

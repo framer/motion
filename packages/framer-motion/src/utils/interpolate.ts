@@ -1,4 +1,4 @@
-import { invariant } from "hey-listen"
+import { invariant } from "../utils/errors"
 import { EasingFunction } from "../easing/types"
 import { color } from "../value/types/color"
 import { clamp } from "./clamp"

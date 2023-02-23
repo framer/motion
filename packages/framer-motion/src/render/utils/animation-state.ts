@@ -12,6 +12,7 @@ import {
 import { isVariantLabel } from "./is-variant-label"
 import { AnimationType } from "./types"
 import { resolveVariant } from "./resolve-dynamic-variants"
+import { variantPriorityOrder } from "./variant-props"
 
 export interface AnimationState {
     animateChanges: (
@@ -33,16 +34,6 @@ interface DefinitionAndOptions {
 }
 
 export type AnimationList = string[] | TargetAndTransition[]
-
-export const variantPriorityOrder = [
-    AnimationType.Animate,
-    AnimationType.InView,
-    AnimationType.Focus,
-    AnimationType.Hover,
-    AnimationType.Tap,
-    AnimationType.Drag,
-    AnimationType.Exit,
-]
 
 const reversePriorityOrder = [...variantPriorityOrder].reverse()
 const numAnimationTypes = variantPriorityOrder.length

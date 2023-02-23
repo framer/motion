@@ -1,6 +1,6 @@
 import { useTransform } from "../value/use-transform"
 import { MotionValue } from "./"
-import { invariant, warning } from "hey-listen"
+import { invariant, warning } from "../utils/errors"
 import { useMotionValue } from "./use-motion-value"
 import { useVisualElementContext } from "../context/MotionContext"
 

@@ -1,5 +1,5 @@
 import { sync, cancelSync } from "../frameloop"
-import { invariant, warning } from "hey-listen"
+import { invariant, warning } from "../utils/errors"
 import {
     MotionConfigContext,
     ReducedMotionConfig,
@@ -28,7 +28,7 @@ import {
     VisualElementEventCallbacks,
     VisualElementOptions,
 } from "./types"
-import { AnimationState, variantPriorityOrder } from "./utils/animation-state"
+import { AnimationState } from "./utils/animation-state"
 import {
     isControllingVariants as checkIsControllingVariants,
     isVariantNode as checkIsVariantNode,
@@ -40,6 +40,7 @@ import { warnOnce } from "../utils/warn-once"
 import { featureDefinitions } from "../motion/features/definitions"
 import { Feature } from "../motion/features/Feature"
 import type { PresenceContextProps } from "../context/PresenceContext"
+import { variantProps } from "./utils/variant-props"
 
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
@@ -53,6 +54,8 @@ const propEventHandlers = [
     "LayoutAnimationStart",
     "LayoutAnimationComplete",
 ] as const
+
+const numVariantProps = variantProps.length
 
 /**
  * A VisualElement is an imperative abstraction around UI elements such as
@@ -888,6 +891,3 @@ export abstract class VisualElement<
         }
     }
 }
-
-const variantProps = ["initial", ...variantPriorityOrder]
-const numVariantProps = variantProps.length

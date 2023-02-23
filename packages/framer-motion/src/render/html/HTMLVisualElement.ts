@@ -1,7 +1,7 @@
 import { HTMLRenderState } from "./types"
 import { DOMVisualElementOptions } from "../dom/types"
 import { buildHTMLStyles } from "./utils/build-styles"
-import { isCSSVariable } from "../dom/utils/is-css-variable"
+import { isCSSVariableName } from "../dom/utils/is-css-variable"
 import { transformProps } from "./utils/transform"
 import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-values"
 import { renderHTML } from "./utils/render"
@@ -36,7 +36,7 @@ export class HTMLVisualElement extends DOMVisualElement<
         } else {
             const computedStyle = getComputedStyle(instance)
             const value =
-                (isCSSVariable(key)
+                (isCSSVariableName(key)
                     ? computedStyle.getPropertyValue(key)
                     : computedStyle[key]) || 0
 
