@@ -11,10 +11,6 @@ export interface ViewportOptions {
     once?: boolean
     margin?: string
     amount?: "some" | "all" | number
-    /**
-     * @deprecated IntersectionObserver fallback will always be disabled from 10.0. Prefer polyfill for older browser support.
-     */
-    fallback?: boolean
 }
 
 export interface ViewportProps {
