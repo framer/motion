@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [9.1.3] 2023-02-23
+
+### Updated
+
+-   Limiting propagation of dirty projection nodes for improved layout animation performance.
+
 ## [9.1.2] 2023-02-23
 
 ### Updated
