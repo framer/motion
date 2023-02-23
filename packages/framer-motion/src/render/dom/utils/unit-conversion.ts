@@ -30,15 +30,6 @@ const hasPositionalKey = (target: TargetWithKeyframes) => {
 const isNumOrPxType = (v?: ValueType): v is ValueType =>
     v === number || v === px
 
-export enum BoundingBoxDimension {
-    width = "width",
-    height = "height",
-    left = "left",
-    right = "right",
-    top = "top",
-    bottom = "bottom",
-}
-
 type GetActualMeasurementInPixels = (
     bbox: Box,
     computedStyle: Partial<CSSStyleDeclaration>
