@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [9.1.0] 2023-02-23
+
+### Added
+
+-   Hardware acceleration of `clipPath`, `filter` and `transform` styles.
+
 ## [9.0.7] 2023-02-21
 
 ### Fixed
