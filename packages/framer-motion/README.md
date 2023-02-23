@@ -7,13 +7,13 @@
 </h3>
 <br/>
 <p align="center">
-  <a href="https://www.framer.com?utm_source=motion">
+  <a href="https://www.framer.com?utm_source=motion-readme">
     <img src="https://framerusercontent.com/images/atXqxn4JhKm4LXVncdNjkKV7yCU.png" width="140" alt="Start for free" />
   </a>
 </p>
 <br/>
 <p align="center">
-  <a href="https://www.framer.com?utm_source=motion">
+  <a href="https://www.framer.com?utm_source=motion-readme">
     <img src="https://framerusercontent.com/images/pMSOmGP2V8sSaZRV2D7i4HTBTe4.png" width="1000" alt="Framer Banner" />
   </a>
 </p>
@@ -49,18 +49,18 @@ It looks like this:
 
 It does all this:
 
--   [Springs](https://www.framer.com/docs/transition/#spring)
--   [Keyframes](https://www.framer.com/docs/animation/##keyframes)
--   [Layout animations](https://www.framer.com/docs/layout-animations/)
--   [Shared layout animations](https://www.framer.com/docs/layout-animations/#shared-layout-animations)
--   [Gestures (drag/tap/hover)](https://www.framer.com/docs/gestures/)
--   [Scroll animations](https://www.framer.com/docs/scroll-animations)
--   [SVG paths](https://www.framer.com/docs/component/###svg-line-drawing)
--   [Exit animations](https://www.framer.com/docs/animate-presence/)
+-   [Springs](https://www.framer.com/docs/transition/#spring?utm_source=motion-readme-docs)
+-   [Keyframes](https://www.framer.com/docs/animation/##keyframes?utm_source=motion-readme-docs)
+-   [Layout animations](https://www.framer.com/docs/layout-animations/?utm_source=motion-readme-docs)
+-   [Shared layout animations](https://www.framer.com/docs/layout-animations/#shared-layout-animations?utm_source=motion-readme-docs)
+-   [Gestures (drag/tap/hover)](https://www.framer.com/docs/gestures/?utm_source=motion-readme-docs)
+-   [Scroll animations](https://www.framer.com/docs/scroll-animations?utm_source=motion-readme-docs)
+-   [SVG paths](https://www.framer.com/docs/component/###svg-line-drawing?utm_source=motion-readme-docs)
+-   [Exit animations](https://www.framer.com/docs/animate-presence/?utm_source=motion-readme-docs)
 -   Server-side rendering
--   [Hardware-accelerated animations](https://www.framer.com/docs/animation/#hardware-accelerated-animations)
--   [Orchestrate animations across components](https://www.framer.com/docs/animation/##orchestration)
--   [CSS variables](https://www.framer.com/docs/component/##css-variables)
+-   [Hardware-accelerated animations](https://www.framer.com/docs/animation/#hardware-accelerated-animations?utm_source=motion-readme-docs)
+-   [Orchestrate animations across components](https://www.framer.com/docs/animation/##orchestration?utm_source=motion-readme-docs)
+-   [CSS variables](https://www.framer.com/docs/component/##css-variables?utm_source=motion-readme-docs)
 
 ...and a whole lot more.
 
@@ -86,8 +86,8 @@ export const MyComponent = ({ isVisible }) => (
 
 ### 📚 Docs
 
--   Check out [our documentation](https://www.framer.com/docs/) for guides and a full API reference.
--   Or see [our examples](https://www.framer.com/docs/examples/) for inspiration.
+-   Check out [our documentation](https://www.framer.com/docs/?utm_source=motion-readme-docs) for guides and a full API reference.
+-   Or see [our examples](https://www.framer.com/docs/examples/?utm_source=motion-readme-docs) for inspiration.
 
 ### 💎 Contribute
 

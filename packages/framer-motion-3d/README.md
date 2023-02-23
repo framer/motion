@@ -1,10 +1,22 @@
 <p align="center">
   <img src="https://user-images.githubusercontent.com/22095598/123793419-f5528800-d8e1-11eb-8c5f-e2dad45a9c81.png" width="108" height="108" alt="Framer Motion" />
 </p>
-<h1 align="center">Framer Motion</h1>
+<h1 align="center">Framer Motion 3D</h1>
 <h3 align="center">
-  An open source and production-ready motion<br>library for React on the web.
+  An open source motion library for React Three Fiber. Motion powers Framer, the web builder for creative pros. Design and ship your dream site. Zero code, maximum speed.
 </h3>
+<br/>
+<p align="center">
+  <a href="https://www.framer.com?utm_source=motion-readme">
+    <img src="https://framerusercontent.com/images/atXqxn4JhKm4LXVncdNjkKV7yCU.png" width="140" alt="Start for free" />
+  </a>
+</p>
+<br/>
+<p align="center">
+  <a href="https://www.framer.com?utm_source=motion-readme">
+    <img src="https://framerusercontent.com/images/pMSOmGP2V8sSaZRV2D7i4HTBTe4.png" width="1000" alt="Framer Banner" />
+  </a>
+</p>
 
 <br>
 
@@ -25,8 +37,6 @@
 
 <br>
 
-Framer Motion 3D is an animation library that ties together
-
 It looks like this:
 
 ```jsx
@@ -45,9 +55,9 @@ It does all this:
 
 ### 📚 Docs
 
-Check out [our documentation](https://www.framer.com/docs/three-introduction/) for guides and a full API reference.
+Check out [our documentation](https://www.framer.com/docs/three-introduction/?utm_source=motion-readme-docs) for guides and a full API reference.
 
-Or checkout [our examples](https://www.framer.com/docs/three-introduction/#examples) for inspiration.
+Or checkout [our examples](https://www.framer.com/docs/three-introduction/#examples?utm_source=motion-readme-docs) for inspiration.
 
 ### 🛠 Contribute
 
@@ -59,4 +69,4 @@ Framer Motion 3D is MIT licensed.
 
 ## Framer
 
-Get on the same page as your designers before production. Get started with [design and prototyping in Framer](https://www.framer.com/).
+Get on the same page as your designers before production. Get started with [design and prototyping in Framer](https://www.framer.com/?utm_source=motion-readme).

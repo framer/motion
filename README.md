@@ -7,13 +7,13 @@
 </h3>
 <br/>
 <p align="center">
-  <a href="https://www.framer.com?utm_source=motion">
+  <a href="https://www.framer.com?utm_source=motion-readme">
     <img src="https://framerusercontent.com/images/atXqxn4JhKm4LXVncdNjkKV7yCU.png" width="140" alt="Start for free" />
   </a>
 </p>
 <br/>
 <p align="center">
-  <a href="https://www.framer.com?utm_source=motion">
+  <a href="https://www.framer.com?utm_source=motion-readme">
     <img src="https://framerusercontent.com/images/pMSOmGP2V8sSaZRV2D7i4HTBTe4.png" width="1000" alt="Framer Banner" />
   </a>
 </p>
@@ -24,17 +24,17 @@ This repo contains the source code for [Framer Motion](https://github.com/framer
 
 ### 📚 Docs
 
-- Check out [our documentation](https://www.framer.com/docs/) for guides and a full API reference.
-- Or see [our examples](https://www.framer.com/docs/examples/) for inspiration.
+-   Check out [our documentation](https://www.framer.com/docs/?utm_source=motion-readme-docs) for guides and a full API reference.
+-   Or see [our examples](https://www.framer.com/docs/examples/?utm_source=motion-readme-docs) for inspiration.
 
 ### 💎 Contribute
 
-- Want to contribute to Framer Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
+-   Want to contribute to Framer Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
 
 ### 👩🏻‍⚖️ License
 
-- Framer Motion is MIT licensed.
+-   Framer Motion is MIT licensed.
 
 ### ✨ Framer
 
-- Design and publish sites that inspire. [Try Framer for free](https://www.framer.com/).
+-   Design and publish sites that inspire. [Try Framer for free](https://www.framer.com/?utm_source=motion-readme).
