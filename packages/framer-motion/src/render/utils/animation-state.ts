@@ -12,7 +12,6 @@ import {
 import { isVariantLabel } from "./is-variant-label"
 import { AnimationType } from "./types"
 import { resolveVariant } from "./resolve-dynamic-variants"
-import { variantPriorityOrder } from "./variant-props"
 
 export interface AnimationState {
     animateChanges: (
@@ -34,6 +33,16 @@ interface DefinitionAndOptions {
 }
 
 export type AnimationList = string[] | TargetAndTransition[]
+
+export const variantPriorityOrder = [
+    AnimationType.Animate,
+    AnimationType.InView,
+    AnimationType.Focus,
+    AnimationType.Hover,
+    AnimationType.Tap,
+    AnimationType.Drag,
+    AnimationType.Exit,
+]
 
 const reversePriorityOrder = [...variantPriorityOrder].reverse()
 const numAnimationTypes = variantPriorityOrder.length
@@ -364,12 +373,9 @@ export function createAnimationState(
         if (state[type].isActive === isActive) return Promise.resolve()
 
         // Propagate active change to children
-        if (visualElement.variantChildren) {
-            visualElement.variantChildren.forEach((child) => {
-                child.animationState &&
-                    child.animationState.setActive(type, isActive)
-            })
-        }
+        visualElement.variantChildren?.forEach((child) =>
+            child.animationState?.setActive(type, isActive)
+        )
 
         state[type].isActive = isActive
 
