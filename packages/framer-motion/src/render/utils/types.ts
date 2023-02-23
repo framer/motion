@@ -1,4 +1,4 @@
-export enum AnimationType {
+export const enum AnimationType {
     Animate = "animate",
     Hover = "whileHover",
     Tap = "whileTap",

@@ -32,7 +32,7 @@ module.exports = {
     devtool: false,
     optimization: {
         usedExports: true,
-        minimize: true,
+        minimize: false,
         minimizer: [
             new TerserPlugin({
                 terserOptions: {
