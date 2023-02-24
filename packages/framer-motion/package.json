@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "10.0.0",
+    "version": "10.0.0-alpha.1",
     "description": "A simple and powerful React animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -70,7 +70,7 @@
     "bundlesize": [
         {
             "path": "./dist/size-rollup-motion.js",
-            "maxSize": "29.92 kB"
+            "maxSize": "29.88 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
@@ -78,11 +78,11 @@
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
-            "maxSize": "14.85 kB"
+            "maxSize": "14.75 kB"
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
-            "maxSize": "25.67 kB"
+            "maxSize": "25.61 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",
@@ -90,11 +90,11 @@
         },
         {
             "path": "./dist/size-webpack-dom-animation.js",
-            "maxSize": "18.81 kB"
+            "maxSize": "18.75 kB"
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "30.52 kB"
+            "maxSize": "30.47 kB"
         }
     ],
     "gitHead": "79675ba44230ae86bfb212be8bd903fc68524976"

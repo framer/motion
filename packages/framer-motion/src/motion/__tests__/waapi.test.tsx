@@ -144,6 +144,67 @@ describe("WAAPI animations", () => {
         )
     })
 
+    test("backgroundColor animates with WAAPI at default settings", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ backgroundColor: "#f00" }}
+                animate={{ backgroundColor: "#00f" }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                backgroundColor: [
+                    "rgba(255, 0, 0, 1)",
+                    "rgba(253, 0, 35, 1)",
+                    "rgba(249, 0, 56, 1)",
+                    "rgba(244, 0, 75, 1)",
+                    "rgba(237, 0, 94, 1)",
+                    "rgba(229, 0, 112, 1)",
+                    "rgba(220, 0, 128, 1)",
+                    "rgba(211, 0, 144, 1)",
+                    "rgba(200, 0, 158, 1)",
+                    "rgba(190, 0, 171, 1)",
+                    "rgba(179, 0, 182, 1)",
+                    "rgba(168, 0, 192, 1)",
+                    "rgba(157, 0, 201, 1)",
+                    "rgba(147, 0, 209, 1)",
+                    "rgba(136, 0, 215, 1)",
+                    "rgba(126, 0, 222, 1)",
+                    "rgba(116, 0, 227, 1)",
+                    "rgba(107, 0, 232, 1)",
+                    "rgba(97, 0, 236, 1)",
+                    "rgba(88, 0, 239, 1)",
+                    "rgba(79, 0, 242, 1)",
+                    "rgba(71, 0, 245, 1)",
+                    "rgba(62, 0, 247, 1)",
+                    "rgba(54, 0, 249, 1)",
+                    "rgba(46, 0, 251, 1)",
+                    "rgba(38, 0, 252, 1)",
+                    "rgba(30, 0, 253, 1)",
+                    "rgba(22, 0, 254, 1)",
+                    "rgba(15, 0, 255, 1)",
+                    "rgba(7, 0, 255, 1)",
+                    "rgba(0, 0, 255, 1)",
+                ],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                duration: 300,
+                easing: "linear",
+                iterations: 1,
+                direction: "normal",
+                fill: "both",
+            }
+        )
+    })
+
     test("opacity animates with WAAPI when no value is originally provided via initial", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
@@ -750,19 +811,77 @@ describe("WAAPI animations", () => {
         expect(ref.current!.animate).not.toBeCalled()
     })
 
-    test("Doesn't animate with WAAPI if repeat is Infinity and we need to generate keyframes", () => {
+    test("Animates with WAAPI if repeat is defined and we need to generate keyframes", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
                 ref={ref}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 0.8 }}
-                transition={{ repeat: Infinity, type: "spring" }}
+                animate={{ opacity: 0.9 }}
+                transition={{
+                    ease: "backInOut",
+                    duration: 0.05,
+                    repeat: 2,
+                }}
             />
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
-        expect(ref.current!.animate).not.toBeCalled()
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                opacity: [
+                    0, -0.038019759996313955, 0.14036703066311026,
+                    0.7596329693368897, 0.9380197599963139, 0.9,
+                ],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                direction: "normal",
+                duration: 50,
+                easing: "linear",
+                fill: "both",
+                iterations: 3,
+            }
+        )
+    })
+
+    test("Animates with WAAPI if repeat is Infinity and we need to generate keyframes", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.9 }}
+                transition={{
+                    ease: "backInOut",
+                    duration: 0.05,
+                    repeat: Infinity,
+                }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                opacity: [
+                    0, -0.038019759996313955, 0.14036703066311026,
+                    0.7596329693368897, 0.9380197599963139, 0.9,
+                ],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                direction: "normal",
+                duration: 50,
+                easing: "linear",
+                fill: "both",
+                iterations: Infinity,
+            }
+        )
     })
 })

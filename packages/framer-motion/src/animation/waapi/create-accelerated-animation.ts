@@ -17,6 +17,7 @@ const acceleratedValues = new Set<string>([
     "clipPath",
     "filter",
     "transform",
+    "backgroundColor",
 ])
 
 /**
@@ -25,6 +26,14 @@ const acceleratedValues = new Set<string>([
  * keyframe quantity.
  */
 const sampleDelta = 10 //ms
+
+const requiresPregeneratedKeyframes = (
+    valueName: string,
+    options: AnimationOptions
+) =>
+    options.type === "spring" ||
+    valueName === "backgroundColor" ||
+    !isWaapiSupportedEasing(options.ease)
 
 export function createAcceleratedAnimation(
     value: MotionValue,
@@ -45,14 +54,12 @@ export function createAcceleratedAnimation(
     /**
      * If this animation needs pre-generated keyframes then generate.
      */
-    if (options.type === "spring" || !isWaapiSupportedEasing(options.ease)) {
-        /**
-         * If we need to pre-generate keyframes and repeat is infinite then
-         * early return as this will lock the thread.
-         */
-        if (options.repeat === Infinity) return
-
-        const sampleAnimation = animateValue({ ...options, elapsed: 0 })
+    if (requiresPregeneratedKeyframes(valueName, options)) {
+        const sampleAnimation = animateValue({
+            ...options,
+            repeat: 0,
+            elapsed: 0,
+        })
         let state = { done: false, value: keyframes[0] }
         const pregeneratedKeyframes: number[] = []
 
