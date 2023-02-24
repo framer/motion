@@ -6,7 +6,6 @@ import { EventInfo } from "../events/types"
 import { addDomEvent } from "../events/add-dom-event"
 import { addPointerEvent } from "../events/add-pointer-event"
 import { Feature } from "../motion/features/Feature"
-import { AnimationType } from "../render/utils/types"
 import { pipe } from "../utils/pipe"
 import { isDragActive } from "./drag/utils/lock"
 import { isNodeOrChild } from "./utils/is-node-or-child"
@@ -37,7 +36,7 @@ export class PressGesture extends Feature<Element> {
          * Ensure we trigger animations before firing event callback
          */
         if (whileTap && this.node.animationState) {
-            this.node.animationState.setActive(AnimationType.Tap, true)
+            this.node.animationState.setActive("whileTap", true)
         }
 
         onTapStart && onTapStart(event, info)
@@ -50,7 +49,7 @@ export class PressGesture extends Feature<Element> {
         const props = this.node.getProps()
 
         if (props.whileTap && this.node.animationState) {
-            this.node.animationState.setActive(AnimationType.Tap, false)
+            this.node.animationState.setActive("whileTap", false)
         }
 
         return !isDragActive()

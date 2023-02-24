@@ -1,4 +1,3 @@
-import { AnimationType } from "../../../render/utils/types"
 import { MotionProps } from "../../types"
 import { Feature } from "../Feature"
 import { observeIntersection } from "./observers"
@@ -27,7 +26,7 @@ export class InViewFeature extends Feature<Element> {
             const { onViewportEnter } = this.node.getProps()
             onViewportEnter && onViewportEnter(null)
             if (this.node.animationState) {
-                this.node.animationState.setActive(AnimationType.InView, true)
+                this.node.animationState.setActive("whileInView", true)
             }
         })
     }
@@ -78,7 +77,7 @@ export class InViewFeature extends Feature<Element> {
 
             if (this.node.animationState) {
                 this.node.animationState.setActive(
-                    AnimationType.InView,
+                    "whileInView",
                     isIntersecting
                 )
             }

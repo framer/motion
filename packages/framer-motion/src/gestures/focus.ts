@@ -1,6 +1,5 @@
 import { addDomEvent } from "../events/add-dom-event"
 import { Feature } from "../motion/features/Feature"
-import { AnimationType } from "../render/utils/types"
 import { pipe } from "../utils/pipe"
 
 export class FocusGesture extends Feature<Element> {
@@ -23,13 +22,13 @@ export class FocusGesture extends Feature<Element> {
 
         if (!isFocusVisible || !this.node.animationState) return
 
-        this.node.animationState.setActive(AnimationType.Focus, true)
+        this.node.animationState.setActive("whileFocus", true)
         this.isActive = true
     }
 
     onBlur() {
         if (!this.isActive || !this.node.animationState) return
-        this.node.animationState.setActive(AnimationType.Focus, false)
+        this.node.animationState.setActive("whileFocus", false)
         this.isActive = false
     }
 

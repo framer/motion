@@ -1,5 +1,4 @@
 import { AnimationState, createAnimationState } from "../animation-state"
-import { AnimationType } from "../types"
 import { MotionProps } from "../../../motion/types"
 import { createHtmlRenderState } from "../../html/utils/create-render-state"
 import { VisualElement } from "../../VisualElement"
@@ -65,9 +64,7 @@ describe("Animation state - Initiating props", () => {
             animate: { opacity: 1 },
         })
 
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
         expect(animate).toBeCalledWith([{ opacity: 1 }])
     })
 
@@ -82,9 +79,7 @@ describe("Animation state - Initiating props", () => {
             },
         })
 
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
         expect(animate).toBeCalledWith(["test"])
     })
 
@@ -99,9 +94,7 @@ describe("Animation state - Initiating props", () => {
             },
         })
 
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
         expect(animate).toBeCalledWith(["test", "heyoo"])
     })
 
@@ -119,9 +112,7 @@ describe("Animation state - Initiating props", () => {
             },
         })
 
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
         expect(animate).not.toBeCalled()
     })
 
@@ -134,9 +125,7 @@ describe("Animation state - Initiating props", () => {
             animate: { opacity: 1 },
         })
 
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
         expect(animate).not.toBeCalled()
     })
 
@@ -152,9 +141,7 @@ describe("Animation state - Initiating props", () => {
             },
         })
 
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
         expect(animate).not.toBeCalled()
     })
 
@@ -170,9 +157,7 @@ describe("Animation state - Initiating props", () => {
             },
         })
 
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
         expect(animate).not.toBeCalled()
     })
 })
@@ -192,7 +177,7 @@ describe("Animation state - Setting props", () => {
         })
 
         expect(animate).not.toBeCalled()
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual({
+        expect(state.getState()["animate"].protectedKeys).toEqual({
             opacity: true,
         })
     })
@@ -210,7 +195,7 @@ describe("Animation state - Setting props", () => {
         })
 
         expect(animate).not.toBeCalled()
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual({
+        expect(state.getState()["animate"].protectedKeys).toEqual({
             opacity: true,
         })
     })
@@ -235,7 +220,7 @@ describe("Animation state - Setting props", () => {
         })
 
         expect(animate).not.toBeCalled()
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual({
+        expect(state.getState()["animate"].protectedKeys).toEqual({
             opacity: true,
         })
     })
@@ -260,7 +245,7 @@ describe("Animation state - Setting props", () => {
         })
 
         expect(animate).not.toBeCalled()
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual({
+        expect(state.getState()["animate"].protectedKeys).toEqual({
             opacity: true,
         })
     })
@@ -279,9 +264,7 @@ describe("Animation state - Setting props", () => {
         })
 
         expect(animate).toBeCalledWith([{ opacity: 0 }])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
     })
 
     test("Change single value, keyframes", () => {
@@ -298,9 +281,7 @@ describe("Animation state - Setting props", () => {
         })
 
         expect(animate).toBeCalledWith([{ opacity: [0.5, 1] }])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
     })
 
     test("Change single value, variant", () => {
@@ -325,9 +306,7 @@ describe("Animation state - Setting props", () => {
         })
 
         expect(animate).toBeCalledWith(["b"])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
     })
 
     test("Change single value, variant list", () => {
@@ -352,9 +331,7 @@ describe("Animation state - Setting props", () => {
         })
 
         expect(animate).toBeCalledWith(["b"])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
     })
 
     test("Swap between value in target and transitionEnd, target", () => {
@@ -373,9 +350,7 @@ describe("Animation state - Setting props", () => {
         })
 
         expect(animate).toBeCalledWith([{ transitionEnd: { opacity: 0.3 } }])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
 
         animate = mockAnimate(state)
 
@@ -384,9 +359,7 @@ describe("Animation state - Setting props", () => {
             animate: { opacity: 0.2 },
         })
         expect(animate).toBeCalledWith([{ opacity: 0.2 }])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
     })
 
     test("Change single value, target, with unchanging values", () => {
@@ -403,7 +376,7 @@ describe("Animation state - Setting props", () => {
         })
 
         expect(animate).toBeCalledWith([{ opacity: 0, x: 0 }])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual({
+        expect(state.getState()["animate"].protectedKeys).toEqual({
             x: true,
         })
 
@@ -414,7 +387,7 @@ describe("Animation state - Setting props", () => {
         })
 
         expect(animate).toBeCalledWith([{ opacity: 0, x: 100 }])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual({
+        expect(state.getState()["animate"].protectedKeys).toEqual({
             opacity: true,
         })
     })
@@ -434,9 +407,7 @@ describe("Animation state - Setting props", () => {
         })
 
         expect(animate).toBeCalledWith([{ opacity: 0 }])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
     })
 
     test("Removing values, target undefined", () => {
@@ -454,9 +425,7 @@ describe("Animation state - Setting props", () => {
         })
 
         expect(animate).toBeCalledWith([{ opacity: 0 }])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
     })
 
     test("Removing values, variant changed", () => {
@@ -482,9 +451,7 @@ describe("Animation state - Setting props", () => {
         })
 
         expect(animate).toBeCalledWith(["b", { opacity: 1 }])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
     })
 
     test("Removing values, inherited variant changed", () => {
@@ -512,9 +479,7 @@ describe("Animation state - Setting props", () => {
         )
 
         expect(animate).toBeCalledWith([{ opacity: 1 }])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
     })
 
     test("Removing values, inherited variant changed from starting at empty variant", () => {
@@ -557,9 +522,7 @@ describe("Animation state - Setting props", () => {
 
         expect(parentAnimate).toBeCalledWith(["a"])
         expect(childAnimate).not.toBeCalled()
-        expect(
-            childState.getState()[AnimationType.Animate].protectedKeys
-        ).toEqual({})
+        expect(childState.getState()["animate"].protectedKeys).toEqual({})
 
         parentAnimate = mockAnimate(parentState)
         childAnimate = mockAnimate(childState)
@@ -582,9 +545,7 @@ describe("Animation state - Setting props", () => {
         parent.animationState!.animateChanges()
         expect(parentAnimate).toBeCalledWith(["b"])
         expect(childAnimate).not.toBeCalled()
-        expect(
-            childState.getState()[AnimationType.Animate].protectedKeys
-        ).toEqual({})
+        expect(childState.getState()["animate"].protectedKeys).toEqual({})
 
         parentAnimate = mockAnimate(parentState)
         childAnimate = mockAnimate(childState)
@@ -607,9 +568,7 @@ describe("Animation state - Setting props", () => {
         parent.animationState!.animateChanges()
         expect(parentAnimate).toBeCalledWith([""])
         expect(childAnimate).toBeCalledWith([{ opacity: 0 }])
-        expect(
-            childState.getState()[AnimationType.Animate].protectedKeys
-        ).toEqual({})
+        expect(childState.getState()["animate"].protectedKeys).toEqual({})
     })
 })
 
@@ -626,42 +585,42 @@ describe("Animation state - Set active", () => {
 
         // Set hover to true
         let animate = mockAnimate(state)
-        state.setActive(AnimationType.Hover, true)
+        state.setActive("whileHover", true)
         expect(animate).toBeCalledWith([{ opacity: 0.5 }])
 
         // Set hover to false
         animate = mockAnimate(state)
-        state.setActive(AnimationType.Hover, false)
+        state.setActive("whileHover", false)
         expect(animate).toBeCalledWith([{ opacity: 1 }])
 
         // Set hover to true
         animate = mockAnimate(state)
-        state.setActive(AnimationType.Hover, true)
+        state.setActive("whileHover", true)
         expect(animate).toBeCalledWith([{ opacity: 0.5 }])
 
         // Set hover to false
         animate = mockAnimate(state)
-        state.setActive(AnimationType.Hover, false)
+        state.setActive("whileHover", false)
         expect(animate).toBeCalledWith([{ opacity: 1 }])
 
         // Set hover to true
         animate = mockAnimate(state)
-        state.setActive(AnimationType.Hover, true)
+        state.setActive("whileHover", true)
         expect(animate).toBeCalledWith([{ opacity: 0.5 }])
 
         // Set press to true
         animate = mockAnimate(state)
-        state.setActive(AnimationType.Tap, true)
+        state.setActive("whileTap", true)
         expect(animate).toBeCalledWith([{ opacity: 0.8 }])
 
         // Set hover to false
         animate = mockAnimate(state)
-        state.setActive(AnimationType.Hover, false)
+        state.setActive("whileHover", false)
         expect(animate).not.toBeCalled()
 
         // Set press to false
         animate = mockAnimate(state)
-        state.setActive(AnimationType.Tap, false)
+        state.setActive("whileTap", false)
         expect(animate).toBeCalledWith([{ opacity: 1 }])
     })
 
@@ -678,20 +637,16 @@ describe("Animation state - Set active", () => {
 
         // Set hover to true
         let animate = mockAnimate(state)
-        state.setActive(AnimationType.Hover, true)
+        state.setActive("whileHover", true)
         expect(animate).toBeCalledWith(["b"])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
-        expect(state.getState()[AnimationType.Hover].protectedKeys).toEqual({})
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
+        expect(state.getState()["whileHover"].protectedKeys).toEqual({})
 
         // Set hover to false
         animate = mockAnimate(state)
-        state.setActive(AnimationType.Hover, false)
+        state.setActive("whileHover", false)
         expect(animate).toBeCalledWith(["a"])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
-        expect(state.getState()[AnimationType.Hover].protectedKeys).toEqual({})
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
+        expect(state.getState()["whileHover"].protectedKeys).toEqual({})
     })
 })

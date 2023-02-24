@@ -1,5 +1,4 @@
 import { addPointerEvent } from "../events/add-pointer-event"
-import { AnimationType } from "../render/utils/types"
 import { pipe } from "../utils/pipe"
 import { isDragActive } from "./drag/utils/lock"
 import { EventInfo } from "../events/types"
@@ -16,7 +15,7 @@ function addHoverEvent(node: VisualElement<Element>, isActive: boolean) {
         const props = node.getProps()
 
         if (node.animationState && props.whileHover) {
-            node.animationState.setActive(AnimationType.Hover, isActive)
+            node.animationState.setActive("whileHover", isActive)
         }
 
         if (props[callbackName]) {

@@ -1,9 +1,8 @@
-export const enum AnimationType {
-    Animate = "animate",
-    Hover = "whileHover",
-    Tap = "whileTap",
-    Drag = "whileDrag",
-    Focus = "whileFocus",
-    InView = "whileInView",
-    Exit = "exit",
-}
+export type AnimationType =
+    | "animate"
+    | "whileHover"
+    | "whileTap"
+    | "whileDrag"
+    | "whileFocus"
+    | "whileInView"
+    | "exit"
