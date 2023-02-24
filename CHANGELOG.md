@@ -6,6 +6,10 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ## [10.0.0] 2023-02-24
 
+### Added
+
+-   `background-color` animations are now hardware accelerated.
+
 ### Removed
 
 -   Removing fallback for `IntersectionObserver`. Use a polyfill for support in older browsers.
