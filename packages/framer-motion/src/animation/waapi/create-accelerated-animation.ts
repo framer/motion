@@ -17,6 +17,7 @@ const acceleratedValues = new Set<string>([
     "clipPath",
     "filter",
     "transform",
+    "backgroundColor",
 ])
 
 /**
@@ -45,7 +46,11 @@ export function createAcceleratedAnimation(
     /**
      * If this animation needs pre-generated keyframes then generate.
      */
-    if (options.type === "spring" || !isWaapiSupportedEasing(options.ease)) {
+    if (
+        options.type === "spring" ||
+        valueName === "backgroundColor" ||
+        !isWaapiSupportedEasing(options.ease)
+    ) {
         /**
          * If we need to pre-generate keyframes and repeat is infinite then
          * early return as this will lock the thread.

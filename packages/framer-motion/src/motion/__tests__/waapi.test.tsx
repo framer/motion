@@ -144,6 +144,67 @@ describe("WAAPI animations", () => {
         )
     })
 
+    test("backgroundColor animates with WAAPI at default settings", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ backgroundColor: "#f00" }}
+                animate={{ backgroundColor: "#00f" }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                backgroundColor: [
+                    "rgba(255, 0, 0, 1)",
+                    "rgba(253, 0, 35, 1)",
+                    "rgba(249, 0, 56, 1)",
+                    "rgba(244, 0, 75, 1)",
+                    "rgba(237, 0, 94, 1)",
+                    "rgba(229, 0, 112, 1)",
+                    "rgba(220, 0, 128, 1)",
+                    "rgba(211, 0, 144, 1)",
+                    "rgba(200, 0, 158, 1)",
+                    "rgba(190, 0, 171, 1)",
+                    "rgba(179, 0, 182, 1)",
+                    "rgba(168, 0, 192, 1)",
+                    "rgba(157, 0, 201, 1)",
+                    "rgba(147, 0, 209, 1)",
+                    "rgba(136, 0, 215, 1)",
+                    "rgba(126, 0, 222, 1)",
+                    "rgba(116, 0, 227, 1)",
+                    "rgba(107, 0, 232, 1)",
+                    "rgba(97, 0, 236, 1)",
+                    "rgba(88, 0, 239, 1)",
+                    "rgba(79, 0, 242, 1)",
+                    "rgba(71, 0, 245, 1)",
+                    "rgba(62, 0, 247, 1)",
+                    "rgba(54, 0, 249, 1)",
+                    "rgba(46, 0, 251, 1)",
+                    "rgba(38, 0, 252, 1)",
+                    "rgba(30, 0, 253, 1)",
+                    "rgba(22, 0, 254, 1)",
+                    "rgba(15, 0, 255, 1)",
+                    "rgba(7, 0, 255, 1)",
+                    "rgba(0, 0, 255, 1)",
+                ],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                duration: 300,
+                easing: "cubic-bezier(0.25, 0.1, 0.35, 1)",
+                iterations: 1,
+                direction: "normal",
+                fill: "both",
+            }
+        )
+    })
+
     test("opacity animates with WAAPI when no value is originally provided via initial", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
