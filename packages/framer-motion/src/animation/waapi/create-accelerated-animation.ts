@@ -51,13 +51,11 @@ export function createAcceleratedAnimation(
         valueName === "backgroundColor" ||
         !isWaapiSupportedEasing(options.ease)
     ) {
-        /**
-         * If we need to pre-generate keyframes and repeat is infinite then
-         * early return as this will lock the thread.
-         */
-        if (options.repeat === Infinity) return
-
-        const sampleAnimation = animateValue({ ...options, elapsed: 0 })
+        const sampleAnimation = animateValue({
+            ...options,
+            repeat: 0,
+            elapsed: 0,
+        })
         let state = { done: false, value: keyframes[0] }
         const pregeneratedKeyframes: number[] = []
 
