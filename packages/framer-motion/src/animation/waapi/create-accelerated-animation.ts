@@ -27,6 +27,14 @@ const acceleratedValues = new Set<string>([
  */
 const sampleDelta = 10 //ms
 
+const requiresPregeneratedKeyframes = (
+    valueName: string,
+    options: AnimationOptions
+) =>
+    options.type === "spring" ||
+    valueName === "backgroundColor" ||
+    !isWaapiSupportedEasing(options.ease)
+
 export function createAcceleratedAnimation(
     value: MotionValue,
     valueName: string,
@@ -46,11 +54,7 @@ export function createAcceleratedAnimation(
     /**
      * If this animation needs pre-generated keyframes then generate.
      */
-    if (
-        options.type === "spring" ||
-        valueName === "backgroundColor" ||
-        !isWaapiSupportedEasing(options.ease)
-    ) {
+    if (requiresPregeneratedKeyframes(valueName, options)) {
         const sampleAnimation = animateValue({
             ...options,
             repeat: 0,
