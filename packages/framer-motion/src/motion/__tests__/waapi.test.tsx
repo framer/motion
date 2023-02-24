@@ -197,7 +197,7 @@ describe("WAAPI animations", () => {
             {
                 delay: -0,
                 duration: 300,
-                easing: "cubic-bezier(0.25, 0.1, 0.35, 1)",
+                easing: "linear",
                 iterations: 1,
                 direction: "normal",
                 fill: "both",
