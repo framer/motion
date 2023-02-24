@@ -2,7 +2,7 @@ import * as React from "react"
 import { useContext, useRef, useEffect, useInsertionEffect } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 import { MotionProps } from "../../motion/types"
-import { useVisualElementContext } from "../../context/MotionContext"
+import { MotionContext } from "../../context/MotionContext"
 import { CreateVisualElement } from "../../render/types"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { VisualState } from "./use-visual-state"
@@ -16,7 +16,7 @@ export function useVisualElement<Instance, RenderState>(
     props: MotionProps & Partial<MotionConfigContext>,
     createVisualElement?: CreateVisualElement<Instance>
 ): VisualElement<Instance> | undefined {
-    const parent = useVisualElementContext()
+    const { visualElement: parent } = useContext(MotionContext)
     const lazyContext = useContext(LazyContext)
     const presenceContext = useContext(PresenceContext)
     const reducedMotionConfig = useContext(MotionConfigContext).reducedMotion

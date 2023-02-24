@@ -2,7 +2,7 @@ import type { Box } from "framer-motion"
 import { RefObject, useContext, useLayoutEffect, useRef } from "react"
 import { Size, useThree } from "@react-three/fiber"
 import { LayoutCameraProps } from "./types"
-import { useVisualElementContext } from "framer-motion"
+import { MotionContext } from "framer-motion"
 import { MotionCanvasContext } from "./MotionCanvasContext"
 import { calcLength, clamp, invariant } from "framer-motion"
 
@@ -30,7 +30,7 @@ export function useLayoutCamera<CameraType>(
     const camera = useThree((three) => three.camera)
     const size = useThree((three) => three.size)
     const gl = useThree((three) => three.gl)
-    const parentVisualElement = useVisualElementContext()
+    const { visualElement: parentVisualElement } = useContext(MotionContext)
     const measuredLayoutSize = useRef<Size>()
 
     useLayoutEffect(() => {

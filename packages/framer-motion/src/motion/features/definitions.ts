@@ -4,13 +4,13 @@ import { FeatureDefinitions } from "./types"
 const featureProps = {
     animation: [
         "animate",
-        "exit",
         "variants",
         "whileHover",
         "whileTap",
+        "exit",
+        "whileInView",
         "whileFocus",
         "whileDrag",
-        "whileInView",
     ],
     exit: ["exit"],
     drag: ["drag", "dragControls"],
