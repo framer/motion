@@ -10,8 +10,12 @@ Undocumented APIs should be considered internal and may change without warning.
 
 -   Removing fallback for `IntersectionObserver`. Use a polyfill for support in older browsers.
 -   Removed `DeprecatedLayoutGroupContext`.
+
+### Changed
+
 -   Using `exitBeforeEnter` with `AnimatePresence` now throws an error.
 -   Using `value.onChange` will now throw a warning with instructions to change to `value.on("change", callback)`.
+-   Using `AnimateSharedLayout` now throws an error.
 
 ## [9.1.7] 2023-02-24
 
