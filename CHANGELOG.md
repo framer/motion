@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [9.1.7] 2023-02-24
+
+### Fixed
+
+-   Switching `const enum` for types.
+
 ## [9.1.6] 2023-02-23
 
 ### Added
