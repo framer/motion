@@ -6,7 +6,6 @@
 export { motion, createDomMotionComponent } from "./render/dom/motion"
 export { m } from "./render/dom/motion-minimal"
 export { AnimatePresence } from "./components/AnimatePresence"
-export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
 export { MotionConfig } from "./components/MotionConfig"
 export { LazyMotion } from "./components/LazyMotion"
 export { LayoutGroup } from "./components/LayoutGroup"
@@ -120,7 +119,6 @@ export { MotionContext } from "./context/MotionContext"
 export { MotionConfigContext } from "./context/MotionConfigContext"
 export { PresenceContext } from "./context/PresenceContext"
 export { LayoutGroupContext } from "./context/LayoutGroupContext"
-export { DeprecatedLayoutGroupContext } from "./context/DeprecatedLayoutGroupContext"
 export { SwitchLayoutGroupContext } from "./context/SwitchLayoutGroupContext"
 
 /**
@@ -198,3 +196,4 @@ export * from "./animation/types"
  */
 export { useAnimatedState as useDeprecatedAnimatedState } from "./animation/hooks/use-animated-state"
 export { useInvertedScale as useDeprecatedInvertedScale } from "./value/use-inverted-scale"
+export { AnimateSharedLayout } from "./components/AnimateSharedLayout"

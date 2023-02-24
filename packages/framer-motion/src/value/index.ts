@@ -5,6 +5,7 @@ import type { VisualElement } from "../render/VisualElement"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { velocityPerSecond } from "../utils/velocity-per-second"
 import { PlaybackControls } from "../animation/types"
+import { warnOnce } from "../utils/warn-once"
 
 export type Transformer<T> = (v: T) => T
 
@@ -166,6 +167,12 @@ export class MotionValue<V = any> {
      * @deprecated
      */
     onChange(subscription: Subscriber<V>): () => void {
+        if (process.env.NODE_ENV !== "production") {
+            warnOnce(
+                false,
+                `value.onChange(callback) is deprecated. Switch to value.on("change", callback).`
+            )
+        }
         return this.on("change", subscription)
     }
 

@@ -1,4 +1,4 @@
-import { warning } from "../utils/errors"
+import { invariant } from "../utils/errors"
 import * as React from "react"
 import { useConstant } from "../utils/use-constant"
 import { LayoutGroup } from "./LayoutGroup"
@@ -8,7 +8,7 @@ export const AnimateSharedLayout: React.FunctionComponent<
     React.PropsWithChildren<unknown>
 > = ({ children }: React.PropsWithChildren<{}>) => {
     React.useEffect(() => {
-        warning(
+        invariant(
             false,
             "AnimateSharedLayout is deprecated: https://www.framer.com/docs/guide-upgrade/##shared-layout-animations"
         )

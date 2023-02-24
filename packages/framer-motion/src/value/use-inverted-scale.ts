@@ -53,6 +53,7 @@ export function useInvertedScale(
         hasWarned,
         "useInvertedScale is deprecated and will be removed in 3.0. Use the layout prop instead."
     )
+
     hasWarned = true
 
     if (scale) {
