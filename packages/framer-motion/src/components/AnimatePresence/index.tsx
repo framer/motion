@@ -82,7 +82,7 @@ export const AnimatePresence: React.FunctionComponent<
     custom,
     initial = true,
     onExitComplete,
-    exitBeforeEnter = false,
+    exitBeforeEnter,
     presenceAffectsLayout = true,
     mode = "sync",
 }) => {
