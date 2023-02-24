@@ -33,20 +33,6 @@ it("if it's a nested LayoutGroup it appends to the group id", () => {
     expect(getByTestId("1").textContent).toBe("a-b")
 })
 
-it("if it's a nested LayoutGroup it takes the inner most group id if inheritId is false", () => {
-    const tree = (
-        <LayoutGroup id={"a"}>
-            <LayoutGroup id={"b"} inheritId={false}>
-                <Consumer />
-            </LayoutGroup>
-        </LayoutGroup>
-    )
-
-    const { getByTestId } = render(tree)
-
-    expect(getByTestId("1").textContent).toBe("b")
-})
-
 it("if the value of id is undefined, it doesn't change the group id", () => {
     const tree = (
         <LayoutGroup id={"a"}>

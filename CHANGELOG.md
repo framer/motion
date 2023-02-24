@@ -4,6 +4,15 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.0.0] 2023-02-24
+
+### Removed
+
+-   Removing fallback for `IntersectionObserver`. Use a polyfill for support in older browsers.
+-   Removed `DeprecatedLayoutGroupContext`.
+-   Using `exitBeforeEnter` with `AnimatePresence` now throws an error.
+-   Using `value.onChange` will now throw a warning with instructions to change to `value.on("change", callback)`.
+
 ## [9.1.7] 2023-02-24
 
 ### Fixed

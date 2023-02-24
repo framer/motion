@@ -40,16 +40,7 @@ export interface AnimatePresenceProps {
     onExitComplete?: () => void
 
     /**
-     * If set to `true`, `AnimatePresence` will only render one component at a time. The exiting component
-     * will finish its exit animation before the entering component is rendered.
-     *
-     * ```jsx
-     * const MyComponent = ({ currentItem }) => (
-     *   <AnimatePresence exitBeforeEnter>
-     *     <motion.div key={currentItem} exit={{ opacity: 0 }} />
-     *   </AnimatePresence>
-     * )
-     * ```
+     * Replace with `mode="wait"`
      *
      * @deprecated
      *

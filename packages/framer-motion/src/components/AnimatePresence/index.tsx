@@ -15,7 +15,7 @@ import { PresenceChild } from "./PresenceChild"
 import { LayoutGroupContext } from "../../context/LayoutGroupContext"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { useUnmountEffect } from "../../utils/use-unmount-effect"
-import { warnOnce } from "../../utils/warn-once"
+import { invariant } from "../../utils/errors"
 
 type ComponentKey = string | number
 
@@ -82,17 +82,11 @@ export const AnimatePresence: React.FunctionComponent<
     custom,
     initial = true,
     onExitComplete,
-    exitBeforeEnter,
+    exitBeforeEnter = false,
     presenceAffectsLayout = true,
     mode = "sync",
 }) => {
-    // Support deprecated exitBeforeEnter prop
-    if (exitBeforeEnter) {
-        mode = "wait"
-        if (process.env.NODE_ENV !== "production") {
-            warnOnce(false, "Replace exitBeforeEnter with mode='wait'")
-        }
-    }
+    invariant(!exitBeforeEnter, "Replace exitBeforeEnter with mode='wait'")
 
     // We want to force a re-render once all exiting animations have finished. We
     // either use a local forceRender function, or one from a parent context if it exists.
