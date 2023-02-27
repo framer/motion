@@ -57,17 +57,15 @@
         "measure": "bundlesize",
         "start-dev-server": "webpack serve --config ../../dev/webpack/config.js --hot"
     },
+    "peerDependencies": {
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0"
+    },
     "dependencies": {
         "tslib": "^2.4.0"
     },
     "optionalDependencies": {
-        "@emotion/is-prop-valid": "^0.8.2",
-        "react": "^18.0.0",
-        "react-dom": "^18.0.0"
-    },
-    "devDependencies": {
-        "react": "^18.0.0",
-        "react-dom": "^18.0.0"
+        "@emotion/is-prop-valid": "^0.8.2"
     },
     "bundlesize": [
         {
