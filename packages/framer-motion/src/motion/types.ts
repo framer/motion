@@ -73,19 +73,6 @@ export interface CustomStyles {
     image?: string
 }
 
-type CSSPropertiesWithoutTransitionOrSingleTransforms = Omit<
-    CSSProperties,
-    "transition" | "rotate" | "scale" | "perspective"
->
-
-type ReactTargetProperties = CSSPropertiesWithoutTransitionOrSingleTransforms &
-    SVGAttributes<SVGElement> &
-    TransformProperties &
-    CustomStyles &
-    SVGPathProperties
-
-export type ReactTarget = MakeCustomValueType<ReactTargetProperties>
-
 export type MakeMotion<T> = MakeCustomValueType<{
     [K in keyof T]:
         | T[K]
