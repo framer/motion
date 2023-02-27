@@ -5,17 +5,17 @@
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
     "exports": {
-        "./dom": {
-            "types": "./dist/dom-entry.d.ts",
-            "require": "./dist/cjs/dom-entry.js",
-            "import": "./dist/es/dom-entry.mjs",
-            "default": "./dist/cjs/dom-entry.js"
-        },
         ".": {
             "types": "./dist/index.d.ts",
             "require": "./dist/cjs/index.js",
             "import": "./dist/es/index.mjs",
             "default": "./dist/cjs/index.js"
+        },
+        "./dom": {
+            "types": "./dist/dom-entry.d.ts",
+            "require": "./dist/cjs/dom-entry.js",
+            "import": "./dist/es/dom-entry.mjs",
+            "default": "./dist/cjs/dom-entry.js"
         },
         "./package.json": "./package.json"
     },
