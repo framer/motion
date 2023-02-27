@@ -1,4 +1,4 @@
-import { CSSProperties } from "react"
+import { CSSProperties, SVGAttributes } from "react"
 import { MotionValue } from "../value"
 import { AnimationControls } from "../animation/types"
 import {
@@ -72,6 +72,19 @@ export interface CustomStyles {
     shadow?: string
     image?: string
 }
+
+type CSSPropertiesWithoutTransitionOrSingleTransforms = Omit<
+    CSSProperties,
+    "transition" | "rotate" | "scale" | "perspective"
+>
+
+type ReactTargetProperties = CSSPropertiesWithoutTransitionOrSingleTransforms &
+    SVGAttributes<SVGElement> &
+    TransformProperties &
+    CustomStyles &
+    SVGPathProperties
+
+export type ReactTarget = MakeCustomValueType<ReactTargetProperties>
 
 export type MakeMotion<T> = MakeCustomValueType<{
     [K in keyof T]:

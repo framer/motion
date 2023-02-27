@@ -1,4 +1,3 @@
-import { MotionProps } from "../motion/types"
 import { VisualState } from "../motion/utils/use-visual-state"
 import { MotionValue } from "../value"
 import { ReducedMotionConfig } from "../context/MotionConfigContext"
@@ -6,6 +5,11 @@ import { AnimationDefinition } from "./utils/animation"
 import { Axis, Box } from "../projection/geometry/types"
 import type { VisualElement } from "./VisualElement"
 import { PresenceContextProps } from "../context/PresenceContext"
+import { MotionProps } from "../motion/types"
+
+export type GenericValues = {
+    [key: string]: string | number
+}
 
 export interface MotionPoint {
     x: MotionValue<number>

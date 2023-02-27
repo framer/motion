@@ -7940,6 +7940,11 @@ __metadata:
   dependenciesMeta:
     "@emotion/is-prop-valid":
       optional: true
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
   languageName: unknown
   linkType: soft
 
