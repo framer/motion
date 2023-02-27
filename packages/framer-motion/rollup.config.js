@@ -79,7 +79,7 @@ const umdProd = Object.assign({}, umd, {
 })
 
 const cjs = Object.assign({}, config, {
-    input: ["lib/index.js"],
+    input: ["lib/index.js", "lib/animation/animate.js"],
     output: {
         entryFileNames: `[name].js`,
         dir: "dist/cjs",
@@ -91,7 +91,7 @@ const cjs = Object.assign({}, config, {
 })
 
 const es = Object.assign({}, config, {
-    input: ["lib/index.js"],
+    input: ["lib/index.js", "lib/animation/animate.js"],
     output: {
         entryFileNames: "[name].mjs",
         format: "es",
@@ -131,6 +131,17 @@ const m = Object.assign({}, es, {
     external: ["react", "react-dom"],
 })
 
+const sizeAnimate = Object.assign({}, es, {
+    input: "lib/animation/animate.js",
+    output: Object.assign({}, es.output, {
+        file: `dist/size-rollup-animate.js`,
+        preserveModules: false,
+        dir: undefined,
+    }),
+    plugins: [...sizePlugins],
+    external: ["react", "react-dom"],
+})
+
 const domAnimation = Object.assign({}, es, {
     input: {
         "size-rollup-dom-animation-m": "lib/render/dom/motion-minimal.js",
@@ -161,22 +172,20 @@ const domMax = Object.assign({}, es, {
     external: ["react", "react-dom"],
 })
 
-const animate = Object.assign({}, es, {
-    input: "lib/animation/animate.js",
-    output: Object.assign({}, es.output, {
-        file: `dist/size-rollup-animate.js`,
-        preserveModules: false,
-        dir: undefined,
-    }),
-    plugins: [...sizePlugins],
-    external: ["react", "react-dom"],
-})
-
 const types = {
     input: "types/index.d.ts",
     output: {
         format: "es",
         file: "dist/index.d.ts",
+    },
+    plugins: [dts()],
+}
+
+const animateTypes = {
+    input: "types/animation/animate.d.ts",
+    output: {
+        format: "es",
+        file: "dist/animate.d.ts",
     },
     plugins: [dts()],
 }
@@ -199,9 +208,10 @@ export default [
     es,
     motion,
     m,
-    animate,
     domAnimation,
     domMax,
     types,
+    sizeAnimate,
+    animateTypes,
     threeTypes,
 ]
