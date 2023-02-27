@@ -160,6 +160,17 @@ const domMax = Object.assign({}, es, {
     external: ["react", "react-dom"],
 })
 
+const animate = Object.assign({}, es, {
+    input: "lib/animation/animate.js",
+    output: Object.assign({}, es.output, {
+        file: `dist/size-rollup-animate.js`,
+        preserveModules: false,
+        dir: undefined,
+    }),
+    plugins: [...sizePlugins],
+    external: ["react", "react-dom"],
+})
+
 const types = {
     input: "types/index.d.ts",
     output: {
@@ -187,6 +198,7 @@ export default [
     es,
     motion,
     m,
+    animate,
     domAnimation,
     domMax,
     types,

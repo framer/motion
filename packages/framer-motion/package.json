@@ -57,15 +57,13 @@
         "measure": "bundlesize",
         "start-dev-server": "webpack serve --config ../../dev/webpack/config.js --hot"
     },
-    "peerDependencies": {
-        "react": "^18.0.0",
-        "react-dom": "^18.0.0"
-    },
     "dependencies": {
         "tslib": "^2.4.0"
     },
     "optionalDependencies": {
-        "@emotion/is-prop-valid": "^0.8.2"
+        "@emotion/is-prop-valid": "^0.8.2",
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0"
     },
     "bundlesize": [
         {
@@ -83,6 +81,10 @@
         {
             "path": "./dist/size-rollup-dom-max.js",
             "maxSize": "25.63 kB"
+        },
+        {
+            "path": "./dist/size-rollup-animate.js",
+            "maxSize": "10 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",
