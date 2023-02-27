@@ -1,12 +1,7 @@
 {
     "name": "framer-motion",
-<<<<<<< HEAD
     "version": "10.2.3",
     "description": "A simple and powerful React and JavaScript animation library",
-=======
-    "version": "10.1.0-alpha.0",
-    "description": "A simple and powerful animation library",
->>>>>>> 4288f903 (Adding seperate entry point)
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
     "exports": {
@@ -16,19 +11,11 @@
             "import": "./dist/es/index.mjs",
             "default": "./dist/cjs/index.js"
         },
-<<<<<<< HEAD
         "./dom": {
             "types": "./dist/dom-entry.d.ts",
             "require": "./dist/cjs/dom-entry.js",
             "import": "./dist/es/dom-entry.mjs",
             "default": "./dist/cjs/dom-entry.js"
-=======
-        "./animate": {
-            "types": "./dist/animate.d.ts",
-            "require": "./dist/cjs/animate.js",
-            "import": "./dist/es/animate.mjs",
-            "default": "./dist/cjs/animate.js"
->>>>>>> 4288f903 (Adding seperate entry point)
         },
         "./package.json": "./package.json"
     },
