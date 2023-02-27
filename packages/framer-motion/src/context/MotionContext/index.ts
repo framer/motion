@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react"
+import { createContext } from "react"
 import type { VisualElement } from "../../render/VisualElement"
 
 export interface MotionContextProps<Instance = unknown> {
@@ -8,7 +8,3 @@ export interface MotionContextProps<Instance = unknown> {
 }
 
 export const MotionContext = createContext<MotionContextProps>({})
-
-export function useVisualElementContext() {
-    return useContext(MotionContext).visualElement
-}
