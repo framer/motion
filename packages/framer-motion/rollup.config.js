@@ -27,6 +27,7 @@ const replaceSettings = (env) => {
 const external = [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
+    ...Object.keys(pkg.optionalDependencies || {}),
 ]
 
 const pureClass = {
