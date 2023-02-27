@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.0.1] 2023-02-27
+
+### Changed
+
+-   Reducing keyframe pregeneration duration by 75%.
+
 ## [10.0.0] 2023-02-24
 
 ### Added
