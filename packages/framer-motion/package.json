@@ -1,7 +1,7 @@
 {
     "name": "framer-motion",
     "version": "10.1.0-alpha.0",
-    "description": "A simple and powerful React animation library",
+    "description": "A simple and powerful animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
     "exports": {
@@ -10,6 +10,12 @@
             "require": "./dist/cjs/index.js",
             "import": "./dist/es/index.mjs",
             "default": "./dist/cjs/index.js"
+        },
+        "./animate": {
+            "types": "./dist/animate.d.ts",
+            "require": "./dist/cjs/animate.js",
+            "import": "./dist/es/animate.mjs",
+            "default": "./dist/cjs/animate.js"
         },
         "./package.json": "./package.json"
     },
@@ -30,7 +36,8 @@
         "drag",
         "spring",
         "popmotion",
-        "framer"
+        "framer",
+        "waapi"
     ],
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
@@ -60,10 +67,20 @@
     "dependencies": {
         "tslib": "^2.4.0"
     },
-    "optionalDependencies": {
-        "@emotion/is-prop-valid": "^0.8.2",
+    "peerDependencies": {
         "react": "^18.0.0",
         "react-dom": "^18.0.0"
+    },
+    "peerDependenciesMeta": {
+        "react": {
+            "optional": true
+        },
+        "react-dom": {
+            "optional": true
+        }
+    },
+    "optionalDependencies": {
+        "@emotion/is-prop-valid": "^0.8.2"
     },
     "bundlesize": [
         {
