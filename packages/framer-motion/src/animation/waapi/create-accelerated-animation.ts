@@ -69,7 +69,7 @@ export function createAcceleratedAnimation(
          */
         let t = 0
         while (!state.done && t < 20000) {
-            state = sampleAnimation.sample(t)
+            state = sampleAnimation.sample(t, true)
             pregeneratedKeyframes.push(state.value)
             t += sampleDelta
         }

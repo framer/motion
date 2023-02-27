@@ -195,9 +195,21 @@ export function animateValue<V = number>({
          * animate() can't yet be sampled for time, instead it
          * consumes time. So to sample it we have to run a low
          * temporal-resolution version.
+         *
+         * isControlled should be set to true if sample is being run within
+         * a loop. This indicates that we're not arbitrarily sampling
+         * the animation but running it one step after another. Therefore
+         * we don't need to run a low-res version here. This is a stop-gap
+         * until a rewrite can sample for time.
          */
-        sample: (t: number) => {
+        sample: (t: number, isControlled: boolean = false) => {
             elapsed = initialElapsed
+
+            if (isControlled) {
+                update(t)
+                return state
+            }
+
             const sampleResolution =
                 duration && typeof duration === "number"
                     ? Math.max(duration * 0.5, 50)

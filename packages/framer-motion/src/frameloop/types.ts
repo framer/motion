@@ -17,13 +17,7 @@ export interface Step {
     process: (frame: FrameData) => void
 }
 
-export type StepId =
-    | "read"
-    | "update"
-    | "postUpdate"
-    | "preRender"
-    | "render"
-    | "postRender"
+export type StepId = "read" | "update" | "preRender" | "render" | "postRender"
 
 export type Sync = {
     [key in StepId]: Schedule
