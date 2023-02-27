@@ -2,3 +2,4 @@
 **/*
 !dist/**
 !LICENSE.md
+!dom/package.json
