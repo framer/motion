@@ -11,11 +11,11 @@
             "import": "./dist/es/index.mjs",
             "default": "./dist/cjs/index.js"
         },
-        "./animate": {
-            "types": "./dist/animate.d.ts",
-            "require": "./dist/cjs/animate.js",
-            "import": "./dist/es/animate.mjs",
-            "default": "./dist/cjs/animate.js"
+        "./dom": {
+            "types": "./dist/dom-entry.d.ts",
+            "require": "./dist/cjs/dom-entry.js",
+            "import": "./dist/es/dom-entry.mjs",
+            "default": "./dist/cjs/dom-entry.js"
         },
         "./package.json": "./package.json"
     },
@@ -41,7 +41,7 @@
     ],
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
-        "build": "yarn clean && tsc -p . && rollup -c && webpack --config webpack.size.config.js",
+        "build": "yarn clean && tsc -p . && rollup -c && node ./scripts/check-bundle.js",
         "dev": "yarn watch",
         "clean": "rm -rf types dist lib",
         "test": "yarn test-server && yarn test-client",
@@ -61,7 +61,7 @@
         "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
         "prepack": "yarn build",
         "postpublish": "git push --tags",
-        "measure": "bundlesize",
+        "measure": "rollup -c ./rollup.size.config.js && webpack --config webpack.size.config.js && bundlesize",
         "start-dev-server": "webpack serve --config ../../dev/webpack/config.js --hot"
     },
     "dependencies": {
