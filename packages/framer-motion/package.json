@@ -80,7 +80,9 @@
         }
     },
     "optionalDependencies": {
-        "@emotion/is-prop-valid": "^0.8.2"
+        "@emotion/is-prop-valid": "^0.8.2",
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0"
     },
     "bundlesize": [
         {
