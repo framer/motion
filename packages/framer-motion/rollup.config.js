@@ -78,11 +78,7 @@ const umdProd = Object.assign({}, umd, {
 })
 
 const cjs = Object.assign({}, config, {
-<<<<<<< HEAD
     input: ["lib/index.js", "lib/dom-entry.js"],
-=======
-    input: ["lib/index.js", "lib/animation/animate.js"],
->>>>>>> 058c04be (Adding seperate entry point)
     output: {
         entryFileNames: `[name].js`,
         dir: "dist/cjs",
@@ -93,13 +89,8 @@ const cjs = Object.assign({}, config, {
     external,
 })
 
-<<<<<<< HEAD
 export const es = Object.assign({}, config, {
     input: ["lib/index.js", "lib/dom-entry.js"],
-=======
-const es = Object.assign({}, config, {
-    input: ["lib/index.js", "lib/animation/animate.js"],
->>>>>>> 058c04be (Adding seperate entry point)
     output: {
         entryFileNames: "[name].mjs",
         format: "es",
@@ -111,78 +102,6 @@ const es = Object.assign({}, config, {
     external,
 })
 
-<<<<<<< HEAD
-=======
-const sizePlugins = [
-    resolve(),
-    replaceSettings("production"),
-    terser({ output: { comments: false } }),
-]
-
-const motion = Object.assign({}, es, {
-    input: "lib/render/dom/motion.js",
-    output: Object.assign({}, es.output, {
-        file: `dist/size-rollup-motion.js`,
-        preserveModules: false,
-        dir: undefined,
-    }),
-    plugins: [...sizePlugins],
-    external: ["react", "react-dom"],
-})
-
-const m = Object.assign({}, es, {
-    input: "lib/render/dom/motion-minimal.js",
-    output: Object.assign({}, es.output, {
-        file: `dist/size-rollup-m.js`,
-        preserveModules: false,
-        dir: undefined,
-    }),
-    plugins: [...sizePlugins, visualizer()],
-    external: ["react", "react-dom"],
-})
-
-const sizeAnimate = Object.assign({}, es, {
-    input: "lib/animation/animate.js",
-    output: Object.assign({}, es.output, {
-        file: `dist/size-rollup-animate.js`,
-        preserveModules: false,
-        dir: undefined,
-    }),
-    plugins: [...sizePlugins],
-    external: ["react", "react-dom"],
-})
-
-const domAnimation = Object.assign({}, es, {
-    input: {
-        "size-rollup-dom-animation-m": "lib/render/dom/motion-minimal.js",
-        "size-rollup-dom-animation": "lib/render/dom/features-animation.js",
-    },
-    output: {
-        format: "es",
-        exports: "named",
-        preserveModules: false,
-        entryFileNames: "[name].js",
-        chunkFileNames: "size-rollup-dom-animation-assets.js",
-        dir: `dist`,
-    },
-    plugins: [...sizePlugins],
-    external: ["react", "react-dom"],
-})
-
-const domMax = Object.assign({}, es, {
-    input: {
-        "size-rollup-dom-animation-m": "lib/render/dom/motion-minimal.js",
-        "size-rollup-dom-max": "lib/render/dom/features-max.js",
-    },
-    output: {
-        ...domAnimation.output,
-        chunkFileNames: "size-rollup-dom-max-assets.js",
-    },
-    plugins: sizePlugins,
-    external: ["react", "react-dom"],
-})
-
->>>>>>> 058c04be (Adding seperate entry point)
 const types = {
     input: "types/index.d.ts",
     output: {
@@ -193,17 +112,10 @@ const types = {
 }
 
 const animateTypes = {
-<<<<<<< HEAD
     input: "types/dom-entry.d.ts",
     output: {
         format: "es",
         file: "dist/dom-entry.d.ts",
-=======
-    input: "types/animation/animate.d.ts",
-    output: {
-        format: "es",
-        file: "dist/animate.d.ts",
->>>>>>> 058c04be (Adding seperate entry point)
     },
     plugins: [dts()],
 }
@@ -224,16 +136,7 @@ export default [
     umdProd,
     cjs,
     es,
-<<<<<<< HEAD
     types,
-=======
-    motion,
-    m,
-    domAnimation,
-    domMax,
-    types,
-    sizeAnimate,
->>>>>>> 058c04be (Adding seperate entry point)
     animateTypes,
     threeTypes,
 ]
