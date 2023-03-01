@@ -10,6 +10,7 @@ import { pipe } from "../utils/pipe"
 import { isDragActive } from "./drag/utils/lock"
 import { isNodeOrChild } from "./utils/is-node-or-child"
 import { noop } from "../utils/noop"
+import { sync } from "../frameloop"
 
 function fireSyntheticPointerEvent(
     name: string,
@@ -39,7 +40,9 @@ export class PressGesture extends Feature<Element> {
             this.node.animationState.setActive("whileTap", true)
         }
 
-        onTapStart && onTapStart(event, info)
+        if (onTapStart) {
+            sync.update(() => onTapStart(event, info))
+        }
     }
 
     private checkPressEnd() {
@@ -73,13 +76,15 @@ export class PressGesture extends Feature<Element> {
 
             const { onTap, onTapCancel } = this.node.getProps()
 
-            /**
-             * We only count this as a tap gesture if the event.target is the same
-             * as, or a child of, this component's element
-             */
-            !isNodeOrChild(this.node.current, endEvent.target as Element)
-                ? onTapCancel && onTapCancel(endEvent, endInfo)
-                : onTap && onTap(endEvent, endInfo)
+            sync.update(() => {
+                /**
+                 * We only count this as a tap gesture if the event.target is the same
+                 * as, or a child of, this component's element
+                 */
+                !isNodeOrChild(this.node.current, endEvent.target as Element)
+                    ? onTapCancel && onTapCancel(endEvent, endInfo)
+                    : onTap && onTap(endEvent, endInfo)
+            })
         }
 
         const removePointerUpListener = addPointerEvent(
@@ -109,7 +114,9 @@ export class PressGesture extends Feature<Element> {
         if (!this.checkPressEnd()) return
 
         const { onTapCancel } = this.node.getProps()
-        onTapCancel && onTapCancel(event, info)
+        if (onTapCancel) {
+            sync.update(() => onTapCancel(event, info))
+        }
     }
 
     private startAccessiblePress = () => {
@@ -119,7 +126,12 @@ export class PressGesture extends Feature<Element> {
             const handleKeyup = (keyupEvent: KeyboardEvent) => {
                 if (keyupEvent.key !== "Enter" || !this.checkPressEnd()) return
 
-                fireSyntheticPointerEvent("up", this.node.getProps().onTap)
+                fireSyntheticPointerEvent("up", (event, info) => {
+                    const { onTap } = this.node.getProps()
+                    if (onTap) {
+                        sync.update(() => onTap(event, info))
+                    }
+                })
             }
 
             this.removeEndListeners()
