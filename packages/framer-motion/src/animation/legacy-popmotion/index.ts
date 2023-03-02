@@ -68,6 +68,7 @@ export function animateValue<V = number>({
     let driverControls: DriverControls | undefined
     let repeatCount = 0
     let computedDuration: number | undefined = duration
+    let isPaused = false
     let isComplete = false
     let isForwardPlayback = true
 
@@ -126,6 +127,7 @@ export function animateValue<V = number>({
 
     function update(delta: number) {
         if (!isForwardPlayback) delta = -delta
+        if (isPaused) delta = 0
 
         elapsed += delta
 
@@ -168,7 +170,17 @@ export function animateValue<V = number>({
     autoplay && play()
 
     return {
-        stop: () => {
+        play() {
+            isPaused = false
+            if (isComplete) {
+                elapsed = initialElapsed
+            }
+            play()
+        },
+        pause() {
+            isPaused = true
+        },
+        stop() {
             onStop && onStop()
             driverControls && driverControls.stop()
         },
