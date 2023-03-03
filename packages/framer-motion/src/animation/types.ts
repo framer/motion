@@ -76,11 +76,6 @@ export type ControlsAnimationDefinition =
     | TargetAndTransition
     | TargetResolver
 
-export interface PlaybackControls {
-    stop: () => void
-    currentTime?: number
-}
-
 /**
  * @public
  */

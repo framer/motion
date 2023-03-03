@@ -3,10 +3,10 @@ import { MotionValue } from "../value"
 import { isMotionValue } from "./utils/is-motion-value"
 import { useMotionValue } from "./use-motion-value"
 import { MotionConfigContext } from "../context/MotionConfigContext"
-import { PlaybackControls } from "../animation/legacy-popmotion/types"
 import { animateValue } from "../animation/legacy-popmotion"
 import { SpringOptions } from "../animation/types"
 import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
+import { AnimationPlaybackControls } from "../animation/animate"
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
@@ -32,7 +32,7 @@ export function useSpring(
     config: SpringOptions = {}
 ) {
     const { isStatic } = useContext(MotionConfigContext)
-    const activeSpringAnimation = useRef<PlaybackControls | null>(null)
+    const activeSpringAnimation = useRef<AnimationPlaybackControls | null>(null)
     const value = useMotionValue(isMotionValue(source) ? source.get() : source)
 
     const stopAnimation = () => {
