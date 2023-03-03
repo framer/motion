@@ -6,7 +6,7 @@ import type { MotionValue, StartAnimation } from "../value"
 import { createAcceleratedAnimation } from "./waapi/create-accelerated-animation"
 import { createInstantAnimation } from "./create-instant-animation"
 import { animateValue } from "./legacy-popmotion"
-import { inertia } from "./legacy-popmotion/inertia"
+// import { inertia } from "./legacy-popmotion/inertia"
 import { AnimationOptions } from "./types"
 import { getDefaultTransition } from "./utils/default-transitions"
 import { isAnimatable } from "./utils/is-animatable"
@@ -84,12 +84,6 @@ export const createMotionValueAnimation = (
              * or this is simply defined as an instant transition, return an instant transition.
              */
             return createInstantAnimation(options)
-        } else if (valueTransition.type === "inertia") {
-            /**
-             * If this is an inertia animation, we currently don't support pre-generating
-             * keyframes for this as such it must always run on the main thread.
-             */
-            return inertia(options)
         }
 
         /**

@@ -62,7 +62,7 @@ export interface AnimationOptions<V = any>
     keyframes: V[]
     elapsed?: number
     driver?: Driver
-    type?: "decay" | "spring" | "keyframes" | "tween"
+    type?: "decay" | "spring" | "keyframes" | "tween" | "inertia"
     duration?: number
     autoplay?: boolean
 }
