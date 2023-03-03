@@ -1,4 +1,4 @@
-import { animateValue } from ".."
+import { animateValue } from "../../legacy-popmotion"
 import { easeOut } from "../../../easing/ease"
 import { noop } from "../../../utils/noop"
 import { AnimationOptions } from "../../types"

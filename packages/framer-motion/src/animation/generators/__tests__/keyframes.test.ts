@@ -1,4 +1,4 @@
-import { keyframes, defaultEasing } from "../keyframes"
+import { keyframes, defaultEasing } from "../../legacy-popmotion/keyframes"
 import { noop } from "../../../utils/noop"
 import { animateSync } from "./utils"
 import { easeInOut } from "../../../easing/ease"

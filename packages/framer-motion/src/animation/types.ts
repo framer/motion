@@ -1,7 +1,7 @@
 import { TargetAndTransition, TargetResolver, Transition } from "../types"
 import type { VisualElement } from "../render/VisualElement"
-import { Driver } from "./legacy-popmotion/types"
 import { Easing } from "../easing/types"
+import { Driver } from "./js/types"
 
 export interface VelocityOptions {
     velocity?: number
@@ -59,6 +59,7 @@ export interface AnimationOptions<V = any>
         Omit<SpringOptions, "keyframes">,
         Omit<InertiaOptions, "keyframes">,
         KeyframeOptions {
+    delay?: number
     keyframes: V[]
     elapsed?: number
     driver?: Driver

@@ -1,4 +1,4 @@
-import { Animation } from "../types"
+import { Animation } from "../../legacy-popmotion/types"
 
 export const syncDriver =
     (interval = 10) =>

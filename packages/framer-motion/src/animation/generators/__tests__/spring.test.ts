@@ -1,5 +1,5 @@
 import { AnimationOptions } from "../../types"
-import { spring } from "../spring"
+import { spring } from "../../legacy-popmotion/spring"
 import { animateSync } from "./utils"
 
 describe("spring", () => {

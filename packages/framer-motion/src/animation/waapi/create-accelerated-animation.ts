@@ -2,12 +2,12 @@ import { EasingDefinition } from "../../easing/types"
 import { sync } from "../../frameloop"
 import type { VisualElement } from "../../render/VisualElement"
 import type { MotionValue } from "../../value"
-import { animateValue } from "../legacy-popmotion"
 import { AnimationOptions } from "../types"
 import { animateStyle } from "./"
 import { isWaapiSupportedEasing } from "./easing"
 import { supports } from "./supports"
 import { getFinalKeyframe } from "./utils/get-final-keyframe"
+import { animateValue } from "../js"
 
 /**
  * A list of values that can be hardware-accelerated.
@@ -53,6 +53,8 @@ export function createAcceleratedAnimation(
 
     /**
      * If this animation needs pre-generated keyframes then generate.
+     *
+     * TODO See if this can be unified with pregenerate keyframes
      */
     if (requiresPregeneratedKeyframes(valueName, options)) {
         const sampleAnimation = animateValue({
@@ -69,7 +71,8 @@ export function createAcceleratedAnimation(
          */
         let t = 0
         while (!state.done && t < 20000) {
-            state = sampleAnimation.sample(t, true)
+            // TODO Reinstate sample
+            state = sampleAnimation.sample(t)
             pregeneratedKeyframes.push(state.value)
             t += sampleDelta
         }

@@ -2,7 +2,7 @@ import { cancelSync, sync } from "../../frameloop"
 import { FrameData } from "../../frameloop/types"
 import { Driver } from "./types"
 
-export const framesyncDriver: Driver = (update) => {
+export const frameloopDriver: Driver = (update) => {
     const passTimestamp = ({ timestamp }: FrameData) => update(timestamp)
 
     return {

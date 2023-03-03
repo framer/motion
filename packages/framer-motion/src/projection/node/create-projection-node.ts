@@ -1,9 +1,5 @@
 import { sync, cancelSync, flushSync } from "../../frameloop"
-import {
-    animate,
-    AnimationOptions,
-    AnimationPlaybackControls,
-} from "../../animation/animate"
+import { animate, AnimationPlaybackControls } from "../../animation/animate"
 import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { mixValues } from "../animation/mix-values"
@@ -47,6 +43,7 @@ import { mix } from "../../utils/mix"
 import { Process } from "../../frameloop/types"
 import { ProjectionFrame } from "../../debug/types"
 import { record } from "../../debug/record"
+import { AnimationOptions } from "../../animation/types"
 
 const transformAxes = ["", "X", "Y", "Z"]
 

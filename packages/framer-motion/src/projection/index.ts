@@ -7,7 +7,7 @@ export { calcBoxDelta } from "./geometry/delta-calc"
  */
 import { sync } from "../frameloop"
 import { mix } from "../utils/mix"
-import { animateValue } from "../animation/legacy-popmotion/index"
+import { animateValue } from "../animation/js"
 export { sync, animateValue as animate, mix }
 export { buildTransform } from "../render/html/utils/build-transform"
 export { addScaleCorrector } from "./styles/scale-correction"

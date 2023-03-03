@@ -1,27 +1,38 @@
-import { AnimationOptions, AnimationPlaybackControls } from "../animate"
-import { keyframes } from "../generators/keyframes"
-import { spring } from "../generators/spring"
+import { AnimationPlaybackControls } from "../animate"
+import { keyframes as keyframesGeneratorFactory } from "../generators/keyframes"
+import { spring } from "../generators/spring/index"
 import { inertia } from "../generators/inertia"
-import { KeyframeGenerator } from "../generators/types"
-import { cancelSync } from "../../frameloop"
+import { AnimationState, KeyframeGenerator } from "../generators/types"
 import { DriverControls } from "./types"
+import { AnimationOptions } from "../types"
+import { frameloopDriver } from "./driver-frameloop"
+import { interpolate } from "../../utils/interpolate"
 
-const types: { [key: string]: () => KeyframeGenerator<any> } = {
+type GeneratorFactory = (
+    options: AnimationOptions<any>
+) => KeyframeGenerator<any>
+
+const types: { [key: string]: GeneratorFactory } = {
     decay: inertia,
     inertia,
-    tween: keyframes,
-    keyframes,
+    tween: keyframesGeneratorFactory,
+    keyframes: keyframesGeneratorFactory,
     spring,
+}
+
+export interface MainThreadAnimationControls<V>
+    extends AnimationPlaybackControls {
+    sample: (t: number) => AnimationState<V>
 }
 
 export function animateValue<V = number>({
     autoplay = true,
-    duration,
+    duration = 0.3,
     delay = 0,
     driver = frameloopDriver,
     keyframes,
     type = "keyframes",
-    repeat,
+    repeat = 0,
     repeatDelay,
     repeatType,
     onPlay,
@@ -29,20 +40,40 @@ export function animateValue<V = number>({
     onComplete,
     onUpdate,
     ...options
-}: AnimationOptions<V>): AnimationPlaybackControls {
+}: AnimationOptions<V>): MainThreadAnimationControls<V> {
     let animationDriver: DriverControls
-    const generator = types[type](options)
-    const mirroredGenerator =
-        repeatType === "mirror" ? types[type](options) : undefined
+
+    const generatorFactory = types[type] || keyframes
+
+    let mapNumbersToKeyframes: undefined | ((t: number) => V)
+    if (generatorFactory !== keyframesGeneratorFactory) {
+        mapNumbersToKeyframes = interpolate([0, 100], keyframes, {
+            clamp: false,
+        })
+        keyframes = [0, 100] as any
+    }
+
+    const generator = generatorFactory({ ...options, keyframes })
+
+    // TODO: Flip initial velocity and keyframes
+    // const mirroredGenerator =
+    //     repeatType === "mirror"
+    //         ? generatorFactory({
+    //               ...options,
+    //               keyframes: [...keyframes].reverse(),
+    //           })
+    //         : undefined
 
     let playState: AnimationPlayState = "idle"
     let pauseTime: number | null = null
     let startTime: number | null = null
     let t = 0
 
-    let totalDuration = 0
+    const totalDuration = duration * (repeat + 1)
 
     const tick = (timestamp: number) => {
+        if (startTime === null) return
+
         if (pauseTime !== null) {
             t = pauseTime
         } else {
@@ -105,7 +136,13 @@ export function animateValue<V = number>({
         }
 
         const p = t >= totalDuration ? 1 : Math.min(iterationProgress, 1)
-        const latest = interpolate(p)
+        const latest = generator.next(p * duration).value
+
+        if (onUpdate) {
+            onUpdate(
+                mapNumbersToKeyframes ? mapNumbersToKeyframes(latest) : latest
+            )
+        }
 
         const isAnimationFinished =
             pauseTime === null &&
@@ -138,7 +175,10 @@ export function animateValue<V = number>({
         play()
     }
 
-    return {
+    const controls = {
         stop: () => {},
+        sample: () => ({ done: false, value: 0 } as any),
     }
+
+    return controls
 }

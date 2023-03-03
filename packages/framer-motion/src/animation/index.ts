@@ -5,13 +5,12 @@ import { instantAnimationState } from "../utils/use-instant-transition-state"
 import type { MotionValue, StartAnimation } from "../value"
 import { createAcceleratedAnimation } from "./waapi/create-accelerated-animation"
 import { createInstantAnimation } from "./create-instant-animation"
-import { animateValue } from "./legacy-popmotion"
-// import { inertia } from "./legacy-popmotion/inertia"
 import { AnimationOptions } from "./types"
 import { getDefaultTransition } from "./utils/default-transitions"
 import { isAnimatable } from "./utils/is-animatable"
 import { getKeyframes } from "./utils/keyframes"
 import { getValueTransition, isTransitionDefined } from "./utils/transitions"
+import { animateValue } from "./js"
 
 export const createMotionValueAnimation = (
     valueName: string,
