@@ -61,7 +61,7 @@ export const createMotionValueAnimation = (
             keyframes,
             velocity: value.getVelocity(),
             ...valueTransition,
-            elapsed,
+            delay: -elapsed,
             onUpdate: (v) => {
                 value.set(v)
                 valueTransition.onUpdate && valueTransition.onUpdate(v)

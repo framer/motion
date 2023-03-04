@@ -7,9 +7,9 @@ export function inertia({
     keyframes,
     velocity = 0.0,
     power = 0.8,
-    timeConstant = 0.325,
-    bounceDamping,
-    bounceStiffness,
+    timeConstant = 325,
+    bounceDamping = 10,
+    bounceStiffness = 500,
     modifyTarget,
     min,
     max,
@@ -17,7 +17,6 @@ export function inertia({
     restSpeed,
 }: AnimationOptions<number>): KeyframeGenerator<number> {
     const origin = keyframes[0]
-    timeConstant = timeConstant * 1000
 
     const state: AnimationState<number> = {
         done: false,

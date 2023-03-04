@@ -1,22 +1,28 @@
-import { Animation } from "../../legacy-popmotion/types"
+import { KeyframeGenerator } from "../../generators/types"
 
 export const syncDriver =
     (interval = 10) =>
     (update: (v: number) => void) => {
         let isRunning = true
+        let elapsed = 0
+
         return {
             start: () => {
                 setTimeout(() => {
-                    update(0)
-                    while (isRunning) update(interval)
+                    update(elapsed)
+                    while (isRunning) {
+                        elapsed += interval
+                        update(elapsed)
+                    }
                 }, 0)
             },
             stop: () => (isRunning = false),
+            now: () => elapsed,
         }
     }
 
 export function animateSync(
-    animation: Animation<number | string>,
+    animation: KeyframeGenerator<string | number>,
     timeStep = 200,
     round = true
 ) {

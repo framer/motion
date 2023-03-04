@@ -3,32 +3,34 @@ import { pregenerateKeyframes } from "./utils"
 
 describe("inertia", () => {
     test("Runs animations with default values ", () => {
-        const generator = inertia({})
+        const generator = inertia({
+            keyframes: [0],
+        })
 
         expect(pregenerateKeyframes(generator).keyframes).toEqual([0, 0])
     })
 
     test("Runs animation", () => {
         const generator = inertia({
-            from: 100,
+            keyframes: [100],
             velocity: 200,
             power: 1,
-            decay: 0.5,
-            restDistance: 0.5,
+            timeConstant: 500,
+            restDelta: 0.5,
         })
         const { keyframes, duration } = pregenerateKeyframes(generator)
         expect(duration).toEqual(3)
         expect(keyframes).toEqual(expectedAnimationKeyframes)
     })
 
-    test("changeTarget changes calculated target", () => {
+    test("modifyTarget changes calculated target", () => {
         const generator = inertia({
-            from: 100,
+            keyframes: [100],
             velocity: 200,
             power: 1,
-            decay: 0.5,
-            restDistance: 0.5,
-            changeTarget: (target) => target / 2,
+            timeConstant: 500,
+            restDelta: 0.5,
+            modifyTarget: (target) => target / 2,
         })
         const { keyframes, duration } = pregenerateKeyframes(generator)
         expect(duration).toEqual(2.31)
@@ -36,8 +38,8 @@ describe("inertia", () => {
     })
 
     test("Negative velocity produces negative keyframes", () => {
-        const positiveGenerator = inertia({ velocity: 100 })
-        const negativeGenerator = inertia({ velocity: 100 })
+        const positiveGenerator = inertia({ keyframes: [0], velocity: 100 })
+        const negativeGenerator = inertia({ keyframes: [0], velocity: 100 })
         expect(pregenerateKeyframes(positiveGenerator).keyframes).toEqual(
             pregenerateKeyframes(negativeGenerator).keyframes.map((value) =>
                 typeof value === "string" ? value : Math.abs(value)
@@ -47,11 +49,11 @@ describe("inertia", () => {
 
     test("Runs animation with min (not encountered)", () => {
         const generator = inertia({
-            from: 100,
+            keyframes: [100],
             velocity: 200,
             power: 1,
-            decay: 0.5,
-            restDistance: 0.5,
+            timeConstant: 500,
+            restDelta: 0.5,
             min: 0,
         })
         const { keyframes, duration } = pregenerateKeyframes(generator)
@@ -61,25 +63,25 @@ describe("inertia", () => {
 
     test("Runs animation with min (spring encountered)", () => {
         const generator = inertia({
-            from: 100,
+            keyframes: [100],
             velocity: -200,
             power: 1,
-            decay: 0.5,
-            restDistance: 0.5,
+            timeConstant: 500,
+            restDelta: 0.5,
             min: 0,
         })
         const { keyframes, duration } = pregenerateKeyframes(generator)
-        expect(duration).toEqual(1.15)
+        expect(duration).toEqual(1.42)
         expect(keyframes).toEqual(expectedAnimationKeyframesWithMin)
     })
 
     test("Runs animation with max (not encountered)", () => {
         const generator = inertia({
-            from: 100,
+            keyframes: [100],
             velocity: -200,
             power: 1,
-            decay: 0.5,
-            restDistance: 0.5,
+            timeConstant: 500,
+            restDelta: 0.5,
             max: 200,
         })
         const { keyframes, duration } = pregenerateKeyframes(generator)
@@ -89,32 +91,32 @@ describe("inertia", () => {
 
     test("Runs animation with max (encountered)", () => {
         const generator = inertia({
-            from: 100,
+            keyframes: [100],
             velocity: 200,
             power: 1,
-            decay: 0.5,
-            restDistance: 0.5,
+            timeConstant: 500,
+            restDelta: 0.5,
             max: 200,
         })
         const { keyframes, duration } = pregenerateKeyframes(generator)
-        expect(duration).toEqual(1.15)
+        expect(duration).toEqual(1.42)
         expect(keyframes).toEqual(expectedAnimationKeyframesWithMax)
     })
 
     test("Higher lift = longer animation", () => {
         const long = inertia({
-            from: 100,
+            keyframes: [100],
             velocity: 200,
             power: 1,
-            decay: 0.5,
-            restDistance: 0.5,
+            timeConstant: 500,
+            restDelta: 0.5,
         })
         const short = inertia({
-            from: 100,
+            keyframes: [100],
             velocity: 200,
             power: 1,
-            decay: 0.1,
-            restDistance: 0.5,
+            timeConstant: 0.1,
+            restDelta: 0.5,
         })
         expect(pregenerateKeyframes(long).duration).toBeGreaterThan(
             pregenerateKeyframes(short).duration
@@ -125,23 +127,23 @@ describe("inertia", () => {
         let longTarget = 0
         let shortTarget = 0
         const long = inertia({
-            from: 100,
+            keyframes: [100],
             velocity: 200,
             power: 10,
-            decay: 0.5,
-            restDistance: 0.5,
-            changeTarget: (v) => {
+            timeConstant: 500,
+            restDelta: 0.5,
+            modifyTarget: (v) => {
                 longTarget = v
                 return v
             },
         })
         const short = inertia({
-            from: 100,
+            keyframes: [100],
             velocity: 200,
             power: 1,
-            decay: 0.5,
-            restDistance: 0.5,
-            changeTarget: (v) => {
+            timeConstant: 500,
+            restDelta: 0.5,
+            modifyTarget: (v) => {
                 shortTarget = v
                 return v
             },

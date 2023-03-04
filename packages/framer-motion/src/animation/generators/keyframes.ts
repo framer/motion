@@ -18,7 +18,7 @@ export function keyframes<T>({
     duration = 300,
     keyframes: keyframeValues,
     times,
-    ease = "easeOut", // TODO Replace with unified defaults
+    ease = "easeInOut",
 }: AnimationOptions<T>): KeyframeGenerator<T> {
     /**
      * Easing functions can be externally defined as strings. Here we convert them

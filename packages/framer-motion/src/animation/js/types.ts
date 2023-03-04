@@ -10,6 +10,7 @@ type Update = (timestamp: number) => void
 export interface DriverControls {
     start: () => void
     stop: () => void
+    now: () => number
 }
 
 export type Driver = (update: Update) => DriverControls

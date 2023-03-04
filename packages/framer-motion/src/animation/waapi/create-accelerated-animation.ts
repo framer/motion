@@ -45,11 +45,12 @@ export function createAcceleratedAnimation(
         acceleratedValues.has(valueName) &&
         !options.repeatDelay &&
         options.repeatType !== "mirror" &&
-        options.damping !== 0
+        options.damping !== 0 &&
+        options.type !== "inertia"
 
     if (!canAccelerateAnimation) return false
 
-    let { keyframes, duration = 300, elapsed = 0, ease } = options
+    let { keyframes, duration = 300, ease } = options
 
     /**
      * If this animation needs pre-generated keyframes then generate.
@@ -60,7 +61,7 @@ export function createAcceleratedAnimation(
         const sampleAnimation = animateValue({
             ...options,
             repeat: 0,
-            elapsed: 0,
+            delay: 0,
         })
         let state = { done: false, value: keyframes[0] }
         const pregeneratedKeyframes: number[] = []
@@ -88,7 +89,6 @@ export function createAcceleratedAnimation(
         keyframes,
         {
             ...options,
-            delay: -elapsed,
             duration,
             /**
              * This function is currently not called if ease is provided
