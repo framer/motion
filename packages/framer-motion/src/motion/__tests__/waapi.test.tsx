@@ -5,9 +5,10 @@ import {
     pointerUp,
     render,
 } from "../../../jest.setup"
-import { motion, sync, useMotionValue } from "../../"
+import { motion, useMotionValue } from "../../"
 import * as React from "react"
 import { createRef } from "react"
+import { nextFrame } from "../../gestures/__tests__/utils"
 
 /**
  * This assignment prevents Jest from complaining about
@@ -254,7 +255,7 @@ describe("WAAPI animations", () => {
         expect(ref.current!.animate).toBeCalled()
     })
 
-    test("WAAPI only receives expected number of calls in Framer configuration with hover gestures enabled", () => {
+    test("WAAPI only receives expected number of calls in Framer configuration with hover gestures enabled", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => {
             const [isHovered, setIsHovered] = React.useState(false)
@@ -276,15 +277,13 @@ describe("WAAPI animations", () => {
         }
         const { container, rerender } = render(<Component />)
         pointerEnter(container.firstChild as Element)
+
+        await nextFrame()
         pointerLeave(container.firstChild as Element)
+        await nextFrame()
         rerender(<Component />)
 
-        return new Promise<void>((resolve) => {
-            sync.render(() => {
-                expect(ref.current!.animate).toBeCalledTimes(2)
-                resolve()
-            })
-        })
+        expect(ref.current!.animate).toBeCalledTimes(2)
     })
 
     test("WAAPI only receives expected number of calls in Framer configuration with tap gestures enabled", async () => {
@@ -309,15 +308,15 @@ describe("WAAPI animations", () => {
         }
         const { container, rerender } = render(<Component />)
         pointerDown(container.firstChild as Element)
+
+        await nextFrame()
         pointerUp(container.firstChild as Element)
+
+        await nextFrame()
+
         rerender(<Component />)
 
-        return new Promise<void>((resolve) => {
-            sync.render(() => {
-                expect(ref.current!.animate).toBeCalledTimes(2)
-                resolve()
-            })
-        })
+        expect(ref.current!.animate).toBeCalledTimes(2)
     })
 
     test("WAAPI is called with expected arguments", () => {
