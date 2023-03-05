@@ -2,6 +2,7 @@ import * as React from "react"
 import { render } from "../../../../jest.setup"
 import { motion, useDragControls } from "../../../"
 import { MockDrag, drag } from "./utils"
+import { nextFrame } from "../../__tests__/utils"
 
 describe("useDragControls", () => {
     test(".start triggers dragging on a different component", async () => {
@@ -33,6 +34,8 @@ describe("useDragControls", () => {
         ).to(100, 100)
 
         pointer.end()
+
+        await nextFrame()
 
         expect(onDragStart).toBeCalledTimes(1)
     })
@@ -67,7 +70,7 @@ describe("useDragControls", () => {
         ).to(100, 100)
 
         pointer.end()
-
+        await nextFrame()
         expect(onDragStart).toBeCalledTimes(1)
     })
 })

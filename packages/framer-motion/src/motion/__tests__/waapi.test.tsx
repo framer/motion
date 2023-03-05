@@ -5,7 +5,7 @@ import {
     pointerUp,
     render,
 } from "../../../jest.setup"
-import { motion, useMotionValue } from "../../"
+import { motion, sync, useMotionValue } from "../../"
 import * as React from "react"
 import { createRef } from "react"
 
@@ -21,7 +21,9 @@ beforeEach(() => {
             _keyframes: Keyframe[] | null | PropertyIndexedKeyframes,
             _options: KeyframeAnimationOptions | number | undefined
         ) => {
-            return {} as any
+            return {
+                cancel: () => {},
+            } as any
         }
     )
 })
@@ -277,10 +279,15 @@ describe("WAAPI animations", () => {
         pointerLeave(container.firstChild as Element)
         rerender(<Component />)
 
-        expect(ref.current!.animate).toBeCalledTimes(2)
+        return new Promise<void>((resolve) => {
+            sync.render(() => {
+                expect(ref.current!.animate).toBeCalledTimes(2)
+                resolve()
+            })
+        })
     })
 
-    test("WAAPI only receives expected number of calls in Framer configuration with tap gestures enabled", () => {
+    test("WAAPI only receives expected number of calls in Framer configuration with tap gestures enabled", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => {
             const [isPressed, setIsPressed] = React.useState(false)
@@ -305,7 +312,12 @@ describe("WAAPI animations", () => {
         pointerUp(container.firstChild as Element)
         rerender(<Component />)
 
-        expect(ref.current!.animate).toBeCalledTimes(2)
+        return new Promise<void>((resolve) => {
+            sync.render(() => {
+                expect(ref.current!.animate).toBeCalledTimes(2)
+                resolve()
+            })
+        })
     })
 
     test("WAAPI is called with expected arguments", () => {

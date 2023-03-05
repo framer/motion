@@ -9,6 +9,7 @@ import * as React from "react"
 import { Variants } from "../../types"
 import { motionValue } from "../../value"
 import { useState } from "react"
+import { nextFrame } from "../../gestures/__tests__/utils"
 
 describe("animate prop as variant", () => {
     test("animates to set variant", async () => {
@@ -978,12 +979,16 @@ describe("animate prop as variant", () => {
 
         await wait(20)
 
+        await nextFrame()
+
         expect(inner).toHaveStyle("background-color: rgb(150,150,0)")
 
         pointerDown(getByTestId("variant-trigger"))
         pointerUp(getByTestId("variant-trigger"))
 
         await wait(20)
+
+        await nextFrame()
 
         expect(inner).toHaveStyle("background-color: rgb(0, 150,150)")
     })

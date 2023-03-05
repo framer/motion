@@ -2,6 +2,7 @@ import * as React from "react"
 import { pointerDown, render } from "../../../../jest.setup"
 import { BoundingBox, motion, motionValue, MotionValue } from "../../../"
 import { MockDrag, drag, deferred, frame, Point, sleep } from "./utils"
+import { nextFrame } from "../../__tests__/utils"
 
 describe("drag", () => {
     test("onDragStart fires", async () => {
@@ -18,6 +19,8 @@ describe("drag", () => {
         const pointer = await drag(container.firstChild).to(100, 100)
 
         pointer.end()
+
+        await nextFrame()
 
         expect(onDragStart).toBeCalledTimes(1)
     })
@@ -43,6 +46,8 @@ describe("dragging", () => {
 
         pointer.end()
 
+        await nextFrame()
+
         expect(onDragStart).toBeCalledTimes(0)
     })
 
@@ -59,6 +64,8 @@ describe("dragging", () => {
 
         const pointer = await drag(container.firstChild).to(100, 100)
         pointer.end()
+
+        await nextFrame()
 
         expect(onDragEnd).toBeCalledTimes(1)
     })
@@ -77,6 +84,8 @@ describe("dragging", () => {
         const pointer = await drag(container.firstChild).to(0, 0)
 
         pointer.end()
+
+        await nextFrame()
 
         expect(onDragEnd).not.toBeCalled()
     })
@@ -104,6 +113,8 @@ describe("dragging", () => {
         const pointer = await drag(container.firstChild).to(10, 0)
 
         pointer.end()
+
+        await nextFrame()
 
         expect(onDragStart).toBeCalledTimes(1)
         expect(onDragEnd).toBeCalledTimes(1)
@@ -177,7 +188,7 @@ describe("dragging", () => {
         const pointer = await drag(getByTestId("draggable")).to(50, 50)
         pointer.end()
 
-        expect(onDragEnd.promise).resolves.toEqual(p)
+        await expect(onDragEnd.promise).resolves.toEqual(p)
     })
 
     test("panSessionStart fires", async () => {
@@ -193,6 +204,8 @@ describe("dragging", () => {
 
         const pointer = await drag(container.firstChild).to(100, 100)
         pointer.end()
+
+        await nextFrame()
 
         expect(onDragStart).toBeCalledTimes(1)
     })
