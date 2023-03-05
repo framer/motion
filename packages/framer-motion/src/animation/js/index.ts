@@ -58,7 +58,7 @@ export function animateValue<V = number>({
 }: AnimationOptions<V>): MainThreadAnimationControls<V> {
     let animationDriver: DriverControls
 
-    const generatorFactory = types[type] || keyframes
+    const generatorFactory = types[type] || keyframesGeneratorFactory
 
     /**
      * If this isn't the keyframes generator and we've been provided
@@ -91,7 +91,6 @@ export function animateValue<V = number>({
     let playState: AnimationPlayState = "idle"
     let pauseTime: number | null = null
     let startTime: number | null = null
-    let t = 0
 
     /**
      * If duration is undefined and we have repeat options,
@@ -109,6 +108,7 @@ export function animateValue<V = number>({
         totalDuration = resolvedDuration * (repeat + 1) - repeatDelay
     }
 
+    let t = 0
     const tick = (timestamp: number) => {
         if (startTime === null) return
 
@@ -187,7 +187,8 @@ export function animateValue<V = number>({
             calculatedElapsed = p * resolvedDuration
         }
 
-        let { value, done } = frameGenerator.next(calculatedElapsed)
+        const state = frameGenerator.next(calculatedElapsed)
+        let { value, done } = state
 
         if (onUpdate) {
             onUpdate(
@@ -199,13 +200,16 @@ export function animateValue<V = number>({
             done = t >= totalDuration
         }
         const isAnimationFinished =
-            pauseTime === null && (playState === "finished" || done)
+            pauseTime === null &&
+            (playState === "finished" || (playState === "running" && done))
 
         if (isAnimationFinished) {
             playState = "finished"
             onComplete && onComplete()
             animationDriver && animationDriver.stop()
         }
+
+        return state
     }
 
     const play = () => {
@@ -217,6 +221,8 @@ export function animateValue<V = number>({
         if (pauseTime !== null) {
             startTime = now - pauseTime
         } else if (!startTime) {
+            // TODO When implementing play/pause, check WAAPI
+            // logic around finished animations
             startTime = now
         }
 
@@ -231,10 +237,13 @@ export function animateValue<V = number>({
 
     const controls = {
         stop: () => {
-            animationDriver && animationDriver.start()
             onStop && onStop()
+            animationDriver && animationDriver.stop()
         },
-        sample: () => ({ done: false, value: 0 } as any),
+        sample: (elapsed: number) => {
+            startTime = 0
+            return tick(elapsed)!
+        },
     }
 
     return controls

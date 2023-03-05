@@ -4,6 +4,11 @@ import { noop } from "../../../utils/noop"
 import { AnimationOptions } from "../../types"
 import { syncDriver } from "./utils"
 
+/**
+ * TODO: Write a test that passes duration to spring and inertia
+ * and repeats them
+ */
+
 const linear = noop
 
 function testAnimate<V>(
@@ -691,104 +696,114 @@ describe("animate", () => {
         })
     })
 
-    // test("Correctly samples", () => {
-    //     const animation = animateValue({
-    //         keyframes: [0, 1],
-    //         duration: 1000,
-    //         autoplay: false,
-    //         ease: noop,
-    //     })
+    test("Correctly samples", () => {
+        const animation = animateValue({
+            keyframes: [0, 1],
+            duration: 1000,
+            autoplay: false,
+            ease: noop,
+        })
 
-    //     expect(animation.sample(0).value).toEqual(0)
-    //     expect(animation.sample(500).value).toEqual(0.5)
-    //     expect(animation.sample(1000).value).toEqual(1)
-    // })
+        expect(animation.sample(500).value).toEqual(0.5)
+        expect(animation.sample(0).value).toEqual(0)
+        expect(animation.sample(500).value).toEqual(0.5)
+        expect(animation.sample(1000).value).toEqual(1)
+        expect(animation.sample(500).value).toEqual(0.5)
+        expect(animation.sample(0).value).toEqual(0)
+    })
 
-    // test("Correctly samples with duration: 0", () => {
-    //     const animation = animateValue({
-    //         keyframes: [0, 1],
-    //         duration: 0,
-    //         autoplay: false,
-    //         ease: noop,
-    //     })
+    test("Correctly samples with duration: 0", () => {
+        const animation = animateValue({
+            keyframes: [0, 1],
+            duration: 0,
+            autoplay: false,
+            ease: noop,
+        })
 
-    //     expect(animation.sample(0).value).toEqual(1)
-    // })
+        expect(animation.sample(0).value).toEqual(1)
+    })
 
-    // test("Correctly samples with custom negative elapsed (delay)", () => {
-    //     const animation = animateValue({
-    //         keyframes: [0, 1],
-    //         duration: 1000,
-    //         autoplay: false,
-    //         elapsed: -500,
-    //         ease: noop,
-    //     })
+    test("Correctly samples with custom negative elapsed (delay)", () => {
+        const animation = animateValue({
+            keyframes: [0, 1],
+            duration: 1000,
+            autoplay: false,
+            delay: 500,
+            ease: noop,
+        })
 
-    //     expect(animation.sample(0).value).toEqual(0)
-    //     expect(animation.sample(500).value).toEqual(0)
-    //     expect(animation.sample(1000).value).toEqual(0.5)
-    //     expect(animation.sample(1500).value).toEqual(1)
-    // })
+        expect(animation.sample(0).value).toEqual(0)
+        expect(animation.sample(500).value).toEqual(0)
+        expect(animation.sample(1000).value).toEqual(0.5)
+        expect(animation.sample(1500).value).toEqual(1)
+    })
 
-    // test("Correctly samples repeating animation", () => {
-    //     const animation = animateValue({
-    //         keyframes: [0, 1],
-    //         duration: 1000,
-    //         repeat: 1,
-    //         autoplay: false,
-    //         ease: noop,
-    //     })
+    test("Correctly samples repeating animation", () => {
+        const animation = animateValue({
+            keyframes: [0, 1],
+            duration: 1000,
+            repeat: 1,
+            autoplay: false,
+            ease: noop,
+        })
 
-    //     expect(animation.sample(1500).value).toEqual(0.5)
-    // })
+        expect(animation.sample(1500).value).toEqual(0.5)
+    })
 
-    // test("Correctly samples repeating animation with delay", () => {
-    //     const animation = animateValue({
-    //         keyframes: [0, 1],
-    //         duration: 1000,
-    //         repeat: 1,
-    //         autoplay: false,
-    //         elapsed: -500,
-    //         ease: noop,
-    //     })
+    test("Correctly samples repeating animation with delay", () => {
+        const animation = animateValue({
+            keyframes: [0, 1],
+            duration: 1000,
+            repeat: 1,
+            autoplay: false,
+            delay: 500,
+            ease: noop,
+        })
 
-    //     expect(animation.sample(2000).value).toEqual(0.5)
-    // })
+        expect(animation.sample(2000).value).toEqual(0.5)
+    })
 
-    // test("Correctly samples with positive elapsed", () => {
-    //     const animation = animateValue({
-    //         keyframes: [0, 1],
-    //         duration: 1000,
-    //         repeat: 1,
-    //         autoplay: false,
-    //         elapsed: 500,
-    //         ease: noop,
-    //     })
+    test("Correctly samples with negative delay", () => {
+        const animation = animateValue({
+            keyframes: [0, 1],
+            duration: 1000,
+            repeat: 1,
+            autoplay: false,
+            delay: -500,
+            ease: noop,
+        })
 
-    //     expect(animation.sample(0).value).toEqual(0.5)
-    //     expect(animation.sample(250).value).toEqual(0.75)
-    // })
+        expect(animation.sample(0).value).toEqual(0.5)
+        expect(animation.sample(250).value).toEqual(0.75)
+    })
 
-    // test("Correctly samples with infinite repeat", () => {
-    //     const animation = animateValue({
-    //         keyframes: [0, 1],
-    //         duration: 1000,
-    //         repeat: Infinity,
-    //         autoplay: false,
-    //         elapsed: 500,
-    //         ease: noop,
-    //     })
+    test("Correctly samples with infinite repeat", () => {
+        const animation = animateValue({
+            keyframes: [0, 1],
+            duration: 1000,
+            repeat: Infinity,
+            autoplay: false,
+            delay: -500,
+            ease: noop,
+        })
 
-    //     expect(animation.sample(0).value).toEqual(0.5)
-    //     expect(animation.sample(250).value).toEqual(0.75)
-    // })
+        expect(animation.sample(0).value).toEqual(0.5)
+        expect(animation.sample(250).value).toEqual(0.75)
+    })
 
-    /**
-     * TODO:
-     * .sample()
-     *   - keyframes with repeat
-     *   - Spring
-     *   - Inertia with spring capture
-     *   - Spring with repeat
-     */
+    test("Correctly samples spring with infinite repeat", () => {
+        const animation = animateValue({
+            keyframes: [0, 100],
+            type: "spring",
+            stiffness: 400,
+            damping: 10,
+            repeat: Infinity,
+            autoplay: false,
+            ease: noop,
+        })
+
+        expect(animation.sample(0).value).toEqual(0)
+        expect(animation.sample(250).value).toEqual(103.65507873893438)
+        expect(animation.sample(4100).value).toEqual(96.10257237444083)
+    })
 })

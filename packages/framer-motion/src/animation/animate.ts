@@ -1,4 +1,5 @@
 import { createMotionValueAnimation } from "."
+import { Transition } from "../types"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
 
@@ -51,7 +52,7 @@ export interface AnimationPlaybackLifecycles<V> {
 export function animate<V>(
     from: MotionValue<V> | V,
     to: V | V[],
-    transition: any = {}
+    transition: Transition & AnimationPlaybackLifecycles<V> = {}
 ): AnimationPlaybackControls {
     const value = isMotionValue(from) ? from : motionValue(from)
     value.start(createMotionValueAnimation("", value, to as any, transition))

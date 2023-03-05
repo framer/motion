@@ -3,7 +3,7 @@ import { AnimationOptions } from "./types"
 
 export function createInstantAnimation<V>({
     keyframes,
-    elapsed,
+    delay: delayBy,
     onUpdate,
     onComplete,
 }: AnimationOptions<V>) {
@@ -12,5 +12,5 @@ export function createInstantAnimation<V>({
         onComplete && onComplete()
     }
 
-    return elapsed ? { stop: delay(setValue, -elapsed) } : setValue()
+    return delayBy ? { stop: delay(setValue, delayBy) } : setValue()
 }

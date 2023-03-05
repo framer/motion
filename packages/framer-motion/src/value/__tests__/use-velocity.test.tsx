@@ -16,19 +16,21 @@ const syncDriver =
     (interval = 10) =>
     (update: (v: number) => void) => {
         let isRunning = true
+        let elapsed = 0
+
         return {
             start: () => {
-                let time = 0
                 setTimeout(() => {
-                    update(0)
+                    update(elapsed)
                     while (isRunning) {
-                        time += interval
-                        setFrameData(interval, time)
-                        update(interval)
+                        elapsed += interval
+                        setFrameData(interval, elapsed)
+                        update(elapsed)
                     }
                 }, 0)
             },
             stop: () => (isRunning = false),
+            now: () => elapsed,
         }
     }
 
