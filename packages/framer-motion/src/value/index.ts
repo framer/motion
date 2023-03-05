@@ -33,9 +33,13 @@ const isFloat = (value: any): value is string => {
     return !isNaN(parseFloat(value))
 }
 
+interface ResolvedValues {
+    [key: string]: string | number
+}
+
 export interface Owner {
     current: HTMLElement | unknown
-    getProps: () => any
+    getProps: () => { onUpdate?: (latest: ResolvedValues) => void }
 }
 
 export interface MotionValueOptions {
