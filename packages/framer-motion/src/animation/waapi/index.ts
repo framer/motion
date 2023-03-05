@@ -15,7 +15,7 @@ export function animateStyle(
     }: NativeAnimationOptions = {}
 ) {
     return element.animate(
-        { [valueName]: keyframes, offset: times },
+        { [valueName]: keyframes, ...(times && { offset: times }) },
         {
             delay,
             duration,
