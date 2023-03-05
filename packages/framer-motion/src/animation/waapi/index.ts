@@ -14,15 +14,15 @@ export function animateStyle(
         times,
     }: NativeAnimationOptions = {}
 ) {
-    return element.animate(
-        { [valueName]: keyframes, ...(times && { offset: times }) },
-        {
-            delay,
-            duration,
-            easing: mapEasingToNativeEasing(ease),
-            fill: "both",
-            iterations: repeat + 1,
-            direction: repeatType === "reverse" ? "alternate" : "normal",
-        }
-    )
+    const keyframeOptions: PropertyIndexedKeyframes = { [valueName]: keyframes }
+    if (times) keyframeOptions.offset = times
+
+    return element.animate(keyframeOptions, {
+        delay,
+        duration,
+        easing: mapEasingToNativeEasing(ease),
+        fill: "both",
+        iterations: repeat + 1,
+        direction: repeatType === "reverse" ? "alternate" : "normal",
+    })
 }
