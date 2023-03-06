@@ -11,7 +11,7 @@ import { transformValues } from "../../motion/__tests__/util-transform-values"
 import { sync } from "../../frameloop"
 
 describe("hover", () => {
-    test("hover event listeners fire", () => {
+    test("hover event listeners fire", async () => {
         const hoverIn = jest.fn()
         const hoverOut = jest.fn()
         const Component = () => (
@@ -22,8 +22,13 @@ describe("hover", () => {
         pointerEnter(container.firstChild as Element)
         pointerLeave(container.firstChild as Element)
 
-        expect(hoverIn).toBeCalledTimes(1)
-        expect(hoverOut).toBeCalledTimes(1)
+        return new Promise<void>((resolve) => {
+            sync.render(() => {
+                expect(hoverIn).toBeCalledTimes(1)
+                expect(hoverOut).toBeCalledTimes(1)
+                resolve()
+            })
+        })
     })
 
     test("whileHover applied", async () => {

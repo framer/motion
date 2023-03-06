@@ -10,13 +10,14 @@ import {
 } from "../../../jest.setup"
 import { drag, MockDrag } from "../drag/__tests__/utils"
 import { fireEvent } from "@testing-library/dom"
+import { nextFrame } from "./utils"
 
 const enterKey = {
     key: "Enter",
 }
 
 describe("press", () => {
-    test("press event listeners fire", () => {
+    test("press event listeners fire", async () => {
         const press = jest.fn()
         const Component = () => <motion.div onTap={() => press()} />
 
@@ -26,10 +27,12 @@ describe("press", () => {
         pointerDown(container.firstChild as Element)
         pointerUp(container.firstChild as Element)
 
+        await nextFrame()
+
         expect(press).toBeCalledTimes(1)
     })
 
-    test("press event listeners fire via keyboard", () => {
+    test("press event listeners fire via keyboard", async () => {
         const press = jest.fn()
         const pressStart = jest.fn()
         const pressCancel = jest.fn()
@@ -47,16 +50,20 @@ describe("press", () => {
         fireEvent.focus(container.firstChild as Element)
         fireEvent.keyDown(container.firstChild as Element, enterKey)
 
+        await nextFrame()
+
         expect(pressStart).toBeCalledTimes(1)
 
         fireEvent.keyUp(container.firstChild as Element, enterKey)
+
+        await nextFrame()
 
         expect(pressStart).toBeCalledTimes(1)
         expect(press).toBeCalledTimes(1)
         expect(pressCancel).toBeCalledTimes(0)
     })
 
-    test("press cancel event listeners fire via keyboard", () => {
+    test("press cancel event listeners fire via keyboard", async () => {
         const press = jest.fn()
         const pressStart = jest.fn()
         const pressCancel = jest.fn()
@@ -74,16 +81,20 @@ describe("press", () => {
         fireEvent.focus(container.firstChild as Element)
         fireEvent.keyDown(container.firstChild as Element, enterKey)
 
+        await nextFrame()
+
         expect(pressStart).toBeCalledTimes(1)
 
         fireEvent.blur(container.firstChild as Element)
+
+        await nextFrame()
 
         expect(pressStart).toBeCalledTimes(1)
         expect(press).toBeCalledTimes(0)
         expect(pressCancel).toBeCalledTimes(1)
     })
 
-    test("press cancel event listeners not fired via keyboard after keyUp", () => {
+    test("press cancel event listeners not fired via keyboard after keyUp", async () => {
         const press = jest.fn()
         const pressStart = jest.fn()
         const pressCancel = jest.fn()
@@ -102,16 +113,20 @@ describe("press", () => {
         fireEvent.keyDown(container.firstChild as Element, enterKey)
         fireEvent.keyUp(container.firstChild as Element, enterKey)
 
+        await nextFrame()
+
         expect(pressStart).toBeCalledTimes(1)
 
         fireEvent.blur(container.firstChild as Element)
+
+        await nextFrame()
 
         expect(press).toBeCalledTimes(1)
         expect(pressStart).toBeCalledTimes(1)
         expect(pressCancel).toBeCalledTimes(0)
     })
 
-    test("press event listeners are cleaned up", () => {
+    test("press event listeners are cleaned up", async () => {
         const press = jest.fn()
         const { container, rerender } = render(
             <motion.div onTap={() => press()} />
@@ -119,14 +134,16 @@ describe("press", () => {
         rerender(<motion.div onTap={() => press()} />)
         pointerDown(container.firstChild as Element)
         pointerUp(container.firstChild as Element)
+        await nextFrame()
         expect(press).toBeCalledTimes(1)
         rerender(<motion.div />)
         pointerDown(container.firstChild as Element)
         pointerUp(container.firstChild as Element)
+        await nextFrame()
         expect(press).toBeCalledTimes(1)
     })
 
-    test("onTapCancel is correctly removed from a component", () => {
+    test("onTapCancel is correctly removed from a component", async () => {
         const cancelA = jest.fn()
 
         const Component = () => (
@@ -147,15 +164,17 @@ describe("press", () => {
 
         pointerDown(a)
         pointerUp(a)
+        await nextFrame()
 
         expect(cancelA).not.toHaveBeenCalled()
 
         pointerDown(b)
         pointerUp(b)
+        await nextFrame()
         expect(cancelA).not.toHaveBeenCalled()
     })
 
-    test("press event listeners fire if triggered by child", () => {
+    test("press event listeners fire if triggered by child", async () => {
         const press = jest.fn()
         const Component = () => (
             <motion.div onTap={() => press()}>
@@ -168,11 +187,12 @@ describe("press", () => {
 
         pointerDown(getByTestId("child"))
         pointerUp(getByTestId("child"))
+        await nextFrame()
 
         expect(press).toBeCalledTimes(1)
     })
 
-    test("press event listeners fire if triggered by child and released on bound element", () => {
+    test("press event listeners fire if triggered by child and released on bound element", async () => {
         const press = jest.fn()
         const Component = () => (
             <motion.div onTap={() => press()}>
@@ -185,11 +205,12 @@ describe("press", () => {
 
         pointerDown(getByTestId("child"))
         pointerUp(container.firstChild as Element)
+        await nextFrame()
 
         expect(press).toBeCalledTimes(1)
     })
 
-    test("press event listeners fire if triggered by bound element and released on child", () => {
+    test("press event listeners fire if triggered by bound element and released on child", async () => {
         const press = jest.fn()
         const Component = () => (
             <motion.div onTap={() => press()}>
@@ -202,11 +223,12 @@ describe("press", () => {
 
         pointerDown(container.firstChild as Element)
         pointerUp(getByTestId("child"))
+        await nextFrame()
 
         expect(press).toBeCalledTimes(1)
     })
 
-    test("press cancel fires if press released outside element", () => {
+    test("press cancel fires if press released outside element", async () => {
         const pressCancel = jest.fn()
         const Component = () => (
             <motion.div>
@@ -222,6 +244,7 @@ describe("press", () => {
 
         pointerDown(getByTestId("child"))
         pointerUp(container.firstChild as Element)
+        await nextFrame()
 
         expect(pressCancel).toBeCalledTimes(1)
     })
@@ -246,6 +269,7 @@ describe("press", () => {
         await pointer.to(10, 10)
         pointer.end()
 
+        await nextFrame()
         expect(press).toBeCalledTimes(0)
     })
 
@@ -267,11 +291,12 @@ describe("press", () => {
 
         const pointer = await drag(getByTestId("pressTarget")).to(0.5, 0.5)
         pointer.end()
+        await nextFrame()
 
         expect(press).toBeCalledTimes(1)
     })
 
-    test("press event listeners unset", () => {
+    test("press event listeners unset", async () => {
         const press = jest.fn()
         const Component = () => <motion.div onTap={() => press()} />
 
@@ -290,6 +315,7 @@ describe("press", () => {
 
         pointerDown(container.firstChild as Element)
         pointerUp(container.firstChild as Element)
+        await nextFrame()
 
         expect(press).toBeCalledTimes(3)
     })

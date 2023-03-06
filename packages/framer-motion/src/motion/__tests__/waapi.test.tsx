@@ -8,6 +8,7 @@ import {
 import { motion, useMotionValue } from "../../"
 import * as React from "react"
 import { createRef } from "react"
+import { nextFrame } from "../../gestures/__tests__/utils"
 
 /**
  * This assignment prevents Jest from complaining about
@@ -21,7 +22,9 @@ beforeEach(() => {
             _keyframes: Keyframe[] | null | PropertyIndexedKeyframes,
             _options: KeyframeAnimationOptions | number | undefined
         ) => {
-            return {} as any
+            return {
+                cancel: () => {},
+            } as any
         }
     )
 })
@@ -252,7 +255,7 @@ describe("WAAPI animations", () => {
         expect(ref.current!.animate).toBeCalled()
     })
 
-    test("WAAPI only receives expected number of calls in Framer configuration with hover gestures enabled", () => {
+    test("WAAPI only receives expected number of calls in Framer configuration with hover gestures enabled", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => {
             const [isHovered, setIsHovered] = React.useState(false)
@@ -274,13 +277,16 @@ describe("WAAPI animations", () => {
         }
         const { container, rerender } = render(<Component />)
         pointerEnter(container.firstChild as Element)
+
+        await nextFrame()
         pointerLeave(container.firstChild as Element)
+        await nextFrame()
         rerender(<Component />)
 
         expect(ref.current!.animate).toBeCalledTimes(2)
     })
 
-    test("WAAPI only receives expected number of calls in Framer configuration with tap gestures enabled", () => {
+    test("WAAPI only receives expected number of calls in Framer configuration with tap gestures enabled", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => {
             const [isPressed, setIsPressed] = React.useState(false)
@@ -302,7 +308,12 @@ describe("WAAPI animations", () => {
         }
         const { container, rerender } = render(<Component />)
         pointerDown(container.firstChild as Element)
+
+        await nextFrame()
         pointerUp(container.firstChild as Element)
+
+        await nextFrame()
+
         rerender(<Component />)
 
         expect(ref.current!.animate).toBeCalledTimes(2)
