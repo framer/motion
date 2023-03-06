@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.1.0] 2023-03-06
+
+### Added
+
+-   Frame-batched event handlers. This means external event handlers are now batched on the next animation frame, allowing React to correctly batch state updates.
+
 ## [10.0.2] 2023-03-05
 
 ### Fixed
