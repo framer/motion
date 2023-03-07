@@ -3,8 +3,8 @@ import { FrameData } from "../frameloop/types"
 import { sync } from "../frameloop"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { velocityPerSecond } from "../utils/velocity-per-second"
-import { PlaybackControls } from "../animation/types"
 import { warnOnce } from "../utils/warn-once"
+import { AnimationPlaybackControls } from "../animation/animate"
 
 export type Transformer<T> = (v: T) => T
 
@@ -18,7 +18,9 @@ export type Subscriber<T> = (v: T) => void
  */
 export type PassiveEffect<T> = (v: T, safeSetter: (v: T) => void) => void
 
-export type StartAnimation = (complete: () => void) => PlaybackControls | void
+export type StartAnimation = (
+    complete: () => void
+) => AnimationPlaybackControls | void
 
 export interface MotionValueEventCallbacks<V> {
     animationStart: () => void
@@ -109,7 +111,7 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    animation?: null | PlaybackControls
+    animation?: null | AnimationPlaybackControls
 
     /**
      * Tracks whether this value can output a velocity. Currently this is only true

@@ -7,8 +7,8 @@ import { isMotionValue } from "../value/utils/is-motion-value"
  * @public
  */
 export interface AnimationPlaybackControls {
+    currentTime?: number | null
     stop: () => void
-    isAnimating: () => boolean
 }
 
 /**
@@ -68,6 +68,5 @@ export function animate<V>(
 
     return {
         stop: () => value.stop(),
-        isAnimating: () => value.isAnimating(),
     }
 }

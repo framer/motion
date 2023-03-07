@@ -12,10 +12,6 @@ export interface AnimationState<V> {
     done: boolean
 }
 
-export interface PlaybackControls {
-    stop: () => void
-}
-
 /**
  * An update function. It accepts a timestamp used to advance the animation.
  */

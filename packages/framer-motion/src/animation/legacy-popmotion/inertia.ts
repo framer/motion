@@ -1,8 +1,8 @@
-import { PlaybackControls } from "./types"
 import { animateValue } from "."
 import { velocityPerSecond } from "../../utils/velocity-per-second"
 import { frameData } from "../../frameloop/data"
 import { AnimationOptions } from "../types"
+import { AnimationPlaybackControls } from "../animate"
 
 export function inertia({
     keyframes,
@@ -21,7 +21,7 @@ export function inertia({
     onStop,
 }: AnimationOptions) {
     const origin = keyframes[0]
-    let currentAnimation: PlaybackControls
+    let currentAnimation: AnimationPlaybackControls
 
     function isOutOfBounds(v: number) {
         return (min !== undefined && v < min) || (max !== undefined && v > max)
