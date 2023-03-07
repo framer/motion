@@ -1,7 +1,6 @@
 import { frameData } from "../frameloop/data"
 import { FrameData } from "../frameloop/types"
 import { sync } from "../frameloop"
-import type { VisualElement } from "../render/VisualElement"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { velocityPerSecond } from "../utils/velocity-per-second"
 import { PlaybackControls } from "../animation/types"
@@ -34,8 +33,17 @@ const isFloat = (value: any): value is string => {
     return !isNaN(parseFloat(value))
 }
 
+interface ResolvedValues {
+    [key: string]: string | number
+}
+
+export interface Owner {
+    current: HTMLElement | unknown
+    getProps: () => { onUpdate?: (latest: ResolvedValues) => void }
+}
+
 export interface MotionValueOptions {
-    owner?: VisualElement
+    owner?: Owner
 }
 
 /**
@@ -54,7 +62,7 @@ export class MotionValue<V = any> {
      * If a MotionValue has an owner, it was created internally within Framer Motion
      * and therefore has no external listeners. It is therefore safe to animate via WAAPI.
      */
-    owner?: VisualElement
+    owner?: Owner
 
     /**
      * The current state of the `MotionValue`.

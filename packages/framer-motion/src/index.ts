@@ -11,9 +11,7 @@ export { LazyMotion } from "./components/LazyMotion"
 export { LayoutGroup } from "./components/LayoutGroup"
 export { Reorder } from "./components/Reorder"
 
-/**
- * Three
- */
+export * from "./dom-entry"
 export * from "./three-entry"
 
 /**
@@ -27,7 +25,6 @@ export { domMax } from "./render/dom/features-max"
  */
 export { useMotionValue } from "./value/use-motion-value"
 export { useMotionTemplate } from "./value/use-motion-template"
-export { MotionValue, motionValue, PassiveEffect, Subscriber } from "./value"
 export { resolveMotionValue } from "./value/utils/resolve-motion-value"
 export { useTransform } from "./value/use-transform"
 export { useSpring } from "./value/use-spring"
@@ -54,8 +51,6 @@ export {
     useAnimationControls,
 } from "./animation/hooks/use-animation"
 export { useAnimationFrame } from "./utils/use-animation-frame"
-export { animate } from "./animation/animate"
-export { scroll } from "./render/dom/scroll"
 export { animateVisualElement } from "./render/utils/animation"
 export {
     HoverHandlers,
@@ -66,7 +61,6 @@ export {
 } from "./gestures/types"
 export { PanInfo } from "./gestures/pan/PanSession"
 export { useCycle, CycleState, Cycle } from "./utils/use-cycle"
-export { transform } from "./utils/transform"
 export { isValidMotionProp } from "./motion/utils/valid-prop"
 export {
     usePresence,
@@ -87,17 +81,6 @@ export { useInstantTransition } from "./utils/use-instant-transition"
 export { useInstantLayoutTransition } from "./projection/use-instant-layout-transition"
 export { useResetProjection } from "./projection/use-reset-projection"
 export { buildTransform } from "./render/html/utils/build-transform"
-export { clamp } from "./utils/clamp"
-export * from "./utils/delay"
-export * from "./utils/distance"
-export * from "./utils/errors"
-export * from "./utils/interpolate"
-export { mix } from "./utils/mix"
-export { pipe } from "./utils/pipe"
-export { progress } from "./utils/progress"
-export { wrap } from "./utils/wrap"
-export { sync } from "./frameloop"
-export { frameData } from "./frameloop/data"
 export { animateValue } from "./animation/legacy-popmotion"
 export { inertia } from "./animation/legacy-popmotion/inertia"
 export { color } from "./value/types/color"
@@ -120,15 +103,6 @@ export { MotionConfigContext } from "./context/MotionConfigContext"
 export { PresenceContext } from "./context/PresenceContext"
 export { LayoutGroupContext } from "./context/LayoutGroupContext"
 export { SwitchLayoutGroupContext } from "./context/SwitchLayoutGroupContext"
-
-/**
- * Easing functions
- */
-export * from "./easing/anticipate"
-export * from "./easing/back"
-export * from "./easing/circ"
-export * from "./easing/ease"
-export * from "./easing/cubic-bezier"
 
 /**
  * Types
