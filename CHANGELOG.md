@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.2.1] 2023-03-07
+
+### Fixed
+
+-   Passing low `restSpeed` and `restDelta` to `useSpring()`.
+
 ## [10.2.0] 2023-03-07
 
 ### Added
