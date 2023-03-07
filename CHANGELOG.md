@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.2.2] 2023-03-07
+
+### Fixed
+
+-   Restoring `DeprecatedLayoutGroupContext` for legacy Smart Components in Framer.
+
 ## [10.2.1] 2023-03-07
 
 ### Fixed

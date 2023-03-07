@@ -168,6 +168,7 @@ export * from "./animation/types"
 /**
  * Deprecated
  */
+export { DeprecatedLayoutGroupContext } from "./context/DeprecatedLayoutGroupContext"
 export { useAnimatedState as useDeprecatedAnimatedState } from "./animation/hooks/use-animated-state"
 export { useInvertedScale as useDeprecatedInvertedScale } from "./value/use-inverted-scale"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
