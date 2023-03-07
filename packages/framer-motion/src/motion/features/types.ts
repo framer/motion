@@ -6,13 +6,9 @@ import { CreateVisualElement } from "../../render/types"
 import type { Feature } from "./Feature"
 import { MeasureLayout } from "./layout/MeasureLayout"
 
-interface FeatureClass<Props = unknown> {
-    new (props: Props): Feature<Props>;
-}
-
 export type HydratedFeatureDefinition = {
     isEnabled: (props: MotionProps) => boolean
-    Feature: FeatureClass<unknown>;
+    Feature: Feature<unknown>;
     ProjectionNode?: any
     MeasureLayout?: typeof MeasureLayout
 }
