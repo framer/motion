@@ -4,6 +4,11 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.2.3] 2023-03-07
+
+### Fixed
+
+-   Unifying `AnimationPlaybackControls` types.
 -   Changing `Feature` type to fix Next build errors.
 
 ## [10.2.2] 2023-03-07
