@@ -135,8 +135,6 @@ export function animateValue<V = number>({
 
         let elapsed = currentTime
 
-        console.log({ elapsed, currentTime, startTime, timestamp })
-
         let frameGenerator = generator
 
         if (repeat) {
