@@ -11,6 +11,7 @@ import { isAnimatable } from "./utils/is-animatable"
 import { getKeyframes } from "./utils/keyframes"
 import { getValueTransition, isTransitionDefined } from "./utils/transitions"
 import { animateValue } from "./js"
+import { AnimationPlaybackControls } from "./animate"
 
 export const createMotionValueAnimation = (
     valueName: string,
@@ -18,7 +19,7 @@ export const createMotionValueAnimation = (
     target: ResolvedValueTarget,
     transition: Transition & { elapsed?: number } = {}
 ): StartAnimation => {
-    return (onComplete: VoidFunction) => {
+    return (onComplete: VoidFunction): AnimationPlaybackControls => {
         const valueTransition = getValueTransition(transition, valueName) || {}
 
         /**

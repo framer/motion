@@ -131,6 +131,7 @@ export function spring({
     }
 
     return {
+        calculatedDuration: isResolvedFromDuration ? duration || null : null,
         next: (t: number) => {
             const current = resolveSpring(t)
 

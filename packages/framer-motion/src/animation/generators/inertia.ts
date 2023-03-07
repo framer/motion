@@ -81,6 +81,7 @@ export function inertia({
     checkCatchBoundary(0)
 
     return {
+        calculatedDuration: null,
         next: (t: number) => {
             /**
              * We need to resolve the friction to figure out if we need a

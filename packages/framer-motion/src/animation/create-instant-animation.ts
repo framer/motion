@@ -1,4 +1,5 @@
-import { delay } from "../utils/delay"
+import { AnimationPlaybackControls } from "./animate"
+import { animateValue } from "./js"
 import { AnimationOptions } from "./types"
 
 export function createInstantAnimation<V>({
@@ -6,11 +7,22 @@ export function createInstantAnimation<V>({
     delay: delayBy,
     onUpdate,
     onComplete,
-}: AnimationOptions<V>) {
+}: AnimationOptions<V>): AnimationPlaybackControls {
     const setValue = () => {
         onUpdate && onUpdate(keyframes[keyframes.length - 1])
         onComplete && onComplete()
+
+        return {
+            stop: () => {},
+            currentTime: 0,
+        }
     }
 
-    return delayBy ? { stop: delay(setValue, delayBy) } : setValue()
+    return delayBy
+        ? animateValue({
+              keyframes: [0, 1],
+              duration: delayBy,
+              onComplete: setValue,
+          })
+        : setValue()
 }

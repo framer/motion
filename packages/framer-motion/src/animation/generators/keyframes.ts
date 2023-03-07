@@ -56,6 +56,7 @@ export function keyframes<T>({
     })
 
     return {
+        calculatedDuration: duration,
         next: (t: number) => {
             state.value = mapTimeToKeyframe(t)
             state.done = t >= duration

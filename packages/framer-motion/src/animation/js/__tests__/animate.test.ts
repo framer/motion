@@ -447,6 +447,36 @@ describe("animate", () => {
         })
     })
 
+    test("Repeats springs according to generated spring", async () => {
+        return new Promise<void>((resolve) => {
+            const output: number[] = []
+            const expected = [
+                100, 371, 884, 1259, 1343, 1204, 1006, 883, 873, 937, 1011,
+                1050, 1046, 1018, 991, 980, 984, 996, 1005, 1008, 1005, 1001,
+                998, 997, 998, 1000, 1001, 1001, 1001, 1000, 1000, 371, 884,
+                1259, 1343, 1204, 1006, 883, 873, 937, 1011, 1050, 1046, 1018,
+                991, 980, 984, 996, 1005, 1008, 1005, 1001, 998, 997, 998, 1000,
+                1001, 1001, 1001, 1000, 1000,
+            ]
+            animateValue({
+                keyframes: [100, 1000],
+                // Spring isn't actually duration 0.1 as stiffness is defined.
+                duration: 0.1,
+                stiffness: 300,
+                driver: syncDriver(50),
+                repeat: 1,
+                restSpeed: 10,
+                restDelta: 0.5,
+                type: "spring",
+                onUpdate: (v) => output.push(Math.round(v)),
+                onComplete: () => {
+                    expect(output).toEqual(expected)
+                    resolve()
+                },
+            })
+        })
+    })
+
     test("Repeats springs with repeat delay", async () => {
         return new Promise<void>((resolve) => {
             const output: number[] = []

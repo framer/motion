@@ -42,7 +42,6 @@ export interface MainThreadAnimationControls<V>
 
 export function animateValue<V = number>({
     autoplay = true,
-    duration,
     delay = 0,
     driver = frameloopDriver,
     keyframes,
@@ -76,13 +75,12 @@ export function animateValue<V = number>({
         keyframes = [0, 100] as any
     }
 
-    const generator = generatorFactory({ ...options, duration, keyframes })
+    const generator = generatorFactory({ ...options, keyframes })
 
     let mirroredGenerator: KeyframeGenerator<unknown> | undefined
     if (repeatType === "mirror") {
         mirroredGenerator = generatorFactory({
             ...options,
-            duration,
             keyframes: [...keyframes].reverse(),
             velocity: -(options.velocity || 0),
         })
@@ -96,40 +94,40 @@ export function animateValue<V = number>({
      * If duration is undefined and we have repeat options,
      * we need to calculate a duration from the generator.
      */
-    if (duration === undefined && repeat) {
-        duration = calculateDuration(generator)
+    if (generator.calculatedDuration === null && repeat) {
+        generator.calculatedDuration = calculateDuration(generator)
     }
 
     let resolvedDuration = Infinity
     let totalDuration = Infinity
 
-    if (duration) {
-        resolvedDuration = duration + repeatDelay
+    if (generator.calculatedDuration) {
+        resolvedDuration = generator.calculatedDuration + repeatDelay
         totalDuration = resolvedDuration * (repeat + 1) - repeatDelay
     }
 
-    let t = 0
+    let currentTime = 0
     const tick = (timestamp: number) => {
         if (startTime === null) return
 
         if (pauseTime !== null) {
-            t = pauseTime
+            currentTime = pauseTime
         } else {
-            t = timestamp - startTime
+            currentTime = timestamp - startTime
         }
 
         // Rebase on delay
-        t = Math.max(t - delay, 0)
+        currentTime = Math.max(currentTime - delay, 0)
 
         /**
          * If this animation has finished, set the current time
          * to the total duration.
          */
         if (playState === "finished" && pauseTime === null) {
-            t = totalDuration
+            currentTime = totalDuration
         }
 
-        let calculatedElapsed = t
+        let calculatedElapsed = currentTime
 
         let frameGenerator = generator
 
@@ -139,7 +137,7 @@ export function animateValue<V = number>({
              * than duration we'll get values like 2.5 (midway through the
              * third iteration)
              */
-            const progress = t / resolvedDuration
+            const progress = currentTime / resolvedDuration
 
             /**
              * Get the current iteration (0 indexed). For instance the floor of
@@ -178,7 +176,7 @@ export function animateValue<V = number>({
             }
 
             const p =
-                t >= totalDuration
+                currentTime >= totalDuration
                     ? repeatType === "reverse" && iterationIsOdd
                         ? 0
                         : 1
@@ -196,8 +194,8 @@ export function animateValue<V = number>({
             )
         }
 
-        if (duration !== undefined) {
-            done = t >= totalDuration
+        if (generator.calculatedDuration !== undefined) {
+            done = currentTime >= totalDuration
         }
         const isAnimationFinished =
             pauseTime === null &&
@@ -236,6 +234,16 @@ export function animateValue<V = number>({
     }
 
     const controls = {
+        get currentTime() {
+            return currentTime
+        },
+        set currentTime(newTime: number) {
+            if (pauseTime !== undefined || !animationDriver) {
+                pauseTime = 0
+            } else {
+                startTime = animationDriver.now() - newTime
+            }
+        },
         stop: () => {
             onStop && onStop()
             animationDriver && animationDriver.stop()
