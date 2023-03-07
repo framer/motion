@@ -87,31 +87,37 @@ export function animateValue<V = number>({
     }
 
     let playState: AnimationPlayState = "idle"
-    let pauseTime: number | null = null
+    let holdTime: number | null = null
     let startTime: number | null = null
 
     /**
      * If duration is undefined and we have repeat options,
      * we need to calculate a duration from the generator.
+     *
+     * We set it to the generator itself to cache the duration.
+     * Any timeline resolver will need to have already precalculated
+     * the duration by this step.
      */
     if (generator.calculatedDuration === null && repeat) {
         generator.calculatedDuration = calculateDuration(generator)
     }
 
+    const { calculatedDuration } = generator
+
     let resolvedDuration = Infinity
     let totalDuration = Infinity
 
-    if (generator.calculatedDuration) {
-        resolvedDuration = generator.calculatedDuration + repeatDelay
+    if (calculatedDuration) {
+        resolvedDuration = calculatedDuration + repeatDelay
         totalDuration = resolvedDuration * (repeat + 1) - repeatDelay
     }
-
+    let count = 0
     let currentTime = 0
     const tick = (timestamp: number) => {
         if (startTime === null) return
-
-        if (pauseTime !== null) {
-            currentTime = pauseTime
+        count++
+        if (holdTime !== null) {
+            currentTime = holdTime
         } else {
             currentTime = timestamp - startTime
         }
@@ -123,11 +129,13 @@ export function animateValue<V = number>({
          * If this animation has finished, set the current time
          * to the total duration.
          */
-        if (playState === "finished" && pauseTime === null) {
+        if (playState === "finished" && holdTime === null) {
             currentTime = totalDuration
         }
 
-        let calculatedElapsed = currentTime
+        let elapsed = currentTime
+
+        console.log({ elapsed, currentTime, startTime, timestamp })
 
         let frameGenerator = generator
 
@@ -182,10 +190,10 @@ export function animateValue<V = number>({
                         : 1
                     : clamp(0, 1, iterationProgress)
 
-            calculatedElapsed = p * resolvedDuration
+            elapsed = p * resolvedDuration
         }
 
-        const state = frameGenerator.next(calculatedElapsed)
+        const state = frameGenerator.next(elapsed)
         let { value, done } = state
 
         if (onUpdate) {
@@ -194,14 +202,14 @@ export function animateValue<V = number>({
             )
         }
 
-        if (generator.calculatedDuration !== undefined) {
+        if (calculatedDuration !== null) {
             done = currentTime >= totalDuration
         }
         const isAnimationFinished =
-            pauseTime === null &&
+            holdTime === null &&
             (playState === "finished" || (playState === "running" && done))
 
-        if (isAnimationFinished) {
+        if (isAnimationFinished || count > 20) {
             playState = "finished"
             onComplete && onComplete()
             animationDriver && animationDriver.stop()
@@ -216,15 +224,15 @@ export function animateValue<V = number>({
 
         playState = "running"
 
-        if (pauseTime !== null) {
-            startTime = now - pauseTime
+        if (holdTime !== null) {
+            startTime = now - holdTime
         } else if (!startTime) {
             // TODO When implementing play/pause, check WAAPI
             // logic around finished animations
             startTime = now
         }
 
-        pauseTime = null
+        holdTime = null
 
         animationDriver.start()
     }
@@ -238,8 +246,8 @@ export function animateValue<V = number>({
             return currentTime
         },
         set currentTime(newTime: number) {
-            if (pauseTime !== undefined || !animationDriver) {
-                pauseTime = 0
+            if (holdTime !== null || !animationDriver) {
+                holdTime = 0
             } else {
                 startTime = animationDriver.now() - newTime
             }

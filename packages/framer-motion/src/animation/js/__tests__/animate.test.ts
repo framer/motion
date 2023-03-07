@@ -836,4 +836,28 @@ describe("animate", () => {
         expect(animation.sample(250).value).toEqual(103.65507873893438)
         expect(animation.sample(4100).value).toEqual(96.10257237444083)
     })
+
+    test.only("Correctly sets and gets currentTime", async () => {
+        const driver = syncDriver(20)
+        const output: number[] = []
+
+        await new Promise<void>((resolve) => {
+            const animation = animateValue({
+                keyframes: [0, 100],
+                duration: 100,
+                ease: "linear",
+                onUpdate: (v) => {
+                    output.push(Math.round(v))
+
+                    if (output.length === 4) {
+                        animation.currentTime = 20
+                    }
+                },
+                onComplete: () => resolve(),
+                driver,
+            })
+        })
+
+        expect(output).toEqual([0, 20, 40, 60, 40, 60, 80, 100])
+    })
 })

@@ -1,8 +1,7 @@
 import { KeyframeGenerator } from "../../generators/types"
 
-export const syncDriver =
-    (interval = 10) =>
-    (update: (v: number) => void) => {
+export const syncDriver = (interval = 10) => {
+    const driver = (update: (v: number) => void) => {
         let isRunning = true
         let elapsed = 0
 
@@ -20,6 +19,9 @@ export const syncDriver =
             now: () => elapsed,
         }
     }
+
+    return driver
+}
 
 export function animateSync(
     animation: KeyframeGenerator<string | number>,
