@@ -7,6 +7,7 @@ import {
     MotionConfig,
     LayoutGroup,
     useAnimation,
+    sync,
 } from "../../.."
 import { motionValue } from "../../../value"
 import { ResolvedValues } from "../../../render/types"
@@ -16,13 +17,15 @@ describe("AnimatePresence", () => {
         const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const Component = () => {
-                setTimeout(() => resolve(x.get()), 100)
                 return (
                     <AnimatePresence>
                         <motion.div
                             animate={{ x: 100 }}
                             style={{ x }}
                             exit={{ x: 0 }}
+                            onAnimationStart={() =>
+                                sync.postRender(() => resolve(x.get()))
+                            }
                         />
                     </AnimatePresence>
                 )
