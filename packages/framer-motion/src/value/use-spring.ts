@@ -55,6 +55,8 @@ export function useSpring(
                 keyframes: [value.get(), v],
                 velocity: value.getVelocity(),
                 type: "spring",
+                restDelta: 0.001,
+                restSpeed: 0.01,
                 ...config,
                 onUpdate: set,
             })
