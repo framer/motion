@@ -1,7 +1,7 @@
 {
     "name": "framer-motion",
-    "version": "10.1.0",
-    "description": "A simple and powerful React animation library",
+    "version": "10.2.0",
+    "description": "A simple and powerful React and JavaScript animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
     "exports": {
@@ -10,6 +10,12 @@
             "require": "./dist/cjs/index.js",
             "import": "./dist/es/index.mjs",
             "default": "./dist/cjs/index.js"
+        },
+        "./dom": {
+            "types": "./dist/dom-entry.d.ts",
+            "require": "./dist/cjs/dom-entry.js",
+            "import": "./dist/es/dom-entry.mjs",
+            "default": "./dist/cjs/dom-entry.js"
         },
         "./package.json": "./package.json"
     },
@@ -30,11 +36,12 @@
         "drag",
         "spring",
         "popmotion",
-        "framer"
+        "framer",
+        "waapi"
     ],
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
-        "build": "yarn clean && tsc -p . && rollup -c && webpack --config webpack.size.config.js",
+        "build": "yarn clean && tsc -p . && rollup -c && node ./scripts/check-bundle.js",
         "dev": "yarn watch",
         "clean": "rm -rf types dist lib",
         "test": "yarn test-server && yarn test-client",
@@ -54,15 +61,23 @@
         "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
         "prepack": "yarn build",
         "postpublish": "git push --tags",
-        "measure": "bundlesize",
+        "measure": "rollup -c ./rollup.size.config.js && webpack --config webpack.size.config.js && bundlesize",
         "start-dev-server": "webpack serve --config ../../dev/webpack/config.js --hot"
+    },
+    "dependencies": {
+        "tslib": "^2.4.0"
     },
     "peerDependencies": {
         "react": "^18.0.0",
         "react-dom": "^18.0.0"
     },
-    "dependencies": {
-        "tslib": "^2.4.0"
+    "peerDependenciesMeta": {
+        "react": {
+            "optional": true
+        },
+        "react-dom": {
+            "optional": true
+        }
     },
     "optionalDependencies": {
         "@emotion/is-prop-valid": "^0.8.2"
@@ -83,6 +98,10 @@
         {
             "path": "./dist/size-rollup-dom-max.js",
             "maxSize": "25.69 kB"
+        },
+        {
+            "path": "./dist/size-rollup-animate.js",
+            "maxSize": "10 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",

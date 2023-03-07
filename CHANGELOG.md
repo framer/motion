@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.2.0] 2023-03-07
+
+### Added
+
+-   Vanilla JS entry point `framer-motion/dom`.
+
 ## [10.1.0] 2023-03-06
 
 ### Added

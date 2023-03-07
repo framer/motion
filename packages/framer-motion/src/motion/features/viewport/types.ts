@@ -1,4 +1,4 @@
-import { RefObject } from "react"
+import { RefObject } from "../../../utils/safe-react-types"
 import { TargetAndTransition } from "../../../types"
 import { VariantLabels } from "../../types"
 
