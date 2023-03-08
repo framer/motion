@@ -4,11 +4,6 @@ import { noop } from "../../../utils/noop"
 import { AnimationOptions } from "../../types"
 import { syncDriver } from "./utils"
 
-/**
- * TODO: Write a test that passes duration to spring and inertia
- * and repeats them
- */
-
 const linear = noop
 
 function testAnimate<V>(
