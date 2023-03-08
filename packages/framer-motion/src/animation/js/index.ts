@@ -21,14 +21,11 @@ const types: { [key: string]: GeneratorFactory } = {
     spring,
 }
 
-/**
- * TODO: Attempt to unify with other pregeneration functions
- */
 function calculateDuration(generator: KeyframeGenerator<unknown>) {
     let duration = 0
     const timeStep = 50
     let state = generator.next(duration)
-    while (!state.done && timeStep < 20000) {
+    while (!state.done && duration < 20000) {
         duration += timeStep
         state = generator.next(duration)
     }
