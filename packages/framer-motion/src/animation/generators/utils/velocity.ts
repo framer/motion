@@ -1,5 +1,6 @@
 import { velocityPerSecond } from "../../../utils/velocity-per-second"
-import { velocitySampleDuration } from "./velocity-sample-duration"
+
+const velocitySampleDuration = 5 // ms
 
 export function calcGeneratorVelocity(
     resolveValue: (v: number) => number,
