@@ -8,7 +8,6 @@ export const frameloopDriver: Driver = (update) => {
     return {
         start: () => sync.update(passTimestamp, true),
         stop: () => cancelSync.update(passTimestamp),
-        // TODO: Check frameData
         now: () => performance.now(),
     }
 }
