@@ -205,7 +205,7 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toBe("rgba(190, 60, 60, 1)")
     })
 
-    test.only("respects orchestration props in transition prop", async () => {
+    test("respects orchestration props in transition prop", async () => {
         const promise = new Promise((resolve) => {
             const opacity = motionValue(0)
 
