@@ -832,7 +832,7 @@ describe("animate", () => {
         expect(animation.sample(4100).value).toEqual(96.10257237444083)
     })
 
-    test.only("Correctly sets and gets currentTime", async () => {
+    test("Correctly sets and gets currentTime", async () => {
         const driver = syncDriver(20)
         const output: number[] = []
 
