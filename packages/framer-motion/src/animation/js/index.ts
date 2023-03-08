@@ -111,11 +111,11 @@ export function animateValue<V = number>({
         resolvedDuration = calculatedDuration + repeatDelay
         totalDuration = resolvedDuration * (repeat + 1) - repeatDelay
     }
-    let count = 0
+
     let currentTime = 0
     const tick = (timestamp: number) => {
         if (startTime === null) return
-        count++
+
         if (holdTime !== null) {
             currentTime = holdTime
         } else {
@@ -207,7 +207,7 @@ export function animateValue<V = number>({
             holdTime === null &&
             (playState === "finished" || (playState === "running" && done))
 
-        if (isAnimationFinished || count > 20) {
+        if (isAnimationFinished) {
             playState = "finished"
             onComplete && onComplete()
             animationDriver && animationDriver.stop()
