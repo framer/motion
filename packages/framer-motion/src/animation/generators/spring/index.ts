@@ -80,7 +80,7 @@ export function spring({
     restSpeed ||= isGranularScale ? 0.01 : 2
     restDelta ||= isGranularScale ? 0.005 : 0.5
 
-    let resolveSpring = zero
+    let resolveSpring: (v: number) => number
     if (dampingRatio < 1) {
         const angularFreq = calcAngularFreq(undampedAngularFreq, dampingRatio)
 
@@ -172,5 +172,3 @@ export function spring({
         },
     }
 }
-
-const zero = (_t: number) => 0
