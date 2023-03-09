@@ -1,5 +1,6 @@
 import { animateValue } from "../"
 import { easeOut } from "../../../easing/ease"
+import { nextFrame } from "../../../gestures/__tests__/utils"
 import { noop } from "../../../utils/noop"
 import { AnimationOptions } from "../../types"
 import { syncDriver } from "./utils"
@@ -877,7 +878,6 @@ describe("animate", () => {
                 ease: "linear",
                 onUpdate: (v) => {
                     output.push(Math.round(v))
-                    console.log(v)
                     if (output.length === 4) {
                         animation.pause()
                     } else if (output.length === 10) {
@@ -903,7 +903,6 @@ describe("animate", () => {
                 ease: "linear",
                 onUpdate: (v) => {
                     output.push(Math.round(v))
-                    console.log(v)
                     if (output.length === 2) {
                         animation.pause()
                     } else if (output.length === 6) {
@@ -931,7 +930,6 @@ describe("animate", () => {
                 ease: "linear",
                 onUpdate: (v) => {
                     output.push(Math.round(v))
-                    console.log(v)
                     if (output.length === 2) {
                         animation.pause()
                     } else if (output.length === 6) {
@@ -960,7 +958,7 @@ describe("animate", () => {
                 ease: "linear",
                 onUpdate: (v) => {
                     output.push(Math.round(v))
-                    console.log(v)
+
                     if (output.length === 2) {
                         animation.pause()
                         animation.currentTime = 0.05
@@ -974,5 +972,27 @@ describe("animate", () => {
         })
 
         expect(output).toEqual([0, 20, 50, 50, 50, 50, 50, 50])
+    })
+
+    test(".play() restarts the animation if already finished", async () => {
+        const driver = syncDriver(20)
+        const output: number[] = []
+        const animation = animateValue({
+            keyframes: [0, 100],
+            duration: 100,
+            ease: "linear",
+            onUpdate: (v) => {
+                output.push(Math.round(v))
+            },
+            driver,
+        })
+
+        await nextFrame()
+
+        animation.play()
+
+        await nextFrame()
+
+        expect(output).toEqual([0, 20, 40, 60, 80, 100, 0, 20, 40, 60, 80, 100])
     })
 })

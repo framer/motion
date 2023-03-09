@@ -7,6 +7,7 @@ export const syncDriver = (interval = 10) => {
 
         return {
             start: () => {
+                isRunning = true
                 setTimeout(() => {
                     update(elapsed)
                     while (isRunning) {
