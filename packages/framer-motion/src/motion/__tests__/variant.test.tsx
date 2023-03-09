@@ -1048,6 +1048,3 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toBe("visible")
     })
 })
-
-const wait = (duration: number) =>
-    new Promise((resolve) => setTimeout(resolve, duration))
