@@ -3,6 +3,14 @@ import type { VisualElement } from "../render/VisualElement"
 import { Easing } from "../easing/types"
 import { Driver } from "./js/types"
 
+/**
+ * @public
+ */
+export interface AnimationPlaybackControls {
+    currentTime: number
+    stop: () => void
+}
+
 export interface VelocityOptions {
     velocity?: number
     restSpeed?: number

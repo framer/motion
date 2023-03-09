@@ -5,7 +5,7 @@ import { useMotionValue } from "./use-motion-value"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { SpringOptions } from "../animation/types"
 import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
-import { AnimationPlaybackControls } from "../animation/animate"
+import { AnimationPlaybackControls } from "../animation/types"
 import { animateValue } from "../animation/js"
 
 /**

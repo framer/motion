@@ -845,7 +845,7 @@ describe("animate", () => {
                     output.push(Math.round(v))
 
                     if (output.length === 4) {
-                        animation.currentTime = 20
+                        animation.currentTime = 0.02
                     }
                 },
                 onComplete: () => resolve(),

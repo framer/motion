@@ -1,5 +1,6 @@
 import { sync, cancelSync, flushSync } from "../../frameloop"
-import { animate, AnimationPlaybackControls } from "../../animation/animate"
+import { animate } from "../../animation/animate"
+import { AnimationPlaybackControls } from "../../animation/types"
 import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { mixValues } from "../animation/mix-values"

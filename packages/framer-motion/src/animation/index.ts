@@ -11,7 +11,7 @@ import { isAnimatable } from "./utils/is-animatable"
 import { getKeyframes } from "./utils/keyframes"
 import { getValueTransition, isTransitionDefined } from "./utils/transitions"
 import { animateValue } from "./js"
-import { AnimationPlaybackControls } from "./animate"
+import { AnimationPlaybackControls } from "./types"
 
 export const createMotionValueAnimation = (
     valueName: string,

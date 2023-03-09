@@ -8,6 +8,10 @@ import { isWaapiSupportedEasing } from "./easing"
 import { supports } from "./supports"
 import { getFinalKeyframe } from "./utils/get-final-keyframe"
 import { animateValue } from "../js"
+import {
+    millisecondsToSeconds,
+    secondsToMilliseconds,
+} from "../../utils/time-conversion"
 
 /**
  * A list of values that can be hardware-accelerated.
@@ -120,10 +124,10 @@ export function createAcceleratedAnimation(
      */
     return {
         get currentTime() {
-            return animation.currentTime || 0
+            return millisecondsToSeconds(animation.currentTime || 0)
         },
-        set currentTime(t: number) {
-            animation.currentTime = t
+        set currentTime(newTime: number) {
+            animation.currentTime = secondsToMilliseconds(newTime)
         },
         stop: () => {
             /**

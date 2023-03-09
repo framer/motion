@@ -1,4 +1,4 @@
-import { AnimationPlaybackControls } from "./animate"
+import { AnimationPlaybackControls } from "./types"
 import { animateValue } from "./js"
 import { AnimationOptions } from "./types"
 

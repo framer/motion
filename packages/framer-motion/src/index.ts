@@ -109,7 +109,7 @@ export { SwitchLayoutGroupContext } from "./context/SwitchLayoutGroupContext"
 export { HTMLMotionProps, ForwardRefComponent } from "./render/html/types"
 export { SVGMotionProps, SVGAttributesAsMotionValues } from "./render/svg/types"
 export { AnimationLifecycles } from "./render/types"
-export { AnimationPlaybackControls } from "./animation/animate"
+export { AnimationPlaybackControls } from "./animation/types"
 export { CustomDomComponent } from "./render/dom/motion-proxy"
 export { ScrollMotionValues } from "./value/scroll/utils"
 export {

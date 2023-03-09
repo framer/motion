@@ -1,4 +1,4 @@
-import { AnimationPlaybackControls } from "../animate"
+import { AnimationPlaybackControls } from "../types"
 import { keyframes as keyframesGeneratorFactory } from "../generators/keyframes"
 import { spring } from "../generators/spring/index"
 import { inertia } from "../generators/inertia"
@@ -8,6 +8,10 @@ import { AnimationOptions } from "../types"
 import { frameloopDriver } from "./driver-frameloop"
 import { interpolate } from "../../utils/interpolate"
 import { clamp } from "../../utils/clamp"
+import {
+    millisecondsToSeconds,
+    secondsToMilliseconds,
+} from "../../utils/time-conversion"
 
 type GeneratorFactory = (
     options: AnimationOptions<any>
@@ -238,13 +242,14 @@ export function animateValue<V = number>({
 
     const controls = {
         get currentTime() {
-            return currentTime
+            return millisecondsToSeconds(currentTime)
         },
         set currentTime(newTime: number) {
             if (holdTime !== null || !animationDriver) {
                 holdTime = 0
             } else {
-                startTime = animationDriver.now() - newTime
+                startTime =
+                    animationDriver.now() - secondsToMilliseconds(newTime)
             }
         },
         stop: () => {

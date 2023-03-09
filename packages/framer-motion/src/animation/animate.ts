@@ -2,14 +2,8 @@ import { createMotionValueAnimation } from "."
 import { Transition } from "../types"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
-
-/**
- * @public
- */
-export interface AnimationPlaybackControls {
-    currentTime: number | null
-    stop: () => void
-}
+import { GroupPlaybackControls } from "./GroupPlaybackControls"
+import { AnimationPlaybackControls } from "./types"
 
 /**
  * @public
@@ -57,5 +51,5 @@ export function animate<V>(
     const value = isMotionValue(from) ? from : motionValue(from)
     value.start(createMotionValueAnimation("", value, to as any, transition))
 
-    return value.animation!
+    return value.animation || new GroupPlaybackControls([value.animation])
 }
