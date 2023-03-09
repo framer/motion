@@ -921,7 +921,7 @@ describe("animate prop as variant", () => {
             if (isHover) variants.push(variant + "-hover")
 
             return (
-                <MotionConfig transition={{ duration: 0.01 }}>
+                <MotionConfig transition={{ type: false }}>
                     <motion.div
                         data-testid="parent"
                         animate={variants}
