@@ -1,4 +1,3 @@
-import { onNextFrame, defaultTimestep } from "./on-next-frame"
 import { createRenderStep } from "./create-render-step"
 import { Process, StepId, CancelSync, FlushSync, Sync, Steps } from "./types"
 import { frameData } from "./data"
@@ -46,7 +45,7 @@ const processFrame = (timestamp: number) => {
     runNextFrame = false
 
     frameData.delta = useDefaultElapsed
-        ? defaultTimestep
+        ? 16.666
         : Math.max(Math.min(timestamp - frameData.timestamp, maxElapsed), 1)
 
     frameData.timestamp = timestamp
@@ -57,7 +56,7 @@ const processFrame = (timestamp: number) => {
 
     if (runNextFrame) {
         useDefaultElapsed = false
-        onNextFrame(processFrame)
+        requestAnimationFrame(processFrame)
     }
 }
 
@@ -65,7 +64,7 @@ const startLoop = () => {
     runNextFrame = true
     useDefaultElapsed = true
 
-    if (!isProcessing) onNextFrame(processFrame)
+    if (!isProcessing) requestAnimationFrame(processFrame)
 }
 
 export { sync, cancelSync, flushSync }
