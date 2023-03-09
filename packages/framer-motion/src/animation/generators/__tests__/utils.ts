@@ -1,3 +1,4 @@
+import { millisecondsToSeconds } from "../../../utils/time-conversion"
 import { KeyframeGenerator } from "../types"
 
 export interface KeyframesMetadata {
@@ -30,6 +31,6 @@ export function pregenerateKeyframes(
 
     return {
         keyframes,
-        duration: duration / 1000,
+        duration: millisecondsToSeconds(duration),
     }
 }

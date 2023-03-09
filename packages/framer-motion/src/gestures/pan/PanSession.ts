@@ -1,7 +1,10 @@
 import { EventInfo } from "../../events/types"
 import { extractEventInfo } from "../../events/event-info"
 import { sync, cancelSync } from "../../frameloop"
-import { secondsToMilliseconds } from "../../utils/time-conversion"
+import {
+    millisecondsToSeconds,
+    secondsToMilliseconds,
+} from "../../utils/time-conversion"
 import { addPointerEvent } from "../../events/add-pointer-event"
 import { Point, TransformPoint } from "../../projection/geometry/types"
 import { pipe } from "../../utils/pipe"
@@ -287,7 +290,9 @@ function getVelocity(history: TimestampedPoint[], timeDelta: number): Point {
         return { x: 0, y: 0 }
     }
 
-    const time = (lastPoint.timestamp - timestampedPoint.timestamp) / 1000
+    const time = millisecondsToSeconds(
+        lastPoint.timestamp - timestampedPoint.timestamp
+    )
     if (time === 0) {
         return { x: 0, y: 0 }
     }

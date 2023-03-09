@@ -1,6 +1,10 @@
 import { warning } from "../../../utils/errors"
 import { clamp } from "../../../utils/clamp"
 import { SpringOptions } from "../../types"
+import {
+    millisecondsToSeconds,
+    secondsToMilliseconds,
+} from "../../../utils/time-conversion"
 
 /**
  * This is ported from the Framer implementation of duration-based spring resolution.
@@ -24,7 +28,7 @@ export function findSpring({
     let derivative: Resolver
 
     warning(
-        duration <= maxDuration * 1000,
+        duration <= secondsToMilliseconds(maxDuration),
         "Spring duration must be 10 seconds or less"
     )
 
@@ -34,7 +38,7 @@ export function findSpring({
      * Restrict dampingRatio and duration to within acceptable ranges.
      */
     dampingRatio = clamp(minDamping, maxDamping, dampingRatio)
-    duration = clamp(minDuration, maxDuration, duration / 1000)
+    duration = clamp(minDuration, maxDuration, millisecondsToSeconds(duration))
 
     if (dampingRatio < 1) {
         /**
@@ -80,7 +84,7 @@ export function findSpring({
     const initialGuess = 5 / duration
     const undampedFreq = approximateRoot(envelope, derivative, initialGuess)
 
-    duration = duration * 1000
+    duration = secondsToMilliseconds(duration)
     if (isNaN(undampedFreq)) {
         return {
             stiffness: 100,

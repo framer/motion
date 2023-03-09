@@ -1,3 +1,4 @@
+import { millisecondsToSeconds } from "../../../utils/time-conversion"
 import { AnimationOptions, SpringOptions } from "../../types"
 import { AnimationState, KeyframeGenerator } from "../types"
 import { calcGeneratorVelocity } from "../utils/velocity"
@@ -63,11 +64,13 @@ export function spring({
         isResolvedFromDuration,
     } = getSpringOptions(options)
 
-    const initialVelocity = velocity ? -(velocity / 1000) : 0.0
+    const initialVelocity = velocity ? -millisecondsToSeconds(velocity) : 0.0
     const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass))
 
     const initialDelta = target - origin
-    const undampedAngularFreq = Math.sqrt(stiffness / mass) / 1000
+    const undampedAngularFreq = millisecondsToSeconds(
+        Math.sqrt(stiffness / mass)
+    )
 
     /**
      * If we're working on a granular scale, use smaller defaults for determining
