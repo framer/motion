@@ -26,7 +26,19 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
         }
     }
 
+    runAll(methodName: keyof Omit<AnimationPlaybackControls, "currentTime">) {
+        this.animations.forEach((controls) => controls[methodName]())
+    }
+
+    play() {
+        this.runAll("play")
+    }
+
+    pause() {
+        this.runAll("pause")
+    }
+
     stop() {
-        this.animations.forEach((controls) => controls.stop())
+        this.runAll("stop")
     }
 }

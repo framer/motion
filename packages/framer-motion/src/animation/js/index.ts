@@ -259,6 +259,11 @@ export function animateValue<V = number>({
                     animationDriver.now() - secondsToMilliseconds(newTime)
             }
         },
+        play,
+        pause: () => {
+            playState = "paused"
+            holdTime = currentTime
+        },
         stop: () => {
             onStop && onStop()
             animationDriver && animationDriver.stop()

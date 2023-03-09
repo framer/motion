@@ -1,6 +1,7 @@
 import { AnimationPlaybackControls } from "./types"
 import { animateValue } from "./js"
 import { AnimationOptions } from "./types"
+import { noop } from "../utils/noop"
 
 export function createInstantAnimation<V>({
     keyframes,
@@ -13,8 +14,10 @@ export function createInstantAnimation<V>({
         onComplete && onComplete()
 
         return {
-            stop: () => {},
             currentTime: 0,
+            play: noop<void>,
+            pause: noop<void>,
+            stop: noop<void>,
         }
     }
 
