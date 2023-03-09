@@ -199,7 +199,7 @@ export function animateValue<V = number>({
 
         const state = frameGenerator.next(elapsed)
         let { value, done } = state
-        console.log(value, done, playState)
+
         if (onUpdate) {
             onUpdate(
                 mapNumbersToKeyframes ? mapNumbersToKeyframes(value) : value
@@ -214,7 +214,6 @@ export function animateValue<V = number>({
             holdTime === null &&
             (playState === "finished" || (playState === "running" && done))
 
-        console.log(isAnimationFinished)
         if (isAnimationFinished) {
             playState = "finished"
             onComplete && onComplete()
