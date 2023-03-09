@@ -25,11 +25,16 @@ const types: { [key: string]: GeneratorFactory } = {
     spring,
 }
 
+/**
+ * Implement a practical max duration for keyframe generation
+ * to prevent infinite loops
+ */
+const maxDuration = 20_000
 function calculateDuration(generator: KeyframeGenerator<unknown>) {
     let duration = 0
     const timeStep = 50
     let state = generator.next(duration)
-    while (!state.done && duration < 20000) {
+    while (!state.done && duration < maxDuration) {
         duration += timeStep
         state = generator.next(duration)
     }

@@ -31,6 +31,12 @@ const acceleratedValues = new Set<string>([
  */
 const sampleDelta = 10 //ms
 
+/**
+ * Implement a practical max duration for keyframe generation
+ * to prevent infinite loops
+ */
+const maxDuration = 20_000
+
 const requiresPregeneratedKeyframes = (
     valueName: string,
     options: AnimationOptions
@@ -58,8 +64,6 @@ export function createAcceleratedAnimation(
 
     /**
      * If this animation needs pre-generated keyframes then generate.
-     *
-     * TODO See if this can be unified with pregenerate keyframes
      */
     if (requiresPregeneratedKeyframes(valueName, options)) {
         const sampleAnimation = animateValue({
@@ -75,7 +79,7 @@ export function createAcceleratedAnimation(
          * we're heading for an infinite loop.
          */
         let t = 0
-        while (!state.done && t < 20000) {
+        while (!state.done && t < maxDuration) {
             state = sampleAnimation.sample(t)
             pregeneratedKeyframes.push(state.value)
             t += sampleDelta
