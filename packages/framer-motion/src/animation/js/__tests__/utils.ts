@@ -15,7 +15,9 @@ export const syncDriver = (interval = 10) => {
                     }
                 }, 0)
             },
-            stop: () => (isRunning = false),
+            stop: () => {
+                isRunning = false
+            },
             now: () => elapsed,
         }
     }

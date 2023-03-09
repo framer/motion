@@ -865,4 +865,114 @@ describe("animate", () => {
 
         expect(output).toEqual([0, 20, 40, 60, 40, 60, 80, 100])
     })
+
+    test("Correctly pauses", async () => {
+        const driver = syncDriver(20)
+        const output: number[] = []
+
+        await new Promise<void>((resolve) => {
+            const animation = animateValue({
+                keyframes: [0, 100],
+                duration: 100,
+                ease: "linear",
+                onUpdate: (v) => {
+                    output.push(Math.round(v))
+                    console.log(v)
+                    if (output.length === 4) {
+                        animation.pause()
+                    } else if (output.length === 10) {
+                        animation.stop()
+                    }
+                },
+                onStop: () => resolve(),
+                driver,
+            })
+        })
+
+        expect(output).toEqual([0, 20, 40, 60, 60, 60, 60, 60, 60, 60])
+    })
+
+    test("Correctly resumes", async () => {
+        const driver = syncDriver(20)
+        const output: number[] = []
+
+        await new Promise<void>((resolve) => {
+            const animation = animateValue({
+                keyframes: [0, 100],
+                duration: 100,
+                ease: "linear",
+                onUpdate: (v) => {
+                    output.push(Math.round(v))
+                    console.log(v)
+                    if (output.length === 2) {
+                        animation.pause()
+                    } else if (output.length === 6) {
+                        animation.play()
+                    } else if (output.length === 9) {
+                        animation.stop()
+                    }
+                },
+                onStop: () => resolve(),
+                driver,
+            })
+        })
+
+        expect(output).toEqual([0, 20, 20, 20, 20, 20, 40, 60, 80])
+    })
+
+    test("Correctly resumes after currentTime is set", async () => {
+        const driver = syncDriver(20)
+        const output: number[] = []
+
+        await new Promise<void>((resolve) => {
+            const animation = animateValue({
+                keyframes: [0, 100],
+                duration: 100,
+                ease: "linear",
+                onUpdate: (v) => {
+                    output.push(Math.round(v))
+                    console.log(v)
+                    if (output.length === 2) {
+                        animation.pause()
+                    } else if (output.length === 6) {
+                        animation.currentTime = 0.05
+                        animation.play()
+                    } else if (output.length === 8) {
+                        animation.stop()
+                    }
+                },
+                onStop: () => resolve(),
+                driver,
+            })
+        })
+
+        expect(output).toEqual([0, 20, 20, 20, 20, 20, 70, 90])
+    })
+
+    test("Correctly sets currentTime during pause", async () => {
+        const driver = syncDriver(20)
+        const output: number[] = []
+
+        await new Promise<void>((resolve) => {
+            const animation = animateValue({
+                keyframes: [0, 100],
+                duration: 100,
+                ease: "linear",
+                onUpdate: (v) => {
+                    output.push(Math.round(v))
+                    console.log(v)
+                    if (output.length === 2) {
+                        animation.pause()
+                        animation.currentTime = 0.05
+                    } else if (output.length === 8) {
+                        animation.stop()
+                    }
+                },
+                onStop: () => resolve(),
+                driver,
+            })
+        })
+
+        expect(output).toEqual([0, 20, 50, 50, 50, 50, 50, 50])
+    })
 })
