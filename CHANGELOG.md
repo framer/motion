@@ -4,6 +4,16 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.2.4] 2023-03-10
+
+### Changed
+
+-   Refactored `animate` to resolve for `time` instead of `timeDelta`.
+
+### Fixed
+
+-   `delay` will now apply to `"inertia"` animations.
+
 ## [10.2.3] 2023-03-07
 
 ### Fixed
