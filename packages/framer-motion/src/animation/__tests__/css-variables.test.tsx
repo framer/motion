@@ -87,7 +87,7 @@ describe("css variables", () => {
                 <motion.div
                     style={{ "--color": " #fff " } as any}
                     animate={{ "--a": "20px", "--color": "#000" } as any}
-                    transition={{ duration: 0.01 }}
+                    transition={{ duration: 0.001 }}
                     onUpdate={(latest: any) => output.push(latest)}
                     onAnimationComplete={() => resolve(output)}
                 />

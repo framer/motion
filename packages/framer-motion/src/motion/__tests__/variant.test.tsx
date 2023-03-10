@@ -921,7 +921,7 @@ describe("animate prop as variant", () => {
             if (isHover) variants.push(variant + "-hover")
 
             return (
-                <MotionConfig transition={{ duration: 0.01 }}>
+                <MotionConfig transition={{ type: false }}>
                     <motion.div
                         data-testid="parent"
                         animate={variants}
@@ -977,8 +977,8 @@ describe("animate prop as variant", () => {
 
         pointerEnter(getByTestId("parent"))
 
-        await wait(20)
-
+        await nextFrame()
+        await nextFrame()
         await nextFrame()
 
         expect(inner).toHaveStyle("background-color: rgb(150,150,0)")
@@ -986,8 +986,8 @@ describe("animate prop as variant", () => {
         pointerDown(getByTestId("variant-trigger"))
         pointerUp(getByTestId("variant-trigger"))
 
-        await wait(20)
-
+        await nextFrame()
+        await nextFrame()
         await nextFrame()
 
         expect(inner).toHaveStyle("background-color: rgb(0, 150,150)")
@@ -1051,6 +1051,3 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toBe("visible")
     })
 })
-
-const wait = (duration: number) =>
-    new Promise((resolve) => setTimeout(resolve, duration))

@@ -1,5 +1,6 @@
 import { Sync } from "../../frameloop/types"
 import { transformProps } from "../../render/html/utils/transform"
+import { millisecondsToSeconds } from "../../utils/time-conversion"
 import type { MotionValue } from "../../value"
 import { appearAnimationStore } from "./store"
 import { appearStoreId } from "./store-id"
@@ -55,7 +56,8 @@ export function handoffOptimizedAppearAnimation(
          */
         sync.update(() => {
             if (value.animation) {
-                value.animation.currentTime = performance.now() - sampledTime
+                value.animation.currentTime =
+                    performance.now() - millisecondsToSeconds(sampledTime)
             }
         })
 

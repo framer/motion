@@ -81,8 +81,7 @@ export { useInstantTransition } from "./utils/use-instant-transition"
 export { useInstantLayoutTransition } from "./projection/use-instant-layout-transition"
 export { useResetProjection } from "./projection/use-reset-projection"
 export { buildTransform } from "./render/html/utils/build-transform"
-export { animateValue } from "./animation/legacy-popmotion"
-export { inertia } from "./animation/legacy-popmotion/inertia"
+export { animateValue } from "./animation/js"
 export { color } from "./value/types/color"
 export { complex } from "./value/types/complex"
 export { px } from "./value/types/numbers/units"
@@ -93,7 +92,7 @@ export { ValueType } from "./value/types/types"
  */
 export { startOptimizedAppearAnimation } from "./animation/optimized-appear/start"
 export { optimizedAppearDataAttribute } from "./animation/optimized-appear/data-id"
-export { spring } from "./animation/legacy-popmotion/spring"
+export { spring } from "./animation/generators/spring"
 
 /**
  * Contexts
@@ -110,10 +109,7 @@ export { SwitchLayoutGroupContext } from "./context/SwitchLayoutGroupContext"
 export { HTMLMotionProps, ForwardRefComponent } from "./render/html/types"
 export { SVGMotionProps, SVGAttributesAsMotionValues } from "./render/svg/types"
 export { AnimationLifecycles } from "./render/types"
-export {
-    AnimationOptions,
-    AnimationPlaybackControls,
-} from "./animation/animate"
+export { AnimationPlaybackControls } from "./animation/types"
 export { CustomDomComponent } from "./render/dom/motion-proxy"
 export { ScrollMotionValues } from "./value/scroll/utils"
 export {

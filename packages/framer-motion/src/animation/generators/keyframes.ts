@@ -5,7 +5,7 @@ import { defaultOffset } from "../../utils/offsets/default"
 import { convertOffsetToTimes } from "../../utils/offsets/time"
 import { AnimationOptions } from "../types"
 import { easingDefinitionToFunction, isEasingArray } from "../utils/easing"
-import { Animation, AnimationState } from "./types"
+import { AnimationState, KeyframeGenerator } from "./types"
 
 export function defaultEasing(
     values: any[],
@@ -14,14 +14,12 @@ export function defaultEasing(
     return values.map(() => easing || easeInOut).splice(0, values.length - 1)
 }
 
-export function keyframes({
-    keyframes: keyframeValues,
-    ease = easeInOut,
-    times,
+export function keyframes<T>({
     duration = 300,
-}: AnimationOptions): Animation<number | string> {
-    keyframeValues = [...keyframeValues]
-
+    keyframes: keyframeValues,
+    times,
+    ease = "easeInOut",
+}: AnimationOptions<T>): KeyframeGenerator<T> {
     /**
      * Easing functions can be externally defined as strings. Here we convert them
      * into actual functions.
@@ -34,7 +32,7 @@ export function keyframes({
      * This is the Iterator-spec return value. We ensure it's mutable rather than using a generator
      * to reduce GC during animation.
      */
-    const state: AnimationState<typeof origin> = {
+    const state: AnimationState<T> = {
         done: false,
         value: keyframeValues[0],
     }
@@ -51,25 +49,18 @@ export function keyframes({
         duration
     )
 
-    function createInterpolator() {
-        return interpolate(absoluteTimes, keyframeValues, {
-            ease: Array.isArray(easingFunctions)
-                ? easingFunctions
-                : defaultEasing(keyframeValues, easingFunctions),
-        })
-    }
-
-    let interpolator = createInterpolator()
+    const mapTimeToKeyframe = interpolate<T>(absoluteTimes, keyframeValues, {
+        ease: Array.isArray(easingFunctions)
+            ? easingFunctions
+            : defaultEasing(keyframeValues, easingFunctions),
+    })
 
     return {
+        calculatedDuration: duration,
         next: (t: number) => {
-            state.value = interpolator(t)
+            state.value = mapTimeToKeyframe(t)
             state.done = t >= duration
             return state
-        },
-        flipTarget: () => {
-            keyframeValues.reverse()
-            interpolator = createInterpolator()
         },
     }
 }

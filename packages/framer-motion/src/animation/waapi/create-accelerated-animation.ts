@@ -2,12 +2,16 @@ import { EasingDefinition } from "../../easing/types"
 import { sync } from "../../frameloop"
 import type { VisualElement } from "../../render/VisualElement"
 import type { MotionValue } from "../../value"
-import { animateValue } from "../legacy-popmotion"
 import { AnimationOptions } from "../types"
 import { animateStyle } from "./"
 import { isWaapiSupportedEasing } from "./easing"
 import { supports } from "./supports"
 import { getFinalKeyframe } from "./utils/get-final-keyframe"
+import { animateValue } from "../js"
+import {
+    millisecondsToSeconds,
+    secondsToMilliseconds,
+} from "../../utils/time-conversion"
 
 /**
  * A list of values that can be hardware-accelerated.
@@ -27,6 +31,12 @@ const acceleratedValues = new Set<string>([
  */
 const sampleDelta = 10 //ms
 
+/**
+ * Implement a practical max duration for keyframe generation
+ * to prevent infinite loops
+ */
+const maxDuration = 20_000
+
 const requiresPregeneratedKeyframes = (
     valueName: string,
     options: AnimationOptions
@@ -45,11 +55,12 @@ export function createAcceleratedAnimation(
         acceleratedValues.has(valueName) &&
         !options.repeatDelay &&
         options.repeatType !== "mirror" &&
-        options.damping !== 0
+        options.damping !== 0 &&
+        options.type !== "inertia"
 
     if (!canAccelerateAnimation) return false
 
-    let { keyframes, duration = 300, elapsed = 0, ease } = options
+    let { keyframes, duration = 300, ease } = options
 
     /**
      * If this animation needs pre-generated keyframes then generate.
@@ -58,7 +69,7 @@ export function createAcceleratedAnimation(
         const sampleAnimation = animateValue({
             ...options,
             repeat: 0,
-            elapsed: 0,
+            delay: 0,
         })
         let state = { done: false, value: keyframes[0] }
         const pregeneratedKeyframes: number[] = []
@@ -68,8 +79,8 @@ export function createAcceleratedAnimation(
          * we're heading for an infinite loop.
          */
         let t = 0
-        while (!state.done && t < 20000) {
-            state = sampleAnimation.sample(t, true)
+        while (!state.done && t < maxDuration) {
+            state = sampleAnimation.sample(t)
             pregeneratedKeyframes.push(state.value)
             t += sampleDelta
         }
@@ -85,7 +96,6 @@ export function createAcceleratedAnimation(
         keyframes,
         {
             ...options,
-            delay: -elapsed,
             duration,
             /**
              * This function is currently not called if ease is provided
@@ -118,10 +128,10 @@ export function createAcceleratedAnimation(
      */
     return {
         get currentTime() {
-            return animation.currentTime || 0
+            return millisecondsToSeconds(animation.currentTime || 0)
         },
-        set currentTime(t: number) {
-            animation.currentTime = t
+        set currentTime(newTime: number) {
+            animation.currentTime = secondsToMilliseconds(newTime)
         },
         stop: () => {
             /**

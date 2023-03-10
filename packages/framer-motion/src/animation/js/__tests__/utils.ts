@@ -1,22 +1,30 @@
-import { Animation } from "../types"
+import { KeyframeGenerator } from "../../generators/types"
 
-export const syncDriver =
-    (interval = 10) =>
-    (update: (v: number) => void) => {
+export const syncDriver = (interval = 10) => {
+    const driver = (update: (v: number) => void) => {
         let isRunning = true
+        let elapsed = 0
+
         return {
             start: () => {
                 setTimeout(() => {
-                    update(0)
-                    while (isRunning) update(interval)
+                    update(elapsed)
+                    while (isRunning) {
+                        elapsed += interval
+                        update(elapsed)
+                    }
                 }, 0)
             },
             stop: () => (isRunning = false),
+            now: () => elapsed,
         }
     }
 
+    return driver
+}
+
 export function animateSync(
-    animation: Animation<number | string>,
+    animation: KeyframeGenerator<string | number>,
     timeStep = 200,
     round = true
 ) {

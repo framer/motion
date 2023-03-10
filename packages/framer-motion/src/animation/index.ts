@@ -5,13 +5,13 @@ import { instantAnimationState } from "../utils/use-instant-transition-state"
 import type { MotionValue, StartAnimation } from "../value"
 import { createAcceleratedAnimation } from "./waapi/create-accelerated-animation"
 import { createInstantAnimation } from "./create-instant-animation"
-import { animateValue } from "./legacy-popmotion"
-import { inertia } from "./legacy-popmotion/inertia"
 import { AnimationOptions } from "./types"
 import { getDefaultTransition } from "./utils/default-transitions"
 import { isAnimatable } from "./utils/is-animatable"
 import { getKeyframes } from "./utils/keyframes"
 import { getValueTransition, isTransitionDefined } from "./utils/transitions"
+import { animateValue } from "./js"
+import { AnimationPlaybackControls } from "./types"
 
 export const createMotionValueAnimation = (
     valueName: string,
@@ -19,7 +19,7 @@ export const createMotionValueAnimation = (
     target: ResolvedValueTarget,
     transition: Transition & { elapsed?: number } = {}
 ): StartAnimation => {
-    return (onComplete: VoidFunction) => {
+    return (onComplete: VoidFunction): AnimationPlaybackControls => {
         const valueTransition = getValueTransition(transition, valueName) || {}
 
         /**
@@ -62,7 +62,7 @@ export const createMotionValueAnimation = (
             keyframes,
             velocity: value.getVelocity(),
             ...valueTransition,
-            elapsed,
+            delay: -elapsed,
             onUpdate: (v) => {
                 value.set(v)
                 valueTransition.onUpdate && valueTransition.onUpdate(v)
@@ -84,12 +84,6 @@ export const createMotionValueAnimation = (
              * or this is simply defined as an instant transition, return an instant transition.
              */
             return createInstantAnimation(options)
-        } else if (valueTransition.type === "inertia") {
-            /**
-             * If this is an inertia animation, we currently don't support pre-generating
-             * keyframes for this as such it must always run on the main thread.
-             */
-            return inertia(options)
         }
 
         /**

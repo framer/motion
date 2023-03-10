@@ -3,8 +3,8 @@ import * as React from "react"
 import { useSpring } from "../use-spring"
 import { useMotionValue } from "../use-motion-value"
 import { motionValue, MotionValue } from ".."
-import { syncDriver } from "../../animation/legacy-popmotion/__tests__/utils"
 import { motion } from "../../"
+import { syncDriver } from "../../animation/js/__tests__/utils"
 
 describe("useSpring", () => {
     test("can create a motion value from a number", async () => {

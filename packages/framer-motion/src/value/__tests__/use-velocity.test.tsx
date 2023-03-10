@@ -4,8 +4,8 @@ import { useVelocity } from "../use-velocity"
 import { useMotionValue } from "../use-motion-value"
 import { animate } from "../../animation/animate"
 import { sync } from "../../frameloop"
-import { pipe } from "../../utils/pipe"
 import { frameData } from "../../frameloop/data"
+import { useMotionValueEvent } from "../../utils/use-motion-value-event"
 
 const setFrameData = (interval: number, time: number) => {
     frameData.timestamp = time
@@ -16,19 +16,21 @@ const syncDriver =
     (interval = 10) =>
     (update: (v: number) => void) => {
         let isRunning = true
+        let elapsed = 0
+
         return {
             start: () => {
-                let time = 0
                 setTimeout(() => {
-                    update(0)
+                    update(elapsed)
                     while (isRunning) {
-                        time += interval
-                        setFrameData(interval, time)
-                        update(interval)
+                        elapsed += interval
+                        setFrameData(interval, elapsed)
+                        update(elapsed)
                     }
                 }, 0)
             },
             stop: () => (isRunning = false),
+            now: () => elapsed,
         }
     }
 
@@ -44,19 +46,17 @@ describe("useVelocity", () => {
                 const xVelocity = useVelocity(x)
                 const xAcceleration = useVelocity(xVelocity)
 
-                React.useEffect(() => {
-                    const unsubscribe = pipe(
-                        x.on("change", (v) => {
-                            output.push(Math.round(v))
-                        }),
-                        xVelocity.on("change", (v) => {
-                            outputVelocity.push(Math.round(v))
-                        }),
-                        xAcceleration.on("change", (v) => {
-                            outputAcceleration.push(Math.round(v))
-                        })
-                    )
+                useMotionValueEvent(x, "change", (v) =>
+                    output.push(Math.round(v))
+                )
+                useMotionValueEvent(xVelocity, "change", (v) =>
+                    outputVelocity.push(Math.round(v))
+                )
+                useMotionValueEvent(xAcceleration, "change", (v) =>
+                    outputAcceleration.push(Math.round(v))
+                )
 
+                React.useEffect(() => {
                     const animation = animate(x, 1000, {
                         duration: 0.1,
                         ease: "easeInOut",
@@ -86,7 +86,6 @@ describe("useVelocity", () => {
                     } as any)
 
                     return () => {
-                        unsubscribe()
                         animation.stop()
                     }
                 }, [])

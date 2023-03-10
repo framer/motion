@@ -1,15 +1,9 @@
 import { createMotionValueAnimation } from "."
-import { Spring, Tween } from "../types"
+import { Transition } from "../types"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
-
-/**
- * @public
- */
-export interface AnimationPlaybackControls {
-    currentTime?: number | null
-    stop: () => void
-}
+import { GroupPlaybackControls } from "./GroupPlaybackControls"
+import { AnimationPlaybackControls } from "./types"
 
 /**
  * @public
@@ -21,15 +15,6 @@ export interface AnimationPlaybackLifecycles<V> {
     onRepeat?: () => void
     onStop?: () => void
 }
-
-/**
- * @public
- */
-export type AnimationOptions<V> = (Tween | Spring) &
-    AnimationPlaybackLifecycles<V> & {
-        delay?: number
-        type?: "tween" | "spring"
-    }
 
 /**
  * Animate a single value or a `MotionValue`.
@@ -61,12 +46,10 @@ export type AnimationOptions<V> = (Tween | Spring) &
 export function animate<V>(
     from: MotionValue<V> | V,
     to: V | V[],
-    transition: AnimationOptions<V> = {}
+    transition: Transition & AnimationPlaybackLifecycles<V> = {}
 ): AnimationPlaybackControls {
     const value = isMotionValue(from) ? from : motionValue(from)
     value.start(createMotionValueAnimation("", value, to as any, transition))
 
-    return {
-        stop: () => value.stop(),
-    }
+    return value.animation || new GroupPlaybackControls([])
 }

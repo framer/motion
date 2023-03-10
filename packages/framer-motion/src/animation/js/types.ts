@@ -1,17 +1,3 @@
-export interface Animation<V> {
-    next: (t: number) => {
-        value: V
-        done: boolean
-    }
-    // TODO Change this mutative approach for a factory
-    flipTarget: () => void
-}
-
-export interface AnimationState<V> {
-    value: V
-    done: boolean
-}
-
 /**
  * An update function. It accepts a timestamp used to advance the animation.
  */
@@ -24,5 +10,7 @@ type Update = (timestamp: number) => void
 export interface DriverControls {
     start: () => void
     stop: () => void
+    now: () => number
 }
+
 export type Driver = (update: Update) => DriverControls

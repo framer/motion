@@ -1,9 +1,9 @@
-import { keyframes, defaultEasing } from "../keyframes"
 import { noop } from "../../../utils/noop"
-import { animateSync } from "./utils"
 import { easeInOut } from "../../../easing/ease"
 import { defaultOffset } from "../../../utils/offsets/default"
 import { convertOffsetToTimes } from "../../../utils/offsets/time"
+import { defaultEasing, keyframes } from "../keyframes"
+import { animateSync } from "../../js/__tests__/utils"
 
 const linear = noop
 
