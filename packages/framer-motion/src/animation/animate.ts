@@ -51,5 +51,5 @@ export function animate<V>(
     const value = isMotionValue(from) ? from : motionValue(from)
     value.start(createMotionValueAnimation("", value, to as any, transition))
 
-    return value.animation || new GroupPlaybackControls([value.animation])
+    return value.animation || new GroupPlaybackControls([])
 }

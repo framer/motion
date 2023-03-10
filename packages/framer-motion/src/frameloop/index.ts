@@ -45,7 +45,7 @@ const processFrame = (timestamp: number) => {
     runNextFrame = false
 
     frameData.delta = useDefaultElapsed
-        ? 16.666
+        ? 1000 / 60
         : Math.max(Math.min(timestamp - frameData.timestamp, maxElapsed), 1)
 
     frameData.timestamp = timestamp
