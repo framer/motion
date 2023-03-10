@@ -9,6 +9,9 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
         ) as AnimationPlaybackControls[]
     }
 
+    /**
+     * TODO: Filter out cancelled or stopped animations before returning
+     */
     get currentTime() {
         return this.animations[0].currentTime
     }
