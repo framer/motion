@@ -979,12 +979,14 @@ describe("animate prop as variant", () => {
 
         await nextFrame()
         await nextFrame()
+        await nextFrame()
 
         expect(inner).toHaveStyle("background-color: rgb(150,150,0)")
 
         pointerDown(getByTestId("variant-trigger"))
         pointerUp(getByTestId("variant-trigger"))
 
+        await nextFrame()
         await nextFrame()
         await nextFrame()
 
