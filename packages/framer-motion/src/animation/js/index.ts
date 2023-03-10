@@ -226,6 +226,8 @@ export function animateValue<V = number>({
         animationDriver = driver(tick)
         const now = animationDriver.now()
 
+        onPlay && onPlay()
+
         playState = "running"
 
         if (holdTime !== null) {

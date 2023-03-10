@@ -37,6 +37,16 @@ describe("animate", () => {
         )
     })
 
+    test("Fires onPlay", async () => {
+        return new Promise<void>((resolve) => {
+            animateValue({
+                keyframes: [0, 1],
+                duration: 0.001,
+                onPlay: resolve,
+            })
+        })
+    })
+
     test("Correctly stops an animation", async () => {
         const output: number[] = []
 
