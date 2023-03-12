@@ -45,6 +45,7 @@ import { Process } from "../../frameloop/types"
 import { ProjectionFrame } from "../../debug/types"
 import { record } from "../../debug/record"
 import { AnimationOptions } from "../../animation/types"
+import { frameData } from "../../dom-entry"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -985,7 +986,7 @@ export function createProjectionNode<I>({
             this.target = undefined
             this.isLayoutDirty = false
         }
-
+        resolvedTargetDeltaAt: number
         /**
          * Frame calculations
          */
@@ -1020,6 +1021,8 @@ export function createProjectionNode<I>({
              * If we have no layout, we can't perform projection, so early return
              */
             if (!this.layout || !(layout || layoutId)) return
+
+            this.resolvedTargetDeltaAt = frameData.timestamp
 
             /**
              * If we don't have a targetDelta but do have a layout, we can attempt to resolve
@@ -1066,7 +1069,9 @@ export function createProjectionNode<I>({
                 this.relativeTarget &&
                 this.relativeTargetOrigin &&
                 this.relativeParent &&
-                this.relativeParent.target
+                this.relativeParent.target &&
+                (this.relativeParent as any).resolvedTargetDeltaAt ===
+                    frameData.timestamp
             ) {
                 calcRelativeBox(
                     this.target,
