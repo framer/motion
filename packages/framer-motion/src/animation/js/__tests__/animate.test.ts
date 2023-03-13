@@ -1,5 +1,6 @@
 import { animateValue } from "../"
 import { easeOut } from "../../../easing/ease"
+import { nextFrame } from "../../../gestures/__tests__/utils"
 import { noop } from "../../../utils/noop"
 import { AnimationOptions } from "../../types"
 import { syncDriver } from "./utils"
@@ -864,5 +865,134 @@ describe("animate", () => {
         })
 
         expect(output).toEqual([0, 20, 40, 60, 40, 60, 80, 100])
+    })
+
+    test("Correctly pauses", async () => {
+        const driver = syncDriver(20)
+        const output: number[] = []
+
+        await new Promise<void>((resolve) => {
+            const animation = animateValue({
+                keyframes: [0, 100],
+                duration: 100,
+                ease: "linear",
+                onUpdate: (v) => {
+                    output.push(Math.round(v))
+                    if (output.length === 4) {
+                        animation.pause()
+                    } else if (output.length === 10) {
+                        animation.stop()
+                    }
+                },
+                onStop: () => resolve(),
+                driver,
+            })
+        })
+
+        expect(output).toEqual([0, 20, 40, 60, 60, 60, 60, 60, 60, 60])
+    })
+
+    test("Correctly resumes", async () => {
+        const driver = syncDriver(20)
+        const output: number[] = []
+
+        await new Promise<void>((resolve) => {
+            const animation = animateValue({
+                keyframes: [0, 100],
+                duration: 100,
+                ease: "linear",
+                onUpdate: (v) => {
+                    output.push(Math.round(v))
+                    if (output.length === 2) {
+                        animation.pause()
+                    } else if (output.length === 6) {
+                        animation.play()
+                    } else if (output.length === 9) {
+                        animation.stop()
+                    }
+                },
+                onStop: () => resolve(),
+                driver,
+            })
+        })
+
+        expect(output).toEqual([0, 20, 20, 20, 20, 20, 40, 60, 80])
+    })
+
+    test("Correctly resumes after currentTime is set", async () => {
+        const driver = syncDriver(20)
+        const output: number[] = []
+
+        await new Promise<void>((resolve) => {
+            const animation = animateValue({
+                keyframes: [0, 100],
+                duration: 100,
+                ease: "linear",
+                onUpdate: (v) => {
+                    output.push(Math.round(v))
+                    if (output.length === 2) {
+                        animation.pause()
+                    } else if (output.length === 6) {
+                        animation.currentTime = 0.05
+                        animation.play()
+                    } else if (output.length === 8) {
+                        animation.stop()
+                    }
+                },
+                onStop: () => resolve(),
+                driver,
+            })
+        })
+
+        expect(output).toEqual([0, 20, 20, 20, 20, 20, 70, 90])
+    })
+
+    test("Correctly sets currentTime during pause", async () => {
+        const driver = syncDriver(20)
+        const output: number[] = []
+
+        await new Promise<void>((resolve) => {
+            const animation = animateValue({
+                keyframes: [0, 100],
+                duration: 100,
+                ease: "linear",
+                onUpdate: (v) => {
+                    output.push(Math.round(v))
+
+                    if (output.length === 2) {
+                        animation.pause()
+                        animation.currentTime = 0.05
+                    } else if (output.length === 8) {
+                        animation.stop()
+                    }
+                },
+                onStop: () => resolve(),
+                driver,
+            })
+        })
+
+        expect(output).toEqual([0, 20, 50, 50, 50, 50, 50, 50])
+    })
+
+    test(".play() restarts the animation if already finished", async () => {
+        const driver = syncDriver(20)
+        const output: number[] = []
+        const animation = animateValue({
+            keyframes: [0, 100],
+            duration: 100,
+            ease: "linear",
+            onUpdate: (v) => {
+                output.push(Math.round(v))
+            },
+            driver,
+        })
+
+        await nextFrame()
+
+        animation.play()
+
+        await nextFrame()
+
+        expect(output).toEqual([0, 20, 40, 60, 80, 100, 0, 20, 40, 60, 80, 100])
     })
 })

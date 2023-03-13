@@ -9,6 +9,8 @@ import { Driver } from "./js/types"
 export interface AnimationPlaybackControls {
     currentTime: number
     stop: () => void
+    play: () => void
+    pause: () => void
 }
 
 export interface VelocityOptions {

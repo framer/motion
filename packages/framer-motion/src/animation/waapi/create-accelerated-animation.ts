@@ -133,6 +133,8 @@ export function createAcceleratedAnimation(
         set currentTime(newTime: number) {
             animation.currentTime = secondsToMilliseconds(newTime)
         },
+        play: () => animation.play(),
+        pause: () => animation.pause(),
         stop: () => {
             /**
              * WAAPI doesn't natively have any interruption capabilities.

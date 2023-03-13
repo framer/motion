@@ -61,7 +61,7 @@ export function animateValue<V = number>({
     onUpdate,
     ...options
 }: AnimationOptions<V>): MainThreadAnimationControls<V> {
-    let animationDriver: DriverControls
+    let animationDriver: DriverControls | undefined
 
     const generatorFactory = types[type] || keyframesGeneratorFactory
 
@@ -209,6 +209,7 @@ export function animateValue<V = number>({
         if (calculatedDuration !== null) {
             done = currentTime >= totalDuration
         }
+
         const isAnimationFinished =
             holdTime === null &&
             (playState === "finished" || (playState === "running" && done))
@@ -223,7 +224,8 @@ export function animateValue<V = number>({
     }
 
     const play = () => {
-        animationDriver = driver(tick)
+        if (!animationDriver) animationDriver = driver(tick)
+
         const now = animationDriver.now()
 
         onPlay && onPlay()
@@ -252,16 +254,22 @@ export function animateValue<V = number>({
             return millisecondsToSeconds(currentTime)
         },
         set currentTime(newTime: number) {
+            const timeInMs = secondsToMilliseconds(newTime)
             if (holdTime !== null || !animationDriver) {
-                holdTime = 0
+                holdTime = timeInMs
             } else {
-                startTime =
-                    animationDriver.now() - secondsToMilliseconds(newTime)
+                startTime = animationDriver.now() - timeInMs
             }
+        },
+        play,
+        pause: () => {
+            playState = "paused"
+            holdTime = currentTime
         },
         stop: () => {
             onStop && onStop()
             animationDriver && animationDriver.stop()
+            animationDriver = undefined
         },
         sample: (elapsed: number) => {
             startTime = 0
