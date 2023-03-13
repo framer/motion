@@ -45,6 +45,7 @@ import { Process } from "../../frameloop/types"
 import { ProjectionFrame } from "../../debug/types"
 import { record } from "../../debug/record"
 import { AnimationOptions } from "../../animation/types"
+import { frameData } from "../../dom-entry"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -989,7 +990,8 @@ export function createProjectionNode<I>({
         /**
          * Frame calculations
          */
-        resolveTargetDelta() {
+        resolvedRelativeTargetAt: number
+        resolveTargetDelta(forceRecalculation = false) {
             /**
              * Once the dirty status of nodes has been spread through the tree, we also
              * need to check if we have a shared node of a different depth that has itself
@@ -1007,11 +1009,13 @@ export function createProjectionNode<I>({
              * need to check whether any nodes have changed transform.
              */
             const canSkip = !(
+                forceRecalculation ||
                 (isShared && this.isSharedProjectionDirty) ||
                 this.isProjectionDirty ||
                 this.parent?.isProjectionDirty ||
                 this.attemptToResolveRelativeTarget
             )
+
             if (canSkip) return
 
             const { layout, layoutId } = this.options
@@ -1020,6 +1024,8 @@ export function createProjectionNode<I>({
              * If we have no layout, we can't perform projection, so early return
              */
             if (!this.layout || !(layout || layoutId)) return
+
+            this.resolvedRelativeTargetAt = frameData.timestamp
 
             /**
              * If we don't have a targetDelta but do have a layout, we can attempt to resolve
@@ -1068,6 +1074,19 @@ export function createProjectionNode<I>({
                 this.relativeParent &&
                 this.relativeParent.target
             ) {
+                /**
+                 * If the parent target isn't up-to-date, force it to update.
+                 * This is an unfortunate de-optimisation as it means any updating relative
+                 * projection will cause all the relative parents to recalculate back
+                 * up the tree.
+                 */
+                if (
+                    this.relativeParent.resolvedRelativeTargetAt !==
+                    frameData.timestamp
+                ) {
+                    this.relativeParent.resolveTargetDelta(true)
+                }
+
                 calcRelativeBox(
                     this.target,
                     this.relativeTarget,
@@ -1178,6 +1197,14 @@ export function createProjectionNode<I>({
                 isShared &&
                 (this.isSharedProjectionDirty || this.isTransformDirty)
             ) {
+                canSkip = false
+            }
+
+            /**
+             * If we have resolved the target this frame we must recalculate the
+             * projection to ensure it visually represents the internal calculations.
+             */
+            if (this.resolvedRelativeTargetAt === frameData.timestamp) {
                 canSkip = false
             }
 
