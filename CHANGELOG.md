@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.2.5] 2023-03-13
+
+### Fixed
+
+-   Adding de-opt to projection tree when relative target has changed.
+
 ## [10.2.4] 2023-03-10
 
 ### Changed
