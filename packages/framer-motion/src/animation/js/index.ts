@@ -64,6 +64,11 @@ export function animateValue<V = number>({
     let resolveFinishedPromise: VoidFunction
     let currentFinishedPromise: Promise<void>
 
+    /**
+     * Create a new finished Promise every time we entered the
+     * finished state and resolve the old Promise. This is
+     * WAAPI-compatible behaviour.
+     */
     const updateFinishedPromise = () => {
         currentFinishedPromise = new Promise((resolve) => {
             resolveFinishedPromise = resolve
