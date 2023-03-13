@@ -61,6 +61,17 @@ export function animateValue<V = number>({
     onUpdate,
     ...options
 }: AnimationOptions<V>): MainThreadAnimationControls<V> {
+    let resolveFinishedPromise: VoidFunction
+    let currentFinishedPromise: Promise<void>
+
+    const updateFinishedPromise = () => {
+        currentFinishedPromise = new Promise((resolve) => {
+            resolveFinishedPromise = resolve
+        })
+    }
+
+    updateFinishedPromise()
+
     let animationDriver: DriverControls | undefined
 
     const generatorFactory = types[type] || keyframesGeneratorFactory
@@ -215,12 +226,18 @@ export function animateValue<V = number>({
             (playState === "finished" || (playState === "running" && done))
 
         if (isAnimationFinished) {
-            playState = "finished"
-            onComplete && onComplete()
-            animationDriver && animationDriver.stop()
+            finish()
         }
 
         return state
+    }
+
+    const finish = () => {
+        animationDriver && animationDriver.stop()
+        playState = "finished"
+        onComplete && onComplete()
+        resolveFinishedPromise()
+        updateFinishedPromise()
     }
 
     const play = () => {
@@ -250,6 +267,9 @@ export function animateValue<V = number>({
     }
 
     const controls = {
+        then(resolve: VoidFunction, reject?: VoidFunction) {
+            return currentFinishedPromise.then(resolve, reject)
+        },
         get currentTime() {
             return millisecondsToSeconds(currentTime)
         },

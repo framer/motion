@@ -2,7 +2,7 @@ import { EasingDefinition } from "../../easing/types"
 import { sync } from "../../frameloop"
 import type { VisualElement } from "../../render/VisualElement"
 import type { MotionValue } from "../../value"
-import { AnimationOptions } from "../types"
+import { AnimationOptions, AnimationPlaybackControls } from "../types"
 import { animateStyle } from "./"
 import { isWaapiSupportedEasing } from "./easing"
 import { supports } from "./supports"
@@ -49,7 +49,7 @@ export function createAcceleratedAnimation(
     value: MotionValue,
     valueName: string,
     { onUpdate, onComplete, ...options }: AnimationOptions
-) {
+): AnimationPlaybackControls | false {
     const canAccelerateAnimation =
         supports.waapi() &&
         acceleratedValues.has(valueName) &&
@@ -127,6 +127,9 @@ export function createAcceleratedAnimation(
      * Animation interrupt callback.
      */
     return {
+        then(resolve: VoidFunction, reject?: VoidFunction) {
+            return animation.finished.then(resolve, reject)
+        },
         get currentTime() {
             return millisecondsToSeconds(animation.currentTime || 0)
         },

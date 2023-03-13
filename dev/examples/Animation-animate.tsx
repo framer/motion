@@ -26,8 +26,9 @@ export const App = () => {
         const controls = animate(x, target, {
             ...transition,
             onUpdate: (v) => console.log(v),
-            onComplete: () => console.log("complete"),
         })
+
+        controls.then(() => console.log("complete"))
 
         return () => controls.stop()
     })

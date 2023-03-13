@@ -11,6 +11,7 @@ export interface AnimationPlaybackControls {
     stop: () => void
     play: () => void
     pause: () => void
+    then: (onResolve: VoidFunction, onReject?: VoidFunction) => Promise<void>
 }
 
 export interface VelocityOptions {
