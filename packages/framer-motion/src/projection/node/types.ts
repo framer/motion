@@ -66,6 +66,7 @@ export interface IProjectionNode<I = unknown> {
     isProjectionDirty: boolean
     isSharedProjectionDirty: boolean
     isTransformDirty: boolean
+    resolvedRelativeTargetAt?: number
     shouldResetTransform: boolean
     prevTransformTemplateValue: string | undefined
     isUpdateBlocked(): boolean
@@ -102,7 +103,7 @@ export interface IProjectionNode<I = unknown> {
     resetTransform(): void
     resetRotation(): void
     applyTransform(box: Box, transformOnly?: boolean): Box
-    resolveTargetDelta(): void
+    resolveTargetDelta(force?: boolean): void
     calcProjection(): void
     getProjectionStyles(styles?: MotionStyle): MotionStyle | undefined
     clearMeasurements(): void

@@ -1,0 +1,144 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #parent {
+                position: relative;
+                width: 200px;
+                height: 200px;
+                background-color: #00cc88;
+                display: flex;
+                align-items: flex-start;
+                justify-content: flex-start;
+            }
+
+            #mid {
+                width: 100px;
+                height: 100px;
+                background-color: white;
+                display: flex;
+                align-items: flex-start;
+                justify-content: flex-start;
+            }
+
+            #parent.b {
+                top: 100px;
+                left: 100px;
+            }
+
+            #child {
+                width: 80px;
+                height: 80px;
+                background-color: #0077ff;
+            }
+
+            #grandchild {
+                width: 20px;
+                height: 20px;
+                background-color: black;
+                position: relative;
+            }
+
+            .b #grandchild {
+                top: 1px;
+                left: 1px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="parent">
+            <div id="mid">
+                <div id="child"><div id="grandchild"></div></div>
+            </div>
+        </div>
+
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { frameData } = window.Projection
+            const { createNode, relativeEase } = window.Animate
+            const { matchViewportBox } = window.Assert
+
+            const parent = document.getElementById("parent")
+            const mid = document.getElementById("mid")
+            const child = document.getElementById("child")
+            const grandchild = document.getElementById("grandchild")
+
+            const childOrigin = child.getBoundingClientRect()
+
+            let prevTimestamp = 0
+            let count = 0
+            const frameEasing = (t) => {
+                // Increment ease if new frame
+                if (prevTimestamp !== frameData.timestamp) {
+                    count++
+                }
+
+                prevTimestamp = frameData.timestamp
+
+                return count < 2 ? t : 0.5
+            }
+
+            const parentProjection = createNode(
+                parent,
+                undefined,
+                {},
+                { duration: 200, ease: frameEasing }
+            )
+            const midProjection = createNode(
+                mid,
+                parentProjection,
+                {},
+                { duration: 200, ease: frameEasing }
+            )
+            const childProjection = createNode(
+                child,
+                midProjection,
+                {},
+                { duration: 200, ease: frameEasing }
+            )
+            const grandchildProjection = createNode(
+                grandchild,
+                childProjection,
+                {},
+                { duration: 200, ease: frameEasing }
+            )
+
+            parentProjection.willUpdate()
+            midProjection.willUpdate()
+            childProjection.willUpdate()
+            grandchildProjection.willUpdate()
+
+            parent.classList.add("b")
+
+            parentProjection.root.didUpdate()
+
+            sync.postRender(() => {
+                sync.postRender(() => {
+                    matchViewportBox(
+                        grandchild,
+                        {
+                            bottom: 71,
+                            height: 20,
+                            left: 51,
+                            right: 71,
+                            top: 51,
+                            width: 20,
+                        },
+                        2
+                    )
+                })
+            })
+        </script>
+    </body>
+</html>

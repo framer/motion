@@ -6,9 +6,10 @@ export { calcBoxDelta } from "./geometry/delta-calc"
  * For debugging purposes
  */
 import { sync } from "../frameloop"
+import { frameData } from "../frameloop/data"
 import { mix } from "../utils/mix"
 import { animateValue } from "../animation/js"
-export { sync, animateValue as animate, mix }
+export { sync, animateValue as animate, mix, frameData }
 export { buildTransform } from "../render/html/utils/build-transform"
 export { addScaleCorrector } from "./styles/scale-correction"
 export { correctBorderRadius } from "./styles/scale-border-radius"
