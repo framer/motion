@@ -6,6 +6,8 @@ import { animate } from "../animate"
 import { useMotionValue } from "../../value/use-motion-value"
 import { motionValue, MotionValue } from "../../value"
 
+const duration = 0.001
+
 describe("animate", () => {
     test("correctly animates MotionValues", async () => {
         const promise = new Promise<[MotionValue, Element]>((resolve) => {
@@ -107,5 +109,63 @@ describe("animate", () => {
         animate(motionValue("#fff"), "#000")
         animate(motionValue("#fff"), [null, "#000"])
         animate(motionValue("#fff"), ["#fff", "#000"])
+    })
+
+    test("Applies target keyframe when animation has finished", async () => {
+        const div = document.createElement("div")
+        const animation = animate(
+            div,
+            { opacity: 0.6 },
+            { duration, x: {}, "--css-var": {} }
+        )
+        await animation.then(() => {
+            expect(div).toHaveStyle("opacity: 0.6")
+        })
+    })
+
+    test("Works with multiple elements", async () => {
+        const div = document.createElement("div")
+        const div2 = document.createElement("div")
+        const animation = animate(
+            [div, div2],
+            { opacity: 0.6 },
+            { duration, x: {}, "--css-var": {} }
+        )
+        await animation.then(() => {
+            expect(div).toHaveStyle("opacity: 0.6")
+            expect(div2).toHaveStyle("opacity: 0.6")
+        })
+    })
+
+    test.only("Applies final target keyframe when animation has finished", async () => {
+        const div = document.createElement("div")
+        const animation = animate(div, { opacity: [0.2, 0.5] }, { duration })
+        await animation.then(() => {
+            expect(div).toHaveStyle("opacity: 0.5")
+        })
+    })
+
+    test("time sets and gets time", async () => {
+        const div = document.createElement("div")
+        const animation = animate(div, { opacity: 0.5 }, { duration: 10 })
+
+        expect(animation.time).toBe(0)
+        animation.time = 5
+        expect(animation.time).toBe(5)
+    })
+
+    test("time can be set to duration", async () => {
+        const div = document.createElement("div")
+        div.style.opacity = "0"
+        const animation = animate(div, { opacity: 0.5 }, { duration: 1 })
+        animation.pause()
+        animation.time = 1
+
+        return new Promise<void>((resolve) => {
+            setTimeout(() => {
+                expect(div).toHaveStyle("opacity: 0.5")
+                resolve()
+            }, 50)
+        })
     })
 })
