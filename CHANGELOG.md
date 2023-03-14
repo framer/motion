@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.3.0] 2023-03-14
+
+### Added
+
+-   `time`, `play()`, `pause()` and `then()` to animations created with `animate()`.
+
 ## [10.2.5] 2023-03-13
 
 ### Fixed
