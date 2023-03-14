@@ -21,8 +21,8 @@ export function animateVariant(
      * Otherwise, we resolve a Promise immediately for a composable no-op.
      */
 
-    const getAnimation = resolved
-        ? () => animateTarget(visualElement, resolved, options)
+    const getAnimation: () => Promise<any> = resolved
+        ? () => Promise.all(animateTarget(visualElement, resolved, options))
         : () => Promise.resolve()
 
     /**

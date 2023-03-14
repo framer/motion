@@ -11,8 +11,38 @@ import {
     DOMKeyframesDefinition,
     ElementOrSelector,
 } from "./types"
-import { getValueOptions } from "./utils/get-value-options"
 import { isDOMKeyframes } from "./utils/is-dom-keyframes"
+import { animateTarget } from "./interfaces/visual-element-target"
+import { isSVGElement } from "../render/dom/utils/is-svg-element"
+import { SVGVisualElement } from "../render/svg/SVGVisualElement"
+import { HTMLVisualElement } from "../render/html/HTMLVisualElement"
+
+function createElementVisualElement(element: HTMLElement | SVGElement) {
+    const options = {
+        presenceContext: null,
+        props: {},
+        visualState: {
+            renderState: {
+                transform: {},
+                transformOrigin: {},
+                style: {},
+                vars: {},
+                attrs: {},
+            },
+            latestValues: {},
+        },
+    }
+    const node = isSVGElement(element)
+        ? new SVGVisualElement(options, {
+              enableHardwareAcceleration: false,
+          })
+        : new HTMLVisualElement(options, {
+              enableHardwareAcceleration: true,
+          })
+
+    node.mount(element as any)
+    visualElementStore.set(element, node)
+}
 
 function animateSingleValue<V>(
     value: MotionValue<V> | V,
@@ -36,7 +66,6 @@ function animateElements(
     const numElements = elements.length
 
     invariant(Boolean(numElements), "No valid element provided.")
-    invariant(Boolean(keyframes), "No keyframes defined.")
 
     const animations: AnimationPlaybackControls[] = []
 
@@ -47,32 +76,24 @@ function animateElements(
          * Check each element for an associated VisualElement. If none exists,
          * we need to create one.
          */
-        // if (!visualElementStore.has(element)) {
-        //     const options = {
-        //         presenceContext : null,
-        //         props: {},
-        //         visualState:
-        //     }
-        //     const node = isSVGElement(element) ? new SVGVisualElement(options, { enableHardwareAcceleration: true }) : new HTMLVisualElement(options, { enableHardwareAcceleration: true })
-        //     visualElementStore.set(element, )
-        // }
+        if (!visualElementStore.has(element)) {
+            /**
+             * TODO: We only need render-specific parts of the VisualElement.
+             * With some additional work the size of the animate() function
+             * could be reduced before this functionality publicised.
+             */
+            createElementVisualElement(element as HTMLElement | SVGElement)
+        }
 
         const visualElement = visualElementStore.get(element)!
 
-        /**
-         * Loop over every value defined in keyframes and make a new animation
-         * for this element/value combination.
-         */
-        for (const key in keyframes) {
-            const valueOptions = getValueOptions(options, key)
-            const motionValue = visualElement.getValue(key)
-
-            // TODO: Loop over options and resolve based on element index
-
-            animations.push(
-                animateSingleValue(motionValue, keyframes[key], valueOptions)
+        animations.push(
+            ...animateTarget(
+                visualElement,
+                { ...keyframes, transition: options } as any,
+                {}
             )
-        }
+        )
     }
 
     return new GroupPlaybackControls(animations)
