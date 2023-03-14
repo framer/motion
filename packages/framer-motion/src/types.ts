@@ -6,22 +6,21 @@ import {
     SVGPathProperties,
 } from "./motion/types"
 
+export type GenericKeyframesTarget<V> = [null, ...V[]] | V[]
+
 /**
  * @public
  */
 export type ResolvedKeyframesTarget =
-    | [null, ...number[]]
-    | number[]
-    | [null, ...string[]]
-    | string[]
+    | GenericKeyframesTarget<number>
+    | GenericKeyframesTarget<string>
 
 /**
  * @public
  */
 export type KeyframesTarget =
     | ResolvedKeyframesTarget
-    | [null, ...CustomValueType[]]
-    | CustomValueType[]
+    | GenericKeyframesTarget<CustomValueType>
 
 /**
  * @public

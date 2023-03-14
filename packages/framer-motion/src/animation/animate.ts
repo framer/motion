@@ -16,6 +16,7 @@ import { animateTarget } from "./interfaces/visual-element-target"
 import { isSVGElement } from "../render/dom/utils/is-svg-element"
 import { SVGVisualElement } from "../render/svg/SVGVisualElement"
 import { HTMLVisualElement } from "../render/html/HTMLVisualElement"
+import { GenericKeyframesTarget } from "../types"
 
 function createElementVisualElement(element: HTMLElement | SVGElement) {
     const options = {
@@ -46,7 +47,7 @@ function createElementVisualElement(element: HTMLElement | SVGElement) {
 
 function animateSingleValue<V>(
     value: MotionValue<V> | V,
-    keyframes: V | V[],
+    keyframes: V | GenericKeyframesTarget<V>,
     options: AnimateOptions<V>
 ): AnimationPlaybackControls {
     const motionValue = isMotionValue(value) ? value : createMotionValue(value)
@@ -102,18 +103,28 @@ function animateElements(
 /**
  * Animate a single value
  */
-export function animate<V>(
-    from: V,
-    to: V | V[],
-    options: AnimateOptions<V>
+export function animate(
+    from: string,
+    to: string | GenericKeyframesTarget<string>,
+    options?: AnimateOptions<string>
+): AnimationPlaybackControls
+export function animate(
+    from: number,
+    to: number | GenericKeyframesTarget<number>,
+    options?: AnimateOptions<number>
 ): AnimationPlaybackControls
 /**
  * Animate a MotionValue
  */
-export function animate<V>(
-    value: MotionValue<V>,
-    keyframes: V | V[],
-    options: AnimateOptions<V>
+export function animate(
+    value: MotionValue<string>,
+    keyframes: string | GenericKeyframesTarget<string>,
+    options?: AnimateOptions<string>
+): AnimationPlaybackControls
+export function animate(
+    value: MotionValue<number>,
+    keyframes: number | GenericKeyframesTarget<number>,
+    options?: AnimateOptions<number>
 ): AnimationPlaybackControls
 /**
  * Animate DOM
@@ -121,11 +132,11 @@ export function animate<V>(
 export function animate<V>(
     value: ElementOrSelector,
     keyframes: DOMKeyframesDefinition,
-    options: AnimateOptions<V>
+    options?: AnimateOptions<V>
 ): AnimationPlaybackControls
 export function animate<V>(
     valueOrElement: ElementOrSelector | MotionValue<V> | V,
-    keyframes: DOMKeyframesDefinition | V | V[],
+    keyframes: DOMKeyframesDefinition | V | GenericKeyframesTarget<V>,
     options: AnimateOptions<V> = {}
 ): AnimationPlaybackControls {
     if (isDOMKeyframes(keyframes)) {
