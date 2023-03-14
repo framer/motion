@@ -9,6 +9,9 @@ function createTestAnimationControls(
         stop: () => {},
         play: () => {},
         pause: () => {},
+        then: (resolve: VoidFunction) => {
+            return Promise.resolve().then(resolve)
+        },
         ...partialControls,
     }
 }
@@ -85,5 +88,46 @@ describe("GroupPlaybackControls", () => {
 
         expect(a.pause).toBeCalledTimes(1)
         expect(b.pause).toBeCalledTimes(1)
+    })
+
+    test(".then() returns Promise", () => {
+        const controls = new GroupPlaybackControls([])
+        controls.then(() => {}).then(() => {})
+    })
+
+    test("Resolves if all promises are already resolved", async () => {
+        const aOnComplete = jest.fn()
+        const a: AnimationPlaybackControls = createTestAnimationControls({})
+
+        const bOnComplete = jest.fn()
+        const b: AnimationPlaybackControls = createTestAnimationControls({})
+
+        a.then(() => aOnComplete())
+        b.then(() => bOnComplete())
+
+        const controls = new GroupPlaybackControls([a, b])
+
+        await controls
+
+        expect(aOnComplete).toBeCalled()
+        expect(bOnComplete).toBeCalled()
+    })
+
+    test("Resolves when all promises are resolved", async () => {
+        const aOnComplete = jest.fn()
+        const a: AnimationPlaybackControls = createTestAnimationControls({})
+
+        const bOnComplete = jest.fn()
+        const b: AnimationPlaybackControls = createTestAnimationControls({})
+
+        a.then(() => aOnComplete())
+        b.then(() => bOnComplete())
+
+        const controls = new GroupPlaybackControls([a, b])
+
+        await controls
+
+        expect(aOnComplete).toBeCalled()
+        expect(bOnComplete).toBeCalled()
     })
 })

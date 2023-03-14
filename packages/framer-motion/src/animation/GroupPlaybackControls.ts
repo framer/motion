@@ -9,6 +9,10 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
         ) as AnimationPlaybackControls[]
     }
 
+    then(onResolve: VoidFunction, onReject?: VoidFunction) {
+        return Promise.all(this.animations).then(onResolve).catch(onReject)
+    }
+
     /**
      * TODO: Filter out cancelled or stopped animations before returning
      */
@@ -27,7 +31,10 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
     }
 
     private runAll(
-        methodName: keyof Omit<AnimationPlaybackControls, "currentTime">
+        methodName: keyof Omit<
+            AnimationPlaybackControls,
+            "currentTime" | "then"
+        >
     ) {
         this.animations.forEach((controls) => controls[methodName]())
     }

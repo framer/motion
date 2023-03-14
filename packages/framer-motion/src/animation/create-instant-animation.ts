@@ -18,6 +18,7 @@ export function createInstantAnimation<V>({
             play: noop<void>,
             pause: noop<void>,
             stop: noop<void>,
+            then: Promise.resolve,
         }
     }
 

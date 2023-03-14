@@ -995,4 +995,52 @@ describe("animate", () => {
 
         expect(output).toEqual([0, 20, 40, 60, 80, 100, 0, 20, 40, 60, 80, 100])
     })
+
+    test(".then() can be chained", async () => {
+        return new Promise(async (resolve) => {
+            const animation = animateValue({
+                keyframes: [0, 100],
+                duration: 100,
+                ease: "linear",
+            })
+
+            await animation.then(() => {}).then(resolve)
+        })
+    })
+
+    test(".then() correctly fires", async () => {
+        await animateValue({
+            keyframes: [0, 100],
+            duration: 100,
+            ease: "linear",
+            driver: syncDriver(20),
+        })
+    })
+
+    test(".then() correctly fires when animation already finished", async () => {
+        const animation = animateValue({
+            keyframes: [0, 100],
+            duration: 100,
+            ease: "linear",
+        })
+
+        return new Promise<void>((resolve) => {
+            animation.then(() => resolve())
+        })
+    })
+
+    test(".then() returns new Promise when animation finished", async () => {
+        const animation = animateValue({
+            keyframes: [0, 100],
+            duration: 100,
+            ease: "linear",
+        })
+
+        return new Promise<void>((resolve) => {
+            animation.then(() => {
+                animation.play()
+                animation.then(() => resolve())
+            })
+        })
+    })
 })
