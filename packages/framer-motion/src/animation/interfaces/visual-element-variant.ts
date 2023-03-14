@@ -20,7 +20,6 @@ export function animateVariant(
      * If we have a variant, create a callback that runs it as an animation.
      * Otherwise, we resolve a Promise immediately for a composable no-op.
      */
-
     const getAnimation: () => Promise<any> = resolved
         ? () => Promise.all(animateTarget(visualElement, resolved, options))
         : () => Promise.resolve()

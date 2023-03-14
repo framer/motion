@@ -25,6 +25,7 @@ export function animateVisualElement(
             typeof definition === "function"
                 ? resolveVariant(visualElement, definition, options.custom)
                 : definition
+
         animation = Promise.all(
             animateTarget(visualElement, resolvedDefinition, options)
         )

@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { motion } from "../.."
 import { animate } from "../animate"
 import { useMotionValue } from "../../value/use-motion-value"
-import { MotionValue } from "../../value"
+import { motionValue, MotionValue } from "../../value"
 
 describe("animate", () => {
     test("correctly animates MotionValues", async () => {
@@ -56,6 +56,7 @@ describe("animate", () => {
 
         expect(promise).resolves.toBe(200)
     })
+
     test("correctly hydrates keyframes null with current MotionValue", async () => {
         const promise = new Promise<number[]>((resolve) => {
             const output: number[] = []
@@ -81,5 +82,28 @@ describe("animate", () => {
         // The default would be to animate from 0 here so if theres no values
         // less than 50 the keyframes were correctly hydrated
         expect(incorrect.length).toBe(0)
+    })
+
+    test("Accepts all overloads", () => {
+        // Selectors
+        animate("div", { opacity: 0 })
+        animate("div", { opacity: 0 }, { duration: 2 })
+
+        // Elements
+        animate(document.createElement("div"), { opacity: 0 })
+        animate(document.createElement("div"), { opacity: 0 }, { duration: 2 })
+
+        // Values
+        animate(0, 100, { duration: 2 })
+        animate("#fff", "#000", { duration: 2 })
+        animate("#fff", ["#000"], { duration: 2 })
+
+        // MotionValues
+        animate(motionValue(0), 100)
+        animate(motionValue(0), [null, 100])
+        animate(motionValue(0), [0, 100])
+        animate(motionValue("#fff"), "#000")
+        animate(motionValue("#fff"), [null, "#000"])
+        animate(motionValue("#fff"), ["#fff", "#000"])
     })
 })
