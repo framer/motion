@@ -21,7 +21,15 @@ export function animateVariant(
      * Otherwise, we resolve a Promise immediately for a composable no-op.
      */
     const getAnimation: () => Promise<any> = resolved
-        ? () => Promise.all(animateTarget(visualElement, resolved, options))
+        ? () => {
+              console.log(
+                  "get animate target",
+                  animateTarget(visualElement, resolved, options)
+              )
+              return Promise.all(
+                  animateTarget(visualElement, resolved, options)
+              )
+          }
         : () => Promise.resolve()
 
     /**
@@ -36,7 +44,7 @@ export function animateVariant(
                       staggerChildren,
                       staggerDirection,
                   } = transition
-
+                  console.log("get children animations")
                   return animateChildren(
                       visualElement,
                       variant,
@@ -46,7 +54,10 @@ export function animateVariant(
                       options
                   )
               }
-            : () => Promise.resolve()
+            : () => {
+                  console.log("get immediate resolve")
+                  return Promise.resolve()
+              }
 
     /**
      * If the transition explicitly defines a "when" option, we need to resolve either
@@ -58,8 +69,15 @@ export function animateVariant(
             when === "beforeChildren"
                 ? [getAnimation, getChildAnimations]
                 : [getChildAnimations, getAnimation]
-
-        return first().then(last)
+        console.log(when, "orchestating")
+        return first()
+            .then(() => {
+                console.log("first complete")
+            })
+            .then(() => last())
+            .then(() => {
+                console.log("last complete")
+            })
     } else {
         return Promise.all([getAnimation(), getChildAnimations(options.delay)])
     }
@@ -94,6 +112,8 @@ function animateChildren(
                 }).then(() => child.notify("AnimationComplete", variant))
             )
         })
+
+    console.log(animations)
 
     return Promise.all(animations)
 }
