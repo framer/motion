@@ -8,6 +8,7 @@ import type { VisualElementAnimationOptions } from "./types"
 import { animateMotionValue } from "./motion-value"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { setTarget } from "../../render/utils/setters"
+import { AnimationPlaybackControls } from "../types"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
@@ -30,7 +31,7 @@ export function animateTarget(
     visualElement: VisualElement,
     definition: TargetAndTransition,
     { delay = 0, transitionOverride, type }: VisualElementAnimationOptions = {}
-): Promise<any> {
+): AnimationPlaybackControls[] {
     let {
         transition = visualElement.getDefaultTransition(),
         transitionEnd,
@@ -41,7 +42,7 @@ export function animateTarget(
 
     if (transitionOverride) transition = transitionOverride
 
-    const animations: Promise<any>[] = []
+    const animations: AnimationPlaybackControls[] = []
 
     const animationTypeState =
         type &&
@@ -81,7 +82,7 @@ export function animateTarget(
             }
         }
 
-        let animation = value.start(
+        value.start(
             animateMotionValue(
                 key,
                 value,
@@ -92,16 +93,21 @@ export function animateTarget(
             )
         )
 
+        const animation = value.animation!
+
         if (isWillChangeMotionValue(willChange)) {
             willChange.add(key)
-
-            animation = animation.then(() => willChange.remove(key))
+            animation.then(() => willChange.remove(key))
         }
 
         animations.push(animation)
     }
 
-    return Promise.all(animations).then(() => {
-        transitionEnd && setTarget(visualElement, transitionEnd)
-    })
+    if (transitionEnd) {
+        Promise.all(animations).then(() => {
+            transitionEnd && setTarget(visualElement, transitionEnd)
+        })
+    }
+
+    return animations
 }
