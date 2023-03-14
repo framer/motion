@@ -65,7 +65,7 @@ export function animateValue<V = number>({
     let currentFinishedPromise: Promise<void>
 
     /**
-     * Create a new finished Promise every time we entered the
+     * Create a new finished Promise every time we enter the
      * finished state and resolve the old Promise. This is
      * WAAPI-compatible behaviour.
      */
@@ -75,6 +75,7 @@ export function animateValue<V = number>({
         })
     }
 
+    // Create the first finished promise
     updateFinishedPromise()
 
     let animationDriver: DriverControls | undefined
