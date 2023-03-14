@@ -51,7 +51,7 @@ export {
     useAnimationControls,
 } from "./animation/hooks/use-animation"
 export { useAnimationFrame } from "./utils/use-animation-frame"
-export { animateVisualElement } from "./render/utils/animation"
+export { animateVisualElement } from "./animation/interfaces/visual-element"
 export {
     HoverHandlers,
     TapHandlers,

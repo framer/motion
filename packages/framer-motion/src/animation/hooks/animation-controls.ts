@@ -1,11 +1,12 @@
 import { invariant } from "../../utils/errors"
-import {
-    animateVisualElement,
-    stopAnimation,
-} from "../../render/utils/animation"
 import { setValues } from "../../render/utils/setters"
 import type { VisualElement } from "../../render/VisualElement"
 import { AnimationControls } from "../types"
+import { animateVisualElement } from "../interfaces/visual-element"
+
+function stopAnimation(visualElement: VisualElement) {
+    visualElement.values.forEach((value) => value.stop())
+}
 
 /**
  * @public

@@ -13,7 +13,7 @@ import { getValueTransition, isTransitionDefined } from "../utils/transitions"
 import { animateValue } from "../animators/js"
 import { AnimationPlaybackControls } from "../types"
 
-export const createMotionValueAnimation = (
+export const animateMotionValue = (
     valueName: string,
     value: MotionValue,
     target: ResolvedValueTarget,

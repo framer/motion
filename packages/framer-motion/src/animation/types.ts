@@ -2,6 +2,7 @@ import { TargetAndTransition, TargetResolver, Transition } from "../types"
 import type { VisualElement } from "../render/VisualElement"
 import { Easing } from "../easing/types"
 import { Driver } from "./animators/js/types"
+import { VariantLabels } from "../motion/types"
 
 export interface AnimationPlaybackLifecycles<V> {
     onUpdate?: (latest: V) => void
@@ -131,12 +132,8 @@ export interface AnimationOptions<V = any>
     autoplay?: boolean
 }
 
-/**
- * @public
- */
-export type ControlsAnimationDefinition =
-    | string
-    | string[]
+export type AnimationDefinition =
+    | VariantLabels
     | TargetAndTransition
     | TargetResolver
 
@@ -174,7 +171,7 @@ export interface AnimationControls {
      * @public
      */
     start(
-        definition: ControlsAnimationDefinition,
+        definition: AnimationDefinition,
         transitionOverride?: Transition
     ): Promise<any>
 
@@ -198,7 +195,7 @@ export interface AnimationControls {
      *
      * @public
      */
-    set(definition: ControlsAnimationDefinition): void
+    set(definition: AnimationDefinition): void
 
     /**
      * Stops animations on all linked components.

@@ -1,3 +1,4 @@
+import { AnimationDefinition } from "../../animation/types"
 import {
     Target,
     TargetAndTransition,
@@ -14,7 +15,6 @@ import { getAnimatableNone } from "../dom/value-types/animatable-none"
 import { findValueType } from "../dom/value-types/find"
 import { ResolvedValues } from "../types"
 import type { VisualElement } from "../VisualElement"
-import { AnimationDefinition } from "./animation"
 import { resolveVariant } from "./resolve-dynamic-variants"
 
 /**

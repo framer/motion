@@ -1,4 +1,4 @@
-import { createMotionValueAnimation } from "./interfaces/motion-value"
+import { animateMotionValue } from "./interfaces/motion-value"
 import { resolveElements } from "../render/dom/utils/resolve-element"
 import { visualElementStore } from "../render/store"
 import { invariant } from "../utils/errors"
@@ -21,7 +21,7 @@ function animateSingleValue<V>(
 ): AnimationPlaybackControls {
     const motionValue = isMotionValue(value) ? value : createMotionValue(value)
     motionValue.start(
-        createMotionValueAnimation("", motionValue, keyframes as any, options)
+        animateMotionValue("", motionValue, keyframes as any, options)
     )
 
     return motionValue.animation!
