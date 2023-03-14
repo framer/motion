@@ -1,4 +1,4 @@
-import { KeyframeGenerator } from "../../generators/types"
+import { KeyframeGenerator } from "../../../generators/types"
 
 export const syncDriver = (interval = 10) => {
     const driver = (update: (v: number) => void) => {

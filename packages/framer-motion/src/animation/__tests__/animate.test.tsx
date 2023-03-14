@@ -85,9 +85,11 @@ describe("animate", () => {
     })
 
     test("Accepts all overloads", () => {
-        // Selectors
-        animate("div", { opacity: 0 })
-        animate("div", { opacity: 0 }, { duration: 2 })
+        // Checking types only, these are expected to fail given the selector
+        expect(() => {
+            animate("div", { opacity: 0 })
+            animate("div", { opacity: 0 }, { duration: 2 })
+        }).toThrow()
 
         // Elements
         animate(document.createElement("div"), { opacity: 0 })
