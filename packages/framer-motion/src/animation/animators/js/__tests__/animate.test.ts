@@ -857,6 +857,7 @@ describe("animate", () => {
 
                     if (output.length === 4) {
                         animation.time = 0.02
+                        expect(animation.time).toEqual(0.02)
                     }
                 },
                 onComplete: () => resolve(),

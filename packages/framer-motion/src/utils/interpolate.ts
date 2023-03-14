@@ -106,6 +106,8 @@ export function interpolate<T>(
     const numMixers = mixers.length
 
     const interpolator = (v: number): T => {
+        if (numMixers === 0) return output[0]
+
         let i = 0
         if (numMixers > 1) {
             for (; i < input.length - 2; i++) {
