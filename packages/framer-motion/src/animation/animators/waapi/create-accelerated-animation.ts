@@ -1,9 +1,9 @@
-import { EasingDefinition } from "../../easing/types"
-import { sync } from "../../frameloop"
-import type { VisualElement } from "../../render/VisualElement"
-import type { MotionValue } from "../../value"
-import { AnimationOptions, AnimationPlaybackControls } from "../types"
-import { animateStyle } from "./"
+import { EasingDefinition } from "../../../easing/types"
+import { sync } from "../../../frameloop"
+import type { VisualElement } from "../../../render/VisualElement"
+import type { MotionValue } from "../../../value"
+import { AnimationOptions, AnimationPlaybackControls } from "../../types"
+import { animateStyle } from "."
 import { isWaapiSupportedEasing } from "./easing"
 import { supports } from "./supports"
 import { getFinalKeyframe } from "./utils/get-final-keyframe"
@@ -11,7 +11,7 @@ import { animateValue } from "../js"
 import {
     millisecondsToSeconds,
     secondsToMilliseconds,
-} from "../../utils/time-conversion"
+} from "../../../utils/time-conversion"
 
 /**
  * A list of values that can be hardware-accelerated.

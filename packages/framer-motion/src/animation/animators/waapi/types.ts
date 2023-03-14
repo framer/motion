@@ -1,4 +1,4 @@
-import { EasingDefinition } from "../../easing/types"
+import { EasingDefinition } from "../../../easing/types"
 
 export interface NativeAnimationOptions {
     delay?: number

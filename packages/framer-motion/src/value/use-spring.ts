@@ -6,7 +6,7 @@ import { MotionConfigContext } from "../context/MotionConfigContext"
 import { SpringOptions } from "../animation/types"
 import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
 import { AnimationPlaybackControls } from "../animation/types"
-import { animateValue } from "../animation/js"
+import { animateValue } from "../animation/animators/js"
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.

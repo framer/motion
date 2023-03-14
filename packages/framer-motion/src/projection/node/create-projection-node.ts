@@ -1,5 +1,4 @@
 import { sync, cancelSync, flushSync } from "../../frameloop"
-import { animate } from "../../animation/animate"
 import { AnimationPlaybackControls } from "../../animation/types"
 import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
@@ -46,6 +45,8 @@ import { ProjectionFrame } from "../../debug/types"
 import { record } from "../../debug/record"
 import { AnimationOptions } from "../../animation/types"
 import { frameData } from "../../dom-entry"
+import { isSVGElement } from "../../render/dom/utils/is-svg-element"
+import { animateValue } from "../../animation/animators/js"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -384,8 +385,7 @@ export function createProjectionNode<I>({
         mount(instance: I, isLayoutDirty = false) {
             if (this.instance) return
 
-            this.isSVG =
-                instance instanceof SVGElement && instance.tagName !== "svg"
+            this.isSVG = isSVGElement(instance)
 
             this.instance = instance
 
@@ -1444,8 +1444,9 @@ export function createProjectionNode<I>({
             this.pendingAnimation = sync.update(() => {
                 globalProjectionState.hasAnimatedSinceResize = true
 
-                this.currentAnimation = animate(0, animationTarget, {
+                this.currentAnimation = animateValue({
                     ...(options as any),
+                    keyframes: [0, animationTarget],
                     onUpdate: (latest: number) => {
                         this.mixTargetDelta(latest)
                         options.onUpdate && options.onUpdate(latest)

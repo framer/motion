@@ -1,5 +1,5 @@
-import { cancelSync, sync } from "../../frameloop"
-import { FrameData } from "../../frameloop/types"
+import { cancelSync, sync } from "../../../frameloop"
+import { FrameData } from "../../../frameloop/types"
 import { Driver } from "./types"
 
 export const frameloopDriver: Driver = (update) => {
