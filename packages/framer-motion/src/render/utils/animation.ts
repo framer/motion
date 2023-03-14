@@ -14,7 +14,7 @@ import { resolveVariant } from "./resolve-dynamic-variants"
 import { transformProps } from "../html/utils/transform"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/data-id"
-import { createMotionValueAnimation } from "../../animation"
+import { createMotionValueAnimation } from "../../animation/interfaces/motion-value"
 import { sync } from "../../frameloop"
 
 export type AnimationDefinition =

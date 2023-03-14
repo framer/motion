@@ -1,6 +1,6 @@
-import { AnimationPlaybackControls } from "../../types"
+import { AnimationPlaybackControls } from "../types"
 import { animateValue } from "./js"
-import { AnimationOptions } from "../../types"
+import { AnimationOptions } from "../types"
 import { noop } from "../../utils/noop"
 
 export function createInstantAnimation<V>({
