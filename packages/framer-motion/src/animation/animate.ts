@@ -13,37 +13,7 @@ import {
 } from "./types"
 import { isDOMKeyframes } from "./utils/is-dom-keyframes"
 import { animateTarget } from "./interfaces/visual-element-target"
-import { isSVGElement } from "../render/dom/utils/is-svg-element"
-import { SVGVisualElement } from "../render/svg/SVGVisualElement"
-import { HTMLVisualElement } from "../render/html/HTMLVisualElement"
 import { GenericKeyframesTarget } from "../types"
-
-function createElementVisualElement(element: HTMLElement | SVGElement) {
-    const options = {
-        presenceContext: null,
-        props: {},
-        visualState: {
-            renderState: {
-                transform: {},
-                transformOrigin: {},
-                style: {},
-                vars: {},
-                attrs: {},
-            },
-            latestValues: {},
-        },
-    }
-    const node = isSVGElement(element)
-        ? new SVGVisualElement(options, {
-              enableHardwareAcceleration: false,
-          })
-        : new HTMLVisualElement(options, {
-              enableHardwareAcceleration: true,
-          })
-
-    node.mount(element as any)
-    visualElementStore.set(element, node)
-}
 
 function animateSingleValue<V>(
     value: MotionValue<V> | V,
@@ -83,7 +53,7 @@ function animateElements(
              * With some additional work the size of the animate() function
              * could be reduced before this functionality publicised.
              */
-            createElementVisualElement(element as HTMLElement | SVGElement)
+            createVisualElement(element as HTMLElement | SVGElement)
         }
 
         const visualElement = visualElementStore.get(element)!
