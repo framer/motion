@@ -135,28 +135,28 @@ export function animateValue<V = number>({
         totalDuration = resolvedDuration * (repeat + 1) - repeatDelay
     }
 
-    let currentTime = 0
+    let time = 0
     const tick = (timestamp: number) => {
         if (startTime === null) return
 
         if (holdTime !== null) {
-            currentTime = holdTime
+            time = holdTime
         } else {
-            currentTime = timestamp - startTime
+            time = timestamp - startTime
         }
 
         // Rebase on delay
-        currentTime = Math.max(currentTime - delay, 0)
+        time = Math.max(time - delay, 0)
 
         /**
          * If this animation has finished, set the current time
          * to the total duration.
          */
         if (playState === "finished" && holdTime === null) {
-            currentTime = totalDuration
+            time = totalDuration
         }
 
-        let elapsed = currentTime
+        let elapsed = time
 
         let frameGenerator = generator
 
@@ -166,7 +166,7 @@ export function animateValue<V = number>({
              * than duration we'll get values like 2.5 (midway through the
              * third iteration)
              */
-            const progress = currentTime / resolvedDuration
+            const progress = time / resolvedDuration
 
             /**
              * Get the current iteration (0 indexed). For instance the floor of
@@ -205,7 +205,7 @@ export function animateValue<V = number>({
             }
 
             const p =
-                currentTime >= totalDuration
+                time >= totalDuration
                     ? repeatType === "reverse" && iterationIsOdd
                         ? 0
                         : 1
@@ -224,7 +224,7 @@ export function animateValue<V = number>({
         }
 
         if (calculatedDuration !== null) {
-            done = currentTime >= totalDuration
+            done = time >= totalDuration
         }
 
         const isAnimationFinished =
@@ -276,10 +276,10 @@ export function animateValue<V = number>({
         then(resolve: VoidFunction, reject?: VoidFunction) {
             return currentFinishedPromise.then(resolve, reject)
         },
-        get currentTime() {
-            return millisecondsToSeconds(currentTime)
+        get time() {
+            return millisecondsToSeconds(time)
         },
-        set currentTime(newTime: number) {
+        set time(newTime: number) {
             const timeInMs = secondsToMilliseconds(newTime)
             if (holdTime !== null || !animationDriver) {
                 holdTime = timeInMs
@@ -290,7 +290,7 @@ export function animateValue<V = number>({
         play,
         pause: () => {
             playState = "paused"
-            holdTime = currentTime
+            holdTime = time
         },
         stop: () => {
             onStop && onStop()

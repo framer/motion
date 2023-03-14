@@ -7,7 +7,7 @@ import { Driver } from "./js/types"
  * @public
  */
 export interface AnimationPlaybackControls {
-    currentTime: number
+    time: number
     stop: () => void
     play: () => void
     pause: () => void

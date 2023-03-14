@@ -5,7 +5,7 @@ function createTestAnimationControls(
     partialControls?: Partial<AnimationPlaybackControls>
 ) {
     return {
-        currentTime: 1,
+        time: 1,
         stop: () => {},
         play: () => {},
         pause: () => {},
@@ -25,41 +25,41 @@ describe("GroupPlaybackControls", () => {
         expect(controls.animations[0]).toBe(a)
     })
 
-    test("Gets currentTime", () => {
+    test("Gets time", () => {
         const a: AnimationPlaybackControls = createTestAnimationControls({
-            currentTime: 5,
+            time: 5,
         })
 
         const controls = new GroupPlaybackControls([a])
 
-        expect(controls.currentTime).toBe(5)
+        expect(controls.time).toBe(5)
     })
 
-    test("Sets currentTime", () => {
+    test("Sets time", () => {
         const a: AnimationPlaybackControls = createTestAnimationControls({
-            currentTime: 5,
+            time: 5,
         })
 
         const b: AnimationPlaybackControls = createTestAnimationControls({
-            currentTime: 5,
+            time: 5,
         })
 
         const controls = new GroupPlaybackControls([a, b])
 
-        controls.currentTime = 1
+        controls.time = 1
 
-        expect(a.currentTime).toBe(1)
-        expect(b.currentTime).toBe(1)
+        expect(a.time).toBe(1)
+        expect(b.time).toBe(1)
     })
 
     test("Calls play on all animations", () => {
         const a: AnimationPlaybackControls = createTestAnimationControls({
-            currentTime: 5,
+            time: 5,
             play: jest.fn(),
         })
 
         const b: AnimationPlaybackControls = createTestAnimationControls({
-            currentTime: 5,
+            time: 5,
             play: jest.fn(),
         })
 
@@ -73,12 +73,12 @@ describe("GroupPlaybackControls", () => {
 
     test("Calls pause on all animations", () => {
         const a: AnimationPlaybackControls = createTestAnimationControls({
-            currentTime: 5,
+            time: 5,
             pause: jest.fn(),
         })
 
         const b: AnimationPlaybackControls = createTestAnimationControls({
-            currentTime: 5,
+            time: 5,
             pause: jest.fn(),
         })
 

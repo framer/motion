@@ -14,7 +14,7 @@ export function createInstantAnimation<V>({
         onComplete && onComplete()
 
         return {
-            currentTime: 0,
+            time: 0,
             play: noop<void>,
             pause: noop<void>,
             stop: noop<void>,

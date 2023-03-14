@@ -130,10 +130,10 @@ export function createAcceleratedAnimation(
         then(resolve: VoidFunction, reject?: VoidFunction) {
             return animation.finished.then(resolve, reject)
         },
-        get currentTime() {
+        get time() {
             return millisecondsToSeconds(animation.currentTime || 0)
         },
-        set currentTime(newTime: number) {
+        set time(newTime: number) {
             animation.currentTime = secondsToMilliseconds(newTime)
         },
         play: () => animation.play(),
