@@ -4,25 +4,23 @@ import { VariantLabels } from "../../motion/types"
 import { TargetAndTransition } from "../../types"
 import { shallowCompare } from "../../utils/shallow-compare"
 import type { VisualElement } from "../VisualElement"
-import {
-    animateVisualElement,
-    AnimationDefinition,
-    AnimationOptions,
-} from "./animation"
 import { isVariantLabel } from "./is-variant-label"
 import { AnimationType } from "./types"
 import { resolveVariant } from "./resolve-dynamic-variants"
 import { variantPriorityOrder } from "./variant-props"
+import { VisualElementAnimationOptions } from "../../animation/interfaces/types"
+import { AnimationDefinition } from "../../animation/types"
+import { animateVisualElement } from "../../animation/interfaces/visual-element"
 
 export interface AnimationState {
     animateChanges: (
-        options?: AnimationOptions,
+        options?: VisualElementAnimationOptions,
         type?: AnimationType
     ) => Promise<any>
     setActive: (
         type: AnimationType,
         isActive: boolean,
-        options?: AnimationOptions
+        options?: VisualElementAnimationOptions
     ) => Promise<any>
     setAnimateFunction: (fn: any) => void
     getState: () => { [key: string]: AnimationTypeState }
@@ -30,7 +28,7 @@ export interface AnimationState {
 
 interface DefinitionAndOptions {
     animation: AnimationDefinition
-    options?: AnimationOptions
+    options?: VisualElementAnimationOptions
 }
 
 export type AnimationList = string[] | TargetAndTransition[]
@@ -91,7 +89,7 @@ export function createAnimationState(
      *    what to animate those to.
      */
     function animateChanges(
-        options?: AnimationOptions,
+        options?: VisualElementAnimationOptions,
         changedActiveType?: AnimationType
     ) {
         const props = visualElement.getProps()
@@ -358,7 +356,7 @@ export function createAnimationState(
     function setActive(
         type: AnimationType,
         isActive: boolean,
-        options?: AnimationOptions
+        options?: VisualElementAnimationOptions
     ) {
         // If the active state hasn't changed, we can safely do nothing here
         if (state[type].isActive === isActive) return Promise.resolve()
