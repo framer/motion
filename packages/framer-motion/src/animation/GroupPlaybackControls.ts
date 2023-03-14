@@ -16,25 +16,22 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
     /**
      * TODO: Filter out cancelled or stopped animations before returning
      */
-    get currentTime() {
-        return this.animations[0].currentTime
+    get time() {
+        return this.animations[0].time
     }
 
     /**
-     * currentTime assignment could reasonably run every frame, so
+     * time assignment could reasonably run every frame, so
      * we iterate using a normal loop to avoid function creation.
      */
-    set currentTime(time: number) {
+    set time(time: number) {
         for (let i = 0; i < this.animations.length; i++) {
-            this.animations[i].currentTime = time
+            this.animations[i].time = time
         }
     }
 
     private runAll(
-        methodName: keyof Omit<
-            AnimationPlaybackControls,
-            "currentTime" | "then"
-        >
+        methodName: keyof Omit<AnimationPlaybackControls, "time" | "then">
     ) {
         this.animations.forEach((controls) => controls[methodName]())
     }

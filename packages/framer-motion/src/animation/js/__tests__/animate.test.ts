@@ -843,7 +843,7 @@ describe("animate", () => {
         expect(animation.sample(4100).value).toEqual(96.10257237444083)
     })
 
-    test("Correctly sets and gets currentTime", async () => {
+    test("Correctly sets and gets time", async () => {
         const driver = syncDriver(20)
         const output: number[] = []
 
@@ -856,7 +856,7 @@ describe("animate", () => {
                     output.push(Math.round(v))
 
                     if (output.length === 4) {
-                        animation.currentTime = 0.02
+                        animation.time = 0.02
                     }
                 },
                 onComplete: () => resolve(),
@@ -919,7 +919,7 @@ describe("animate", () => {
         expect(output).toEqual([0, 20, 20, 20, 20, 20, 40, 60, 80])
     })
 
-    test("Correctly resumes after currentTime is set", async () => {
+    test("Correctly resumes after time is set", async () => {
         const driver = syncDriver(20)
         const output: number[] = []
 
@@ -933,7 +933,7 @@ describe("animate", () => {
                     if (output.length === 2) {
                         animation.pause()
                     } else if (output.length === 6) {
-                        animation.currentTime = 0.05
+                        animation.time = 0.05
                         animation.play()
                     } else if (output.length === 8) {
                         animation.stop()
@@ -947,7 +947,7 @@ describe("animate", () => {
         expect(output).toEqual([0, 20, 20, 20, 20, 20, 70, 90])
     })
 
-    test("Correctly sets currentTime during pause", async () => {
+    test("Correctly sets time during pause", async () => {
         const driver = syncDriver(20)
         const output: number[] = []
 
@@ -961,7 +961,7 @@ describe("animate", () => {
 
                     if (output.length === 2) {
                         animation.pause()
-                        animation.currentTime = 0.05
+                        animation.time = 0.05
                     } else if (output.length === 8) {
                         animation.stop()
                     }
