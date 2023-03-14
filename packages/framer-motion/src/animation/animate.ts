@@ -14,6 +14,7 @@ import {
 import { isDOMKeyframes } from "./utils/is-dom-keyframes"
 import { animateTarget } from "./interfaces/visual-element-target"
 import { GenericKeyframesTarget } from "../types"
+import { createVisualElement } from "./utils/create-visual-element"
 
 function animateSingleValue<V>(
     value: MotionValue<V> | V,
@@ -21,6 +22,7 @@ function animateSingleValue<V>(
     options: AnimateOptions<V>
 ): AnimationPlaybackControls {
     const motionValue = isMotionValue(value) ? value : createMotionValue(value)
+
     motionValue.start(
         animateMotionValue("", motionValue, keyframes as any, options)
     )
@@ -51,7 +53,7 @@ function animateElements(
             /**
              * TODO: We only need render-specific parts of the VisualElement.
              * With some additional work the size of the animate() function
-             * could be reduced before this functionality publicised.
+             * could be reduced significantly.
              */
             createVisualElement(element as HTMLElement | SVGElement)
         }

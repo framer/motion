@@ -280,11 +280,13 @@ export function animateValue<V = number>({
             return millisecondsToSeconds(time)
         },
         set time(newTime: number) {
-            const timeInMs = secondsToMilliseconds(newTime)
+            newTime = secondsToMilliseconds(newTime)
+
+            time = newTime
             if (holdTime !== null || !animationDriver) {
-                holdTime = timeInMs
+                holdTime = newTime
             } else {
-                startTime = animationDriver.now() - timeInMs
+                startTime = animationDriver.now() - newTime
             }
         },
         play,

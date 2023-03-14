@@ -118,7 +118,7 @@ describe("animate", () => {
             { opacity: 0.6 },
             { duration, x: {}, "--css-var": {} }
         )
-        await animation.then(() => {
+        return animation.then(() => {
             expect(div).toHaveStyle("opacity: 0.6")
         })
     })
@@ -137,7 +137,7 @@ describe("animate", () => {
         })
     })
 
-    test.only("Applies final target keyframe when animation has finished", async () => {
+    test("Applies final target keyframe when animation has finished", async () => {
         const div = document.createElement("div")
         const animation = animate(div, { opacity: [0.2, 0.5] }, { duration })
         await animation.then(() => {
@@ -147,7 +147,7 @@ describe("animate", () => {
 
     test("time sets and gets time", async () => {
         const div = document.createElement("div")
-        const animation = animate(div, { opacity: 0.5 }, { duration: 10 })
+        const animation = animate(div, { x: 100 }, { duration: 10 })
 
         expect(animation.time).toBe(0)
         animation.time = 5
