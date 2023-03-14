@@ -1,4 +1,4 @@
-import { createMotionValueAnimation } from "."
+import { createMotionValueAnimation } from "./interfaces/motion-value"
 import { resolveElements } from "../render/dom/utils/resolve-element"
 import { visualElementStore } from "../render/store"
 import { invariant } from "../utils/errors"

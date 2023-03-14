@@ -30,7 +30,7 @@ import { addDomEvent } from "../../events/add-dom-event"
 import { calcLength } from "../../projection/geometry/delta-calc"
 import { mix } from "../../utils/mix"
 import { percent } from "../../value/types/numbers/units"
-import { createMotionValueAnimation } from "../../animation"
+import { createMotionValueAnimation } from "../../animation/interfaces/motion-value"
 import { sync } from "../../frameloop"
 
 export const elementDragControls = new WeakMap<
