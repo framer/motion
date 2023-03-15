@@ -312,6 +312,10 @@ export function animateValue<V = number>({
             onStop && onStop()
             cancel()
         },
+        complete: () => {
+            playState = "finished"
+            holdTime === null
+        },
         cancel: () => {
             if (cancelTime !== null) tick(cancelTime)
             cancel()

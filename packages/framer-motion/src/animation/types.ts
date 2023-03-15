@@ -30,6 +30,7 @@ export interface AnimationPlaybackControls {
     play: () => void
     pause: () => void
     cancel: () => void
+    complete: () => void
     then: (onResolve: VoidFunction, onReject?: VoidFunction) => Promise<void>
 }
 

@@ -168,6 +168,7 @@ export function createAcceleratedAnimation(
         },
         play: () => animation.play(),
         pause: () => animation.pause(),
+        complete: () => animation.finish(),
         cancel: safeCancel,
         stop: () => {
             /**
