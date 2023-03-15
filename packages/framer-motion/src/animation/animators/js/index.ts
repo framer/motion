@@ -62,7 +62,6 @@ export function animateValue<V = number>({
     ...options
 }: AnimationOptions<V>): MainThreadAnimationControls<V> {
     let resolveFinishedPromise: VoidFunction
-    let rejectFinishedPromise: (error: Error) => void
     let currentFinishedPromise: Promise<void>
 
     /**
@@ -71,9 +70,9 @@ export function animateValue<V = number>({
      * WAAPI-compatible behaviour.
      */
     const updateFinishedPromise = () => {
-        currentFinishedPromise = new Promise((resolve, reject) => {
+        resolveFinishedPromise && resolveFinishedPromise()
+        currentFinishedPromise = new Promise((resolve) => {
             resolveFinishedPromise = resolve
-            rejectFinishedPromise = reject
         })
     }
 
@@ -254,10 +253,9 @@ export function animateValue<V = number>({
     }
 
     const finish = () => {
-        stopAnimationDriver()
         playState = "finished"
         onComplete && onComplete()
-        resolveFinishedPromise()
+        stopAnimationDriver()
         updateFinishedPromise()
     }
 
@@ -312,12 +310,10 @@ export function animateValue<V = number>({
         },
         stop: () => {
             onStop && onStop()
-            resolveFinishedPromise()
             cancel()
         },
         cancel: () => {
             if (cancelTime !== null) tick(cancelTime)
-            rejectFinishedPromise(new Error("Animation cancelled"))
             cancel()
         },
         sample: (elapsed: number) => {

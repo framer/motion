@@ -10,7 +10,7 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
     }
 
     then(onResolve: VoidFunction, onReject?: VoidFunction) {
-        return Promise.all(this.animations).then(onResolve).catch(onReject)
+        return Promise.all(this.animations).then(onResolve, onReject)
     }
 
     /**

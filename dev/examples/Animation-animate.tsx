@@ -24,11 +24,13 @@ export const App = () => {
     const [scope, animate] = useAnimate()
 
     useEffect(() => {
-        const controls = animate("div", { x: target }, transition)
+        const controls = animate("div", { opacity: 0 }, transition)
 
-        controls.then(() => console.log("complete"))
+        // controls.then(() => console.log("complete"))
 
-        return () => controls.stop()
+        return () => {
+            controls.cancel()
+        }
     }, [target])
 
     return (
@@ -41,13 +43,14 @@ export const App = () => {
                     width: motionValue(width),
                     y: width / 10,
                 }}
+                onUpdate={() => {}}
                 onClick={() => {
                     setTarget(target + 100)
                     // setWidth(width + 100)
                 }}
                 initial={{ borderRadius: 10 }}
             />
-            <div style={style} />
+            {/* <div style={style} /> */}
         </div>
     )
 }
