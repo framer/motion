@@ -59,7 +59,7 @@ function getVariableValue(
 export function resolveCSSVariables(
     visualElement: VisualElement,
     { ...target }: TargetWithKeyframes,
-    transitionEnd: Target
+    transitionEnd: Target | undefined
 ): { target: TargetWithKeyframes; transitionEnd?: Target } {
     const element = visualElement.current
     if (!(element instanceof Element)) return { target, transitionEnd }
