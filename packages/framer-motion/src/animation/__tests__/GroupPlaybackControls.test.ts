@@ -12,6 +12,7 @@ function createTestAnimationControls(
         then: (resolve: VoidFunction) => {
             return Promise.resolve().then(resolve)
         },
+        cancel: () => {},
         ...partialControls,
     }
 }
@@ -129,5 +130,39 @@ describe("GroupPlaybackControls", () => {
 
         expect(aOnComplete).toBeCalled()
         expect(bOnComplete).toBeCalled()
+    })
+
+    test("Resolves when all promises are resolved", async () => {
+        const aOnComplete = jest.fn()
+        const a: AnimationPlaybackControls = createTestAnimationControls({})
+
+        const bOnComplete = jest.fn()
+        const b: AnimationPlaybackControls = createTestAnimationControls({})
+
+        a.then(() => aOnComplete())
+        b.then(() => bOnComplete())
+
+        const controls = new GroupPlaybackControls([a, b])
+
+        await controls
+
+        expect(aOnComplete).toBeCalled()
+        expect(bOnComplete).toBeCalled()
+    })
+
+    test("Calls cancel on all animations", async () => {
+        const a = createTestAnimationControls({
+            cancel: jest.fn(),
+        })
+        const b = createTestAnimationControls({
+            cancel: jest.fn(),
+        })
+
+        const controls = new GroupPlaybackControls([a, b])
+
+        controls.cancel()
+
+        expect(a.cancel).toBeCalled()
+        expect(b.cancel).toBeCalled()
     })
 })

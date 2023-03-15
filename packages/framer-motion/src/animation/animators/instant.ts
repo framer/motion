@@ -22,6 +22,7 @@ export function createInstantAnimation<V>({
                 resolve()
                 return Promise.resolve()
             },
+            cancel: noop<void>,
         }
     }
 

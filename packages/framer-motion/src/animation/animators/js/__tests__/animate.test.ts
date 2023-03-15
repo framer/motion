@@ -71,6 +71,32 @@ describe("animate", () => {
         })
     })
 
+    test("Correctly cancels an animation", async () => {
+        const output: number[] = []
+
+        try {
+            const animation = animateValue({
+                keyframes: [0, 100],
+                driver: syncDriver(20),
+                duration: 100,
+                ease: linear,
+                onUpdate: (v) => {
+                    output.push(v)
+                    if (v === 40) {
+                        animation.cancel()
+                    }
+                },
+            })
+
+            await animation
+
+            // This should never run
+            expect(true).toEqual(false)
+        } catch (error) {
+            expect(output).toEqual([0, 20, 40, 0])
+        }
+    })
+
     test("Correctly interpolates a string-based keyframes", async () => {
         return new Promise<void>((resolve) => {
             const numeric: number[] = []

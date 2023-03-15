@@ -62,6 +62,7 @@ export function animateValue<V = number>({
     ...options
 }: AnimationOptions<V>): MainThreadAnimationControls<V> {
     let resolveFinishedPromise: VoidFunction
+    let rejectFinishedPromise: (error: Error) => void
     let currentFinishedPromise: Promise<void>
 
     /**
@@ -70,8 +71,9 @@ export function animateValue<V = number>({
      * WAAPI-compatible behaviour.
      */
     const updateFinishedPromise = () => {
-        currentFinishedPromise = new Promise((resolve) => {
+        currentFinishedPromise = new Promise((resolve, reject) => {
             resolveFinishedPromise = resolve
+            rejectFinishedPromise = reject
         })
     }
 
@@ -112,6 +114,7 @@ export function animateValue<V = number>({
     let playState: AnimationPlayState = "idle"
     let holdTime: number | null = null
     let startTime: number | null = null
+    let cancelTime: number | null = null
 
     /**
      * If duration is undefined and we have repeat options,
@@ -238,8 +241,20 @@ export function animateValue<V = number>({
         return state
     }
 
-    const finish = () => {
+    const stopAnimationDriver = () => {
         animationDriver && animationDriver.stop()
+        animationDriver = undefined
+    }
+
+    const cancel = () => {
+        playState = "idle"
+        stopAnimationDriver()
+        updateFinishedPromise()
+        startTime = cancelTime = null
+    }
+
+    const finish = () => {
+        stopAnimationDriver()
         playState = "finished"
         onComplete && onComplete()
         resolveFinishedPromise()
@@ -263,6 +278,7 @@ export function animateValue<V = number>({
             startTime = now
         }
 
+        cancelTime = startTime
         holdTime = null
 
         animationDriver.start()
@@ -296,8 +312,13 @@ export function animateValue<V = number>({
         },
         stop: () => {
             onStop && onStop()
-            animationDriver && animationDriver.stop()
-            animationDriver = undefined
+            resolveFinishedPromise()
+            cancel()
+        },
+        cancel: () => {
+            if (cancelTime !== null) tick(cancelTime)
+            rejectFinishedPromise(new Error("Animation cancelled"))
+            cancel()
         },
         sample: (elapsed: number) => {
             startTime = 0

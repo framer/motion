@@ -138,6 +138,7 @@ export function createAcceleratedAnimation(
         },
         play: () => animation.play(),
         pause: () => animation.pause(),
+        cancel: () => animation.cancel(),
         stop: () => {
             /**
              * WAAPI doesn't natively have any interruption capabilities.
