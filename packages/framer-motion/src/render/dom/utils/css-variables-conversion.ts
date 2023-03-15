@@ -59,7 +59,7 @@ function getVariableValue(
 export function resolveCSSVariables(
     visualElement: VisualElement,
     { ...target }: TargetWithKeyframes,
-    transitionEnd: Target | undefined
+    transitionEnd: Target
 ): { target: TargetWithKeyframes; transitionEnd?: Target } {
     const element = visualElement.current
     if (!(element instanceof Element)) return { target, transitionEnd }
@@ -91,10 +91,12 @@ export function resolveCSSVariables(
         // Clone target if it hasn't already been
         target[key] = resolved
 
+        if (!transitionEnd) transitionEnd = {}
+
         // If the user hasn't already set this key on `transitionEnd`, set it to the unresolved
         // CSS variable. This will ensure that after the animation the component will reflect
         // changes in the value of the CSS variable.
-        if (transitionEnd && transitionEnd[key] === undefined) {
+        if (transitionEnd[key] === undefined) {
             transitionEnd[key] = current
         }
     }
