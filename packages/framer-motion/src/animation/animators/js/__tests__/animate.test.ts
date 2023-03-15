@@ -71,6 +71,27 @@ describe("animate", () => {
         })
     })
 
+    test("Correctly resolves when stopped", async () => {
+        const output: number[] = []
+
+        const animation = animateValue({
+            keyframes: [0, 100],
+            driver: syncDriver(20),
+            duration: 100,
+            ease: linear,
+            onUpdate: (v) => {
+                output.push(v)
+                if (v === 40) {
+                    animation.stop()
+                }
+            },
+        })
+
+        await animation
+
+        expect(output).toEqual([0, 20, 40])
+    })
+
     test("Correctly cancels an animation", async () => {
         const output: number[] = []
 
