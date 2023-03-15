@@ -7844,8 +7844,8 @@ __metadata:
     cache-loader: ^1.2.5
     convert-tsconfig-paths-to-webpack-aliases: ^0.9.2
     fork-ts-checker-webpack-plugin: ^6.2.0
-    framer-motion: ^10.3.1
-    framer-motion-3d: ^10.3.1
+    framer-motion: ^10.3.2
+    framer-motion-3d: ^10.3.2
     path-browserify: ^1.0.1
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -7911,14 +7911,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion-3d@^10.3.1, framer-motion-3d@workspace:packages/framer-motion-3d":
+"framer-motion-3d@^10.3.2, framer-motion-3d@workspace:packages/framer-motion-3d":
   version: 0.0.0-use.local
   resolution: "framer-motion-3d@workspace:packages/framer-motion-3d"
   dependencies:
     "@react-three/fiber": ^8.2.2
     "@react-three/test-renderer": ^9.0.0
     "@rollup/plugin-commonjs": ^22.0.1
-    framer-motion: ^10.3.1
+    framer-motion: ^10.3.2
     react-merge-refs: ^2.0.1
   peerDependencies:
     "@react-three/fiber": ^8.2.2
@@ -7928,7 +7928,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion@^10.3.1, framer-motion@workspace:packages/framer-motion":
+"framer-motion@^10.3.2, framer-motion@workspace:packages/framer-motion":
   version: 0.0.0-use.local
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
@@ -16842,8 +16842,8 @@ __metadata:
   linkType: hard
 
 "webpack@npm:^5.27.2":
-  version: 5.74.0
-  resolution: "webpack@npm:5.74.0"
+  version: 5.76.1
+  resolution: "webpack@npm:5.76.1"
   dependencies:
     "@types/eslint-scope": ^3.7.3
     "@types/estree": ^0.0.51
@@ -16874,7 +16874,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 320c41369a75051b19e18c63f408b3dcc481852e992f83d311771c5ec0f05f2946385e8ebef62030cf3587f0a3d2f12779ffdb191569a966847289ba7313f946
+  checksum: b01fe0bc2dbca0e10d290ddb0bf81e807a031de48028176e2b21afd696b4d3f25ab9accdad888ef4a1f7c7f4d41f13d5bf2395b7653fdf3e5e3dafa54e56dab2
   languageName: node
   linkType: hard
 
