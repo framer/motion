@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useEffect, useState } from "react"
-import { motion, motionValue, useMotionValue, animate } from "framer-motion"
+import { motion, motionValue, useAnimate } from "framer-motion"
 
 /**
  * An example of the tween transition type
@@ -21,6 +21,8 @@ export const App = () => {
         dampingRatio: 0.4,
     }
 
+    const [scope, animate] = useAnimate()
+
     useEffect(() => {
         const controls = animate("div", { x: target }, transition)
 
@@ -30,7 +32,7 @@ export const App = () => {
     }, [target])
 
     return (
-        <>
+        <div ref={scope}>
             <motion.div
                 id="box"
                 style={{
@@ -46,6 +48,6 @@ export const App = () => {
                 initial={{ borderRadius: 10 }}
             />
             <div style={style} />
-        </>
+        </div>
     )
 }
