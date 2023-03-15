@@ -16,17 +16,17 @@ export const App = () => {
     const [width] = useState(100)
     const [target, setTarget] = useState(0)
     const transition = {
-        type: "spring" as const,
-        duration: 0.4,
-        dampingRatio: 0.4,
+        duration: 2,
     }
 
     const [scope, animate] = useAnimate()
 
     useEffect(() => {
-        const controls = animate("div", { opacity: 0 }, transition)
+        const controls = animate("div", { opacity: 0, x: 200 }, transition)
 
-        // controls.then(() => console.log("complete"))
+        setTimeout(() => {
+            controls.cancel()
+        }, 500)
 
         return () => {
             controls.cancel()
@@ -50,7 +50,7 @@ export const App = () => {
                 }}
                 initial={{ borderRadius: 10 }}
             />
-            {/* <div style={style} /> */}
+            <div style={style} />
         </div>
     )
 }

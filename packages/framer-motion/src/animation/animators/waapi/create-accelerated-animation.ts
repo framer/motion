@@ -124,11 +124,41 @@ export function createAcceleratedAnimation(
     }
 
     /**
+     * WAAPI's Animation.cancel() throws when called. Whereas our animations
+     * always resolve. Because of this we use a seperate cancel Promise
+     * that resolves when .cancel() or .stop() is called on this animation.
+     */
+    let cancelPromise: Promise<void>
+    let resolveCancelPromise: VoidFunction
+
+    const updateCancelPromise = () => {
+        cancelPromise = new Promise((resolve) => {
+            resolveCancelPromise = resolve
+        })
+    }
+
+    updateCancelPromise()
+
+    const safeCancel = () => {
+        resolveCancelPromise()
+        updateCancelPromise()
+        animation.cancel()
+    }
+
+    /**
      * Animation interrupt callback.
      */
     return {
         then(resolve: VoidFunction, reject?: VoidFunction) {
-            return animation.finished.then(resolve, reject)
+            /**
+             * We use Promise.race as it has much broader browser support than
+             * Promise.any. Via safeCancel, we will always resolve the cancelPromise
+             * before the animation.finished Promise can throw.
+             */
+            return Promise.race([animation.finished, cancelPromise]).then(
+                resolve,
+                reject
+            )
         },
         get time() {
             return millisecondsToSeconds(animation.currentTime || 0)
@@ -138,7 +168,7 @@ export function createAcceleratedAnimation(
         },
         play: () => animation.play(),
         pause: () => animation.pause(),
-        cancel: () => animation.cancel(),
+        cancel: safeCancel,
         stop: () => {
             /**
              * WAAPI doesn't natively have any interruption capabilities.
@@ -160,7 +190,7 @@ export function createAcceleratedAnimation(
                     sampleDelta
                 )
             }
-            sync.update(() => animation.cancel())
+            sync.update(safeCancel)
         },
     }
 }
