@@ -10,6 +10,7 @@ describe("useAnimate", () => {
 
             useEffect(() => {
                 animate("div", { opacity: 1 })
+                animate(scope.current, { opacity: 1 })
             })
 
             return <div ref={scope} />
