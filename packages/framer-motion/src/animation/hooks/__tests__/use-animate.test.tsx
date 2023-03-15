@@ -6,7 +6,7 @@ import { useAnimate } from "../use-animate"
 describe("useAnimate", () => {
     test("Types work as expected", () => {
         const Component = () => {
-            const [scope, animate] = useAnimate()
+            const [scope, animate] = useAnimate<HTMLDivElement>()
 
             useEffect(() => {
                 animate("div", { opacity: 1 })

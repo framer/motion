@@ -1,10 +1,5 @@
+import type { ElementOrSelector } from "../../../animation/types"
 import { invariant } from "../../../utils/errors"
-
-export type ElementOrSelector =
-    | Element
-    | Element[]
-    | NodeListOf<Element>
-    | string
 
 export interface WithQuerySelectorAll {
     querySelectorAll: Element["querySelectorAll"]
