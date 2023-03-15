@@ -1,19 +1,34 @@
+import { invariant } from "../../../utils/errors"
+
 export type ElementOrSelector =
     | Element
     | Element[]
     | NodeListOf<Element>
     | string
 
+export interface WithQuerySelectorAll {
+    querySelectorAll: Element["querySelectorAll"]
+}
+
+export type GetAnimateScope = () => WithQuerySelectorAll
+
+const defaultScope: GetAnimateScope = () => document
+
 export function resolveElements(
     elements: ElementOrSelector,
+    getScope = defaultScope,
     selectorCache?: { [key: string]: NodeListOf<Element> }
 ): Element[] {
     if (typeof elements === "string") {
+        const scope = getScope()
+
+        invariant(Boolean(scope), "No scope defined.")
+
         if (selectorCache) {
-            selectorCache[elements] ??= document.querySelectorAll(elements)
+            selectorCache[elements] ??= scope.querySelectorAll(elements)
             elements = selectorCache[elements]
         } else {
-            elements = document.querySelectorAll(elements)
+            elements = scope.querySelectorAll(elements)
         }
     } else if (elements instanceof Element) {
         elements = [elements]

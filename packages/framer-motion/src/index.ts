@@ -86,6 +86,7 @@ export { color } from "./value/types/color"
 export { complex } from "./value/types/complex"
 export { px } from "./value/types/numbers/units"
 export { ValueType } from "./value/types/types"
+export { useAnimate } from "./animation/hooks/use-animate"
 
 /**
  * Appear animations
