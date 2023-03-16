@@ -9,7 +9,9 @@ describe("useAnimate", () => {
             const [scope, animate] = useAnimate<HTMLDivElement>()
 
             useEffect(() => {
-                animate("div", { opacity: 1 })
+                expect(() => {
+                    animate("div", { opacity: 1 })
+                }).toThrow()
                 animate(scope.current, { opacity: 1 })
             })
 
