@@ -1,5 +1,7 @@
 import { AnimationPlaybackControls } from "./types"
 
+type PropNames = "time" | "speed"
+
 export class GroupPlaybackControls implements AnimationPlaybackControls {
     animations: AnimationPlaybackControls[]
 
@@ -13,11 +15,18 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
         return Promise.all(this.animations).then(onResolve, onReject)
     }
 
-    /**
-     * TODO: Filter out cancelled or stopped animations before returning
-     */
+    private getAll(propName: PropNames) {
+        return this.animations[0][propName]
+    }
+
+    private setAll(propName: PropNames, newValue: number) {
+        for (let i = 0; i < this.animations.length; i++) {
+            this.animations[i][propName] = newValue
+        }
+    }
+
     get time() {
-        return this.animations[0].time
+        return this.getAll("time")
     }
 
     /**
@@ -25,13 +34,19 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
      * we iterate using a normal loop to avoid function creation.
      */
     set time(time: number) {
-        for (let i = 0; i < this.animations.length; i++) {
-            this.animations[i].time = time
-        }
+        this.setAll("time", time)
+    }
+
+    get speed() {
+        return this.getAll("speed")
+    }
+
+    set speed(speed: number) {
+        this.setAll("speed", speed)
     }
 
     private runAll(
-        methodName: keyof Omit<AnimationPlaybackControls, "time" | "then">
+        methodName: keyof Omit<AnimationPlaybackControls, PropNames | "then">
     ) {
         this.animations.forEach((controls) => controls[methodName]())
     }

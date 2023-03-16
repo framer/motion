@@ -26,6 +26,7 @@ export type ElementOrSelector =
  */
 export interface AnimationPlaybackControls {
     time: number
+    speed: number
     stop: () => void
     play: () => void
     pause: () => void
