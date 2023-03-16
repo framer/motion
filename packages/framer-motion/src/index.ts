@@ -46,6 +46,7 @@ export { useReducedMotionConfig } from "./utils/reduced-motion/use-reduced-motio
  * Utils
  */
 export { animationControls } from "./animation/hooks/animation-controls"
+export { useAnimate } from "./animation/hooks/use-animate"
 export {
     useAnimation,
     useAnimationControls,
