@@ -31,7 +31,6 @@ export type ElementOrSelector =
  */
 export interface AnimationPlaybackControls {
     time: number
-    readonly state: AnimationPlayState
     stop: () => void
     play: () => void
     pause: () => void
