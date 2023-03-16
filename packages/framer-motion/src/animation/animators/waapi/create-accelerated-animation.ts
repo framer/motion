@@ -60,6 +60,26 @@ export function createAcceleratedAnimation(
 
     if (!canAccelerateAnimation) return false
 
+    /**
+     * TODO: Unify with js/index
+     */
+    let resolveFinishedPromise: VoidFunction
+    let currentFinishedPromise: Promise<void>
+
+    /**
+     * Create a new finished Promise every time we enter the
+     * finished state and resolve the old Promise. This is
+     * WAAPI-compatible behaviour.
+     */
+    const updateFinishedPromise = () => {
+        currentFinishedPromise = new Promise((resolve) => {
+            resolveFinishedPromise = resolve
+        })
+    }
+
+    // Create the first finished promise
+    updateFinishedPromise()
+
     let { keyframes, duration = 300, ease } = options
 
     /**
@@ -121,6 +141,8 @@ export function createAcceleratedAnimation(
         value.set(getFinalKeyframe(keyframes, options))
         sync.update(() => animation.cancel())
         onComplete && onComplete()
+        resolveFinishedPromise()
+        updateFinishedPromise()
     }
 
     /**
@@ -128,7 +150,7 @@ export function createAcceleratedAnimation(
      */
     return {
         then(resolve: VoidFunction, reject?: VoidFunction) {
-            return animation.finished.then(resolve, reject)
+            return currentFinishedPromise.then(resolve, reject)
         },
         get time() {
             return millisecondsToSeconds(animation.currentTime || 0)
