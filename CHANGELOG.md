@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.5.0] 2023-03-17
+
+### Added
+
+-   `useAnimate()` provides a composable way to use `animate()`.
+
 ## [10.4.0] 2023-03-16
 
 ### Added
