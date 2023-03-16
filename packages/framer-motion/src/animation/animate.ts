@@ -1,7 +1,4 @@
-import {
-    GetAnimateScope,
-    resolveElements,
-} from "../render/dom/utils/resolve-element"
+import { resolveElements } from "../render/dom/utils/resolve-element"
 import { visualElementStore } from "../render/store"
 import { invariant } from "../utils/errors"
 import { MotionValue } from "../value"
@@ -9,6 +6,7 @@ import { GroupPlaybackControls } from "./GroupPlaybackControls"
 import {
     AnimateOptions,
     AnimationPlaybackControls,
+    AnimationScope,
     DOMKeyframesDefinition,
     ElementOrSelector,
 } from "./types"
@@ -22,9 +20,9 @@ function animateElements(
     elementOrSelector: ElementOrSelector,
     keyframes: DOMKeyframesDefinition,
     options: AnimateOptions<any>,
-    getScope?: GetAnimateScope
+    scope?: AnimationScope
 ): AnimationPlaybackControls {
-    const elements = resolveElements(elementOrSelector, getScope)
+    const elements = resolveElements(elementOrSelector, scope)
     const numElements = elements.length
 
     invariant(Boolean(numElements), "No valid element provided.")
@@ -61,7 +59,7 @@ function animateElements(
     return new GroupPlaybackControls(animations)
 }
 
-export const createScopedAnimate = (getScope?: GetAnimateScope) => {
+export const createScopedAnimate = (scope?: AnimationScope) => {
     /**
      * Animate a single value
      */
@@ -101,16 +99,24 @@ export const createScopedAnimate = (getScope?: GetAnimateScope) => {
         keyframes: DOMKeyframesDefinition | V | GenericKeyframesTarget<V>,
         options: AnimateOptions<V> = {}
     ): AnimationPlaybackControls {
+        let animation: AnimationPlaybackControls
+
         if (isDOMKeyframes(keyframes)) {
-            return animateElements(
+            animation = animateElements(
                 valueOrElement as ElementOrSelector,
                 keyframes,
                 options,
-                getScope
+                scope
             )
         } else {
-            return animateSingleValue(valueOrElement, keyframes, options)
+            animation = animateSingleValue(valueOrElement, keyframes, options)
         }
+
+        if (scope) {
+            scope.animations.push(animation)
+        }
+
+        return animation
     }
 
     return scopedAnimate

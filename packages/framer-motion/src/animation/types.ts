@@ -12,6 +12,11 @@ export interface AnimationPlaybackLifecycles<V> {
     onStop?: () => void
 }
 
+export interface AnimationScope<T = any> {
+    readonly current: T
+    animations: AnimationPlaybackControls[]
+}
+
 export type AnimateOptions<V = any> = Transition &
     AnimationPlaybackLifecycles<V>
 
@@ -26,6 +31,7 @@ export type ElementOrSelector =
  */
 export interface AnimationPlaybackControls {
     time: number
+    readonly state: AnimationPlayState
     stop: () => void
     play: () => void
     pause: () => void

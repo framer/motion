@@ -1,20 +1,23 @@
-import { useRef } from "react"
 import { useConstant } from "../../utils/use-constant"
+import { useUnmountEffect } from "../../utils/use-unmount-effect"
 import { createScopedAnimate } from "../animate"
+import { AnimationScope } from "../types"
 
-/**
- * We explicitly type this RefObject as not-null as this
- * allows the usage of animate(scope.current) without
- * type errors. In development we have runtime checking
- * to ensure .current is actually defined.
- */
-export interface ScopeRefObject<T> {
-    readonly current: T
-}
+export function useAnimate<T extends Element = any>() {
+    const scope: AnimationScope<T> = useConstant(() => ({
+        current: null!, // Will be hydrated by React
+        animations: [],
+    }))
 
-export function useAnimate<T extends Element>() {
-    const scope = useRef<T>(null)
-    const animate = useConstant(() => createScopedAnimate(() => scope.current!))
+    const animate = useConstant(() => createScopedAnimate(scope))
 
-    return [scope, animate] as [ScopeRefObject<T>, typeof animate]
+    useUnmountEffect(() => {
+        scope.animations.forEach((animation) => {
+            if (animation.state !== "finished") {
+                animation.stop()
+            }
+        })
+    })
+
+    return [scope, animate] as [AnimationScope<T>, typeof animate]
 }
