@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.4.0] 2023-03-16
+
+### Added
+
+-   `animate()` now supports DOM elements and DOM selectors.
+
 ## [10.3.4] 2023-03-16
 
 ### Fixed
