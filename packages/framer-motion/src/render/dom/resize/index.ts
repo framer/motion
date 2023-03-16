@@ -1,4 +1,4 @@
-import { ElementOrSelector } from "../utils/resolve-element"
+import { ElementOrSelector } from "../../../animation/types"
 import { resizeElement } from "./handle-element"
 import { resizeWindow } from "./handle-window"
 import { ResizeHandler } from "./types"

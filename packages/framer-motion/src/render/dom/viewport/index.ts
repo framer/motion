@@ -1,4 +1,5 @@
-import { ElementOrSelector, resolveElements } from "../utils/resolve-element"
+import { ElementOrSelector } from "../../../animation/types"
+import { resolveElements } from "../utils/resolve-element"
 
 export type ViewChangeHandler = (entry: IntersectionObserverEntry) => void
 
