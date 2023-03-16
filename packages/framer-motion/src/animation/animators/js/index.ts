@@ -216,7 +216,7 @@ export function animateValue<V = number>({
 
         const state = frameGenerator.next(elapsed)
         let { value, done } = state
-        console.log(value)
+
         if (onUpdate) {
             onUpdate(
                 mapNumbersToKeyframes ? mapNumbersToKeyframes(value) : value
@@ -298,7 +298,6 @@ export function animateValue<V = number>({
             holdTime = time
         },
         stop: () => {
-            console.log("stpp[")
             if (playState === "idle") return
             playState = "idle"
             onStop && onStop()
