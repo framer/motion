@@ -184,7 +184,20 @@ describe("GroupPlaybackControls", () => {
         expect(b.complete).toBeCalled()
     })
 
-    test("Gets and sets speed on all animations", async () => {
+    test("Gets speed on all animations", async () => {
+        const a = createTestAnimationControls({
+            speed: 2,
+        })
+        const b = createTestAnimationControls({
+            speed: 2,
+        })
+
+        const controls = new GroupPlaybackControls([a, b])
+
+        expect(controls.speed).toEqual(2)
+    })
+
+    test("Sets speed on all animations", async () => {
         const a = createTestAnimationControls({
             speed: 2,
         })
