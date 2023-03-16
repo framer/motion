@@ -1,6 +1,6 @@
 import { appearStoreId } from "./store-id"
-import { animateStyle } from "../waapi"
-import { NativeAnimationOptions } from "../waapi/types"
+import { animateStyle } from "../animators/waapi"
+import { NativeAnimationOptions } from "../animators/waapi/types"
 import { optimizedAppearDataId } from "./data-id"
 import { handoffOptimizedAppearAnimation } from "./handoff"
 import { appearAnimationStore } from "./store"
