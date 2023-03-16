@@ -6,6 +6,7 @@ import { GroupPlaybackControls } from "./GroupPlaybackControls"
 import {
     AnimateOptions,
     AnimationPlaybackControls,
+    AnimationScope,
     DOMKeyframesDefinition,
     ElementOrSelector,
 } from "./types"
@@ -18,9 +19,10 @@ import { animateSingleValue } from "./interfaces/single-value"
 function animateElements(
     elementOrSelector: ElementOrSelector,
     keyframes: DOMKeyframesDefinition,
-    options: AnimateOptions<any>
+    options: AnimateOptions<any>,
+    scope?: AnimationScope
 ): AnimationPlaybackControls {
-    const elements = resolveElements(elementOrSelector)
+    const elements = resolveElements(elementOrSelector, scope)
     const numElements = elements.length
 
     invariant(Boolean(numElements), "No valid element provided.")
@@ -57,52 +59,67 @@ function animateElements(
     return new GroupPlaybackControls(animations)
 }
 
-/**
- * Animate a single value
- */
-export function animate(
-    from: string,
-    to: string | GenericKeyframesTarget<string>,
-    options?: AnimateOptions<string>
-): AnimationPlaybackControls
-export function animate(
-    from: number,
-    to: number | GenericKeyframesTarget<number>,
-    options?: AnimateOptions<number>
-): AnimationPlaybackControls
-/**
- * Animate a MotionValue
- */
-export function animate(
-    value: MotionValue<string>,
-    keyframes: string | GenericKeyframesTarget<string>,
-    options?: AnimateOptions<string>
-): AnimationPlaybackControls
-export function animate(
-    value: MotionValue<number>,
-    keyframes: number | GenericKeyframesTarget<number>,
-    options?: AnimateOptions<number>
-): AnimationPlaybackControls
-/**
- * Animate DOM
- */
-export function animate<V>(
-    value: ElementOrSelector,
-    keyframes: DOMKeyframesDefinition,
-    options?: AnimateOptions<V>
-): AnimationPlaybackControls
-export function animate<V>(
-    valueOrElement: ElementOrSelector | MotionValue<V> | V,
-    keyframes: DOMKeyframesDefinition | V | GenericKeyframesTarget<V>,
-    options: AnimateOptions<V> = {}
-): AnimationPlaybackControls {
-    if (isDOMKeyframes(keyframes)) {
-        return animateElements(
-            valueOrElement as ElementOrSelector,
-            keyframes,
-            options
-        )
-    } else {
-        return animateSingleValue(valueOrElement, keyframes, options)
+export const createScopedAnimate = (scope?: AnimationScope) => {
+    /**
+     * Animate a single value
+     */
+    function scopedAnimate(
+        from: string,
+        to: string | GenericKeyframesTarget<string>,
+        options?: AnimateOptions<string>
+    ): AnimationPlaybackControls
+    function scopedAnimate(
+        from: number,
+        to: number | GenericKeyframesTarget<number>,
+        options?: AnimateOptions<number>
+    ): AnimationPlaybackControls
+    /**
+     * Animate a MotionValue
+     */
+    function scopedAnimate(
+        value: MotionValue<string>,
+        keyframes: string | GenericKeyframesTarget<string>,
+        options?: AnimateOptions<string>
+    ): AnimationPlaybackControls
+    function scopedAnimate(
+        value: MotionValue<number>,
+        keyframes: number | GenericKeyframesTarget<number>,
+        options?: AnimateOptions<number>
+    ): AnimationPlaybackControls
+    /**
+     * Animate DOM
+     */
+    function scopedAnimate<V>(
+        value: ElementOrSelector,
+        keyframes: DOMKeyframesDefinition,
+        options?: AnimateOptions<V>
+    ): AnimationPlaybackControls
+    function scopedAnimate<V>(
+        valueOrElement: ElementOrSelector | MotionValue<V> | V,
+        keyframes: DOMKeyframesDefinition | V | GenericKeyframesTarget<V>,
+        options: AnimateOptions<V> = {}
+    ): AnimationPlaybackControls {
+        let animation: AnimationPlaybackControls
+
+        if (isDOMKeyframes(keyframes)) {
+            animation = animateElements(
+                valueOrElement as ElementOrSelector,
+                keyframes,
+                options,
+                scope
+            )
+        } else {
+            animation = animateSingleValue(valueOrElement, keyframes, options)
+        }
+
+        if (scope) {
+            scope.animations.push(animation)
+        }
+
+        return animation
     }
+
+    return scopedAnimate
 }
+
+export const animate = createScopedAnimate()
