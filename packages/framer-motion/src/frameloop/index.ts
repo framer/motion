@@ -5,7 +5,6 @@ import { frameData } from "./data"
 const maxElapsed = 40
 let useDefaultElapsed = true
 let runNextFrame = false
-let isProcessing = false
 
 const stepsOrder: StepId[] = [
     "read",
@@ -50,9 +49,9 @@ const processFrame = (timestamp: number) => {
 
     frameData.timestamp = timestamp
 
-    isProcessing = true
+    frameData.isProcessing = true
     stepsOrder.forEach(processStep)
-    isProcessing = false
+    frameData.isProcessing = false
 
     if (runNextFrame) {
         useDefaultElapsed = false
@@ -64,7 +63,7 @@ const startLoop = () => {
     runNextFrame = true
     useDefaultElapsed = true
 
-    if (!isProcessing) requestAnimationFrame(processFrame)
+    if (!frameData.isProcessing) requestAnimationFrame(processFrame)
 }
 
 export { sync, cancelSync, flushSync }
