@@ -15,6 +15,9 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
         return Promise.all(this.animations).then(onResolve, onReject)
     }
 
+    /**
+     * TODO: Filter out cancelled or stopped animations before returning
+     */
     private getAll(propName: PropNames) {
         return this.animations[0][propName]
     }
