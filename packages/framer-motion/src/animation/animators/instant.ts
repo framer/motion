@@ -9,7 +9,7 @@ export function createInstantAnimation<V>({
     onUpdate,
     onComplete,
 }: AnimationOptions<V>): AnimationPlaybackControls {
-    const setValue = () => {
+    const setValue = (): AnimationPlaybackControls => {
         onUpdate && onUpdate(keyframes[keyframes.length - 1])
         onComplete && onComplete()
 

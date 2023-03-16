@@ -3,7 +3,7 @@ import { AnimationPlaybackControls } from "../types"
 
 function createTestAnimationControls(
     partialControls?: Partial<AnimationPlaybackControls>
-) {
+): AnimationPlaybackControls {
     return {
         time: 1,
         stop: () => {},

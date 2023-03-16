@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useEffect, useState } from "react"
-import { motion, motionValue, useMotionValue, animate } from "framer-motion"
+import { motion, motionValue, useAnimate } from "framer-motion"
 
 /**
  * An example of the tween transition type
@@ -12,17 +12,17 @@ const style = {
     background: "white",
 }
 
-export const App = () => {
+const Child = ({ setState }: any) => {
     const [width] = useState(100)
     const [target, setTarget] = useState(0)
     const transition = {
-        type: "spring" as const,
-        duration: 0.4,
-        dampingRatio: 0.4,
+        duration: 10,
     }
 
+    const [scope, animate] = useAnimate()
+
     useEffect(() => {
-        const controls = animate("div", { x: target }, transition)
+        const controls = animate("div", { x: 100, opacity: 0 }, transition)
 
         controls.then(() => console.log("complete"))
 
@@ -30,7 +30,7 @@ export const App = () => {
     }, [target])
 
     return (
-        <>
+        <div ref={scope}>
             <motion.div
                 id="box"
                 style={{
@@ -45,7 +45,14 @@ export const App = () => {
                 }}
                 initial={{ borderRadius: 10 }}
             />
-            <div style={style} />
-        </>
+            <div style={style} onClick={() => setState(false)} />
+        </div>
     )
+    return
+}
+
+export const App = () => {
+    const [state, setState] = useState(true)
+
+    return state && <Child setState={setState} />
 }

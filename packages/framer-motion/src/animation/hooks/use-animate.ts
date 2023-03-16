@@ -12,11 +12,7 @@ export function useAnimate<T extends Element = any>() {
     const animate = useConstant(() => createScopedAnimate(scope))
 
     useUnmountEffect(() => {
-        scope.animations.forEach((animation) => {
-            if (animation.state !== "finished") {
-                animation.stop()
-            }
-        })
+        scope.animations.forEach((animation) => animation.stop())
     })
 
     return [scope, animate] as [AnimationScope<T>, typeof animate]

@@ -161,6 +161,8 @@ export function createAcceleratedAnimation(
         play: () => animation.play(),
         pause: () => animation.pause(),
         stop: () => {
+            if (animation.playState === "idle") return
+
             /**
              * WAAPI doesn't natively have any interruption capabilities.
              *
