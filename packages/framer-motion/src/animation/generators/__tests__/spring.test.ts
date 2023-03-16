@@ -1,6 +1,6 @@
 import { AnimationOptions } from "../../types"
 import { spring } from "../spring"
-import { animateSync } from "../../js/__tests__/utils"
+import { animateSync } from "../../animators/js/__tests__/utils"
 
 describe("spring", () => {
     test("Runs animations with default values ", () => {

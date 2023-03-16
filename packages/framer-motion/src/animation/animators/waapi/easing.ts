@@ -1,4 +1,8 @@
-import { BezierDefinition, Easing, EasingDefinition } from "../../easing/types"
+import {
+    BezierDefinition,
+    Easing,
+    EasingDefinition,
+} from "../../../easing/types"
 
 export function isWaapiSupportedEasing(easing?: Easing | Easing[]) {
     return (

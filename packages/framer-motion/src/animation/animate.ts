@@ -1,55 +1,123 @@
-import { createMotionValueAnimation } from "."
-import { Transition } from "../types"
-import { motionValue, MotionValue } from "../value"
+import { animateMotionValue } from "./interfaces/motion-value"
+import { resolveElements } from "../render/dom/utils/resolve-element"
+import { visualElementStore } from "../render/store"
+import { invariant } from "../utils/errors"
+import { motionValue as createMotionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import { GroupPlaybackControls } from "./GroupPlaybackControls"
-import { AnimationPlaybackControls } from "./types"
+import {
+    AnimateOptions,
+    AnimationPlaybackControls,
+    DOMKeyframesDefinition,
+    ElementOrSelector,
+} from "./types"
+import { isDOMKeyframes } from "./utils/is-dom-keyframes"
+import { animateTarget } from "./interfaces/visual-element-target"
+import { GenericKeyframesTarget } from "../types"
+import { createVisualElement } from "./utils/create-visual-element"
 
-/**
- * @public
- */
-export interface AnimationPlaybackLifecycles<V> {
-    onUpdate?: (latest: V) => void
-    onPlay?: () => void
-    onComplete?: () => void
-    onRepeat?: () => void
-    onStop?: () => void
+function animateSingleValue<V>(
+    value: MotionValue<V> | V,
+    keyframes: V | GenericKeyframesTarget<V>,
+    options: AnimateOptions<V>
+): AnimationPlaybackControls {
+    const motionValue = isMotionValue(value) ? value : createMotionValue(value)
+
+    motionValue.start(
+        animateMotionValue("", motionValue, keyframes as any, options)
+    )
+
+    return motionValue.animation!
+}
+
+function animateElements(
+    elementOrSelector: ElementOrSelector,
+    keyframes: DOMKeyframesDefinition,
+    options: AnimateOptions<any>
+): AnimationPlaybackControls {
+    const elements = resolveElements(elementOrSelector)
+    const numElements = elements.length
+
+    invariant(Boolean(numElements), "No valid element provided.")
+
+    const animations: AnimationPlaybackControls[] = []
+
+    for (let i = 0; i < numElements; i++) {
+        const element = elements[i]
+
+        /**
+         * Check each element for an associated VisualElement. If none exists,
+         * we need to create one.
+         */
+        if (!visualElementStore.has(element)) {
+            /**
+             * TODO: We only need render-specific parts of the VisualElement.
+             * With some additional work the size of the animate() function
+             * could be reduced significantly.
+             */
+            createVisualElement(element as HTMLElement | SVGElement)
+        }
+
+        const visualElement = visualElementStore.get(element)!
+
+        animations.push(
+            ...animateTarget(
+                visualElement,
+                { ...keyframes, transition: options } as any,
+                {}
+            )
+        )
+    }
+
+    return new GroupPlaybackControls(animations)
 }
 
 /**
- * Animate a single value or a `MotionValue`.
- *
- * The first argument is either a `MotionValue` to animate, or an initial animation value.
- *
- * The second is either a value to animate to, or an array of keyframes to animate through.
- *
- * The third argument can be either tween or spring options, and optional lifecycle methods: `onUpdate`, `onPlay`, `onComplete`, `onRepeat` and `onStop`.
- *
- * Returns `AnimationPlaybackControls`, currently just a `stop` method.
- *
- * ```javascript
- * const x = useMotionValue(0)
- *
- * useEffect(() => {
- *   const controls = animate(x, 100, {
- *     type: "spring",
- *     stiffness: 2000,
- *     onComplete: v => {}
- *   })
- *
- *   return controls.stop
- * })
- * ```
- *
- * @public
+ * Animate a single value
+ */
+export function animate(
+    from: string,
+    to: string | GenericKeyframesTarget<string>,
+    options?: AnimateOptions<string>
+): AnimationPlaybackControls
+export function animate(
+    from: number,
+    to: number | GenericKeyframesTarget<number>,
+    options?: AnimateOptions<number>
+): AnimationPlaybackControls
+/**
+ * Animate a MotionValue
+ */
+export function animate(
+    value: MotionValue<string>,
+    keyframes: string | GenericKeyframesTarget<string>,
+    options?: AnimateOptions<string>
+): AnimationPlaybackControls
+export function animate(
+    value: MotionValue<number>,
+    keyframes: number | GenericKeyframesTarget<number>,
+    options?: AnimateOptions<number>
+): AnimationPlaybackControls
+/**
+ * Animate DOM
  */
 export function animate<V>(
-    from: MotionValue<V> | V,
-    to: V | V[],
-    transition: Transition & AnimationPlaybackLifecycles<V> = {}
+    value: ElementOrSelector,
+    keyframes: DOMKeyframesDefinition,
+    options?: AnimateOptions<V>
+): AnimationPlaybackControls
+export function animate<V>(
+    valueOrElement: ElementOrSelector | MotionValue<V> | V,
+    keyframes: DOMKeyframesDefinition | V | GenericKeyframesTarget<V>,
+    options: AnimateOptions<V> = {}
 ): AnimationPlaybackControls {
-    const value = isMotionValue(from) ? from : motionValue(from)
-    value.start(createMotionValueAnimation("", value, to as any, transition))
-
-    return value.animation || new GroupPlaybackControls([])
+    if (isDOMKeyframes(keyframes)) {
+        return animateElements(
+            valueOrElement as ElementOrSelector,
+            keyframes,
+            options
+        )
+    } else {
+        return animateSingleValue(valueOrElement, keyframes, options)
+    }
 }

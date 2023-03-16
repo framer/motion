@@ -4,7 +4,7 @@ import { useSpring } from "../use-spring"
 import { useMotionValue } from "../use-motion-value"
 import { motionValue, MotionValue } from ".."
 import { motion } from "../../"
-import { syncDriver } from "../../animation/js/__tests__/utils"
+import { syncDriver } from "../../animation/animators/js/__tests__/utils"
 
 describe("useSpring", () => {
     test("can create a motion value from a number", async () => {

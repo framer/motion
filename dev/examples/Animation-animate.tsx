@@ -13,8 +13,7 @@ const style = {
 }
 
 export const App = () => {
-    const [width, setWidth] = useState(100)
-    const x = useMotionValue(0)
+    const [width] = useState(100)
     const [target, setTarget] = useState(0)
     const transition = {
         type: "spring" as const,
@@ -23,24 +22,30 @@ export const App = () => {
     }
 
     useEffect(() => {
-        const controls = animate(x, target, {
-            ...transition,
-            onUpdate: (v) => console.log(v),
-        })
+        const controls = animate("div", { x: target }, transition)
 
         controls.then(() => console.log("complete"))
 
         return () => controls.stop()
-    })
+    }, [target])
 
     return (
-        <motion.div
-            style={{ x, ...style, width: motionValue(width), y: width / 10 }}
-            onClick={() => {
-                setTarget(target + 100)
-                setWidth(width + 100)
-            }}
-            initial={{ borderRadius: 10 }}
-        />
+        <>
+            <motion.div
+                id="box"
+                style={{
+                    x: target,
+                    ...style,
+                    width: motionValue(width),
+                    y: width / 10,
+                }}
+                onClick={() => {
+                    setTarget(target + 100)
+                    // setWidth(width + 100)
+                }}
+                initial={{ borderRadius: 10 }}
+            />
+            <div style={style} />
+        </>
     )
 }

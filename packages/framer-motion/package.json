@@ -101,7 +101,7 @@
         },
         {
             "path": "./dist/size-rollup-animate.js",
-            "maxSize": "10 kB"
+            "maxSize": "15 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",

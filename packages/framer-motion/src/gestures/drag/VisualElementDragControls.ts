@@ -30,7 +30,7 @@ import { addDomEvent } from "../../events/add-dom-event"
 import { calcLength } from "../../projection/geometry/delta-calc"
 import { mix } from "../../utils/mix"
 import { percent } from "../../value/types/numbers/units"
-import { createMotionValueAnimation } from "../../animation"
+import { animateMotionValue } from "../../animation/interfaces/motion-value"
 import { sync } from "../../frameloop"
 
 export const elementDragControls = new WeakMap<
@@ -419,7 +419,7 @@ export class VisualElementDragControls {
     ) {
         const axisValue = this.getAxisMotionValue(axis)
         return axisValue.start(
-            createMotionValueAnimation(axis, axisValue, 0, transition)
+            animateMotionValue(axis, axisValue, 0, transition)
         )
     }
 

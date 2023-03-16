@@ -1,7 +1,25 @@
 import { TargetAndTransition, TargetResolver, Transition } from "../types"
 import type { VisualElement } from "../render/VisualElement"
 import { Easing } from "../easing/types"
-import { Driver } from "./js/types"
+import { Driver } from "./animators/js/types"
+import { VariantLabels } from "../motion/types"
+
+export interface AnimationPlaybackLifecycles<V> {
+    onUpdate?: (latest: V) => void
+    onPlay?: () => void
+    onComplete?: () => void
+    onRepeat?: () => void
+    onStop?: () => void
+}
+
+export type AnimateOptions<V = any> = Transition &
+    AnimationPlaybackLifecycles<V>
+
+export type ElementOrSelector =
+    | Element
+    | Element[]
+    | NodeListOf<Element>
+    | string
 
 /**
  * @public
@@ -13,6 +31,41 @@ export interface AnimationPlaybackControls {
     pause: () => void
     then: (onResolve: VoidFunction, onReject?: VoidFunction) => Promise<void>
 }
+
+export interface CSSStyleDeclarationWithTransform
+    extends Omit<CSSStyleDeclaration, "direction" | "transition"> {
+    x: number | string
+    y: number | string
+    z: number | string
+    rotateX: number | string
+    rotateY: number | string
+    rotateZ: number | string
+    scaleX: number
+    scaleY: number
+    scaleZ: number
+    skewX: number | string
+    skewY: number | string
+}
+
+export type ValueKeyframe = string | number
+
+export type UnresolvedValueKeyframe = ValueKeyframe | null
+
+export type ValueKeyframesDefinition =
+    | ValueKeyframe
+    | ValueKeyframe[]
+    | UnresolvedValueKeyframe[]
+
+export type StyleKeyframesDefinition = {
+    [K in keyof CSSStyleDeclarationWithTransform]?: ValueKeyframesDefinition
+}
+
+export type VariableKeyframesDefinition = {
+    [key: `--${string}`]: ValueKeyframesDefinition
+}
+
+export type DOMKeyframesDefinition = StyleKeyframesDefinition &
+    VariableKeyframesDefinition
 
 export interface VelocityOptions {
     velocity?: number
@@ -79,12 +132,8 @@ export interface AnimationOptions<V = any>
     autoplay?: boolean
 }
 
-/**
- * @public
- */
-export type ControlsAnimationDefinition =
-    | string
-    | string[]
+export type AnimationDefinition =
+    | VariantLabels
     | TargetAndTransition
     | TargetResolver
 
@@ -122,7 +171,7 @@ export interface AnimationControls {
      * @public
      */
     start(
-        definition: ControlsAnimationDefinition,
+        definition: AnimationDefinition,
         transitionOverride?: Transition
     ): Promise<any>
 
@@ -146,7 +195,7 @@ export interface AnimationControls {
      *
      * @public
      */
-    set(definition: ControlsAnimationDefinition): void
+    set(definition: AnimationDefinition): void
 
     /**
      * Stops animations on all linked components.

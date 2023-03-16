@@ -4,7 +4,9 @@ import { useEffect } from "react"
 import { motion } from "../.."
 import { animate } from "../animate"
 import { useMotionValue } from "../../value/use-motion-value"
-import { MotionValue } from "../../value"
+import { motionValue, MotionValue } from "../../value"
+
+const duration = 0.001
 
 describe("animate", () => {
     test("correctly animates MotionValues", async () => {
@@ -56,6 +58,7 @@ describe("animate", () => {
 
         expect(promise).resolves.toBe(200)
     })
+
     test("correctly hydrates keyframes null with current MotionValue", async () => {
         const promise = new Promise<number[]>((resolve) => {
             const output: number[] = []
@@ -81,5 +84,88 @@ describe("animate", () => {
         // The default would be to animate from 0 here so if theres no values
         // less than 50 the keyframes were correctly hydrated
         expect(incorrect.length).toBe(0)
+    })
+
+    test("Accepts all overloads", () => {
+        // Checking types only, these are expected to fail given the selector
+        expect(() => {
+            animate("div", { opacity: 0 })
+            animate("div", { opacity: 0 }, { duration: 2 })
+        }).toThrow()
+
+        // Elements
+        animate(document.createElement("div"), { opacity: 0 })
+        animate(document.createElement("div"), { opacity: 0 }, { duration: 2 })
+
+        // Values
+        animate(0, 100, { duration: 2 })
+        animate("#fff", "#000", { duration: 2 })
+        animate("#fff", ["#000"], { duration: 2 })
+
+        // MotionValues
+        animate(motionValue(0), 100)
+        animate(motionValue(0), [null, 100])
+        animate(motionValue(0), [0, 100])
+        animate(motionValue("#fff"), "#000")
+        animate(motionValue("#fff"), [null, "#000"])
+        animate(motionValue("#fff"), ["#fff", "#000"])
+    })
+
+    test("Applies target keyframe when animation has finished", async () => {
+        const div = document.createElement("div")
+        const animation = animate(
+            div,
+            { opacity: 0.6 },
+            { duration, x: {}, "--css-var": {} }
+        )
+        return animation.then(() => {
+            expect(div).toHaveStyle("opacity: 0.6")
+        })
+    })
+
+    test("Works with multiple elements", async () => {
+        const div = document.createElement("div")
+        const div2 = document.createElement("div")
+        const animation = animate(
+            [div, div2],
+            { opacity: 0.6 },
+            { duration, x: {}, "--css-var": {} }
+        )
+        await animation.then(() => {
+            expect(div).toHaveStyle("opacity: 0.6")
+            expect(div2).toHaveStyle("opacity: 0.6")
+        })
+    })
+
+    test("Applies final target keyframe when animation has finished", async () => {
+        const div = document.createElement("div")
+        const animation = animate(div, { opacity: [0.2, 0.5] }, { duration })
+        await animation.then(() => {
+            expect(div).toHaveStyle("opacity: 0.5")
+        })
+    })
+
+    test("time sets and gets time", async () => {
+        const div = document.createElement("div")
+        const animation = animate(div, { x: 100 }, { duration: 10 })
+
+        expect(animation.time).toBe(0)
+        animation.time = 5
+        expect(animation.time).toBe(5)
+    })
+
+    test("time can be set to duration", async () => {
+        const div = document.createElement("div")
+        div.style.opacity = "0"
+        const animation = animate(div, { opacity: 0.5 }, { duration: 1 })
+        animation.pause()
+        animation.time = 1
+
+        return new Promise<void>((resolve) => {
+            setTimeout(() => {
+                expect(div).toHaveStyle("opacity: 0.5")
+                resolve()
+            }, 50)
+        })
     })
 })

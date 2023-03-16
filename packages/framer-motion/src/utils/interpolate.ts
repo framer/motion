@@ -83,7 +83,7 @@ export function interpolate<T>(
     input: number[],
     output: T[],
     { clamp: isClamp = true, ease, mixer }: InterpolateOptions<T> = {}
-) {
+): (v: number) => T {
     const inputLength = input.length
 
     invariant(
@@ -95,6 +95,12 @@ export function interpolate<T>(
         !ease || !Array.isArray(ease) || ease.length === inputLength - 1,
         "Array of easing functions must be of length `input.length - 1`, as it applies to the transitions **between** the defined values."
     )
+
+    /**
+     * If we're only provided a single input, we can just make a function
+     * that returns the output.
+     */
+    if (inputLength === 1) return () => output[0]
 
     // If input runs highest -> lowest, reverse both arrays
     if (input[0] > input[inputLength - 1]) {

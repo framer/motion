@@ -1,17 +1,17 @@
-import { AnimationPlaybackControls } from "../types"
-import { keyframes as keyframesGeneratorFactory } from "../generators/keyframes"
-import { spring } from "../generators/spring/index"
-import { inertia } from "../generators/inertia"
-import { AnimationState, KeyframeGenerator } from "../generators/types"
+import { AnimationPlaybackControls } from "../../types"
+import { keyframes as keyframesGeneratorFactory } from "../../generators/keyframes"
+import { spring } from "../../generators/spring/index"
+import { inertia } from "../../generators/inertia"
+import { AnimationState, KeyframeGenerator } from "../../generators/types"
 import { DriverControls } from "./types"
-import { AnimationOptions } from "../types"
+import { AnimationOptions } from "../../types"
 import { frameloopDriver } from "./driver-frameloop"
-import { interpolate } from "../../utils/interpolate"
-import { clamp } from "../../utils/clamp"
+import { interpolate } from "../../../utils/interpolate"
+import { clamp } from "../../../utils/clamp"
 import {
     millisecondsToSeconds,
     secondsToMilliseconds,
-} from "../../utils/time-conversion"
+} from "../../../utils/time-conversion"
 
 type GeneratorFactory = (
     options: AnimationOptions<any>
@@ -280,11 +280,13 @@ export function animateValue<V = number>({
             return millisecondsToSeconds(time)
         },
         set time(newTime: number) {
-            const timeInMs = secondsToMilliseconds(newTime)
+            newTime = secondsToMilliseconds(newTime)
+
+            time = newTime
             if (holdTime !== null || !animationDriver) {
-                holdTime = timeInMs
+                holdTime = newTime
             } else {
-                startTime = animationDriver.now() - timeInMs
+                startTime = animationDriver.now() - newTime
             }
         },
         play,

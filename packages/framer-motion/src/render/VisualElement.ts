@@ -41,6 +41,7 @@ import { featureDefinitions } from "../motion/features/definitions"
 import { Feature } from "../motion/features/Feature"
 import type { PresenceContextProps } from "../context/PresenceContext"
 import { variantProps } from "./utils/variant-props"
+import { visualElementStore } from "./store"
 
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
@@ -392,6 +393,8 @@ export abstract class VisualElement<
     mount(instance: Instance) {
         this.current = instance
 
+        visualElementStore.set(instance, this)
+
         if (this.projection) {
             this.projection.mount(instance)
         }
@@ -425,6 +428,7 @@ export abstract class VisualElement<
     }
 
     unmount() {
+        visualElementStore.delete(this.current)
         this.projection && this.projection.unmount()
         cancelSync.update(this.notifyUpdate)
         cancelSync.render(this.render)

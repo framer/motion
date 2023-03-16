@@ -51,7 +51,7 @@ export {
     useAnimationControls,
 } from "./animation/hooks/use-animation"
 export { useAnimationFrame } from "./utils/use-animation-frame"
-export { animateVisualElement } from "./render/utils/animation"
+export { animateVisualElement } from "./animation/interfaces/visual-element"
 export {
     HoverHandlers,
     TapHandlers,
@@ -81,7 +81,7 @@ export { useInstantTransition } from "./utils/use-instant-transition"
 export { useInstantLayoutTransition } from "./projection/use-instant-layout-transition"
 export { useResetProjection } from "./projection/use-reset-projection"
 export { buildTransform } from "./render/html/utils/build-transform"
-export { animateValue } from "./animation/js"
+export { animateValue } from "./animation/animators/js"
 export { color } from "./value/types/color"
 export { complex } from "./value/types/complex"
 export { px } from "./value/types/numbers/units"

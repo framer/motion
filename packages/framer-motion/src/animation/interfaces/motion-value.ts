@@ -1,19 +1,19 @@
-import { warning } from "../utils/errors"
-import { ResolvedValueTarget, Transition } from "../types"
-import { secondsToMilliseconds } from "../utils/time-conversion"
-import { instantAnimationState } from "../utils/use-instant-transition-state"
-import type { MotionValue, StartAnimation } from "../value"
-import { createAcceleratedAnimation } from "./waapi/create-accelerated-animation"
-import { createInstantAnimation } from "./create-instant-animation"
-import { AnimationOptions } from "./types"
-import { getDefaultTransition } from "./utils/default-transitions"
-import { isAnimatable } from "./utils/is-animatable"
-import { getKeyframes } from "./utils/keyframes"
-import { getValueTransition, isTransitionDefined } from "./utils/transitions"
-import { animateValue } from "./js"
-import { AnimationPlaybackControls } from "./types"
+import { warning } from "../../utils/errors"
+import { ResolvedValueTarget, Transition } from "../../types"
+import { secondsToMilliseconds } from "../../utils/time-conversion"
+import { instantAnimationState } from "../../utils/use-instant-transition-state"
+import type { MotionValue, StartAnimation } from "../../value"
+import { createAcceleratedAnimation } from "../animators/waapi/create-accelerated-animation"
+import { createInstantAnimation } from "../animators/instant"
+import { AnimationOptions } from "../types"
+import { getDefaultTransition } from "../utils/default-transitions"
+import { isAnimatable } from "../utils/is-animatable"
+import { getKeyframes } from "../utils/keyframes"
+import { getValueTransition, isTransitionDefined } from "../utils/transitions"
+import { animateValue } from "../animators/js"
+import { AnimationPlaybackControls } from "../types"
 
-export const createMotionValueAnimation = (
+export const animateMotionValue = (
     valueName: string,
     value: MotionValue,
     target: ResolvedValueTarget,

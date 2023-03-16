@@ -1,8 +1,8 @@
 import { animateValue } from "../"
-import { easeOut } from "../../../easing/ease"
-import { nextFrame } from "../../../gestures/__tests__/utils"
-import { noop } from "../../../utils/noop"
-import { AnimationOptions } from "../../types"
+import { easeOut } from "../../../../easing/ease"
+import { nextFrame } from "../../../../gestures/__tests__/utils"
+import { noop } from "../../../../utils/noop"
+import { AnimationOptions } from "../../../types"
 import { syncDriver } from "./utils"
 
 const linear = noop
@@ -857,6 +857,7 @@ describe("animate", () => {
 
                     if (output.length === 4) {
                         animation.time = 0.02
+                        expect(animation.time).toEqual(0.02)
                     }
                 },
                 onComplete: () => resolve(),

@@ -24,6 +24,12 @@ beforeEach(() => {
         ) => {
             return {
                 cancel: () => {},
+                finished: {
+                    then: (resolve: VoidFunction) => {
+                        resolve()
+                        return Promise.resolve()
+                    },
+                },
             } as any
         }
     )
