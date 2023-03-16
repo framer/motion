@@ -46,7 +46,7 @@ import { record } from "../../debug/record"
 import { AnimationOptions } from "../../animation/types"
 import { frameData } from "../../dom-entry"
 import { isSVGElement } from "../../render/dom/utils/is-svg-element"
-import { animateValue } from "../../animation/animators/js"
+import { animateSingleValue } from "../../animation/interfaces/single-value"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -1444,9 +1444,9 @@ export function createProjectionNode<I>({
             this.pendingAnimation = sync.update(() => {
                 globalProjectionState.hasAnimatedSinceResize = true
 
-                this.currentAnimation = animateValue({
+                this.currentAnimation = animateSingleValue(0, animationTarget, {
                     ...(options as any),
-                    keyframes: [0, animationTarget],
+                    // keyframes: [0, animationTarget],÷
                     onUpdate: (latest: number) => {
                         this.mixTargetDelta(latest)
                         options.onUpdate && options.onUpdate(latest)

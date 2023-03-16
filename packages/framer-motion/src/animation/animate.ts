@@ -1,9 +1,7 @@
-import { animateMotionValue } from "./interfaces/motion-value"
 import { resolveElements } from "../render/dom/utils/resolve-element"
 import { visualElementStore } from "../render/store"
 import { invariant } from "../utils/errors"
-import { motionValue as createMotionValue, MotionValue } from "../value"
-import { isMotionValue } from "../value/utils/is-motion-value"
+import { MotionValue } from "../value"
 import { GroupPlaybackControls } from "./GroupPlaybackControls"
 import {
     AnimateOptions,
@@ -15,20 +13,7 @@ import { isDOMKeyframes } from "./utils/is-dom-keyframes"
 import { animateTarget } from "./interfaces/visual-element-target"
 import { GenericKeyframesTarget } from "../types"
 import { createVisualElement } from "./utils/create-visual-element"
-
-function animateSingleValue<V>(
-    value: MotionValue<V> | V,
-    keyframes: V | GenericKeyframesTarget<V>,
-    options: AnimateOptions<V>
-): AnimationPlaybackControls {
-    const motionValue = isMotionValue(value) ? value : createMotionValue(value)
-
-    motionValue.start(
-        animateMotionValue("", motionValue, keyframes as any, options)
-    )
-
-    return motionValue.animation!
-}
+import { animateSingleValue } from "./interfaces/single-value"
 
 function animateElements(
     elementOrSelector: ElementOrSelector,
