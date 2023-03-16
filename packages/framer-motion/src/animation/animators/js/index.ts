@@ -320,7 +320,7 @@ export function animateValue<V = number>({
         set speed(newSpeed: number) {
             if (newSpeed === speed || !animationDriver) return
             speed = newSpeed
-            startTime = animationDriver.now() - time / speed
+            controls.time = millisecondsToSeconds(time)
         },
         resetStartTime() {},
         play,
