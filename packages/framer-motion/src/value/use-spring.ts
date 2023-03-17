@@ -59,21 +59,10 @@ export function useSpring(
                 type: "spring",
                 restDelta: 0.001,
                 restSpeed: 0.01,
+                applyMinElapsed: true,
                 ...config,
                 onUpdate: set,
             })
-
-            /**
-             * This is a slight hack but it ensures that the animation
-             * is given a little time to run and incorporate some velocity.
-             * It could otherwise be the case
-             */
-            if (!frameData.isProcessing) {
-                activeSpringAnimation.current.time = Math.max(
-                    millisecondsToSeconds(frameData.delta),
-                    0.032
-                )
-            }
 
             return value.get()
         }, stopAnimation)
