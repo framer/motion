@@ -14,6 +14,10 @@ Undocumented APIs should be considered internal and may change without warning.
 
 -   `"easeIn"`, `"easeOut"` and `"easeInOut"` easing functions are now WAAPI spec-compliant.
 
+### Fixed
+
+-   `.stop()` stops animations permanently.
+
 ## [10.5.0] 2023-03-16
 
 ### Added

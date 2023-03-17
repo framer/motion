@@ -63,6 +63,7 @@ export function createAcceleratedAnimation(
     /**
      * TODO: Unify with js/index
      */
+    let hasStopped = false
     let resolveFinishedPromise: VoidFunction
     let currentFinishedPromise: Promise<void>
 
@@ -168,9 +169,13 @@ export function createAcceleratedAnimation(
         set speed(newSpeed: number) {
             animation.playbackRate = newSpeed
         },
-        play: () => animation.play(),
+        play: () => {
+            if (hasStopped) return
+            animation.play()
+        },
         pause: () => animation.pause(),
         stop: () => {
+            hasStopped = true
             if (animation.playState === "idle") return
 
             /**
