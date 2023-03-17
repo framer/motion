@@ -7,6 +7,8 @@ import { SpringOptions } from "../animation/types"
 import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
 import { AnimationPlaybackControls } from "../animation/types"
 import { animateValue } from "../animation/animators/js"
+import { frameData } from "../frameloop/data"
+import { millisecondsToSeconds } from "../utils/time-conversion"
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
@@ -60,6 +62,18 @@ export function useSpring(
                 ...config,
                 onUpdate: set,
             })
+
+            /**
+             * If we're between frames, resync the animation to the frameloop.
+             */
+            if (!frameData.isProcessing) {
+                const delta = performance.now() - frameData.timestamp
+
+                if (delta < 30) {
+                    activeSpringAnimation.current.time =
+                        millisecondsToSeconds(delta)
+                }
+            }
 
             return value.get()
         }, stopAnimation)
