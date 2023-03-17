@@ -129,6 +129,12 @@ export function createAcceleratedAnimation(
         }
     )
 
+    const safeCancel = () => {
+        sync.update(() => animation.cancel())
+        resolveFinishedPromise()
+        updateFinishedPromise()
+    }
+
     /**
      * Prefer the `onfinish` prop as it's more widely supported than
      * the `finished` promise.
@@ -139,10 +145,8 @@ export function createAcceleratedAnimation(
      */
     animation.onfinish = () => {
         value.set(getFinalKeyframe(keyframes, options))
-        sync.update(() => animation.cancel())
         onComplete && onComplete()
-        resolveFinishedPromise()
-        updateFinishedPromise()
+        safeCancel()
     }
 
     /**
@@ -183,7 +187,8 @@ export function createAcceleratedAnimation(
                     sampleDelta
                 )
             }
-            sync.update(() => animation.cancel())
+            safeCancel()
         },
+        cancel: safeCancel,
     }
 }

@@ -50,4 +50,8 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
     stop() {
         this.runAll("stop")
     }
+
+    cancel() {
+        this.runAll("cancel")
+    }
 }
