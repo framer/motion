@@ -5,6 +5,7 @@ import { motion } from "../.."
 import { animate } from "../animate"
 import { useMotionValue } from "../../value/use-motion-value"
 import { motionValue, MotionValue } from "../../value"
+import { syncDriver } from "../animators/js/__tests__/utils"
 
 const duration = 0.001
 
@@ -139,7 +140,11 @@ describe("animate", () => {
 
     test("Applies final target keyframe when animation has finished", async () => {
         const div = document.createElement("div")
-        const animation = animate(div, { opacity: [0.2, 0.5] }, { duration })
+        const animation = animate(
+            div,
+            { opacity: [0.2, 0.5] },
+            { duration: 1, driver: syncDriver(23) }
+        )
         await animation.then(() => {
             expect(div).toHaveStyle("opacity: 0.5")
         })
@@ -150,14 +155,42 @@ describe("animate", () => {
         const animation = animate(
             div,
             { opacity: [0.2, 0.5] },
-            { duration, repeat: 1, repeatType: "reverse" }
+            {
+                duration,
+                repeat: 1,
+                repeatType: "reverse",
+            }
         )
         await animation.then(() => {
             expect(div).toHaveStyle("opacity: 0.2")
         })
     })
 
+    test("Applies final target keyframe when animation has finished, repeat: reverse even", async () => {
+        const div = document.createElement("div")
+        const animation = animate(
+            div,
+            { opacity: [0.2, 0.5] },
+            { duration, repeat: 2, repeatType: "reverse" }
+        )
+        await animation.then(() => {
+            expect(div).toHaveStyle("opacity: 0.5")
+        })
+    })
+
     test("Applies final target keyframe when animation has finished, repeat: mirror", async () => {
+        const div = document.createElement("div")
+        const animation = animate(
+            div,
+            { opacity: [0.2, 0.5] },
+            { duration, repeat: 1, repeatType: "mirror" }
+        )
+        await animation.then(() => {
+            expect(div).toHaveStyle("opacity: 0.2")
+        })
+    })
+
+    test("Applies final target keyframe when animation has finished, repeat: mirror even", async () => {
         const div = document.createElement("div")
         const animation = animate(
             div,

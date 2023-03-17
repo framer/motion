@@ -196,9 +196,13 @@ export function animateValue<V = number>({
              * If iteration progress is 1 we count that as the end
              * of the previous iteration.
              */
-            if (!iterationProgress && progress >= 1) {
+            if (
+                (!iterationProgress && progress >= 1) ||
+                progress > repeat + 1
+            ) {
                 iterationProgress = 1
             }
+
             iterationProgress === 1 && currentIteration--
 
             /**
@@ -223,11 +227,14 @@ export function animateValue<V = number>({
                         : 1
                     : clamp(0, 1, iterationProgress)
 
+            console.log({ progress, iterationProgress })
             elapsed = p * resolvedDuration
         }
 
         const state = frameGenerator.next(elapsed)
         let { value, done } = state
+
+        console.log({ value, elapsed })
 
         if (calculatedDuration !== null) {
             done = time >= totalDuration
