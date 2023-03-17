@@ -1091,4 +1091,25 @@ describe("animate", () => {
 
         expect(output).toEqual([0, 20, 40, 0])
     })
+
+    test("Correctly completes an animation", async () => {
+        const output: number[] = []
+
+        const animation = animateValue({
+            keyframes: [0, 100],
+            driver: syncDriver(20),
+            duration: 100,
+            ease: linear,
+            onUpdate: (v) => {
+                output.push(v)
+                if (v === 40) {
+                    animation.complete()
+                }
+            },
+        })
+
+        await animation
+
+        expect(output).toEqual([0, 20, 40, 100])
+    })
 })
