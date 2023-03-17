@@ -1002,6 +1002,30 @@ describe("animate", () => {
         expect(output).toEqual([0, 20, 40, 60, 80, 100, 0, 20, 40, 60, 80, 100])
     })
 
+    test(".play() doesn't start the animation if it has been manually stopped", async () => {
+        const driver = syncDriver(20)
+        const output: number[] = []
+        const animation = animateValue({
+            keyframes: [0, 100],
+            duration: 100,
+            ease: "linear",
+            onUpdate: (v) => {
+                output.push(Math.round(v))
+
+                if (output.length === 5) animation.stop()
+            },
+            driver,
+        })
+
+        await nextFrame()
+
+        animation.play()
+
+        await nextFrame()
+
+        expect(output).toEqual([0, 20, 40, 60, 80])
+    })
+
     test(".then() can be chained", async () => {
         return new Promise(async (resolve) => {
             const animation = animateValue({
