@@ -58,8 +58,6 @@ export function createAcceleratedAnimation(
         options.damping !== 0 &&
         options.type !== "inertia"
 
-    if (options.ease === undefined) options.ease = "linear"
-
     if (!canAccelerateAnimation) return false
 
     /**
