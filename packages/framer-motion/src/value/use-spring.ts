@@ -59,10 +59,21 @@ export function useSpring(
                 type: "spring",
                 restDelta: 0.001,
                 restSpeed: 0.01,
-                applyMinElapsed: true,
                 ...config,
                 onUpdate: set,
             })
+
+            /**
+             * If we're between frames, resync the animation to the frameloop.
+             */
+            if (!frameData.isProcessing) {
+                const delta = performance.now() - frameData.timestamp
+
+                if (delta < 30) {
+                    activeSpringAnimation.current.time =
+                        millisecondsToSeconds(delta)
+                }
+            }
 
             return value.get()
         }, stopAnimation)

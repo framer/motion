@@ -12,7 +12,6 @@ import {
     millisecondsToSeconds,
     secondsToMilliseconds,
 } from "../../../utils/time-conversion"
-import { frameData } from "../../../frameloop/data"
 
 type GeneratorFactory = (
     options: AnimationOptions<any>
@@ -47,10 +46,6 @@ export interface MainThreadAnimationControls<V>
     sample: (t: number) => AnimationState<V>
 }
 
-export interface MainThreadAnimationOptions<V> extends AnimationOptions<V> {
-    applyMinElapsed?: boolean
-}
-
 /**
  * Animate a single value on the main thread.
  *
@@ -71,9 +66,8 @@ export function animateValue<V = number>({
     onStop,
     onComplete,
     onUpdate,
-    applyMinElapsed,
     ...options
-}: MainThreadAnimationOptions<V>): MainThreadAnimationControls<V> {
+}: AnimationOptions<V>): MainThreadAnimationControls<V> {
     let speed = 1
 
     let resolveFinishedPromise: VoidFunction
@@ -165,10 +159,6 @@ export function animateValue<V = number>({
         // Rebase on delay
         time = Math.max(time - delay, 0)
 
-        if (applyMinElapsed) {
-            time = Math.max(time, frameData.delta)
-        }
-
         /**
          * If this animation has finished, set the current time
          * to the total duration.
@@ -180,8 +170,6 @@ export function animateValue<V = number>({
         let elapsed = time
 
         let frameGenerator = generator
-
-        console.log({ elapsed, velocity: options.velocity })
 
         if (repeat) {
             /**
