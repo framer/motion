@@ -274,18 +274,13 @@ export function animateValue<V = number>({
     const play = () => {
         if (hasStopped) return
 
-        if (!animationDriver) {
-            animationDriver = driver(tick)
-            animationDriver.start()
-        }
+        if (!animationDriver) animationDriver = driver(tick)
 
         const now = animationDriver.now()
 
         onPlay && onPlay()
 
         playState = "running"
-
-        console.log(holdTime)
 
         if (holdTime !== null) {
             startTime = now - holdTime
@@ -297,6 +292,8 @@ export function animateValue<V = number>({
 
         cancelTime = startTime
         holdTime = null
+
+        animationDriver.start()
     }
 
     if (autoplay) {
@@ -335,8 +332,6 @@ export function animateValue<V = number>({
         pause: () => {
             playState = "paused"
             holdTime = time
-
-            console.log("pausing with holdtime", holdTime)
         },
         stop: () => {
             hasStopped = true
