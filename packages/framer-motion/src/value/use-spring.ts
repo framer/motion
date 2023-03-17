@@ -7,6 +7,7 @@ import { SpringOptions } from "../animation/types"
 import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
 import { AnimationPlaybackControls } from "../animation/types"
 import { animateValue } from "../animation/animators/js"
+import { frameData } from "../frameloop/data"
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
@@ -60,6 +61,15 @@ export function useSpring(
                 ...config,
                 onUpdate: set,
             })
+
+            /**
+             * This is a slight hack but it ensures that the animation
+             * is given a little time to run and incorporate some velocity.
+             * It could otherwise be the case
+             */
+            if (!frameData.isProcessing) {
+                activeSpringAnimation.current.time = 0.01
+            }
 
             return value.get()
         }, stopAnimation)

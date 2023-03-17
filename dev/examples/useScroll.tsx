@@ -44,10 +44,31 @@ export const Example = () => {
     const [isComplete, setIsComplete] = useState(false)
     const containerRef = useRef(null)
     const { scrollYProgress } = useElementScroll(containerRef)
-    const yRange = useTransform(scrollYProgress, [0, 0.9], [0, 1])
-    const pathLength = useSpring(yRange, { stiffness: 400, damping: 90 })
+    // const yRange = useTransform(scrollYProgress, [0, 0.9], [0, 1])
+    // const pathLength = useSpring(yRange, {
+    //     stiffness: 100,
+    //     damping: 30,
+    //     restDelta: 0.001,
+    // })
 
-    useEffect(() => yRange.on("change", (v) => setIsComplete(v >= 1)), [yRange])
+    // const { scrollYProgress } = useScroll();
+    const scaleX = useSpring(scrollYProgress, {
+        stiffness: 100,
+        damping: 30,
+        restDelta: 0.001,
+    })
+
+    // return (
+    //   <>
+    //     <motion.div className="progress-bar" style={{ scaleX }} />
+    //     <h1>
+    //       <code>useScroll</code> with spring smoothing
+    //     </h1>
+    //     <LoremIpsum />
+    //   </>
+    // );
+
+    // useEffect(() => yRange.on("change", (v) => setIsComplete(v >= 1)), [yRange])
 
     return (
         <div
@@ -61,6 +82,15 @@ export const Example = () => {
                 right: 0,
             }}
         >
+            <motion.div
+                style={{
+                    position: "fixed",
+                    width: "100%",
+                    height: 10,
+                    background: "white",
+                    scaleX,
+                }}
+            />
             <ContentPlaceholder />
             <svg className="progress-icon" viewBox="0 0 60 60">
                 <motion.path
@@ -70,7 +100,7 @@ export const Example = () => {
                     strokeDasharray="0px 10000px"
                     d="M 0, 20 a 20, 20 0 1,0 40,0 a 20, 20 0 1,0 -40,0"
                     style={{
-                        pathLength,
+                        // pathLength,
                         rotate: 90,
                         translateX: 5,
                         translateY: 5,
