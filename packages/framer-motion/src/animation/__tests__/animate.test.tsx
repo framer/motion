@@ -145,6 +145,58 @@ describe("animate", () => {
         })
     })
 
+    test("Applies final target keyframe when animation has finished, repeat: reverse", async () => {
+        const div = document.createElement("div")
+        const animation = animate(
+            div,
+            { opacity: [0.2, 0.5] },
+            {
+                duration,
+                repeat: 1,
+                repeatType: "reverse",
+            }
+        )
+        await animation.then(() => {
+            expect(div).toHaveStyle("opacity: 0.2")
+        })
+    })
+
+    test("Applies final target keyframe when animation has finished, repeat: reverse even", async () => {
+        const div = document.createElement("div")
+        const animation = animate(
+            div,
+            { opacity: [0.2, 0.5] },
+            { duration, repeat: 2, repeatType: "reverse" }
+        )
+        await animation.then(() => {
+            expect(div).toHaveStyle("opacity: 0.5")
+        })
+    })
+
+    test("Applies final target keyframe when animation has finished, repeat: mirror", async () => {
+        const div = document.createElement("div")
+        const animation = animate(
+            div,
+            { opacity: [0.2, 0.5] },
+            { duration, repeat: 1, repeatType: "mirror" }
+        )
+        await animation.then(() => {
+            expect(div).toHaveStyle("opacity: 0.2")
+        })
+    })
+
+    test("Applies final target keyframe when animation has finished, repeat: mirror even", async () => {
+        const div = document.createElement("div")
+        const animation = animate(
+            div,
+            { opacity: [0.2, 0.5] },
+            { duration, repeat: 1, repeatType: "mirror" }
+        )
+        await animation.then(() => {
+            expect(div).toHaveStyle("opacity: 0.2")
+        })
+    })
+
     test("time sets and gets time", async () => {
         const div = document.createElement("div")
         const animation = animate(div, { x: 100 }, { duration: 10 })

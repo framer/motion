@@ -237,7 +237,7 @@ describe("animate", () => {
     })
 
     test("Correctly applies repeat type 'reverse'", async () => {
-        return new Promise<void>((resolve) => {
+        await new Promise<void>((resolve) => {
             testAnimate(
                 {
                     keyframes: [0, 100],
@@ -249,10 +249,26 @@ describe("animate", () => {
                 resolve
             )
         })
+
+        return new Promise<void>((resolve) => {
+            testAnimate(
+                {
+                    keyframes: [0, 100],
+                    ease: "linear",
+                    repeat: 2,
+                    repeatType: "reverse",
+                },
+                [
+                    0, 20, 40, 60, 80, 100, 80, 60, 40, 20, 0, 20, 40, 60, 80,
+                    100,
+                ],
+                resolve
+            )
+        })
     })
 
     test("Correctly applies repeat type 'mirror'", async () => {
-        return new Promise<void>((resolve) => {
+        await new Promise<void>((resolve) => {
             testAnimate(
                 {
                     keyframes: [0, 100],
@@ -261,6 +277,19 @@ describe("animate", () => {
                     repeatType: "mirror",
                 },
                 [0, 36, 64, 84, 96, 100, 64, 36, 16, 4, 0],
+                resolve
+            )
+        })
+
+        return new Promise<void>((resolve) => {
+            testAnimate(
+                {
+                    keyframes: [0, 100],
+                    repeat: 2,
+                    ease: reverseEasing((v) => v * v),
+                    repeatType: "mirror",
+                },
+                [0, 36, 64, 84, 96, 100, 64, 36, 16, 4, 0, 36, 64, 84, 96, 100],
                 resolve
             )
         })

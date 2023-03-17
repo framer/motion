@@ -17,6 +17,8 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Fixed
 
 -   `.stop()` stops animations permanently.
+-   `useSpring` timing.
+-   `animate()` with `repeat: 1` and `repeatType` `"reverse"` or `"mirror"` correctly applies final keyframe.
 
 ## [10.5.0] 2023-03-16
 

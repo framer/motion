@@ -199,12 +199,16 @@ export function animateValue<V = number>({
             if (!iterationProgress && progress >= 1) {
                 iterationProgress = 1
             }
+
             iterationProgress === 1 && currentIteration--
+
+            currentIteration = Math.min(currentIteration, repeat + 1)
 
             /**
              * Reverse progress if we're not running in "normal" direction
              */
-            const iterationIsOdd = currentIteration % 2
+            const iterationIsOdd = Boolean(currentIteration % 2)
+
             if (iterationIsOdd) {
                 if (repeatType === "reverse") {
                     iterationProgress = 1 - iterationProgress
@@ -216,12 +220,11 @@ export function animateValue<V = number>({
                 }
             }
 
-            const p =
-                time >= totalDuration
-                    ? repeatType === "reverse" && iterationIsOdd
-                        ? 0
-                        : 1
-                    : clamp(0, 1, iterationProgress)
+            let p = clamp(0, 1, iterationProgress)
+
+            if (time > totalDuration) {
+                p = repeatType === "reverse" && iterationIsOdd ? 1 : 0
+            }
 
             elapsed = p * resolvedDuration
         }
