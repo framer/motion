@@ -8,6 +8,7 @@ import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
 import { AnimationPlaybackControls } from "../animation/types"
 import { animateValue } from "../animation/animators/js"
 import { frameData } from "../frameloop/data"
+import { millisecondsToSeconds } from "../utils/time-conversion"
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
@@ -68,7 +69,10 @@ export function useSpring(
              * It could otherwise be the case
              */
             if (!frameData.isProcessing) {
-                activeSpringAnimation.current.time = 0.01
+                activeSpringAnimation.current.time = Math.max(
+                    millisecondsToSeconds(frameData.delta),
+                    0.032
+                )
             }
 
             return value.get()
