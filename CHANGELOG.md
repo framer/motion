@@ -4,7 +4,17 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [10.5.0] 2023-03-17
+## [10.6.0] 2023-03-17
+
+### Added
+
+-   `cancel()`, `complete()` and `speed` to `animate()`.
+
+### Changed
+
+-   `"easeIn"`, `"easeOut"` and `"easeInOut"` easing functions are now WAAPI spec-compliant.
+
+## [10.5.0] 2023-03-16
 
 ### Added
 
