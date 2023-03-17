@@ -219,12 +219,6 @@ export function animateValue<V = number>({
         const state = frameGenerator.next(elapsed)
         let { value, done } = state
 
-        if (onUpdate) {
-            onUpdate(
-                mapNumbersToKeyframes ? mapNumbersToKeyframes(value) : value
-            )
-        }
-
         if (calculatedDuration !== null) {
             done = time >= totalDuration
         }
@@ -232,6 +226,12 @@ export function animateValue<V = number>({
         const isAnimationFinished =
             holdTime === null &&
             (playState === "finished" || (playState === "running" && done))
+
+        if (onUpdate) {
+            onUpdate(
+                mapNumbersToKeyframes ? mapNumbersToKeyframes(value) : value
+            )
+        }
 
         if (isAnimationFinished) {
             finish()
@@ -320,6 +320,10 @@ export function animateValue<V = number>({
         cancel: () => {
             if (cancelTime !== null) tick(cancelTime)
             cancel()
+        },
+        complete: () => {
+            playState = "finished"
+            holdTime === null
         },
         sample: (elapsed: number) => {
             startTime = 0

@@ -191,6 +191,7 @@ export function createAcceleratedAnimation(
             }
             safeCancel()
         },
+        complete: () => animation.finish(),
         cancel: safeCancel,
     }
 }
