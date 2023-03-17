@@ -70,6 +70,7 @@ export function animateValue<V = number>({
      * WAAPI-compatible behaviour.
      */
     const updateFinishedPromise = () => {
+        resolveFinishedPromise && resolveFinishedPromise()
         currentFinishedPromise = new Promise((resolve) => {
             resolveFinishedPromise = resolve
         })
@@ -112,6 +113,7 @@ export function animateValue<V = number>({
     let playState: AnimationPlayState = "idle"
     let holdTime: number | null = null
     let startTime: number | null = null
+    let cancelTime: number | null = null
 
     /**
      * If duration is undefined and we have repeat options,
@@ -238,11 +240,22 @@ export function animateValue<V = number>({
         return state
     }
 
-    const finish = () => {
+    const stopAnimationDriver = () => {
         animationDriver && animationDriver.stop()
+        animationDriver = undefined
+    }
+
+    const cancel = () => {
+        playState = "idle"
+        stopAnimationDriver()
+        updateFinishedPromise()
+        startTime = cancelTime = null
+    }
+
+    const finish = () => {
         playState = "finished"
         onComplete && onComplete()
-        resolveFinishedPromise()
+        stopAnimationDriver()
         updateFinishedPromise()
     }
 
@@ -263,6 +276,7 @@ export function animateValue<V = number>({
             startTime = now
         }
 
+        cancelTime = startTime
         holdTime = null
 
         animationDriver.start()
@@ -301,8 +315,11 @@ export function animateValue<V = number>({
             if (playState === "idle") return
             playState = "idle"
             onStop && onStop()
-            animationDriver && animationDriver.stop()
-            animationDriver = undefined
+            cancel()
+        },
+        cancel: () => {
+            if (cancelTime !== null) tick(cancelTime)
+            cancel()
         },
         sample: (elapsed: number) => {
             startTime = 0

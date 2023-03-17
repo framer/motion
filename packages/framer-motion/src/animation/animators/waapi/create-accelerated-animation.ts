@@ -129,6 +129,12 @@ export function createAcceleratedAnimation(
         }
     )
 
+    const safeCancel = () => {
+        sync.update(() => animation.cancel())
+        resolveFinishedPromise()
+        updateFinishedPromise()
+    }
+
     /**
      * Prefer the `onfinish` prop as it's more widely supported than
      * the `finished` promise.
@@ -139,10 +145,8 @@ export function createAcceleratedAnimation(
      */
     animation.onfinish = () => {
         value.set(getFinalKeyframe(keyframes, options))
-        sync.update(() => animation.cancel())
         onComplete && onComplete()
-        resolveFinishedPromise()
-        updateFinishedPromise()
+        safeCancel()
     }
 
     /**
@@ -172,18 +176,21 @@ export function createAcceleratedAnimation(
              * Motion to calculate velocity for any subsequent animation.
              */
             const { currentTime } = animation
+
             if (currentTime) {
                 const sampleAnimation = animateValue({
                     ...options,
                     autoplay: false,
                 })
+
                 value.setWithVelocity(
                     sampleAnimation.sample(currentTime - sampleDelta).value,
                     sampleAnimation.sample(currentTime).value,
                     sampleDelta
                 )
             }
-            sync.update(() => animation.cancel())
+            safeCancel()
         },
+        cancel: safeCancel,
     }
 }
