@@ -46,6 +46,13 @@ export interface MainThreadAnimationControls<V>
     sample: (t: number) => AnimationState<V>
 }
 
+/**
+ * Animate a single value on the main thread.
+ *
+ * This function is written, where functionality overlaps,
+ * to be largely spec-compliant with WAAPI to allow fungibility
+ * between the two.
+ */
 export function animateValue<V = number>({
     autoplay = true,
     delay = 0,
@@ -61,6 +68,8 @@ export function animateValue<V = number>({
     onUpdate,
     ...options
 }: AnimationOptions<V>): MainThreadAnimationControls<V> {
+    let speed = 1
+
     let resolveFinishedPromise: VoidFunction
     let currentFinishedPromise: Promise<void>
 
@@ -144,7 +153,7 @@ export function animateValue<V = number>({
         if (holdTime !== null) {
             time = holdTime
         } else {
-            time = timestamp - startTime
+            time = (timestamp - startTime) * speed
         }
 
         // Rebase on delay
@@ -225,7 +234,9 @@ export function animateValue<V = number>({
 
         const isAnimationFinished =
             holdTime === null &&
-            (playState === "finished" || (playState === "running" && done))
+            (playState === "finished" ||
+                (playState === "running" && done) ||
+                (speed < 0 && time <= 0))
 
         if (onUpdate) {
             onUpdate(
@@ -297,11 +308,19 @@ export function animateValue<V = number>({
             newTime = secondsToMilliseconds(newTime)
 
             time = newTime
-            if (holdTime !== null || !animationDriver) {
+            if (holdTime !== null || !animationDriver || speed === 0) {
                 holdTime = newTime
             } else {
-                startTime = animationDriver.now() - newTime
+                startTime = animationDriver.now() - newTime / speed
             }
+        },
+        get speed() {
+            return speed
+        },
+        set speed(newSpeed: number) {
+            if (newSpeed === speed || !animationDriver) return
+            speed = newSpeed
+            controls.time = millisecondsToSeconds(time)
         },
         get state() {
             return playState

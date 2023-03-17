@@ -1112,4 +1112,70 @@ describe("animate", () => {
 
         expect(output).toEqual([0, 20, 40, 100])
     })
+
+    test("Updates speed to half speed", async () => {
+        const output: number[] = []
+
+        const animation = animateValue({
+            keyframes: [0, 100],
+            driver: syncDriver(20),
+            duration: 100,
+            ease: linear,
+            onUpdate: (v) => {
+                output.push(v)
+                if (v === 40) {
+                    animation.speed = 0.5
+                    expect(animation.speed).toEqual(0.5)
+                }
+            },
+        })
+
+        await animation
+
+        expect(output).toEqual([0, 20, 40, 50, 60, 70, 80, 90, 100])
+    })
+
+    test("Updates speed to double speed", async () => {
+        const output: number[] = []
+
+        const animation = animateValue({
+            keyframes: [0, 100],
+            driver: syncDriver(20),
+            duration: 100,
+            ease: linear,
+            onUpdate: (v) => {
+                output.push(v)
+                if (v === 20) {
+                    animation.speed = 2
+                    expect(animation.speed).toEqual(2)
+                }
+            },
+        })
+
+        await animation
+
+        expect(output).toEqual([0, 20, 60, 100])
+    })
+
+    test("Updates speed to reverse playback", async () => {
+        const output: number[] = []
+
+        const animation = animateValue({
+            keyframes: [0, 100],
+            driver: syncDriver(20),
+            duration: 100,
+            ease: linear,
+            onUpdate: (v) => {
+                output.push(v)
+                if (v === 40) {
+                    animation.speed = -1
+                    expect(animation.speed).toEqual(-1)
+                }
+            },
+        })
+
+        await animation
+
+        expect(output).toEqual([0, 20, 40, 20, 0])
+    })
 })

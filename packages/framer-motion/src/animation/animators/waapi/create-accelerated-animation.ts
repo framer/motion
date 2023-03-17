@@ -162,6 +162,12 @@ export function createAcceleratedAnimation(
         set time(newTime: number) {
             animation.currentTime = secondsToMilliseconds(newTime)
         },
+        get speed() {
+            return animation.playbackRate
+        },
+        set speed(newSpeed: number) {
+            animation.playbackRate = newSpeed
+        },
         play: () => animation.play(),
         pause: () => animation.pause(),
         stop: () => {
