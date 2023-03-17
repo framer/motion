@@ -276,6 +276,7 @@ export function animateValue<V = number>({
             startTime = now
         }
 
+        cancelTime = startTime
         holdTime = null
 
         animationDriver.start()
