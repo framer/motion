@@ -5,7 +5,6 @@ import { motion } from "../.."
 import { animate } from "../animate"
 import { useMotionValue } from "../../value/use-motion-value"
 import { motionValue, MotionValue } from "../../value"
-import { syncDriver } from "../animators/js/__tests__/utils"
 
 const duration = 0.001
 
@@ -140,11 +139,7 @@ describe("animate", () => {
 
     test("Applies final target keyframe when animation has finished", async () => {
         const div = document.createElement("div")
-        const animation = animate(
-            div,
-            { opacity: [0.2, 0.5] },
-            { duration: 1, driver: syncDriver(23) }
-        )
+        const animation = animate(div, { opacity: [0.2, 0.5] }, { duration })
         await animation.then(() => {
             expect(div).toHaveStyle("opacity: 0.5")
         })
