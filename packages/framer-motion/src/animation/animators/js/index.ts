@@ -70,6 +70,7 @@ export function animateValue<V = number>({
 }: AnimationOptions<V>): MainThreadAnimationControls<V> {
     let speed = 1
 
+    let hasStopped = false
     let resolveFinishedPromise: VoidFunction
     let currentFinishedPromise: Promise<void>
 
@@ -271,13 +272,20 @@ export function animateValue<V = number>({
     }
 
     const play = () => {
-        if (!animationDriver) animationDriver = driver(tick)
+        if (hasStopped) return
+
+        if (!animationDriver) {
+            animationDriver = driver(tick)
+            animationDriver.start()
+        }
 
         const now = animationDriver.now()
 
         onPlay && onPlay()
 
         playState = "running"
+
+        console.log(holdTime)
 
         if (holdTime !== null) {
             startTime = now - holdTime
@@ -289,8 +297,6 @@ export function animateValue<V = number>({
 
         cancelTime = startTime
         holdTime = null
-
-        animationDriver.start()
     }
 
     if (autoplay) {
@@ -329,8 +335,11 @@ export function animateValue<V = number>({
         pause: () => {
             playState = "paused"
             holdTime = time
+
+            console.log("pausing with holdtime", holdTime)
         },
         stop: () => {
+            hasStopped = true
             if (playState === "idle") return
             playState = "idle"
             onStop && onStop()
