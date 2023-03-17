@@ -61,6 +61,7 @@ export const animateMotionValue = (
         let options: AnimationOptions = {
             keyframes,
             velocity: value.getVelocity(),
+            ease: "easeOut",
             ...valueTransition,
             delay: -elapsed,
             onUpdate: (v) => {

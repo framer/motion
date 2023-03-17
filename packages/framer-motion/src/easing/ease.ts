@@ -1,6 +1,5 @@
-import { mirrorEasing } from "./modifiers/mirror"
-import { reverseEasing } from "./modifiers/reverse"
+import { cubicBezier } from "./cubic-bezier"
 
-export const easeIn = (p: number) => p * p
-export const easeOut = reverseEasing(easeIn)
-export const easeInOut = mirrorEasing(easeIn)
+export const easeIn = cubicBezier(0.42, 0, 1, 1)
+export const easeOut = cubicBezier(0, 0, 0.58, 1)
+export const easeInOut = cubicBezier(0.42, 0, 0.58, 1)

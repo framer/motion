@@ -58,6 +58,8 @@ export function createAcceleratedAnimation(
         options.damping !== 0 &&
         options.type !== "inertia"
 
+    if (options.ease === undefined) options.ease = "linear"
+
     if (!canAccelerateAnimation) return false
 
     /**
@@ -176,11 +178,13 @@ export function createAcceleratedAnimation(
              * Motion to calculate velocity for any subsequent animation.
              */
             const { currentTime } = animation
+
             if (currentTime) {
                 const sampleAnimation = animateValue({
                     ...options,
                     autoplay: false,
                 })
+
                 value.setWithVelocity(
                     sampleAnimation.sample(currentTime - sampleDelta).value,
                     sampleAnimation.sample(currentTime).value,
