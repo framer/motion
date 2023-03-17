@@ -32,7 +32,7 @@ describe("convertOffsetToTimes", () => {
 describe("keyframes", () => {
     test("runs a default animation", () => {
         expect(animateSync(keyframes({ keyframes: [0, 100] }), 20)).toEqual([
-            0, 1, 4, 8, 14, 22, 32, 44, 56, 68, 78, 86, 92, 96, 99, 100,
+            0, 1, 4, 8, 15, 23, 33, 44, 56, 67, 77, 85, 92, 96, 99, 100,
         ])
     })
 

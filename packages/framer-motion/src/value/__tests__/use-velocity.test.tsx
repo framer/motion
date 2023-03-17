@@ -6,6 +6,7 @@ import { animate } from "../../animation/animate"
 import { sync } from "../../frameloop"
 import { frameData } from "../../frameloop/data"
 import { useMotionValueEvent } from "../../utils/use-motion-value-event"
+import { mirrorEasing } from "../../easing/modifiers/mirror"
 
 const setFrameData = (interval: number, time: number) => {
     frameData.timestamp = time
@@ -59,7 +60,7 @@ describe("useVelocity", () => {
                 React.useEffect(() => {
                     const animation = animate(x, 1000, {
                         duration: 0.1,
-                        ease: "easeInOut",
+                        ease: mirrorEasing((v) => v * v),
                         driver: syncDriver(),
                         onComplete: () => {
                             /**

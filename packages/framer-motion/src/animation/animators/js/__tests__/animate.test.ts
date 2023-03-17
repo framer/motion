@@ -1,5 +1,5 @@
 import { animateValue } from "../"
-import { easeOut } from "../../../../easing/ease"
+import { reverseEasing } from "../../../../easing/modifiers/reverse"
 import { nextFrame } from "../../../../gestures/__tests__/utils"
 import { noop } from "../../../../utils/noop"
 import { AnimationOptions } from "../../../types"
@@ -239,7 +239,12 @@ describe("animate", () => {
     test("Correctly applies repeat type 'reverse'", async () => {
         return new Promise<void>((resolve) => {
             testAnimate(
-                { keyframes: [0, 100], repeat: 1, repeatType: "reverse" },
+                {
+                    keyframes: [0, 100],
+                    ease: "linear",
+                    repeat: 1,
+                    repeatType: "reverse",
+                },
                 [0, 20, 40, 60, 80, 100, 80, 60, 40, 20, 0],
                 resolve
             )
@@ -252,7 +257,7 @@ describe("animate", () => {
                 {
                     keyframes: [0, 100],
                     repeat: 1,
-                    ease: easeOut,
+                    ease: reverseEasing((v) => v * v),
                     repeatType: "mirror",
                 },
                 [0, 36, 64, 84, 96, 100, 64, 36, 16, 4, 0],
@@ -297,7 +302,7 @@ describe("animate", () => {
             testAnimate(
                 {
                     keyframes: [0, 100],
-                    ease: easeOut,
+                    ease: reverseEasing((v) => v * v),
                     repeat: 2,
                     repeatDelay: 100,
                     repeatType: "mirror",
