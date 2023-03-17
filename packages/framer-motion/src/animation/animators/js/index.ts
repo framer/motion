@@ -184,7 +184,7 @@ export function animateValue<V = number>({
              * Get the current iteration (0 indexed). For instance the floor of
              * 2.5 is 2.
              */
-            let currentIteration = Math.min(Math.floor(progress), repeat)
+            let currentIteration = Math.floor(progress)
 
             /**
              * Get the current progress of the iteration by taking the remainder
