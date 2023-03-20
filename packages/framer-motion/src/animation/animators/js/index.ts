@@ -230,7 +230,12 @@ export function animateValue<V = number>({
         }
 
         const state = frameGenerator.next(elapsed)
-        let { value, done } = state
+
+        if (mapNumbersToKeyframes) {
+            state.value = mapNumbersToKeyframes(state.value)
+        }
+
+        let { done } = state
 
         if (calculatedDuration !== null) {
             done = time >= totalDuration
@@ -243,9 +248,7 @@ export function animateValue<V = number>({
                 (speed < 0 && time <= 0))
 
         if (onUpdate) {
-            onUpdate(
-                mapNumbersToKeyframes ? mapNumbersToKeyframes(value) : value
-            )
+            onUpdate(state.value)
         }
 
         if (isAnimationFinished) {

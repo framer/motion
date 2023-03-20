@@ -124,6 +124,36 @@ describe("WAAPI animations", () => {
         )
     })
 
+    test("Complex string type animates with WAAPI spring", () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ clipPath: "inset(100%)" }}
+                animate={{ clipPath: "inset(0%)" }}
+                transition={{ type: "spring" }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                clipPath: clipPathSpring,
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                duration: 1060,
+                easing: "linear",
+                iterations: 1,
+                direction: "normal",
+                fill: "both",
+            }
+        )
+    })
+
     test("transform animates with WAAPI at default settings", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
@@ -902,3 +932,113 @@ describe("WAAPI animations", () => {
         )
     })
 })
+
+const clipPathSpring = [
+    "inset(100%)",
+    "inset(99.51666%)",
+    "inset(98.13308%)",
+    "inset(95.94808%)",
+    "inset(93.0587%)",
+    "inset(89.55945%)",
+    "inset(85.54164%)",
+    "inset(81.09282%)",
+    "inset(76.2963%)",
+    "inset(71.23077%)",
+    "inset(65.97002%)",
+    "inset(60.58262%)",
+    "inset(55.13186%)",
+    "inset(49.6756%)",
+    "inset(44.26624%)",
+    "inset(38.95075%)",
+    "inset(33.77073%)",
+    "inset(28.76256%)",
+    "inset(23.9575%)",
+    "inset(19.3819%)",
+    "inset(15.05744%)",
+    "inset(11.00133%)",
+    "inset(7.22661%)",
+    "inset(3.74239%)",
+    "inset(0.55415%)",
+    "inset(-2.33596%)",
+    "inset(-4.92882%)",
+    "inset(-7.22808%)",
+    "inset(-9.23981%)",
+    "inset(-10.97224%)",
+    "inset(-12.43548%)",
+    "inset(-13.64123%)",
+    "inset(-14.60254%)",
+    "inset(-15.33352%)",
+    "inset(-15.84914%)",
+    "inset(-16.16499%)",
+    "inset(-16.29709%)",
+    "inset(-16.26165%)",
+    "inset(-16.07497%)",
+    "inset(-15.75321%)",
+    "inset(-15.31228%)",
+    "inset(-14.76771%)",
+    "inset(-14.13455%)",
+    "inset(-13.42725%)",
+    "inset(-12.65959%)",
+    "inset(-11.84461%)",
+    "inset(-10.99456%)",
+    "inset(-10.12086%)",
+    "inset(-9.23407%)",
+    "inset(-8.34388%)",
+    "inset(-7.45906%)",
+    "inset(-6.58752%)",
+    "inset(-5.73628%)",
+    "inset(-4.9115%)",
+    "inset(-4.11851%)",
+    "inset(-3.36183%)",
+    "inset(-2.64518%)",
+    "inset(-1.97159%)",
+    "inset(-1.34334%)",
+    "inset(-0.76211%)",
+    "inset(-0.22895%)",
+    "inset(0.25566%)",
+    "inset(0.69171%)",
+    "inset(1.0797%)",
+    "inset(1.42049%)",
+    "inset(1.71535%)",
+    "inset(1.96584%)",
+    "inset(2.1738%)",
+    "inset(2.3413%)",
+    "inset(2.4706%)",
+    "inset(2.5641%)",
+    "inset(2.62433%)",
+    "inset(2.65387%)",
+    "inset(2.65537%)",
+    "inset(2.63147%)",
+    "inset(2.58483%)",
+    "inset(2.51805%)",
+    "inset(2.43368%)",
+    "inset(2.3342%)",
+    "inset(2.22199%)",
+    "inset(2.09934%)",
+    "inset(1.96839%)",
+    "inset(1.83119%)",
+    "inset(1.68964%)",
+    "inset(1.54548%)",
+    "inset(1.40036%)",
+    "inset(1.25572%)",
+    "inset(1.11292%)",
+    "inset(0.97312%)",
+    "inset(0.83737%)",
+    "inset(0.70657%)",
+    "inset(0.58151%)",
+    "inset(0.46282%)",
+    "inset(0.35102%)",
+    "inset(0.24652%)",
+    "inset(0.14963%)",
+    "inset(0.06053%)",
+    "inset(-0.02067%)",
+    "inset(-0.09394%)",
+    "inset(-0.15935%)",
+    "inset(-0.21701%)",
+    "inset(-0.26713%)",
+    "inset(-0.30993%)",
+    "inset(-0.34572%)",
+    "inset(-0.37481%)",
+    "inset(-0.39757%)",
+    "inset(0%)",
+]
