@@ -5,6 +5,7 @@ import { motion, stagger } from "../.."
 import { animate } from "../animate"
 import { useMotionValue } from "../../value/use-motion-value"
 import { motionValue, MotionValue } from "../../value"
+import { restoreWaapi, setupWaapi } from "../animators/waapi/__tests__/setup"
 
 const duration = 0.001
 
@@ -113,11 +114,7 @@ describe("animate", () => {
 
     test("Applies target keyframe when animation has finished", async () => {
         const div = document.createElement("div")
-        const animation = animate(
-            div,
-            { opacity: 0.6 },
-            { duration, x: {}, "--css-var": {} }
-        )
+        const animation = animate(div, { opacity: 0.6 }, { duration })
         return animation.then(() => {
             expect(div).toHaveStyle("opacity: 0.6")
         })
@@ -126,11 +123,7 @@ describe("animate", () => {
     test("Works with multiple elements", async () => {
         const div = document.createElement("div")
         const div2 = document.createElement("div")
-        const animation = animate(
-            [div, div2],
-            { opacity: 0.6 },
-            { duration, x: {}, "--css-var": {} }
-        )
+        const animation = animate([div, div2], { opacity: 0.6 }, { duration })
         await animation.then(() => {
             expect(div).toHaveStyle("opacity: 0.6")
             expect(div2).toHaveStyle("opacity: 0.6")
@@ -206,7 +199,7 @@ describe("animate", () => {
         expect(animation.time).toBe(5)
     })
 
-    test("time can be set to duration", async () => {
+    test(".time can be set to duration", async () => {
         const div = document.createElement("div")
         div.style.opacity = "0"
         const animation = animate(div, { opacity: 0.5 }, { duration: 1 })
@@ -220,14 +213,51 @@ describe("animate", () => {
             }, 50)
         })
     })
+})
+
+describe("animate() with WAAPI", () => {
+    beforeEach(() => {
+        setupWaapi()
+    })
+
+    afterEach(() => {
+        restoreWaapi()
+    })
 
     test("Applies stagger", async () => {
+        const a = document.createElement("div")
+        const b = document.createElement("div")
         const animation = animate(
-            [document.createElement("div"), document.createElement("div")],
+            [a, b],
             { opacity: [0.2, 0.5] },
             { delay: stagger(0.2) }
         )
 
-        await animation.then(() => {})
+        await animation.then(() => {
+            expect(a.animate).toBeCalled()
+            expect(a.animate).toBeCalledWith(
+                { opacity: [0.2, 0.5], offset: undefined },
+                {
+                    delay: -0,
+                    duration: 300,
+                    easing: "cubic-bezier(0.25, 0.1, 0.35, 1)",
+                    iterations: 1,
+                    direction: "normal",
+                    fill: "both",
+                }
+            )
+            expect(b.animate).toBeCalled()
+            expect(b.animate).toBeCalledWith(
+                { opacity: [0.2, 0.5], offset: undefined },
+                {
+                    delay: 200,
+                    duration: 300,
+                    easing: "cubic-bezier(0.25, 0.1, 0.35, 1)",
+                    iterations: 1,
+                    direction: "normal",
+                    fill: "both",
+                }
+            )
+        })
     })
 })

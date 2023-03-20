@@ -12,12 +12,27 @@ export interface AnimationPlaybackLifecycles<V> {
     onStop?: () => void
 }
 
+export interface AnimationOptions<V = any>
+    extends AnimationLifecycleOptions<V>,
+        AnimationPlaybackOptions,
+        Omit<SpringOptions, "keyframes">,
+        Omit<InertiaOptions, "keyframes">,
+        KeyframeOptions {
+    delay?: number
+    keyframes: V[]
+    elapsed?: number
+    driver?: Driver
+    type?: "decay" | "spring" | "keyframes" | "tween" | "inertia"
+    duration?: number
+    autoplay?: boolean
+}
+
 export interface AnimationScope<T = any> {
     readonly current: T
     animations: AnimationPlaybackControls[]
 }
 
-export type AnimateOptions<V = any> = Transition &
+export type AnimateOptions<V = any> = Omit<AnimationOptions<V>, "keyframes"> &
     AnimationPlaybackLifecycles<V>
 
 export type ElementOrSelector =
@@ -125,21 +140,6 @@ export interface InertiaOptions extends DecayOptions {
 export interface KeyframeOptions {
     ease?: Easing | Easing[]
     times?: number[]
-}
-
-export interface AnimationOptions<V = any>
-    extends AnimationLifecycleOptions<V>,
-        AnimationPlaybackOptions,
-        Omit<SpringOptions, "keyframes">,
-        Omit<InertiaOptions, "keyframes">,
-        KeyframeOptions {
-    delay?: number
-    keyframes: V[]
-    elapsed?: number
-    driver?: Driver
-    type?: "decay" | "spring" | "keyframes" | "tween" | "inertia"
-    duration?: number
-    autoplay?: boolean
 }
 
 export type AnimationDefinition =

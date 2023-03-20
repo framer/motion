@@ -17,11 +17,12 @@ import { GenericKeyframesTarget } from "../types"
 import { createVisualElement } from "./utils/create-visual-element"
 import { animateSingleValue } from "./interfaces/single-value"
 
-export interface Stagger {
+export interface Stagger {}
+
+export interface DOMAnimationOptions
+    extends Omit<AnimateOptions<any>, "delay"> {
     delay?: number | DynamicOption<number>
 }
-
-export type DOMAnimationOptions = Omit<AnimateOptions<any>, "delay"> & Stagger
 
 function animateElements(
     elementOrSelector: ElementOrSelector,
@@ -54,17 +55,19 @@ function animateElements(
 
         const visualElement = visualElementStore.get(element)!
 
+        const transition = { ...options }
+
         /**
          * Resolve stagger function if provided.
          */
-        if (typeof options.delay === "function") {
-            options.delay = options.delay(i, numElements)
+        if (typeof transition.delay === "function") {
+            transition.delay = transition.delay(i, numElements)
         }
 
         animations.push(
             ...animateTarget(
                 visualElement,
-                { ...keyframes, transition: options } as any,
+                { ...keyframes, transition } as any,
                 {}
             )
         )
@@ -111,7 +114,7 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
     function scopedAnimate<V>(
         valueOrElement: ElementOrSelector | MotionValue<V> | V,
         keyframes: DOMKeyframesDefinition | V | GenericKeyframesTarget<V>,
-        options?: AnimateOptions<V> | DOMAnimationOptions
+        options: AnimateOptions<V> | DOMAnimationOptions = {}
     ): AnimationPlaybackControls {
         let animation: AnimationPlaybackControls
 
