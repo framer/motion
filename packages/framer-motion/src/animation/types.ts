@@ -40,6 +40,8 @@ export interface AnimationPlaybackControls {
     then: (onResolve: VoidFunction, onReject?: VoidFunction) => Promise<void>
 }
 
+export type DynamicOption<T> = (i: number, total: number) => T
+
 export interface CSSStyleDeclarationWithTransform
     extends Omit<CSSStyleDeclaration, "direction" | "transition"> {
     x: number | string

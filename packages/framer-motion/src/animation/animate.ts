@@ -8,6 +8,7 @@ import {
     AnimationPlaybackControls,
     AnimationScope,
     DOMKeyframesDefinition,
+    DynamicOption,
     ElementOrSelector,
 } from "./types"
 import { isDOMKeyframes } from "./utils/is-dom-keyframes"
@@ -16,10 +17,16 @@ import { GenericKeyframesTarget } from "../types"
 import { createVisualElement } from "./utils/create-visual-element"
 import { animateSingleValue } from "./interfaces/single-value"
 
+export interface Stagger {
+    delay?: number | DynamicOption<number>
+}
+
+export type DOMAnimationOptions = Omit<AnimateOptions<any>, "delay"> & Stagger
+
 function animateElements(
     elementOrSelector: ElementOrSelector,
     keyframes: DOMKeyframesDefinition,
-    options: AnimateOptions<any>,
+    options: DOMAnimationOptions,
     scope?: AnimationScope
 ): AnimationPlaybackControls {
     const elements = resolveElements(elementOrSelector, scope)
@@ -46,6 +53,13 @@ function animateElements(
         }
 
         const visualElement = visualElementStore.get(element)!
+
+        /**
+         * Resolve stagger function if provided.
+         */
+        if (typeof options.delay === "function") {
+            options.delay = options.delay(i, numElements)
+        }
 
         animations.push(
             ...animateTarget(
@@ -89,15 +103,15 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
     /**
      * Animate DOM
      */
-    function scopedAnimate<V>(
+    function scopedAnimate(
         value: ElementOrSelector,
         keyframes: DOMKeyframesDefinition,
-        options?: AnimateOptions<V>
+        options?: DOMAnimationOptions
     ): AnimationPlaybackControls
     function scopedAnimate<V>(
         valueOrElement: ElementOrSelector | MotionValue<V> | V,
         keyframes: DOMKeyframesDefinition | V | GenericKeyframesTarget<V>,
-        options: AnimateOptions<V> = {}
+        options?: AnimateOptions<V> | DOMAnimationOptions
     ): AnimationPlaybackControls {
         let animation: AnimationPlaybackControls
 
@@ -105,11 +119,15 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
             animation = animateElements(
                 valueOrElement as ElementOrSelector,
                 keyframes,
-                options,
+                options as DOMAnimationOptions,
                 scope
             )
         } else {
-            animation = animateSingleValue(valueOrElement, keyframes, options)
+            animation = animateSingleValue(
+                valueOrElement,
+                keyframes,
+                options as AnimateOptions<V>
+            )
         }
 
         if (scope) {

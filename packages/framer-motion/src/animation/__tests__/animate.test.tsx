@@ -1,7 +1,7 @@
 import { render } from "../../../jest.setup"
 import * as React from "react"
 import { useEffect } from "react"
-import { motion } from "../.."
+import { motion, stagger } from "../.."
 import { animate } from "../animate"
 import { useMotionValue } from "../../value/use-motion-value"
 import { motionValue, MotionValue } from "../../value"
@@ -219,5 +219,15 @@ describe("animate", () => {
                 resolve()
             }, 50)
         })
+    })
+
+    test("Applies stagger", async () => {
+        const animation = animate(
+            [document.createElement("div"), document.createElement("div")],
+            { opacity: [0.2, 0.5] },
+            { delay: stagger(0.2) }
+        )
+
+        await animation.then(() => {})
     })
 })
