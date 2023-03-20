@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.6.1] 2023-03-20
+
+### Fixed
+
+-   Complex string types interpolate correctly with WAAPI spring easing.
+
 ## [10.6.0] 2023-03-17
 
 ### Added
