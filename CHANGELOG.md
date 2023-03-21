@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.8.2] 2023-03-22
+
+### Changed
+
+-   Further loosening `animate()` overloads.
+
 ## [10.8.1] 2023-03-22
 
 ### Changed
