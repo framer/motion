@@ -2,6 +2,7 @@ import { render } from "../../../jest.setup"
 import {
     motion,
     motionValue,
+    sync,
     useMotionValue,
     useMotionValueEvent,
 } from "../../"
@@ -359,6 +360,59 @@ describe("animate prop as object", () => {
 
             resolve()
         })
+    })
+
+    test("accepts default transition prop", async () => {
+        const promise = new Promise((resolve) => {
+            const x = motionValue(0)
+            const opacity = motionValue(0)
+
+            const Component = () => (
+                <motion.div
+                    animate={{ opacity: 1, x: 20 }}
+                    transition={{
+                        default: { type: false },
+                        x: { type: "tween", from: 10, ease: () => 0.5 },
+                    }}
+                    onUpdate={() => {
+                        sync.read(() => {
+                            resolve([x.get(), opacity.get()])
+                        })
+                    }}
+                    style={{ x, opacity }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toEqual([15, 1])
+    })
+
+    test("accepts base transition settings", async () => {
+        const promise = new Promise((resolve) => {
+            const x = motionValue(0)
+            const opacity = motionValue(0)
+
+            const Component = () => (
+                <motion.div
+                    animate={{ opacity: 1, x: 20 }}
+                    transition={{
+                        type: false,
+                        duration: 1,
+                        x: { type: "tween", from: 10, ease: () => 0.5 },
+                    }}
+                    onUpdate={() => {
+                        sync.read(() => {
+                            resolve([x.get(), opacity.get()])
+                        })
+                    }}
+                    style={{ x, opacity }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toEqual([15, 1])
     })
 
     test("when value is removed from animate, animate back to value read from DOM", async () => {

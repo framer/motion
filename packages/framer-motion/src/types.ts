@@ -980,9 +980,10 @@ export type TransitionDefinition =
     | None
     | PermissiveTransitionDefinition
 
-export type TransitionMap = Orchestration & {
-    [key: string]: TransitionDefinition
-}
+export type TransitionMap = Orchestration &
+    TransitionDefinition & {
+        [key: string]: TransitionDefinition
+    }
 
 /**
  * Transition props
