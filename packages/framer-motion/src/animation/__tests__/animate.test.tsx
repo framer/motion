@@ -113,7 +113,11 @@ describe("animate", () => {
 
     test("Applies target keyframe when animation has finished", async () => {
         const div = document.createElement("div")
-        const animation = animate(div, { opacity: 0.6 }, { duration })
+        const animation = animate(
+            div,
+            { opacity: 0.6 },
+            { duration, x: {}, "--css-var": {} }
+        )
         return animation.then(() => {
             expect(div).toHaveStyle("opacity: 0.6")
         })
@@ -122,7 +126,11 @@ describe("animate", () => {
     test("Works with multiple elements", async () => {
         const div = document.createElement("div")
         const div2 = document.createElement("div")
-        const animation = animate([div, div2], { opacity: 0.6 }, { duration })
+        const animation = animate(
+            [div, div2],
+            { opacity: 0.6 },
+            { duration, x: {}, "--css-var": {} }
+        )
         await animation.then(() => {
             expect(div).toHaveStyle("opacity: 0.6")
             expect(div2).toHaveStyle("opacity: 0.6")

@@ -17,8 +17,7 @@ import { GenericKeyframesTarget } from "../types"
 import { createVisualElement } from "./utils/create-visual-element"
 import { animateSingleValue } from "./interfaces/single-value"
 
-export interface DOMAnimationOptions
-    extends Omit<AnimateOptions<any>, "delay"> {
+export interface DOMAnimationOptions extends Omit<AnimateOptions, "delay"> {
     delay?: number | DynamicOption<number>
 }
 
@@ -65,7 +64,7 @@ function animateElements(
         animations.push(
             ...animateTarget(
                 visualElement,
-                { ...keyframes, transition } as any,
+                { ...keyframes, transition } as AnimateOptions,
                 {}
             )
         )
