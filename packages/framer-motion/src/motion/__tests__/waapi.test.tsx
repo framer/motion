@@ -9,35 +9,7 @@ import { motion, useMotionValue } from "../../"
 import * as React from "react"
 import { createRef } from "react"
 import { nextFrame } from "../../gestures/__tests__/utils"
-
-/**
- * This assignment prevents Jest from complaining about
- * .animate() being undefined (as it's unsupported in node).
- */
-Element.prototype.animate = (() => {}) as any
-
-beforeEach(() => {
-    jest.spyOn(Element.prototype, "animate").mockImplementation(
-        (
-            _keyframes: Keyframe[] | null | PropertyIndexedKeyframes,
-            _options: KeyframeAnimationOptions | number | undefined
-        ) => {
-            return {
-                cancel: () => {},
-                finished: {
-                    then: (resolve: VoidFunction) => {
-                        resolve()
-                        return Promise.resolve()
-                    },
-                },
-            } as any
-        }
-    )
-})
-
-afterEach(() => {
-    jest.restoreAllMocks()
-})
+import "../../animation/animators/waapi/__tests__/setup"
 
 describe("WAAPI animations", () => {
     test("opacity animates with WAAPI at default settings", () => {
