@@ -376,7 +376,7 @@ describe("animate prop as object", () => {
                     }}
                     onUpdate={() => {
                         sync.read(() => {
-                            sync.read(() => resolve([x.get(), opacity.get()]))
+                            resolve([x.get(), opacity.get()])
                         })
                     }}
                     style={{ x, opacity }}
@@ -401,7 +401,11 @@ describe("animate prop as object", () => {
                         duration: 1,
                         x: { type: "tween", from: 10, ease: () => 0.5 },
                     }}
-                    onUpdate={() => resolve([x.get(), opacity.get()])}
+                    onUpdate={() => {
+                        sync.read(() => {
+                            resolve([x.get(), opacity.get()])
+                        })
+                    }}
                     style={{ x, opacity }}
                 />
             )
