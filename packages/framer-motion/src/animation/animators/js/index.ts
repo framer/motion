@@ -142,7 +142,7 @@ export function animateValue<V = number>({
     let resolvedDuration = Infinity
     let totalDuration = Infinity
 
-    if (calculatedDuration) {
+    if (calculatedDuration !== null) {
         resolvedDuration = calculatedDuration + repeatDelay
         totalDuration = resolvedDuration * (repeat + 1) - repeatDelay
     }

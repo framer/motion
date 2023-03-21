@@ -1231,4 +1231,15 @@ describe("animate", () => {
 
         expect(output).toEqual([0, 20, 40, 20, 0])
     })
+
+    test("Correctly ends animations with duration: 0", async () => {
+        const animation = animateValue({
+            keyframes: [0, 100],
+            driver: syncDriver(20),
+            duration: 0,
+            ease: linear,
+        })
+
+        await animation
+    })
 })
