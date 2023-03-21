@@ -5,7 +5,7 @@ import { easingDefinitionToFunction } from "./easing"
 export type StaggerOrigin = "first" | "last" | "center" | number
 
 export type StaggerOptions = {
-    start?: number
+    startDelay?: number
     origin?: StaggerOrigin
     ease?: Easing
 }
@@ -21,7 +21,7 @@ export function getOriginIndex(origin: StaggerOrigin, total: number) {
 
 export function stagger(
     duration: number = 0.1,
-    { start = 0, origin = 0, ease }: StaggerOptions = {}
+    { startDelay = 0, origin = 0, ease }: StaggerOptions = {}
 ): DynamicOption<number> {
     return (i: number, total: number) => {
         const originIndex =
@@ -35,6 +35,6 @@ export function stagger(
             delay = easingFunction(delay / maxDelay) * maxDelay
         }
 
-        return start + delay
+        return startDelay + delay
     }
 }

@@ -7,9 +7,9 @@ describe("stagger", () => {
         expect(stagger(0.1)(2, 10)).toEqual(0.2)
     })
 
-    test("Accepts start", () => {
-        expect(stagger(0.1, { start: 0.2 })(0, 10)).toEqual(0.2)
-        expect(stagger(0.1, { start: 0.2 })(2, 10)).toEqual(0.4)
+    test("Accepts startDelay", () => {
+        expect(stagger(0.1, { startDelay: 0.2 })(0, 10)).toEqual(0.2)
+        expect(stagger(0.1, { startDelay: 0.2 })(2, 10)).toEqual(0.4)
     })
 
     test("Accepts from", () => {
