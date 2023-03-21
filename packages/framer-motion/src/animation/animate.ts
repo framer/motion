@@ -89,6 +89,11 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
         to: number | GenericKeyframesTarget<number>,
         options?: ValueAnimationTransition<number>
     ): AnimationPlaybackControls
+    function scopedAnimate<V>(
+        from: V,
+        to: V | GenericKeyframesTarget<V>,
+        options?: ValueAnimationTransition<V>
+    ): AnimationPlaybackControls
     /**
      * Animate a MotionValue
      */
