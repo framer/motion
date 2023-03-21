@@ -1,4 +1,4 @@
-import { TargetAndTransition, TargetResolver, Transition } from "../types"
+import { TargetAndTransition, TargetResolver } from "../types"
 import type { VisualElement } from "../render/VisualElement"
 import { Easing } from "../easing/types"
 import { Driver } from "./animators/js/types"
@@ -12,14 +12,12 @@ export interface AnimationPlaybackLifecycles<V> {
     onStop?: () => void
 }
 
-export interface ValueAnimationOptions<V = any>
-    extends AnimationPlaybackLifecycles<V>,
-        AnimationPlaybackOptions,
+export interface Transition
+    extends AnimationPlaybackOptions,
         Omit<SpringOptions, "keyframes">,
         Omit<InertiaOptions, "keyframes">,
         KeyframeOptions {
     delay?: number
-    keyframes: V[]
     elapsed?: number
     driver?: Driver
     type?: "decay" | "spring" | "keyframes" | "tween" | "inertia"
@@ -27,21 +25,31 @@ export interface ValueAnimationOptions<V = any>
     autoplay?: boolean
 }
 
+export interface ValueAnimationTransition<V = any>
+    extends Transition,
+        AnimationPlaybackLifecycles<V> {}
+
+export interface ValueAnimationOptions<V = any>
+    extends ValueAnimationTransition {
+    keyframes: V[]
+}
+
 export interface AnimationScope<T = any> {
     readonly current: T
     animations: AnimationPlaybackControls[]
 }
 
-export type StyleAnimationOptions = {
-    [K in keyof CSSStyleDeclarationWithTransform]?: ValueAnimationOptions
+export type StyleTransitions = {
+    [K in keyof CSSStyleDeclarationWithTransform]?: Transition
 }
 
-export type VariableAnimationOptions = {
-    [key: `--${string}`]: ValueAnimationOptions
+export type VariableTransitions = {
+    [key: `--${string}`]: Transition
 }
 
-export type AnimationOptionsWithValueOverrides<V = any> =
-    StyleAnimationOptions & VariableAnimationOptions & ValueAnimationOptions<V>
+export type AnimationOptionsWithValueOverrides<V = any> = StyleTransitions &
+    VariableTransitions &
+    ValueAnimationTransition<V>
 
 export type ElementOrSelector =
     | Element

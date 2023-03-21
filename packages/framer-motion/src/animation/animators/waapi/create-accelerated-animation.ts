@@ -2,7 +2,7 @@ import { EasingDefinition } from "../../../easing/types"
 import { sync } from "../../../frameloop"
 import type { VisualElement } from "../../../render/VisualElement"
 import type { MotionValue } from "../../../value"
-import { AnimationOptions, AnimationPlaybackControls } from "../../types"
+import { AnimationPlaybackControls, ValueAnimationOptions } from "../../types"
 import { animateStyle } from "."
 import { isWaapiSupportedEasing } from "./easing"
 import { supports } from "./supports"
@@ -39,7 +39,7 @@ const maxDuration = 20_000
 
 const requiresPregeneratedKeyframes = (
     valueName: string,
-    options: AnimationOptions
+    options: ValueAnimationOptions
 ) =>
     options.type === "spring" ||
     valueName === "backgroundColor" ||
@@ -48,7 +48,7 @@ const requiresPregeneratedKeyframes = (
 export function createAcceleratedAnimation(
     value: MotionValue,
     valueName: string,
-    { onUpdate, onComplete, ...options }: AnimationOptions
+    { onUpdate, onComplete, ...options }: ValueAnimationOptions
 ): AnimationPlaybackControls | false {
     const canAccelerateAnimation =
         supports.waapi() &&

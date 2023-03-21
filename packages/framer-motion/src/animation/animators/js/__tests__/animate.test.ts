@@ -2,13 +2,13 @@ import { animateValue } from "../"
 import { reverseEasing } from "../../../../easing/modifiers/reverse"
 import { nextFrame } from "../../../../gestures/__tests__/utils"
 import { noop } from "../../../../utils/noop"
-import { AnimationOptions } from "../../../types"
+import { ValueAnimationOptions } from "../../../types"
 import { syncDriver } from "./utils"
 
 const linear = noop
 
 function testAnimate<V>(
-    options: AnimationOptions<V>,
+    options: ValueAnimationOptions<V>,
     expected: V[],
     resolve: () => void
 ) {

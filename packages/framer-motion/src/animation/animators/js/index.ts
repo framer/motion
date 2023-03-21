@@ -4,7 +4,7 @@ import { spring } from "../../generators/spring/index"
 import { inertia } from "../../generators/inertia"
 import { AnimationState, KeyframeGenerator } from "../../generators/types"
 import { DriverControls } from "./types"
-import { AnimationOptions } from "../../types"
+import { ValueAnimationOptions } from "../../types"
 import { frameloopDriver } from "./driver-frameloop"
 import { interpolate } from "../../../utils/interpolate"
 import { clamp } from "../../../utils/clamp"
@@ -14,7 +14,7 @@ import {
 } from "../../../utils/time-conversion"
 
 type GeneratorFactory = (
-    options: AnimationOptions<any>
+    options: ValueAnimationOptions<any>
 ) => KeyframeGenerator<any>
 
 const types: { [key: string]: GeneratorFactory } = {
@@ -67,7 +67,7 @@ export function animateValue<V = number>({
     onComplete,
     onUpdate,
     ...options
-}: AnimationOptions<V>): MainThreadAnimationControls<V> {
+}: ValueAnimationOptions<V>): MainThreadAnimationControls<V> {
     let speed = 1
 
     let hasStopped = false

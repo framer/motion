@@ -5,13 +5,12 @@ import { instantAnimationState } from "../../utils/use-instant-transition-state"
 import type { MotionValue, StartAnimation } from "../../value"
 import { createAcceleratedAnimation } from "../animators/waapi/create-accelerated-animation"
 import { createInstantAnimation } from "../animators/instant"
-import { AnimationOptions } from "../types"
 import { getDefaultTransition } from "../utils/default-transitions"
 import { isAnimatable } from "../utils/is-animatable"
 import { getKeyframes } from "../utils/keyframes"
 import { getValueTransition, isTransitionDefined } from "../utils/transitions"
 import { animateValue } from "../animators/js"
-import { AnimationPlaybackControls } from "../types"
+import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
 
 export const animateMotionValue = (
     valueName: string,
@@ -58,7 +57,7 @@ export const animateMotionValue = (
             `You are trying to animate ${valueName} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`
         )
 
-        let options: AnimationOptions = {
+        let options: ValueAnimationOptions = {
             keyframes,
             velocity: value.getVelocity(),
             ease: "easeOut",
