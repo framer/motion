@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.7.0] 2023-03-21
+
+### Changed
+
+-   Default transitions no longer need to be namespaced under `default`.
+
 ## [10.6.1] 2023-03-20
 
 ### Fixed
