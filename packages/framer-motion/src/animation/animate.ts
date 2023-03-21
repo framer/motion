@@ -4,11 +4,12 @@ import { invariant } from "../utils/errors"
 import { MotionValue } from "../value"
 import { GroupPlaybackControls } from "./GroupPlaybackControls"
 import {
-    AnimateOptions,
     AnimationPlaybackControls,
     AnimationScope,
     DOMKeyframesDefinition,
     ElementOrSelector,
+    TransitionWithOverrides,
+    TransitionWithPlaybackLifecycles,
 } from "./types"
 import { isDOMKeyframes } from "./utils/is-dom-keyframes"
 import { animateTarget } from "./interfaces/visual-element-target"
@@ -19,7 +20,7 @@ import { animateSingleValue } from "./interfaces/single-value"
 function animateElements(
     elementOrSelector: ElementOrSelector,
     keyframes: DOMKeyframesDefinition,
-    options: AnimateOptions<any>,
+    options: TransitionWithOverrides,
     scope?: AnimationScope
 ): AnimationPlaybackControls {
     const elements = resolveElements(elementOrSelector, scope)
@@ -66,12 +67,12 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
     function scopedAnimate(
         from: string,
         to: string | GenericKeyframesTarget<string>,
-        options?: AnimateOptions<string>
+        options?: TransitionWithPlaybackLifecycles<string>
     ): AnimationPlaybackControls
     function scopedAnimate(
         from: number,
         to: number | GenericKeyframesTarget<number>,
-        options?: AnimateOptions<number>
+        options?: TransitionWithPlaybackLifecycles<number>
     ): AnimationPlaybackControls
     /**
      * Animate a MotionValue
@@ -79,25 +80,25 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
     function scopedAnimate(
         value: MotionValue<string>,
         keyframes: string | GenericKeyframesTarget<string>,
-        options?: AnimateOptions<string>
+        options?: TransitionWithPlaybackLifecycles<string>
     ): AnimationPlaybackControls
     function scopedAnimate(
         value: MotionValue<number>,
         keyframes: number | GenericKeyframesTarget<number>,
-        options?: AnimateOptions<number>
+        options?: TransitionWithPlaybackLifecycles<number>
     ): AnimationPlaybackControls
     /**
      * Animate DOM
      */
-    function scopedAnimate<V>(
+    function scopedAnimate(
         value: ElementOrSelector,
         keyframes: DOMKeyframesDefinition,
-        options?: AnimateOptions<V>
+        options?: TransitionWithOverrides
     ): AnimationPlaybackControls
     function scopedAnimate<V>(
         valueOrElement: ElementOrSelector | MotionValue<V> | V,
         keyframes: DOMKeyframesDefinition | V | GenericKeyframesTarget<V>,
-        options: AnimateOptions<V> = {}
+        options: TransitionWithPlaybackLifecycles | TransitionWithOverrides = {}
     ): AnimationPlaybackControls {
         let animation: AnimationPlaybackControls
 
@@ -105,7 +106,7 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
             animation = animateElements(
                 valueOrElement as ElementOrSelector,
                 keyframes,
-                options,
+                options as TransitionWithOverrides,
                 scope
             )
         } else {

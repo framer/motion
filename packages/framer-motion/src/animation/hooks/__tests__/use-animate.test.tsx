@@ -2,6 +2,7 @@ import * as React from "react"
 import { useEffect } from "react"
 import { render } from "@testing-library/react"
 import { useAnimate } from "../use-animate"
+import { sync } from "../../../frameloop"
 
 describe("useAnimate", () => {
     test("Types work as expected", () => {
@@ -48,28 +49,30 @@ describe("useAnimate", () => {
     test("Stops animations when unmounted", async () => {
         let frameCount = 0
         let unmount = () => {}
+        let prevOpacity: string
 
         await new Promise<void>((resolve) => {
             const Component = () => {
                 const [scope, animate] = useAnimate()
 
                 useEffect(() => {
-                    animate(
-                        scope.current,
-                        { opacity: 0.5 },
-                        {
-                            duration: 20,
-                            onUpdate: () => {
-                                frameCount++
-                                if (frameCount === 3) {
-                                    unmount()
-                                    setTimeout(() => {
-                                        resolve()
-                                    }, 50)
-                                }
-                            },
+                    sync.update(() => {
+                        if (
+                            scope.current &&
+                            scope.current.style.opacity !== prevOpacity
+                        ) {
+                            frameCount++
+
+                            if (frameCount === 3) {
+                                unmount()
+                                setTimeout(() => {
+                                    resolve()
+                                }, 50)
+                            }
                         }
-                    )
+                    }, true)
+
+                    animate(scope.current, { opacity: 0.5 }, { duration: 20 })
                 })
 
                 return <div ref={scope} />

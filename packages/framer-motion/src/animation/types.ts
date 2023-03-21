@@ -1,24 +1,77 @@
-import { TargetAndTransition, TargetResolver, Transition } from "../types"
+import { TargetAndTransition, TargetResolver } from "../types"
 import type { VisualElement } from "../render/VisualElement"
 import { Easing } from "../easing/types"
 import { Driver } from "./animators/js/types"
 import { VariantLabels } from "../motion/types"
 
-export interface AnimationPlaybackLifecycles<V> {
-    onUpdate?: (latest: V) => void
-    onPlay?: () => void
-    onComplete?: () => void
-    onRepeat?: () => void
-    onStop?: () => void
+/**
+ * Base transition settings for all animations.
+ */
+export interface Transition
+    extends RepeatOptions,
+        Omit<SpringOptions, "keyframes">,
+        Omit<InertiaOptions, "keyframes">,
+        KeyframeOptions {
+    delay?: number
+    elapsed?: number
+    driver?: Driver
+    type?: "decay" | "spring" | "keyframes" | "tween" | "inertia"
+    duration?: number
+    autoplay?: boolean
+}
+
+/**
+ * Style-specific transition overrides
+ *
+ * { delay: 1, x: { delay: 0.4 } }
+ */
+export type StyleTransitionOverrides = {
+    [K in keyof CSSStyleDeclarationWithTransform]?: Transition
+}
+
+/**
+ * Variable-specific transition overrides
+ *
+ * { delay: 1, "--tint": { delay: 0.4 } }
+ */
+export type VariableTransitionOverrides = {
+    [key: `--${string}`]: Transition
+}
+
+/**
+ * Legacy default transition. Previously, it was necessary to assign
+ * default transition settings to "default".
+ */
+export type DefaultTransitionOverride = { default?: Transition }
+
+/**
+ * Transition with value-specific overrides
+ */
+export type TransitionWithOverrides = StyleTransitionOverrides &
+    VariableTransitionOverrides &
+    DefaultTransitionOverride &
+    Transition
+
+export interface VariantOrchestration {
+    when?: false | "beforeChildren" | "afterChildren" | string
+    delayChildren?: number
+    staggerChildren?: number
+    staggerDirection?: number
+}
+
+export interface TransitionWithPlaybackLifecycles<V = any>
+    extends Transition,
+        AnimationPlaybackLifecycles<V> {}
+
+export interface AnimationOptions<V = any>
+    extends TransitionWithPlaybackLifecycles<V> {
+    keyframes: V[]
 }
 
 export interface AnimationScope<T = any> {
     readonly current: T
     animations: AnimationPlaybackControls[]
 }
-
-export type AnimateOptions<V = any> = Transition &
-    AnimationPlaybackLifecycles<V>
 
 export type ElementOrSelector =
     | Element
@@ -38,6 +91,14 @@ export interface AnimationPlaybackControls {
     complete: () => void
     cancel: () => void
     then: (onResolve: VoidFunction, onReject?: VoidFunction) => Promise<void>
+}
+
+export interface AnimationPlaybackLifecycles<V> {
+    onUpdate?: (latest: V) => void
+    onPlay?: () => void
+    onComplete?: () => void
+    onRepeat?: () => void
+    onStop?: () => void
 }
 
 export interface CSSStyleDeclarationWithTransform
@@ -81,15 +142,7 @@ export interface VelocityOptions {
     restDelta?: number
 }
 
-export interface AnimationLifecycleOptions<V> {
-    onUpdate?: (v: V) => void
-    onComplete?: VoidFunction
-    onPlay?: VoidFunction
-    onRepeat?: VoidFunction
-    onStop?: VoidFunction
-}
-
-export interface AnimationPlaybackOptions {
+export interface RepeatOptions {
     repeat?: number
     repeatType?: "loop" | "reverse" | "mirror"
     repeatDelay?: number
@@ -123,21 +176,6 @@ export interface InertiaOptions extends DecayOptions {
 export interface KeyframeOptions {
     ease?: Easing | Easing[]
     times?: number[]
-}
-
-export interface AnimationOptions<V = any>
-    extends AnimationLifecycleOptions<V>,
-        AnimationPlaybackOptions,
-        Omit<SpringOptions, "keyframes">,
-        Omit<InertiaOptions, "keyframes">,
-        KeyframeOptions {
-    delay?: number
-    keyframes: V[]
-    elapsed?: number
-    driver?: Driver
-    type?: "decay" | "spring" | "keyframes" | "tween" | "inertia"
-    duration?: number
-    autoplay?: boolean
 }
 
 export type AnimationDefinition =
