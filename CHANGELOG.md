@@ -4,19 +4,25 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [10.8.2] 2023-03-22
+## [10.8.3] 2023-03-21
+
+### Changed
+
+-   Fixing `duration: 0` animations never ending.
+
+## [10.8.2] 2023-03-21
 
 ### Changed
 
 -   Further loosening `animate()` overloads.
 
-## [10.8.1] 2023-03-22
+## [10.8.1] 2023-03-21
 
 ### Changed
 
 -   Loosening `animate()` overloads.
 
-## [10.8.0] 2023-03-22
+## [10.8.0] 2023-03-21
 
 ### Added
 
