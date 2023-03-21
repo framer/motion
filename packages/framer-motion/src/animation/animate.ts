@@ -17,8 +17,6 @@ import { GenericKeyframesTarget } from "../types"
 import { createVisualElement } from "./utils/create-visual-element"
 import { animateSingleValue } from "./interfaces/single-value"
 
-export interface Stagger {}
-
 export interface DOMAnimationOptions
     extends Omit<AnimateOptions<any>, "delay"> {
     delay?: number | DynamicOption<number>
