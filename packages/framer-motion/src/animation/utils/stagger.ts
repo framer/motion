@@ -2,36 +2,36 @@ import { Easing } from "../../easing/types"
 import { DynamicOption } from "../types"
 import { easingDefinitionToFunction } from "./easing"
 
-export type From = "first" | "last" | "center" | number
+export type StaggerOrigin = "first" | "last" | "center" | number
 
 export type StaggerOptions = {
     start?: number
-    from?: From
-    easing?: Easing
+    origin?: StaggerOrigin
+    ease?: Easing
 }
 
-export function getFromIndex(from: From, total: number) {
-    if (from === "first") {
+export function getOriginIndex(origin: StaggerOrigin, total: number) {
+    if (origin === "first") {
         return 0
     } else {
         const lastIndex = total - 1
-        return from === "last" ? lastIndex : lastIndex / 2
+        return origin === "last" ? lastIndex : lastIndex / 2
     }
 }
 
 export function stagger(
     duration: number = 0.1,
-    { start = 0, from = 0, easing }: StaggerOptions = {}
+    { start = 0, origin = 0, ease }: StaggerOptions = {}
 ): DynamicOption<number> {
     return (i: number, total: number) => {
-        const fromIndex =
-            typeof from === "number" ? from : getFromIndex(from, total)
-        const distance = Math.abs(fromIndex - i)
+        const originIndex =
+            typeof origin === "number" ? origin : getOriginIndex(origin, total)
+        const distance = Math.abs(originIndex - i)
         let delay = duration * distance
 
-        if (easing) {
+        if (ease) {
             const maxDelay = total * duration
-            const easingFunction = easingDefinitionToFunction(easing)
+            const easingFunction = easingDefinitionToFunction(ease)
             delay = easingFunction(delay / maxDelay) * maxDelay
         }
 

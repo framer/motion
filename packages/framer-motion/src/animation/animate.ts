@@ -4,7 +4,7 @@ import { invariant } from "../utils/errors"
 import { MotionValue } from "../value"
 import { GroupPlaybackControls } from "./GroupPlaybackControls"
 import {
-    AnimateOptions,
+    AnimationOptionsWithValueOverrides,
     AnimationPlaybackControls,
     AnimationScope,
     DOMKeyframesDefinition,
@@ -17,7 +17,8 @@ import { GenericKeyframesTarget } from "../types"
 import { createVisualElement } from "./utils/create-visual-element"
 import { animateSingleValue } from "./interfaces/single-value"
 
-export interface DOMAnimationOptions extends Omit<AnimateOptions, "delay"> {
+export interface DOMAnimationOptions
+    extends Omit<AnimationOptionsWithValueOverrides, "delay"> {
     delay?: number | DynamicOption<number>
 }
 
@@ -80,12 +81,12 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
     function scopedAnimate(
         from: string,
         to: string | GenericKeyframesTarget<string>,
-        options?: AnimateOptions<string>
+        options?: AnimationOptionsWithValueOverrides<string>
     ): AnimationPlaybackControls
     function scopedAnimate(
         from: number,
         to: number | GenericKeyframesTarget<number>,
-        options?: AnimateOptions<number>
+        options?: AnimationOptionsWithValueOverrides<number>
     ): AnimationPlaybackControls
     /**
      * Animate a MotionValue
@@ -93,12 +94,12 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
     function scopedAnimate(
         value: MotionValue<string>,
         keyframes: string | GenericKeyframesTarget<string>,
-        options?: AnimateOptions<string>
+        options?: AnimationOptionsWithValueOverrides<string>
     ): AnimationPlaybackControls
     function scopedAnimate(
         value: MotionValue<number>,
         keyframes: number | GenericKeyframesTarget<number>,
-        options?: AnimateOptions<number>
+        options?: AnimationOptionsWithValueOverrides<number>
     ): AnimationPlaybackControls
     /**
      * Animate DOM
@@ -111,7 +112,9 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
     function scopedAnimate<V>(
         valueOrElement: ElementOrSelector | MotionValue<V> | V,
         keyframes: DOMKeyframesDefinition | V | GenericKeyframesTarget<V>,
-        options: AnimateOptions<V> | DOMAnimationOptions = {}
+        options:
+            | AnimationOptionsWithValueOverrides<V>
+            | DOMAnimationOptions = {}
     ): AnimationPlaybackControls {
         let animation: AnimationPlaybackControls
 
@@ -126,7 +129,7 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
             animation = animateSingleValue(
                 valueOrElement,
                 keyframes,
-                options as AnimateOptions<V>
+                options as AnimationOptionsWithValueOverrides<V>
             )
         }
 

@@ -12,8 +12,8 @@ export interface AnimationPlaybackLifecycles<V> {
     onStop?: () => void
 }
 
-export interface AnimationOptions<V = any>
-    extends AnimationLifecycleOptions<V>,
+export interface ValueAnimationOptions<V = any>
+    extends AnimationPlaybackLifecycles<V>,
         AnimationPlaybackOptions,
         Omit<SpringOptions, "keyframes">,
         Omit<InertiaOptions, "keyframes">,
@@ -32,8 +32,16 @@ export interface AnimationScope<T = any> {
     animations: AnimationPlaybackControls[]
 }
 
-export type AnimateOptions<V = any> = Omit<AnimationOptions<V>, "keyframes"> &
-    AnimationPlaybackLifecycles<V>
+export type StyleAnimationOptions = {
+    [K in keyof CSSStyleDeclarationWithTransform]?: ValueAnimationOptions
+}
+
+export type VariableAnimationOptions = {
+    [key: `--${string}`]: ValueAnimationOptions
+}
+
+export type AnimationOptionsWithValueOverrides<V = any> =
+    StyleAnimationOptions & VariableAnimationOptions & ValueAnimationOptions<V>
 
 export type ElementOrSelector =
     | Element
@@ -96,14 +104,6 @@ export interface VelocityOptions {
     velocity?: number
     restSpeed?: number
     restDelta?: number
-}
-
-export interface AnimationLifecycleOptions<V> {
-    onUpdate?: (v: V) => void
-    onComplete?: VoidFunction
-    onPlay?: VoidFunction
-    onRepeat?: VoidFunction
-    onStop?: VoidFunction
 }
 
 export interface AnimationPlaybackOptions {
