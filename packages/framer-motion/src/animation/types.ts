@@ -2,7 +2,8 @@ import { TargetAndTransition, TargetResolver } from "../types"
 import type { VisualElement } from "../render/VisualElement"
 import { Easing } from "../easing/types"
 import { Driver } from "./animators/js/types"
-import { VariantLabels } from "../motion/types"
+import { SVGPathProperties, VariantLabels } from "../motion/types"
+import { SVGAttributes } from "../render/svg/types-attributes"
 
 export interface AnimationPlaybackLifecycles<V> {
     onUpdate?: (latest: V) => void
@@ -43,11 +44,21 @@ export type StyleTransitions = {
     [K in keyof CSSStyleDeclarationWithTransform]?: Transition
 }
 
+export type SVGPathTransitions = {
+    [K in keyof SVGPathProperties]: Transition
+}
+
+export type SVGTransitions = {
+    [K in keyof SVGAttributes]: Transition
+}
+
 export type VariableTransitions = {
     [key: `--${string}`]: Transition
 }
 
 export type AnimationOptionsWithValueOverrides<V = any> = StyleTransitions &
+    SVGPathTransitions &
+    SVGTransitions &
     VariableTransitions &
     ValueAnimationTransition<V>
 
@@ -101,11 +112,21 @@ export type StyleKeyframesDefinition = {
     [K in keyof CSSStyleDeclarationWithTransform]?: ValueKeyframesDefinition
 }
 
+export type SVGKeyframesDefinition = {
+    [K in keyof SVGAttributes]?: ValueKeyframesDefinition
+}
+
 export type VariableKeyframesDefinition = {
     [key: `--${string}`]: ValueKeyframesDefinition
 }
 
+export type SVGPathKeyframesDefinition = {
+    [K in keyof SVGPathProperties]?: ValueKeyframesDefinition
+}
+
 export type DOMKeyframesDefinition = StyleKeyframesDefinition &
+    SVGKeyframesDefinition &
+    SVGPathKeyframesDefinition &
     VariableKeyframesDefinition
 
 export interface VelocityOptions {

@@ -220,4 +220,19 @@ describe("animate", () => {
             }, 50)
         })
     })
+
+    test("Is typed correctly", async () => {
+        const div = document.createElement("div")
+        animate(
+            div,
+            { "--css-var": 0 },
+            { duration: 1, "--css-var": { duration: 1 } }
+        )
+        animate(
+            div,
+            { pathLength: 0 },
+            { duration: 1, pathLength: { duration: 1 } }
+        )
+        animate(div, { r: 0 }, { duration: 1, r: { duration: 1 } })
+    })
 })
