@@ -1,13 +1,13 @@
 import { getAnimatableNone } from "../../render/dom/value-types/animatable-none"
-import { ResolvedValueTarget, Transition } from "../../types"
 import { MotionValue } from "../../value"
+import { ResolvedValue, Transition } from "../types"
 import { isAnimatable } from "./is-animatable"
 import { getZeroUnit, isZero } from "./transitions"
 
 export function getKeyframes(
     value: MotionValue,
     valueName: string,
-    target: ResolvedValueTarget,
+    target: ResolvedValue,
     transition: Transition
 ) {
     const isTargetAnimatable = isAnimatable(valueName, target)

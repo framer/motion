@@ -187,7 +187,7 @@ describe("custom values type", () => {
             return (
                 <motion.div
                     transformValues={transformValues}
-                    initial={{ height: new Custom(200) }}
+                    initial={{ height: new Custom(200) } as any}
                 />
             )
         }
@@ -207,8 +207,8 @@ describe("custom values type", () => {
                 return (
                     <motion.div
                         transformValues={transformValues}
-                        initial={{ height: new Custom(0) }}
-                        animate={{ height: new Custom(100) }}
+                        initial={{ height: new Custom(0) } as any}
+                        animate={{ height: new Custom(100) } as any}
                         transition={{ duration: 0.1 }}
                         onAnimationComplete={resolvePromise}
                     />

@@ -8,12 +8,12 @@ import {
     AnimationScope,
     DOMKeyframesDefinition,
     ElementOrSelector,
+    GenericKeyframes,
     TransitionWithOverrides,
     TransitionWithPlaybackLifecycles,
 } from "./types"
 import { isDOMKeyframes } from "./utils/is-dom-keyframes"
 import { animateTarget } from "./interfaces/visual-element-target"
-import { GenericKeyframesTarget } from "../types"
 import { createVisualElement } from "./utils/create-visual-element"
 import { animateSingleValue } from "./interfaces/single-value"
 
@@ -66,12 +66,12 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
      */
     function scopedAnimate(
         from: string,
-        to: string | GenericKeyframesTarget<string>,
+        to: string | GenericKeyframes<string>,
         options?: TransitionWithPlaybackLifecycles<string>
     ): AnimationPlaybackControls
     function scopedAnimate(
         from: number,
-        to: number | GenericKeyframesTarget<number>,
+        to: number | GenericKeyframes<number>,
         options?: TransitionWithPlaybackLifecycles<number>
     ): AnimationPlaybackControls
     /**
@@ -79,12 +79,12 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
      */
     function scopedAnimate(
         value: MotionValue<string>,
-        keyframes: string | GenericKeyframesTarget<string>,
+        keyframes: string | GenericKeyframes<string>,
         options?: TransitionWithPlaybackLifecycles<string>
     ): AnimationPlaybackControls
     function scopedAnimate(
         value: MotionValue<number>,
-        keyframes: number | GenericKeyframesTarget<number>,
+        keyframes: number | GenericKeyframes<number>,
         options?: TransitionWithPlaybackLifecycles<number>
     ): AnimationPlaybackControls
     /**
@@ -97,7 +97,7 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
     ): AnimationPlaybackControls
     function scopedAnimate<V>(
         valueOrElement: ElementOrSelector | MotionValue<V> | V,
-        keyframes: DOMKeyframesDefinition | V | GenericKeyframesTarget<V>,
+        keyframes: DOMKeyframesDefinition | V | GenericKeyframes<V>,
         options: TransitionWithPlaybackLifecycles | TransitionWithOverrides = {}
     ): AnimationPlaybackControls {
         let animation: AnimationPlaybackControls

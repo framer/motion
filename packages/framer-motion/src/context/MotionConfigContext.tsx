@@ -1,6 +1,6 @@
 import { createContext } from "react"
+import { Transition } from "../animation/types"
 import { TransformPoint } from "../projection/geometry/types"
-import { Transition } from "../types"
 
 export type ReducedMotionConfig = "always" | "never" | "user"
 

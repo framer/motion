@@ -43,6 +43,51 @@ describe("animate prop as object", () => {
         })
         return expect(promise).resolves.toBe(15)
     })
+
+    test("accepts default transition prop", async () => {
+        const promise = new Promise((resolve) => {
+            const x = motionValue(0)
+            const opacity = motionValue(0)
+
+            const Component = () => (
+                <motion.div
+                    animate={{ opacity: 1, x: 20 }}
+                    transition={{
+                        default: { type: false },
+                        x: { type: "tween", from: 10, ease: () => 0.5 },
+                    }}
+                    onUpdate={() => resolve([x.get(), opacity.get()])}
+                    style={{ x, opacity }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toEqual([15, 1])
+    })
+
+    test("accepts base transition settings", async () => {
+        const promise = new Promise((resolve) => {
+            const x = motionValue(0)
+            const opacity = motionValue(0)
+
+            const Component = () => (
+                <motion.div
+                    animate={{ opacity: 1, x: 20 }}
+                    transition={{
+                        type: false,
+                        x: { type: "tween", from: 10, ease: () => 0.5 },
+                    }}
+                    onUpdate={() => resolve([x.get(), opacity.get()])}
+                    style={{ x, opacity }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toEqual([15, 1])
+    })
+
     test("fires onAnimationStart when animation begins", async () => {
         const promise = new Promise((resolve) => {
             const onStart = jest.fn()

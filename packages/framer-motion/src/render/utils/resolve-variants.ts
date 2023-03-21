@@ -1,5 +1,5 @@
-import type { MotionProps } from "../../motion/types"
-import type { TargetAndTransition, TargetResolver } from "../../types"
+import { TargetAndTransition } from "../../animation/types"
+import type { MotionProps, TargetResolver } from "../../motion/types"
 import type { ResolvedValues } from "../types"
 
 export function resolveVariantFromProps(

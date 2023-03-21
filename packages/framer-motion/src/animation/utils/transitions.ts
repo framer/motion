@@ -1,5 +1,5 @@
-import { Transition } from "../../types"
 import { getAnimatableNone } from "../../render/dom/value-types/animatable-none"
+import { Transition, VariantTransition } from "../types"
 
 /**
  * Decide whether a transition is defined on a given Transition.
@@ -18,7 +18,7 @@ export function isTransitionDefined({
     from,
     elapsed,
     ...transition
-}: Transition & { elapsed?: number }) {
+}: VariantTransition & { elapsed?: number }) {
     return !!Object.keys(transition).length
 }
 

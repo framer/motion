@@ -2,6 +2,7 @@ import * as React from "react"
 import { render } from "@testing-library/react"
 import { MotionConfig } from ".."
 import { MotionConfigContext } from "../../../context/MotionConfigContext"
+import { AnimationType } from "../../../animation/types"
 
 const consumerId = "consumer"
 
@@ -10,7 +11,7 @@ const Consumer = () => {
     return <div data-testid={consumerId}>{value.transition!.type}</div>
 }
 
-const App = ({ type }: { type: string }) => (
+const App = ({ type }: { type: AnimationType }) => (
     <MotionConfig transition={{ type }}>
         <Consumer />
     </MotionConfig>

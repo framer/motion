@@ -10,7 +10,6 @@ import { MotionProps, MotionStyle } from "../motion/types"
 import { createBox } from "../projection/geometry/models"
 import { Box } from "../projection/geometry/types"
 import { IProjectionNode } from "../projection/node/types"
-import { TargetAndTransition } from "../types"
 import { isRefObject } from "../utils/is-ref-object"
 import { initPrefersReducedMotion } from "../utils/reduced-motion"
 import {
@@ -42,6 +41,7 @@ import { Feature } from "../motion/features/Feature"
 import type { PresenceContextProps } from "../context/PresenceContext"
 import { variantProps } from "./utils/variant-props"
 import { visualElementStore } from "./store"
+import { TargetAndTransition } from "../animation/types"
 
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length

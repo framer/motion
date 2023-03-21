@@ -1,14 +1,15 @@
 import { CSSProperties } from "react"
 import { MotionValue } from "../value"
-import { AnimationControls } from "../animation/types"
 import {
-    Variants,
-    Target,
-    Transition,
+    AnimationControls,
+    CustomStyles,
+    DOMKeyframesDefinition,
+    DOMValuesDefinition,
+    SVGPathProperties,
     TargetAndTransition,
-    Omit,
-    MakeCustomValueType,
-} from "../types"
+    Transition,
+    VariantTransition,
+} from "../animation/types"
 import { DraggableProps } from "../gestures/drag/types"
 import { LayoutProps } from "./features/layout/types"
 import { ResolvedValues, EventProps } from "../render/types"
@@ -20,13 +21,23 @@ import {
 } from "../gestures/types"
 import { ViewportProps } from "./features/viewport/types"
 
-export type MotionStyleProp = string | number | MotionValue
-
 /**
  * Either a string, or array of strings, that reference variants defined via the `variants` prop.
  * @public
  */
 export type VariantLabels = string | string[]
+
+/**
+ * @public
+ */
+export type Variant = TargetAndTransition | TargetResolver
+
+/**
+ * @public
+ */
+export type Variants = {
+    [key: string]: Variant
+}
 
 export interface TransformProperties {
     x?: string | number
@@ -53,26 +64,6 @@ export interface TransformProperties {
     transformPerspective?: string | number
 }
 
-/**
- * @public
- */
-export interface SVGPathProperties {
-    pathLength?: number
-    pathOffset?: number
-    pathSpacing?: number
-}
-
-export interface CustomStyles {
-    /**
-     * Framer Library custom prop types. These are not actually supported in Motion - preferably
-     * we'd have a way of external consumers injecting supported styles into this library.
-     */
-    size?: string | number
-    radius?: string | number
-    shadow?: string
-    image?: string
-}
-
 export type MakeMotion<T> = MakeCustomValueType<{
     [K in keyof T]:
         | T[K]
@@ -96,9 +87,7 @@ export type MotionTransform = MakeMotion<TransformProperties>
 export type MotionStyle = MotionCSS &
     MotionTransform &
     MakeMotion<SVGPathProperties> &
-    MakeCustomValueType<CustomStyles>
-
-export type OnUpdate = (v: Target) => void
+    MakeMotion<CustomStyles>
 
 /**
  * @public
@@ -142,7 +131,7 @@ export interface AnimationProps {
      * <motion.div initial={false} animate={{ opacity: 0 }} />
      * ```
      */
-    initial?: boolean | Target | VariantLabels
+    initial?: boolean | DOMKeyframesDefinition | VariantLabels
 
     /**
      * Values to animate to, variant label(s), or `AnimationControls`.
@@ -230,7 +219,7 @@ export interface AnimationProps {
      * <motion.div transition={spring} animate={{ scale: 1.2 }} />
      * ```
      */
-    transition?: Transition
+    transition?: VariantTransition
 }
 
 /**
@@ -357,3 +346,19 @@ export type TransformTemplate = (
     transform: TransformProperties,
     generatedTransform: string
 ) => string
+
+export type TargetResolver = (
+    custom: any,
+    current: DOMValuesDefinition,
+    velocity: DOMValuesDefinition
+) => TargetAndTransition | string
+
+type MakeCustomValueType<T> = { [K in keyof T]: T[K] | CustomValueType }
+
+/**
+ * @public
+ */
+export interface CustomValueType {
+    mix: (from: any, to: any) => (p: number) => number | string
+    toValue: () => number | string
+}

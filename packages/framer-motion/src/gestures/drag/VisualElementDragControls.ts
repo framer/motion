@@ -20,7 +20,6 @@ import { createBox } from "../../projection/geometry/models"
 import { eachAxis } from "../../projection/utils/each-axis"
 import { measurePageBox } from "../../projection/utils/measure"
 import { extractEventInfo } from "../../events/event-info"
-import { Transition } from "../../types"
 import {
     convertBoundingBoxToBox,
     convertBoxToBoundingBox,
@@ -32,6 +31,7 @@ import { mix } from "../../utils/mix"
 import { percent } from "../../value/types/numbers/units"
 import { animateMotionValue } from "../../animation/interfaces/motion-value"
 import { sync } from "../../frameloop"
+import { Transition } from "../../animation/types"
 
 export const elementDragControls = new WeakMap<
     VisualElement,

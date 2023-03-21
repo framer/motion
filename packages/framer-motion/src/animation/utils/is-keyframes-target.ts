@@ -1,5 +1,7 @@
-import { ValueTarget, KeyframesTarget } from "../../types"
+import { GenericKeyframes, ValueKeyframesDefinition } from "../types"
 
-export const isKeyframesTarget = (v: ValueTarget): v is KeyframesTarget => {
+export const isKeyframesTarget = (
+    v: ValueKeyframesDefinition
+): v is GenericKeyframes<any> => {
     return Array.isArray(v)
 }

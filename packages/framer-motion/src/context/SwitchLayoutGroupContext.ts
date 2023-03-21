@@ -1,6 +1,6 @@
 import { IProjectionNode } from "../projection/node/types"
 import { createContext } from "react"
-import { Transition } from "../types"
+import { Transition } from "../animation/types"
 
 export interface SwitchLayoutGroup {
     register?: (member: IProjectionNode) => void

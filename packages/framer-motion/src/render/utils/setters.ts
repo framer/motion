@@ -1,11 +1,11 @@
-import { AnimationDefinition } from "../../animation/types"
 import {
-    Target,
+    AnimationDefinition,
+    DOMKeyframesDefinition,
+    DOMValuesDefinition,
     TargetAndTransition,
-    TargetResolver,
-    TargetWithKeyframes,
     Transition,
-} from "../../types"
+} from "../../animation/types"
+import { TargetResolver } from "../../motion/types"
 import { isNumericalString } from "../../utils/is-numerical-string"
 import { isZeroValueString } from "../../utils/is-zero-value-string"
 import { resolveFinalValueInKeyframes } from "../../utils/resolve-value"
@@ -82,7 +82,7 @@ export function setValues(
 
 export function checkTargetForNewValues(
     visualElement: VisualElement,
-    target: TargetWithKeyframes,
+    target: DOMKeyframesDefinition,
     origin: ResolvedValues
 ) {
     const newValueKeys = Object.keys(target).filter(
@@ -150,11 +150,11 @@ export function getOriginFromTransition(key: string, transition: Transition) {
 }
 
 export function getOrigin(
-    target: Target,
+    target: DOMValuesDefinition,
     transition: Transition,
     visualElement: VisualElement
 ) {
-    const origin: Target = {}
+    const origin: DOMValuesDefinition = {}
 
     for (const key in target) {
         const transitionOrigin = getOriginFromTransition(key, transition)

@@ -1,9 +1,9 @@
 import { AnimationType } from "../../render/utils/types"
-import { Transition } from "../../types"
+import { VariantTransition } from "../types"
 
 export type VisualElementAnimationOptions = {
     delay?: number
-    transitionOverride?: Transition
+    transitionOverride?: VariantTransition
     custom?: any
     type?: AnimationType
 }

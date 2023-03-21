@@ -1,16 +1,19 @@
-import { Target, TargetWithKeyframes } from "../../../types"
+import {
+    DOMKeyframesDefinition,
+    DOMValuesDefinition,
+} from "../../../animation/types"
 import type { VisualElement } from "../../VisualElement"
 import { resolveCSSVariables } from "./css-variables-conversion"
 import { unitConversion } from "./unit-conversion"
 
 export type MakeTargetAnimatable<T = unknown> = (
     visualElement: VisualElement<T>,
-    target: TargetWithKeyframes,
-    origin?: Target,
-    transitionEnd?: Target
+    target: DOMKeyframesDefinition,
+    origin?: DOMValuesDefinition,
+    transitionEnd?: DOMValuesDefinition
 ) => {
-    target: TargetWithKeyframes
-    transitionEnd?: Target
+    target: DOMKeyframesDefinition
+    transitionEnd?: DOMValuesDefinition
 }
 
 /**

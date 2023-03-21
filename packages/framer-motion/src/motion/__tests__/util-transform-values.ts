@@ -1,12 +1,8 @@
 import { invariant } from "../../utils/errors"
 import { isCustomValue } from "../../utils/resolve-value"
-import {
-    CustomValueType,
-    ValueTarget,
-    ResolvedValueTarget,
-    ResolvedKeyframesTarget,
-} from "../../types"
 import { ResolvedValues } from "../../render/types"
+import { CustomValueType } from "../types"
+import { ValueKeyframesDefinition } from "../../animation/types"
 
 export const resolveSingleValue = (
     v: string | number | CustomValueType
@@ -23,9 +19,9 @@ export const resolveSingleValue = (
     }
 }
 
-const resolveValue = (v: ValueTarget): ResolvedValueTarget => {
+const resolveValue = (v: ValueKeyframesDefinition): any => {
     return Array.isArray(v)
-        ? ((v as []).map(resolveSingleValue) as ResolvedKeyframesTarget)
+        ? (v as []).map(resolveSingleValue)
         : resolveSingleValue(v)
 }
 

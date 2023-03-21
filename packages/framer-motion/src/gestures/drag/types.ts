@@ -1,10 +1,10 @@
 import { RefObject } from "../../utils/safe-react-types"
 import { PanInfo } from "../pan/PanSession"
-import { Inertia, TargetAndTransition } from "../../types"
 import { DragControls } from "./use-drag-controls"
 import { MotionValue } from "../../value"
 import { VariantLabels } from "../../motion/types"
 import { Axis, BoundingBox } from "../../projection/geometry/types"
+import { InertiaOptions, TargetAndTransition } from "../../animation/types"
 
 export type DragHandler = (
     event: MouseEvent | TouchEvent | PointerEvent,
@@ -114,7 +114,9 @@ export interface DragHandlers {
 /**
  * @public
  */
-export type InertiaOptions = Partial<Omit<Inertia, "velocity" | "type">>
+export type DragTransitionOptions = Partial<
+    Omit<InertiaOptions, "velocity" | "type">
+>
 
 /**
  * @public
@@ -235,7 +237,7 @@ export interface DraggableProps extends DragHandlers {
      * />
      * ```
      */
-    dragTransition?: InertiaOptions
+    dragTransition?: DragTransitionOptions
 
     /**
      * Usually, dragging is initiated by pressing down on a component and moving it. For some

@@ -98,13 +98,13 @@ describe("useAnimation", () => {
                         initial="hidden"
                         animate="visible"
                         variants={variants}
-                        transition={{ transition: false }}
+                        transition={{ type: false }}
                     >
                         <motion.div
                             onAnimationComplete={(definition) =>
                                 resolve(definition)
                             }
-                            transition={{ transition: false }}
+                            transition={{ type: false }}
                             variants={variants}
                         />
                     </motion.div>
@@ -215,10 +215,7 @@ describe("useAnimation", () => {
             rerender(<Component />)
         })
 
-        return await expect(promise).resolves.toEqual([
-            100,
-            "rgba(255, 255, 255, 1)",
-        ])
+        return expect(promise).resolves.toEqual([100, "rgba(255, 255, 255, 1)"])
     })
 
     it("respects initial even if passed controls", () => {
@@ -268,7 +265,7 @@ describe("useAnimation", () => {
             rerender(<Component />)
         })
 
-        return await expect(promise).resolves.toEqual("rgba(255, 255, 255, 1)")
+        return expect(promise).resolves.toEqual("rgba(255, 255, 255, 1)")
     })
 
     test("accepts array of variants", async () => {
@@ -316,7 +313,7 @@ describe("useAnimation", () => {
             rerender(<Component />)
         })
 
-        return await expect(promise).resolves.toEqual([1, 1])
+        return expect(promise).resolves.toEqual([1, 1])
     })
 
     test(".set accepts state depending on custom attribute", async () => {
@@ -353,7 +350,7 @@ describe("useAnimation", () => {
             rerender(<Component />)
         })
 
-        return await expect(promise).resolves.toEqual([1, 2])
+        return expect(promise).resolves.toEqual([1, 2])
     })
 
     test(".start accepts state depending on custom attribute", async () => {
@@ -393,7 +390,7 @@ describe("useAnimation", () => {
             rerender(<Component />)
         })
 
-        return await expect(promise).resolves.toEqual([1, 2])
+        return expect(promise).resolves.toEqual([1, 2])
     })
 
     test("pathOffset types are inferred correctly", async () => {
@@ -444,6 +441,6 @@ describe("useAnimation", () => {
             rerender(<Component />)
         })
 
-        return await expect(promise).resolves.toEqual([1, 2])
+        return expect(promise).resolves.toEqual([1, 2])
     })
 })

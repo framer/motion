@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 import { useConstant } from "../../utils/use-constant"
 import { checkTargetForNewValues, getOrigin } from "../../render/utils/setters"
-import { TargetAndTransition } from "../../types"
 import { ResolvedValues } from "../../render/types"
 import { makeUseVisualState } from "../../motion/utils/use-visual-state"
 import { createBox } from "../../projection/geometry/models"
 import { VisualElement } from "../../render/VisualElement"
 import { animateVisualElement } from "../interfaces/visual-element"
+import { TargetAndTransition } from "../types"
 
 interface AnimatedStateOptions {
     initialState: ResolvedValues

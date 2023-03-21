@@ -1,7 +1,6 @@
 import { isAnimationControls } from "../../animation/utils/is-animation-controls"
 import { isKeyframesTarget } from "../../animation/utils/is-keyframes-target"
 import { VariantLabels } from "../../motion/types"
-import { TargetAndTransition } from "../../types"
 import { shallowCompare } from "../../utils/shallow-compare"
 import type { VisualElement } from "../VisualElement"
 import { isVariantLabel } from "./is-variant-label"
@@ -9,7 +8,7 @@ import { AnimationType } from "./types"
 import { resolveVariant } from "./resolve-dynamic-variants"
 import { variantPriorityOrder } from "./variant-props"
 import { VisualElementAnimationOptions } from "../../animation/interfaces/types"
-import { AnimationDefinition } from "../../animation/types"
+import { AnimationDefinition, TargetAndTransition } from "../../animation/types"
 import { animateVisualElement } from "../../animation/interfaces/visual-element"
 
 export interface AnimationState {

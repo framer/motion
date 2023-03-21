@@ -1,5 +1,5 @@
+import { TargetAndTransition } from "../../../animation/types"
 import { RefObject } from "../../../utils/safe-react-types"
-import { TargetAndTransition } from "../../../types"
 import { VariantLabels } from "../../types"
 
 export type ViewportEventHandler = (

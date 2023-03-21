@@ -1,5 +1,5 @@
 import { sync, cancelSync, flushSync } from "../../frameloop"
-import { AnimationPlaybackControls } from "../../animation/types"
+import { AnimationPlaybackControls, Transition } from "../../animation/types"
 import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { mixValues } from "../animation/mix-values"
@@ -34,7 +34,6 @@ import {
     Phase,
 } from "./types"
 import { FlatTree } from "../../render/utils/flat-tree"
-import { Transition } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { MotionStyle } from "../../motion/types"
 import { globalProjectionState } from "./state"
@@ -2038,7 +2037,7 @@ function hasOpacityCrossfade(node: IProjectionNode) {
     )
 }
 
-const defaultLayoutTransition = {
+const defaultLayoutTransition: Transition = {
     duration: 0.45,
     ease: [0.4, 0, 0.1, 1],
 }

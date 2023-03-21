@@ -1,5 +1,5 @@
-import { ResolvedValueTarget } from "../../types"
 import { complex } from "../../value/types/complex"
+import { ResolvedValue } from "../types"
 
 /**
  * Check if a value is animatable. Examples:
@@ -10,7 +10,7 @@ import { complex } from "../../value/types/complex"
  *
  * @internal
  */
-export const isAnimatable = (key: string, value: ResolvedValueTarget) => {
+export const isAnimatable = (key: string, value: ResolvedValue) => {
     // If the list of keys tat might be non-animatable grows, replace with Set
     if (key === "zIndex") return false
 

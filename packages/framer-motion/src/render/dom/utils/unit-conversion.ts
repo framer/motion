@@ -1,4 +1,3 @@
-import { Target, TargetWithKeyframes } from "../../../types"
 import { isKeyframesTarget } from "../../../animation/utils/is-keyframes-target"
 import { invariant } from "../../../utils/errors"
 import { MotionValue } from "../../../value"
@@ -11,6 +10,10 @@ import type { VisualElement } from "../../VisualElement"
 import { ValueType } from "../../../value/types/types"
 import { number } from "../../../value/types/numbers"
 import { px } from "../../../value/types/numbers/units"
+import {
+    DOMKeyframesDefinition,
+    DOMValuesDefinition,
+} from "../../../animation/types"
 
 const positionalKeys = new Set([
     "width",
@@ -23,7 +26,7 @@ const positionalKeys = new Set([
     "y",
 ])
 const isPositionalKey = (key: string) => positionalKeys.has(key)
-const hasPositionalKey = (target: TargetWithKeyframes) => {
+const hasPositionalKey = (target: DOMKeyframesDefinition) => {
     return Object.keys(target).some(isPositionalKey)
 }
 
@@ -101,7 +104,7 @@ export const positionalValues: { [key: string]: GetActualMeasurementInPixels } =
     }
 
 const convertChangedValueTypes = (
-    target: TargetWithKeyframes,
+    target: DOMKeyframesDefinition,
     visualElement: VisualElement<HTMLElement | SVGElement>,
     changedKeys: string[]
 ) => {
@@ -146,10 +149,10 @@ const convertChangedValueTypes = (
 
 const checkAndConvertChangedValueTypes = (
     visualElement: VisualElement<HTMLElement | SVGElement>,
-    target: TargetWithKeyframes,
-    origin: Target = {},
-    transitionEnd: Target = {}
-): { target: TargetWithKeyframes; transitionEnd: Target } => {
+    target: DOMKeyframesDefinition,
+    origin: DOMValuesDefinition = {},
+    transitionEnd: DOMValuesDefinition = {}
+): { target: DOMKeyframesDefinition; transitionEnd: DOMValuesDefinition } => {
     target = { ...target }
     transitionEnd = { ...transitionEnd }
 
@@ -290,10 +293,10 @@ const checkAndConvertChangedValueTypes = (
  */
 export function unitConversion(
     visualElement: VisualElement<HTMLElement | SVGElement>,
-    target: TargetWithKeyframes,
-    origin?: Target,
-    transitionEnd?: Target
-): { target: TargetWithKeyframes; transitionEnd?: Target } {
+    target: DOMKeyframesDefinition,
+    origin?: DOMValuesDefinition,
+    transitionEnd?: DOMValuesDefinition
+): { target: DOMKeyframesDefinition; transitionEnd?: DOMValuesDefinition } {
     return hasPositionalKey(target)
         ? checkAndConvertChangedValueTypes(
               visualElement,

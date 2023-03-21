@@ -123,27 +123,6 @@ export {
     RelayoutInfo,
     ResolveLayoutTransition,
 } from "./motion/types"
-export {
-    Orchestration,
-    Repeat,
-    Tween,
-    Spring,
-    Keyframes,
-    Inertia,
-    None,
-    Target,
-    TargetAndTransition,
-    Transition,
-    ResolvedKeyframesTarget,
-    KeyframesTarget,
-    CustomValueType,
-    ResolvedSingleTarget,
-    SingleTarget,
-    ResolvedValueTarget,
-    ValueTarget,
-    Variant,
-    Variants,
-} from "./types"
 export * from "./easing/types"
 export { EventInfo } from "./events/types"
 export * from "./motion/features/types"

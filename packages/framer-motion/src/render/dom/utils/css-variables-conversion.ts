@@ -1,4 +1,7 @@
-import { Target, TargetWithKeyframes } from "../../../types"
+import {
+    DOMKeyframesDefinition,
+    DOMValuesDefinition,
+} from "../../../animation/types"
 import { invariant } from "../../../utils/errors"
 import type { VisualElement } from "../../VisualElement"
 import { isCSSVariableToken, CSSVariableToken } from "./is-css-variable"
@@ -58,9 +61,9 @@ function getVariableValue(
  */
 export function resolveCSSVariables(
     visualElement: VisualElement,
-    { ...target }: TargetWithKeyframes,
-    transitionEnd: Target | undefined
-): { target: TargetWithKeyframes; transitionEnd?: Target } {
+    { ...target }: DOMKeyframesDefinition,
+    transitionEnd: DOMValuesDefinition | undefined
+): { target: DOMKeyframesDefinition; transitionEnd?: DOMValuesDefinition } {
     const element = visualElement.current
     if (!(element instanceof Element)) return { target, transitionEnd }
 

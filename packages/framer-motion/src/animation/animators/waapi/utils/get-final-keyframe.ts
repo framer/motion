@@ -1,8 +1,8 @@
-import { Repeat } from "../../../../types"
+import { RepeatOptions } from "../../../types"
 
 export function getFinalKeyframe<T>(
     keyframes: T[],
-    { repeat, repeatType = "loop" }: Repeat
+    { repeat, repeatType = "loop" }: RepeatOptions
 ): T {
     const index =
         repeat && repeatType !== "loop" && repeat % 2 === 1

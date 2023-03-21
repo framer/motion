@@ -11,6 +11,7 @@ import {
 } from "../../.."
 import { motionValue } from "../../../value"
 import { ResolvedValues } from "../../../render/types"
+import { Variants } from "../../../motion/types"
 
 describe("AnimatePresence", () => {
     test("Allows initial animation if no `initial` prop defined", async () => {
@@ -317,7 +318,7 @@ describe("AnimatePresence", () => {
             }, 400)
         })
 
-        return await expect(promise).resolves.toBe(3)
+        return expect(promise).resolves.toBe(3)
     })
 
     test("Only renders one child at a time if mode === 'wait'", async () => {
@@ -348,7 +349,7 @@ describe("AnimatePresence", () => {
             }, 150)
         })
 
-        return await expect(promise).resolves.toBe(1)
+        return expect(promise).resolves.toBe(1)
     })
 
     test("Immediately remove child if no exit animations defined", async () => {
@@ -379,7 +380,7 @@ describe("AnimatePresence", () => {
             }, 150)
         })
 
-        return await expect(promise).resolves.toBeTruthy()
+        return expect(promise).resolves.toBeTruthy()
     })
 
     test("Exit variants are triggered with `AnimatePresence.custom`, not that of the element.", async () => {
@@ -464,7 +465,7 @@ describe("AnimatePresence", () => {
             resolve(opacity.get())
         })
 
-        return await expect(promise).resolves.toBe(0)
+        return expect(promise).resolves.toBe(0)
     })
 
     test("Handles external refs on a single child", async () => {
@@ -663,7 +664,7 @@ describe("AnimatePresence with custom components", () => {
             }, 500)
         })
 
-        return await expect(promise).resolves.toBe(3)
+        return expect(promise).resolves.toBe(3)
     })
 
     test("Exit variants are triggered with `AnimatePresence.custom`, not that of the element.", async () => {
