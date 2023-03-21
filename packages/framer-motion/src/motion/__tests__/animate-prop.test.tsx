@@ -376,7 +376,7 @@ describe("animate prop as object", () => {
                     }}
                     onUpdate={() => {
                         sync.read(() => {
-                            resolve([x.get(), opacity.get()])
+                            sync.read(() => resolve([x.get(), opacity.get()]))
                         })
                     }}
                     style={{ x, opacity }}
