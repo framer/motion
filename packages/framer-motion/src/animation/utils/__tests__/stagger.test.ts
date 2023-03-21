@@ -13,11 +13,11 @@ describe("stagger", () => {
     })
 
     test("Accepts from", () => {
-        expect(stagger(0.1, { origin: 2 })(0, 10)).toEqual(0.2)
-        expect(stagger(0.1, { origin: "first" })(2, 10)).toEqual(0.2)
-        expect(stagger(0.1, { origin: "last" })(9, 10)).toEqual(0)
-        expect(stagger(0.1, { origin: "last" })(5, 10)).toEqual(0.4)
-        expect(stagger(0.1, { origin: "center" })(2, 10)).toEqual(0.25)
+        expect(stagger(0.1, { from: 2 })(0, 10)).toEqual(0.2)
+        expect(stagger(0.1, { from: "first" })(2, 10)).toEqual(0.2)
+        expect(stagger(0.1, { from: "last" })(9, 10)).toEqual(0)
+        expect(stagger(0.1, { from: "last" })(5, 10)).toEqual(0.4)
+        expect(stagger(0.1, { from: "center" })(2, 10)).toEqual(0.25)
     })
 
     test("Accepts easing", () => {

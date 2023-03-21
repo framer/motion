@@ -6,27 +6,27 @@ export type StaggerOrigin = "first" | "last" | "center" | number
 
 export type StaggerOptions = {
     startDelay?: number
-    origin?: StaggerOrigin
+    from?: StaggerOrigin
     ease?: Easing
 }
 
-export function getOriginIndex(origin: StaggerOrigin, total: number) {
-    if (origin === "first") {
+export function getOriginIndex(from: StaggerOrigin, total: number) {
+    if (from === "first") {
         return 0
     } else {
         const lastIndex = total - 1
-        return origin === "last" ? lastIndex : lastIndex / 2
+        return from === "last" ? lastIndex : lastIndex / 2
     }
 }
 
 export function stagger(
     duration: number = 0.1,
-    { startDelay = 0, origin = 0, ease }: StaggerOptions = {}
+    { startDelay = 0, from = 0, ease }: StaggerOptions = {}
 ): DynamicOption<number> {
     return (i: number, total: number) => {
-        const originIndex =
-            typeof origin === "number" ? origin : getOriginIndex(origin, total)
-        const distance = Math.abs(originIndex - i)
+        const fromIndex =
+            typeof from === "number" ? from : getOriginIndex(from, total)
+        const distance = Math.abs(fromIndex - i)
         let delay = duration * distance
 
         if (ease) {
