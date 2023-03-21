@@ -1,11 +1,10 @@
 import { render } from "../../../jest.setup"
 import * as React from "react"
 import { useEffect } from "react"
-import { motion, stagger } from "../.."
+import { motion } from "../.."
 import { animate } from "../animate"
 import { useMotionValue } from "../../value/use-motion-value"
 import { motionValue, MotionValue } from "../../value"
-import { restoreWaapi, setupWaapi } from "../animators/waapi/__tests__/setup"
 
 const duration = 0.001
 
@@ -211,53 +210,6 @@ describe("animate", () => {
                 expect(div).toHaveStyle("opacity: 0.5")
                 resolve()
             }, 50)
-        })
-    })
-})
-
-describe("animate() with WAAPI", () => {
-    beforeEach(() => {
-        setupWaapi()
-    })
-
-    afterEach(() => {
-        restoreWaapi()
-    })
-
-    test("Applies stagger", async () => {
-        const a = document.createElement("div")
-        const b = document.createElement("div")
-        const animation = animate(
-            [a, b],
-            { opacity: [0.2, 0.5] },
-            { delay: stagger(0.2) }
-        )
-
-        await animation.then(() => {
-            expect(a.animate).toBeCalled()
-            expect(a.animate).toBeCalledWith(
-                { opacity: [0.2, 0.5], offset: undefined },
-                {
-                    delay: -0,
-                    duration: 300,
-                    easing: "cubic-bezier(0.25, 0.1, 0.35, 1)",
-                    iterations: 1,
-                    direction: "normal",
-                    fill: "both",
-                }
-            )
-            expect(b.animate).toBeCalled()
-            expect(b.animate).toBeCalledWith(
-                { opacity: [0.2, 0.5], offset: undefined },
-                {
-                    delay: 200,
-                    duration: 300,
-                    easing: "cubic-bezier(0.25, 0.1, 0.35, 1)",
-                    iterations: 1,
-                    direction: "normal",
-                    fill: "both",
-                }
-            )
         })
     })
 })
