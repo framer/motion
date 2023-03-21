@@ -1,5 +1,5 @@
 import { millisecondsToSeconds } from "../../../utils/time-conversion"
-import { AnimationOptions, SpringOptions } from "../../types"
+import { ValueAnimationOptions, SpringOptions } from "../../types"
 import { AnimationState, KeyframeGenerator } from "../types"
 import { calcGeneratorVelocity } from "../utils/velocity"
 import { calcAngularFreq, findSpring } from "./find"
@@ -45,7 +45,7 @@ export function spring({
     restDelta,
     restSpeed,
     ...options
-}: AnimationOptions<number>): KeyframeGenerator<number> {
+}: ValueAnimationOptions<number>): KeyframeGenerator<number> {
     const origin = keyframes[0]
     const target = keyframes[keyframes.length - 1]
 

@@ -4,22 +4,29 @@ import { invariant } from "../utils/errors"
 import { MotionValue } from "../value"
 import { GroupPlaybackControls } from "./GroupPlaybackControls"
 import {
-    AnimateOptions,
+    AnimationOptionsWithValueOverrides,
     AnimationPlaybackControls,
     AnimationScope,
     DOMKeyframesDefinition,
+    DynamicOption,
     ElementOrSelector,
+    ValueAnimationTransition,
 } from "./types"
 import { isDOMKeyframes } from "./utils/is-dom-keyframes"
 import { animateTarget } from "./interfaces/visual-element-target"
-import { GenericKeyframesTarget } from "../types"
+import { GenericKeyframesTarget, TargetAndTransition } from "../types"
 import { createVisualElement } from "./utils/create-visual-element"
 import { animateSingleValue } from "./interfaces/single-value"
+
+export interface DynamicAnimationOptions
+    extends Omit<AnimationOptionsWithValueOverrides, "delay"> {
+    delay?: number | DynamicOption<number>
+}
 
 function animateElements(
     elementOrSelector: ElementOrSelector,
     keyframes: DOMKeyframesDefinition,
-    options: AnimateOptions<any>,
+    options?: DynamicAnimationOptions,
     scope?: AnimationScope
 ): AnimationPlaybackControls {
     const elements = resolveElements(elementOrSelector, scope)
@@ -47,10 +54,19 @@ function animateElements(
 
         const visualElement = visualElementStore.get(element)!
 
+        const transition = { ...options }
+
+        /**
+         * Resolve stagger function if provided.
+         */
+        if (typeof transition.delay === "function") {
+            transition.delay = transition.delay(i, numElements)
+        }
+
         animations.push(
             ...animateTarget(
                 visualElement,
-                { ...keyframes, transition: options } as any,
+                { ...keyframes, transition } as TargetAndTransition,
                 {}
             )
         )
@@ -66,12 +82,12 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
     function scopedAnimate(
         from: string,
         to: string | GenericKeyframesTarget<string>,
-        options?: AnimateOptions<string>
+        options?: ValueAnimationTransition<string>
     ): AnimationPlaybackControls
     function scopedAnimate(
         from: number,
         to: number | GenericKeyframesTarget<number>,
-        options?: AnimateOptions<number>
+        options?: ValueAnimationTransition<number>
     ): AnimationPlaybackControls
     /**
      * Animate a MotionValue
@@ -79,25 +95,25 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
     function scopedAnimate(
         value: MotionValue<string>,
         keyframes: string | GenericKeyframesTarget<string>,
-        options?: AnimateOptions<string>
+        options?: ValueAnimationTransition<string>
     ): AnimationPlaybackControls
     function scopedAnimate(
         value: MotionValue<number>,
         keyframes: number | GenericKeyframesTarget<number>,
-        options?: AnimateOptions<number>
+        options?: ValueAnimationTransition<number>
     ): AnimationPlaybackControls
     /**
      * Animate DOM
      */
-    function scopedAnimate<V>(
+    function scopedAnimate(
         value: ElementOrSelector,
         keyframes: DOMKeyframesDefinition,
-        options?: AnimateOptions<V>
+        options?: DynamicAnimationOptions
     ): AnimationPlaybackControls
     function scopedAnimate<V>(
         valueOrElement: ElementOrSelector | MotionValue<V> | V,
         keyframes: DOMKeyframesDefinition | V | GenericKeyframesTarget<V>,
-        options: AnimateOptions<V> = {}
+        options?: ValueAnimationTransition<V> | DynamicAnimationOptions
     ): AnimationPlaybackControls {
         let animation: AnimationPlaybackControls
 
@@ -105,11 +121,15 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
             animation = animateElements(
                 valueOrElement as ElementOrSelector,
                 keyframes,
-                options,
+                options as DynamicAnimationOptions | undefined,
                 scope
             )
         } else {
-            animation = animateSingleValue(valueOrElement, keyframes, options)
+            animation = animateSingleValue(
+                valueOrElement,
+                keyframes,
+                options as ValueAnimationTransition<V> | undefined
+            )
         }
 
         if (scope) {

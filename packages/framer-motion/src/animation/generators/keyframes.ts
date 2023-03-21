@@ -3,7 +3,7 @@ import { EasingFunction } from "../../easing/types"
 import { interpolate } from "../../utils/interpolate"
 import { defaultOffset } from "../../utils/offsets/default"
 import { convertOffsetToTimes } from "../../utils/offsets/time"
-import { AnimationOptions } from "../types"
+import { ValueAnimationOptions } from "../types"
 import { easingDefinitionToFunction, isEasingArray } from "../utils/easing"
 import { AnimationState, KeyframeGenerator } from "./types"
 
@@ -19,7 +19,7 @@ export function keyframes<T>({
     keyframes: keyframeValues,
     times,
     ease = "easeInOut",
-}: AnimationOptions<T>): KeyframeGenerator<T> {
+}: ValueAnimationOptions<T>): KeyframeGenerator<T> {
     /**
      * Easing functions can be externally defined as strings. Here we convert them
      * into actual functions.

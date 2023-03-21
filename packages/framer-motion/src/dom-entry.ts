@@ -15,6 +15,7 @@ export * from "./easing/cubic-bezier"
 /**
  * Utils
  */
+export { stagger } from "./animation/utils/stagger"
 export { transform } from "./utils/transform"
 export { clamp } from "./utils/clamp"
 export * from "./utils/delay"

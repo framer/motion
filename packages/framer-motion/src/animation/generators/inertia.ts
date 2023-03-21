@@ -1,6 +1,6 @@
 import { AnimationState, KeyframeGenerator } from "./types"
 import { spring as createSpring } from "./spring"
-import { AnimationOptions } from "../types"
+import { ValueAnimationOptions } from "../types"
 import { calcGeneratorVelocity } from "./utils/velocity"
 
 export function inertia({
@@ -15,7 +15,7 @@ export function inertia({
     max,
     restDelta = 0.5,
     restSpeed,
-}: AnimationOptions<number>): KeyframeGenerator<number> {
+}: ValueAnimationOptions<number>): KeyframeGenerator<number> {
     const origin = keyframes[0]
 
     const state: AnimationState<number> = {

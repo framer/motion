@@ -1,7 +1,7 @@
 import { transformProps } from "../../render/html/utils/transform"
-import { AnimationOptions } from "../types"
+import { ValueAnimationOptions } from "../types"
 
-const underDampedSpring: Partial<AnimationOptions> = {
+const underDampedSpring: Partial<ValueAnimationOptions> = {
     type: "spring",
     stiffness: 500,
     damping: 25,
@@ -10,14 +10,14 @@ const underDampedSpring: Partial<AnimationOptions> = {
 
 const criticallyDampedSpring = (
     target: unknown
-): Partial<AnimationOptions> => ({
+): Partial<ValueAnimationOptions> => ({
     type: "spring",
     stiffness: 550,
     damping: target === 0 ? 2 * Math.sqrt(550) : 30,
     restSpeed: 10,
 })
 
-const keyframesTransition: Partial<AnimationOptions> = {
+const keyframesTransition: Partial<ValueAnimationOptions> = {
     type: "keyframes",
     duration: 0.8,
 }
@@ -26,7 +26,7 @@ const keyframesTransition: Partial<AnimationOptions> = {
  * Default easing curve is a slightly shallower version of
  * the default browser easing curve.
  */
-const ease: Partial<AnimationOptions> = {
+const ease: Partial<ValueAnimationOptions> = {
     type: "keyframes",
     ease: [0.25, 0.1, 0.35, 1],
     duration: 0.3,
@@ -34,8 +34,8 @@ const ease: Partial<AnimationOptions> = {
 
 export const getDefaultTransition = (
     valueKey: string,
-    { keyframes }: AnimationOptions
-): Partial<AnimationOptions> => {
+    { keyframes }: ValueAnimationOptions
+): Partial<ValueAnimationOptions> => {
     if (keyframes.length > 2) {
         return keyframesTransition
     } else if (transformProps.has(valueKey)) {

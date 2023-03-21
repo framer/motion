@@ -1,4 +1,4 @@
-import { AnimationOptions } from "../../types"
+import { ValueAnimationOptions } from "../../types"
 import { spring } from "../spring"
 import { animateSync } from "../../animators/js/__tests__/utils"
 
@@ -23,7 +23,7 @@ describe("spring", () => {
     })
 
     test("Velocity passed to underdamped spring", () => {
-        const settings: AnimationOptions<number> = {
+        const settings: ValueAnimationOptions<number> = {
             keyframes: [100, 1000],
             stiffness: 300,
             restSpeed: 10,

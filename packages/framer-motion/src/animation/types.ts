@@ -1,8 +1,9 @@
-import { TargetAndTransition, TargetResolver, Transition } from "../types"
+import { TargetAndTransition, TargetResolver } from "../types"
 import type { VisualElement } from "../render/VisualElement"
 import { Easing } from "../easing/types"
 import { Driver } from "./animators/js/types"
-import { VariantLabels } from "../motion/types"
+import { SVGPathProperties, VariantLabels } from "../motion/types"
+import { SVGAttributes } from "../render/svg/types-attributes"
 
 export interface AnimationPlaybackLifecycles<V> {
     onUpdate?: (latest: V) => void
@@ -12,13 +13,54 @@ export interface AnimationPlaybackLifecycles<V> {
     onStop?: () => void
 }
 
+export interface Transition
+    extends AnimationPlaybackOptions,
+        Omit<SpringOptions, "keyframes">,
+        Omit<InertiaOptions, "keyframes">,
+        KeyframeOptions {
+    delay?: number
+    elapsed?: number
+    driver?: Driver
+    type?: "decay" | "spring" | "keyframes" | "tween" | "inertia"
+    duration?: number
+    autoplay?: boolean
+}
+
+export interface ValueAnimationTransition<V = any>
+    extends Transition,
+        AnimationPlaybackLifecycles<V> {}
+
+export interface ValueAnimationOptions<V = any>
+    extends ValueAnimationTransition {
+    keyframes: V[]
+}
+
 export interface AnimationScope<T = any> {
     readonly current: T
     animations: AnimationPlaybackControls[]
 }
 
-export type AnimateOptions<V = any> = Transition &
-    AnimationPlaybackLifecycles<V>
+export type StyleTransitions = {
+    [K in keyof CSSStyleDeclarationWithTransform]?: Transition
+}
+
+export type SVGPathTransitions = {
+    [K in keyof SVGPathProperties]: Transition
+}
+
+export type SVGTransitions = {
+    [K in keyof SVGAttributes]: Transition
+}
+
+export type VariableTransitions = {
+    [key: `--${string}`]: Transition
+}
+
+export type AnimationOptionsWithValueOverrides<V = any> = StyleTransitions &
+    SVGPathTransitions &
+    SVGTransitions &
+    VariableTransitions &
+    ValueAnimationTransition<V>
 
 export type ElementOrSelector =
     | Element
@@ -39,6 +81,8 @@ export interface AnimationPlaybackControls {
     cancel: () => void
     then: (onResolve: VoidFunction, onReject?: VoidFunction) => Promise<void>
 }
+
+export type DynamicOption<T> = (i: number, total: number) => T
 
 export interface CSSStyleDeclarationWithTransform
     extends Omit<CSSStyleDeclaration, "direction" | "transition"> {
@@ -68,25 +112,27 @@ export type StyleKeyframesDefinition = {
     [K in keyof CSSStyleDeclarationWithTransform]?: ValueKeyframesDefinition
 }
 
+export type SVGKeyframesDefinition = {
+    [K in keyof SVGAttributes]?: ValueKeyframesDefinition
+}
+
 export type VariableKeyframesDefinition = {
     [key: `--${string}`]: ValueKeyframesDefinition
 }
 
+export type SVGPathKeyframesDefinition = {
+    [K in keyof SVGPathProperties]?: ValueKeyframesDefinition
+}
+
 export type DOMKeyframesDefinition = StyleKeyframesDefinition &
+    SVGKeyframesDefinition &
+    SVGPathKeyframesDefinition &
     VariableKeyframesDefinition
 
 export interface VelocityOptions {
     velocity?: number
     restSpeed?: number
     restDelta?: number
-}
-
-export interface AnimationLifecycleOptions<V> {
-    onUpdate?: (v: V) => void
-    onComplete?: VoidFunction
-    onPlay?: VoidFunction
-    onRepeat?: VoidFunction
-    onStop?: VoidFunction
 }
 
 export interface AnimationPlaybackOptions {
@@ -123,21 +169,6 @@ export interface InertiaOptions extends DecayOptions {
 export interface KeyframeOptions {
     ease?: Easing | Easing[]
     times?: number[]
-}
-
-export interface AnimationOptions<V = any>
-    extends AnimationLifecycleOptions<V>,
-        AnimationPlaybackOptions,
-        Omit<SpringOptions, "keyframes">,
-        Omit<InertiaOptions, "keyframes">,
-        KeyframeOptions {
-    delay?: number
-    keyframes: V[]
-    elapsed?: number
-    driver?: Driver
-    type?: "decay" | "spring" | "keyframes" | "tween" | "inertia"
-    duration?: number
-    autoplay?: boolean
 }
 
 export type AnimationDefinition =

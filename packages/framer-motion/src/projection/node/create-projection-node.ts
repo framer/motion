@@ -43,7 +43,7 @@ import { mix } from "../../utils/mix"
 import { Process } from "../../frameloop/types"
 import { ProjectionFrame } from "../../debug/types"
 import { record } from "../../debug/record"
-import { AnimationOptions } from "../../animation/types"
+import { ValueAnimationOptions } from "../../animation/types"
 import { frameData } from "../../dom-entry"
 import { isSVGElement } from "../../render/dom/utils/is-svg-element"
 import { animateSingleValue } from "../../animation/interfaces/single-value"
@@ -1425,7 +1425,7 @@ export function createProjectionNode<I>({
             this.mixTargetDelta(this.options.layoutRoot ? 1000 : 0)
         }
 
-        startAnimation(options: AnimationOptions<number>) {
+        startAnimation(options: ValueAnimationOptions<number>) {
             this.notifyListeners("animationStart")
 
             this.currentAnimation && this.currentAnimation.stop()
