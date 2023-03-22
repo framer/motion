@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.8.5] 2023-03-22
+
+### Fixed
+
+-   Fixed use of multiple easing functions with WAAPI animations.
+
 ## [10.8.4] 2023-03-21
 
 ### Changed
