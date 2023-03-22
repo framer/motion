@@ -59,4 +59,38 @@ describe("animate() with WAAPI", () => {
             )
         })
     })
+
+    test("Accepts ease array for multiple keyframes", async () => {
+        const a = document.createElement("div")
+
+        animate(a, { opacity: [0.2, 0.5] }, { ease: "easeIn" })
+
+        expect(a.animate).toBeCalledWith(
+            { opacity: [0.2, 0.5], offset: undefined },
+            {
+                delay: -0,
+                duration: 300,
+                easing: "ease-in",
+                iterations: 1,
+                direction: "normal",
+                fill: "both",
+            }
+        )
+
+        const b = document.createElement("div")
+
+        animate(b, { opacity: [0.2, 0.5] }, { ease: ["easeIn"] })
+
+        expect(b.animate).toBeCalledWith(
+            { opacity: [0.2, 0.5], offset: undefined, easing: ["ease-in"] },
+            {
+                delay: -0,
+                duration: 300,
+                easing: "linear",
+                iterations: 1,
+                direction: "normal",
+                fill: "both",
+            }
+        )
+    })
 })
