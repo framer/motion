@@ -117,4 +117,25 @@ describe("animate() with WAAPI", () => {
             }
         )
     })
+    test("Can accept timeline sequences", async () => {
+        const a = document.createElement("div")
+
+        animate([
+            [
+                a,
+                { opacity: [0, 1], transform: ["scale(0)", "scale(1)"] },
+                { duration: 1, transform: { duration: 2 } },
+            ],
+        ])
+
+        expect(a.animate).toBeCalledWith(
+            { opacity: [0, 1], offset: undefined },
+            { ...defaultOptions, duration: 1000 }
+        )
+
+        expect(a.animate).toBeCalledWith(
+            { transform: ["scale(0)", "scale(1)"], offset: undefined },
+            { ...defaultOptions, duration: 2000 }
+        )
+    })
 })

@@ -17,6 +17,8 @@ import { animateTarget } from "./interfaces/visual-element-target"
 import { GenericKeyframesTarget, TargetAndTransition } from "../types"
 import { createVisualElement } from "./utils/create-visual-element"
 import { animateSingleValue } from "./interfaces/single-value"
+import { AnimationSequence, SequenceOptions } from "./sequence/types"
+import { createAnimationsFromSequence } from "./sequence/create"
 
 export interface DynamicAnimationOptions
     extends Omit<AnimationOptionsWithValueOverrides, "delay"> {
@@ -75,6 +77,23 @@ function animateElements(
     return new GroupPlaybackControls(animations)
 }
 
+const isSequence = (value: unknown): value is AnimationSequence =>
+    Array.isArray(value)
+
+function animateSequence(
+    sequence: AnimationSequence,
+    options?: SequenceOptions
+) {
+    const animations: AnimationPlaybackControls[] = []
+    const animationDefinitions = createAnimationsFromSequence(sequence, options)
+
+    animationDefinitions.forEach(({ keyframes, transition }, element) => {
+        animations.push(animateElements(element, keyframes, transition))
+    })
+
+    return new GroupPlaybackControls(animations)
+}
+
 export const createScopedAnimate = (scope?: AnimationScope) => {
     /**
      * Animate a single value
@@ -100,24 +119,47 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
         keyframes: DOMKeyframesDefinition,
         options?: DynamicAnimationOptions
     ): AnimationPlaybackControls
+    /**
+     * Animate sequences
+     */
+    function scopedAnimate(
+        sequence: AnimationSequence,
+        options?: SequenceOptions
+    ): AnimationPlaybackControls
+    /**
+     * Implementation
+     */
     function scopedAnimate<V>(
-        valueOrElement: ElementOrSelector | MotionValue<V> | V,
-        keyframes: DOMKeyframesDefinition | V | GenericKeyframesTarget<V>,
+        valueOrElementOrSequence:
+            | AnimationSequence
+            | ElementOrSelector
+            | MotionValue<V>
+            | V,
+        keyframes:
+            | SequenceOptions
+            | DOMKeyframesDefinition
+            | V
+            | GenericKeyframesTarget<V>,
         options?: ValueAnimationTransition<V> | DynamicAnimationOptions
     ): AnimationPlaybackControls {
         let animation: AnimationPlaybackControls
 
-        if (isDOMKeyframes(keyframes)) {
+        if (isSequence(valueOrElementOrSequence)) {
+            animation = animateSequence(
+                valueOrElementOrSequence,
+                keyframes as SequenceOptions
+            )
+        } else if (isDOMKeyframes(keyframes)) {
             animation = animateElements(
-                valueOrElement as ElementOrSelector,
+                valueOrElementOrSequence as ElementOrSelector,
                 keyframes,
                 options as DynamicAnimationOptions | undefined,
                 scope
             )
         } else {
             animation = animateSingleValue(
-                valueOrElement,
-                keyframes,
+                valueOrElementOrSequence,
+                keyframes as V | GenericKeyframesTarget<V>,
                 options as ValueAnimationTransition<V> | undefined
             )
         }
