@@ -29,19 +29,28 @@ export interface At {
 
 export type MotionValueSegment = [
     MotionValue,
-    UnresolvedValueKeyframe | UnresolvedValueKeyframe[],
-    (Transition & At)?
+    UnresolvedValueKeyframe | UnresolvedValueKeyframe[]
 ]
 
-export type DOMSegment = [
+export type MotionValueSegmentWithTransition = [
+    MotionValue,
+    UnresolvedValueKeyframe | UnresolvedValueKeyframe[],
+    Transition & At
+]
+
+export type DOMSegment = [ElementOrSelector, DOMKeyframesDefinition]
+
+export type DOMSegmentWithTransition = [
     ElementOrSelector,
     DOMKeyframesDefinition,
-    (DynamicAnimationOptions & At)?
+    DynamicAnimationOptions & At
 ]
 
 export type Segment =
     | MotionValueSegment
+    | MotionValueSegmentWithTransition
     | DOMSegment
+    | DOMSegmentWithTransition
     | SequenceLabel
     | SequenceLabelWithTime
 

@@ -111,6 +111,32 @@ describe("animate", () => {
         animate(motionValue("#fff"), ["#fff", "#000"])
     })
 
+    test.only("animates motion values in sequence", async () => {
+        const a = motionValue(0)
+        const b = motionValue(100)
+
+        const aOutput: number[] = []
+        const bOutput: number[] = []
+
+        a.on("change", (v) => aOutput.push(v))
+        b.on("change", (v) => bOutput.push(v))
+
+        const animation = animate(
+            [
+                [a, [50, 100]],
+                [b, 0],
+            ],
+            {
+                defaultTransition: { ease: "linear", duration: 1 },
+            }
+        )
+
+        animation.then(() => {
+            expect(aOutput).toEqual([50, 100])
+            expect(bOutput).toEqual([100, 50, 0])
+        })
+    })
+
     test("Applies target keyframe when animation has finished", async () => {
         const div = document.createElement("div")
         const animation = animate(
