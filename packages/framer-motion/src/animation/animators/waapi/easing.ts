@@ -1,14 +1,12 @@
-import {
-    BezierDefinition,
-    Easing,
-    EasingDefinition,
-} from "../../../easing/types"
+import { BezierDefinition, Easing } from "../../../easing/types"
+import { isBezierDefinition } from "../../../easing/utils/is-bezier-definition"
 
-export function isWaapiSupportedEasing(easing?: Easing | Easing[]) {
-    return (
-        !easing || // Default easing
-        Array.isArray(easing) || // Bezier curve
-        (typeof easing === "string" && supportedWaapiEasing[easing])
+export function isWaapiSupportedEasing(easing?: Easing | Easing[]): boolean {
+    return Boolean(
+        !easing ||
+            (typeof easing === "string" && supportedWaapiEasing[easing]) ||
+            isBezierDefinition(easing) ||
+            (Array.isArray(easing) && easing.every(isWaapiSupportedEasing))
     )
 }
 
@@ -28,10 +26,12 @@ export const supportedWaapiEasing = {
 }
 
 export function mapEasingToNativeEasing(
-    easing?: EasingDefinition
-): string | undefined {
+    easing?: Easing | Easing[]
+): string | string[] | undefined {
     if (!easing) return undefined
-    return Array.isArray(easing)
+    return isBezierDefinition(easing)
         ? cubicBezierAsString(easing)
-        : supportedWaapiEasing[easing]
+        : Array.isArray(easing)
+        ? easing.map(mapEasingToNativeEasing)
+        : supportedWaapiEasing[easing as string]
 }
