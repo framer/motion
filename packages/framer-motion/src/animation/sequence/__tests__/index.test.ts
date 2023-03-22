@@ -1,3 +1,4 @@
+import { motionValue } from "../../../value"
 import { stagger } from "../../utils/stagger"
 import { createAnimationsFromSequence } from "../create"
 
@@ -5,6 +6,7 @@ describe("createAnimationsFromSequence", () => {
     const a = document.createElement("div")
     const b = document.createElement("div")
     const c = document.createElement("div")
+    const value = motionValue(0)
 
     test("It creates a single animation", () => {
         const animations = createAnimationsFromSequence([
@@ -91,6 +93,32 @@ describe("createAnimationsFromSequence", () => {
             duration: 2,
             ease: ["linear", "easeOut", "easeOut"],
             times: [0, 0.25, 0.5, 1],
+        })
+    })
+
+    test("It accepts motion values", () => {
+        const animations = createAnimationsFromSequence([
+            [value, 100, { duration: 0.5 }],
+        ])
+
+        expect(animations.get(value)!.keyframes.default).toEqual([null, 100])
+        expect(animations.get(value)!.transition.default).toEqual({
+            duration: 0.5,
+            ease: ["easeOut", "easeOut"],
+            times: [0, 1],
+        })
+    })
+
+    test("It accepts motion values keyframes", () => {
+        const animations = createAnimationsFromSequence([
+            [value, [50, 100], { duration: 0.5 }],
+        ])
+
+        expect(animations.get(value)!.keyframes.default).toEqual([50, 100])
+        expect(animations.get(value)!.transition.default).toEqual({
+            duration: 0.5,
+            ease: ["easeOut", "easeOut"],
+            times: [0, 1],
         })
     })
 

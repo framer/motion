@@ -19,6 +19,7 @@ import { createVisualElement } from "./utils/create-visual-element"
 import { animateSingleValue } from "./interfaces/single-value"
 import { AnimationSequence, SequenceOptions } from "./sequence/types"
 import { createAnimationsFromSequence } from "./sequence/create"
+import { isMotionValue } from "../value/utils/is-motion-value"
 
 export interface DynamicAnimationOptions
     extends Omit<AnimationOptionsWithValueOverrides, "delay"> {
@@ -87,8 +88,20 @@ function animateSequence(
     const animations: AnimationPlaybackControls[] = []
     const animationDefinitions = createAnimationsFromSequence(sequence, options)
 
-    animationDefinitions.forEach(({ keyframes, transition }, element) => {
-        animations.push(animateElements(element, keyframes, transition))
+    animationDefinitions.forEach(({ keyframes, transition }, subject) => {
+        let animation: AnimationPlaybackControls
+
+        if (isMotionValue(subject)) {
+            animation = animateSingleValue(
+                subject,
+                keyframes.default,
+                transition.default
+            )
+        } else {
+            animation = animateElements(subject, keyframes, transition)
+        }
+
+        animations.push(animation)
     })
 
     return new GroupPlaybackControls(animations)

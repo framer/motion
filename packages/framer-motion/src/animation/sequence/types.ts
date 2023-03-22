@@ -29,7 +29,7 @@ export interface At {
 
 export type MotionValueSegment = [
     MotionValue,
-    string | number,
+    UnresolvedValueKeyframe | UnresolvedValueKeyframe[],
     (Transition & At)?
 ]
 
@@ -39,7 +39,11 @@ export type DOMSegment = [
     (DynamicAnimationOptions & At)?
 ]
 
-export type Segment = DOMSegment | SequenceLabel | SequenceLabelWithTime
+export type Segment =
+    | MotionValueSegment
+    | DOMSegment
+    | SequenceLabel
+    | SequenceLabelWithTime
 
 export type AnimationSequence = Segment[]
 
@@ -57,7 +61,7 @@ export interface AbsoluteKeyframe {
 
 export type ValueSequence = AbsoluteKeyframe[]
 
-export interface ElementSequence {
+export interface SequenceMap {
     [key: string]: ValueSequence
 }
 
@@ -67,6 +71,6 @@ export type ResolvedAnimationDefinition = {
 }
 
 export type ResolvedAnimationDefinitions = Map<
-    Element,
+    Element | MotionValue,
     ResolvedAnimationDefinition
 >

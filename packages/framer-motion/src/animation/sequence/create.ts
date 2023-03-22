@@ -3,17 +3,19 @@ import { resolveElements } from "../../render/dom/utils/resolve-element"
 import { defaultOffset } from "../../utils/offsets/default"
 import { fillOffset } from "../../utils/offsets/fill"
 import { progress } from "../../utils/progress"
+import type { MotionValue } from "../../value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 import { DynamicAnimationOptions } from "../animate"
 import {
     AnimationScope,
     DOMKeyframesDefinition,
+    Transition,
     UnresolvedValueKeyframe,
 } from "../types"
 import {
     AnimationSequence,
     At,
-    ElementSequence,
+    SequenceMap,
     ResolvedAnimationDefinitions,
     SequenceOptions,
     ValueSequence,
@@ -28,7 +30,7 @@ export function createAnimationsFromSequence(
     scope?: AnimationScope
 ): ResolvedAnimationDefinitions {
     const animationDefinitions: ResolvedAnimationDefinitions = new Map()
-    const elementSequences = new Map<Element, ElementSequence>()
+    const sequences = new Map<Element | MotionValue, SequenceMap>()
     const elementCache = {}
     const timeLabels = new Map<string, number>()
 
@@ -79,8 +81,73 @@ export function createAnimationsFromSequence(
          */
         let maxDuration = 0
 
+        const resolveValueSequence = (
+            valueKeyframes: UnresolvedValueKeyframe | UnresolvedValueKeyframe[],
+            valueTransition: Transition | DynamicAnimationOptions,
+            valueSequence: ValueSequence,
+            elementIndex = 0,
+            numElements = 0
+        ) => {
+            const valueKeyframesAsList = keyframesAsList(valueKeyframes)
+            const {
+                duration = defaultTransition.duration || 0.3,
+                ease = defaultTransition.ease || "easeOut",
+            } = valueTransition
+
+            const delay =
+                typeof valueTransition.delay === "function"
+                    ? valueTransition.delay(elementIndex, numElements)
+                    : valueTransition.delay || 0
+
+            const startTime = currentTime + delay
+            const targetTime = startTime + duration
+
+            const { times = defaultOffset(valueKeyframesAsList) } =
+                valueTransition
+            /**
+             * If there's only one time offset of 0, fill in a second with length 1
+             */
+            if (times.length === 1 && times[0] === 0) {
+                times[1] = 1
+            }
+
+            /**
+             * Fill out if offset if fewer offsets than keyframes
+             */
+            const remainder = times.length - valueKeyframesAsList.length
+            remainder > 0 && fillOffset(times, remainder)
+
+            /**
+             * If only one value has been set, ie [1], push a null to the start of
+             * the keyframe array. This will let us mark a keyframe at this point
+             * that will later be hydrated with the previous value.
+             */
+            valueKeyframesAsList.length === 1 &&
+                valueKeyframesAsList.unshift(null)
+
+            /**
+             * Add keyframes, mapping offsets to absolute time.
+             */
+            addKeyframes(
+                valueSequence,
+                valueKeyframesAsList,
+                ease as Easing | Easing[],
+                times,
+                startTime,
+                targetTime
+            )
+
+            maxDuration = Math.max(delay + duration, maxDuration)
+            totalDuration = Math.max(targetTime, totalDuration)
+        }
+
         if (isMotionValue(subject)) {
-            // TODO: Implement in later release
+            const subjectSequence = getSubjectSequence(subject, sequences)
+            resolveValueSequence(
+                keyframes as string | number,
+                transition,
+                getValueSequence("default", subjectSequence)
+            )
         } else {
             /**
              * Find all the elements specified in the definition and parse value
@@ -104,66 +171,16 @@ export function createAnimationsFromSequence(
                 transition = transition as DynamicAnimationOptions
 
                 const element = elements[elementIndex]
-                const elementSequence = getElementSequence(
-                    element,
-                    elementSequences
-                )
+                const subjectSequence = getSubjectSequence(element, sequences)
 
                 for (const key in keyframes) {
-                    const valueSequence = getValueSequence(key, elementSequence)
-                    const valueKeyframes = keyframesAsList(keyframes[key]!)
-                    const valueTransition = getValueTransition(transition, key)
-
-                    const {
-                        duration = defaultTransition.duration || 0.3,
-                        ease = defaultTransition.ease || "easeOut",
-                    } = valueTransition
-
-                    const delay =
-                        typeof valueTransition.delay === "function"
-                            ? valueTransition.delay(elementIndex, numElements)
-                            : valueTransition.delay || 0
-
-                    const startTime = currentTime + delay
-                    const targetTime = startTime + duration
-
-                    const { times = defaultOffset(valueKeyframes) } =
-                        valueTransition
-
-                    /**
-                     * If there's only one time offset of 0, fill in a second with length 1
-                     */
-                    if (times.length === 1 && times[0] === 0) {
-                        times[1] = 1
-                    }
-
-                    /**
-                     * Fill out if offset if fewer offsets than keyframes
-                     */
-                    const remainder = times.length - valueKeyframes.length
-                    remainder > 0 && fillOffset(times, remainder)
-
-                    /**
-                     * If only one value has been set, ie [1], push a null to the start of
-                     * the keyframe array. This will let us mark a keyframe at this point
-                     * that will later be hydrated with the previous value.
-                     */
-                    valueKeyframes.length === 1 && valueKeyframes.unshift(null)
-
-                    /**
-                     * Add keyframes, mapping offsets to absolute time.
-                     */
-                    addKeyframes(
-                        valueSequence,
-                        valueKeyframes,
-                        ease as Easing | Easing[],
-                        times,
-                        startTime,
-                        targetTime
+                    resolveValueSequence(
+                        keyframes[key],
+                        getValueTransition(transition, key),
+                        getValueSequence(key, subjectSequence),
+                        elementIndex,
+                        numElements
                     )
-
-                    maxDuration = Math.max(delay + duration, maxDuration)
-                    totalDuration = Math.max(targetTime, totalDuration)
                 }
             }
 
@@ -175,7 +192,7 @@ export function createAnimationsFromSequence(
     /**
      * For every element and value combination create a new animation.
      */
-    elementSequences.forEach((valueSequences, element) => {
+    sequences.forEach((valueSequences, element) => {
         for (const key in valueSequences) {
             const valueSequence = valueSequences[key]
 
@@ -243,18 +260,15 @@ export function createAnimationsFromSequence(
     return animationDefinitions
 }
 
-function getElementSequence(
-    element: Element,
-    sequences: Map<Element, ElementSequence>
-): ElementSequence {
-    !sequences.has(element) && sequences.set(element, {})
-    return sequences.get(element)!
+function getSubjectSequence(
+    subject: Element | MotionValue,
+    sequences: Map<Element | MotionValue, SequenceMap>
+): SequenceMap {
+    !sequences.has(subject) && sequences.set(subject, {})
+    return sequences.get(subject)!
 }
 
-function getValueSequence(
-    name: string,
-    sequences: ElementSequence
-): ValueSequence {
+function getValueSequence(name: string, sequences: SequenceMap): ValueSequence {
     if (!sequences[name]) sequences[name] = []
     return sequences[name]
 }
