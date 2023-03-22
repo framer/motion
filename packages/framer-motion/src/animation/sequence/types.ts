@@ -63,7 +63,7 @@ export interface ElementSequence {
 
 export type ResolvedAnimationDefinition = {
     keyframes: { [key: string]: UnresolvedValueKeyframe[] }
-    transition: { [key: string]: DynamicAnimationOptions }
+    transition: { [key: string]: Transition }
 }
 
 export type ResolvedAnimationDefinitions = Map<

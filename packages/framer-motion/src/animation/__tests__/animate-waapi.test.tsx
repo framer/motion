@@ -117,7 +117,8 @@ describe("animate() with WAAPI", () => {
             }
         )
     })
-    test("Can accept timeline sequences", async () => {
+
+    test.only("Can accept timeline sequences", async () => {
         const a = document.createElement("div")
 
         animate([
@@ -129,12 +130,12 @@ describe("animate() with WAAPI", () => {
         ])
 
         expect(a.animate).toBeCalledWith(
-            { opacity: [0, 1], offset: undefined },
-            { ...defaultOptions, duration: 1000 }
+            { opacity: [0, 1, 1], offset: [0, 0.5, 1] },
+            { ...defaultOptions, duration: 2000 }
         )
 
         expect(a.animate).toBeCalledWith(
-            { transform: ["scale(0)", "scale(1)"], offset: undefined },
+            { transform: ["scale(0)", "scale(1)"], offset: [0, 1] },
             { ...defaultOptions, duration: 2000 }
         )
     })

@@ -78,7 +78,7 @@ function animateElements(
 }
 
 const isSequence = (value: unknown): value is AnimationSequence =>
-    Array.isArray(value)
+    Array.isArray(value) && Array.isArray(value[0])
 
 function animateSequence(
     sequence: AnimationSequence,
