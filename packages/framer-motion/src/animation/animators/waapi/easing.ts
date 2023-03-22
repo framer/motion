@@ -2,11 +2,11 @@ import { BezierDefinition, Easing } from "../../../easing/types"
 import { isBezierDefinition } from "../../../easing/utils/is-bezier-definition"
 
 export function isWaapiSupportedEasing(easing?: Easing | Easing[]): boolean {
-    return (
+    return Boolean(
         !easing ||
-        (typeof easing === "string" && supportedWaapiEasing[easing]) ||
-        isBezierDefinition(easing) ||
-        (Array.isArray(easing) && easing.every(isWaapiSupportedEasing))
+            (typeof easing === "string" && supportedWaapiEasing[easing]) ||
+            isBezierDefinition(easing) ||
+            (Array.isArray(easing) && easing.every(isWaapiSupportedEasing))
     )
 }
 

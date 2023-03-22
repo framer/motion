@@ -1,6 +1,6 @@
 import { isWaapiSupportedEasing } from "../easing"
 
-describe("isWaapiSupportedEasing", () => {
+test("isWaapiSupportedEasing", () => {
     expect(isWaapiSupportedEasing()).toEqual(true)
     expect(isWaapiSupportedEasing("linear")).toEqual(true)
     expect(isWaapiSupportedEasing("easeIn")).toEqual(true)

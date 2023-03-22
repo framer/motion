@@ -92,5 +92,29 @@ describe("animate() with WAAPI", () => {
                 fill: "both",
             }
         )
+
+        const c = document.createElement("div")
+
+        animate(
+            c,
+            { opacity: [0.2, 0.5, 1] },
+            { times: [0.2, 0.3, 1], ease: [[0, 1, 2, 3], "linear"] }
+        )
+
+        expect(c.animate).toBeCalledWith(
+            {
+                opacity: [0.2, 0.5, 1],
+                offset: [0.2, 0.3, 1],
+                easing: ["cubic-bezier(0, 1, 2, 3)", "linear"],
+            },
+            {
+                delay: -0,
+                duration: 300,
+                easing: "linear",
+                iterations: 1,
+                direction: "normal",
+                fill: "both",
+            }
+        )
     })
 })

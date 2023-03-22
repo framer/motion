@@ -1,6 +1,6 @@
 import { isBezierDefinition } from "../is-bezier-definition"
 
-describe("isBezierDefinition", () => {
+test("isBezierDefinition", () => {
     expect(isBezierDefinition("linear")).toEqual(false)
     expect(isBezierDefinition((v) => v)).toEqual(false)
     expect(isBezierDefinition(["linear"])).toEqual(false)
