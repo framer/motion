@@ -5,6 +5,7 @@ import { motion } from "../.."
 import { animate } from "../animate"
 import { useMotionValue } from "../../value/use-motion-value"
 import { motionValue, MotionValue } from "../../value"
+import { syncDriver } from "../animators/js/__tests__/utils"
 
 const duration = 0.001
 
@@ -118,8 +119,8 @@ describe("animate", () => {
         const aOutput: number[] = []
         const bOutput: number[] = []
 
-        a.on("change", (v) => aOutput.push(v))
-        b.on("change", (v) => bOutput.push(v))
+        a.on("change", (v) => aOutput.push(Math.round(v)))
+        b.on("change", (v) => bOutput.push(Math.round(v)))
 
         const animation = animate(
             [
@@ -127,13 +128,17 @@ describe("animate", () => {
                 [b, 0],
             ],
             {
-                defaultTransition: { ease: "linear", duration: 1 },
+                defaultTransition: {
+                    ease: "linear",
+                    duration: 0.05,
+                    driver: syncDriver(20),
+                },
             }
         )
 
-        animation.then(() => {
-            expect(aOutput).toEqual([50, 100])
-            expect(bOutput).toEqual([100, 50, 0])
+        return animation.then(() => {
+            expect(aOutput).toEqual([50, 70, 90, 100])
+            expect(bOutput).toEqual([60, 20, 0])
         })
     })
 

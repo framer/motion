@@ -91,10 +91,12 @@ export function interpolate<T>(
         "Both input and output ranges must be the same length"
     )
 
-    invariant(
-        !ease || !Array.isArray(ease) || ease.length === inputLength - 1,
-        "Array of easing functions must be of length `input.length - 1`, as it applies to the transitions **between** the defined values."
-    )
+    // TODO FILL OUT EASING
+
+    // invariant(
+    //     !ease || !Array.isArray(ease) || ease.length === inputLength - 1,
+    //     "Array of easing functions must be of length `input.length - 1`, as it applies to the transitions **between** the defined values."
+    // )
 
     /**
      * If we're only provided a single input, we can just make a function
