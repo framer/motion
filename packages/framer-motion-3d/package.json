@@ -47,7 +47,8 @@
     },
     "dependencies": {
         "framer-motion": "^10.8.5",
-        "react-merge-refs": "^2.0.1"
+        "react-merge-refs": "^2.0.1",
+        "react-use-measure": "^2.1.1"
     },
     "peerDependencies": {
         "@react-three/fiber": "^8.2.2",
