@@ -7,7 +7,6 @@ import { mixColor } from "./mix-color"
 import { mixArray, mixComplex, mixObject } from "./mix-complex"
 import { pipe } from "./pipe"
 import { progress } from "./progress"
-import { easeInOut } from "../easing/ease"
 import { noop } from "./noop"
 
 type Mix<T> = (v: number) => T
