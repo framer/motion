@@ -1,6 +1,6 @@
 import { AnimationPlaybackControls } from "./types"
 
-type PropNames = "time" | "speed"
+type PropNames = "time" | "speed" | "duration"
 
 export class GroupPlaybackControls implements AnimationPlaybackControls {
     animations: AnimationPlaybackControls[]
@@ -42,6 +42,14 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
 
     set speed(speed: number) {
         this.setAll("speed", speed)
+    }
+
+    get duration() {
+        let max = 0
+        for (let i = 0; i < this.animations.length; i++) {
+            max = Math.max(max, this.animations[i].duration)
+        }
+        return max
     }
 
     private runAll(

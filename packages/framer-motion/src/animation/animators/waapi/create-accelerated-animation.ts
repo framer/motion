@@ -169,6 +169,9 @@ export function createAcceleratedAnimation(
         set speed(newSpeed: number) {
             animation.playbackRate = newSpeed
         },
+        get duration() {
+            return millisecondsToSeconds(duration)
+        },
         play: () => {
             if (hasStopped) return
             animation.play()

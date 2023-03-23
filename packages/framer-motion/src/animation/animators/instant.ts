@@ -4,7 +4,7 @@ import { noop } from "../../utils/noop"
 
 export function createInstantAnimation<V>({
     keyframes,
-    delay: delayBy,
+    delay,
     onUpdate,
     onComplete,
 }: ValueAnimationOptions<V>): AnimationPlaybackControls {
@@ -22,6 +22,7 @@ export function createInstantAnimation<V>({
         return {
             time: 0,
             speed: 1,
+            duration: 0,
             play: noop<void>,
             pause: noop<void>,
             stop: noop<void>,
@@ -34,10 +35,11 @@ export function createInstantAnimation<V>({
         }
     }
 
-    return delayBy
+    return delay
         ? animateValue({
               keyframes: [0, 1],
-              duration: delayBy,
+              duration: 0,
+              delay,
               onComplete: setValue,
           })
         : setValue()

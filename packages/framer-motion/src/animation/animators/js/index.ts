@@ -158,7 +158,9 @@ export function animateValue<V = number>({
         }
 
         // Rebase on delay
-        time = Math.max(time - delay, 0)
+        const timeWithDelay = time - delay
+        const isInDelayPhase = timeWithDelay < 0
+        time = Math.max(timeWithDelay, 0)
 
         /**
          * If this animation has finished, set the current time
@@ -229,7 +231,14 @@ export function animateValue<V = number>({
             elapsed = p * resolvedDuration
         }
 
-        const state = frameGenerator.next(elapsed)
+        /**
+         * If we're in negative time, set state as the initial keyframe.
+         * This prevents delay: x, duration: 0 animations from finishing
+         * instantly.
+         */
+        const state = isInDelayPhase
+            ? { done: false, value: keyframes[0] }
+            : frameGenerator.next(elapsed)
 
         if (mapNumbersToKeyframes) {
             state.value = mapNumbersToKeyframes(state.value)
@@ -237,7 +246,7 @@ export function animateValue<V = number>({
 
         let { done } = state
 
-        if (calculatedDuration !== null) {
+        if (!isInDelayPhase && calculatedDuration !== null) {
             done = time >= totalDuration
         }
 
@@ -322,6 +331,14 @@ export function animateValue<V = number>({
             } else {
                 startTime = animationDriver.now() - newTime / speed
             }
+        },
+        get duration() {
+            const duration =
+                generator.calculatedDuration === null
+                    ? calculateDuration(generator)
+                    : generator.calculatedDuration
+
+            return millisecondsToSeconds(duration)
         },
         get speed() {
             return speed

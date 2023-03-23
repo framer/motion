@@ -73,19 +73,6 @@ export const animateMotionValue = (
             },
         }
 
-        if (
-            !isOriginAnimatable ||
-            !isTargetAnimatable ||
-            instantAnimationState.current ||
-            valueTransition.type === false
-        ) {
-            /**
-             * If we can't animate this value, or the global instant animation flag is set,
-             * or this is simply defined as an instant transition, return an instant transition.
-             */
-            return createInstantAnimation(options)
-        }
-
         /**
          * If there's no transition defined for this value, we can generate
          * unqiue transition settings for this value.
@@ -108,6 +95,19 @@ export const animateMotionValue = (
 
         if (options.repeatDelay) {
             options.repeatDelay = secondsToMilliseconds(options.repeatDelay)
+        }
+
+        if (
+            !isOriginAnimatable ||
+            !isTargetAnimatable ||
+            instantAnimationState.current ||
+            valueTransition.type === false
+        ) {
+            /**
+             * If we can't animate this value, or the global instant animation flag is set,
+             * or this is simply defined as an instant transition, return an instant transition.
+             */
+            return createInstantAnimation(options)
         }
 
         /**

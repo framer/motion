@@ -1242,4 +1242,56 @@ describe("animate", () => {
 
         await animation
     })
+
+    test("Correctly returns duration", async () => {
+        expect(
+            animateValue({
+                keyframes: [0, 100],
+                duration: 1000,
+            }).duration
+        ).toEqual(1)
+    })
+
+    test("Correctly returns duration when delay is defined", () => {
+        expect(
+            animateValue({
+                keyframes: [0, 100],
+                delay: 1000,
+                duration: 1000,
+            }).duration
+        ).toEqual(1)
+    })
+
+    test("Correctly returns duration when repeat is defined", () => {
+        expect(
+            animateValue({
+                keyframes: [0, 100],
+                delay: 1000,
+                duration: 1000,
+                repeat: Infinity,
+            }).duration
+        ).toEqual(1)
+    })
+
+    test("Correctly returns duration when animation is spring", () => {
+        expect(
+            animateValue({
+                keyframes: [0, 100],
+                delay: 1000,
+                duration: 1000,
+                type: "spring",
+            }).duration
+        ).toEqual(1)
+    })
+
+    test("Correctly returns duration when animation is dynamic spring", () => {
+        expect(
+            animateValue({
+                keyframes: [0, 100],
+                stiffness: 200,
+                damping: 10,
+                type: "spring",
+            }).duration
+        ).toEqual(1.2)
+    })
 })
