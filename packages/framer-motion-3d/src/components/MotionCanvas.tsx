@@ -1,7 +1,7 @@
 import * as React from "react"
 import {
     useContext,
-    useLayoutEffect,
+    useEffect,
     useRef,
     forwardRef,
     MutableRefObject,
@@ -23,6 +23,7 @@ import {
     Dpr,
     ReconcilerRoot,
 } from "@react-three/fiber"
+import useMeasure from "react-use-measure"
 import { DimensionsState, MotionCanvasContext } from "./MotionCanvasContext"
 
 export interface MotionCanvasProps extends Omit<Props, "resize"> {}
@@ -100,21 +101,21 @@ function CanvasComponent(
     })
     const { size, dpr } = dimensions.current
 
-    const containerRef = useRef<HTMLDivElement>(null)
+    const [containerRef, containerSize] = useMeasure();
 
     const handleResize = (): void => {
-        const container = containerRef.current!
+        const { width, height } = containerSize;
         dimensions.current = {
             size: {
-                width: container.offsetWidth,
-                height: container.offsetHeight,
+                width,
+                height,
             },
         }
         forceRender()
     }
 
     // Set canvas size on mount
-    useLayoutEffect(handleResize, [])
+    useEffect(handleResize, [containerSize, forceRender])
 
     const canvasRef = React.useRef<HTMLCanvasElement>(null!)
     const [block, setBlock] = React.useState<SetBlock>(false)
