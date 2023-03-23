@@ -279,9 +279,6 @@ function keyframesAsList(
     return Array.isArray(keyframes) ? keyframes : [keyframes]
 }
 
-/**
- * TODO: Consolidate with other implementations
- */
 export function getValueTransition(
     transition: DynamicAnimationOptions & At,
     key: string
