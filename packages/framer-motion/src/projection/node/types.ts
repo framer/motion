@@ -54,6 +54,7 @@ export interface IProjectionNode<I = unknown> {
     snapshot?: Measurements
     target?: Box
     relativeTarget?: Box
+    relativeLayout?: Box
     relativeTargetOrigin?: Box
     targetDelta?: Delta
     targetWithTransforms?: Box

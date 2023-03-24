@@ -184,6 +184,7 @@ export function createProjectionNode<I>({
          * from viewport-relative to parent-relative.
          */
         relativeTarget?: Box
+        relativeLayout?: Box
 
         relativeTargetOrigin?: Box
         relativeParent?: IProjectionNode
@@ -1344,7 +1345,7 @@ export function createProjectionNode<I>({
             }
             this.attemptToResolveRelativeTarget = !hasOnlyRelativeTargetChanged
 
-            const relativeLayout = createBox()
+            this.relativeLayout = createBox()
 
             const snapshotSource = snapshot ? snapshot.source : undefined
             const layoutSource = this.layout ? this.layout.source : undefined
@@ -1371,20 +1372,21 @@ export function createProjectionNode<I>({
 
                 if (
                     this.relativeTarget &&
+                    this.relativeLayout &&
                     this.relativeTargetOrigin &&
                     this.layout &&
                     this.relativeParent &&
                     this.relativeParent.layout
                 ) {
                     calcRelativePosition(
-                        relativeLayout,
+                        this.relativeLayout,
                         this.layout.layoutBox,
                         this.relativeParent.layout.layoutBox
                     )
                     mixBox(
                         this.relativeTarget,
                         this.relativeTargetOrigin,
-                        relativeLayout,
+                        this.relativeLayout,
                         progress
                     )
 
@@ -1826,6 +1828,9 @@ function updateLayout(node: IProjectionNode) {
 
 function notifyLayoutUpdate(node: IProjectionNode) {
     const snapshot = node.resumeFrom?.snapshot || node.snapshot
+
+    delete node.relativeLayout
+    delete node.relativeTarget
 
     if (
         node.isLead() &&
