@@ -1858,6 +1858,15 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                     : snapshot.layoutBox[axis]
                 const length = calcLength(layout[axis])
                 axisSnapshot.max = axisSnapshot.min + length
+
+                /**
+                 * Ensure relative target gets resized and rerendererd
+                 */
+                if (node.relativeTarget && !node.currentAnimation) {
+                    node.isProjectionDirty = true
+                    node.relativeTarget[axis].max =
+                        node.relativeTarget[axis].min + length
+                }
             })
         }
 
