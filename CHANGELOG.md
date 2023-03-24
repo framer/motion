@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.9.1] 2023-03-24
+
+### Fixed
+
+-   Recalculating and rerendering relative targets when layout is remeasured.
+
 ## [10.9.0] 2023-03-24
 
 ### Added
