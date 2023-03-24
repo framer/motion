@@ -247,6 +247,7 @@ export function createAnimationsFromSequence(
             const definition = animationDefinitions.get(element)!
 
             definition.keyframes[key] = keyframes
+
             definition.transition[key] = {
                 ...defaultTransition,
                 duration: totalDuration,

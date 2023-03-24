@@ -112,6 +112,7 @@ export function checkTargetForNewValues(
          * if not read the value from the DOM. As an absolute fallback, take the defined target value.
          */
         if (value === null) {
+            console.log(origin[key], visualElement.readValue(key), target[key])
             value = origin[key] ?? visualElement.readValue(key) ?? target[key]
         }
 
@@ -163,6 +164,7 @@ export function getOrigin(
             origin[key] = transitionOrigin
         } else {
             const value = visualElement.getValue(key)
+
             if (value) {
                 origin[key] = value.get()
             }

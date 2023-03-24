@@ -85,7 +85,8 @@ export const animateMotionValue = (
              */
             return createInstantAnimation(options)
         }
-
+        console.log(keyframes)
+        console.trace()
         /**
          * If there's no transition defined for this value, we can generate
          * unqiue transition settings for this value.

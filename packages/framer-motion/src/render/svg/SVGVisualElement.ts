@@ -38,7 +38,9 @@ export class SVGVisualElement extends DOMVisualElement<
             return defaultType ? defaultType.default || 0 : 0
         }
         key = !camelCaseAttributes.has(key) ? camelToDash(key) : key
-        return instance.getAttribute(key)
+        return (
+            getComputedStyle(instance)[key] ?? instance.getAttribute(key) ?? 0
+        )
     }
 
     measureInstanceViewportBox(): Box {
