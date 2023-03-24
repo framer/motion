@@ -1862,6 +1862,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                 axisSnapshot.max = axisSnapshot.min + length
 
                 if (node.relativeTarget && !node.currentAnimation) {
+                    node.isProjectionDirty = true
                     node.relativeTarget[axis].max =
                         node.relativeTarget[axis].min + length
                 }
