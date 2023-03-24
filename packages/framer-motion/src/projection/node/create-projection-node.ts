@@ -1838,16 +1838,6 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         const { layoutBox: layout, measuredBox: measuredLayout } = node.layout
         const { animationType } = node.options
 
-        /**
-         * If we have a relative layout already, resize it to match
-         */
-        if (node.relativeLayout) {
-            node.relativeLayout.x.max =
-                node.relativeLayout.x.min + calcLength(layout.x)
-            node.relativeLayout.y.max =
-                node.relativeLayout.y.min + calcLength(layout.y)
-        }
-
         const isShared = snapshot.source !== node.layout.source
 
         // TODO Maybe we want to also resize the layout snapshot so we don't trigger
@@ -1870,6 +1860,12 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                     : snapshot.layoutBox[axis]
                 const length = calcLength(layout[axis])
                 axisSnapshot.max = axisSnapshot.min + length
+
+                if (node.relativeTargetOrigin) {
+                    node.relativeTargetOrigin[axis].max =
+                        node.relativeTargetOrigin[axis].min +
+                        calcLength(layout[axis])
+                }
             })
         }
 
