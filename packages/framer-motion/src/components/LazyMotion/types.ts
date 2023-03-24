@@ -13,8 +13,8 @@ export interface LazyProps {
      *
      * ```jsx
      * // features.js
-     * import { domAnimations } from "framer-motion"
-     * export default domAnimations
+     * import { domAnimation } from "framer-motion"
+     * export default domAnimation
      *
      * // index.js
      * import { LazyMotion, m } from "framer-motion"

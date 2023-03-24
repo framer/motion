@@ -17,11 +17,11 @@ import { LazyProps } from "./types"
  *
  * ```jsx
  * // Synchronous loading
- * import { LazyMotion, m, domAnimations } from "framer-motion"
+ * import { LazyMotion, m, domAnimation } from "framer-motion"
  *
  * function App() {
  *   return (
- *     <LazyMotion features={domAnimations}>
+ *     <LazyMotion features={domAnimation}>
  *       <m.div animate={{ scale: 2 }} />
  *     </LazyMotion>
  *   )
@@ -32,7 +32,7 @@ import { LazyProps } from "./types"
  *
  * function App() {
  *   return (
- *     <LazyMotion features={() => import('./path/to/domAnimations')}>
+ *     <LazyMotion features={() => import('./path/to/domAnimation')}>
  *       <m.div animate={{ scale: 2 }} />
  *     </LazyMotion>
  *   )
