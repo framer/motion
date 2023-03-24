@@ -60,5 +60,5 @@
         "@react-three/test-renderer": "^9.0.0",
         "@rollup/plugin-commonjs": "^22.0.1"
     },
-    "gitHead": "e77f414c8640944ea6fc6d26dcf1de2bc4d47864"
+    "gitHead": "e991ba33316191d7be88dafd3840e04e2285ed5b"
 }
