@@ -38,7 +38,7 @@ export function getKeyframes(
          */
         for (let i = 0; i < target.length; i++) {
             if (target[i] === null) {
-                target[i] = i ? target[i - 1] : origin
+                target[i] = i === 0 ? origin : target[i - 1]
             }
         }
 
