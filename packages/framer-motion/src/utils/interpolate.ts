@@ -7,6 +7,7 @@ import { mixColor } from "./mix-color"
 import { mixArray, mixComplex, mixObject } from "./mix-complex"
 import { pipe } from "./pipe"
 import { progress } from "./progress"
+import { noop } from "./noop"
 
 type Mix<T> = (v: number) => T
 export type MixerFactory<T> = (from: T, to: T) => Mix<T>
@@ -50,7 +51,7 @@ function createMixers<T>(
         let mixer = mixerFactory(output[i], output[i + 1])
 
         if (ease) {
-            const easingFunction = Array.isArray(ease) ? ease[i] : ease
+            const easingFunction = Array.isArray(ease) ? ease[i] || noop : ease
             mixer = pipe(easingFunction, mixer) as Mix<T>
         }
 
@@ -89,11 +90,6 @@ export function interpolate<T>(
     invariant(
         inputLength === output.length,
         "Both input and output ranges must be the same length"
-    )
-
-    invariant(
-        !ease || !Array.isArray(ease) || ease.length === inputLength - 1,
-        "Array of easing functions must be of length `input.length - 1`, as it applies to the transitions **between** the defined values."
     )
 
     /**

@@ -117,4 +117,53 @@ describe("animate() with WAAPI", () => {
             }
         )
     })
+
+    test("Can accept timeline sequences", async () => {
+        const a = document.createElement("div")
+        const b = document.createElement("div")
+
+        animate([
+            [
+                [a, b],
+                { opacity: [0, 1], transform: ["scale(0)", "scale(1)"] },
+                { duration: 1, transform: { duration: 2 } },
+            ],
+        ])
+
+        expect(a.animate).toBeCalledWith(
+            {
+                opacity: [0, 1, 1],
+                offset: [0, 0.5, 1],
+                easing: ["ease-out", "ease-out"],
+            },
+            { ...defaultOptions, duration: 2000, easing: "linear" }
+        )
+
+        expect(a.animate).toBeCalledWith(
+            {
+                transform: ["scale(0)", "scale(1)"],
+                offset: [0, 1],
+                easing: ["ease-out", "ease-out"],
+            },
+            { ...defaultOptions, duration: 2000, easing: "linear" }
+        )
+
+        expect(b.animate).toBeCalledWith(
+            {
+                opacity: [0, 1, 1],
+                offset: [0, 0.5, 1],
+                easing: ["ease-out", "ease-out"],
+            },
+            { ...defaultOptions, duration: 2000, easing: "linear" }
+        )
+
+        expect(b.animate).toBeCalledWith(
+            {
+                transform: ["scale(0)", "scale(1)"],
+                offset: [0, 1],
+                easing: ["ease-out", "ease-out"],
+            },
+            { ...defaultOptions, duration: 2000, easing: "linear" }
+        )
+    })
 })

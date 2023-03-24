@@ -5,6 +5,7 @@ import { motion } from "../.."
 import { animate } from "../animate"
 import { useMotionValue } from "../../value/use-motion-value"
 import { motionValue, MotionValue } from "../../value"
+import { syncDriver } from "../animators/js/__tests__/utils"
 
 const duration = 0.001
 
@@ -109,6 +110,36 @@ describe("animate", () => {
         animate(motionValue("#fff"), "#000")
         animate(motionValue("#fff"), [null, "#000"])
         animate(motionValue("#fff"), ["#fff", "#000"])
+    })
+
+    test("animates motion values in sequence", async () => {
+        const a = motionValue(0)
+        const b = motionValue(100)
+
+        const aOutput: number[] = []
+        const bOutput: number[] = []
+
+        a.on("change", (v) => aOutput.push(Math.round(v)))
+        b.on("change", (v) => bOutput.push(Math.round(v)))
+
+        const animation = animate(
+            [
+                [a, [50, 100]],
+                [b, 0],
+            ],
+            {
+                defaultTransition: {
+                    ease: "linear",
+                    duration: 0.05,
+                    driver: syncDriver(20),
+                },
+            }
+        )
+
+        return animation.then(() => {
+            expect(aOutput).toEqual([50, 70, 90, 100])
+            expect(bOutput).toEqual([60, 20, 0])
+        })
     })
 
     test("Applies target keyframe when animation has finished", async () => {

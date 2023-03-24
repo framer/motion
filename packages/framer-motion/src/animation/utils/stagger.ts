@@ -1,6 +1,6 @@
 import { Easing } from "../../easing/types"
+import { easingDefinitionToFunction } from "../../easing/utils/map"
 import { DynamicOption } from "../types"
-import { easingDefinitionToFunction } from "./easing"
 
 export type StaggerOrigin = "first" | "last" | "center" | number
 

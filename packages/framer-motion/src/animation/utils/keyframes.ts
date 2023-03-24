@@ -34,11 +34,12 @@ export function getKeyframes(
      */
     if (Array.isArray(target)) {
         /**
-         * Ensure an initial wildcard keyframe is hydrated by the origin.
-         * TODO: Support extra wildcard keyframes i.e [1, null, 0]
+         * Ensure an wildcard keyframes are hydrated by the origin.
          */
-        if (target[0] === null) {
-            target[0] = origin
+        for (let i = 0; i < target.length; i++) {
+            if (target[i] === null) {
+                target[i] = i === 0 ? origin : target[i - 1]
+            }
         }
 
         return target

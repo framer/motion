@@ -1,4 +1,4 @@
-import { easingDefinitionToFunction } from "../easing"
+import { easingDefinitionToFunction } from "../../../easing/utils/map"
 import { stagger, getOriginIndex } from "../stagger"
 
 describe("stagger", () => {
