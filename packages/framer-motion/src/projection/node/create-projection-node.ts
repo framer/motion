@@ -1829,6 +1829,9 @@ function updateLayout(node: IProjectionNode) {
 function notifyLayoutUpdate(node: IProjectionNode) {
     const snapshot = node.resumeFrom?.snapshot || node.snapshot
 
+    /**
+     * If we've updated the actual layout then the relativve layout is invalid
+     */
     delete node.relativeLayout
     delete node.relativeTarget
 
