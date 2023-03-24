@@ -1829,12 +1829,6 @@ function updateLayout(node: IProjectionNode) {
 function notifyLayoutUpdate(node: IProjectionNode) {
     const snapshot = node.resumeFrom?.snapshot || node.snapshot
 
-    /**
-     * If we've updated the actual layout then the relativve layout is invalid
-     */
-    delete node.relativeLayout
-    delete node.relativeTarget
-
     if (
         node.isLead() &&
         node.layout &&
@@ -1843,6 +1837,16 @@ function notifyLayoutUpdate(node: IProjectionNode) {
     ) {
         const { layoutBox: layout, measuredBox: measuredLayout } = node.layout
         const { animationType } = node.options
+
+        /**
+         * If we have a relative layout already, resize it to match
+         */
+        if (node.relativeLayout) {
+            node.relativeLayout.x.max =
+                node.relativeLayout.x.min + calcLength(layout.x)
+            node.relativeLayout.y.max =
+                node.relativeLayout.y.min + calcLength(layout.y)
+        }
 
         const isShared = snapshot.source !== node.layout.source
 
