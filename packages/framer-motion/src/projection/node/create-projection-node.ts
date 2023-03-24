@@ -1861,10 +1861,9 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                 const length = calcLength(layout[axis])
                 axisSnapshot.max = axisSnapshot.min + length
 
-                if (node.relativeTargetOrigin) {
-                    node.relativeTargetOrigin[axis].max =
-                        node.relativeTargetOrigin[axis].min +
-                        calcLength(layout[axis])
+                if (node.relativeTarget && !node.currentAnimation) {
+                    node.relativeTarget[axis].max =
+                        node.relativeTarget[axis].min + length
                 }
             })
         }
