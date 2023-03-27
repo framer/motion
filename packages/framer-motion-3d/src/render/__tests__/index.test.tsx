@@ -240,7 +240,7 @@ describe("motion for three", () => {
             }
 
             ReactThreeTestRenderer.create(<Component />)
-            sync.update(() => resolve([x.get(), y.get()]), 5)
+            sync.update(() => resolve([x.get(), y.get()]))
         })
 
         expect(result[0]).toEqual(100)
