@@ -210,4 +210,10 @@ describe("GroupPlaybackControls", () => {
 
         expect(controls.duration).toEqual(3)
     })
+
+    test("Returns zero for no animations", async () => {
+        const controls = new GroupPlaybackControls([])
+
+        expect(controls.duration).toEqual(0)
+    })
 })
