@@ -21,7 +21,6 @@ export function keyframes<T>({
     times,
     ease = "easeInOut",
 }: ValueAnimationOptions<T>): KeyframeGenerator<T> {
-    console.log(duration, times, keyframeValues, ...(ease as []))
     /**
      * Easing functions can be externally defined as strings. Here we convert them
      * into actual functions.

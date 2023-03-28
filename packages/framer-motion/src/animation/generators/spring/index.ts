@@ -48,7 +48,7 @@ export function spring({
 }: ValueAnimationOptions<number>): KeyframeGenerator<number> {
     const origin = keyframes[0]
     const target = keyframes[keyframes.length - 1]
-
+    console.log(keyframes)
     /**
      * This is the Iterator-spec return value. We ensure it's mutable rather than using a generator
      * to reduce GC during animation.

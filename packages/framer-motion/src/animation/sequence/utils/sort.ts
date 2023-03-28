@@ -5,7 +5,9 @@ export function compareByTime(
     b: AbsoluteKeyframe
 ): number {
     if (a.at === b.at) {
-        return a.value === null ? 0 : -1
+        if (a.value === null) return 1
+        if (b.value === null) return -1
+        return 0
     } else {
         return a.at - b.at
     }

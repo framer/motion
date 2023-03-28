@@ -9,11 +9,8 @@ import { millisecondsToSeconds } from "../../utils/time-conversion"
 /**
  * Create a progress => progress easing function from a generator.
  */
-export function createGeneratorEasing(
-    options: Transition,
-    keyframes: number[]
-) {
-    const generator = spring({ keyframes, ...options })
+export function createGeneratorEasing(options: Transition, scale = 100) {
+    const generator = spring({ keyframes: [0, scale], ...options })
     const duration = Math.min(
         calcGeneratorDuration(generator),
         maxGeneratorDuration
@@ -21,7 +18,8 @@ export function createGeneratorEasing(
 
     return {
         type: "keyframes",
-        ease: (progress: number) => generator.next(duration * progress).value,
+        ease: (progress: number) =>
+            generator.next(duration * progress).value / scale,
         duration: millisecondsToSeconds(duration),
     }
 }

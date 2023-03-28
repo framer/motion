@@ -20,9 +20,21 @@ describe("createAnimationsFromSequence", () => {
         expect(animations.get(a)!.keyframes.opacity).toEqual([null, 1])
         expect(animations.get(a)!.transition.opacity).toEqual({
             duration: 1,
-            ease: [[0, 1, 2, 3]],
+            ease: [
+                [0, 1, 2, 3],
+                [0, 1, 2, 3],
+            ],
             times: [0, 1],
         })
+    })
+
+    test("It orders grouped keyframes correctly", () => {
+        const animations = createAnimationsFromSequence([
+            [a, { x: 100 }],
+            [a, { x: [200, 300] }],
+        ])
+
+        expect(animations.get(a)!.keyframes.x).toEqual([null, 100, 200, 300])
     })
 
     test("It creates a single animation with defaults", () => {
@@ -33,7 +45,7 @@ describe("createAnimationsFromSequence", () => {
         expect(animations.get(a)!.keyframes.opacity).toEqual([null, 1])
         expect(animations.get(a)!.transition.opacity).toEqual({
             duration: 1,
-            ease: ["easeOut"],
+            ease: ["easeOut", "easeOut"],
             times: [0, 1],
         })
     })
@@ -459,7 +471,7 @@ describe("createAnimationsFromSequence", () => {
         expect(times).toEqual([0, 0.5, 0.5, 1])
     })
 
-    test.only("Adds springs as duration-based simulation when two keyframes defined", () => {
+    test("Adds springs as duration-based simulation when two keyframes defined", () => {
         const animations = createAnimationsFromSequence([
             [a, { x: 200 }, { duration: 1, ease: "linear" }],
             [a, { x: [200, 0] }, { duration: 1, type: "spring", bounce: 0 }],
@@ -488,9 +500,10 @@ describe("createAnimationsFromSequence", () => {
         expect(animations.get(a)!.keyframes.x).toEqual([null, 200, 100, 0])
         const { duration, ease, times } = animations.get(a)!.transition.x
 
-        expect(duration).toEqual(1.2)
-        expect(ease![0]).toEqual("easeInOut")
-        expect(typeof ease![1]).toEqual("function")
+        expect(duration).toEqual(2.2)
+        expect(ease![0]).toEqual("easeOut")
+        expect(ease![1]).toEqual("easeOut")
+        expect(typeof ease![2]).toEqual("function")
         expect(times).toEqual([0, 0.5, 1])
     })
 })

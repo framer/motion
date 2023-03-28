@@ -184,6 +184,8 @@ const checkAndConvertChangedValueTypes = (
             fromType = findDimensionValueType(from)
 
             for (let i = fromIndex; i < numKeyframes; i++) {
+                if (to[i] === null) break
+
                 if (!toType) {
                     toType = findDimensionValueType(to[i])
 

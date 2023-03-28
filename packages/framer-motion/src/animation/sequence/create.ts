@@ -117,20 +117,22 @@ export function createAnimationsFromSequence(
              */
             const numKeyframes = valueKeyframesAsList.length
             if (numKeyframes <= 2 && type === "spring") {
-                const generatorKeyframes =
+                const scale =
                     numKeyframes === 2 &&
                     isNumberKeyframesArray(valueKeyframesAsList)
-                        ? valueKeyframesAsList
-                        : [0, 100]
-                console.log(generatorKeyframes)
+                        ? Math.abs(
+                              valueKeyframesAsList[1] - valueKeyframesAsList[0]
+                          )
+                        : 100
+
                 const springEasing = createGeneratorEasing(
                     {
                         ...remainingTransition,
                         duration: secondsToMilliseconds(duration),
                     },
-                    generatorKeyframes
+                    scale
                 )
-                console.log(springEasing)
+                // console.log(springEasing)
                 ease = springEasing.ease
                 duration = springEasing.duration
             }
@@ -238,8 +240,6 @@ export function createAnimationsFromSequence(
             const keyframes: UnresolvedValueKeyframe[] = []
             const valueOffset: number[] = []
             const valueEasing: Easing[] = []
-
-            console.log(valueSequence)
 
             /**
              * For each keyframe, translate absolute times into

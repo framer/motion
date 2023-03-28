@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useEffect, useState } from "react"
-import { easeIn, motion, motionValue, useAnimate } from "framer-motion"
+import { motion, motionValue, useAnimate } from "framer-motion"
 
 /**
  * An example of the tween transition type
@@ -22,8 +22,11 @@ const Child = ({ setState }: any) => {
     const [scope, animate] = useAnimate()
 
     useEffect(() => {
-        animate([["div", { x: 100 }, { ease: easeIn }]])
-
+        const animation = animate([
+            ["div", { x: 100 }, { duration: 1, ease: "linear" }],
+            ["div", { x: [200, 300] }, { duration: 1, type: "spring" }],
+        ])
+        console.log({ duration: animation.duration })
         // const controls = animate("div", { x: 100, opacity: 0 }, transition)
 
         // controls.then(() => console.log("complete"))
