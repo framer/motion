@@ -20,10 +20,7 @@ describe("createAnimationsFromSequence", () => {
         expect(animations.get(a)!.keyframes.opacity).toEqual([null, 1])
         expect(animations.get(a)!.transition.opacity).toEqual({
             duration: 1,
-            ease: [
-                [0, 1, 2, 3],
-                [0, 1, 2, 3],
-            ],
+            ease: [[0, 1, 2, 3]],
             times: [0, 1],
         })
     })
@@ -36,7 +33,7 @@ describe("createAnimationsFromSequence", () => {
         expect(animations.get(a)!.keyframes.opacity).toEqual([null, 1])
         expect(animations.get(a)!.transition.opacity).toEqual({
             duration: 1,
-            ease: ["easeOut", "easeOut"],
+            ease: ["easeOut"],
             times: [0, 1],
         })
     })
@@ -54,6 +51,27 @@ describe("createAnimationsFromSequence", () => {
             duration: 0.5,
             ease: ["easeInOut", "easeInOut", "easeInOut", "easeInOut"],
             times: [0, 0.5, 0.7, 1],
+        })
+    })
+
+    test("It assigns the correct easing to the correct keyframes", () => {
+        const animations = createAnimationsFromSequence([
+            [a, { x: 1 }, { duration: 1, ease: "circIn" }],
+            [a, { x: 2, opacity: 0 }, { duration: 1, ease: "backInOut" }],
+        ])
+
+        const { keyframes, transition } = animations.get(a)!
+        expect(keyframes.x).toEqual([null, 1, null, 2])
+        expect(transition.x).toEqual({
+            duration: 2,
+            ease: ["circIn", "circIn", "backInOut", "backInOut"],
+            times: [0, 0.5, 0.5, 1],
+        })
+        expect(keyframes.opacity).toEqual([null, null, 0])
+        expect(transition.opacity).toEqual({
+            duration: 2,
+            ease: ["easeInOut", "backInOut", "backInOut"],
+            times: [0, 0.5, 1],
         })
     })
 
@@ -423,5 +441,56 @@ describe("createAnimationsFromSequence", () => {
             ],
             times: [0, 1],
         })
+    })
+
+    test("Adds spring as duration-based easing when only one keyframe defined", () => {
+        const animations = createAnimationsFromSequence([
+            [a, { x: 200 }, { duration: 1 }],
+            [a, { x: 0 }, { duration: 1, type: "spring", bounce: 0 }],
+        ])
+
+        expect(animations.get(a)!.keyframes.x).toEqual([null, 200, null, 0])
+        const { duration, ease, times } = animations.get(a)!.transition.x
+
+        expect(duration).toEqual(2)
+        expect(ease![0]).toEqual("easeOut")
+        expect(ease![1]).toEqual("easeOut")
+        expect(typeof ease![2]).toEqual("function")
+        expect(times).toEqual([0, 0.5, 0.5, 1])
+    })
+
+    test.only("Adds springs as duration-based simulation when two keyframes defined", () => {
+        const animations = createAnimationsFromSequence([
+            [a, { x: 200 }, { duration: 1, ease: "linear" }],
+            [a, { x: [200, 0] }, { duration: 1, type: "spring", bounce: 0 }],
+        ])
+
+        expect(animations.get(a)!.keyframes.x).toEqual([null, 200, 200, 0])
+        const { duration, ease, times } = animations.get(a)!.transition.x
+
+        expect(duration).toEqual(2)
+        expect(ease![0]).toEqual("linear")
+        expect(ease![1]).toEqual("linear")
+        expect(typeof ease![2]).toEqual("function")
+        expect(times).toEqual([0, 0.5, 0.5, 1])
+    })
+
+    test("It correctly adds type: spring to timeline with simulated spring", () => {
+        const animations = createAnimationsFromSequence([
+            [a, { x: 200 }, { duration: 1 }],
+            [
+                a,
+                { x: [100, 0] },
+                { type: "spring", stiffness: 200, damping: 10 },
+            ],
+        ])
+
+        expect(animations.get(a)!.keyframes.x).toEqual([null, 200, 100, 0])
+        const { duration, ease, times } = animations.get(a)!.transition.x
+
+        expect(duration).toEqual(1.2)
+        expect(ease![0]).toEqual("easeInOut")
+        expect(typeof ease![1]).toEqual("function")
+        expect(times).toEqual([0, 0.5, 1])
     })
 })

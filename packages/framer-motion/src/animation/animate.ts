@@ -103,7 +103,7 @@ function animateSequence(
                 transition.default
             )
         } else {
-            animation = animateElements(subject, keyframes, transition)
+            animation = animateElements(subject, keyframes, transition, scope)
         }
 
         animations.push(animation)

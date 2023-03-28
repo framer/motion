@@ -4,6 +4,7 @@ import { resolveElements } from "../../render/dom/utils/resolve-element"
 import { defaultOffset } from "../../utils/offsets/default"
 import { fillOffset } from "../../utils/offsets/fill"
 import { progress } from "../../utils/progress"
+import { secondsToMilliseconds } from "../../utils/time-conversion"
 import type { MotionValue } from "../../value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 import { DynamicAnimationOptions } from "../animate"
@@ -98,8 +99,10 @@ export function createAnimationsFromSequence(
                 type = "keyframes",
                 ...remainingTransition
             } = valueTransition
-            let { ease = defaultTransition.ease || "easeOut", duration = 0.3 } =
-                valueTransition
+            let {
+                ease = defaultTransition.ease || "easeOut",
+                duration = defaultTransition.duration || 0.3,
+            } = valueTransition
 
             /**
              * Resolve stagger() if defined.
@@ -119,12 +122,15 @@ export function createAnimationsFromSequence(
                     isNumberKeyframesArray(valueKeyframesAsList)
                         ? valueKeyframesAsList
                         : [0, 100]
-
+                console.log(generatorKeyframes)
                 const springEasing = createGeneratorEasing(
-                    remainingTransition,
+                    {
+                        ...remainingTransition,
+                        duration: secondsToMilliseconds(duration),
+                    },
                     generatorKeyframes
                 )
-
+                console.log(springEasing)
                 ease = springEasing.ease
                 duration = springEasing.duration
             }
@@ -232,6 +238,8 @@ export function createAnimationsFromSequence(
             const keyframes: UnresolvedValueKeyframe[] = []
             const valueOffset: number[] = []
             const valueEasing: Easing[] = []
+
+            console.log(valueSequence)
 
             /**
              * For each keyframe, translate absolute times into
