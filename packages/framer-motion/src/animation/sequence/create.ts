@@ -117,22 +117,30 @@ export function createAnimationsFromSequence(
              */
             const numKeyframes = valueKeyframesAsList.length
             if (numKeyframes <= 2 && type === "spring") {
-                const scale =
+                /**
+                 * As we're creating an easing function from a spring,
+                 * ideally we want to generate it using the real distance
+                 * between the two keyframes. However this isn't always
+                 * possible - in these situations we use 0-100.
+                 */
+                let absoluteDelta = 100
+                if (
                     numKeyframes === 2 &&
                     isNumberKeyframesArray(valueKeyframesAsList)
-                        ? Math.abs(
-                              valueKeyframesAsList[1] - valueKeyframesAsList[0]
-                          )
-                        : 100
+                ) {
+                    const delta =
+                        valueKeyframesAsList[1] - valueKeyframesAsList[0]
+                    absoluteDelta = Math.abs(delta)
+                }
 
                 const springEasing = createGeneratorEasing(
                     {
                         ...remainingTransition,
                         duration: secondsToMilliseconds(duration),
                     },
-                    scale
+                    absoluteDelta
                 )
-                // console.log(springEasing)
+
                 ease = springEasing.ease
                 duration = springEasing.duration
             }
