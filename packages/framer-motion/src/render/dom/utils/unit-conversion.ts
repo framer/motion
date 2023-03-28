@@ -184,6 +184,10 @@ const checkAndConvertChangedValueTypes = (
             fromType = findDimensionValueType(from)
 
             for (let i = fromIndex; i < numKeyframes; i++) {
+                /**
+                 * Don't allow wildcard keyframes to be used to detect
+                 * a difference in value types.
+                 */
                 if (to[i] === null) break
 
                 if (!toType) {
