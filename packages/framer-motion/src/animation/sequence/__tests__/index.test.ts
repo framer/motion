@@ -46,13 +46,13 @@ describe("createAnimationsFromSequence", () => {
             [
                 a,
                 { x: [100, 100, 200, 300] },
-                { duration: 0.5, times: [0, 0.5, 0.7, 1], ease: "linear" },
+                { duration: 0.5, times: [0, 0.5, 0.7, 1], ease: "easeInOut" },
             ],
         ])
         expect(animations.get(a)!.keyframes.x).toEqual([100, 100, 200, 300])
         expect(animations.get(a)!.transition.x).toEqual({
             duration: 0.5,
-            ease: ["linear", "linear", "linear", "linear"],
+            ease: ["easeInOut", "easeInOut", "easeInOut", "easeInOut"],
             times: [0, 0.5, 0.7, 1],
         })
     })
@@ -62,7 +62,7 @@ describe("createAnimationsFromSequence", () => {
             [
                 a,
                 { x: [100, 200, 300], opacity: 1 },
-                { duration: 0.5, ease: "linear" },
+                { duration: 0.5, ease: "easeInOut" },
             ],
             [b, { y: 500 }, { duration: 0.5 }],
             [a, { x: 400 }, { duration: 1 }],
@@ -77,21 +77,21 @@ describe("createAnimationsFromSequence", () => {
         ])
         expect(animations.get(a)!.transition.x).toEqual({
             duration: 2,
-            ease: ["linear", "linear", "linear", "easeOut", "easeOut"],
+            ease: ["easeInOut", "easeInOut", "easeInOut", "easeOut", "easeOut"],
             times: [0, 0.125, 0.25, 0.5, 1],
         })
 
         expect(animations.get(a)!.keyframes.opacity).toEqual([null, 1, null])
         expect(animations.get(a)!.transition.opacity).toEqual({
             duration: 2,
-            ease: ["linear", "linear"],
+            ease: ["easeInOut", "easeInOut"],
             times: [0, 0.25, 1],
         })
 
         expect(animations.get(b)!.keyframes.y).toEqual([null, null, 500, null])
         expect(animations.get(b)!.transition.y).toEqual({
             duration: 2,
-            ease: ["linear", "easeOut", "easeOut"],
+            ease: ["easeInOut", "easeOut", "easeOut"],
             times: [0, 0.25, 0.5, 1],
         })
     })
@@ -138,7 +138,7 @@ describe("createAnimationsFromSequence", () => {
         expect(animations.get(b)!.keyframes.y).toEqual([null, null, 500])
         expect(animations.get(b)!.transition.y).toEqual({
             duration: 2,
-            ease: ["linear", "easeOut", "easeOut"],
+            ease: ["easeInOut", "easeOut", "easeOut"],
             times: [0, 0.75, 1],
         })
     })
@@ -201,7 +201,7 @@ describe("createAnimationsFromSequence", () => {
         expect(animations.get(b)!.keyframes.y).toEqual([null, null, 500])
         expect(animations.get(b)!.transition.y).toEqual({
             duration: 2,
-            ease: ["linear", "easeOut", "easeOut"],
+            ease: ["easeInOut", "easeOut", "easeOut"],
             times: [0, 0.75, 1],
         })
     })
@@ -224,14 +224,14 @@ describe("createAnimationsFromSequence", () => {
         expect(animations.get(a)!.keyframes.opacity).toEqual([null, null, 0])
         expect(animations.get(a)!.transition.opacity).toEqual({
             duration: 2,
-            ease: ["linear", "easeOut", "easeOut"],
+            ease: ["easeInOut", "easeOut", "easeOut"],
             times: [0, 0.5, 1],
         })
 
         expect(animations.get(b)!.keyframes.y).toEqual([null, null, 500])
         expect(animations.get(b)!.transition.y).toEqual({
             duration: 2,
-            ease: ["linear", "easeOut", "easeOut"],
+            ease: ["easeInOut", "easeOut", "easeOut"],
             times: [0, 0.5, 1],
         })
     })
@@ -254,7 +254,7 @@ describe("createAnimationsFromSequence", () => {
         expect(animations.get(a)!.keyframes.opacity).toEqual([null, null, 0])
         expect(animations.get(a)!.transition.opacity).toEqual({
             duration: 2,
-            ease: ["linear", "easeOut", "easeOut"],
+            ease: ["easeInOut", "easeOut", "easeOut"],
             times: [0, 0.5, 1],
         })
 
@@ -284,7 +284,7 @@ describe("createAnimationsFromSequence", () => {
         expect(animations.get(a)!.keyframes.opacity).toEqual([null, null, 0])
         expect(animations.get(a)!.transition.opacity).toEqual({
             duration: 2,
-            ease: ["linear", "easeOut", "easeOut"],
+            ease: ["easeInOut", "easeOut", "easeOut"],
             times: [0, 0.5, 1],
         })
 
@@ -329,21 +329,21 @@ describe("createAnimationsFromSequence", () => {
         expect(animations.get(a)!.keyframes.opacity).toEqual([null, null, 1])
         expect(animations.get(a)!.transition.opacity).toEqual({
             duration: 4,
-            ease: ["linear", "easeOut", "easeOut"],
+            ease: ["easeInOut", "easeOut", "easeOut"],
             times: [0, 0.75, 1],
         })
 
         expect(animations.get(b)!.keyframes.x).toEqual([null, null, 1, null])
         expect(animations.get(b)!.transition.x).toEqual({
             duration: 4,
-            ease: ["linear", "easeOut", "easeOut"],
+            ease: ["easeInOut", "easeOut", "easeOut"],
             times: [0, 0.25, 0.5, 1],
         })
 
         expect(animations.get(c)!.keyframes.x).toEqual([null, null, 1, null])
         expect(animations.get(c)!.transition.x).toEqual({
             duration: 4,
-            ease: ["linear", "easeOut", "easeOut"],
+            ease: ["easeInOut", "easeOut", "easeOut"],
             times: [0, 0.5, 0.75, 1],
         })
     })
