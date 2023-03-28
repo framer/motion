@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.9.2] 2023-03-28
+
+### Fixed
+
+-   Fixing animation scope with animation sequences.
+
 ## [10.9.1] 2023-03-24
 
 ### Fixed

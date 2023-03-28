@@ -83,10 +83,15 @@ const isSequence = (value: unknown): value is AnimationSequence =>
 
 function animateSequence(
     sequence: AnimationSequence,
-    options?: SequenceOptions
+    options?: SequenceOptions,
+    scope?: AnimationScope
 ) {
     const animations: AnimationPlaybackControls[] = []
-    const animationDefinitions = createAnimationsFromSequence(sequence, options)
+    const animationDefinitions = createAnimationsFromSequence(
+        sequence,
+        options,
+        scope
+    )
 
     animationDefinitions.forEach(({ keyframes, transition }, subject) => {
         let animation: AnimationPlaybackControls
@@ -160,7 +165,8 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
         if (isSequence(valueOrElementOrSequence)) {
             animation = animateSequence(
                 valueOrElementOrSequence,
-                keyframes as SequenceOptions
+                keyframes as SequenceOptions,
+                scope
             )
         } else if (isDOMKeyframes(keyframes)) {
             animation = animateElements(
