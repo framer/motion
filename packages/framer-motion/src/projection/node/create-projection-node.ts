@@ -638,6 +638,23 @@ export function createProjectionNode<I>({
             }
 
             /**
+             * If every node is brand-new then we can skip layout animations
+             * entirely.
+             */
+            let canBail = true
+            for (let i = 0; i < this.nodes!.children.length; i++) {
+                const node = this.nodes!.children[i] as IProjectionNode<any>
+                if (node.snapshot || node.resumeFrom) {
+                    canBail = false
+                    break
+                }
+            }
+            if (canBail) {
+                this.clearAllSnapshots()
+                return
+            }
+
+            /**
              * Write
              */
             this.nodes!.forEach(resetTransformStyle)

@@ -2,7 +2,7 @@ import { addUniqueItem, removeItem } from "../../utils/array"
 import { compareByDepth, WithDepth } from "./compare-by-depth"
 
 export class FlatTree {
-    private children: WithDepth[] = []
+    children: WithDepth[] = []
 
     private isDirty: boolean = false
 
