@@ -158,7 +158,7 @@ export function animateValue<V = number>({
          * though in the future it could be possible to make setting startTime
          * a pending operation that gets resolved here.
          */
-        startTime = Math.min(startTime, timestamp)
+        if (speed > 0) startTime = Math.min(startTime, timestamp)
 
         if (holdTime !== null) {
             currentTime = holdTime
