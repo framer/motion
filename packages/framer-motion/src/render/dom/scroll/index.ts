@@ -1,3 +1,5 @@
+import { sync, cancelSync } from "../../../frameloop"
+import { frameData } from "../../../frameloop/data"
 import { resize } from "../resize"
 import { createScrollInfo } from "./info"
 import { createOnScrollHandler } from "./on-scroll-handler"
@@ -44,12 +46,24 @@ export function scroll(
      * If not, create one.
      */
     if (!scrollListeners.has(container)) {
-        const listener = () => {
-            const time = performance.now()
-
+        const measureAll = () => {
             for (const handler of containerHandlers!) handler.measure()
-            for (const handler of containerHandlers!) handler.update(time)
+        }
+
+        const updateAll = () => {
+            for (const handler of containerHandlers!) {
+                handler.update(frameData.timestamp)
+            }
+        }
+
+        const notifyAll = () => {
             for (const handler of containerHandlers!) handler.notify()
+        }
+
+        const listener = () => {
+            sync.read(measureAll, false, true)
+            sync.update(updateAll, false, true)
+            sync.update(notifyAll, false, true)
         }
 
         scrollListeners.set(container, listener)
@@ -63,10 +77,10 @@ export function scroll(
     }
 
     const listener = scrollListeners.get(container)!
-    const onLoadProcesss = requestAnimationFrame(listener)
+    sync.read(listener, false, true)
 
     return () => {
-        cancelAnimationFrame(onLoadProcesss)
+        cancelSync.read(listener)
 
         /**
          * Check if we even have any handlers for this container.
