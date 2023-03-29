@@ -1,5 +1,4 @@
-import { cancelSync } from "../../../frameloop"
-import { frameData, sync } from "../../../projection"
+import { frameData, sync, cancelSync } from "../../../frameloop"
 import { resize } from "../resize"
 import { createScrollInfo } from "./info"
 import { createOnScrollHandler } from "./on-scroll-handler"
