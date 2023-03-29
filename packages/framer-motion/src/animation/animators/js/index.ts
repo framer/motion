@@ -38,7 +38,8 @@ function calculateDuration(generator: KeyframeGenerator<unknown>) {
         duration += timeStep
         state = generator.next(duration)
     }
-    return duration
+
+    return duration >= maxDuration ? Infinity : duration
 }
 
 export interface MainThreadAnimationControls<V>
@@ -147,28 +148,30 @@ export function animateValue<V = number>({
         totalDuration = resolvedDuration * (repeat + 1) - repeatDelay
     }
 
-    let time = 0
+    let currentTime = 0
     const tick = (timestamp: number) => {
         if (startTime === null) return
 
         if (holdTime !== null) {
-            time = holdTime
+            currentTime = holdTime
         } else {
-            time = (timestamp - startTime) * speed
+            currentTime = (timestamp - startTime) * speed
         }
 
         // Rebase on delay
-        time = Math.max(time - delay, 0)
+        const timeWithoutDelay = currentTime - delay
+        const isInDelayPhase = timeWithoutDelay < 0
+        currentTime = Math.max(timeWithoutDelay, 0)
 
         /**
          * If this animation has finished, set the current time
          * to the total duration.
          */
         if (playState === "finished" && holdTime === null) {
-            time = totalDuration
+            currentTime = totalDuration
         }
 
-        let elapsed = time
+        let elapsed = currentTime
 
         let frameGenerator = generator
 
@@ -178,7 +181,7 @@ export function animateValue<V = number>({
              * than duration we'll get values like 2.5 (midway through the
              * third iteration)
              */
-            const progress = time / resolvedDuration
+            const progress = currentTime / resolvedDuration
 
             /**
              * Get the current iteration (0 indexed). For instance the floor of
@@ -222,14 +225,21 @@ export function animateValue<V = number>({
 
             let p = clamp(0, 1, iterationProgress)
 
-            if (time > totalDuration) {
+            if (currentTime > totalDuration) {
                 p = repeatType === "reverse" && iterationIsOdd ? 1 : 0
             }
 
             elapsed = p * resolvedDuration
         }
 
-        const state = frameGenerator.next(elapsed)
+        /**
+         * If we're in negative time, set state as the initial keyframe.
+         * This prevents delay: x, duration: 0 animations from finishing
+         * instantly.
+         */
+        const state = isInDelayPhase
+            ? { done: false, value: keyframes[0] }
+            : frameGenerator.next(elapsed)
 
         if (mapNumbersToKeyframes) {
             state.value = mapNumbersToKeyframes(state.value)
@@ -237,15 +247,15 @@ export function animateValue<V = number>({
 
         let { done } = state
 
-        if (calculatedDuration !== null) {
-            done = time >= totalDuration
+        if (!isInDelayPhase && calculatedDuration !== null) {
+            done = currentTime >= totalDuration
         }
 
         const isAnimationFinished =
             holdTime === null &&
             (playState === "finished" ||
                 (playState === "running" && done) ||
-                (speed < 0 && time <= 0))
+                (speed < 0 && currentTime <= 0))
 
         if (onUpdate) {
             onUpdate(state.value)
@@ -311,17 +321,25 @@ export function animateValue<V = number>({
             return currentFinishedPromise.then(resolve, reject)
         },
         get time() {
-            return millisecondsToSeconds(time)
+            return millisecondsToSeconds(currentTime)
         },
         set time(newTime: number) {
             newTime = secondsToMilliseconds(newTime)
 
-            time = newTime
+            currentTime = newTime
             if (holdTime !== null || !animationDriver || speed === 0) {
                 holdTime = newTime
             } else {
                 startTime = animationDriver.now() - newTime / speed
             }
+        },
+        get duration() {
+            const duration =
+                generator.calculatedDuration === null
+                    ? calculateDuration(generator)
+                    : generator.calculatedDuration
+
+            return millisecondsToSeconds(duration)
         },
         get speed() {
             return speed
@@ -329,7 +347,7 @@ export function animateValue<V = number>({
         set speed(newSpeed: number) {
             if (newSpeed === speed || !animationDriver) return
             speed = newSpeed
-            controls.time = millisecondsToSeconds(time)
+            controls.time = millisecondsToSeconds(currentTime)
         },
         get state() {
             return playState
@@ -337,7 +355,7 @@ export function animateValue<V = number>({
         play,
         pause: () => {
             playState = "paused"
-            holdTime = time
+            holdTime = currentTime
         },
         stop: () => {
             hasStopped = true

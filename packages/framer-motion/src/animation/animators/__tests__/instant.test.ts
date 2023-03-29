@@ -74,4 +74,18 @@ describe("instantAnimation", () => {
         expect(onUpdate).toBeCalledWith(1)
         expect(onComplete).toBeCalled()
     })
+
+    test("Returns duration: 0", async () => {
+        const animation = createInstantAnimation({
+            delay: 0,
+            keyframes: [0, 1],
+        })
+        expect(animation.duration).toEqual(0)
+
+        const animationWithDelay = createInstantAnimation({
+            delay: 0.2,
+            keyframes: [0, 1],
+        })
+        expect(animationWithDelay.duration).toEqual(0)
+    })
 })
