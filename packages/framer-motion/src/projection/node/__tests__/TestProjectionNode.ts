@@ -1,3 +1,4 @@
+import { createBox } from "../../geometry/models"
 import { Box } from "../../geometry/types"
 import { createProjectionNode } from "../create-projection-node"
 import { IProjectionNode, ProjectionNodeOptions } from "../types"
@@ -38,5 +39,12 @@ export function createTestNode(
     testNode.setOptions({
         ...options,
     })
+    testNode.layout = {
+        animationId: 0,
+        measuredBox: createBox(),
+        latestValues: {},
+        layoutBox: createBox(),
+        source: 0,
+    }
     return testNode
 }
