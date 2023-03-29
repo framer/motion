@@ -63,6 +63,7 @@ export function useSpring(
                 onUpdate: set,
             })
 
+            console.log(frameData.isProcessing)
             /**
              * If we're between frames, resync the animation to the frameloop.
              */
