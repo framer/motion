@@ -152,6 +152,14 @@ export function animateValue<V = number>({
     const tick = (timestamp: number) => {
         if (startTime === null) return
 
+        /**
+         * requestAnimationFrame timestamps can come through as lower than
+         * the startTime as set by performance.now(). Here we prevent this,
+         * though in the future it could be possible to make setting startTime
+         * a pending operation that gets resolved here.
+         */
+        startTime = Math.min(startTime, timestamp)
+
         if (holdTime !== null) {
             currentTime = holdTime
         } else {
