@@ -611,6 +611,7 @@ export function createProjectionNode<I>({
 
         // Note: Currently only running on root node
         didUpdate() {
+            console.log("did update")
             const updateWasBlocked = this.isUpdateBlocked()
 
             // When doing an instant transition, we skip the layout update,
@@ -645,11 +646,16 @@ export function createProjectionNode<I>({
             for (let i = 0; i < this.nodes!.children.length; i++) {
                 const node = this.nodes!.children[i] as IProjectionNode<any>
                 if (node.snapshot || node.resumeFrom || node.layout) {
-                    console.log(node)
+                    console.log(node, {
+                        snapshot: Boolean(node.snapshot),
+                        resumeFrom: Boolean(node.resumeFrom),
+                        layout: Boolean(node.layout),
+                    })
                     canBail = false
                     break
                 }
             }
+            console.log({ canBail })
             if (canBail) {
                 this.clearAllSnapshots()
                 return
