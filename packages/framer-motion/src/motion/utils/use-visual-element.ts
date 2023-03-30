@@ -47,10 +47,6 @@ export function useVisualElement<Instance, RenderState>(
         visualElement && visualElement.update(props, presenceContext)
     })
 
-    useIsomorphicLayoutEffect(() => {
-        visualElement && visualElement.render()
-    })
-
     useEffect(() => {
         visualElement && visualElement.updateFeatures()
     })
