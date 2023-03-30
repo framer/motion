@@ -645,6 +645,7 @@ export function createProjectionNode<I>({
             for (let i = 0; i < this.nodes!.children.length; i++) {
                 const node = this.nodes!.children[i] as IProjectionNode<any>
                 if (node.snapshot || node.resumeFrom || node.layout) {
+                    console.log(node)
                     canBail = false
                     break
                 }
