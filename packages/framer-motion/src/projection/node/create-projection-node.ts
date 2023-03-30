@@ -645,7 +645,10 @@ export function createProjectionNode<I>({
             let canBail = true
             for (let i = 0; i < this.nodes!.children.length; i++) {
                 const node = this.nodes!.children[i] as IProjectionNode<any>
-                if (node.snapshot || node.resumeFrom || node.layout) {
+                if (
+                    (node.snapshot || node.resumeFrom || node.layout) &&
+                    node.isLayoutDirty
+                ) {
                     console.log(node, {
                         snapshot: Boolean(node.snapshot),
                         resumeFrom: Boolean(node.resumeFrom),
