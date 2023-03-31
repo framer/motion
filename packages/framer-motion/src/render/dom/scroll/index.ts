@@ -62,7 +62,7 @@ export function scroll(
 
         const listener = () => {
             sync.read(measureAll, false, true)
-            sync.update(updateAll, false, true)
+            sync.read(updateAll, false, true)
             sync.update(notifyAll, false, true)
         }
 
