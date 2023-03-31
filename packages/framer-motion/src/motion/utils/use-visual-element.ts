@@ -73,7 +73,10 @@ export function useVisualElement<Instance, RenderState>(
     }
 
     if (window.HandoffAppearAnimations) {
-        useIsomorphicLayoutEffect(animate)
+        useIsomorphicLayoutEffect(() => {
+            if (isInitialRender.current && !hasFiredInitialAnimation.current)
+                animate()
+        }, [])
     }
 
     useEffect(() => {
