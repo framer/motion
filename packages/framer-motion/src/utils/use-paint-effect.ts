@@ -1,5 +1,6 @@
 import { sync, cancelSync } from "../frameloop"
 import { DependencyList, EffectCallback, useEffect } from "react"
+import { recordFrameloopTasks } from "../frameloop/record"
 
 /**
  * An effect that is guarenteed to fire after a paint.
@@ -17,20 +18,21 @@ export function usePaintEffect(
     dependencies?: DependencyList
 ) {
     useEffect(() => {
-        let cleanupEffect: VoidFunction | void
+        let cleanFrameloop: VoidFunction | void
+        let cleanEffect: VoidFunction | void
 
         const fireCallback = () => {
-            cleanupEffect = callback()
+            cleanFrameloop = recordFrameloopTasks(() => {
+                cleanEffect = callback()
+            })
         }
 
         sync.read(fireCallback)
 
         return () => {
-            if (cleanupEffect) {
-                cleanupEffect()
-            } else {
-                cancelSync.read(fireCallback)
-            }
+            if (cleanFrameloop) cleanFrameloop()
+            if (cleanEffect) cleanEffect()
+            cancelSync.read(fireCallback)
         }
     }, dependencies)
 }

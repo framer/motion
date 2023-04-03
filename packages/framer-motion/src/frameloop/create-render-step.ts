@@ -1,3 +1,4 @@
+import { frameloopContext } from "./context"
 import { Step, Process } from "./types"
 
 export function createRenderStep(runNextFrame: () => void): Step {
@@ -39,6 +40,17 @@ export function createRenderStep(runNextFrame: () => void): Step {
             // If the buffer doesn't already contain this callback, add it
             if (buffer.indexOf(callback) === -1) {
                 buffer.push(callback)
+
+                /**
+                 * If we're currently running in a specific context, provide
+                 * it a cancel function for this function. In these per-frame functions
+                 * we avoid creating functions and objects but it's
+                 * okay in this case as contexts are established synchronously
+                 * outside the renderloop.
+                 */
+                if (frameloopContext.current) {
+                    frameloopContext.current.push(() => step.cancel(callback))
+                }
 
                 // If we're adding it to the currently running buffer, update its measured size
                 if (addToCurrentFrame && isProcessing) numToRun = toRun.length

@@ -106,4 +106,35 @@ describe("usePaintEffect", () => {
 
         expect(output).toEqual([1])
     })
+
+    test("Automatically cleans up frameloop jobs", async () => {
+        let value = 0
+
+        await new Promise<void>((resolve) => {
+            const Component = () => {
+                const [state, setState] = React.useState(0)
+
+                React.useLayoutEffect(() => {
+                    setState(state + 1)
+                }, [])
+
+                usePaintEffect(() => {
+                    sync.update(() => {
+                        value++
+                    })
+                })
+
+                return null
+            }
+
+            const { rerender, unmount } = render(<Component />)
+            rerender(<Component />)
+            sync.read(() => {
+                unmount()
+                resolve()
+            })
+        })
+
+        expect(value).toEqual(0)
+    })
 })
