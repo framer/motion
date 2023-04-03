@@ -42,11 +42,15 @@ export function createRenderStep(runNextFrame: () => void): Step {
                 buffer.push(callback)
 
                 /**
-                 * If we're currently running in a specific context, provide
-                 * it a cancel function for this function. In these per-frame functions
-                 * we avoid creating functions and objects but it's
-                 * okay in this case as contexts are established synchronously
-                 * outside the renderloop.
+                 * If there's an active context, create a cancel function for
+                 * this callback.
+                 *
+                 * In these per-frame functions we avoid creating things like
+                 * functions, arrays and objects to reduce GC.
+                 *
+                 * However these active contexts are established and destroyed
+                 * synchronously outside of the renderloop so aren't
+                 * expected to run per-frame.
                  */
                 if (frameloopContext.current) {
                     frameloopContext.current.push(() => step.cancel(callback))
