@@ -9,6 +9,7 @@ import { recordFrameloopTasks } from "../frameloop/record"
  * before the initial paint if they're part of a render
  * where a subsequent render is triggered from within a
  * useLayoutEffect.
+ * https://blog.thoughtspile.tech/2021/11/15/unintentional-layout-effect/
  *
  * This effect uses the render loop to batch jobs until after
  * the paint has been committed by the browser.
