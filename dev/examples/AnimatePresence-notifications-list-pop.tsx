@@ -13,8 +13,8 @@ const Notification = React.forwardRef(function (
             drag="x"
             ref={ref}
             dragConstraints={{ left: 0, right: 0 }}
-            initial={{ opacity: 0, y: 50, scale: 0 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{
                 opacity: 0,
                 scale: 0.5,

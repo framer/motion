@@ -1962,7 +1962,7 @@ export function propagateDirtyNodes(node: IProjectionNode) {
      * correcting.
      */
     if (!node.isProjecting()) {
-        node.isProjectionDirty = node.parent.isProjectionDirty
+        node.isProjectionDirty ||= node.parent.isProjectionDirty
     }
 
     /**

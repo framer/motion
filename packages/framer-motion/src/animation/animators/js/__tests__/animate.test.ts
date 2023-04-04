@@ -1,6 +1,6 @@
 import { animateValue } from "../"
 import { reverseEasing } from "../../../../easing/modifiers/reverse"
-import { nextFrame } from "../../../../gestures/__tests__/utils"
+import { frame } from "../../../../testing/frame"
 import { noop } from "../../../../utils/noop"
 import { ValueAnimationOptions } from "../../../types"
 import { syncDriver } from "./utils"
@@ -1022,11 +1022,11 @@ describe("animate", () => {
             driver,
         })
 
-        await nextFrame()
+        await frame()
 
         animation.play()
 
-        await nextFrame()
+        await frame()
 
         expect(output).toEqual([0, 20, 40, 60, 80, 100, 0, 20, 40, 60, 80, 100])
     })
@@ -1046,11 +1046,11 @@ describe("animate", () => {
             driver,
         })
 
-        await nextFrame()
+        await frame()
 
         animation.play()
 
-        await nextFrame()
+        await frame()
 
         expect(output).toEqual([0, 20, 40, 60, 80])
     })

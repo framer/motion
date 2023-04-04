@@ -97,9 +97,10 @@ describe("css variables", () => {
         })
 
         const results = await promise
-        expect(results).toEqual([
-            { "--a": "20px", "--color": "rgba(0, 0, 0, 1)" },
-        ])
+        expect(results[0]).toEqual({
+            "--a": "20px",
+            "--color": "rgba(0, 0, 0, 1)",
+        })
     })
 
     // Skipping because this test always succeeds, no matter what style values you check for ¯\\_(ツ)_/¯

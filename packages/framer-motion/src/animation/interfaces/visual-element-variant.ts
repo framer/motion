@@ -16,6 +16,8 @@ export function animateVariant(
         transition = options.transitionOverride
     }
 
+    console.log(variant)
+
     /**
      * If we have a variant, create a callback that runs it as an animation.
      * Otherwise, we resolve a Promise immediately for a composable no-op.

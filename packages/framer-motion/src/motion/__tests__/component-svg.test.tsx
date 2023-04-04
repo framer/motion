@@ -1,6 +1,7 @@
 import { render } from "../../../jest.setup"
 import { motion, motionValue, useMotionValue, useTransform } from "../../"
 import * as React from "react"
+import { frame } from "../../testing/frame"
 
 describe("SVG", () => {
     test("doesn't add translateZ", () => {
@@ -19,7 +20,7 @@ describe("SVG", () => {
         )
     })
 
-    test("recognises MotionValues in attributes", () => {
+    test("recognises MotionValues in attributes", async () => {
         let r = motionValue(0)
         let fill = motionValue("#000")
 
@@ -43,6 +44,8 @@ describe("SVG", () => {
 
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await frame()
 
         expect(r.get()).toBe(100)
         expect(fill.get()).toBe("rgba(255, 0, 0, 1)")
@@ -105,7 +108,7 @@ describe("SVG", () => {
         )
     })
 
-    test("animates viewBox", () => {
+    test("animates viewBox", async () => {
         const Component = () => {
             return (
                 <motion.svg
@@ -116,6 +119,7 @@ describe("SVG", () => {
             )
         }
         const { container } = render(<Component />)
+        await frame()
         expect(container.firstChild as Element).toHaveAttribute(
             "viewBox",
             "100 100 200 200"

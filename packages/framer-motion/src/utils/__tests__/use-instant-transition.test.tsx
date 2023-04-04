@@ -4,10 +4,11 @@ import * as React from "react"
 import { useInstantTransition } from "../use-instant-transition"
 import { useEffect } from "react"
 import { act } from "@testing-library/react"
+import { frame } from "../../testing/frame"
 
 describe("useInstantTransition", () => {
     test("Disables animations for a single render", async () => {
-        const values = await new Promise((resolve) => {
+        const values = await new Promise(async (resolve) => {
             const xParent = motionValue(0)
             const xComponent = motionValue(0)
             const xChild = motionValue(0)
@@ -32,12 +33,6 @@ describe("useInstantTransition", () => {
 
                 useEffect(() => {
                     startInstantTransition(() => act(() => setState(true)))
-
-                    const timeout = setTimeout(() => {
-                        resolve([xParent.get(), xComponent.get(), xChild.get()])
-                    }, 100)
-
-                    return () => clearTimeout(timeout)
                 }, [])
 
                 return (
@@ -65,6 +60,9 @@ describe("useInstantTransition", () => {
 
             const { rerender } = render(<Parent />)
             rerender(<Parent />)
+
+            await frame()
+            resolve([xParent.get(), xComponent.get(), xChild.get()])
         })
 
         expect(values).toEqual([50, 100, 200])

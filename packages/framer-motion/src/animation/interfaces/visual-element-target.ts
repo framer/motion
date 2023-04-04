@@ -48,11 +48,12 @@ export function animateTarget(
         type &&
         visualElement.animationState &&
         visualElement.animationState.getState()[type]
-
+    console.log(target)
     for (const key in target) {
         const value = visualElement.getValue(key)
         const valueTarget = target[key]
 
+        console.log("attempting to animate", key, "to", valueTarget)
         if (
             !value ||
             valueTarget === undefined ||
@@ -61,7 +62,7 @@ export function animateTarget(
         ) {
             continue
         }
-
+        console.log("animating", key, "to", valueTarget)
         const valueTransition = { delay, elapsed: 0, ...transition }
 
         /**

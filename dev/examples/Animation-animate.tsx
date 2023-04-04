@@ -15,22 +15,22 @@ const style = {
 const Child = ({ setState }: any) => {
     const [width] = useState(100)
     const [target, setTarget] = useState(0)
-    const transition = {
-        duration: 10,
-    }
+    // const transition = {
+    //     duration: 10,
+    // }
 
-    const [scope, animate] = useAnimate()
+    // const [scope, animate] = useAnimate()
 
-    useEffect(() => {
-        const controls = animate("div", { x: 100, opacity: 0 }, transition)
+    // useEffect(() => {
+    //     const controls = animate("div", { x: 100, opacity: 0 }, transition)
 
-        controls.then(() => console.log("complete"))
+    //     controls.then(() => console.log("complete"))
 
-        return () => controls.stop()
-    }, [target])
+    //     return () => controls.stop()
+    // }, [target])
 
     return (
-        <div ref={scope}>
+        <div>
             <motion.div
                 id="box"
                 style={{
@@ -39,11 +39,13 @@ const Child = ({ setState }: any) => {
                     width: motionValue(width),
                     y: width / 10,
                 }}
+                initial={false}
+                animate={{ x: 300 }}
                 onClick={() => {
                     setTarget(target + 100)
                     // setWidth(width + 100)
                 }}
-                initial={{ borderRadius: 10 }}
+                // initial={{ borderRadius: 10 }}
             />
             <div style={style} onClick={() => setState(false)} />
         </div>

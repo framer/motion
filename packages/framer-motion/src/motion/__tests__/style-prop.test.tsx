@@ -1,6 +1,7 @@
 import { render } from "../../../jest.setup"
 import { motion, MotionConfig, useMotionValue } from "../.."
 import * as React from "react"
+import { frame } from "../../testing/frame"
 
 describe("style prop", () => {
     test("should remove non-set styles", () => {
@@ -43,7 +44,7 @@ describe("style prop", () => {
         expect(container.firstChild as Element).toHaveStyle("transform: none")
     })
 
-    test("doesn't update transforms that are handled by animation props", () => {
+    test("doesn't update transforms that are handled by animation props", async () => {
         const Component = ({ x = 0 }) => {
             return (
                 <motion.div
@@ -56,11 +57,15 @@ describe("style prop", () => {
 
         const { container, rerender } = render(<Component />)
 
+        await frame()
+
         expect(container.firstChild as Element).toHaveStyle(
             "transform: translateX(1px) translateZ(0)"
         )
 
         rerender(<Component x={2} />)
+
+        await frame()
 
         expect(container.firstChild as Element).not.toHaveStyle(
             "transform: translateX(2px) translateZ(0)"

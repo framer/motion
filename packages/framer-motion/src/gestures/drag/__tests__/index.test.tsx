@@ -2,7 +2,7 @@ import * as React from "react"
 import { pointerDown, render } from "../../../../jest.setup"
 import { BoundingBox, motion, motionValue, MotionValue } from "../../../"
 import { MockDrag, drag, deferred, frame, Point, sleep } from "./utils"
-import { nextFrame } from "../../__tests__/utils"
+import { frame as nextFrame } from "../../../testing/frame"
 
 describe("drag", () => {
     test("onDragStart fires", async () => {

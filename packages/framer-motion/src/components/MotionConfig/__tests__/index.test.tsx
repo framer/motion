@@ -2,6 +2,7 @@ import { render } from "../../../../jest.setup"
 import { motion } from "../../../render/dom/motion"
 import { MotionConfig } from "../"
 import * as React from "react"
+import { frame } from "../../../testing/frame"
 import { motionValue } from "../../../value"
 
 describe("custom properties", () => {
@@ -48,7 +49,7 @@ describe("reducedMotion", () => {
     })
 
     test("reducedMotion makes transforms animate instantly", async () => {
-        const result = await new Promise<[number, number]>((resolve) => {
+        const result = await new Promise<[number, number]>(async (resolve) => {
             const x = motionValue(0)
             const opacity = motionValue(0)
             const Component = () => {
@@ -65,6 +66,7 @@ describe("reducedMotion", () => {
 
             const { rerender } = render(<Component />)
             rerender(<Component />)
+            await frame()
             resolve([x.get(), opacity.get()])
         })
 

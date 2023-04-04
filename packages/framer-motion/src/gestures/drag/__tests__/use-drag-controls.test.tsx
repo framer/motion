@@ -2,7 +2,7 @@ import * as React from "react"
 import { render } from "../../../../jest.setup"
 import { motion, useDragControls } from "../../../"
 import { MockDrag, drag } from "./utils"
-import { nextFrame } from "../../__tests__/utils"
+import { frame as nextFrame } from "../../../testing/frame"
 
 describe("useDragControls", () => {
     test(".start triggers dragging on a different component", async () => {

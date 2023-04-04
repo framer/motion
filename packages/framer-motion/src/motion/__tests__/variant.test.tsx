@@ -9,7 +9,7 @@ import * as React from "react"
 import { Variants } from "../../types"
 import { motionValue } from "../../value"
 import { useState } from "react"
-import { nextFrame } from "../../gestures/__tests__/utils"
+import { frame, frame as nextFrame } from "../../testing/frame"
 
 describe("animate prop as variant", () => {
     test("animates to set variant", async () => {
@@ -458,7 +458,7 @@ describe("animate prop as variant", () => {
     })
 
     test("nested controlled variants switch correctly", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const parentOpacity = motionValue(0.2)
             const childOpacity = motionValue(0.1)
 
@@ -489,16 +489,15 @@ describe("animate prop as variant", () => {
             }
 
             const { rerender } = render(<Component isOpen={false} />)
-            setTimeout(() => {
-                expect(parentOpacity.get()).toBe(0.4)
-                expect(childOpacity.get()).toBe(0.6)
+            await frame()
+            expect(parentOpacity.get()).toBe(0.4)
+            expect(childOpacity.get()).toBe(0.6)
 
-                rerender(<Component isOpen />)
+            rerender(<Component isOpen />)
 
-                setTimeout(() => {
-                    resolve([parentOpacity.get(), childOpacity.get()])
-                }, 0)
-            }, 0)
+            await frame()
+
+            resolve([parentOpacity.get(), childOpacity.get()])
         })
 
         return expect(promise).resolves.toEqual([0.3, 0.5])
@@ -797,7 +796,7 @@ describe("animate prop as variant", () => {
         }).not.toThrowError()
     })
 
-    test("new child items animate from initial to animate", () => {
+    test("new child items animate from initial to animate", async () => {
         const x = motionValue(0)
         const Component = ({ length }: { length: number }) => {
             const variants: Variants = {
@@ -828,6 +827,8 @@ describe("animate prop as variant", () => {
         rerender(<Component length={2} />)
         rerender(<Component length={2} />)
 
+        await frame()
+
         expect(x.get()).toBe(100)
     })
 
@@ -845,14 +846,21 @@ describe("animate prop as variant", () => {
 
         const { container, rerender } = render(<Component />)
         const element = container.firstChild as Element
+
+        await frame()
+
         expect(element).toHaveStyle("opacity: 0")
 
         rerender(<Component animate="a" />)
         rerender(<Component animate="a" />)
+
+        await frame()
         expect(element).toHaveStyle("opacity: 1")
 
         rerender(<Component />)
         rerender(<Component />)
+
+        await frame()
         expect(element).toHaveStyle("opacity: 0")
     })
 
@@ -870,14 +878,17 @@ describe("animate prop as variant", () => {
 
         const { container, rerender } = render(<Component />)
         const element = container.firstChild as Element
+        await frame()
         expect(element).toHaveStyle("opacity: 0")
 
         rerender(<Component animate="a" />)
         rerender(<Component animate="a" />)
+        await frame()
         expect(element).toHaveStyle("opacity: 1")
 
         rerender(<Component animate="b" />)
         rerender(<Component animate="b" />)
+        await frame()
         expect(element).toHaveStyle("opacity: 0")
     })
 
@@ -895,7 +906,7 @@ describe("animate prop as variant", () => {
         const Parent = ({ isVisible }: { isVisible: boolean }) => (
             <motion.div
                 initial={{ x: 0 }}
-                animate={isVisible ? "hidden" : "visible"}
+                animate={isVisible ? "visible" : "hidden"}
             >
                 <Child />
             </motion.div>
@@ -903,11 +914,14 @@ describe("animate prop as variant", () => {
 
         const { container, rerender } = render(<Parent isVisible={false} />)
         const element = container.firstChild?.firstChild as Element
+
         rerender(<Parent isVisible={true} />)
+        await frame()
         expect(element).toHaveStyle(
             "transform: translateX(100px) translateZ(0)"
         )
         rerender(<Parent isVisible={false} />)
+        await frame()
         expect(element).toHaveStyle("transform: none")
     })
 

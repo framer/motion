@@ -9,6 +9,8 @@ import { VisualState } from "./use-visual-state"
 import { LazyContext } from "../../context/LazyContext"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import type { VisualElement } from "../../render/VisualElement"
+import { usePaintEffect } from "../../utils/use-paint-effect"
+import { useUnmountEffect } from "../../three-entry"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -51,9 +53,12 @@ export function useVisualElement<Instance, RenderState>(
         visualElement && visualElement.render()
     })
 
+    const renderCount = useRef(0)
     useEffect(() => {
+        renderCount.current++
         visualElement && visualElement.updateFeatures()
     })
+    useUnmountEffect(() => (renderCount.current = 0))
 
     /**
      * Ideally this function would always run in a useEffect.
@@ -67,10 +72,12 @@ export function useVisualElement<Instance, RenderState>(
      */
     const useAnimateChangesEffect = window.HandoffAppearAnimations
         ? useIsomorphicLayoutEffect
-        : useEffect
+        : usePaintEffect
     useAnimateChangesEffect(() => {
         if (visualElement && visualElement.animationState) {
-            visualElement.animationState.animateChanges()
+            visualElement.animationState.animateChanges({
+                isInitialRender: renderCount.current === 1,
+            })
         }
     })
 

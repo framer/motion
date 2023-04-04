@@ -2,6 +2,7 @@ import { render } from "../../../jest.setup"
 import { motion, motionValue } from "../.."
 import * as React from "react"
 import { checkVariantsDidChange } from "../../render/utils/animation-state"
+import { frame } from "../../testing/frame"
 
 describe("keyframes transition", () => {
     test("keyframes as target", async () => {
@@ -66,8 +67,8 @@ describe("keyframes transition", () => {
         expect(promise).resolves.toHaveStyle("width: 100%;")
     })
 
-    test("if initial={false}, take state of final keyframe", async () => {
-        const xResult = await new Promise((resolve) => {
+    test.only("if initial={false}, take state of final keyframe", async () => {
+        const xResult = await new Promise(async (resolve) => {
             const x = motionValue(0)
             const Component = ({ animate }: any) => {
                 return (
@@ -82,14 +83,16 @@ describe("keyframes transition", () => {
             }
 
             render(<Component animate="a" />)
-            setTimeout(() => resolve(x.get()), 50)
+
+            await frame()
+            resolve(x.get())
         })
 
         expect(xResult).toBe(100)
     })
 
     test("keyframes animation reruns when variants change and keyframes are the same", async () => {
-        const xResult = await new Promise((resolve) => {
+        const xResult = await new Promise(async (resolve) => {
             const x = motionValue(0)
             const Component = ({ animate }: any) => {
                 return (
@@ -109,7 +112,9 @@ describe("keyframes transition", () => {
             const { rerender } = render(<Component animate="a" />)
             rerender(<Component animate="b" />)
             rerender(<Component animate="a" />)
-            setTimeout(() => resolve(x.get()), 50)
+
+            await frame()
+            resolve(x.get())
         })
 
         expect(xResult).toBe(50)

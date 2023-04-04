@@ -24,6 +24,7 @@ export interface AnimationState {
     ) => Promise<any>
     setAnimateFunction: (fn: any) => void
     getState: () => { [key: string]: AnimationTypeState }
+    setIsInitialRender: (isInitial: boolean) => void
 }
 
 interface DefinitionAndOptions {
@@ -92,6 +93,10 @@ export function createAnimationState(
         options?: VisualElementAnimationOptions,
         changedActiveType?: AnimationType
     ) {
+        if (options && options.isInitialRender === false) {
+            isInitialRender = false
+        }
+
         const props = visualElement.getProps()
         const context = visualElement.getVariantContext(true) || {}
 
@@ -303,13 +308,22 @@ export function createAnimationState(
                 shouldAnimateType = false
             }
 
+            if (
+                type === "animate" &&
+                isInitialRender &&
+                props.initial === false &&
+                !visualElement.manuallyAnimateOnMount
+            ) {
+                shouldAnimateType = false
+            }
+
             /**
              * If this is an inherited prop we want to hard-block animations
              * TODO: Test as this should probably still handle animations triggered
              * by removed values?
              */
             if (shouldAnimateType && !isInherited) {
-                animations.push(
+                animations.unshift(
                     ...definitionList.map((animation) => ({
                         animation: animation as AnimationDefinition,
                         options: { type, ...options },
@@ -335,19 +349,11 @@ export function createAnimationState(
             animations.push({ animation: fallbackAnimation })
         }
 
-        let shouldAnimate = Boolean(animations.length)
-
-        if (
-            isInitialRender &&
-            props.initial === false &&
-            !visualElement.manuallyAnimateOnMount
-        ) {
-            shouldAnimate = false
-        }
+        console.log(animations)
 
         isInitialRender = false
 
-        return shouldAnimate ? animate(animations) : Promise.resolve()
+        return animations.length ? animate(animations) : Promise.resolve()
     }
 
     /**
@@ -382,6 +388,7 @@ export function createAnimationState(
         setActive,
         setAnimateFunction,
         getState: () => state,
+        setIsInitialRender: (isInitial) => (isInitialRender = isInitial),
     }
 }
 

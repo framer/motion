@@ -6,4 +6,5 @@ export type VisualElementAnimationOptions = {
     transitionOverride?: Transition
     custom?: any
     type?: AnimationType
+    isInitialRender?: boolean
 }

@@ -10,7 +10,7 @@ import {
 } from "../../../jest.setup"
 import { drag, MockDrag } from "../drag/__tests__/utils"
 import { fireEvent } from "@testing-library/dom"
-import { nextFrame } from "./utils"
+import { frame } from "../../testing/frame"
 
 const enterKey = {
     key: "Enter",
@@ -27,7 +27,7 @@ describe("press", () => {
         pointerDown(container.firstChild as Element)
         pointerUp(container.firstChild as Element)
 
-        await nextFrame()
+        await frame()
 
         expect(press).toBeCalledTimes(1)
     })
@@ -50,13 +50,13 @@ describe("press", () => {
         fireEvent.focus(container.firstChild as Element)
         fireEvent.keyDown(container.firstChild as Element, enterKey)
 
-        await nextFrame()
+        await frame()
 
         expect(pressStart).toBeCalledTimes(1)
 
         fireEvent.keyUp(container.firstChild as Element, enterKey)
 
-        await nextFrame()
+        await frame()
 
         expect(pressStart).toBeCalledTimes(1)
         expect(press).toBeCalledTimes(1)
@@ -81,13 +81,13 @@ describe("press", () => {
         fireEvent.focus(container.firstChild as Element)
         fireEvent.keyDown(container.firstChild as Element, enterKey)
 
-        await nextFrame()
+        await frame()
 
         expect(pressStart).toBeCalledTimes(1)
 
         fireEvent.blur(container.firstChild as Element)
 
-        await nextFrame()
+        await frame()
 
         expect(pressStart).toBeCalledTimes(1)
         expect(press).toBeCalledTimes(0)
@@ -113,13 +113,13 @@ describe("press", () => {
         fireEvent.keyDown(container.firstChild as Element, enterKey)
         fireEvent.keyUp(container.firstChild as Element, enterKey)
 
-        await nextFrame()
+        await frame()
 
         expect(pressStart).toBeCalledTimes(1)
 
         fireEvent.blur(container.firstChild as Element)
 
-        await nextFrame()
+        await frame()
 
         expect(press).toBeCalledTimes(1)
         expect(pressStart).toBeCalledTimes(1)
@@ -134,12 +134,12 @@ describe("press", () => {
         rerender(<motion.div onTap={() => press()} />)
         pointerDown(container.firstChild as Element)
         pointerUp(container.firstChild as Element)
-        await nextFrame()
+        await frame()
         expect(press).toBeCalledTimes(1)
         rerender(<motion.div />)
         pointerDown(container.firstChild as Element)
         pointerUp(container.firstChild as Element)
-        await nextFrame()
+        await frame()
         expect(press).toBeCalledTimes(1)
     })
 
@@ -164,13 +164,13 @@ describe("press", () => {
 
         pointerDown(a)
         pointerUp(a)
-        await nextFrame()
+        await frame()
 
         expect(cancelA).not.toHaveBeenCalled()
 
         pointerDown(b)
         pointerUp(b)
-        await nextFrame()
+        await frame()
         expect(cancelA).not.toHaveBeenCalled()
     })
 
@@ -187,7 +187,7 @@ describe("press", () => {
 
         pointerDown(getByTestId("child"))
         pointerUp(getByTestId("child"))
-        await nextFrame()
+        await frame()
 
         expect(press).toBeCalledTimes(1)
     })
@@ -205,7 +205,7 @@ describe("press", () => {
 
         pointerDown(getByTestId("child"))
         pointerUp(container.firstChild as Element)
-        await nextFrame()
+        await frame()
 
         expect(press).toBeCalledTimes(1)
     })
@@ -223,7 +223,7 @@ describe("press", () => {
 
         pointerDown(container.firstChild as Element)
         pointerUp(getByTestId("child"))
-        await nextFrame()
+        await frame()
 
         expect(press).toBeCalledTimes(1)
     })
@@ -244,7 +244,7 @@ describe("press", () => {
 
         pointerDown(getByTestId("child"))
         pointerUp(container.firstChild as Element)
-        await nextFrame()
+        await frame()
 
         expect(pressCancel).toBeCalledTimes(1)
     })
@@ -269,7 +269,7 @@ describe("press", () => {
         await pointer.to(10, 10)
         pointer.end()
 
-        await nextFrame()
+        await frame()
         expect(press).toBeCalledTimes(0)
     })
 
@@ -291,7 +291,7 @@ describe("press", () => {
 
         const pointer = await drag(getByTestId("pressTarget")).to(0.5, 0.5)
         pointer.end()
-        await nextFrame()
+        await frame()
 
         expect(press).toBeCalledTimes(1)
     })
@@ -315,7 +315,7 @@ describe("press", () => {
 
         pointerDown(container.firstChild as Element)
         pointerUp(container.firstChild as Element)
-        await nextFrame()
+        await frame()
 
         expect(press).toBeCalledTimes(3)
     })

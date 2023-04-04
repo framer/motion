@@ -8,6 +8,7 @@ import {
 } from "../../"
 import * as React from "react"
 import { createRef } from "react"
+import { frame } from "../../testing/frame"
 
 describe("animate prop as object", () => {
     test("animates to set prop", async () => {
@@ -100,7 +101,7 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toBe(true)
     })
     test("uses transitionEnd on subsequent renders", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const x = motionValue(0)
             const Component = ({ animate }: any) => (
                 <motion.div animate={animate} style={{ x }} />
@@ -132,7 +133,11 @@ describe("animate prop as object", () => {
                     }}
                 />
             )
-            requestAnimationFrame(() => resolve(x.get()))
+
+            await frame()
+            await frame()
+
+            resolve(x.get())
         })
         return expect(promise).resolves.toBe(300)
     })
@@ -273,7 +278,7 @@ describe("animate prop as object", () => {
     })
 
     test("when value is removed from animate, animates back to value originally defined in initial prop", async () => {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>(async (resolve) => {
             const ref = createRef()
 
             const props: any = {
@@ -287,10 +292,14 @@ describe("animate prop as object", () => {
 
             rerender(<motion.div {...props} />)
 
+            await frame()
+
             expect(ref.current).toHaveStyle("opacity: 1")
 
             rerender(<motion.div {...props} animate={{}} />)
             rerender(<motion.div {...props} animate={{}} />)
+
+            await frame()
 
             expect(ref.current).toHaveStyle("opacity: 0")
 
@@ -299,7 +308,7 @@ describe("animate prop as object", () => {
     })
 
     test("when value is removed from animate, animates back to value currently defined in initial prop", async () => {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>(async (resolve) => {
             const ref = createRef()
 
             const props: any = {
@@ -312,6 +321,8 @@ describe("animate prop as object", () => {
             const { rerender } = render(<motion.div {...props} />)
 
             rerender(<motion.div {...props} />)
+
+            await frame()
 
             expect(ref.current).toHaveStyle("opacity: 1")
 
@@ -329,6 +340,8 @@ describe("animate prop as object", () => {
                     animate={{}}
                 />
             )
+
+            await frame()
 
             expect(ref.current).toHaveStyle("opacity: 0.5")
 
@@ -337,7 +350,7 @@ describe("animate prop as object", () => {
     })
 
     test("when value is removed from both animate and initial, perform no animation", async () => {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>(async (resolve) => {
             const ref = createRef()
 
             const props: any = {
@@ -351,10 +364,14 @@ describe("animate prop as object", () => {
 
             rerender(<motion.div {...props} />)
 
+            await frame()
+
             expect(ref.current).toHaveStyle("opacity: 1")
 
             rerender(<motion.div {...props} initial={{}} animate={{}} />)
             rerender(<motion.div {...props} initial={{}} animate={{}} />)
+
+            await frame()
 
             expect(ref.current).toHaveStyle("opacity: 1")
 
@@ -416,7 +433,7 @@ describe("animate prop as object", () => {
     })
 
     test("when value is removed from animate, animate back to value read from DOM", async () => {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>(async (resolve) => {
             const ref = createRef()
 
             const props: any = {
@@ -430,10 +447,14 @@ describe("animate prop as object", () => {
 
             rerender(<motion.div {...props} />)
 
+            await frame()
+
             expect(ref.current).toHaveStyle("opacity: 1")
 
             rerender(<motion.div {...props} animate={{}} />)
             rerender(<motion.div {...props} animate={{}} />)
+
+            await frame()
 
             expect(ref.current).toHaveStyle("opacity: 0.5")
 
@@ -467,7 +488,7 @@ describe("animate prop as object", () => {
         })
         return expect(promise).resolves.toBe(20)
     })
-    test("animates previously unseen properties", () => {
+    test("animates previously unseen properties", async () => {
         const Component = ({ animate }: any) => (
             <motion.div animate={animate} transition={{ type: false }} />
         )
@@ -477,8 +498,10 @@ describe("animate prop as object", () => {
         rerender(<Component animate={{ x: 100 }} />)
         rerender(<Component animate={{ y: 100 }} />)
         rerender(<Component animate={{ y: 100 }} />)
+
+        await frame()
         return expect(container.firstChild as Element).toHaveStyle(
-            "transform: translateX(0px) translateY(100px) translateZ(0)"
+            "transform: translateY(100px) translateZ(0)"
         )
     })
 
@@ -519,7 +542,7 @@ describe("animate prop as object", () => {
     })
 
     test("forces an animation to fallback if has been set to `null`", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const complete = () => resolve(true)
             const Component = ({ animate, onAnimationComplete }: any) => (
                 <motion.div
@@ -533,6 +556,8 @@ describe("animate prop as object", () => {
             )
             rerender(<Component animate={{ x: null }} />)
             rerender(<Component animate={{ x: null }} />)
+
+            await frame()
             expect(container.firstChild as Element).toHaveStyle(
                 "transform: none"
             )

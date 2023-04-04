@@ -52,7 +52,7 @@ export function createRenderStep(runNextFrame: () => void): Step {
                  * synchronously outside of the renderloop so aren't
                  * expected to run per-frame.
                  */
-                if (frameloopContext.current) {
+                if (!keepAlive && frameloopContext.current) {
                     frameloopContext.current.push(() => step.cancel(callback))
                 }
 
