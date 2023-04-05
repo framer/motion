@@ -1,13 +1,13 @@
 import { resolveVariant } from "../../render/utils/resolve-dynamic-variants"
 import { VisualElement } from "../../render/VisualElement"
-import { VisualElementAnimationOptions } from "./types"
+import { PreparedAnimation, VisualElementAnimationOptions } from "./types"
 import { animateTarget } from "./visual-element-target"
 
 export function animateVariant(
     visualElement: VisualElement,
     variant: string,
     options: VisualElementAnimationOptions = {}
-) {
+): PreparedAnimation {
     const resolved = resolveVariant(visualElement, variant, options.custom)
     let { transition = visualElement.getDefaultTransition() || {} } =
         resolved || {}
@@ -59,9 +59,10 @@ export function animateVariant(
                 ? [getAnimation, getChildAnimations]
                 : [getChildAnimations, getAnimation]
 
-        return first().then(() => last())
+        return () => first().then(() => last())
     } else {
-        return Promise.all([getAnimation(), getChildAnimations(options.delay)])
+        return () =>
+            Promise.all([getAnimation(), getChildAnimations(options.delay)])
     }
 }
 

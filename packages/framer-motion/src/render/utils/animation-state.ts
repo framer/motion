@@ -11,6 +11,7 @@ import { variantPriorityOrder } from "./variant-props"
 import { VisualElementAnimationOptions } from "../../animation/interfaces/types"
 import { AnimationDefinition } from "../../animation/types"
 import { animateVisualElement } from "../../animation/interfaces/visual-element"
+import { sync as schedule } from "../../frameloop/"
 
 export interface AnimationState {
     animateChanges: (
@@ -37,12 +38,17 @@ const reversePriorityOrder = [...variantPriorityOrder].reverse()
 const numAnimationTypes = variantPriorityOrder.length
 
 function animateList(visualElement: VisualElement) {
-    return (animations: DefinitionAndOptions[]) =>
-        Promise.all(
-            animations.map(({ animation, options }) =>
-                animateVisualElement(visualElement, animation, options)
-            )
+    return (animations: DefinitionAndOptions[]) => {
+        const preparedAnimations = animations.map(({ animation, options }) =>
+            animateVisualElement(visualElement, animation, options)
         )
+
+        return () => {
+            return Promise.all(
+                preparedAnimations.map((startAnimation) => startAnimation())
+            )
+        }
+    }
 }
 
 export function createAnimationState(
@@ -89,7 +95,7 @@ export function createAnimationState(
      *    what to animate those to.
      */
     function animateChanges(
-        options?: VisualElementAnimationOptions,
+        { sync = true, ...options }: VisualElementAnimationOptions = {},
         changedActiveType?: AnimationType
     ) {
         const props = visualElement.getProps()
@@ -347,7 +353,23 @@ export function createAnimationState(
 
         isInitialRender = false
 
-        return shouldAnimate ? animate(animations) : Promise.resolve()
+        return new Promise<void>((resolve) => {
+            if (shouldAnimate) {
+                if (sync) {
+                    animate(animations)().then(() => resolve())
+                } else {
+                    let startAnimations: () => Promise<any>
+                    schedule.read(() => {
+                        startAnimations = animate(animations)
+                    })
+                    schedule.update(() => {
+                        startAnimations().then(() => resolve())
+                    })
+                }
+            } else {
+                resolve()
+            }
+        })
     }
 
     /**

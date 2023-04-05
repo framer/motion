@@ -6,4 +6,7 @@ export type VisualElementAnimationOptions = {
     transitionOverride?: Transition
     custom?: any
     type?: AnimationType
+    sync?: boolean
 }
+
+export type PreparedAnimation = () => Promise<void>

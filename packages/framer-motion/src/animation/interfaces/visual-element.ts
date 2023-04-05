@@ -1,7 +1,7 @@
 import { resolveVariant } from "../../render/utils/resolve-dynamic-variants"
 import { VisualElement } from "../../render/VisualElement"
 import { AnimationDefinition } from "../types"
-import { VisualElementAnimationOptions } from "./types"
+import { PreparedAnimation, VisualElementAnimationOptions } from "./types"
 import { animateTarget } from "./visual-element-target"
 import { animateVariant } from "./visual-element-variant"
 
@@ -9,29 +9,35 @@ export function animateVisualElement(
     visualElement: VisualElement,
     definition: AnimationDefinition,
     options: VisualElementAnimationOptions = {}
-) {
+): PreparedAnimation {
     visualElement.notify("AnimationStart", definition)
-    let animation: Promise<any>
+
+    let preparedAnimations: PreparedAnimation[] = []
 
     if (Array.isArray(definition)) {
-        const animations = definition.map((variant) =>
+        preparedAnimations = definition.map((variant) =>
             animateVariant(visualElement, variant, options)
         )
-        animation = Promise.all(animations)
     } else if (typeof definition === "string") {
-        animation = animateVariant(visualElement, definition, options)
+        preparedAnimations = animateVariant(visualElement, definition, options)
     } else {
         const resolvedDefinition =
             typeof definition === "function"
                 ? resolveVariant(visualElement, definition, options.custom)
                 : definition
 
-        animation = Promise.all(
-            animateTarget(visualElement, resolvedDefinition, options)
+        preparedAnimations = animateTarget(
+            visualElement,
+            resolvedDefinition,
+            options
         )
     }
 
-    return animation.then(() =>
-        visualElement.notify("AnimationComplete", definition)
-    )
+    return () => {
+        return Promise.all(
+            preparedAnimations.map((animation) => animation())
+        ).then(() => {
+            visualElement.notify("AnimationComplete", definition)
+        })
+    }
 }
