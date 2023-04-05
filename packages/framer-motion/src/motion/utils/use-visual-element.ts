@@ -65,12 +65,9 @@ export function useVisualElement<Instance, RenderState>(
      * So if we detect a situtation where optimised appear animations
      * are running, we use useLayoutEffect to trigger animations.
      */
-    const useAnimateChangesEffect = window.HandoffAppearAnimations
-        ? useIsomorphicLayoutEffect
-        : useEffect
-    useAnimateChangesEffect(() => {
+    useEffect(() => {
         if (visualElement && visualElement.animationState) {
-            visualElement.animationState.animateChanges()
+            visualElement.animationState.animateChanges({ sync: false })
         }
     })
 
