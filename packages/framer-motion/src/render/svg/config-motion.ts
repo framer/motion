@@ -6,6 +6,7 @@ import { makeUseVisualState } from "../../motion/utils/use-visual-state"
 import { createSvgRenderState } from "./utils/create-render-state"
 import { buildSVGAttrs } from "./utils/build-attrs"
 import { isSVGTag } from "./utils/is-svg-tag"
+import { sync } from "../../frameloop"
 
 export const svgMotionConfig: Partial<
     MotionComponentConfig<SVGElement, SVGRenderState>
@@ -14,31 +15,37 @@ export const svgMotionConfig: Partial<
         scrapeMotionValuesFromProps: scrapeSVGProps,
         createRenderState: createSvgRenderState,
         onMount: (props, instance, { renderState, latestValues }) => {
-            try {
-                renderState.dimensions =
-                    typeof (instance as SVGGraphicsElement).getBBox ===
-                    "function"
-                        ? (instance as SVGGraphicsElement).getBBox()
-                        : (instance.getBoundingClientRect() as DOMRect)
-            } catch (e) {
-                // Most likely trying to measure an unrendered element under Firefox
-                renderState.dimensions = {
-                    x: 0,
-                    y: 0,
-                    width: 0,
-                    height: 0,
+            sync.read(() => {
+                try {
+                    renderState.dimensions =
+                        typeof (instance as SVGGraphicsElement).getBBox ===
+                        "function"
+                            ? (instance as SVGGraphicsElement).getBBox()
+                            : (instance.getBoundingClientRect() as DOMRect)
+                } catch (e) {
+                    // Most likely trying to measure an unrendered element under Firefox
+                    renderState.dimensions = {
+                        x: 0,
+                        y: 0,
+                        width: 0,
+                        height: 0,
+                    }
                 }
-            }
+            })
 
-            buildSVGAttrs(
-                renderState,
-                latestValues,
-                { enableHardwareAcceleration: false },
-                isSVGTag(instance.tagName),
-                props.transformTemplate
-            )
+            sync.update(() => {
+                buildSVGAttrs(
+                    renderState,
+                    latestValues,
+                    { enableHardwareAcceleration: false },
+                    isSVGTag(instance.tagName),
+                    props.transformTemplate
+                )
+            })
 
-            renderSVG(instance, renderState)
+            sync.render(() => {
+                renderSVG(instance, renderState)
+            })
         },
     }),
 }
