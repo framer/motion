@@ -66,12 +66,13 @@ function animateElements(
             transition.delay = transition.delay(i, numElements)
         }
 
+        // TODO Make not sync
         animations.push(
             ...animateTarget(
                 visualElement,
                 { ...keyframes, transition } as TargetAndTransition,
                 {}
-            )
+            )()
         )
     }
 

@@ -4,7 +4,7 @@ import type { AnimationTypeState } from "../../render/utils/animation-state"
 import type { VisualElement } from "../../render/VisualElement"
 import type { TargetAndTransition } from "../../types"
 import { optimizedAppearDataAttribute } from "../optimized-appear/data-id"
-import type { VisualElementAnimationOptions } from "./types"
+import type { PreparedAnimation, VisualElementAnimationOptions } from "./types"
 import { animateMotionValue } from "./motion-value"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { setTarget } from "../../render/utils/setters"
@@ -31,7 +31,7 @@ export function animateTarget(
     visualElement: VisualElement,
     definition: TargetAndTransition,
     { delay = 0, transitionOverride, type }: VisualElementAnimationOptions = {}
-): AnimationPlaybackControls[] {
+): PreparedAnimation {
     let {
         transition = visualElement.getDefaultTransition(),
         transitionEnd,
@@ -42,72 +42,74 @@ export function animateTarget(
 
     if (transitionOverride) transition = transitionOverride
 
-    const animations: AnimationPlaybackControls[] = []
-
     const animationTypeState =
         type &&
         visualElement.animationState &&
         visualElement.animationState.getState()[type]
 
-    for (const key in target) {
-        const value = visualElement.getValue(key)
-        const valueTarget = target[key]
+    return () => {
+        const animations: AnimationPlaybackControls[] = []
 
-        if (
-            !value ||
-            valueTarget === undefined ||
-            (animationTypeState &&
-                shouldBlockAnimation(animationTypeState, key))
-        ) {
-            continue
-        }
+        for (const key in target) {
+            const value = visualElement.getValue(key)
+            const valueTarget = target[key]
 
-        const valueTransition = { delay, elapsed: 0, ...transition }
+            if (
+                !value ||
+                valueTarget === undefined ||
+                (animationTypeState &&
+                    shouldBlockAnimation(animationTypeState, key))
+            ) {
+                continue
+            }
 
-        /**
-         * If this is the first time a value is being animated, check
-         * to see if we're handling off from an existing animation.
-         */
-        if (window.HandoffAppearAnimations && !value.hasAnimated) {
-            const appearId =
-                visualElement.getProps()[optimizedAppearDataAttribute]
+            const valueTransition = { delay, elapsed: 0, ...transition }
 
-            if (appearId) {
-                valueTransition.elapsed = window.HandoffAppearAnimations(
-                    appearId,
+            /**
+             * If this is the first time a value is being animated, check
+             * to see if we're handling off from an existing animation.
+             */
+            if (window.HandoffAppearAnimations && !value.hasAnimated) {
+                const appearId =
+                    visualElement.getProps()[optimizedAppearDataAttribute]
+
+                if (appearId) {
+                    valueTransition.elapsed = window.HandoffAppearAnimations(
+                        appearId,
+                        key,
+                        value,
+                        sync
+                    )
+                }
+            }
+
+            value.start(
+                animateMotionValue(
                     key,
                     value,
-                    sync
+                    valueTarget,
+                    visualElement.shouldReduceMotion && transformProps.has(key)
+                        ? { type: false }
+                        : valueTransition
                 )
-            }
-        }
-
-        value.start(
-            animateMotionValue(
-                key,
-                value,
-                valueTarget,
-                visualElement.shouldReduceMotion && transformProps.has(key)
-                    ? { type: false }
-                    : valueTransition
             )
-        )
 
-        const animation = value.animation!
+            const animation = value.animation!
 
-        if (isWillChangeMotionValue(willChange)) {
-            willChange.add(key)
-            animation.then(() => willChange.remove(key))
+            if (isWillChangeMotionValue(willChange)) {
+                willChange.add(key)
+                animation.then(() => willChange.remove(key))
+            }
+
+            animations.push(animation)
         }
 
-        animations.push(animation)
-    }
+        if (transitionEnd) {
+            Promise.all(animations).then(() => {
+                transitionEnd && setTarget(visualElement, transitionEnd)
+            })
+        }
 
-    if (transitionEnd) {
-        Promise.all(animations).then(() => {
-            transitionEnd && setTarget(visualElement, transitionEnd)
-        })
+        return animations
     }
-
-    return animations
 }

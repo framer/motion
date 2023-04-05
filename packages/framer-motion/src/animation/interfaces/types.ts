@@ -1,5 +1,6 @@
 import { AnimationType } from "../../render/utils/types"
 import { Transition } from "../../types"
+import { AnimationPlaybackControls } from "../types"
 
 export type VisualElementAnimationOptions = {
     delay?: number
@@ -9,4 +10,4 @@ export type VisualElementAnimationOptions = {
     sync?: boolean
 }
 
-export type PreparedAnimation = () => Promise<void>
+export type PreparedAnimation = () => AnimationPlaybackControls[]

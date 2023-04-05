@@ -390,7 +390,7 @@ export function createAnimationState(
 
         state[type].isActive = isActive
 
-        const animations = animateChanges(options, type)
+        const animations = animateChanges({ ...options, sync: true }, type)
 
         for (const key in state) {
             state[key].protectedKeys = {}

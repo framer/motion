@@ -1,68 +1,65 @@
 import { resolveVariant } from "../../render/utils/resolve-dynamic-variants"
 import { VisualElement } from "../../render/VisualElement"
-import { PreparedAnimation, VisualElementAnimationOptions } from "./types"
+import { VisualElementAnimationOptions } from "./types"
 import { animateTarget } from "./visual-element-target"
 
 export function animateVariant(
     visualElement: VisualElement,
     variant: string,
     options: VisualElementAnimationOptions = {}
-): PreparedAnimation {
+) {
     const resolved = resolveVariant(visualElement, variant, options.custom)
     let { transition = visualElement.getDefaultTransition() || {} } =
         resolved || {}
+    const { when } = transition
 
     if (options.transitionOverride) {
         transition = options.transitionOverride
     }
 
-    /**
-     * If we have a variant, create a callback that runs it as an animation.
-     * Otherwise, we resolve a Promise immediately for a composable no-op.
-     */
-    const getAnimation: () => Promise<any> = resolved
-        ? () => Promise.all(animateTarget(visualElement, resolved, options))
-        : () => Promise.resolve()
+    let preparedAnimation: () => Promise<void | unknown> = () =>
+        Promise.resolve()
+    if (resolved) {
+        const animations = animateTarget(visualElement, resolved, options)
+        preparedAnimation = () => Promise.all(animations())
+    }
 
-    /**
-     * If we have children, create a callback that runs all their animations.
-     * Otherwise, we resolve a Promise immediately for a composable no-op.
-     */
-    const getChildAnimations =
-        visualElement.variantChildren && visualElement.variantChildren.size
-            ? (forwardDelay = 0) => {
-                  const {
-                      delayChildren = 0,
-                      staggerChildren,
-                      staggerDirection,
-                  } = transition
+    let preparedChildrenAnimations: () => Promise<void | unknown> = () =>
+        Promise.resolve()
+    if (visualElement.variantChildren && visualElement.variantChildren.size) {
+        const {
+            delayChildren = 0,
+            staggerChildren,
+            staggerDirection,
+        } = transition
 
-                  return animateChildren(
-                      visualElement,
-                      variant,
-                      delayChildren + forwardDelay,
-                      staggerChildren,
-                      staggerDirection,
-                      options
-                  )
-              }
-            : () => Promise.resolve()
+        preparedChildrenAnimations = animateChildren(
+            visualElement,
+            variant,
+            delayChildren + (when ? 0 : options.delay || 0),
+            staggerChildren,
+            staggerDirection,
+            options
+        )
+    }
 
-    /**
-     * If the transition explicitly defines a "when" option, we need to resolve either
-     * this animation or all children animations before playing the other.
-     */
-    const { when } = transition
-    if (when) {
-        const [first, last] =
-            when === "beforeChildren"
-                ? [getAnimation, getChildAnimations]
-                : [getChildAnimations, getAnimation]
-
-        return () => first().then(() => last())
-    } else {
-        return () =>
-            Promise.all([getAnimation(), getChildAnimations(options.delay)])
+    return () => {
+        /**
+         * If the transition explicitly defines a "when" option, we need to resolve either
+         * this animation or all children animations before playing the other.
+         */
+        if (when) {
+            const [first, last] =
+                when === "beforeChildren"
+                    ? [preparedAnimation, preparedChildrenAnimations]
+                    : [preparedChildrenAnimations, preparedAnimation]
+            return first().then(() => last())
+        } else {
+            return Promise.all([
+                preparedAnimation(),
+                preparedChildrenAnimations(),
+            ])
+        }
     }
 }
 
@@ -74,7 +71,7 @@ function animateChildren(
     staggerDirection = 1,
     options: VisualElementAnimationOptions
 ) {
-    const animations: Promise<any>[] = []
+    const animations: (() => Promise<any>)[] = []
 
     const maxStaggerDuration =
         (visualElement.variantChildren!.size - 1) * staggerChildren
@@ -87,16 +84,20 @@ function animateChildren(
     Array.from(visualElement.variantChildren!)
         .sort(sortByTreeOrder)
         .forEach((child, i) => {
-            child.notify("AnimationStart", variant)
-            animations.push(
-                animateVariant(child, variant, {
-                    ...options,
-                    delay: delayChildren + generateStaggerDuration(i),
-                }).then(() => child.notify("AnimationComplete", variant))
-            )
+            const preparedAnimation = animateVariant(child, variant, {
+                ...options,
+                delay: delayChildren + generateStaggerDuration(i),
+            })
+
+            animations.push(() => {
+                child.notify("AnimationStart", variant)
+                return preparedAnimation().then(() =>
+                    child.notify("AnimationComplete", variant)
+                )
+            })
         })
 
-    return Promise.all(animations)
+    return () => Promise.all(animations)
 }
 
 export function sortByTreeOrder(a: VisualElement, b: VisualElement) {

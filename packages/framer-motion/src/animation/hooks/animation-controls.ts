@@ -39,7 +39,7 @@ export function animationControls(): AnimationControls {
                 animations.push(
                     animateVisualElement(visualElement, definition, {
                         transitionOverride,
-                    })
+                    })()
                 )
             })
 
