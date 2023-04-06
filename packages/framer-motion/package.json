@@ -46,7 +46,7 @@
         "clean": "rm -rf types dist lib",
         "test": "yarn test-server && yarn test-client",
         "test-ci": "yarn test",
-        "test-client": "jest --config jest.config.json --max-workers=2 animators/js/__tests__/animate.test.ts",
+        "test-client": "jest --config jest.config.json --max-workers=2",
         "test-server": "jest --config jest.config.ssr.json ",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov --config jest.config.json",
         "test-appear": "yarn run collect-appear-tests && start-server-and-test 'pushd ../../; python -m SimpleHTTPServer; popd' http://0.0.0.0:8000 'cypress run -s cypress/integration/appear.chrome.ts --config baseUrl=http://localhost:8000/'",
