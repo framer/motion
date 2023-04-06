@@ -33,6 +33,7 @@ export function createAnimationsFromSequence(
     { defaultTransition = {}, ...sequenceTransition }: SequenceOptions = {},
     scope?: AnimationScope
 ): ResolvedAnimationDefinitions {
+    const defaultDuration = defaultTransition.duration || 0.3
     const animationDefinitions: ResolvedAnimationDefinitions = new Map()
     const sequences = new Map<Element | MotionValue, SequenceMap>()
     const elementCache = {}
@@ -99,10 +100,8 @@ export function createAnimationsFromSequence(
                 type = "keyframes",
                 ...remainingTransition
             } = valueTransition
-            let {
-                ease = defaultTransition.ease || "easeOut",
-                duration = defaultTransition.duration || 0.3,
-            } = valueTransition
+            let { ease = defaultTransition.ease || "easeOut", duration } =
+                valueTransition
 
             /**
              * Resolve stagger() if defined.
@@ -133,17 +132,21 @@ export function createAnimationsFromSequence(
                     absoluteDelta = Math.abs(delta)
                 }
 
+                const springTransition = { ...remainingTransition }
+                if (duration !== undefined) {
+                    springTransition.duration = secondsToMilliseconds(duration)
+                }
+
                 const springEasing = createGeneratorEasing(
-                    {
-                        ...remainingTransition,
-                        duration: secondsToMilliseconds(duration),
-                    },
+                    springTransition,
                     absoluteDelta
                 )
 
                 ease = springEasing.ease
                 duration = springEasing.duration
             }
+
+            duration ??= defaultDuration
 
             const startTime = currentTime + calculatedDelay
             const targetTime = startTime + duration
