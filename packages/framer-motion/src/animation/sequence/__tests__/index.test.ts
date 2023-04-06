@@ -471,6 +471,18 @@ describe("createAnimationsFromSequence", () => {
         expect(times).toEqual([0, 0.5, 0.5, 1])
     })
 
+    test("Adds spring as duration-based easing when only one keyframe defined", () => {
+        const animations = createAnimationsFromSequence([
+            [a, { x: [0, 100] }, { type: "spring" }],
+        ])
+
+        expect(animations.get(a)!.keyframes.x).toEqual([0, 100])
+        const { duration, ease } = animations.get(a)!.transition.x
+
+        expect(duration).toEqual(1.1)
+        expect(typeof ease![0]).toEqual("function")
+    })
+
     test("Adds springs as duration-based simulation when two keyframes defined", () => {
         const animations = createAnimationsFromSequence([
             [a, { x: 200 }, { duration: 1, ease: "linear" }],

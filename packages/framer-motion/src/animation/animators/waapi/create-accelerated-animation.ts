@@ -81,7 +81,7 @@ export function createAcceleratedAnimation(
     // Create the first finished promise
     updateFinishedPromise()
 
-    let { keyframes, duration = 300, ease } = options
+    let { keyframes, duration = 300, ease, times } = options
 
     /**
      * If this animation needs pre-generated keyframes then generate.
@@ -106,6 +106,7 @@ export function createAcceleratedAnimation(
             t += sampleDelta
         }
 
+        times = undefined
         keyframes = pregeneratedKeyframes
         duration = t - sampleDelta
         ease = "linear"
@@ -127,6 +128,7 @@ export function createAcceleratedAnimation(
              * support the upcoming `linear()` easing function.
              */
             ease: ease as EasingDefinition,
+            times,
         }
     )
 

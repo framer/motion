@@ -372,6 +372,7 @@ describe("WAAPI animations", () => {
                     duration: 0.05,
                     delay: 2,
                     ease: () => 0.5,
+                    times: [0, 1],
                 }}
             />
         )

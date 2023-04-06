@@ -22,7 +22,13 @@ const Child = ({ setState }: any) => {
     const [scope, animate] = useAnimate()
 
     useEffect(() => {
-        const controls = animate("div", { x: 100, opacity: 0 }, transition)
+        const controls = animate([
+            [
+                "div",
+                { x: 500, opacity: 0 },
+                { type: "spring", duration: 1, bounce: 0 },
+            ],
+        ])
 
         controls.then(() => console.log("complete"))
 
