@@ -4,7 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [10.11.0] 2023-03-29
+## [10.11.1] 2023-04-06
+
+### Fixed
+
+-   Fixing WAAPI offsets with springs in animation sequences.
+
+## [10.11.0] 2023-04-06
 
 ### Added
 
