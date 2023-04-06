@@ -1,41 +1,59 @@
 import { getAnimatableNone } from "../../render/dom/value-types/animatable-none"
-import { ResolvedValueTarget, Transition } from "../../types"
+import { Transition } from "../../types"
 import { MotionValue } from "../../value"
+import { ValueKeyframesDefinition } from "../types"
 import { isAnimatable } from "./is-animatable"
-import { getZeroUnit, isZero } from "./transitions"
-import { fillWildcardKeyframes } from "./wildcards"
+import { isNone } from "./is-none"
 
 export function getKeyframes(
     value: MotionValue,
     valueName: string,
-    target: ResolvedValueTarget,
+    target: ValueKeyframesDefinition,
     transition: Transition
-) {
+): string[] | number[] {
     const isTargetAnimatable = isAnimatable(valueName, target)
-    let origin = transition.from !== undefined ? transition.from : value.get()
+    let keyframes: ValueKeyframesDefinition
 
-    if (origin === "none" && isTargetAnimatable && typeof target === "string") {
-        /**
-         * If we're trying to animate from "none", try and get an animatable version
-         * of the target. This could be improved to work both ways.
-         */
-        origin = getAnimatableNone(valueName, target)
-    } else if (isZero(origin) && typeof target === "string") {
-        origin = getZeroUnit(target)
-    } else if (
-        !Array.isArray(target) &&
-        isZero(target) &&
-        typeof origin === "string"
-    ) {
-        target = getZeroUnit(origin)
-    }
-
-    /**
-     * If the target has been defined as a series of keyframes
-     */
     if (Array.isArray(target)) {
-        return fillWildcardKeyframes(origin, target)
+        keyframes = [...target]
     } else {
-        return [origin, target]
+        keyframes = [null, target]
     }
+
+    const defaultOrigin =
+        transition.from !== undefined ? transition.from : value.get()
+
+    let animatableTemplateValue: string | undefined = undefined
+    const noneKeyframeIndexes: number[] = []
+
+    for (let i = 0; i < keyframes.length; i++) {
+        /**
+         * Fill null/wildcard keyframes
+         */
+        if (keyframes[i] === null) {
+            keyframes[i] = i === 0 ? defaultOrigin : keyframes[i - 1]
+        }
+
+        if (isNone(keyframes[i])) {
+            noneKeyframeIndexes.push(i)
+        } else if (typeof keyframes[i] === "string") {
+            animatableTemplateValue = keyframes[i] as string
+        }
+    }
+
+    if (
+        isTargetAnimatable &&
+        noneKeyframeIndexes.length &&
+        animatableTemplateValue
+    ) {
+        for (let i = 0; i < noneKeyframeIndexes.length; i++) {
+            const index = noneKeyframeIndexes[i]
+            keyframes[index] = getAnimatableNone(
+                valueName,
+                animatableTemplateValue
+            )
+        }
+    }
+
+    return keyframes as string[] | number[]
 }
