@@ -266,4 +266,12 @@ describe("animate", () => {
         )
         animate(div, { r: 0 }, { duration: 1, r: { duration: 1 } })
     })
+
+    test("Doesn't throw keyframe error", async () => {
+        const div = document.createElement("div")
+        animate([
+            [div, { x: 100 }],
+            [div, { y: 100 }],
+        ])
+    })
 })

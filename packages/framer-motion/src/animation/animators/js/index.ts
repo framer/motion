@@ -12,6 +12,7 @@ import {
     millisecondsToSeconds,
     secondsToMilliseconds,
 } from "../../../utils/time-conversion"
+import { calcGeneratorDuration } from "../../generators/utils/calc-duration"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -23,23 +24,6 @@ const types: { [key: string]: GeneratorFactory } = {
     tween: keyframesGeneratorFactory,
     keyframes: keyframesGeneratorFactory,
     spring,
-}
-
-/**
- * Implement a practical max duration for keyframe generation
- * to prevent infinite loops
- */
-const maxDuration = 20_000
-function calculateDuration(generator: KeyframeGenerator<unknown>) {
-    let duration = 0
-    const timeStep = 50
-    let state = generator.next(duration)
-    while (!state.done && duration < maxDuration) {
-        duration += timeStep
-        state = generator.next(duration)
-    }
-
-    return duration >= maxDuration ? Infinity : duration
 }
 
 export interface MainThreadAnimationControls<V>
@@ -135,7 +119,7 @@ export function animateValue<V = number>({
      * the duration by this step.
      */
     if (generator.calculatedDuration === null && repeat) {
-        generator.calculatedDuration = calculateDuration(generator)
+        generator.calculatedDuration = calcGeneratorDuration(generator)
     }
 
     const { calculatedDuration } = generator
@@ -344,7 +328,7 @@ export function animateValue<V = number>({
         get duration() {
             const duration =
                 generator.calculatedDuration === null
-                    ? calculateDuration(generator)
+                    ? calcGeneratorDuration(generator)
                     : generator.calculatedDuration
 
             return millisecondsToSeconds(duration)

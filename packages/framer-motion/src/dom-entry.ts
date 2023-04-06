@@ -11,6 +11,8 @@ export * from "./easing/back"
 export * from "./easing/circ"
 export * from "./easing/ease"
 export * from "./easing/cubic-bezier"
+export * from "./easing/modifiers/mirror"
+export * from "./easing/modifiers/reverse"
 
 /**
  * Utils

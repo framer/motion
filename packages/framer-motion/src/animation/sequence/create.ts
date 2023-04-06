@@ -1,8 +1,10 @@
 import { Easing } from "../../easing/types"
+import { createGeneratorEasing } from "../../easing/utils/create-generator-easing"
 import { resolveElements } from "../../render/dom/utils/resolve-element"
 import { defaultOffset } from "../../utils/offsets/default"
 import { fillOffset } from "../../utils/offsets/fill"
 import { progress } from "../../utils/progress"
+import { secondsToMilliseconds } from "../../utils/time-conversion"
 import type { MotionValue } from "../../value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 import { DynamicAnimationOptions } from "../animate"
@@ -23,6 +25,8 @@ import {
 import { calcNextTime } from "./utils/calc-time"
 import { addKeyframes } from "./utils/edit"
 import { compareByTime } from "./utils/sort"
+
+const defaultSegmentEasing = "easeInOut"
 
 export function createAnimationsFromSequence(
     sequence: AnimationSequence,
@@ -90,20 +94,60 @@ export function createAnimationsFromSequence(
         ) => {
             const valueKeyframesAsList = keyframesAsList(valueKeyframes)
             const {
-                duration = defaultTransition.duration || 0.3,
+                delay = 0,
+                times = defaultOffset(valueKeyframesAsList),
+                type = "keyframes",
+                ...remainingTransition
+            } = valueTransition
+            let {
                 ease = defaultTransition.ease || "easeOut",
+                duration = defaultTransition.duration || 0.3,
             } = valueTransition
 
-            const delay =
-                typeof valueTransition.delay === "function"
-                    ? valueTransition.delay(elementIndex, numElements)
-                    : valueTransition.delay || 0
+            /**
+             * Resolve stagger() if defined.
+             */
+            const calculatedDelay =
+                typeof delay === "function"
+                    ? delay(elementIndex, numElements)
+                    : delay
 
-            const startTime = currentTime + delay
+            /**
+             * If this animation should and can use a spring, generate a spring easing function.
+             */
+            const numKeyframes = valueKeyframesAsList.length
+            if (numKeyframes <= 2 && type === "spring") {
+                /**
+                 * As we're creating an easing function from a spring,
+                 * ideally we want to generate it using the real distance
+                 * between the two keyframes. However this isn't always
+                 * possible - in these situations we use 0-100.
+                 */
+                let absoluteDelta = 100
+                if (
+                    numKeyframes === 2 &&
+                    isNumberKeyframesArray(valueKeyframesAsList)
+                ) {
+                    const delta =
+                        valueKeyframesAsList[1] - valueKeyframesAsList[0]
+                    absoluteDelta = Math.abs(delta)
+                }
+
+                const springEasing = createGeneratorEasing(
+                    {
+                        ...remainingTransition,
+                        duration: secondsToMilliseconds(duration),
+                    },
+                    absoluteDelta
+                )
+
+                ease = springEasing.ease
+                duration = springEasing.duration
+            }
+
+            const startTime = currentTime + calculatedDelay
             const targetTime = startTime + duration
 
-            const { times = defaultOffset(valueKeyframesAsList) } =
-                valueTransition
             /**
              * If there's only one time offset of 0, fill in a second with length 1
              */
@@ -137,7 +181,7 @@ export function createAnimationsFromSequence(
                 targetTime
             )
 
-            maxDuration = Math.max(delay + duration, maxDuration)
+            maxDuration = Math.max(calculatedDelay + duration, maxDuration)
             totalDuration = Math.max(targetTime, totalDuration)
         }
 
@@ -224,7 +268,7 @@ export function createAnimationsFromSequence(
             if (valueOffset[0] !== 0) {
                 valueOffset.unshift(0)
                 keyframes.unshift(keyframes[0])
-                valueEasing.unshift("linear")
+                valueEasing.unshift(defaultSegmentEasing)
             }
 
             /**
@@ -287,3 +331,8 @@ export function getValueTransition(
         ? { ...transition, ...transition[key] }
         : { ...transition }
 }
+
+const isNumber = (keyframe: unknown) => typeof keyframe === "number"
+const isNumberKeyframesArray = (
+    keyframes: UnresolvedValueKeyframe[]
+): keyframes is number[] => keyframes.every(isNumber)
