@@ -4,11 +4,21 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.11.0] 2023-03-29
+
+### Added
+
+-   Adding springs to animation sequences.
+
+### Fixed
+
+-   Fixing "keyframes must be of same type" error with some animation
+
 ## [10.10.0] 2023-03-29
 
 ### Fixed
 
--   Adding `.duration` to `animate()`.
+-   Adding `.duration` to `animate()`. sequences.
 
 ## [10.9.4] 2023-03-29
 

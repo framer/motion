@@ -504,6 +504,6 @@ describe("createAnimationsFromSequence", () => {
         expect(ease![0]).toEqual("easeOut")
         expect(ease![1]).toEqual("easeOut")
         expect(typeof ease![2]).toEqual("function")
-        expect(times).toEqual([0, 0.5, 1])
+        expect(times).toEqual([0, 0.45454545454545453, 0.45454545454545453, 1])
     })
 })
