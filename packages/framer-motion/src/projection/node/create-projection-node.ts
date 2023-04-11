@@ -1045,6 +1045,7 @@ export function createProjectionNode<I>({
                         this.layout.layoutBox,
                         relativeParent.layout.layoutBox
                     )
+
                     copyBoxInto(this.relativeTarget, this.relativeTargetOrigin)
                 } else {
                     this.relativeParent = this.relativeTarget = undefined
@@ -1393,6 +1394,8 @@ export function createProjectionNode<I>({
                      * projection not dirty.
                      */
                     if (
+                        // TODO: Ideally we would be able to improve optimisations by removing this line
+                        !this.relativeParent.isProjectionDirty &&
                         prevRelativeTarget &&
                         boxEquals(this.relativeTarget, prevRelativeTarget)
                     ) {
@@ -1446,7 +1449,6 @@ export function createProjectionNode<I>({
 
                 this.currentAnimation = animateSingleValue(0, animationTarget, {
                     ...(options as any),
-                    // keyframes: [0, animationTarget],÷
                     onUpdate: (latest: number) => {
                         this.mixTargetDelta(latest)
                         options.onUpdate && options.onUpdate(latest)
