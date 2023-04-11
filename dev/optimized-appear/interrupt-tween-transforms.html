@@ -40,6 +40,7 @@
             const duration = 0.5
             const y = motionValue(0)
 
+            let isFirstFrame = true
             y.on("change", (latest) => {
                 if (latest < 50) {
                     showError(
@@ -47,6 +48,14 @@
                         `y transform should never be less than 50, but was ${latest}`
                     )
                 }
+
+                if (isFirstFrame && latest === 100) {
+                    showError(
+                        document.getElementById("box"),
+                        `y transform shouldn't be 100 on the first frame`
+                    )
+                }
+                isFirstFrame = false
             })
 
             // This is the tree to be rendered "server" and client-side.

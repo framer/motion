@@ -56,8 +56,9 @@ export function handoffOptimizedAppearAnimation(
          */
         sync.update(() => {
             if (value.animation) {
-                value.animation.time =
-                    performance.now() - millisecondsToSeconds(sampledTime)
+                value.animation.time = millisecondsToSeconds(
+                    performance.now() - sampledTime
+                )
             }
         })
 
