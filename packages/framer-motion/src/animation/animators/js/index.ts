@@ -288,18 +288,20 @@ export function animateValue<V = number>({
 
         onPlay && onPlay()
 
-        playState = "running"
-
         if (holdTime !== null) {
             startTime = now - holdTime
-        } else if (!startTime) {
-            // TODO When implementing play/pause, check WAAPI
-            // logic around finished animations
+        } else if (!startTime || playState === "finished") {
             startTime = now
         }
 
         cancelTime = startTime
         holdTime = null
+
+        /**
+         * Set playState to running only after we've used it in
+         * the previous logic.
+         */
+        playState = "running"
 
         animationDriver.start()
     }

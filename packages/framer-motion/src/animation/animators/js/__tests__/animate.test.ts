@@ -1022,11 +1022,11 @@ describe("animate", () => {
             driver,
         })
 
-        await nextFrame()
+        await animation
 
         animation.play()
 
-        await nextFrame()
+        await animation
 
         expect(output).toEqual([0, 20, 40, 60, 80, 100, 0, 20, 40, 60, 80, 100])
     })

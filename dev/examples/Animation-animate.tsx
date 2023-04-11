@@ -30,7 +30,9 @@ const Child = ({ setState }: any) => {
             ],
         ])
 
-        controls.then(() => console.log("complete"))
+        controls.then(() => {
+            controls.play()
+        })
 
         return () => controls.stop()
     }, [target])
@@ -51,7 +53,7 @@ const Child = ({ setState }: any) => {
                 }}
                 initial={{ borderRadius: 10 }}
             />
-            <div style={style} onClick={() => setState(false)} />
+            {/* <div style={style} onClick={() => setState(false)} /> */}
         </div>
     )
     return
