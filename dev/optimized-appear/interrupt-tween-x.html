@@ -40,6 +40,7 @@
             const duration = 0.5
             const x = motionValue(0)
 
+            let isFirstFrame = true
             x.onChange((latest) => {
                 if (latest < 50) {
                     showError(
@@ -47,6 +48,14 @@
                         `x transform should never be less than 50`
                     )
                 }
+
+                if (latest === 100 && isFirstFrame) {
+                    showError(
+                        document.getElementById("box"),
+                        `x transform shouldn't be 100 on the first frame`
+                    )
+                }
+                isFirstFrame = false
             })
 
             // This is the tree to be rendered "server" and client-side.
@@ -76,7 +85,7 @@
             // Emulate server rendering of element
             root.innerHTML = ReactDOMServer.renderToString(Component)
 
-            // Start Motion One animation
+            // Start WAAPI animation
             const animation = startOptimizedAppearAnimation(
                 document.getElementById("box"),
                 "transform",
