@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.11.3] 2023-04-11
+
+### Fixed
+
+-   Calling `.play()` on finished animations now correctly restarts them.
+
 ## [10.11.2] 2023-04-06
 
 ### Fixed
