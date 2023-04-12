@@ -987,6 +987,23 @@ export function createProjectionNode<I>({
             this.isLayoutDirty = false
         }
 
+        forceRelativeParentToResolveTarget() {
+            if (!this.relativeParent) return
+
+            /**
+             * If the parent target isn't up-to-date, force it to update.
+             * This is an unfortunate de-optimisation as it means any updating relative
+             * projection will cause all the relative parents to recalculate back
+             * up the tree.
+             */
+            if (
+                this.relativeParent.resolvedRelativeTargetAt !==
+                frameData.timestamp
+            ) {
+                this.relativeParent.resolveTargetDelta(true)
+            }
+        }
+
         /**
          * Frame calculations
          */
@@ -1038,6 +1055,7 @@ export function createProjectionNode<I>({
                 const relativeParent = this.getClosestProjectingParent()
                 if (relativeParent && relativeParent.layout) {
                     this.relativeParent = relativeParent
+                    this.forceRelativeParentToResolveTarget()
                     this.relativeTarget = createBox()
                     this.relativeTargetOrigin = createBox()
                     calcRelativePosition(
@@ -1075,18 +1093,7 @@ export function createProjectionNode<I>({
                 this.relativeParent &&
                 this.relativeParent.target
             ) {
-                /**
-                 * If the parent target isn't up-to-date, force it to update.
-                 * This is an unfortunate de-optimisation as it means any updating relative
-                 * projection will cause all the relative parents to recalculate back
-                 * up the tree.
-                 */
-                if (
-                    this.relativeParent.resolvedRelativeTargetAt !==
-                    frameData.timestamp
-                ) {
-                    this.relativeParent.resolveTargetDelta(true)
-                }
+                this.forceRelativeParentToResolveTarget()
 
                 calcRelativeBox(
                     this.target,
@@ -1128,6 +1135,7 @@ export function createProjectionNode<I>({
                     relativeParent.target
                 ) {
                     this.relativeParent = relativeParent
+                    this.forceRelativeParentToResolveTarget()
                     this.relativeTarget = createBox()
                     this.relativeTargetOrigin = createBox()
 
@@ -1394,8 +1402,6 @@ export function createProjectionNode<I>({
                      * projection not dirty.
                      */
                     if (
-                        // TODO: Ideally we would be able to improve optimisations by removing this line
-                        !this.relativeParent.isProjectionDirty &&
                         prevRelativeTarget &&
                         boxEquals(this.relativeTarget, prevRelativeTarget)
                     ) {
