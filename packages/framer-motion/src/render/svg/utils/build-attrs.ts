@@ -14,6 +14,7 @@ export function buildSVGAttrs(
     {
         attrX,
         attrY,
+        attrScale,
         originX,
         originY,
         pathLength,
@@ -63,9 +64,10 @@ export function buildSVGAttrs(
         )
     }
 
-    // Treat x/y not as shortcuts but as actual attributes
+    // Treat attrX/attrY/attrScale not as shortcuts but as actual attributes
     if (attrX !== undefined) attrs.x = attrX
     if (attrY !== undefined) attrs.y = attrY
+    if (attrScale !== undefined) attrs.scale = attrScale
 
     // Build SVG path if one has been defined
     if (pathLength !== undefined) {

@@ -9,6 +9,7 @@ describe("SVG useProps", () => {
                 {
                     attrX: 1,
                     attrY: motionValue(5),
+                    attrScale: 3,
                     cx: 2,
                     style: {
                         x: 3,
@@ -18,6 +19,7 @@ describe("SVG useProps", () => {
                 {
                     attrX: 6,
                     attrY: 10,
+                    attrScale: 4,
                     cx: 7,
                     x: 8,
                     scale: 9,
@@ -30,6 +32,7 @@ describe("SVG useProps", () => {
         expect(result.current).toStrictEqual({
             x: 6,
             y: 10,
+            scale: 4,
             cx: 7,
             style: {},
         })
