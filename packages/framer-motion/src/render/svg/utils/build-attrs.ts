@@ -64,7 +64,7 @@ export function buildSVGAttrs(
         )
     }
 
-    // Treat attrX/attrY/attrScale not as shortcuts but as actual attributes
+    // Render attrX/attrY/attrScale as attributes
     if (attrX !== undefined) attrs.x = attrX
     if (attrY !== undefined) attrs.y = attrY
     if (attrScale !== undefined) attrs.scale = attrScale
