@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.11.6] 2023-04-12
+
+### Fixed
+
+-   Fixed performance regression introduced with previous fix.
+
 ## [10.11.5] 2023-04-11
 
 ### Fixed
