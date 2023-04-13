@@ -1,13 +1,7 @@
-import { frame, cancelFrame, flushFrame } from ".."
-import { onNextFrame } from "../on-next-frame"
+import { frame, cancelFrame, steps } from ".."
+import { frameData } from "../data"
 
-describe("onNextFrame", () => {
-    it("fires callback on following frame", () => {
-        return new Promise((resolve) => onNextFrame(resolve))
-    })
-})
-
-describe("sync", () => {
+describe("frame", () => {
     it("fires callbacks in the correct order", () => {
         return new Promise<void>((resolve, reject) => {
             const order: number[] = []
@@ -141,7 +135,7 @@ describe("sync", () => {
             let v = 0
 
             frame.update(() => {
-                if (v === 2) flushFrame()
+                if (v === 2) steps.update.process(frameData)
             }, true)
 
             frame.update(() => {
@@ -149,7 +143,7 @@ describe("sync", () => {
                 if (v > 6) resolve(true)
             }, true)
         })
-        flushFrame()
+        steps.update.process(frameData)
         return expect(promise).resolves.toBe(true)
     })
 })

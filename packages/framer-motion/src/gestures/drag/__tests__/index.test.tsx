@@ -132,15 +132,12 @@ describe("dragging", () => {
                         drag
                         onDragStart={() => {
                             count += increment
-                            console.log("drag start", count, increment)
                             setIncrement(2)
                         }}
                         onDrag={() => {
-                            console.log("drag", count, increment)
                             count += increment
                         }}
                         onDragEnd={() => {
-                            console.log("drag end", count, increment)
                             count += increment + 1
                             onDragEnd.resolve()
                         }}
