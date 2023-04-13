@@ -2,6 +2,7 @@ export { motionValue, MotionValue, PassiveEffect, Subscriber } from "./value"
 export { animate, createScopedAnimate } from "./animation/animate"
 export { scroll } from "./render/dom/scroll"
 export { inView } from "./render/dom/viewport"
+export { resize } from "./render/dom/resize"
 
 /**
  * Easing
