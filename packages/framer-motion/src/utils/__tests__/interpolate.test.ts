@@ -110,3 +110,14 @@ test("custom mixer", () => {
     })
     expect(a(0.5)).toBe(42)
 })
+
+test("interpolate - CSS variables", () => {
+    const f = interpolate(
+        [0, 1],
+        ["linear-gradient(#fff, grey)", "linear-gradient(var(--10), grey)"]
+    )
+    expect(f(0)).toEqual("linear-gradient(#fff, grey)")
+    expect(f(0.5)).toEqual("linear-gradient(#fff, grey)")
+    expect(f(1)).toEqual("linear-gradient(var(--10), grey)")
+    expect(f(1.4)).toEqual("linear-gradient(var(--10), grey)")
+})

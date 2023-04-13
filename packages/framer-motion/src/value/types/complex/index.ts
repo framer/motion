@@ -39,7 +39,13 @@ export function analyseComplexValue(v: string | number) {
         values.push(...numbers.map(number.parse))
     }
 
-    return { values, numColors, numNumbers, tokenised: v }
+    return {
+        values,
+        numColors,
+        numNumbers,
+        tokenised: v,
+        containsCSSVars: v.includes("var(--"),
+    }
 }
 
 function parse(v: string | number) {

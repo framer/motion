@@ -65,7 +65,9 @@ export const mixComplex = (
 
     const canInterpolate =
         originStats.numColors === targetStats.numColors &&
-        originStats.numNumbers >= targetStats.numNumbers
+        originStats.numNumbers >= targetStats.numNumbers &&
+        !originStats.containsCSSVars &&
+        !targetStats.containsCSSVars
 
     if (canInterpolate) {
         return pipe(

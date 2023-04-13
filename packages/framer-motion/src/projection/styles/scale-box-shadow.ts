@@ -1,4 +1,4 @@
-import { cssVariableRegex } from "../../render/dom/utils/css-variables-conversion"
+import { cssVariableRegex } from "../../render/dom/utils/is-css-variable"
 import { mix } from "../../utils/mix"
 import { complex } from "../../value/types/complex"
 import { ScaleCorrectorDefinition } from "./types"

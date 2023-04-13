@@ -10,3 +10,6 @@ const checkStringStartsWith =
 export const isCSSVariableName = checkStringStartsWith<CSSVariableName>("--")
 export const isCSSVariableToken =
     checkStringStartsWith<CSSVariableToken>("var(--")
+
+export const cssVariableRegex =
+    /var\((--[a-zA-Z0-9-_]+),? ?([a-zA-Z0-9 ()%#.,-]+)?\)/

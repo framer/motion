@@ -43,3 +43,15 @@ test("mixComplex can animate from a value with extra zeros", () => {
         "10px 0px rgba(180, 180, 180, 1)"
     )
 })
+
+test("mixComplex won't interpolate strings containing CSS variables", () => {
+    expect(
+        mixComplex("#fff 0 var(--grey) 10px", "#000 0 var(--grey) 0px")(0)
+    ).toBe("#fff 0 var(--grey) 10px")
+    expect(
+        mixComplex("#fff 0 var(--grey) 10px", "#000 0 var(--grey) 0px")(0.5)
+    ).toBe("#000 0 var(--grey) 0px")
+    expect(
+        mixComplex("#fff 0 var(--grey) 10px", "#000 0 var(--grey) 0px")(1)
+    ).toBe("#000 0 var(--grey) 0px")
+})

@@ -85,7 +85,11 @@
     "bundlesize": [
         {
             "path": "./dist/size-rollup-motion.js",
+<<<<<<< HEAD
             "maxSize": "30.33 kB"
+=======
+            "maxSize": "30.31 kB"
+>>>>>>> 22c49d6a (Adding CSS var detection to mixComplex)
         },
         {
             "path": "./dist/size-rollup-m.js",
@@ -101,7 +105,11 @@
         },
         {
             "path": "./dist/size-rollup-animate.js",
+<<<<<<< HEAD
             "maxSize": "15.83 kB"
+=======
+            "maxSize": "15.81 kB"
+>>>>>>> 22c49d6a (Adding CSS var detection to mixComplex)
         },
         {
             "path": "./dist/size-webpack-m.js",
