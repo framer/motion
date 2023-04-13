@@ -151,7 +151,7 @@ export class VisualElementDragControls {
 
             // Fire onDragStart event
             if (onDragStart) {
-                frame.update(() => onDragStart(event, info))
+                frame.update(() => onDragStart(event, info), false, true)
             }
 
             const { animationState } = this.visualElement

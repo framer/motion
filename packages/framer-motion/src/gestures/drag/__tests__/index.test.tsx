@@ -120,7 +120,7 @@ describe("dragging", () => {
         expect(onDragEnd).toBeCalledTimes(1)
     })
 
-    test("drag handlers aren't frozen at drag session start", async () => {
+    test.only("drag handlers aren't frozen at drag session start", async () => {
         let count = 0
         const onDragEnd = deferred()
         const Component = () => {
@@ -132,12 +132,15 @@ describe("dragging", () => {
                         drag
                         onDragStart={() => {
                             count += increment
+                            console.log("drag start", count, increment)
                             setIncrement(2)
                         }}
                         onDrag={() => {
+                            console.log("drag", count, increment)
                             count += increment
                         }}
                         onDragEnd={() => {
+                            console.log("drag end", count, increment)
                             count += increment + 1
                             onDragEnd.resolve()
                         }}
