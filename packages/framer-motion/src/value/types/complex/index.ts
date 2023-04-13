@@ -2,14 +2,11 @@ import {
     cssVariableRegex,
     CSSVariableToken,
 } from "../../../render/dom/utils/is-css-variable"
+import { noop } from "../../../utils/noop"
 import { color } from "../color"
 import { number } from "../numbers"
 import { Color } from "../types"
 import { colorRegex, floatRegex, isString, sanitize } from "../utils"
-
-const varToken = "${v}"
-const colorToken = "${c}"
-const numberToken = "${n}"
 
 function test(v: any) {
     return (
@@ -21,52 +18,74 @@ function test(v: any) {
     )
 }
 
-export function analyseComplexValue(v: string | number) {
-    if (typeof v === "number") v = `${v}`
-
-    const values: Array<CSSVariableToken | Color | number> = []
-    let numVars = 0
-    let numColors = 0
-    let numNumbers = 0
-
-    const containsCSSVars = v.includes("var(--")
-    if (containsCSSVars) {
-        const vars = v.match(cssVariableRegex) as null | CSSVariableToken[]
-        console.log(vars)
-        if (vars) {
-            numVars = vars.length
-            v = v.replace(cssVariableRegex, varToken)
-            values.push(...vars)
-        }
-    }
-
-    const colors = v.match(colorRegex)
-    if (colors) {
-        numColors = colors.length
-        // Strip colors from input so they're not picked up by number regex.
-        // There's a better way to combine these regex searches, but its beyond my regex skills
-        v = v.replace(colorRegex, colorToken)
-        values.push(...(colors.map(color.parse) as any))
-    }
-
-    const numbers = v.match(floatRegex)
-    if (numbers) {
-        numNumbers = numbers.length
-        v = v.replace(floatRegex, numberToken)
-        values.push(...numbers.map(number.parse))
-    }
-    console.log({ v, values })
-    return {
-        values,
-        numVars,
-        numColors,
-        numNumbers,
-        tokenised: v,
-        containsCSSVars: v.includes("var(--"),
-    }
+export interface ComplexValueInfo {
+    value: string
+    values: Array<CSSVariableToken | Color | number>
+    numVars: number
+    numColors: number
+    numNumbers: number
+    tokenised: string
 }
 
-function parse(v: string | number) {
+interface Tokeniser {
+    regex: RegExp
+    countKey: string
+    token: string
+    parse: (value: string) => any
+}
+
+const cssVarTokeniser: Tokeniser = {
+    regex: cssVariableRegex,
+    countKey: "Vars",
+    token: "${v}",
+    parse: noop,
+}
+
+const colorTokeniser: Tokeniser = {
+    regex: colorRegex,
+    countKey: "Colors",
+    token: "${c}",
+    parse: color.parse,
+}
+
+const numberTokeniser: Tokeniser = {
+    regex: floatRegex,
+    countKey: "Numbers",
+    token: "${n}",
+    parse: number.parse,
+}
+
+function tokenise(
+    info: ComplexValueInfo,
+    { regex, countKey, token, parse }: Tokeniser
+) {
+    const matches = info.value.match(regex)
+
+    if (!matches) return
+
+    info["num" + countKey] = matches.length
+    info.value = info.value.replace(regex, token)
+    info.values.push(...(matches.map(parse) as any))
+}
+
+export function analyseComplexValue(value: string | number): ComplexValueInfo {
+    const info = {
+        value: typeof value === "number" ? "" + value : value,
+        values: [],
+        numVars: 0,
+        numColors: 0,
+        numNumbers: 0,
+        tokenised: "",
+    }
+
+    if (info.value.includes("var(--")) tokenise(info, cssVarTokeniser)
+    tokenise(info, colorTokeniser)
+    tokenise(info, numberTokeniser)
+
+    return info
+}
+
+function parseComplexValue(v: string | number) {
     return analyseComplexValue(v).values
 }
 
@@ -80,15 +99,15 @@ function createTransformer(source: string | number) {
 
         for (let i = 0; i < numValues; i++) {
             if (i < numVars) {
-                output = output.replace(varToken, v[i] as any)
+                output = output.replace(cssVarTokeniser.token, v[i] as any)
             } else if (i < numVars + numColors) {
                 output = output.replace(
-                    colorToken,
+                    colorTokeniser.token,
                     color.transform(v[i] as any)
                 )
             } else {
                 output = output.replace(
-                    numberToken,
+                    numberTokeniser.token,
                     sanitize(v[i] as number) as any
                 )
             }
@@ -102,9 +121,14 @@ const convertNumbersToZero = (v: number | Color) =>
     typeof v === "number" ? 0 : v
 
 function getAnimatableNone(v: string | number) {
-    const parsed = parse(v)
+    const parsed = parseComplexValue(v)
     const transformer = createTransformer(v)
     return transformer(parsed.map(convertNumbersToZero))
 }
 
-export const complex = { test, parse, createTransformer, getAnimatableNone }
+export const complex = {
+    test,
+    parse: parseComplexValue,
+    createTransformer,
+    getAnimatableNone,
+}

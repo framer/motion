@@ -14,7 +14,7 @@ type BlendableObject = {
 }
 
 const mixImmediate =
-    (from: number | string, to: number | string) => (p: number) =>
+    (origin: number | string, target: number | string) => (p: number) =>
         `${p > 0 ? target : origin}`
 
 function getMixer(origin: any, target: any) {
