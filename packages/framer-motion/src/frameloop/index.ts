@@ -14,7 +14,7 @@ const stepsOrder: StepId[] = [
     "postRender",
 ]
 
-const steps = stepsOrder.reduce((acc, key) => {
+export const steps = stepsOrder.reduce((acc, key) => {
     acc[key] = createRenderStep(() => (runNextFrame = true))
     return acc
 }, {} as Steps)
@@ -57,8 +57,4 @@ export const frame = stepsOrder.reduce((acc, key) => {
 
 export function cancelFrame(process: Process) {
     stepsOrder.forEach((key) => steps[key].cancel(process))
-}
-
-export function flushFrame() {
-    stepsOrder.forEach((key) => steps[key].process(frameData))
 }

@@ -1,4 +1,4 @@
-import { frame, cancelFrame, flushFrame } from "../../frameloop"
+import { frame, cancelFrame, steps } from "../../frameloop"
 import { AnimationPlaybackControls } from "../../animation/types"
 import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
@@ -656,7 +656,9 @@ export function createProjectionNode<I>({
             this.clearAllSnapshots()
 
             // Flush any scheduled updates
-            flushFrame()
+            steps.update.process(frameData)
+            steps.preRender.process(frameData)
+            steps.render.process(frameData)
         }
 
         clearAllSnapshots() {
