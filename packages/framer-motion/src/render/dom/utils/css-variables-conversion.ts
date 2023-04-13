@@ -1,11 +1,7 @@
 import { Target, TargetWithKeyframes } from "../../../types"
 import { invariant } from "../../../utils/errors"
 import type { VisualElement } from "../../VisualElement"
-import {
-    isCSSVariableToken,
-    CSSVariableToken,
-    cssVariableRegex,
-} from "./is-css-variable"
+import { isCSSVariableToken, CSSVariableToken } from "./is-css-variable"
 
 /**
  * Parse Framer's special CSS variable format into a CSS token and a fallback.
@@ -16,8 +12,10 @@ import {
  *
  * @param current
  */
+const splitCssVariableRegex =
+    /var\((--[a-zA-Z0-9-_]+),? ?([a-zA-Z0-9 ()%#.,-]+)?\)/
 export function parseCSSVariable(current: string) {
-    const match = cssVariableRegex.exec(current)
+    const match = splitCssVariableRegex.exec(current)
     if (!match) return [,]
 
     const [, token, fallback] = match

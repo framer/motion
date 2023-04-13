@@ -1,8 +1,13 @@
+import {
+    cssVariableRegex,
+    CSSVariableToken,
+} from "../../../render/dom/utils/is-css-variable"
 import { color } from "../color"
 import { number } from "../numbers"
 import { Color } from "../types"
 import { colorRegex, floatRegex, isString, sanitize } from "../utils"
 
+const varToken = "${v}"
 const colorToken = "${c}"
 const numberToken = "${n}"
 
@@ -19,9 +24,21 @@ function test(v: any) {
 export function analyseComplexValue(v: string | number) {
     if (typeof v === "number") v = `${v}`
 
-    const values: Array<Color | number> = []
+    const values: Array<CSSVariableToken | Color | number> = []
+    let numVars = 0
     let numColors = 0
     let numNumbers = 0
+
+    const containsCSSVars = v.includes("var(--")
+    if (containsCSSVars) {
+        const vars = v.match(cssVariableRegex) as null | CSSVariableToken[]
+        console.log(vars)
+        if (vars) {
+            numVars = vars.length
+            v = v.replace(cssVariableRegex, varToken)
+            values.push(...vars)
+        }
+    }
 
     const colors = v.match(colorRegex)
     if (colors) {
@@ -38,9 +55,10 @@ export function analyseComplexValue(v: string | number) {
         v = v.replace(floatRegex, numberToken)
         values.push(...numbers.map(number.parse))
     }
-
+    console.log({ v, values })
     return {
         values,
+        numVars,
         numColors,
         numNumbers,
         tokenised: v,
@@ -53,19 +71,27 @@ function parse(v: string | number) {
 }
 
 function createTransformer(source: string | number) {
-    const { values, numColors, tokenised } = analyseComplexValue(source)
+    const { values, numColors, numVars, tokenised } =
+        analyseComplexValue(source)
     const numValues = values.length
 
-    return (v: Array<Color | number | string>) => {
+    return (v: Array<CSSVariableToken | Color | number | string>) => {
         let output = tokenised
 
         for (let i = 0; i < numValues; i++) {
-            output = output.replace(
-                i < numColors ? colorToken : numberToken,
-                i < numColors
-                    ? color.transform(v[i] as any)
-                    : (sanitize(v[i] as number) as any)
-            )
+            if (i < numVars) {
+                output = output.replace(varToken, v[i] as any)
+            } else if (i < numVars + numColors) {
+                output = output.replace(
+                    colorToken,
+                    color.transform(v[i] as any)
+                )
+            } else {
+                output = output.replace(
+                    numberToken,
+                    sanitize(v[i] as number) as any
+                )
+            }
         }
 
         return output

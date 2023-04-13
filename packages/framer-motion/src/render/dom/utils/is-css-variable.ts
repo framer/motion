@@ -12,4 +12,4 @@ export const isCSSVariableToken =
     checkStringStartsWith<CSSVariableToken>("var(--")
 
 export const cssVariableRegex =
-    /var\((--[a-zA-Z0-9-_]+),? ?([a-zA-Z0-9 ()%#.,-]+)?\)/
+    /var\s*\(\s*--[\w-]+(\s*,\s*(?:(?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)+)?\s*\)/g

@@ -1,26 +1,10 @@
-import { cssVariableRegex } from "../../render/dom/utils/is-css-variable"
 import { mix } from "../../utils/mix"
 import { complex } from "../../value/types/complex"
 import { ScaleCorrectorDefinition } from "./types"
 
-const varToken = "_$css"
-
 export const correctBoxShadow: ScaleCorrectorDefinition = {
     correct: (latest: string, { treeScale, projectionDelta }) => {
         const original = latest
-
-        /**
-         * We need to first strip and store CSS variables from the string.
-         */
-        const containsCSSVariables = latest.includes("var(")
-        const cssVariables: string[] = []
-        if (containsCSSVariables) {
-            latest = latest.replace(cssVariableRegex, (match) => {
-                cssVariables.push(match)
-                return varToken
-            })
-        }
-
         const shadow = complex.parse(latest)
 
         // TODO: Doesn't support multiple shadows
@@ -53,17 +37,6 @@ export const correctBoxShadow: ScaleCorrectorDefinition = {
         if (typeof shadow[3 + offset] === "number")
             (shadow[3 + offset] as number) /= averageScale
 
-        let output = template(shadow)
-
-        if (containsCSSVariables) {
-            let i = 0
-            output = output.replace(varToken, () => {
-                const cssVariable = cssVariables[i]
-                i++
-                return cssVariable
-            })
-        }
-
-        return output
+        return template(shadow)
     },
 }
