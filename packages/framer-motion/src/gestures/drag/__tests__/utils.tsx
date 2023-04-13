@@ -14,7 +14,7 @@ const pos: Point = {
     y: 0,
 }
 
-export const frame = {
+export const dragFrame = {
     postRender: () => new Promise((resolve) => frame.postRender(resolve)),
 }
 
@@ -43,7 +43,7 @@ export const drag = (element: any, triggerElement?: any) => {
 
             await act(async () => {
                 pointerMove(document.body)
-                await frame.postRender()
+                await dragFrame.postRender()
             })
 
             return controls
