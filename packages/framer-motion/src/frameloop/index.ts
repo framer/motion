@@ -29,7 +29,6 @@ const processFrame = (timestamp: number) => {
         : Math.max(Math.min(timestamp - frameData.timestamp, maxElapsed), 1)
 
     frameData.timestamp = timestamp
-
     frameData.isProcessing = true
     stepsOrder.forEach(processStep)
     frameData.isProcessing = false
