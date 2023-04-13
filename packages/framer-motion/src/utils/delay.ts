@@ -1,4 +1,4 @@
-import { sync, cancelSync } from "../frameloop"
+import { frame, cancelFrame } from "../frameloop"
 import { FrameData } from "../frameloop/types"
 
 export type DelayedFunction = (overshoot: number) => void
@@ -13,12 +13,12 @@ export function delay(callback: DelayedFunction, timeout: number) {
         const elapsed = timestamp - start
 
         if (elapsed >= timeout) {
-            cancelSync.read(checkElapsed)
+            cancelFrame(checkElapsed)
             callback(elapsed - timeout)
         }
     }
 
-    sync.read(checkElapsed, true)
+    frame.read(checkElapsed, true)
 
-    return () => cancelSync.read(checkElapsed)
+    return () => cancelFrame(checkElapsed)
 }

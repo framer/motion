@@ -1,6 +1,6 @@
 import { EventInfo } from "../../events/types"
 import { extractEventInfo } from "../../events/event-info"
-import { sync, cancelSync } from "../../frameloop"
+import { frame, cancelFrame } from "../../frameloop"
 import {
     millisecondsToSeconds,
     secondsToMilliseconds,
@@ -206,7 +206,7 @@ export class PanSession {
         this.lastMoveEventInfo = transformPoint(info, this.transformPagePoint)
 
         // Throttle mouse move event to once per frame
-        sync.update(this.updatePoint, true)
+        frame.update(this.updatePoint, true)
     }
 
     private handlePointerUp = (event: PointerEvent, info: EventInfo) => {
@@ -235,7 +235,7 @@ export class PanSession {
 
     end() {
         this.removeListeners && this.removeListeners()
-        cancelSync.update(this.updatePoint)
+        cancelFrame(this.updatePoint)
     }
 }
 

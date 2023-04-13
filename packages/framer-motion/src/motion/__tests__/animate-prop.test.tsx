@@ -2,7 +2,7 @@ import { render } from "../../../jest.setup"
 import {
     motion,
     motionValue,
-    sync,
+    frame,
     useMotionValue,
     useMotionValueEvent,
 } from "../../"
@@ -375,7 +375,7 @@ describe("animate prop as object", () => {
                         x: { type: "tween", from: 10, ease: () => 0.5 },
                     }}
                     onUpdate={() => {
-                        sync.read(() => {
+                        frame.read(() => {
                             resolve([x.get(), opacity.get()])
                         })
                     }}
@@ -402,7 +402,7 @@ describe("animate prop as object", () => {
                         x: { type: "tween", from: 10, ease: () => 0.5 },
                     }}
                     onUpdate={() => {
-                        sync.read(() => {
+                        frame.read(() => {
                             resolve([x.get(), opacity.get()])
                         })
                     }}

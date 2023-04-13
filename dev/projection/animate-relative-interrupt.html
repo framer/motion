@@ -86,8 +86,8 @@
             matchViewportBox(parent, parentOrigin)
             matchViewportBox(child, childOrigin)
 
-            sync.postRender(() => {
-                sync.postRender(() => {
+            frame.postRender(() => {
+                frame.postRender(() => {
                     matchViewportBox(parent, {
                         top: 50,
                         bottom: 170,
@@ -108,8 +108,8 @@
 
                     parentProjection.root.didUpdate()
 
-                    sync.postRender(() => {
-                        sync.postRender(() => {
+                    frame.postRender(() => {
+                        frame.postRender(() => {
                             matchViewportBox(parent, {
                                 top: 25,
                                 bottom: 135,

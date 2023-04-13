@@ -2,7 +2,7 @@ import { render } from "../../../jest.setup"
 import * as React from "react"
 import { motion } from "../../render/dom/motion"
 import { motionValue } from "../../value"
-import { sync } from "../../frameloop"
+import { frame } from "../../frameloop"
 
 describe("child as motion value", () => {
     test("accepts motion values as children", async () => {
@@ -24,10 +24,10 @@ describe("child as motion value", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 
-            sync.postRender(() => {
+            frame.postRender(() => {
                 child.set(2)
 
-                sync.postRender(() => {
+                frame.postRender(() => {
                     resolve(container.firstChild as HTMLDivElement)
                 })
             })

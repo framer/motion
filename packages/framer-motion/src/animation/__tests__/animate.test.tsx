@@ -5,7 +5,7 @@ import { motion } from "../.."
 import { animate } from "../animate"
 import { useMotionValue } from "../../value/use-motion-value"
 import { motionValue, MotionValue } from "../../value"
-import { syncDriver } from "../animators/js/__tests__/utils"
+import { frameDriver } from "../animators/js/__tests__/utils"
 
 const duration = 0.001
 

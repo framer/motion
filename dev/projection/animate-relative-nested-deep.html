@@ -123,8 +123,8 @@
 
             parentProjection.root.didUpdate()
 
-            sync.postRender(() => {
-                sync.postRender(() => {
+            frame.postRender(() => {
+                frame.postRender(() => {
                     matchViewportBox(
                         grandchild,
                         {

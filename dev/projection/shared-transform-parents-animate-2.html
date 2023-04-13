@@ -68,7 +68,7 @@
 
             scrollerProjection.setValue("x", -200)
 
-            sync.postRender(() => {
+            frame.postRender(() => {
                 aProjection.willUpdate()
                 const b = document.createElement("div")
                 b.id = "b"
@@ -77,7 +77,7 @@
                     layoutId: "a",
                 })
                 aProjection.root.didUpdate()
-                sync.postRender(() => {
+                frame.postRender(() => {
                     matchViewportBox(a, b.getBoundingClientRect())
                     matchViewportBox(a, {
                         bottom: 350,

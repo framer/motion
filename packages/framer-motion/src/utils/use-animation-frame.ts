@@ -1,4 +1,4 @@
-import { sync, cancelSync } from "../frameloop"
+import { frame, cancelFrame } from "../frameloop"
 import { useContext, useEffect, useRef } from "react"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { FrameData } from "../frameloop/types"
@@ -18,7 +18,7 @@ export function useAnimationFrame(callback: FrameCallback) {
             callback(timestamp - initialTimestamp.current, delta)
         }
 
-        sync.update(provideTimeSinceStart, true)
-        return () => cancelSync.update(provideTimeSinceStart)
+        frame.update(provideTimeSinceStart, true)
+        return () => cancelFrame(provideTimeSinceStart)
     }, [callback])
 }

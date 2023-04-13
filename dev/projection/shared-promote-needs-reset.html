@@ -150,7 +150,7 @@
 
             childProjection.root.didUpdate()
 
-            sync.postRender(() => {
+            frame.postRender(() => {
                 // only update child layout
                 childProjection.willUpdate()
 
@@ -158,7 +158,7 @@
 
                 childProjection.root.didUpdate()
 
-                sync.postRender(() => {
+                frame.postRender(() => {
                     const midChildBox = {
                         left: 0,
                         right: 50,

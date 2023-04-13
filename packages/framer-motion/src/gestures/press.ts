@@ -10,7 +10,7 @@ import { pipe } from "../utils/pipe"
 import { isDragActive } from "./drag/utils/lock"
 import { isNodeOrChild } from "./utils/is-node-or-child"
 import { noop } from "../utils/noop"
-import { sync } from "../frameloop"
+import { frame } from "../frameloop"
 
 function fireSyntheticPointerEvent(
     name: string,
@@ -41,7 +41,7 @@ export class PressGesture extends Feature<Element> {
         }
 
         if (onTapStart) {
-            sync.update(() => onTapStart(event, info))
+            frame.update(() => onTapStart(event, info))
         }
     }
 
@@ -76,7 +76,7 @@ export class PressGesture extends Feature<Element> {
 
             const { onTap, onTapCancel } = this.node.getProps()
 
-            sync.update(() => {
+            frame.update(() => {
                 /**
                  * We only count this as a tap gesture if the event.target is the same
                  * as, or a child of, this component's element
@@ -115,7 +115,7 @@ export class PressGesture extends Feature<Element> {
 
         const { onTapCancel } = this.node.getProps()
         if (onTapCancel) {
-            sync.update(() => onTapCancel(event, info))
+            frame.update(() => onTapCancel(event, info))
         }
     }
 
@@ -129,7 +129,7 @@ export class PressGesture extends Feature<Element> {
                 fireSyntheticPointerEvent("up", (event, info) => {
                     const { onTap } = this.node.getProps()
                     if (onTap) {
-                        sync.update(() => onTap(event, info))
+                        frame.update(() => onTap(event, info))
                     }
                 })
             }

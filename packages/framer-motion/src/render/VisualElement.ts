@@ -1,4 +1,4 @@
-import { sync, cancelSync } from "../frameloop"
+import { frame, cancelFrame } from "../frameloop"
 import { invariant, warning } from "../utils/errors"
 import {
     MotionConfigContext,
@@ -430,8 +430,8 @@ export abstract class VisualElement<
     unmount() {
         visualElementStore.delete(this.current)
         this.projection && this.projection.unmount()
-        cancelSync.update(this.notifyUpdate)
-        cancelSync.render(this.render)
+        cancelFrame(this.notifyUpdate)
+        cancelFrame(this.render)
         this.valueSubscriptions.forEach((remove) => remove())
         this.removeFromVariantTree && this.removeFromVariantTree()
         this.parent && this.parent.children.delete(this)
@@ -452,7 +452,7 @@ export abstract class VisualElement<
             (latestValue: string | number) => {
                 this.latestValues[key] = latestValue
                 this.props.onUpdate &&
-                    sync.update(this.notifyUpdate, false, true)
+                    frame.update(this.notifyUpdate, false, true)
 
                 if (valueIsTransform && this.projection) {
                     this.projection.isTransformDirty = true
@@ -611,7 +611,7 @@ export abstract class VisualElement<
         )
     }
 
-    scheduleRender = () => sync.render(this.render, false, true)
+    scheduleRender = () => frame.render(this.render, false, true)
 
     /**
      * Measure the current viewport box with or without transforms.

@@ -1,5 +1,5 @@
 import { EasingDefinition } from "../../../easing/types"
-import { cancelSync, sync } from "../../../frameloop"
+import { frame, cancelFrame } from "../../../frameloop"
 import type { VisualElement } from "../../../render/VisualElement"
 import type { MotionValue } from "../../../value"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../../types"
@@ -135,7 +135,7 @@ export function createAcceleratedAnimation(
     const cancelAnimation = () => animation.cancel()
 
     const safeCancel = () => {
-        sync.update(cancelAnimation)
+        frame.update(cancelAnimation)
         resolveFinishedPromise()
         updateFinishedPromise()
     }
@@ -183,7 +183,7 @@ export function createAcceleratedAnimation(
             /**
              * Cancel any pending cancel tasks
              */
-            cancelSync.update(cancelAnimation)
+            cancelFrame(cancelAnimation)
         },
         pause: () => animation.pause(),
         stop: () => {

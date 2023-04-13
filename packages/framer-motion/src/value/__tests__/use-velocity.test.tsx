@@ -3,7 +3,7 @@ import * as React from "react"
 import { useVelocity } from "../use-velocity"
 import { useMotionValue } from "../use-motion-value"
 import { animate } from "../../animation/animate"
-import { sync } from "../../frameloop"
+import { frame } from "../../frameloop"
 import { frameData } from "../../frameloop/data"
 import { useMotionValueEvent } from "../../utils/use-motion-value-event"
 import { mirrorEasing } from "../../easing/modifiers/mirror"
@@ -70,13 +70,13 @@ describe("useVelocity", () => {
                              * The more derivatives we have the more frames it'll take for
                              * all values to settle.
                              */
-                            sync.postRender(() => {
+                            frame.postRender(() => {
                                 setFrameData(10, 110)
-                                sync.postRender(() => {
+                                frame.postRender(() => {
                                     setFrameData(10, 120)
-                                    sync.postRender(() => {
+                                    frame.postRender(() => {
                                         setFrameData(10, 130)
-                                        sync.postRender(() => {
+                                        frame.postRender(() => {
                                             setFrameData(10, 140)
                                             resolve(undefined)
                                         })

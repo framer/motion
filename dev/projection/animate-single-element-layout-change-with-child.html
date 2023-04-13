@@ -82,8 +82,8 @@
 
             boxProjection.root.didUpdate()
 
-            sync.postRender(() => {
-                sync.postRender(() => {
+            frame.postRender(() => {
+                frame.postRender(() => {
                     matchViewportBox(box, {
                         top: 50,
                         right: 270,

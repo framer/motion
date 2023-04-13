@@ -1,4 +1,4 @@
-import { sync } from "../../../../frameloop"
+import { frame } from "../../../../frameloop"
 import { scroll } from "../index"
 import { ScrollOffset } from "../offsets/presets"
 import { ScrollInfo } from "../types"
@@ -10,7 +10,7 @@ type Measurements = {
 const measurements = new Map<Element, Measurements>()
 
 async function frame() {
-    return new Promise((resolve) => sync.postRender(resolve))
+    return new Promise((resolve) => frame.postRender(resolve))
 }
 
 const createMockMeasurement = (element: Element, name: string) => {

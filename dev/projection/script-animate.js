@@ -2,7 +2,7 @@ Animate = {}
 
 const {
     HTMLProjectionNode,
-    sync,
+    frame,
     buildTransform,
     animateDelta,
     addScaleCorrector,
@@ -89,14 +89,14 @@ Animate.createNode = (
 }
 
 Animate.relativeEase = () => {
-    let frame = 0
+    let frameCount = 0
     return (t) => {
-        frame++
+        frameCount++
         // one frame for the first synchronous call of mixTargetDelta at the very start,
         // don't lock it to 0.5 otherwise the relative boxes can't be measure correctly.
         // Then the first animation frame when we resolve relative delta,
         // and then finally the first relative frame.
-        return frame >= 2 ? (t === 1 || t === 0 ? t : 0.5) : 0
+        return frameCount >= 2 ? (t === 1 || t === 0 ? t : 0.5) : 0
     }
 }
 

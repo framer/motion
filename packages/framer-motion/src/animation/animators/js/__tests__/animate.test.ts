@@ -3,7 +3,7 @@ import { reverseEasing } from "../../../../easing/modifiers/reverse"
 import { nextFrame } from "../../../../gestures/__tests__/utils"
 import { noop } from "../../../../utils/noop"
 import { ValueAnimationOptions } from "../../../types"
-import { syncDriver } from "./utils"
+import { frameDriver } from "./utils"
 
 const linear = noop
 

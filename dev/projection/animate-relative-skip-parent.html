@@ -104,7 +104,7 @@
                 parent.classList.remove("b")
                 parentProjection.root.didUpdate()
 
-                sync.postRender(() => {
+                frame.postRender(() => {
                     matchViewportBox(child, childOrigin, 0.5)
                 })
             }, 150)

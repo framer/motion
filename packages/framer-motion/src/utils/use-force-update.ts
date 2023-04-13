@@ -1,4 +1,4 @@
-import { sync } from "../frameloop"
+import { frame } from "../frameloop"
 import { useState, useCallback } from "react"
 import { useIsMounted } from "./use-is-mounted"
 
@@ -15,7 +15,7 @@ export function useForceUpdate(): [VoidFunction, number] {
      * synchronous calls.
      */
     const deferredForceRender = useCallback(
-        () => sync.postRender(forceRender),
+        () => frame.postRender(forceRender),
         [forceRender]
     )
 

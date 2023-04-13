@@ -1,6 +1,6 @@
 import { frameData } from "../frameloop/data"
 import { FrameData } from "../frameloop/types"
-import { sync } from "../frameloop"
+import { frame } from "../frameloop"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { velocityPerSecond } from "../utils/velocity-per-second"
 import { warnOnce } from "../utils/warn-once"
@@ -211,7 +211,7 @@ export class MotionValue<V = any> {
                  * If we have no more change listeners by the start
                  * of the next frame, stop active animations.
                  */
-                sync.read(() => {
+                frame.read(() => {
                     if (!this.events.change.getSize()) {
                         this.stop()
                     }
@@ -287,7 +287,7 @@ export class MotionValue<V = any> {
         if (this.lastUpdated !== timestamp) {
             this.timeDelta = delta
             this.lastUpdated = timestamp
-            sync.postRender(this.scheduleVelocityCheck)
+            frame.postRender(this.scheduleVelocityCheck)
         }
 
         // Update update subscribers
@@ -351,7 +351,7 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    private scheduleVelocityCheck = () => sync.postRender(this.velocityCheck)
+    private scheduleVelocityCheck = () => frame.postRender(this.velocityCheck)
 
     /**
      * Updates `prev` with `current` if the value hasn't been updated this frame.

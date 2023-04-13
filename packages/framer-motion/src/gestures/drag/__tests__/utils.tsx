@@ -1,5 +1,5 @@
 import * as React from "react"
-import { sync } from "../../../frameloop"
+import { frame } from "../../../frameloop"
 import { MotionConfig } from "../../../components/MotionConfig"
 import { act } from "react-dom/test-utils"
 import { pointerDown, pointerMove, pointerUp } from "../../../../jest.setup"
@@ -15,7 +15,7 @@ const pos: Point = {
 }
 
 export const frame = {
-    postRender: () => new Promise((resolve) => sync.postRender(resolve)),
+    postRender: () => new Promise((resolve) => frame.postRender(resolve)),
 }
 
 type Deferred<T> = {
