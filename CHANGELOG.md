@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.0] 2023-04-14
+
+### Added
+
+-   Exporting `frame` and `cancelFrame` as a public API.
+
 ## [10.11.6] 2023-04-12
 
 ### Fixed
