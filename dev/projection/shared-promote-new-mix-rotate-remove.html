@@ -72,7 +72,7 @@
 
             newBoxProjection.root.didUpdate()
 
-            sync.postRender(() => {
+            frame.postRender(() => {
                 matchVisibility(newBox, "visible")
                 matchOpacity(newBox, 1)
                 matchRotate(newBox, 20)

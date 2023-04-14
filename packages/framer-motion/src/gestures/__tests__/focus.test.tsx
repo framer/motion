@@ -2,7 +2,7 @@ import { focus, blur, render } from "../../../jest.setup"
 import * as React from "react"
 import { motion, motionValue } from "../../"
 import { transformValues } from "../../motion/__tests__/util-transform-values"
-import { sync } from "../../frameloop"
+import { frame } from "../../frameloop"
 
 describe("focus", () => {
     test("whileFocus applied", async () => {
@@ -195,9 +195,9 @@ describe("focus", () => {
 
             focus(container, "myAnchorElement")
 
-            sync.postRender(() => {
+            frame.postRender(() => {
                 blur(container, "myAnchorElement")
-                sync.postRender(() => resolve(container.firstChild as Element))
+                frame.postRender(() => resolve(container.firstChild as Element))
             })
         })
 

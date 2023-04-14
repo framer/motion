@@ -1,4 +1,4 @@
-import { Sync } from "../../frameloop/types"
+import { Frameloop } from "../../frameloop/types"
 import { transformProps } from "../../render/html/utils/transform"
 import { millisecondsToSeconds } from "../../utils/time-conversion"
 import type { MotionValue } from "../../value"
@@ -16,7 +16,7 @@ export function handoffOptimizedAppearAnimation(
      * while also allowing this function to not be included in
      * Framer Motion bundles where it's not needed.
      */
-    sync: Sync
+    frame: Frameloop
 ): number {
     const storeId = appearStoreId(
         id,
@@ -54,7 +54,7 @@ export function handoffOptimizedAppearAnimation(
          *
          * Here, we resync the two animations before the optimised WAAPI animation is cancelled.
          */
-        sync.update(() => {
+        frame.update(() => {
             if (value.animation) {
                 value.animation.time = millisecondsToSeconds(
                     performance.now() - sampledTime
@@ -69,7 +69,7 @@ export function handoffOptimizedAppearAnimation(
          *   2. As all independent transforms share a single transform animation, stopping
          *      it synchronously would prevent subsequent transforms from handing off.
          */
-        sync.render(cancelOptimisedAnimation)
+        frame.render(cancelOptimisedAnimation)
 
         /**
          * We use main thread timings vs those returned by Animation.currentTime as it

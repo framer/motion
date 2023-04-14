@@ -98,7 +98,7 @@
             newBoxProjection.root.didUpdate()
 
             let midBox = { bottom: 100, left: 50, right: 125, top: 50 }
-            sync.postRender(() => {
+            frame.postRender(() => {
                 matchViewportBox(child, midBox)
                 matchViewportBox(newChild, midBox)
                 matchVisibility(child, "visible")
@@ -119,7 +119,7 @@
                 newBoxProjection.root.didUpdate()
 
                 midBox = { bottom: 75, left: 25, right: 87.5, top: 25 }
-                sync.postRender(() => {
+                frame.postRender(() => {
                     matchViewportBox(child, midBox)
                     matchViewportBox(newChild, midBox)
                     matchVisibility(child, "visible")

@@ -70,7 +70,7 @@
 
             newBoxProjection.root.didUpdate()
 
-            sync.postRender(() => {
+            frame.postRender(() => {
                 const bbox = newBox.getBoundingClientRect()
                 matchViewportBox(box, bbox)
                 matchVisibility(box, "visible")

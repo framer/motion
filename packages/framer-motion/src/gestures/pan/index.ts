@@ -2,13 +2,13 @@ import { PanInfo, PanSession } from "./PanSession"
 import { addPointerEvent } from "../../events/add-pointer-event"
 import { Feature } from "../../motion/features/Feature"
 import { noop } from "../../utils/noop"
-import { sync } from "../../frameloop"
+import { frame } from "../../frameloop"
 
 type PanEventHandler = (event: PointerEvent, info: PanInfo) => void
 const asyncHandler =
     (handler?: PanEventHandler) => (event: PointerEvent, info: PanInfo) => {
         if (handler) {
-            sync.update(() => handler(event, info))
+            frame.update(() => handler(event, info))
         }
     }
 
@@ -36,7 +36,7 @@ export class PanGesture extends Feature<Element> {
             onEnd: (event: PointerEvent, info: PanInfo) => {
                 delete this.session
                 if (onPanEnd) {
-                    sync.update(() => onPanEnd(event, info))
+                    frame.update(() => onPanEnd(event, info))
                 }
             },
         }

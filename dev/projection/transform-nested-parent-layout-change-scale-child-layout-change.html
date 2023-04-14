@@ -64,7 +64,7 @@
             parentProjection.setValue("scale", 2)
             parentProjection.setValue("x", 400)
 
-            sync.postRender(() => {
+            frame.postRender(() => {
                 const parentOrigin = parent.getBoundingClientRect()
                 const childOrigin = child.getBoundingClientRect()
 

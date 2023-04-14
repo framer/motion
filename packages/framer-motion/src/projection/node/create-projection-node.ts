@@ -1,4 +1,4 @@
-import { sync, cancelSync, flushSync } from "../../frameloop"
+import { frame, cancelFrame, steps } from "../../frameloop"
 import { AnimationPlaybackControls } from "../../animation/types"
 import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
@@ -540,7 +540,7 @@ export function createProjectionNode<I>({
             this.parent && this.parent.children.delete(this)
             ;(this.instance as any) = undefined
 
-            cancelSync.preRender(this.updateProjection)
+            cancelFrame(this.updateProjection)
         }
 
         // only on the root
@@ -656,9 +656,9 @@ export function createProjectionNode<I>({
             this.clearAllSnapshots()
 
             // Flush any scheduled updates
-            flushSync.update()
-            flushSync.preRender()
-            flushSync.render()
+            steps.update.process(frameData)
+            steps.preRender.process(frameData)
+            steps.render.process(frameData)
         }
 
         clearAllSnapshots() {
@@ -667,7 +667,7 @@ export function createProjectionNode<I>({
         }
 
         scheduleUpdateProjection() {
-            sync.preRender(this.updateProjection, false, true)
+            frame.preRender(this.updateProjection, false, true)
         }
 
         scheduleCheckAfterUnmount() {
@@ -676,7 +676,7 @@ export function createProjectionNode<I>({
              * we manually call didUpdate to give a chance to the siblings to animate.
              * Otherwise, cleanup all snapshots to prevents future nodes from reusing them.
              */
-            sync.postRender(() => {
+            frame.postRender(() => {
                 if (this.isLayoutDirty) {
                     this.root.didUpdate()
                 } else {
@@ -1442,7 +1442,7 @@ export function createProjectionNode<I>({
                 this.resumingFrom.currentAnimation.stop()
             }
             if (this.pendingAnimation) {
-                cancelSync.update(this.pendingAnimation)
+                cancelFrame(this.pendingAnimation)
                 this.pendingAnimation = undefined
             }
             /**
@@ -1450,7 +1450,7 @@ export function createProjectionNode<I>({
              * where the target is the same as when the animation started, so we can
              * calculate the relative positions correctly for instant transitions.
              */
-            this.pendingAnimation = sync.update(() => {
+            this.pendingAnimation = frame.update(() => {
                 globalProjectionState.hasAnimatedSinceResize = true
 
                 this.currentAnimation = animateSingleValue(0, animationTarget, {

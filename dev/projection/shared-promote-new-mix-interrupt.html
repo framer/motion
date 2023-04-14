@@ -72,7 +72,7 @@
             newBoxProjection.root.didUpdate()
 
             let midBox = { bottom: 250, left: 50, right: 200, top: 50 }
-            sync.postRender(() => {
+            frame.postRender(() => {
                 matchViewportBox(box, midBox)
                 matchViewportBox(newBox, midBox)
             })

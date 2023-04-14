@@ -31,7 +31,7 @@ import { calcLength } from "../../projection/geometry/delta-calc"
 import { mix } from "../../utils/mix"
 import { percent } from "../../value/types/numbers/units"
 import { animateMotionValue } from "../../animation/interfaces/motion-value"
-import { sync } from "../../frameloop"
+import { frame } from "../../frameloop"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -151,7 +151,7 @@ export class VisualElementDragControls {
 
             // Fire onDragStart event
             if (onDragStart) {
-                sync.update(() => onDragStart(event, info))
+                frame.update(() => onDragStart(event, info), false, true)
             }
 
             const { animationState } = this.visualElement
@@ -228,7 +228,7 @@ export class VisualElementDragControls {
 
         const { onDragEnd } = this.getProps()
         if (onDragEnd) {
-            sync.update(() => onDragEnd(event, info))
+            frame.update(() => onDragEnd(event, info))
         }
     }
 

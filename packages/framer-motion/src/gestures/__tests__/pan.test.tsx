@@ -4,7 +4,7 @@ import { render } from "../../../jest.setup"
 import {
     MockDrag,
     drag,
-    frame,
+    dragFrame,
     deferred,
 } from "../../gestures/drag/__tests__/utils"
 
@@ -35,9 +35,9 @@ describe("pan", () => {
         rerender(<Component />)
 
         const pointer = await drag(container.firstChild).to(100, 100)
-        await frame.postRender()
+        await dragFrame.postRender()
         await pointer.to(50, 50)
-        await frame.postRender()
+        await dragFrame.postRender()
         pointer.end()
         await onPanEnd.promise
 
@@ -59,7 +59,7 @@ describe("pan", () => {
         rerender(<Component />)
 
         const pointer = await drag(container.firstChild).to(1, 1)
-        await frame.postRender()
+        await dragFrame.postRender()
         pointer.end()
         expect(onPanStart).not.toBeCalled()
         expect(onPanEnd).not.toBeCalled()

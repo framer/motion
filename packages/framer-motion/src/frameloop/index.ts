@@ -1,5 +1,5 @@
 import { createRenderStep } from "./create-render-step"
-import { Process, StepId, CancelSync, FlushSync, Sync, Steps } from "./types"
+import { Process, StepId, Frameloop, Steps } from "./types"
 import { frameData } from "./data"
 
 const maxElapsed = 40
@@ -14,29 +14,10 @@ const stepsOrder: StepId[] = [
     "postRender",
 ]
 
-const steps = stepsOrder.reduce((acc, key) => {
+export const steps = stepsOrder.reduce((acc, key) => {
     acc[key] = createRenderStep(() => (runNextFrame = true))
     return acc
 }, {} as Steps)
-
-const sync = stepsOrder.reduce((acc, key) => {
-    const step = steps[key]
-    acc[key] = (process: Process, keepAlive = false, immediate = false) => {
-        if (!runNextFrame) startLoop()
-        return step.schedule(process, keepAlive, immediate)
-    }
-    return acc
-}, {} as Sync)
-
-const cancelSync = stepsOrder.reduce((acc, key) => {
-    acc[key] = steps[key].cancel
-    return acc
-}, {} as CancelSync)
-
-const flushSync = stepsOrder.reduce((acc, key) => {
-    acc[key] = () => steps[key].process(frameData)
-    return acc
-}, {} as FlushSync)
 
 const processStep = (stepId: StepId) => steps[stepId].process(frameData)
 
@@ -48,7 +29,6 @@ const processFrame = (timestamp: number) => {
         : Math.max(Math.min(timestamp - frameData.timestamp, maxElapsed), 1)
 
     frameData.timestamp = timestamp
-
     frameData.isProcessing = true
     stepsOrder.forEach(processStep)
     frameData.isProcessing = false
@@ -66,4 +46,15 @@ const startLoop = () => {
     if (!frameData.isProcessing) requestAnimationFrame(processFrame)
 }
 
-export { sync, cancelSync, flushSync }
+export const frame = stepsOrder.reduce((acc, key) => {
+    const step = steps[key]
+    acc[key] = (process: Process, keepAlive = false, immediate = false) => {
+        if (!runNextFrame) startLoop()
+        return step.schedule(process, keepAlive, immediate)
+    }
+    return acc
+}, {} as Frameloop)
+
+export function cancelFrame(process: Process) {
+    stepsOrder.forEach((key) => steps[key].cancel(process))
+}

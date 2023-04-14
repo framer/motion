@@ -1,6 +1,6 @@
 import { motionValue } from "../"
 import { animate } from "../../animation/animate"
-import { sync } from "../../frameloop"
+import { frame } from "../../frameloop"
 
 describe("motionValue", () => {
     test("change event is type-inferred", () => {
@@ -93,7 +93,7 @@ describe("motionValue", () => {
             expect(value.isAnimating()).toEqual(true)
             unsubscribeB()
 
-            sync.postRender(() => {
+            frame.postRender(() => {
                 expect(value.isAnimating()).toEqual(false)
                 resolve()
             })

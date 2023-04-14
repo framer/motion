@@ -1,4 +1,4 @@
-import { sync, cancelSync } from "../../../frameloop"
+import { frame, cancelFrame } from "../../../frameloop"
 import { frameData } from "../../../frameloop/data"
 import { resize } from "../resize"
 import { createScrollInfo } from "./info"
@@ -61,9 +61,9 @@ export function scroll(
         }
 
         const listener = () => {
-            sync.read(measureAll, false, true)
-            sync.update(updateAll, false, true)
-            sync.update(notifyAll, false, true)
+            frame.read(measureAll, false, true)
+            frame.update(updateAll, false, true)
+            frame.update(notifyAll, false, true)
         }
 
         scrollListeners.set(container, listener)
@@ -77,10 +77,10 @@ export function scroll(
     }
 
     const listener = scrollListeners.get(container)!
-    sync.read(listener, false, true)
+    frame.read(listener, false, true)
 
     return () => {
-        cancelSync.read(listener)
+        cancelFrame(listener)
 
         /**
          * Check if we even have any handlers for this container.

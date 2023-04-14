@@ -1,4 +1,4 @@
-import { sync } from "../../frameloop"
+import { frame } from "../../frameloop"
 import { transformProps } from "../../render/html/utils/transform"
 import type { AnimationTypeState } from "../../render/utils/animation-state"
 import type { VisualElement } from "../../render/VisualElement"
@@ -77,7 +77,7 @@ export function animateTarget(
                     appearId,
                     key,
                     value,
-                    sync
+                    frame
                 )
             }
         }

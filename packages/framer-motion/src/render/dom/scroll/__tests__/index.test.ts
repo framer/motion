@@ -1,4 +1,4 @@
-import { sync } from "../../../../frameloop"
+import { frame } from "../../../../frameloop"
 import { scroll } from "../index"
 import { ScrollOffset } from "../offsets/presets"
 import { ScrollInfo } from "../types"
@@ -9,8 +9,8 @@ type Measurements = {
 
 const measurements = new Map<Element, Measurements>()
 
-async function frame() {
-    return new Promise((resolve) => sync.postRender(resolve))
+async function nextFrame() {
+    return new Promise((resolve) => frame.postRender(resolve))
 }
 
 const createMockMeasurement = (element: Element, name: string) => {
@@ -48,7 +48,7 @@ const setScrollTop = createMockMeasurement(
 async function fireScroll(distance: number = 0) {
     setScrollTop(distance)
     window.dispatchEvent(new window.Event("scroll"))
-    return frame()
+    return nextFrame()
 }
 
 describe("scroll", () => {
@@ -130,7 +130,7 @@ describe("scroll", () => {
         const fireElementScroll = async (distance: number = 0) => {
             setContainerScrollTop(distance)
             container.dispatchEvent(new window.Event("scroll"))
-            await frame()
+            await nextFrame()
         }
 
         const stopScroll = scroll(
@@ -198,7 +198,7 @@ describe("scroll", () => {
         async function fireElementScroll(distance: number = 0) {
             setContainerScrollTop(distance)
             container.dispatchEvent(new window.Event("scroll"))
-            await frame()
+            await nextFrame()
         }
 
         const stopScroll = scroll(
@@ -209,7 +209,7 @@ describe("scroll", () => {
         )
 
         return new Promise<void>(async (resolve) => {
-            await frame()
+            await nextFrame()
             expect(latest.y.current).toEqual(0)
             expect(latest.y.offset).toEqual([0, 200])
             expect(latest.y.scrollLength).toEqual(900)
@@ -256,7 +256,7 @@ describe("scroll", () => {
         )
 
         return new Promise<void>(async (resolve) => {
-            await frame()
+            await nextFrame()
 
             expect(latest.y.current).toEqual(0)
             expect(latest.y.offset).toEqual([0, 200])
@@ -302,13 +302,13 @@ describe("scroll", () => {
             expect(latest.y.targetLength).toEqual(3000)
             expect(latest.y.containerLength).toEqual(1000)
             expect(latest.y.progress).toEqual(0.25)
-            await frame()
+            await nextFrame()
 
             setWindowHeight(500)
             setDocumentHeight(6000)
 
             window.dispatchEvent(new window.Event("resize"))
-            await frame()
+            await nextFrame()
             expect(latest.y.current).toEqual(500)
             expect(latest.y.targetLength).toEqual(6000)
             expect(latest.y.containerLength).toEqual(500)
@@ -343,7 +343,7 @@ describe("scroll", () => {
         const fireElementScroll = async (distance: number = 0) => {
             setContainerScrollTop(distance)
             container.dispatchEvent(new window.Event("scroll"))
-            await frame()
+            await nextFrame()
         }
 
         const stopScroll = scroll(
@@ -364,12 +364,12 @@ describe("scroll", () => {
             expect(latest.y.targetLength).toEqual(1000)
             expect(latest.y.containerLength).toEqual(100)
             expect(latest.y.progress).toBeCloseTo(0.1, 1)
-            await frame()
+            await nextFrame()
             setContainerHeight(500)
             setContainerLength(2000)
 
             window.dispatchEvent(new window.Event("resize"))
-            await frame()
+            await nextFrame()
             expect(latest.y.current).toEqual(100)
             expect(latest.y.targetLength).toEqual(2000)
             expect(latest.y.containerLength).toEqual(500)

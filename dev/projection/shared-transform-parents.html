@@ -73,7 +73,7 @@
             aProjection.setValue("x", 100)
             bProjection.setValue("x", -100)
 
-            sync.postRender(() => {
+            frame.postRender(() => {
                 aProjection.willUpdate()
                 bProjection.willUpdate()
                 childProjection.willUpdate()
