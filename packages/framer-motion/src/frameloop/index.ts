@@ -6,7 +6,7 @@ const maxElapsed = 40
 let useDefaultElapsed = true
 let runNextFrame = false
 
-const stepsOrder: StepId[] = [
+export const stepsOrder: StepId[] = [
     "read",
     "update",
     "preRender",
