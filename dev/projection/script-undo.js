@@ -2,6 +2,7 @@ Undo = {}
 
 const {
     HTMLProjectionNode,
+    frame,
     buildTransform,
     animateDelta,
     addScaleCorrector,
