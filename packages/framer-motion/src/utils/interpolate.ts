@@ -24,11 +24,7 @@ function detectMixerFactory<T>(v: T): MixerFactory<any> {
     if (typeof v === "number") {
         return mixNumber
     } else if (typeof v === "string") {
-        if (color.test(v)) {
-            return mixColor
-        } else {
-            return mixComplex
-        }
+        return color.test(v) ? mixColor : mixComplex
     } else if (Array.isArray(v)) {
         return mixArray
     } else if (typeof v === "object") {
