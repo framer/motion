@@ -59,23 +59,24 @@ function tokenise(
     info: ComplexValueInfo,
     { regex, countKey, token, parse }: Tokeniser
 ) {
-    const matches = info.value.match(regex)
+    const matches = info.tokenised.match(regex)
 
     if (!matches) return
 
     info["num" + countKey] = matches.length
-    info.value = info.value.replace(regex, token)
+    info.tokenised = info.tokenised.replace(regex, token)
     info.values.push(...(matches.map(parse) as any))
 }
 
 export function analyseComplexValue(value: string | number): ComplexValueInfo {
+    const originalValue = value.toString()
     const info = {
-        value: typeof value === "number" ? "" + value : value,
+        value: originalValue,
+        tokenised: originalValue,
         values: [],
         numVars: 0,
         numColors: 0,
         numNumbers: 0,
-        tokenised: "",
     }
 
     if (info.value.includes("var(--")) tokenise(info, cssVarTokeniser)
