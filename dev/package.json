@@ -1,6 +1,6 @@
 {
     "name": "framer-motion--dev",
-    "version": "10.12.2",
+    "version": "10.12.3",
     "private": true,
     "scripts": {
         "dev": "webpack serve --config ./webpack/config.js --hot"
@@ -8,8 +8,8 @@
     "dependencies": {
         "@react-three/drei": "^7.27.3",
         "@react-three/fiber": "^8.2.2",
-        "framer-motion": "^10.12.2",
-        "framer-motion-3d": "^10.12.2",
+        "framer-motion": "^10.12.3",
+        "framer-motion-3d": "^10.12.3",
         "path-browserify": "^1.0.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
