@@ -4,7 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [10.12.3] 2023-04-17
+## [10.12.4] 2023-04-18
+
+### Fixed
+
+-   Fixing types for `attrX`, `attrY` and `attrScale` values.
+
+## [10.12.3] 2023-04-18
 
 ### Fixed
 
