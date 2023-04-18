@@ -1001,9 +1001,9 @@ type CSSPropertiesWithoutTransitionOrSingleTransforms = Omit<
 >
 
 type SVGTransformAttributes = {
-    attrX: number
-    attrY: number
-    attrScale: number
+    attrX?: number
+    attrY?: number
+    attrScale?: number
 }
 
 type TargetProperties = CSSPropertiesWithoutTransitionOrSingleTransforms &
