@@ -1000,8 +1000,11 @@ type CSSPropertiesWithoutTransitionOrSingleTransforms = Omit<
     "transition" | "rotate" | "scale" | "perspective"
 >
 
+type SVGTransformAttributes = "attrX" | "attrY" | "attrScale"
+
 type TargetProperties = CSSPropertiesWithoutTransitionOrSingleTransforms &
     SVGAttributes<SVGElement> &
+    SVGTransformAttributes &
     TransformProperties &
     CustomStyles &
     SVGPathProperties
