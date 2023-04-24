@@ -63,7 +63,8 @@ export function createAnimationState(
         const resolved = resolveVariant(visualElement, definition)
 
         if (resolved) {
-            const { transition, transitionEnd, ...target } = resolved
+            const { transition, transitionEnd, transitionFrom, ...target } =
+                resolved
             acc = { ...acc, ...target, ...transitionEnd }
         }
 

@@ -37,7 +37,12 @@ export abstract class DOMVisualElement<
     }
 
     makeTargetAnimatableFromInstance(
-        { transition, transitionEnd, ...target }: TargetAndTransition,
+        {
+            transition,
+            transitionEnd,
+            transitionFrom,
+            ...target
+        }: TargetAndTransition,
         { transformValues }: MotionProps,
         isMounted: boolean
     ): TargetAndTransition {
@@ -63,6 +68,7 @@ export abstract class DOMVisualElement<
         return {
             transition,
             transitionEnd,
+            transitionFrom,
             ...target,
         }
     }

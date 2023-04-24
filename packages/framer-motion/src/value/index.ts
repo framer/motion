@@ -5,6 +5,7 @@ import { SubscriptionManager } from "../utils/subscription-manager"
 import { velocityPerSecond } from "../utils/velocity-per-second"
 import { warnOnce } from "../utils/warn-once"
 import { AnimationPlaybackControls } from "../animation/types"
+import { AnimationType } from "../render/utils/types"
 
 export type Transformer<T> = (v: T) => T
 
@@ -65,6 +66,11 @@ export class MotionValue<V = any> {
      * and therefore has no external listeners. It is therefore safe to animate via WAAPI.
      */
     owner?: Owner
+
+    /**
+     * A
+     */
+    type?: AnimationType
 
     /**
      * The current state of the `MotionValue`.

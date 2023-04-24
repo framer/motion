@@ -35,6 +35,7 @@ export function animateTarget(
     let {
         transition = visualElement.getDefaultTransition(),
         transitionEnd,
+        transitionFrom,
         ...target
     } = visualElement.makeTargetAnimatable(definition)
 
@@ -62,7 +63,11 @@ export function animateTarget(
             continue
         }
 
-        const valueTransition = { delay, elapsed: 0, ...transition }
+        const valueTransition = {
+            delay,
+            elapsed: 0,
+            ...(transitionFrom?.[value.type || "initial"] || transition),
+        }
 
         /**
          * If this is the first time a value is being animated, check
@@ -92,6 +97,8 @@ export function animateTarget(
                     : valueTransition
             )
         )
+
+        value.type = type || "animate"
 
         const animation = value.animation!
 
