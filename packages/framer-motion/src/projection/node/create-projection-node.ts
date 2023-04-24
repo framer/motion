@@ -1400,13 +1400,15 @@ export function createProjectionNode<I>({
                     /**
                      * If this is an unchanged relative target we can consider the
                      * projection not dirty.
+                     *
+                     * TODO: Reinstate performance
                      */
-                    if (
-                        prevRelativeTarget &&
-                        boxEquals(this.relativeTarget, prevRelativeTarget)
-                    ) {
-                        this.isProjectionDirty = false
-                    }
+                    // if (
+                    //     prevRelativeTarget &&
+                    //     boxEquals(this.relativeTarget, prevRelativeTarget)
+                    // ) {
+                    //     this.isProjectionDirty = false
+                    // }
 
                     if (!prevRelativeTarget) prevRelativeTarget = createBox()
                     copyBoxInto(prevRelativeTarget, this.relativeTarget)
@@ -1969,9 +1971,15 @@ export function propagateDirtyNodes(node: IProjectionNode) {
      * but *isn't* dirty to just check its parent to see if *any* ancestor needs
      * correcting.
      */
-    if (!node.isProjecting()) {
-        node.isProjectionDirty = node.parent.isProjectionDirty
-    }
+    // if (!node.isProjecting()) {
+    //     node.isProjectionDirty = node.parent.isProjectionDirty
+    // }
+
+    /**
+     * TODO: The above commented block is only neccessary without this next line.
+     * The next line should be removed
+     */
+    node.isProjectionDirty ||= node.parent.isProjectionDirty
 
     /**
      * Propagate isSharedProjectionDirty and isTransformDirty
