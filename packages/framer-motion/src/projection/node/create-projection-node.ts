@@ -1053,7 +1053,11 @@ export function createProjectionNode<I>({
             if (!this.targetDelta && !this.relativeTarget) {
                 // TODO: This is a semi-repetition of further down this function, make DRY
                 const relativeParent = this.getClosestProjectingParent()
-                if (relativeParent && relativeParent.layout && this.animationProgress !== 1) {
+                if (
+                    relativeParent &&
+                    relativeParent.layout &&
+                    this.animationProgress !== 1
+                ) {
                     this.relativeParent = relativeParent
                     this.forceRelativeParentToResolveTarget()
                     this.relativeTarget = createBox()
@@ -1132,7 +1136,8 @@ export function createProjectionNode<I>({
                     Boolean(relativeParent.resumingFrom) ===
                         Boolean(this.resumingFrom) &&
                     !relativeParent.options.layoutScroll &&
-                    relativeParent.target && this.animationProgress !== 1
+                    relativeParent.target &&
+                    this.animationProgress !== 1
                 ) {
                     this.relativeParent = relativeParent
                     this.forceRelativeParentToResolveTarget()
@@ -1431,7 +1436,6 @@ export function createProjectionNode<I>({
                 this.animationProgress = progress
             }
 
-            if ()
             this.mixTargetDelta(this.options.layoutRoot ? 1000 : 0)
         }
 
