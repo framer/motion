@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.5] 2023-05-01
+
+### Changed
+
+-   Exporting `visualElementStore` for internal use.
+
 ## [10.12.4] 2023-04-18
 
 ### Fixed
