@@ -847,7 +847,7 @@ export abstract class VisualElement<
      * props.
      */
     getBaseTarget(key: string) {
-        const { initial, values } = this.props
+        const { initial } = this.props
         const valueFromInitial =
             typeof initial === "string" || typeof initial === "object"
                 ? resolveVariantFromProps(this.props, initial as any)?.[key]
@@ -859,12 +859,6 @@ export abstract class VisualElement<
         if (initial && valueFromInitial !== undefined) {
             return valueFromInitial
         }
-
-        /**
-         * If we have a MotionValue provided via values, use its current value
-         * to animate back down to.
-         */
-        if (values && values[key]) return values[key].get()
 
         /**
          * Alternatively, if this VisualElement config has defined a getBaseTarget
