@@ -327,6 +327,7 @@ export function createAnimationState(
             const fallbackAnimation = {}
             removedKeys.forEach((key) => {
                 const fallbackTarget = visualElement.getBaseTarget(key)
+
                 if (fallbackTarget !== undefined) {
                     fallbackAnimation[key] = fallbackTarget
                 }
