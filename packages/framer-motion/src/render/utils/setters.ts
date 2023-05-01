@@ -113,7 +113,6 @@ export function checkTargetForNewValues(
          */
         if (value === null) {
             value = origin[key] ?? visualElement.readValue(key) ?? target[key]
-            console.log(origin[key], visualElement.readValue(key), target[key])
         }
 
         /**
