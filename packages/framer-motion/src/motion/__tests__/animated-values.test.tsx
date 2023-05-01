@@ -1,5 +1,6 @@
-import { render } from "../../../jest.setup"
+import { pointerEnter, pointerLeave, render } from "../../../jest.setup"
 import {
+    frame,
     motion,
     motionValue,
     useMotionTemplate,
@@ -155,5 +156,44 @@ describe("values prop", () => {
                 values={{ x: undefined } as any}
             />
         )
+    })
+
+    test.only("Fallback values work as expected", async () => {
+        const promise = new Promise<number>((resolve) => {
+            const opacity = motionValue(0)
+            const ref = React.createRef<HTMLDivElement>()
+
+            const Component = () => {
+                const opacityStyle = useTransform(opacity, [0, 1], [0, 0.5])
+                return (
+                    <motion.div
+                        ref={ref}
+                        values={{ opacity }}
+                        style={{ opacity: opacityStyle }}
+                        whileHover={{ opacity: 1 }}
+                        transition={{ type: false }}
+                    />
+                )
+            }
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            opacity.set(0.5)
+            pointerEnter(container.firstChild as Element)
+
+            frame.render(() => {
+                expect(opacity.get()).toBe(1)
+                pointerLeave(container.firstChild as Element)
+
+                frame.render(() => {
+                    resolve(opacity.get())
+                })
+            })
+        })
+
+        await promise.then((opacity) => {
+            console.log({ opacity })
+            expect(opacity).toBe(1)
+        })
     })
 })
