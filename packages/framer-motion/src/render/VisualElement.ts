@@ -837,8 +837,6 @@ export abstract class VisualElement<
      * only hydrated on creation and when we first read a value.
      */
     setBaseTarget(key: string, value: string | number) {
-        console.log("setting base target", key, "as", value)
-        console.trace()
         this.baseTarget[key] = value
     }
 
