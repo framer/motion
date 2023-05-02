@@ -617,9 +617,11 @@ export function createProjectionNode<I>({
             // but should still clean up the measurements so that the next
             // snapshot could be taken correctly.
             if (updateWasBlocked) {
-                this.unblockUpdate()
-                this.clearAllSnapshots()
-                this.nodes!.forEach(clearMeasurements)
+                queueMicrotask(() => {
+                    this.unblockUpdate()
+                    this.clearAllSnapshots()
+                    this.nodes!.forEach(clearMeasurements)
+                })
                 return
             }
             if (!this.isUpdating) return

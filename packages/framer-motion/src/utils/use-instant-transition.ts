@@ -10,15 +10,11 @@ export function useInstantTransition() {
 
     useEffect(() => {
         /**
-         * Unblock after three animation frames, otherwise this will unblock too soon.
+         * Unblock after two animation frames, otherwise this will unblock too soon.
          */
-        frame.postRender(() => {
-            frame.postRender(() => {
-                frame.postRender(() => {
-                    instantAnimationState.current = false
-                })
-            })
-        })
+        frame.postRender(() =>
+            frame.postRender(() => (instantAnimationState.current = false))
+        )
     }, [forcedRenderCount])
 
     return (callback: () => void) => {
