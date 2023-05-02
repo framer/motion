@@ -1,5 +1,5 @@
-import { ResolvedValueTarget } from "../../types"
 import { complex } from "../../value/types/complex"
+import { ValueKeyframesDefinition } from "../types"
 
 /**
  * Check if a value is animatable. Examples:
@@ -10,7 +10,7 @@ import { complex } from "../../value/types/complex"
  *
  * @internal
  */
-export const isAnimatable = (key: string, value: ResolvedValueTarget) => {
+export const isAnimatable = (key: string, value: ValueKeyframesDefinition) => {
     // If the list of keys tat might be non-animatable grows, replace with Set
     if (key === "zIndex") return false
 
@@ -21,7 +21,7 @@ export const isAnimatable = (key: string, value: ResolvedValueTarget) => {
 
     if (
         typeof value === "string" && // It's animatable if we have a string
-        complex.test(value) && // And it contains numbers and/or colors
+        (complex.test(value) || value === "0") && // And it contains numbers and/or colors
         !value.startsWith("url(") // Unless it starts with "url("
     ) {
         return true
