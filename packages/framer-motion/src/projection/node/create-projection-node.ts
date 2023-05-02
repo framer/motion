@@ -617,6 +617,10 @@ export function createProjectionNode<I>({
             // but should still clean up the measurements so that the next
             // snapshot could be taken correctly.
             if (updateWasBlocked) {
+                /**
+                 * Note: When layout animations are moved to a microtask,
+                 * we can move this back out of one.
+                 */
                 queueMicrotask(() => {
                     this.unblockUpdate()
                     this.clearAllSnapshots()
