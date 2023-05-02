@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.6] 2023-05-02
+
+### Fixed
+
+-   Fixing relative layout animations when mixing `type: false` and `type: "tween", duration: 0`.
+
 ## [10.12.5] 2023-05-01
 
 ### Changed
