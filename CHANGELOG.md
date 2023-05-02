@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.7] 2023-05-02
+
+### Fixed
+
+-   Improve handling of `"none"` keyframes.
+
 ## [10.12.6] 2023-05-02
 
 ### Fixed
