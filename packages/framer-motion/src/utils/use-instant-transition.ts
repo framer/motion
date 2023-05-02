@@ -1,4 +1,4 @@
-import { frame } from "../frameloop"
+// import { frame } from "../frameloop"
 import { useEffect } from "react"
 import { useInstantLayoutTransition } from "../projection/use-instant-layout-transition"
 import { useForceUpdate } from "./use-force-update"
@@ -9,12 +9,15 @@ export function useInstantTransition() {
     const startInstantLayoutTransition = useInstantLayoutTransition()
 
     useEffect(() => {
+        queueMicrotask(() => {
+            instantAnimationState.current = false
+        })
         /**
          * Unblock after two animation frames, otherwise this will unblock too soon.
          */
-        frame.postRender(() =>
-            frame.postRender(() => (instantAnimationState.current = false))
-        )
+        // frame.postRender(() =>
+        //     frame.postRender(() => (instantAnimationState.current = false))
+        // )
     }, [forcedRenderCount])
 
     return (callback: () => void) => {
