@@ -618,6 +618,9 @@ export function createProjectionNode<I>({
             // snapshot could be taken correctly.
             if (updateWasBlocked) {
                 /**
+                 * Unblock layout animations in a microtask, which will run
+                 * after any double renders forced by setStates within layout effects.
+                 *
                  * Note: When layout animations are moved to a microtask,
                  * we can move this back out of one.
                  */
