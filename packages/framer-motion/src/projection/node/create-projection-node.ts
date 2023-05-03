@@ -322,6 +322,8 @@ export function createProjectionNode<I>({
 
         preserveOpacity?: boolean
 
+        hasTreeAnimated = false
+
         constructor(
             latestValues: ResolvedValues = {},
             parent: IProjectionNode | undefined = defaultParent?.()
@@ -360,9 +362,9 @@ export function createProjectionNode<I>({
         /**
          * Lifecycles
          */
-        mount(instance: I, isLayoutDirty = false) {
+        mount(instance: I, isLayoutDirty = this.root.hasTreeAnimated) {
             if (this.instance) return
-            console.log("mount", instance)
+
             this.isSVG = isSVGElement(instance)
 
             this.instance = instance
@@ -555,6 +557,7 @@ export function createProjectionNode<I>({
         }
 
         willUpdate(shouldNotifyListeners = true) {
+            this.root.hasTreeAnimated = true
             if (this.root.isUpdateBlocked()) {
                 this.options.onExitComplete && this.options.onExitComplete()
                 return
