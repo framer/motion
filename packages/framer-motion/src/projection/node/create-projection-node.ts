@@ -610,7 +610,11 @@ export function createProjectionNode<I>({
         }
 
         // Note: Currently only running on root node
-        didUpdate() {
+        updateScheduled = false
+
+        update() {
+            this.updateScheduled = false
+
             const updateWasBlocked = this.isUpdateBlocked()
 
             // When doing an instant transition, we skip the layout update,
@@ -622,6 +626,7 @@ export function createProjectionNode<I>({
                 this.nodes!.forEach(clearMeasurements)
                 return
             }
+
             if (!this.isUpdating) return
 
             this.isUpdating = false
@@ -659,6 +664,13 @@ export function createProjectionNode<I>({
             steps.update.process(frameData)
             steps.preRender.process(frameData)
             steps.render.process(frameData)
+        }
+
+        didUpdate() {
+            if (!this.updateScheduled) {
+                this.updateScheduled = true
+                queueMicrotask(() => this.update())
+            }
         }
 
         clearAllSnapshots() {

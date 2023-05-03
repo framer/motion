@@ -84,9 +84,11 @@
             /**
              * Don't animate the box from its previous position if the scroll has changed.
              */
-            matchViewportBox(box, boxOrigin)
-            matchOpacity(box, 1)
-            matchBorderRadius(box, "20%")
+            frame.postRender(() => {
+                matchViewportBox(box, boxOrigin)
+                matchOpacity(box, 1)
+                matchBorderRadius(box, "20%")
+            })
         </script>
     </body>
 </html>

@@ -89,11 +89,13 @@
                 boxProjection.promote()
                 boxProjection.root.didUpdate()
 
-                matchViewportBox(box, newBoxOrigin)
-                matchViewportBox(newBox, newBoxOrigin)
-                matchVisibility(box, "visible")
-                matchVisibility(newBox, "hidden")
-                matchOpacity(box, 1)
+                frame.postRender(() => {
+                    matchViewportBox(box, newBoxOrigin)
+                    matchViewportBox(newBox, newBoxOrigin)
+                    matchVisibility(box, "visible")
+                    matchVisibility(newBox, "hidden")
+                    matchOpacity(box, 1)
+                })
             }, 50)
         </script>
     </body>

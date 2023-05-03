@@ -78,7 +78,14 @@
 
             boxProjection.root.didUpdate()
 
-            matchViewportBox(box, { top: 0, left: -50, bottom: 100, right: 50 })
+            frame.postRender(() => {
+                matchViewportBox(box, {
+                    top: 0,
+                    left: -50,
+                    bottom: 100,
+                    right: 50,
+                })
+            })
         </script>
     </body>
 </html>

@@ -79,8 +79,10 @@
 
             aProjection.root.didUpdate()
 
-            matchViewportBox(a, aOrigin)
-            matchViewportBox(b, bOrigin)
+            frame.postRender(() => {
+                matchViewportBox(a, aOrigin)
+                matchViewportBox(b, bOrigin)
+            })
         </script>
     </body>
 </html>

@@ -80,8 +80,13 @@
 
             boxProjection.root.didUpdate()
 
-            matchViewportBox(box, addPageScroll(boxOrigin, ...scrollOffset))
-            matchViewportBox(child, addPageScroll(childOrigin, ...scrollOffset))
+            frame.postRender(() => {
+                matchViewportBox(box, addPageScroll(boxOrigin, ...scrollOffset))
+                matchViewportBox(
+                    child,
+                    addPageScroll(childOrigin, ...scrollOffset)
+                )
+            })
         </script>
     </body>
 </html>

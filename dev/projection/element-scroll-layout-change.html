@@ -79,9 +79,11 @@
 
             boxProjection.root.didUpdate()
 
-            matchViewportBox(box, boxOrigin)
-            matchOpacity(box, 1)
-            matchBorderRadius(box, "20%")
+            frame.postRender(() => {
+                matchViewportBox(box, boxOrigin)
+                matchOpacity(box, 1)
+                matchBorderRadius(box, "20%")
+            })
         </script>
     </body>
 </html>

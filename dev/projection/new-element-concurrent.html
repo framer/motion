@@ -77,15 +77,16 @@
             // First layout effect
             boxProjection.root.didUpdate()
 
-            // A/B mounts
-            aProjection.mount(a)
-
-            matchViewportBox(box, boxOrigin)
-            matchViewportBox(a, {
-                bottom: 70,
-                left: 20,
-                right: 70,
-                top: 20,
+            frame.postRender(() => {
+                // A/B mounts
+                aProjection.mount(a)
+                matchViewportBox(box, boxOrigin)
+                matchViewportBox(a, {
+                    bottom: 70,
+                    left: 20,
+                    right: 70,
+                    top: 20,
+                })
             })
         </script>
     </body>
