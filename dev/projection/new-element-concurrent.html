@@ -56,7 +56,6 @@
             const boxOrigin = box.getBoundingClientRect()
             const a = document.createElement("div")
             a.id = "child"
-            a.setAttribute("data-projection-id", "a")
 
             // Render phase
             const aProjection = createNode(
@@ -65,7 +64,7 @@
                 { layout: true },
                 "a"
             )
-            const bProjection = new HTMLProjectionNode("b", {}, boxProjection)
+            const bProjection = new HTMLProjectionNode({}, boxProjection)
 
             // Snapshot
             boxProjection.willUpdate()
@@ -77,9 +76,10 @@
             // First layout effect
             boxProjection.root.didUpdate()
 
+            // A/B mounts
+            aProjection.mount(a)
+
             frame.postRender(() => {
-                // A/B mounts
-                aProjection.mount(a)
                 matchViewportBox(box, boxOrigin)
                 matchViewportBox(a, {
                     bottom: 70,

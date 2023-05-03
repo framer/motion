@@ -7,12 +7,12 @@ import type { Feature } from "./Feature"
 import { MeasureLayout } from "./layout/MeasureLayout"
 
 interface FeatureClass<Props = unknown> {
-    new (props: Props): Feature<Props>;
+    new (props: Props): Feature<Props>
 }
 
 export type HydratedFeatureDefinition = {
     isEnabled: (props: MotionProps) => boolean
-    Feature: FeatureClass<unknown>;
+    Feature: FeatureClass<unknown>
     ProjectionNode?: any
     MeasureLayout?: typeof MeasureLayout
 }
@@ -59,7 +59,6 @@ export type LazyFeatureBundle = () => Promise<FeatureBundle>
 export type RenderComponent<Instance, RenderState> = (
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
     props: MotionProps,
-    projectionId: number | undefined,
     ref: React.Ref<Instance>,
     visualState: VisualState<Instance, RenderState>,
     isStatic: boolean,

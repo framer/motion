@@ -395,7 +395,7 @@ export abstract class VisualElement<
 
         visualElementStore.set(instance, this)
 
-        if (this.projection) {
+        if (this.projection && !this.projection.instance) {
             this.projection.mount(instance)
         }
 
@@ -493,7 +493,6 @@ export abstract class VisualElement<
         { children, ...renderedProps }: MotionProps,
         isStrict: boolean,
         preloadedFeatures?: FeatureBundle,
-        projectionId?: number,
         initialLayoutGroupConfig?: SwitchLayoutGroupContext
     ) {
         let ProjectionNodeConstructor: any
@@ -538,7 +537,6 @@ export abstract class VisualElement<
 
         if (!this.projection && ProjectionNodeConstructor) {
             this.projection = new ProjectionNodeConstructor(
-                projectionId,
                 this.latestValues,
                 this.parent && this.parent.projection
             ) as IProjectionNode

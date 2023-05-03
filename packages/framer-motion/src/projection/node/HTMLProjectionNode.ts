@@ -13,7 +13,7 @@ export const HTMLProjectionNode = createProjectionNode<HTMLElement>({
     }),
     defaultParent: () => {
         if (!rootProjectionNode.current) {
-            const documentNode = new DocumentProjectionNode(0, {})
+            const documentNode = new DocumentProjectionNode({})
             documentNode.mount(window)
             documentNode.setOptions({ layoutScroll: true })
             rootProjectionNode.current = documentNode
