@@ -593,7 +593,6 @@ export function createProjectionNode<I>({
         updateScheduled = false
 
         update() {
-            console.log("process frame")
             this.updateScheduled = false
 
             const updateWasBlocked = this.isUpdateBlocked()
