@@ -700,10 +700,6 @@ export function createProjectionNode<I>({
             if (this.snapshot || !this.instance) return
 
             this.snapshot = this.measure()
-
-            if ((this.instance as any)?.dataset?.framerName === "Top") {
-                console.log("Update snapshot", this.snapshot.measuredBox.y)
-            }
         }
 
         updateLayout() {
@@ -735,10 +731,6 @@ export function createProjectionNode<I>({
 
             const prevLayout = this.layout
             this.layout = this.measure(false)
-
-            if ((this.instance as any)?.dataset?.framerName === "Top") {
-                console.log("Update layout", this.layout.measuredBox.y)
-            }
 
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
@@ -1208,10 +1200,6 @@ export function createProjectionNode<I>({
                 canSkip = false
             }
 
-            if ((this.instance as any)?.dataset?.framerName === "Top") {
-                console.log("Calc projection", canSkip, this.target?.y)
-            }
-
             if (canSkip) return
 
             const { layout, layoutId } = this.options
@@ -1250,7 +1238,18 @@ export function createProjectionNode<I>({
 
             const { target } = lead
 
-            if (!target) return
+            if (!target) {
+                /**
+                 * If we don't have a target to project into, but we were previously
+                 * projecting, we want to remove the stored transform and schedule
+                 * a render to ensure the elements reflect the removed transform.
+                 */
+                if (this.projectionTransform) {
+                    this.projectionTransform = "none"
+                    this.scheduleRender()
+                }
+                return
+            }
 
             if (!this.projectionDelta) {
                 this.projectionDelta = createDelta()
@@ -2009,6 +2008,7 @@ function resetTransformStyle(node: IProjectionNode) {
 function finishAnimation(node: IProjectionNode) {
     node.finishAnimation()
     node.targetDelta = node.relativeTarget = node.target = undefined
+    node.isProjectionDirty = true
 }
 
 function resolveTargetDelta(node: IProjectionNode) {
