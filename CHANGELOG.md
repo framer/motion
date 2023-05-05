@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.8] 2023-05-05
+
+### Fixed
+
+-   Moving layout animations to `queueMicrotasks()`, ensuring layout animations don't fire until all synchronous effects have executed.
+
 ## [10.12.7] 2023-05-02
 
 ### Fixed
