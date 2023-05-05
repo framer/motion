@@ -12,7 +12,7 @@ export function createUseRender(forwardMotionProps = false) {
     const useRender: RenderComponent<
         HTMLElement | SVGElement,
         HTMLRenderState | SVGRenderState
-    > = (Component, props, projectionId, ref, { latestValues }, isStatic) => {
+    > = (Component, props, ref, { latestValues }, isStatic) => {
         const useVisualProps = isSVGComponent(Component)
             ? useSVGProps
             : useHTMLProps
@@ -44,10 +44,6 @@ export function createUseRender(forwardMotionProps = false) {
             () => (isMotionValue(children) ? children.get() : children),
             [children]
         )
-
-        if (projectionId) {
-            elementProps["data-projection-id"] = projectionId
-        }
 
         return createElement<any>(Component, {
             ...elementProps,

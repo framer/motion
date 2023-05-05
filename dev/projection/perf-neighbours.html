@@ -94,8 +94,8 @@
 
             topProjection.root.didUpdate()
 
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
+            frame.postRender(() => {
+                frame.postRender(() => {
                     console.log(window.ProjectionFrames)
                     checkFrame(topEl, 2, {
                         totalNodes: 5,

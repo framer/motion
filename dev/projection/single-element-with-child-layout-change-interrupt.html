@@ -78,20 +78,24 @@
 
             boxProjection.root.didUpdate()
 
-            matchViewportBox(box, boxOrigin)
-            matchViewportBox(child, childOrigin)
+            frame.postRender(() => {
+                matchViewportBox(box, boxOrigin)
+                matchViewportBox(child, childOrigin)
 
-            // Second render
-            boxProjection.willUpdate()
-            childProjection.willUpdate()
+                // Second render
+                boxProjection.willUpdate()
+                childProjection.willUpdate()
 
-            box.classList.remove("b")
-            child.classList.remove("b")
+                box.classList.remove("b")
+                child.classList.remove("b")
 
-            boxProjection.root.didUpdate()
+                boxProjection.root.didUpdate()
 
-            matchViewportBox(box, boxOrigin)
-            matchViewportBox(child, childOrigin)
+                frame.postRender(() => {
+                    matchViewportBox(box, boxOrigin)
+                    matchViewportBox(child, childOrigin)
+                })
+            })
         </script>
     </body>
 </html>

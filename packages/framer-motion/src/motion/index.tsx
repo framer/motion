@@ -10,7 +10,6 @@ import { useMotionRef } from "./utils/use-motion-ref"
 import { useCreateMotionContext } from "../context/MotionContext/create"
 import { loadFeatures } from "./features/load-features"
 import { isBrowser } from "../utils/is-browser"
-import { useProjectionId } from "../projection/node/id"
 import { LayoutGroupContext } from "../context/LayoutGroupContext"
 import { LazyContext } from "../context/LazyContext"
 import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
@@ -63,19 +62,6 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
 
         const context = useCreateMotionContext<Instance>(props)
 
-        /**
-         * Create a unique projection ID for this component. If a new component is added
-         * during a layout animation we'll use this to query the DOM and hydrate its ref early, allowing
-         * us to measure it as soon as any layout effect flushes pending layout animations.
-         *
-         * Performance note: It'd be better not to have to search the DOM for these elements.
-         * For newly-entering components it could be enough to only correct treeScale, in which
-         * case we could mount in a scale-correction mode. This wouldn't be enough for
-         * shared element transitions however. Perhaps for those we could revert to a root node
-         * that gets forceRendered and layout animations are triggered on its layout effect.
-         */
-        const projectionId = isStatic ? undefined : useProjectionId()
-
         const visualState = useVisualState(props, isStatic)
 
         if (!isStatic && isBrowser) {
@@ -107,7 +93,6 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                     configAndProps,
                     isStrict,
                     preloadedFeatures,
-                    projectionId,
                     initialLayoutGroupConfig
                 )
             }
@@ -128,7 +113,6 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                 {useRender(
                     Component,
                     props,
-                    projectionId,
                     useMotionRef<Instance, RenderState>(
                         visualState,
                         context.visualElement,

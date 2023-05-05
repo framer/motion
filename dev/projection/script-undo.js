@@ -28,7 +28,6 @@ addScaleCorrector({
     boxShadow: correctBoxShadow,
 })
 
-let id = 1
 Undo.createNode = (element, parent, options = {}, overrideId) => {
     const latestValues = {}
     const visualElement = new HTMLVisualElement({
@@ -49,8 +48,7 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
         visualElement.scheduleRender()
     }
 
-    id++
-    const node = new HTMLProjectionNode(overrideId || id, latestValues, parent)
+    const node = new HTMLProjectionNode(latestValues, parent)
 
     node.setOptions({
         animate: false,

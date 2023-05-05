@@ -86,22 +86,26 @@
 
             aProjection.root.didUpdate()
 
-            matchViewportBox(a, addPageScroll(aOrigin, 50, 100))
-            matchViewportBox(b, addPageScroll(bOrigin, 50, 100))
+            frame.postRender(() => {
+                matchViewportBox(a, addPageScroll(aOrigin, 50, 100))
+                matchViewportBox(b, addPageScroll(bOrigin, 50, 100))
 
-            aProjection.willUpdate()
-            bProjection.willUpdate()
-            container.classList.remove("as-grid")
-            window.scrollTo(0, 0)
+                aProjection.willUpdate()
+                bProjection.willUpdate()
+                container.classList.remove("as-grid")
+                window.scrollTo(0, 0)
 
-            aProjection.root.didUpdate()
+                aProjection.root.didUpdate()
 
-            matchViewportBox(a, aOrigin)
-            matchViewportBox(b, bOrigin)
-            matchOpacity(a, 1)
-            matchOpacity(b, 1)
-            matchBorderRadius(a, "20px")
-            matchBorderRadius(b, "")
+                frame.postRender(() => {
+                    matchViewportBox(a, aOrigin)
+                    matchViewportBox(b, bOrigin)
+                    matchOpacity(a, 1)
+                    matchOpacity(b, 1)
+                    matchBorderRadius(a, "20px")
+                    matchBorderRadius(b, "")
+                })
+            })
         </script>
     </body>
 </html>

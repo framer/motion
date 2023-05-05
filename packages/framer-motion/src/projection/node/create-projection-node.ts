@@ -83,18 +83,6 @@ export function createProjectionNode<I>({
         id: number = id++
 
         /**
-         * A unique ID generated for every projection element beyond the initial render.
-         *
-         * The projection tree's `didUpdate` function will be triggered by the first element
-         * in the tree to run its layout effects. However, if there are elements entering the tree
-         * these might not be mounted yet. When React renders a `motion` component we
-         * give it a unique selector and register it as a potential projection node (not all
-         * rendered components will be committed by React). In `didUpdate`, we search the DOM for
-         * these potential nodes with this id and hydrate the projetion node of the ones that were commited.
-         */
-        elementId: number | undefined
-
-        /**
          * An id that represents a unique session instigated by startUpdate.
          */
         animationId: number = 0
@@ -334,20 +322,18 @@ export function createProjectionNode<I>({
 
         preserveOpacity?: boolean
 
+        hasTreeAnimated = false
+
         constructor(
-            elementId: number | undefined,
             latestValues: ResolvedValues = {},
             parent: IProjectionNode | undefined = defaultParent?.()
         ) {
-            this.elementId = elementId
             this.latestValues = latestValues
             this.root = parent ? parent.root || parent : this
             this.path = parent ? [...parent.path, parent] : []
             this.parent = parent
 
             this.depth = parent ? parent.depth + 1 : 0
-
-            elementId && this.root.registerPotentialNode(elementId, this)
 
             for (let i = 0; i < this.path.length; i++) {
                 this.path[i].shouldResetTransform = true
@@ -373,16 +359,10 @@ export function createProjectionNode<I>({
             return this.eventHandlers.has(name)
         }
 
-        // Note: Currently only running on root node
-        potentialNodes = new Map<number, IProjectionNode>()
-        registerPotentialNode(elementId: number, node: IProjectionNode) {
-            this.potentialNodes.set(elementId, node)
-        }
-
         /**
          * Lifecycles
          */
-        mount(instance: I, isLayoutDirty = false) {
+        mount(instance: I, isLayoutDirty = this.root.hasTreeAnimated) {
             if (this.instance) return
 
             this.isSVG = isSVGElement(instance)
@@ -396,7 +376,6 @@ export function createProjectionNode<I>({
 
             this.root.nodes!.add(this)
             this.parent && this.parent.children.add(this)
-            this.elementId && this.root.potentialNodes.delete(this.elementId)
 
             if (isLayoutDirty && (layout || layoutId)) {
                 this.isLayoutDirty = true
@@ -578,6 +557,7 @@ export function createProjectionNode<I>({
         }
 
         willUpdate(shouldNotifyListeners = true) {
+            this.root.hasTreeAnimated = true
             if (this.root.isUpdateBlocked()) {
                 this.options.onExitComplete && this.options.onExitComplete()
                 return
@@ -610,7 +590,11 @@ export function createProjectionNode<I>({
         }
 
         // Note: Currently only running on root node
-        didUpdate() {
+        updateScheduled = false
+
+        update() {
+            this.updateScheduled = false
+
             const updateWasBlocked = this.isUpdateBlocked()
 
             // When doing an instant transition, we skip the layout update,
@@ -622,20 +606,10 @@ export function createProjectionNode<I>({
                 this.nodes!.forEach(clearMeasurements)
                 return
             }
+
             if (!this.isUpdating) return
 
             this.isUpdating = false
-
-            /**
-             * Search for and mount newly-added projection elements.
-             *
-             * TODO: Every time a new component is rendered we could search up the tree for
-             * the closest mounted node and query from there rather than document.
-             */
-            if (this.potentialNodes.size) {
-                this.potentialNodes.forEach(mountNodeEarly)
-                this.potentialNodes.clear()
-            }
 
             /**
              * Write
@@ -659,6 +633,13 @@ export function createProjectionNode<I>({
             steps.update.process(frameData)
             steps.preRender.process(frameData)
             steps.render.process(frameData)
+        }
+
+        didUpdate() {
+            if (!this.updateScheduled) {
+                this.updateScheduled = true
+                queueMicrotask(() => this.update())
+            }
         }
 
         clearAllSnapshots() {
@@ -2063,27 +2044,6 @@ function hasOpacityCrossfade(node: IProjectionNode) {
 const defaultLayoutTransition = {
     duration: 0.45,
     ease: [0.4, 0, 0.1, 1],
-}
-
-function mountNodeEarly(node: IProjectionNode, elementId: number) {
-    /**
-     * Rather than searching the DOM from document we can search the
-     * path for the deepest mounted ancestor and search from there
-     */
-    let searchNode = node.root
-    for (let i = node.path.length - 1; i >= 0; i--) {
-        if (Boolean(node.path[i].instance)) {
-            searchNode = node.path[i]
-            break
-        }
-    }
-    const searchElement =
-        searchNode && searchNode !== node.root ? searchNode.instance : document
-
-    const element = (searchElement as Element).querySelector(
-        `[data-projection-id="${elementId}"]`
-    )
-    if (element) node.mount(element, true)
 }
 
 function roundAxis(axis: Axis): void {
