@@ -700,6 +700,10 @@ export function createProjectionNode<I>({
             if (this.snapshot || !this.instance) return
 
             this.snapshot = this.measure()
+
+            if ((this.instance as any)?.dataset?.framerName === "Top") {
+                console.log("Update snapshot", this.snapshot.measuredBox.y)
+            }
         }
 
         updateLayout() {
@@ -731,6 +735,10 @@ export function createProjectionNode<I>({
 
             const prevLayout = this.layout
             this.layout = this.measure(false)
+
+            if ((this.instance as any)?.dataset?.framerName === "Top") {
+                console.log("Update layout", this.layout.measuredBox.y)
+            }
 
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
@@ -1198,6 +1206,10 @@ export function createProjectionNode<I>({
              */
             if (this.resolvedRelativeTargetAt === frameData.timestamp) {
                 canSkip = false
+            }
+
+            if ((this.instance as any)?.dataset?.framerName === "Top") {
+                console.log("Calc projection", canSkip, this.target?.y)
             }
 
             if (canSkip) return
