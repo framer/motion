@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.9] 2023-05-05
+
+### Fixed
+
+-   Fixing jumpy layer when a layout changes after a pending animation has been scheduled.
+
 ## [10.12.8] 2023-05-05
 
 ### Fixed
