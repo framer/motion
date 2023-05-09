@@ -493,10 +493,7 @@ export function createProjectionNode<I>({
                              * finish it immediately. Otherwise it will be animating from a location
                              * that was probably never commited to screen and look like a jumpy box.
                              */
-                            if (
-                                !hasLayoutChanged &&
-                                this.animationProgress === 0
-                            ) {
+                            if (!hasLayoutChanged) {
                                 finishAnimation(this)
                             }
 
