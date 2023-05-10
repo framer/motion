@@ -75,8 +75,11 @@
 
                 requestAnimationFrame(() => {
                     boxProjection.root.didUpdate()
-                    matchViewportBox(box, boxOrigin)
-                    matchViewportBox(child, childOrigin)
+
+                    frame.postRender(() => {
+                        matchViewportBox(box, boxOrigin)
+                        matchViewportBox(child, childOrigin)
+                    })
                 })
             })
         </script>

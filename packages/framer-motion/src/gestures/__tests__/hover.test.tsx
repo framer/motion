@@ -8,7 +8,7 @@ import * as React from "react"
 import { motion } from "../../"
 import { motionValue } from "../../value"
 import { transformValues } from "../../motion/__tests__/util-transform-values"
-import { sync } from "../../frameloop"
+import { frame } from "../../frameloop"
 
 describe("hover", () => {
     test("hover event listeners fire", async () => {
@@ -23,7 +23,7 @@ describe("hover", () => {
         pointerLeave(container.firstChild as Element)
 
         return new Promise<void>((resolve) => {
-            sync.render(() => {
+            frame.render(() => {
                 expect(hoverIn).toBeCalledTimes(1)
                 expect(hoverOut).toBeCalledTimes(1)
                 resolve()
@@ -199,9 +199,9 @@ describe("hover", () => {
 
             pointerEnter(container.firstChild as Element)
 
-            sync.postRender(() => {
+            frame.postRender(() => {
                 pointerLeave(container.firstChild as Element)
-                sync.postRender(() => resolve(container.firstChild as Element))
+                frame.postRender(() => resolve(container.firstChild as Element))
             })
         })
 

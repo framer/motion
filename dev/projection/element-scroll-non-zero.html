@@ -71,9 +71,11 @@
 
             boxProjection.root.didUpdate()
 
-            matchViewportBox(box, addPageScroll(boxOrigin, -50, 0))
-            matchOpacity(box, 1)
-            matchBorderRadius(box, "20px")
+            frame.postRender(() => {
+                matchViewportBox(box, addPageScroll(boxOrigin, -50, 0))
+                matchOpacity(box, 1)
+                matchBorderRadius(box, "20px")
+            })
         </script>
     </body>
 </html>

@@ -90,9 +90,8 @@ export const AnimatePresence: React.FunctionComponent<
 
     // We want to force a re-render once all exiting animations have finished. We
     // either use a local forceRender function, or one from a parent context if it exists.
-    let [forceRender] = useForceUpdate()
-    const forceRenderLayoutGroup = useContext(LayoutGroupContext).forceRender
-    if (forceRenderLayoutGroup) forceRender = forceRenderLayoutGroup
+    const forceRender =
+        useContext(LayoutGroupContext).forceRender || useForceUpdate()[0]
 
     const isMounted = useIsMounted()
 

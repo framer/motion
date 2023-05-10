@@ -7,7 +7,7 @@ import {
     MotionConfig,
     LayoutGroup,
     useAnimation,
-    sync,
+    frame,
 } from "../../.."
 import { motionValue } from "../../../value"
 import { ResolvedValues } from "../../../render/types"
@@ -24,7 +24,7 @@ describe("AnimatePresence", () => {
                             style={{ x }}
                             exit={{ x: 0 }}
                             onAnimationStart={() =>
-                                sync.postRender(() => resolve(x.get()))
+                                frame.postRender(() => resolve(x.get()))
                             }
                         />
                     </AnimatePresence>

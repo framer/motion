@@ -142,9 +142,9 @@ describe("complex value type", () => {
     })
 
     it('can create an animatable "none"', () => {
-        expect(complex.getAnimatableNone("100% 0px #fff")).toBe(
-            "0% 0px rgba(255, 255, 255, 1)"
-        )
+        expect(
+            complex.getAnimatableNone("100% 0px var(--grey, 100) #fff")
+        ).toBe("0% 0px var(--grey, 100) rgba(255, 255, 255, 1)")
     })
 })
 

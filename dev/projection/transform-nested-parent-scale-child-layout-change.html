@@ -61,7 +61,7 @@
 
             parentProjection.setValue("scale", 2)
 
-            sync.postRender(() => {
+            frame.postRender(() => {
                 const parentOrigin = parent.getBoundingClientRect()
                 const childOrigin = child.getBoundingClientRect()
 
@@ -71,8 +71,10 @@
 
                 childProjection.root.didUpdate()
 
-                matchViewportBox(parent, parentOrigin)
-                matchViewportBox(child, childOrigin)
+                frame.postRender(() => {
+                    matchViewportBox(parent, parentOrigin)
+                    matchViewportBox(child, childOrigin)
+                })
             })
         </script>
     </body>

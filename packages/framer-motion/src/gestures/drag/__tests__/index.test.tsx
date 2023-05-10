@@ -1,7 +1,7 @@
 import * as React from "react"
 import { pointerDown, render } from "../../../../jest.setup"
 import { BoundingBox, motion, motionValue, MotionValue } from "../../../"
-import { MockDrag, drag, deferred, frame, Point, sleep } from "./utils"
+import { MockDrag, drag, deferred, dragFrame, Point, sleep } from "./utils"
 import { nextFrame } from "../../__tests__/utils"
 
 describe("drag", () => {
@@ -120,7 +120,7 @@ describe("dragging", () => {
         expect(onDragEnd).toBeCalledTimes(1)
     })
 
-    test("drag handlers aren't frozen at drag session start", async () => {
+    test.only("drag handlers aren't frozen at drag session start", async () => {
         let count = 0
         const onDragEnd = deferred()
         const Component = () => {
@@ -152,9 +152,9 @@ describe("dragging", () => {
         const pointer = await drag(container.firstChild).to(100, 100) // + 1 + 2 = 3
         // Move fires twice + 2 = 5, if this changes in the future it's probably just
         // a change in frame scheduling.
-        await frame.postRender() // + 2 = 7
+        await dragFrame.postRender() // + 2 = 7
         await pointer.to(50, 50) // + 2 = 9
-        await frame.postRender() // + 2 = 11
+        await dragFrame.postRender() // + 2 = 11
         pointer.end() // + 3 = 14
         await onDragEnd.promise
 

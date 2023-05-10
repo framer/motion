@@ -112,7 +112,7 @@
             })
             childAProjection.root.didUpdate()
 
-            sync.postRender(() => {
+            frame.postRender(() => {
                 const parentBbox = parentB.getBoundingClientRect()
                 matchViewportBox(parentA, parentBbox)
 

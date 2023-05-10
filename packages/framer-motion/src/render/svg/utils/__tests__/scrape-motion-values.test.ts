@@ -6,14 +6,17 @@ describe("SVG scrapeMotionValuesFromProps", () => {
         const x = motionValue(0)
         const attrX = motionValue(0)
         const attrY = motionValue(0)
+        const scale = motionValue(0)
+        const attrScale = motionValue(0)
 
         expect(
             scrapeMotionValuesFromProps(
                 {
                     x: attrX,
                     attrY,
+                    scale: attrScale,
                     prev: 0,
-                    style: { x },
+                    style: { x, scale },
                 } as any,
                 {
                     prev: motionValue(1),
@@ -22,7 +25,9 @@ describe("SVG scrapeMotionValuesFromProps", () => {
         ).toEqual({
             attrX,
             attrY,
+            attrScale,
             x,
+            scale,
             prev: 0,
         })
     })

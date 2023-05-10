@@ -51,7 +51,7 @@
 
             boxProjection.setValue("scale", 2)
 
-            sync.postRender(() => {
+            frame.postRender(() => {
                 const transformedBox = {
                     top: -50,
                     left: -50,
@@ -66,7 +66,9 @@
 
                 boxProjection.root.didUpdate()
 
-                matchViewportBox(box, transformedBox)
+                frame.postRender(() => {
+                    matchViewportBox(box, transformedBox)
+                })
             })
         </script>
     </body>

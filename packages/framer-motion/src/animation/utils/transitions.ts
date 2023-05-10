@@ -1,5 +1,4 @@
 import { Transition } from "../../types"
-import { getAnimatableNone } from "../../render/dom/value-types/animatable-none"
 
 /**
  * Decide whether a transition is defined on a given Transition.
@@ -20,23 +19,6 @@ export function isTransitionDefined({
     ...transition
 }: Transition & { elapsed?: number }) {
     return !!Object.keys(transition).length
-}
-
-export function isZero(value: string | number) {
-    return (
-        value === 0 ||
-        (typeof value === "string" &&
-            parseFloat(value) === 0 &&
-            value.indexOf(" ") === -1)
-    )
-}
-
-export function getZeroUnit(
-    potentialUnitType: string | number
-): string | number {
-    return typeof potentialUnitType === "number"
-        ? 0
-        : getAnimatableNone("", potentialUnitType)
 }
 
 export function getValueTransition(transition: Transition, key: string) {

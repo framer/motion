@@ -77,8 +77,8 @@
 
             parentProjection.root.didUpdate()
 
-            sync.postRender(() => {
-                sync.postRender(() => {
+            frame.postRender(() => {
+                frame.postRender(() => {
                     matchViewportBox(parent, parentOrigin)
                     matchViewportBox(child, {
                         bottom: 85,

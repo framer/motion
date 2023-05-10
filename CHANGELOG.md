@@ -4,6 +4,66 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.9] 2023-05-05
+
+### Fixed
+
+-   Fixing jumpy layer when a layout changes after a pending animation has been scheduled.
+
+## [10.12.8] 2023-05-05
+
+### Fixed
+
+-   Moving layout animations to `queueMicrotasks()`, ensuring layout animations don't fire until all synchronous effects have executed.
+
+## [10.12.7] 2023-05-02
+
+### Fixed
+
+-   Improve handling of `"none"` keyframes.
+
+## [10.12.6] 2023-05-02
+
+### Fixed
+
+-   Fixing relative layout animations when mixing `type: false` and `type: "tween", duration: 0`.
+
+## [10.12.5] 2023-05-01
+
+### Changed
+
+-   Exporting `visualElementStore` for internal use.
+
+## [10.12.4] 2023-04-18
+
+### Fixed
+
+-   Fixing types for `attrX`, `attrY` and `attrScale` values.
+
+## [10.12.3] 2023-04-18
+
+### Fixed
+
+-   Fixing CSS variable interpolation inside complex strings.
+
+## [10.12.2] 2023-04-14
+
+### Added
+
+-   Support for `attrScale`. Animate the `scale` SVG attribute.
+
+## [10.12.1] 2023-04-14
+
+### Added
+
+-   Creating `sync` and `cancelSync` as legacy APIs for use within Framer.
+
+## [10.12.0] 2023-04-14
+
+### Added
+
+-   Exporting `frame` and `cancelFrame` as a public API.
+
 ## [10.11.6] 2023-04-12
 
 ### Fixed

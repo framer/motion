@@ -19,6 +19,10 @@ describe("SVG", () => {
         )
     })
 
+    test("accepts attrX/attrY/attrScale in types", () => {
+        render(<motion.circle animate={{ attrX: 1, attrY: 2, attrScale: 3 }} />)
+    })
+
     test("recognises MotionValues in attributes", () => {
         let r = motionValue(0)
         let fill = motionValue("#000")

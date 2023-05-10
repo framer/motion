@@ -1,4 +1,4 @@
-import { sync } from "../../../frameloop"
+import { frame } from "../../../frameloop"
 import React, { useContext } from "react"
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import {
@@ -90,7 +90,7 @@ class MeasureLayoutWithContext extends React.Component<MeasureProps> {
                  * it's in charge of the exit animation and therefore should
                  * be in charge of the safe to remove. Otherwise we call it here.
                  */
-                sync.postRender(() => {
+                frame.postRender(() => {
                     const stack = projection.getStack()
                     if (!stack || !stack.members.length) {
                         this.safeToRemove()
@@ -106,9 +106,12 @@ class MeasureLayoutWithContext extends React.Component<MeasureProps> {
         const { projection } = this.props.visualElement
         if (projection) {
             projection.root!.didUpdate()
-            if (!projection.currentAnimation && projection.isLead()) {
-                this.safeToRemove()
-            }
+
+            queueMicrotask(() => {
+                if (!projection.currentAnimation && projection.isLead()) {
+                    this.safeToRemove()
+                }
+            })
         }
     }
 

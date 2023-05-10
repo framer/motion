@@ -1,7 +1,7 @@
 import { render } from "../../../jest.setup"
 import { motion } from "../../"
 import * as React from "react"
-import { sync } from "../../frameloop"
+import { frame } from "../../frameloop"
 
 describe("transformTemplate", () => {
     it("applies transformTemplate on initial render", () => {
@@ -76,7 +76,7 @@ describe("transformTemplate", () => {
         expect(container.firstChild).toHaveStyle("transform: translateY(20px)")
         rerender(<motion.div style={{ x: 20 }} />)
 
-        await new Promise((resolve) => sync.postRender(resolve))
+        await new Promise((resolve) => frame.postRender(resolve))
 
         expect(container.firstChild).toHaveStyle(
             "transform: translateX(20px) translateZ(0)"
@@ -93,7 +93,7 @@ describe("transformTemplate", () => {
         expect(container.firstChild).toHaveStyle("transform: translateY(20px)")
         rerender(<motion.div style={{ x: 10 }} />)
 
-        await new Promise((resolve) => sync.postRender(resolve))
+        await new Promise((resolve) => frame.postRender(resolve))
 
         expect(container.firstChild).toHaveStyle(
             "transform: translateX(10px) translateZ(0)"
@@ -107,7 +107,7 @@ describe("transformTemplate", () => {
         expect(container.firstChild).toHaveStyle("transform: translateY(20px)")
         rerender(<motion.div />)
 
-        await new Promise((resolve) => sync.postRender(resolve))
+        await new Promise((resolve) => frame.postRender(resolve))
 
         expect(container.firstChild).toHaveStyle("transform: none")
     })

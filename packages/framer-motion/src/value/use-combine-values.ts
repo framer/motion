@@ -1,6 +1,6 @@
 import { MotionValue } from "."
 import { useMotionValue } from "./use-motion-value"
-import { sync, cancelSync } from "../frameloop"
+import { frame, cancelFrame } from "../frameloop"
 import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
 
 export function useCombineMotionValues<R>(
@@ -31,12 +31,12 @@ export function useCombineMotionValues<R>(
      * schedule an update.
      */
     useIsomorphicLayoutEffect(() => {
-        const scheduleUpdate = () => sync.update(updateValue, false, true)
+        const scheduleUpdate = () => frame.update(updateValue, false, true)
         const subscriptions = values.map((v) => v.on("change", scheduleUpdate))
 
         return () => {
             subscriptions.forEach((unsubscribe) => unsubscribe())
-            cancelSync.update(updateValue)
+            cancelFrame(updateValue)
         }
     })
 

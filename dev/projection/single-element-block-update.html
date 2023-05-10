@@ -64,20 +64,25 @@
             // should unblock update
             boxProjection.root.didUpdate()
 
-            const boxNewLayout = {
-                left: 200,
-                top: 100,
-                right: 440,
-                bottom: 240,
-            }
-            matchViewportBox(box, boxNewLayout)
+            frame.postRender(() => {
+                const boxNewLayout = {
+                    left: 200,
+                    top: 100,
+                    right: 440,
+                    bottom: 240,
+                }
+                matchViewportBox(box, boxNewLayout)
 
-            boxProjection.willUpdate()
+                boxProjection.willUpdate()
 
-            box.classList.remove("b")
+                box.classList.remove("b")
 
-            boxProjection.root.didUpdate()
-            matchViewportBox(box, boxNewLayout)
+                boxProjection.root.didUpdate()
+
+                frame.postRender(() => {
+                    matchViewportBox(box, boxNewLayout)
+                })
+            })
         </script>
     </body>
 </html>

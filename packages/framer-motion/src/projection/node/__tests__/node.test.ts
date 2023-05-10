@@ -1,9 +1,14 @@
 import { createTestNode } from "./TestProjectionNode"
 import { propagateDirtyNodes, cleanDirtyNodes } from "../create-projection-node"
 import { IProjectionNode } from "../types"
+import { frame } from "../../../frameloop"
+
+async function nextFrame() {
+    return new Promise((resolve) => frame.postRender(resolve))
+}
 
 describe("node", () => {
-    test("If a child updates layout, and parent has scale, parent resetsTransform during measurement", () => {
+    test("If a child updates layout, and parent has scale, parent resetsTransform during measurement", async () => {
         const parent = createTestNode(undefined, {}, { scale: 2 })
 
         const parentInstance = {
@@ -48,6 +53,8 @@ describe("node", () => {
 
         child.root.didUpdate()
 
+        await nextFrame()
+
         expect(parentInstance.resetTransform).toBeCalledTimes(1)
         expect(childInstance.resetTransform).toBeCalledTimes(0)
 
@@ -60,11 +67,13 @@ describe("node", () => {
 
         child.root.didUpdate()
 
+        await nextFrame()
+
         expect(parentInstance.resetTransform).toBeCalledTimes(2)
         expect(childInstance.resetTransform).toBeCalledTimes(0)
     })
 
-    test("If a child updates layout, parent doesn't resetsTransform during measurement if it has no projection transform", () => {
+    test("If a child updates layout, parent doesn't resetsTransform during measurement if it has no projection transform", async () => {
         const parent = createTestNode()
 
         const parentInstance = {
@@ -104,6 +113,8 @@ describe("node", () => {
 
         child.root.didUpdate()
 
+        await nextFrame()
+
         // Shouldn't call on initial render as calculated deltas are zero
         expect(parentInstance.resetTransform).toBeCalledTimes(0)
         expect(childInstance.resetTransform).toBeCalledTimes(0)
@@ -122,11 +133,13 @@ describe("node", () => {
 
         child.root.didUpdate()
 
+        await nextFrame()
+
         expect(parentInstance.resetTransform).toBeCalledTimes(0)
         expect(childInstance.resetTransform).toBeCalledTimes(1)
     })
 
-    test("Subtrees with updated targets propagate isProjectionDirty to children", () => {
+    test("Subtrees with updated targets propagate isProjectionDirty to children", async () => {
         const a = createTestNode(undefined, {})
 
         const aInstance = {
@@ -198,6 +211,8 @@ describe("node", () => {
         }
 
         b.root.didUpdate()
+
+        await nextFrame()
 
         b.setTargetDelta({
             x: { translate: 200, scale: 2, origin: 0.5, originPoint: 100 },

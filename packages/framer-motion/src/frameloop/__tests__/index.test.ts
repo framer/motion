@@ -1,22 +1,16 @@
-import { sync, cancelSync, flushSync } from ".."
-import { onNextFrame } from "../on-next-frame"
+import { frame, cancelFrame, steps } from ".."
+import { frameData } from "../data"
 
-describe("onNextFrame", () => {
-    it("fires callback on following frame", () => {
-        return new Promise((resolve) => onNextFrame(resolve))
-    })
-})
-
-describe("sync", () => {
+describe("frame", () => {
     it("fires callbacks in the correct order", () => {
         return new Promise<void>((resolve, reject) => {
             const order: number[] = []
 
-            sync.read(() => order.push(0))
-            sync.update(() => order.push(1))
-            sync.preRender(() => order.push(2))
-            sync.render(() => order.push(3))
-            sync.postRender(() => {
+            frame.read(() => order.push(0))
+            frame.update(() => order.push(1))
+            frame.preRender(() => order.push(2))
+            frame.render(() => order.push(3))
+            frame.postRender(() => {
                 order.push(4)
                 if (
                     order[0] === 0 &&
@@ -37,11 +31,11 @@ describe("sync", () => {
         return new Promise<void>((resolve, reject) => {
             let hasFired = false
 
-            const process = sync.render(() => (hasFired = true))
+            const process = frame.render(() => (hasFired = true))
 
-            sync.update(() => cancelSync.render(process))
+            frame.update(() => cancelFrame(process))
 
-            sync.postRender(() => (hasFired ? reject(hasFired) : resolve()))
+            frame.postRender(() => (hasFired ? reject(hasFired) : resolve()))
         })
     })
 
@@ -49,9 +43,9 @@ describe("sync", () => {
         return new Promise<number | string | void>((resolve, reject) => {
             let v = 0
 
-            sync.update(({ timestamp: prevTimestamp }) => {
+            frame.update(({ timestamp: prevTimestamp }) => {
                 v++
-                sync.update(
+                frame.update(
                     ({ timestamp }) => {
                         v++
                         if (timestamp !== prevTimestamp) {
@@ -63,7 +57,7 @@ describe("sync", () => {
                 )
             })
 
-            sync.render(() => (v === 2 ? resolve() : reject(v)))
+            frame.render(() => (v === 2 ? resolve() : reject(v)))
         })
     })
 
@@ -71,18 +65,18 @@ describe("sync", () => {
         return new Promise((resolve: Function, reject: Function) => {
             let v = 0
 
-            sync.update(() => v++)
-            sync.update(() => v++, false, true)
-            sync.render(() => (v === 2 ? resolve() : reject()))
+            frame.update(() => v++)
+            frame.update(() => v++, false, true)
+            frame.render(() => (v === 2 ? resolve() : reject()))
         })
     })
 
     it("uses default elapsed time if first fire", () => {
         return new Promise((resolve: Function, reject: Function) => {
-            sync.update(({ delta: defaultElapsed }) => {
+            frame.update(({ delta: defaultElapsed }) => {
                 setTimeout(
                     () =>
-                        sync.update(({ delta }) =>
+                        frame.update(({ delta }) =>
                             delta === defaultElapsed
                                 ? resolve()
                                 : reject(defaultElapsed, delta)
@@ -97,17 +91,17 @@ describe("sync", () => {
         return new Promise<void>((resolve, reject) => {
             const callback = () => reject()
 
-            sync.read(() => cancelSync.update(callback))
-            sync.update(callback)
-            sync.render(() => resolve())
+            frame.read(() => cancelFrame(callback))
+            frame.update(callback)
+            frame.render(() => resolve())
         })
     })
 
     it("correctly keeps alive", () => {
         return new Promise<void>((resolve) => {
             let v = 0
-            sync.update(() => v++, true)
-            sync.render(() => v === 2 && resolve(), true)
+            frame.update(() => v++, true)
+            frame.render(() => v === 2 && resolve(), true)
         })
     })
 
@@ -116,13 +110,13 @@ describe("sync", () => {
             let updateCount = 0
             let renderCount = 0
 
-            const update = sync.update(() => {
+            const update = frame.update(() => {
                 updateCount++
 
-                if (updateCount === 4) cancelSync.update(update)
+                if (updateCount === 4) cancelFrame(update)
             }, true)
 
-            sync.render(() => {
+            frame.render(() => {
                 renderCount++
 
                 if (renderCount === 6) {
@@ -140,16 +134,16 @@ describe("sync", () => {
         const promise = new Promise<boolean>((resolve) => {
             let v = 0
 
-            sync.update(() => {
-                if (v === 2) flushSync.update()
+            frame.update(() => {
+                if (v === 2) steps.update.process(frameData)
             }, true)
 
-            sync.update(() => {
+            frame.update(() => {
                 v++
                 if (v > 6) resolve(true)
             }, true)
         })
-        flushSync.update()
+        steps.update.process(frameData)
         return expect(promise).resolves.toBe(true)
     })
 })

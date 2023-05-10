@@ -110,3 +110,38 @@ test("custom mixer", () => {
     })
     expect(a(0.5)).toBe(42)
 })
+
+test("interpolate - CSS variables", () => {
+    const f = interpolate(
+        [0, 1],
+        [
+            "linear-gradient(var(--10), var(--20, rgba(0,0,0,0)), #fff)",
+            "linear-gradient(var(--20), var(--20, rgba(0,0,0,0)), #000)",
+        ]
+    )
+    expect(f(0.5)).toEqual(
+        "linear-gradient(var(--20), var(--20, rgba(0,0,0,0)), rgba(180, 180, 180, 1))"
+    )
+})
+
+test("interpolate - color to CSS variables", () => {
+    const f = interpolate(
+        [0, 1],
+        [
+            "linear-gradient(#fff, var(--20, rgba(0,0,0,0)), grey)",
+            "linear-gradient(var(--10), var(--20, rgba(0,0,0,0)), grey)",
+        ]
+    )
+    expect(f(0)).toEqual(
+        "linear-gradient(#fff, var(--20, rgba(0,0,0,0)), grey)"
+    )
+    expect(f(0.5)).toEqual(
+        "linear-gradient(var(--10), var(--20, rgba(0,0,0,0)), grey)"
+    )
+    expect(f(1)).toEqual(
+        "linear-gradient(var(--10), var(--20, rgba(0,0,0,0)), grey)"
+    )
+    expect(f(1.4)).toEqual(
+        "linear-gradient(var(--10), var(--20, rgba(0,0,0,0)), grey)"
+    )
+})

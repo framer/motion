@@ -1,5 +1,5 @@
 import * as React from "react"
-import { sync } from "../../../frameloop"
+import { frame } from "../../../frameloop"
 import { MotionConfig } from "../../../components/MotionConfig"
 import { act } from "react-dom/test-utils"
 import { pointerDown, pointerMove, pointerUp } from "../../../../jest.setup"
@@ -14,8 +14,8 @@ const pos: Point = {
     y: 0,
 }
 
-export const frame = {
-    postRender: () => new Promise((resolve) => sync.postRender(resolve)),
+export const dragFrame = {
+    postRender: () => new Promise((resolve) => frame.postRender(resolve)),
 }
 
 type Deferred<T> = {
@@ -43,7 +43,7 @@ export const drag = (element: any, triggerElement?: any) => {
 
             await act(async () => {
                 pointerMove(document.body)
-                await frame.postRender()
+                await dragFrame.postRender()
             })
 
             return controls

@@ -44,7 +44,7 @@ const calculateDpr = (dpr?: Dpr) =>
 /**
  * This file contains a version of R3F's Canvas component that uses our projection
  * system for layout measurements instead of use-react-measure so we can keep the
- * projection and cameras in sync.
+ * projection and cameras in frame.
  *
  * https://github.com/pmndrs/react-three-fiber/blob/master/packages/fiber/src/web/Canvas.tsx
  */

@@ -1,4 +1,4 @@
-import { sync, cancelSync, flushSync } from "../../frameloop"
+import { frame, cancelFrame, steps } from "../../frameloop"
 import { AnimationPlaybackControls } from "../../animation/types"
 import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
@@ -81,18 +81,6 @@ export function createProjectionNode<I>({
          * A unique ID generated for every projection node.
          */
         id: number = id++
-
-        /**
-         * A unique ID generated for every projection element beyond the initial render.
-         *
-         * The projection tree's `didUpdate` function will be triggered by the first element
-         * in the tree to run its layout effects. However, if there are elements entering the tree
-         * these might not be mounted yet. When React renders a `motion` component we
-         * give it a unique selector and register it as a potential projection node (not all
-         * rendered components will be committed by React). In `didUpdate`, we search the DOM for
-         * these potential nodes with this id and hydrate the projetion node of the ones that were commited.
-         */
-        elementId: number | undefined
 
         /**
          * An id that represents a unique session instigated by startUpdate.
@@ -334,20 +322,18 @@ export function createProjectionNode<I>({
 
         preserveOpacity?: boolean
 
+        hasTreeAnimated = false
+
         constructor(
-            elementId: number | undefined,
             latestValues: ResolvedValues = {},
             parent: IProjectionNode | undefined = defaultParent?.()
         ) {
-            this.elementId = elementId
             this.latestValues = latestValues
             this.root = parent ? parent.root || parent : this
             this.path = parent ? [...parent.path, parent] : []
             this.parent = parent
 
             this.depth = parent ? parent.depth + 1 : 0
-
-            elementId && this.root.registerPotentialNode(elementId, this)
 
             for (let i = 0; i < this.path.length; i++) {
                 this.path[i].shouldResetTransform = true
@@ -373,16 +359,10 @@ export function createProjectionNode<I>({
             return this.eventHandlers.has(name)
         }
 
-        // Note: Currently only running on root node
-        potentialNodes = new Map<number, IProjectionNode>()
-        registerPotentialNode(elementId: number, node: IProjectionNode) {
-            this.potentialNodes.set(elementId, node)
-        }
-
         /**
          * Lifecycles
          */
-        mount(instance: I, isLayoutDirty = false) {
+        mount(instance: I, isLayoutDirty = this.root.hasTreeAnimated) {
             if (this.instance) return
 
             this.isSVG = isSVGElement(instance)
@@ -396,7 +376,6 @@ export function createProjectionNode<I>({
 
             this.root.nodes!.add(this)
             this.parent && this.parent.children.add(this)
-            this.elementId && this.root.potentialNodes.delete(this.elementId)
 
             if (isLayoutDirty && (layout || layoutId)) {
                 this.isLayoutDirty = true
@@ -514,10 +493,7 @@ export function createProjectionNode<I>({
                              * finish it immediately. Otherwise it will be animating from a location
                              * that was probably never commited to screen and look like a jumpy box.
                              */
-                            if (
-                                !hasLayoutChanged &&
-                                this.animationProgress === 0
-                            ) {
+                            if (!hasLayoutChanged) {
                                 finishAnimation(this)
                             }
 
@@ -540,7 +516,7 @@ export function createProjectionNode<I>({
             this.parent && this.parent.children.delete(this)
             ;(this.instance as any) = undefined
 
-            cancelSync.preRender(this.updateProjection)
+            cancelFrame(this.updateProjection)
         }
 
         // only on the root
@@ -578,6 +554,7 @@ export function createProjectionNode<I>({
         }
 
         willUpdate(shouldNotifyListeners = true) {
+            this.root.hasTreeAnimated = true
             if (this.root.isUpdateBlocked()) {
                 this.options.onExitComplete && this.options.onExitComplete()
                 return
@@ -610,7 +587,11 @@ export function createProjectionNode<I>({
         }
 
         // Note: Currently only running on root node
-        didUpdate() {
+        updateScheduled = false
+
+        update() {
+            this.updateScheduled = false
+
             const updateWasBlocked = this.isUpdateBlocked()
 
             // When doing an instant transition, we skip the layout update,
@@ -622,20 +603,10 @@ export function createProjectionNode<I>({
                 this.nodes!.forEach(clearMeasurements)
                 return
             }
+
             if (!this.isUpdating) return
 
             this.isUpdating = false
-
-            /**
-             * Search for and mount newly-added projection elements.
-             *
-             * TODO: Every time a new component is rendered we could search up the tree for
-             * the closest mounted node and query from there rather than document.
-             */
-            if (this.potentialNodes.size) {
-                this.potentialNodes.forEach(mountNodeEarly)
-                this.potentialNodes.clear()
-            }
 
             /**
              * Write
@@ -656,9 +627,16 @@ export function createProjectionNode<I>({
             this.clearAllSnapshots()
 
             // Flush any scheduled updates
-            flushSync.update()
-            flushSync.preRender()
-            flushSync.render()
+            steps.update.process(frameData)
+            steps.preRender.process(frameData)
+            steps.render.process(frameData)
+        }
+
+        didUpdate() {
+            if (!this.updateScheduled) {
+                this.updateScheduled = true
+                queueMicrotask(() => this.update())
+            }
         }
 
         clearAllSnapshots() {
@@ -667,7 +645,7 @@ export function createProjectionNode<I>({
         }
 
         scheduleUpdateProjection() {
-            sync.preRender(this.updateProjection, false, true)
+            frame.preRender(this.updateProjection, false, true)
         }
 
         scheduleCheckAfterUnmount() {
@@ -676,7 +654,7 @@ export function createProjectionNode<I>({
              * we manually call didUpdate to give a chance to the siblings to animate.
              * Otherwise, cleanup all snapshots to prevents future nodes from reusing them.
              */
-            sync.postRender(() => {
+            frame.postRender(() => {
                 if (this.isLayoutDirty) {
                     this.root.didUpdate()
                 } else {
@@ -1053,7 +1031,11 @@ export function createProjectionNode<I>({
             if (!this.targetDelta && !this.relativeTarget) {
                 // TODO: This is a semi-repetition of further down this function, make DRY
                 const relativeParent = this.getClosestProjectingParent()
-                if (relativeParent && relativeParent.layout) {
+                if (
+                    relativeParent &&
+                    relativeParent.layout &&
+                    this.animationProgress !== 1
+                ) {
                     this.relativeParent = relativeParent
                     this.forceRelativeParentToResolveTarget()
                     this.relativeTarget = createBox()
@@ -1132,7 +1114,8 @@ export function createProjectionNode<I>({
                     Boolean(relativeParent.resumingFrom) ===
                         Boolean(this.resumingFrom) &&
                     !relativeParent.options.layoutScroll &&
-                    relativeParent.target
+                    relativeParent.target &&
+                    this.animationProgress !== 1
                 ) {
                     this.relativeParent = relativeParent
                     this.forceRelativeParentToResolveTarget()
@@ -1442,7 +1425,7 @@ export function createProjectionNode<I>({
                 this.resumingFrom.currentAnimation.stop()
             }
             if (this.pendingAnimation) {
-                cancelSync.update(this.pendingAnimation)
+                cancelFrame(this.pendingAnimation)
                 this.pendingAnimation = undefined
             }
             /**
@@ -1450,7 +1433,7 @@ export function createProjectionNode<I>({
              * where the target is the same as when the animation started, so we can
              * calculate the relative positions correctly for instant transitions.
              */
-            this.pendingAnimation = sync.update(() => {
+            this.pendingAnimation = frame.update(() => {
                 globalProjectionState.hasAnimatedSinceResize = true
 
                 this.currentAnimation = animateSingleValue(0, animationTarget, {
@@ -2058,27 +2041,6 @@ function hasOpacityCrossfade(node: IProjectionNode) {
 const defaultLayoutTransition = {
     duration: 0.45,
     ease: [0.4, 0, 0.1, 1],
-}
-
-function mountNodeEarly(node: IProjectionNode, elementId: number) {
-    /**
-     * Rather than searching the DOM from document we can search the
-     * path for the deepest mounted ancestor and search from there
-     */
-    let searchNode = node.root
-    for (let i = node.path.length - 1; i >= 0; i--) {
-        if (Boolean(node.path[i].instance)) {
-            searchNode = node.path[i]
-            break
-        }
-    }
-    const searchElement =
-        searchNode && searchNode !== node.root ? searchNode.instance : document
-
-    const element = (searchElement as Element).querySelector(
-        `[data-projection-id="${elementId}"]`
-    )
-    if (element) node.mount(element, true)
 }
 
 function roundAxis(axis: Axis): void {

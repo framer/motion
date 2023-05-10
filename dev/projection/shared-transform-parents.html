@@ -73,7 +73,7 @@
             aProjection.setValue("x", 100)
             bProjection.setValue("x", -100)
 
-            sync.postRender(() => {
+            frame.postRender(() => {
                 aProjection.willUpdate()
                 bProjection.willUpdate()
                 childProjection.willUpdate()
@@ -89,12 +89,14 @@
 
                 newChildProjection.root.didUpdate()
 
-                const newChildOrigin = newChild.getBoundingClientRect()
+                frame.postRender(() => {
+                    const newChildOrigin = newChild.getBoundingClientRect()
 
-                matchViewportBox(child, childOrigin)
-                matchViewportBox(newChild, childOrigin)
-                matchOpacity(child, 1)
-                matchOpacity(newChild, 0)
+                    matchViewportBox(child, childOrigin)
+                    matchViewportBox(newChild, childOrigin)
+                    matchOpacity(child, 1)
+                    matchOpacity(newChild, 0)
+                })
             })
         </script>
     </body>

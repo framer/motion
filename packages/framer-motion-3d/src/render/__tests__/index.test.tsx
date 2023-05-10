@@ -1,4 +1,4 @@
-import { ResolvedValues, sync } from "framer-motion"
+import { ResolvedValues, frame } from "framer-motion"
 import * as React from "react"
 import { useEffect, useRef } from "react"
 import { Euler, Vector3 } from "three"
@@ -240,7 +240,7 @@ describe("motion for three", () => {
             }
 
             ReactThreeTestRenderer.create(<Component />)
-            sync.update(() => resolve([x.get(), y.get()]))
+            frame.update(() => resolve([x.get(), y.get()]))
         })
 
         expect(result[0]).toEqual(100)

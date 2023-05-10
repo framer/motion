@@ -13,13 +13,19 @@ type BlendableObject = {
     [key: string]: string | number | RGBA | HSLA
 }
 
+const mixImmediate =
+    (origin: number | string, target: number | string) => (p: number) =>
+        `${p > 0 ? target : origin}`
+
 function getMixer(origin: any, target: any) {
     if (typeof origin === "number") {
         return (v: number) => mix(origin, target as number, v)
     } else if (color.test(origin)) {
         return mixColor(origin, target as HSLA | RGBA | string)
     } else {
-        return mixComplex(origin as string, target as string)
+        return origin.startsWith("var(")
+            ? mixImmediate(origin, target)
+            : mixComplex(origin as string, target as string)
     }
 }
 
@@ -64,6 +70,7 @@ export const mixComplex = (
     const targetStats = analyseComplexValue(target)
 
     const canInterpolate =
+        originStats.numVars === targetStats.numVars &&
         originStats.numColors === targetStats.numColors &&
         originStats.numNumbers >= targetStats.numNumbers
 
@@ -78,6 +85,6 @@ export const mixComplex = (
             `Complex values '${origin}' and '${target}' too different to mix. Ensure all colors are of the same type, and that each contains the same quantity of number and color values. Falling back to instant transition.`
         )
 
-        return (p: number) => `${p > 0 ? target : origin}`
+        return mixImmediate(origin, target)
     }
 }

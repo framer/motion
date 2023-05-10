@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #parent {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+            }
+
+            #parent.b {
+                width: 110px;
+                height: 110px;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="parent"></div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode, relativeEase } = window.Animate
+            const { matchViewportBox } = window.Assert
+
+            const parent = document.getElementById("parent")
+            const parentOrigin = parent.getBoundingClientRect()
+
+            const parentProjection = createNode(
+                parent,
+                undefined,
+                {},
+                { duration: 2 }
+            )
+
+            parentProjection.willUpdate()
+
+            parent.classList.add("b")
+
+            parentProjection.root.didUpdate()
+
+            frame.postRender(() => {
+                parentProjection.willUpdate()
+
+                parent.classList.remove("b")
+
+                parentProjection.root.didUpdate()
+
+                frame.postRender(() => {
+                    matchViewportBox(parent, parentOrigin)
+                })
+            })
+        </script>
+    </body>
+</html>

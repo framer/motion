@@ -12,10 +12,10 @@ import { isCSSVariableToken, CSSVariableToken } from "./is-css-variable"
  *
  * @param current
  */
-export const cssVariableRegex =
+const splitCSSVariableRegex =
     /var\((--[a-zA-Z0-9-_]+),? ?([a-zA-Z0-9 ()%#.,-]+)?\)/
 export function parseCSSVariable(current: string) {
-    const match = cssVariableRegex.exec(current)
+    const match = splitCSSVariableRegex.exec(current)
     if (!match) return [,]
 
     const [, token, fallback] = match

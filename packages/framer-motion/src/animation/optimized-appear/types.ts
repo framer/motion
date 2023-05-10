@@ -1,4 +1,4 @@
-import { Sync } from "../../frameloop/types"
+import { Frameloop } from "../../frameloop/types"
 import { MotionValue } from "../../value"
 
 /**
@@ -11,7 +11,7 @@ declare global {
             storeId: string,
             valueName: string,
             value: MotionValue,
-            sync: Sync
+            sync: Frameloop
         ) => number
     }
 }

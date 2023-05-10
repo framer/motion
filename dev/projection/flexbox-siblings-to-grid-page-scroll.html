@@ -86,12 +86,14 @@
 
             aProjection.root.didUpdate()
 
-            matchViewportBox(a, addPageScroll(aOrigin, 50, 100))
-            matchViewportBox(b, addPageScroll(bOrigin, 50, 100))
-            matchOpacity(a, 1)
-            matchOpacity(b, 1)
-            matchBorderRadius(a, "13.3333% / 10%")
-            matchBorderRadius(b, "")
+            frame.postRender(() => {
+                matchViewportBox(a, addPageScroll(aOrigin, 50, 100))
+                matchViewportBox(b, addPageScroll(bOrigin, 50, 100))
+                matchOpacity(a, 1)
+                matchOpacity(b, 1)
+                matchBorderRadius(a, "13.3333% / 10%")
+                matchBorderRadius(b, "")
+            })
         </script>
     </body>
 </html>

@@ -70,14 +70,16 @@
 
             aProjection.root.didUpdate()
 
-            window.scrollTo(0, 0)
+            frame.postRender(() => {
+                window.scrollTo(0, 0)
 
-            matchViewportBox(a, aOrigin)
-            matchViewportBox(b, bOrigin)
-            matchOpacity(a, 1)
-            matchOpacity(b, 1)
-            matchBorderRadius(a, "13.3333% / 10%")
-            matchBorderRadius(b, "")
+                matchViewportBox(a, aOrigin)
+                matchViewportBox(b, bOrigin)
+                matchOpacity(a, 1)
+                matchOpacity(b, 1)
+                matchBorderRadius(a, "13.3333% / 10%")
+                matchBorderRadius(b, "")
+            })
         </script>
     </body>
 </html>

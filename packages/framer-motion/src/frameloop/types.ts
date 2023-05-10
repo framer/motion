@@ -19,18 +19,10 @@ export interface Step {
 
 export type StepId = "read" | "update" | "preRender" | "render" | "postRender"
 
-export type Sync = {
+export type Frameloop = {
     [key in StepId]: Schedule
 }
 
 export type Steps = {
     [key in StepId]: Step
-}
-
-export type CancelSync = {
-    [key in StepId]: (process: Process) => void
-}
-
-export type FlushSync = {
-    [key in StepId]: () => void
 }
