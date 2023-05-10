@@ -111,6 +111,55 @@ describe("AnimatePresence", () => {
         expect(container.firstChild).toBeFalsy()
     })
 
+    test("Animates out all components when unmounted in close succession", async () => {
+        const keys = [0, 1, 2]
+
+        const Component = ({ visibleKeys }: { visibleKeys: number[] }) => {
+            return (
+                <AnimatePresence>
+                    {visibleKeys.map((key) => {
+                        return (
+                            <motion.div
+                                key={key}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.5 }}
+                            />
+                        )
+                    })}
+                </AnimatePresence>
+            )
+        }
+
+        const { container, rerender } = render(<Component visibleKeys={keys} />)
+
+        // Remove the last element from the array and wait briefly
+        await act(async () => {
+            rerender(<Component visibleKeys={[0, 1]} />)
+            await new Promise<void>((resolve) => {
+                setTimeout(() => {
+                    resolve()
+                }, 100)
+            });
+        })
+
+        // Remove the second-to-last element from the array
+        await act(async () => {
+            rerender(<Component visibleKeys={[0]} />)
+        });
+
+        await act(async () => {
+            await new Promise<void>((resolve) => {
+                //  Resolve after all animation is expected to have completed
+                setTimeout(() => {
+                    resolve()
+                }, 1000)
+            })
+        })
+
+        // There should only be one element left
+        expect(container.childElementCount).toBe(1)
+    })
+
     test("Allows nested exit animations", async () => {
         const promise = new Promise((resolve) => {
             const opacity = motionValue(0)
