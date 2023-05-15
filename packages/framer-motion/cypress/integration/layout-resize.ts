@@ -26,6 +26,16 @@ describe("Resize window", () => {
                     height: 100,
                 })
             })
+            .get("#child")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .get("#box")
             .trigger("click")
             .wait(50)
             .viewport(200, 200)
@@ -35,12 +45,23 @@ describe("Resize window", () => {
                 expectBbox($box, {
                     top: 100,
                     left: 100,
-                    width: 200,
+                    width: 400,
                     height: 200,
                 })
             })
+            .get("#child")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 100,
+                    left: 100,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .get("#box")
             .trigger("click", { force: true })
             .wait(50)
+            .get("#box")
             .should(([$box]: any) => {
                 expectBbox($box, {
                     top: 0,
@@ -49,6 +70,16 @@ describe("Resize window", () => {
                     height: 100,
                 })
             })
+            .get("#child")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .get("#box")
             .wait(200)
             .trigger("click", { force: true })
             .wait(300)
