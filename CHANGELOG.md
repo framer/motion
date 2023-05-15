@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.11] 2023-05-15
+
+### Fixed
+
+-   Fixing ending layout animations immediately on resize.
+
 ## [10.12.10] 2023-05-10
 
 ### Fixed
