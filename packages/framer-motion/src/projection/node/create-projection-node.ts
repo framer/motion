@@ -1846,7 +1846,6 @@ function updateLayout(node: IProjectionNode) {
 }
 
 function notifyLayoutUpdate(node: IProjectionNode) {
-    node.isLayoutDirty = false
     const snapshot = node.resumeFrom?.snapshot || node.snapshot
 
     if (
