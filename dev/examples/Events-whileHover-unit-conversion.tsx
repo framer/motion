@@ -11,20 +11,18 @@ const style = {
     background: "white",
 }
 
-const container = {
-    hidden: { width: 10 },
-    visible: {
-        width: "100%",
-    },
-}
-
 export const App = () => {
+    const [translateX, setTranslateX] = React.useState("0%")
+
+    React.useEffect(() => {
+        setTimeout(() => setTranslateX("50%"), 1000)
+    }, [])
+
     return (
         <motion.div
-            variants={container}
-            initial="hidden"
-            whileHover="visible"
-            style={style}
+            onUpdate={console.log}
+            animate={{ translateX }}
+            style={{ ...style }}
         />
     )
 }

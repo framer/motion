@@ -32,6 +32,7 @@ export class HTMLVisualElement extends DOMVisualElement<
     ): string | number | null | undefined {
         if (transformProps.has(key)) {
             const defaultType = getDefaultValueType(key)
+            console.log(key, defaultType)
             return defaultType ? defaultType.default || 0 : 0
         } else {
             const computedStyle = getComputedStyle(instance)

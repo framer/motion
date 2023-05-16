@@ -53,6 +53,8 @@ export function animateTarget(
         const value = visualElement.getValue(key)
         const valueTarget = target[key]
 
+        console.log(value?.get())
+
         if (
             !value ||
             valueTarget === undefined ||
