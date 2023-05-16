@@ -94,8 +94,6 @@ export function animateValue<V = number>({
         keyframes = [0, 100] as any
     }
 
-    console.log(keyframes)
-
     const generator = generatorFactory({ ...options, keyframes })
 
     let mirroredGenerator: KeyframeGenerator<unknown> | undefined

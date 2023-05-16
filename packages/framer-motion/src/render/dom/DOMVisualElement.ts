@@ -42,7 +42,7 @@ export abstract class DOMVisualElement<
         isMounted: boolean
     ): TargetAndTransition {
         let origin = getOrigin(target as any, transition || {}, this)
-        console.log({ origin })
+
         /**
          * If Framer has provided a function to convert `Color` etc value types, convert them
          */
