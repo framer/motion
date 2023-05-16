@@ -576,9 +576,9 @@ export abstract class VisualElement<
 
     updateFeatures() {
         for (const key in this.features) {
-            const feature = this.features[key]
+            const feature = this.features[key] as Feature<any>
             if (feature.isMounted) {
-                feature.update(this.props, this.prevProps)
+                feature.update()
             } else {
                 feature.mount()
                 feature.isMounted = true
