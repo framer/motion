@@ -362,7 +362,7 @@ export function createProjectionNode<I>({
         /**
          * Lifecycles
          */
-        mount(instance: I, isLayoutDirty: boolean = this.root.hasTreeAnimated) {
+        mount(instance: I, isLayoutDirty = this.root.hasTreeAnimated) {
             if (this.instance) return
 
             this.isSVG = isSVGElement(instance)
