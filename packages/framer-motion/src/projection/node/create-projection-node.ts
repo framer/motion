@@ -629,10 +629,17 @@ export function createProjectionNode<I>({
             this.nodes!.forEach(notifyLayoutUpdate)
             this.clearAllSnapshots()
 
-            // Flush any scheduled updates
+            /**
+             * Manually flush any pending updates. Ideally
+             * we could leave this to the following requestAnimationFrame but this seems
+             * to leave a flash of incorrectly styled content.
+             */
+            frameData.timestamp = performance.now()
+            frameData.isProcessing = true
             steps.update.process(frameData)
             steps.preRender.process(frameData)
             steps.render.process(frameData)
+            frameData.isProcessing = false
         }
 
         didUpdate() {
