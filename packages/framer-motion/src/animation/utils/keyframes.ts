@@ -36,7 +36,8 @@ export function getKeyframes(
 
         if (isNone(keyframes[i])) {
             noneKeyframeIndexes.push(i)
-        } else if (typeof keyframes[i] === "string") {
+        }
+        if (typeof keyframes[i] === "string" && keyframes[i] !== "none") {
             animatableTemplateValue = keyframes[i] as string
         }
     }
