@@ -137,4 +137,19 @@ describe("getKeyframes", () => {
         )
         expect(e).toEqual(["0px", "50px"])
     })
+
+    test("Makes 0 motion value animatable to string", () => {
+        const keyframes = getKeyframes(motionValue(0), "transform", "0%", {})
+        expect(keyframes).toEqual(["0%", "0%"])
+    })
+
+    test("Makes 0 keyframe animatable to string", () => {
+        const keyframes = getKeyframes(
+            motionValue(0),
+            "transform",
+            [0, "0%"],
+            {}
+        )
+        expect(keyframes).toEqual(["0%", "0%"])
+    })
 })
