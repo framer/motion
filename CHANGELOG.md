@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.12] 2023-05-15
+
+### Fixed
+
+-   Ensuring zero units like `"0px"` can be used as keyframe templates.
+
 ## [10.12.11] 2023-05-15
 
 ### Fixed
