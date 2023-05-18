@@ -9,7 +9,6 @@ const Item = ({ item, axis }) => {
     const y = useMotionValue(0)
     const axisValue = axis === "y" ? y : x
     const boxShadow = useMotionValue(inactiveShadow)
-    // const dragControls = useDragControls()
 
     useEffect(() => {
         let isActive = false
@@ -17,14 +16,8 @@ const Item = ({ item, axis }) => {
             const wasActive = isActive
             if (latestY !== 0) {
                 isActive = true
-                if (isActive !== wasActive) {
-                    animate(boxShadow, "5px 5px 10px rgba(0,0,0,0.3)")
-                }
             } else {
                 isActive = false
-                if (isActive !== wasActive) {
-                    animate(boxShadow, inactiveShadow)
-                }
             }
         })
     }, [y, boxShadow])
@@ -33,16 +26,11 @@ const Item = ({ item, axis }) => {
         <Reorder.Item
             value={item}
             id={item}
-            drag
-            // dragListener={false}
-            // dragControls={dragControls}
             style={{ boxShadow, y }}
-            dragTransition={{ bounceStiffness: 2000, bounceDamping: 10000 }}
             transition={{ duration: 0.1 }}
         >
             <span>{item}</span>
             <ReorderIcon
-            // dragControls={dragControls}
             />
         </Reorder.Item>
     )
@@ -50,12 +38,11 @@ const Item = ({ item, axis }) => {
 
 export const App = () => {
     const [items, setItems] = useState(initialItems)
-    const params = new URLSearchParams(window.location.search)
-    const axis = params.get("axis") || "y"
+    const axis =  "y"
 
     return (
         <Reorder.Group
-            axis={axis}
+            axis="y"
             onReorder={setItems}
             style={axis === "y" ? verticalList : horizontalList}
             values={items}
