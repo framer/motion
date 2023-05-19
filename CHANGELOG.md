@@ -8,7 +8,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Fixed issue with `dragSnapToOrigin` not continuing animation when interupted interupt
+-   Fixed issue with `dragSnapToOrigin` not continuing animation when interupted
 
 ## [10.12.12] 2023-05-15
 
