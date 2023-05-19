@@ -4,11 +4,41 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [10.12.8] 2023-05-19
+## [10.12.13] 2023-05-19
 
 ### Fixed
 
 -   Fixed issue with `dragSnapToOrigin` not continuing animation when interupted interupt
+
+## [10.12.12] 2023-05-15
+
+### Fixed
+
+-   Ensuring zero units like `"0px"` can be used as keyframe templates.
+
+## [10.12.11] 2023-05-15
+
+### Fixed
+
+-   Fixing ending layout animations immediately on resize.
+
+## [10.12.10] 2023-05-10
+
+### Fixed
+
+-   Fixing persisting `AnimatePresence` child when exit animation is interrupted.
+
+## [10.12.9] 2023-05-05
+
+### Fixed
+
+-   Fixing jumpy layer when a layout changes after a pending animation has been scheduled.
+
+## [10.12.8] 2023-05-05
+
+### Fixed
+
+-   Moving layout animations to `queueMicrotasks()`, ensuring layout animations don't fire until all synchronous effects have executed.
 
 ## [10.12.7] 2023-05-02
 

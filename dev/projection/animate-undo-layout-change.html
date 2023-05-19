@@ -6,18 +6,15 @@
                 margin: 0;
             }
 
-            #box {
+            #parent {
                 width: 100px;
                 height: 100px;
                 background-color: #00cc88;
             }
 
-            #box.b {
-                width: 200px;
-                position: absolute;
-                top: 100px;
-                left: 200px;
-                padding: 20px;
+            #parent.b {
+                width: 110px;
+                height: 110px;
             }
 
             #trigger-overflow {
@@ -34,39 +31,42 @@
             }
         </style>
     </head>
-
     <body>
-        <div id="box" data-layout-correct="true"></div>
+        <div id="parent"></div>
         <div id="trigger-overflow"></div>
 
         <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
         <script src="./script-assert.js"></script>
-        <script src="./script-undo.js"></script>
+        <script src="./script-animate.js"></script>
         <script>
-            const { createNode } = window.Undo
+            const { createNode, relativeEase } = window.Animate
             const { matchViewportBox } = window.Assert
-            const box = document.getElementById("box")
-            const boxProjection = createNode(box)
-            const boxOrigin = box.getBoundingClientRect()
+
+            const parent = document.getElementById("parent")
+            const parentOrigin = parent.getBoundingClientRect()
+
+            const parentProjection = createNode(
+                parent,
+                undefined,
+                {},
+                { duration: 2 }
+            )
+
+            parentProjection.willUpdate()
+
+            parent.classList.add("b")
+
+            parentProjection.root.didUpdate()
 
             frame.postRender(() => {
-                matchViewportBox(box, boxOrigin)
+                parentProjection.willUpdate()
 
-                boxProjection.willUpdate()
+                parent.classList.remove("b")
 
-                boxProjection.setValue("scale", 2)
-
-                const transformedBox = {
-                    top: -50,
-                    left: -50,
-                    right: 150,
-                    bottom: 150,
-                }
-
-                boxProjection.root.didUpdate()
+                parentProjection.root.didUpdate()
 
                 frame.postRender(() => {
-                    matchViewportBox(box, transformedBox)
+                    matchViewportBox(parent, parentOrigin)
                 })
             })
         </script>

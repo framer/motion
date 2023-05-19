@@ -36,7 +36,6 @@ export type LayoutEvents =
 
 export interface IProjectionNode<I = unknown> {
     id: number
-    elementId: number | undefined
     animationId: number
     parent?: IProjectionNode
     relativeParent?: IProjectionNode
@@ -88,9 +87,7 @@ export interface IProjectionNode<I = unknown> {
     scheduleUpdateProjection(): void
     scheduleCheckAfterUnmount(): void
     checkUpdateFailed(): void
-    potentialNodes: Map<number, IProjectionNode>
     sharedNodes: Map<string, NodeStack>
-    registerPotentialNode(id: number, node: IProjectionNode): void
     registerSharedNode(id: string, node: IProjectionNode): void
     getStack(): NodeStack | undefined
     isVisible: boolean
@@ -134,7 +131,7 @@ export interface IProjectionNode<I = unknown> {
     addEventListener(name: LayoutEvents, handler: any): VoidFunction
     notifyListeners(name: LayoutEvents, ...args: any): void
     hasListeners(name: LayoutEvents): boolean
-
+    hasTreeAnimated: boolean
     preserveOpacity?: boolean
 }
 

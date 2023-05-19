@@ -89,12 +89,14 @@
 
                 newChildProjection.root.didUpdate()
 
-                const newChildOrigin = newChild.getBoundingClientRect()
+                frame.postRender(() => {
+                    const newChildOrigin = newChild.getBoundingClientRect()
 
-                matchViewportBox(child, childOrigin)
-                matchViewportBox(newChild, childOrigin)
-                matchOpacity(child, 1)
-                matchOpacity(newChild, 0)
+                    matchViewportBox(child, childOrigin)
+                    matchViewportBox(newChild, childOrigin)
+                    matchOpacity(child, 1)
+                    matchOpacity(newChild, 0)
+                })
             })
         </script>
     </body>

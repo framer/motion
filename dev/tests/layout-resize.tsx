@@ -14,7 +14,14 @@ export const App = () => {
             style={{ ...(state ? a : b) }}
             onClick={() => setState(!state)}
             transition={{ duration: 3 }}
-        />
+        >
+            <motion.div
+                layout
+                id="child"
+                style={{ width: 100, height: 100, background: "blue" }}
+                transition={{ duration: 3 }}
+            />
+        </motion.div>
     )
 }
 
@@ -33,7 +40,7 @@ const a = {
 
 const b = {
     ...box,
-    width: 200,
+    width: 400,
     height: 200,
     top: 100,
     left: 100,

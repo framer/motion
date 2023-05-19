@@ -58,7 +58,9 @@
                     boxProjection.setValue("rotate", 75)
                     boxProjection.root.didUpdate()
 
-                    matchViewportBox(box, boxOrigin)
+                    frame.postRender(() => {
+                        matchViewportBox(box, boxOrigin)
+                    })
                 })
             })
         </script>

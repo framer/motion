@@ -84,7 +84,7 @@
                 requestAnimationFrame(() => {
                     boxProjection.root.didUpdate()
 
-                    requestAnimationFrame(() => {
+                    frame.postRender(() => {
                         matchViewportBox(box, {
                             bottom: 391.4213562011719,
                             height: 282.84271240234375,

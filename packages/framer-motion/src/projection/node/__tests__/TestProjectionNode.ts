@@ -18,7 +18,7 @@ export const TestProjectionNode = createProjectionNode<TestInstance>({
     measureScroll: (_instance) => ({ x: 0, y: 0 }),
     defaultParent: () => {
         if (!rootNode) {
-            rootNode = new TestRootNode(0)
+            rootNode = new TestRootNode() as any
         }
 
         return rootNode
@@ -28,13 +28,12 @@ export const TestProjectionNode = createProjectionNode<TestInstance>({
     checkIsScrollRoot: () => false,
 })
 
-let id = 0
 export function createTestNode(
     parent?: any,
     options?: ProjectionNodeOptions,
     latestValues: any = {}
 ) {
-    const testNode = new TestProjectionNode(id++, latestValues, parent)
+    const testNode = new TestProjectionNode(latestValues, parent)
     testNode.setOptions({
         ...options,
     })

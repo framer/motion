@@ -63,8 +63,10 @@
 
             parentProjection.root.didUpdate()
 
-            matchViewportBox(parent, parentOrigin)
-            matchViewportBox(child, childOrigin)
+            frame.postRender(() => {
+                matchViewportBox(parent, parentOrigin)
+                matchViewportBox(child, childOrigin)
+            })
         </script>
     </body>
 </html>

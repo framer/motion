@@ -106,9 +106,12 @@ class MeasureLayoutWithContext extends React.Component<MeasureProps> {
         const { projection } = this.props.visualElement
         if (projection) {
             projection.root!.didUpdate()
-            if (!projection.currentAnimation && projection.isLead()) {
-                this.safeToRemove()
-            }
+
+            queueMicrotask(() => {
+                if (!projection.currentAnimation && projection.isLead()) {
+                    this.safeToRemove()
+                }
+            })
         }
     }
 

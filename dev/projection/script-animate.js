@@ -28,7 +28,6 @@ addScaleCorrector({
     boxShadow: correctBoxShadow,
 })
 
-let id = 1
 Animate.createNode = (
     element,
     parent,
@@ -54,8 +53,7 @@ Animate.createNode = (
         visualElement.scheduleRender()
     }
 
-    id++
-    const node = new HTMLProjectionNode(id, latestValues, parent)
+    const node = new HTMLProjectionNode(latestValues, parent)
 
     node.setOptions({
         scheduleRender: scheduleRender,

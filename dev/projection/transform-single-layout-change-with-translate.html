@@ -66,7 +66,9 @@
 
                 boxProjection.root.didUpdate()
 
-                matchViewportBox(box, transformedBox)
+                frame.postRender(() => {
+                    matchViewportBox(box, transformedBox)
+                })
             })
         </script>
     </body>
