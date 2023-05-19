@@ -5,22 +5,9 @@ import { Reorder, useMotionValue, animate } from "framer-motion"
 const inactiveShadow = "0px 0px 0px rgba(0,0,0,0.8)"
 
 const Item = ({ item, axis }) => {
-    const x = useMotionValue(0)
     const y = useMotionValue(0)
-    const axisValue = axis === "y" ? y : x
     const boxShadow = useMotionValue(inactiveShadow)
 
-    useEffect(() => {
-        let isActive = false
-        axisValue.on("change", (latestY) => {
-            const wasActive = isActive
-            if (latestY !== 0) {
-                isActive = true
-            } else {
-                isActive = false
-            }
-        })
-    }, [y, boxShadow])
 
     return (
         <Reorder.Item
