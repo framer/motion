@@ -92,9 +92,11 @@ export class VisualElementDragControls {
         if (presenceContext && presenceContext.isPresent === false) return
 
         const onSessionStart = (event: PointerEvent) => {
-            // Stop any animations on both axis values immediately. This allows the user to throw and catch
+            const { dragSnapToOrigin } = this.getProps()
+
+            // Stop or pause any animations on both axis values immediately. This allows the user to throw and catch
             // the component.
-            this.stopAnimation()
+            dragSnapToOrigin ? this.pauseAnimation() : this.stopAnimation()
 
             if (snapToCursor) {
                 this.snapToCursor(extractEventInfo(event, "page").point)
@@ -206,6 +208,11 @@ export class VisualElementDragControls {
         const onSessionEnd = (event: PointerEvent, info: PanInfo) =>
             this.stop(event, info)
 
+        const resumeAnimation = () => 
+            eachAxis((axis) => (this.getAnimationState(axis) === 'paused') && this.getAxisMotionValue(axis).play())
+
+
+        const { dragSnapToOrigin } = this.getProps()
         this.panSession = new PanSession(
             originEvent,
             {
@@ -213,8 +220,10 @@ export class VisualElementDragControls {
                 onStart,
                 onMove,
                 onSessionEnd,
+                resumeAnimation
             },
-            { transformPagePoint: this.visualElement.getTransformPagePoint() }
+            { transformPagePoint: this.visualElement.getTransformPagePoint() },
+            dragSnapToOrigin
         )
     }
 
@@ -425,6 +434,14 @@ export class VisualElementDragControls {
 
     private stopAnimation() {
         eachAxis((axis) => this.getAxisMotionValue(axis).stop())
+    }
+
+    private pauseAnimation() {
+        eachAxis((axis) => this.getAxisMotionValue(axis).pause())
+    }
+
+    private getAnimationState(axis: DragDirection) {
+        return this.getAxisMotionValue(axis).getState()
     }
 
     /**

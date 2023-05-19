@@ -53,7 +53,7 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
     }
 
     private runAll(
-        methodName: keyof Omit<AnimationPlaybackControls, PropNames | "then">
+        methodName: keyof Omit<AnimationPlaybackControls, PropNames | "then" | "state">
     ) {
         this.animations.forEach((controls) => controls[methodName]())
     }

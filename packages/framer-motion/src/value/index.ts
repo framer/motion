@@ -317,6 +317,11 @@ export class MotionValue<V = any> {
         return this.current
     }
 
+
+    getState() {
+        return this.animation?.state
+    }
+
     /**
      * @public
      */
@@ -335,11 +340,11 @@ export class MotionValue<V = any> {
         // This could be isFloat(this.prev) && isFloat(this.current), but that would be wasteful
         return this.canTrackVelocity
             ? // These casts could be avoided if parseFloat would be typed better
-              velocityPerSecond(
-                  parseFloat(this.current as any) -
-                      parseFloat(this.prev as any),
-                  this.timeDelta
-              )
+            velocityPerSecond(
+                parseFloat(this.current as any) -
+                parseFloat(this.prev as any),
+                this.timeDelta
+            )
             : 0
     }
 
@@ -418,6 +423,32 @@ export class MotionValue<V = any> {
         }
         this.clearAnimation()
     }
+
+    /**
+     * Pause the currently active animation.
+     *
+     * @public
+     */
+
+    pause() {
+        if (this.animation) {
+            this.animation.pause()
+        }
+    }
+
+    /**
+     * play the currently active animation.
+     *
+     * @public
+     */
+
+    play() {
+        if (this.animation) {
+            this.animation.play()
+        }
+    }
+
+
 
     /**
      * Returns `true` if this value is currently animating.

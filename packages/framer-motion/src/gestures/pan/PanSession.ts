@@ -93,7 +93,8 @@ interface PanSessionHandlers {
     onStart: PanHandler
     onMove: PanHandler
     onEnd: PanHandler
-    onSessionEnd: PanHandler
+    onSessionEnd: PanHandler,
+    resumeAnimation: () => void
 }
 
 interface PanSessionOptions {
@@ -143,14 +144,23 @@ export class PanSession {
      */
     private removeListeners: Function
 
+    /**
+     * For determining if an animation should resume after it is interupted
+     * 
+     * @internal
+     */
+    private dragSnapToOrigin: boolean
+
     constructor(
         event: PointerEvent,
         handlers: Partial<PanSessionHandlers>,
-        { transformPagePoint }: PanSessionOptions = {}
+        { transformPagePoint }: PanSessionOptions = {},
+        dragSnapToOrigin: boolean = false
     ) {
         // If we have more than one touch, don't start detecting this gesture
         if (!isPrimaryPointer(event)) return
 
+        this.dragSnapToOrigin = dragSnapToOrigin
         this.handlers = handlers
         this.transformPagePoint = transformPagePoint
 
@@ -212,9 +222,11 @@ export class PanSession {
     private handlePointerUp = (event: PointerEvent, info: EventInfo) => {
         this.end()
 
+        const { onEnd, onSessionEnd, resumeAnimation } = this.handlers
+        
+        if(this.dragSnapToOrigin) resumeAnimation && resumeAnimation()
         if (!(this.lastMoveEvent && this.lastMoveEventInfo)) return
 
-        const { onEnd, onSessionEnd } = this.handlers
         const panInfo = getPanInfo(
             event.type === "pointercancel"
                 ? this.lastMoveEventInfo
