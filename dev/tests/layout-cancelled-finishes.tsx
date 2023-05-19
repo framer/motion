@@ -1,5 +1,9 @@
 import * as React from "react"
-import { motion, AnimatePresence, useInstantLayoutTransition } from "framer-motion"
+import {
+    motion,
+    AnimatePresence,
+    useInstantLayoutTransition,
+} from "framer-motion"
 
 export const App = () => {
     const [isVisible, setIsVisible] = React.useState(true)

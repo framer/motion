@@ -8,7 +8,6 @@ const Item = ({ item, axis }) => {
     const y = useMotionValue(0)
     const boxShadow = useMotionValue(inactiveShadow)
 
-
     return (
         <Reorder.Item
             value={item}
@@ -17,15 +16,14 @@ const Item = ({ item, axis }) => {
             transition={{ duration: 0.1 }}
         >
             <span>{item}</span>
-            <ReorderIcon
-            />
+            <ReorderIcon />
         </Reorder.Item>
     )
 }
 
 export const App = () => {
     const [items, setItems] = useState(initialItems)
-    const axis =  "y"
+    const axis = "y"
 
     return (
         <Reorder.Group
