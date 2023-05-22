@@ -493,6 +493,7 @@ export function createProjectionNode<I>({
                              * finish it immediately. Otherwise it will be animating from a location
                              * that was probably never commited to screen and look like a jumpy box.
                              */
+
                             if (!hasLayoutChanged) {
                                 finishAnimation(this)
                             }
@@ -1226,6 +1227,12 @@ export function createProjectionNode<I>({
             copyBoxInto(this.layoutCorrected, this.layout.layoutBox)
 
             /**
+             * Record previous tree scales before updating.
+             */
+            const prevTreeScaleX = this.treeScale.x
+            const prevTreeScaleY = this.treeScale.y
+
+            /**
              * Apply all the parent deltas to this box to produce the corrected box. This
              * is the layout box, as it will appear on screen as a result of the transforms of its parents.
              */
@@ -1236,6 +1243,18 @@ export function createProjectionNode<I>({
                 isShared
             )
 
+            /**
+             * If this layer needs to perform scale correction but doesn't have a target,
+             * use the layout as the target.
+             */
+            if (
+                lead.layout &&
+                !lead.target &&
+                (this.treeScale.x !== 1 || this.treeScale.y !== 1)
+            ) {
+                lead.target = lead.layout.layoutBox
+            }
+
             const { target } = lead
 
             if (!target) {
@@ -1245,6 +1264,7 @@ export function createProjectionNode<I>({
                  * a render to ensure the elements reflect the removed transform.
                  */
                 if (this.projectionTransform) {
+                    this.projectionDelta = createDelta()
                     this.projectionTransform = "none"
                     this.scheduleRender()
                 }
@@ -1256,8 +1276,6 @@ export function createProjectionNode<I>({
                 this.projectionDeltaWithTransform = createDelta()
             }
 
-            const prevTreeScaleX = this.treeScale.x
-            const prevTreeScaleY = this.treeScale.y
             const prevProjectionTransform = this.projectionTransform
 
             /**
