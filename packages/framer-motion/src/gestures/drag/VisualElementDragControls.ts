@@ -281,6 +281,7 @@ export class VisualElementDragControls {
                 this.constraints = this.resolveRefConstraints()
             }
         } else {
+            console.log(layout)
             if (dragConstraints && layout) {
                 this.constraints = calcRelativeConstraints(
                     layout.layoutBox,
