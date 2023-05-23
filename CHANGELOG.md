@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.14] 2023-05-23
+
+### Fixed
+
+-   Ensure new `layout` components animate correctly on the first re-render.
+
 ## [10.12.13] 2023-05-23
 
 ### Fixed
