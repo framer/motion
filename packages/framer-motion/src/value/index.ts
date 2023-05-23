@@ -109,7 +109,7 @@ export class MotionValue<V = any> {
     /**
      * A reference to the currently-controlling Popmotion animation
      *
-     * @internal
+     *
      */
     animation?: AnimationPlaybackControls
 
@@ -317,11 +317,6 @@ export class MotionValue<V = any> {
         return this.current
     }
 
-
-    getState() {
-        return this.animation?.state
-    }
-
     /**
      * @public
      */
@@ -423,32 +418,6 @@ export class MotionValue<V = any> {
         }
         this.clearAnimation()
     }
-
-    /**
-     * Pause the currently active animation.
-     *
-     * @public
-     */
-
-    pause() {
-        if (this.animation) {
-            this.animation.pause()
-        }
-    }
-
-    /**
-     * play the currently active animation.
-     *
-     * @public
-     */
-
-    play() {
-        if (this.animation) {
-            this.animation.play()
-        }
-    }
-
-
 
     /**
      * Returns `true` if this value is currently animating.

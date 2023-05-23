@@ -98,7 +98,8 @@ interface PanSessionHandlers {
 }
 
 interface PanSessionOptions {
-    transformPagePoint?: TransformPoint
+    transformPagePoint?: TransformPoint,
+    dragSnapToOrigin?: boolean
 }
 
 interface TimestampedPoint extends Point {
@@ -154,8 +155,7 @@ export class PanSession {
     constructor(
         event: PointerEvent,
         handlers: Partial<PanSessionHandlers>,
-        { transformPagePoint }: PanSessionOptions = {},
-        dragSnapToOrigin: boolean = false
+        { transformPagePoint, dragSnapToOrigin = false }: PanSessionOptions = {},
     ) {
         // If we have more than one touch, don't start detecting this gesture
         if (!isPrimaryPointer(event)) return

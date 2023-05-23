@@ -208,8 +208,8 @@ export class VisualElementDragControls {
         const onSessionEnd = (event: PointerEvent, info: PanInfo) =>
             this.stop(event, info)
 
-        const resumeAnimation = () => 
-            eachAxis((axis) => (this.getAnimationState(axis) === 'paused') && this.getAxisMotionValue(axis).play())
+        const resumeAnimation = () =>
+            eachAxis((axis) => (this.getAnimationState(axis) === 'paused') && this.getAxisMotionValue(axis).animation?.play())
 
 
         const { dragSnapToOrigin } = this.getProps()
@@ -222,8 +222,11 @@ export class VisualElementDragControls {
                 onSessionEnd,
                 resumeAnimation
             },
-            { transformPagePoint: this.visualElement.getTransformPagePoint() },
-            dragSnapToOrigin
+            {
+                transformPagePoint: this.visualElement.getTransformPagePoint(),
+                dragSnapToOrigin
+            },
+
         )
     }
 
@@ -433,15 +436,15 @@ export class VisualElementDragControls {
     }
 
     private stopAnimation() {
-        eachAxis((axis) => this.getAxisMotionValue(axis).stop())
+        eachAxis((axis) => this.getAxisMotionValue(axis).animation?.stop())
     }
 
     private pauseAnimation() {
-        eachAxis((axis) => this.getAxisMotionValue(axis).pause())
+        eachAxis((axis) => this.getAxisMotionValue(axis).animation?.pause())
     }
 
     private getAnimationState(axis: DragDirection) {
-        return this.getAxisMotionValue(axis).getState()
+        return this.getAxisMotionValue(axis).animation?.state
     }
 
     /**
