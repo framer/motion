@@ -198,4 +198,61 @@ describe("Layout animation", () => {
                 })
             })
     })
+
+    it("Newly-entering elements animate as expected", () => {
+        cy.visit("?test=layout-repeat-new")
+            .wait(50)
+            .get("#add")
+            .trigger("click")
+            .wait(50)
+            .get("#box-0")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 50,
+                    left: 0,
+                    width: 160,
+                    height: 100,
+                })
+            })
+            .get("#add")
+            .trigger("click")
+            .wait(50)
+            .get("#box-1")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 50,
+                    left: 0,
+                    width: 160,
+                    height: 100,
+                })
+            })
+            .get("#box-0")
+            .should(([$box]: any) => {
+                const bbox = $box.getBoundingClientRect()
+                expect(bbox.left).not.to.equal(170)
+            })
+            .get("#reset")
+            .trigger("click")
+            .wait(50)
+            .get("#add")
+            .trigger("click")
+            .wait(50)
+            .get("#box-0")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 50,
+                    left: 0,
+                    width: 160,
+                    height: 100,
+                })
+            })
+            .get("#add")
+            .trigger("click")
+            .wait(50)
+            .get("#box-0")
+            .should(([$box]: any) => {
+                const bbox = $box.getBoundingClientRect()
+                expect(bbox.left).not.to.equal(170)
+            })
+    })
 })
