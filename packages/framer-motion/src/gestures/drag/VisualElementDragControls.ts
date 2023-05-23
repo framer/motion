@@ -436,7 +436,7 @@ export class VisualElementDragControls {
     }
 
     private stopAnimation() {
-        eachAxis((axis) => this.getAxisMotionValue(axis).animation?.stop())
+        eachAxis((axis) => this.getAxisMotionValue(axis).stop())
     }
 
     private pauseAnimation() {
