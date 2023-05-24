@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.16] 2023-05-24
+
+### Fixed
+
+-   Fixing unit conversion when animating `translateX`/`translateY`.
+
 ## [10.12.15] 2023-05-24
 
 ### Fixed
