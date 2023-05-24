@@ -9,6 +9,7 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Fixed
 
 -   Fixed timing bug when mixing `layout` prop and `animate()`.
+-   Removing errant log from `resolveConstraints`.
 
 ## [10.12.14] 2023-05-23
 
