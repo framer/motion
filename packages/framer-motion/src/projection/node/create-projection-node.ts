@@ -47,6 +47,7 @@ import { ValueAnimationOptions } from "../../animation/types"
 import { frameData } from "../../dom-entry"
 import { isSVGElement } from "../../render/dom/utils/is-svg-element"
 import { animateSingleValue } from "../../animation/interfaces/single-value"
+import { clamp } from "../../utils/clamp"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -634,7 +635,9 @@ export function createProjectionNode<I>({
              * we could leave this to the following requestAnimationFrame but this seems
              * to leave a flash of incorrectly styled content.
              */
-            frameData.timestamp = performance.now()
+            const now = performance.now()
+            frameData.delta = clamp(0, 1000 / 60, now - frameData.timestamp)
+            frameData.timestamp = now
             frameData.isProcessing = true
             steps.update.process(frameData)
             steps.preRender.process(frameData)
