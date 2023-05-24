@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.15] 2023-05-24
+
+### Fixed
+
+-   Fixed timing bug when mixing `layout` prop and `animate()`.
+
 ## [10.12.14] 2023-05-23
 
 ### Fixed
