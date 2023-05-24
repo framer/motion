@@ -21,6 +21,8 @@ const positionalKeys = new Set([
     "bottom",
     "x",
     "y",
+    "translateX",
+    "translateY",
 ])
 const isPositionalKey = (key: string) => positionalKeys.has(key)
 const hasPositionalKey = (target: TargetWithKeyframes) => {
