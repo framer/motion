@@ -29,7 +29,6 @@ export { pipe } from "./utils/pipe"
 export { progress } from "./utils/progress"
 export { wrap } from "./utils/wrap"
 export * from "./frameloop"
-export { frameData } from "./frameloop/data"
 
 /**
  * Deprecated

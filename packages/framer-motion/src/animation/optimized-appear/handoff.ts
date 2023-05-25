@@ -1,4 +1,4 @@
-import { Frameloop } from "../../frameloop/types"
+import { Batcher } from "../../frameloop/types"
 import { transformProps } from "../../render/html/utils/transform"
 import { millisecondsToSeconds } from "../../utils/time-conversion"
 import type { MotionValue } from "../../value"
@@ -16,7 +16,7 @@ export function handoffOptimizedAppearAnimation(
      * while also allowing this function to not be included in
      * Framer Motion bundles where it's not needed.
      */
-    frame: Frameloop
+    frame: Batcher
 ): number {
     const storeId = appearStoreId(
         id,

@@ -1,4 +1,4 @@
-import { frame, cancelFrame, steps } from "../../frameloop"
+import { frame, cancelFrame } from "../../frameloop"
 import { AnimationPlaybackControls } from "../../animation/types"
 import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
@@ -48,6 +48,7 @@ import { frameData } from "../../dom-entry"
 import { isSVGElement } from "../../render/dom/utils/is-svg-element"
 import { animateSingleValue } from "../../animation/interfaces/single-value"
 import { clamp } from "../../utils/clamp"
+import { steps } from "../../frameloop/frame"
 
 const transformAxes = ["", "X", "Y", "Z"]
 

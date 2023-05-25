@@ -1,8 +1,3 @@
-export type FrameData = {
-    delta: number
-    timestamp: number
-}
-
 export type Process = (data: FrameData) => void
 
 export type Schedule = (
@@ -14,15 +9,29 @@ export type Schedule = (
 export interface Step {
     schedule: Schedule
     cancel: (process: Process) => void
-    process: (frame: FrameData) => void
+    process: (data: FrameData) => void
 }
 
-export type StepId = "read" | "update" | "preRender" | "render" | "postRender"
+export type StepId =
+    | "prepare"
+    | "read"
+    | "update"
+    | "preRender"
+    | "render"
+    | "postRender"
 
-export type Frameloop = {
+export type CancelProcess = (process: Process) => void
+
+export type Batcher = {
     [key in StepId]: Schedule
 }
 
 export type Steps = {
     [key in StepId]: Step
+}
+
+export interface FrameData {
+    delta: number
+    timestamp: number
+    isProcessing: boolean
 }

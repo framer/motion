@@ -1,4 +1,4 @@
-import { frameData } from "../frameloop/data"
+import { frameData } from "../frameloop"
 import { FrameData } from "../frameloop/types"
 import { frame } from "../frameloop"
 import { SubscriptionManager } from "../utils/subscription-manager"

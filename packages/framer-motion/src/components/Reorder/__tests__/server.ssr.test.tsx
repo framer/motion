@@ -1,3 +1,9 @@
+if (!global.requestAnimationFrame) {
+    ;(global.requestAnimationFrame as any) = function (callback: VoidFunction) {
+        setTimeout(callback, 0)
+    }
+}
+
 import * as React from "react"
 import { renderToString, renderToStaticMarkup } from "react-dom/server"
 import { useState } from "react"
