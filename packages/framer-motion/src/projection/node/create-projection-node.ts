@@ -697,7 +697,7 @@ export function createProjectionNode<I>({
                 projectionFrameData.resolvedTargetDeltas =
                 projectionFrameData.recalculatedProjection =
                     0
-
+            console.log("-------------")
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
@@ -1023,6 +1023,8 @@ export function createProjectionNode<I>({
                 this.parent?.isProjectionDirty ||
                 this.attemptToResolveRelativeTarget
             )
+
+            console.log(this.instance.id, canSkip)
 
             if (canSkip) return
 
