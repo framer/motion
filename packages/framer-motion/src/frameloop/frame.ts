@@ -1,3 +1,4 @@
+import { noop } from "../utils/noop"
 import { createRenderBatcher } from "./batcher"
 
 export const {
@@ -5,4 +6,7 @@ export const {
     cancel: cancelFrame,
     state: frameData,
     steps,
-} = createRenderBatcher(requestAnimationFrame, true)
+} = createRenderBatcher(
+    typeof requestAnimationFrame !== "undefined" ? requestAnimationFrame : noop,
+    true
+)
