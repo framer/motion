@@ -335,11 +335,11 @@ export class MotionValue<V = any> {
         // This could be isFloat(this.prev) && isFloat(this.current), but that would be wasteful
         return this.canTrackVelocity
             ? // These casts could be avoided if parseFloat would be typed better
-            velocityPerSecond(
-                parseFloat(this.current as any) -
-                parseFloat(this.prev as any),
-                this.timeDelta
-            )
+              velocityPerSecond(
+                  parseFloat(this.current as any) -
+                      parseFloat(this.prev as any),
+                  this.timeDelta
+              )
             : 0
     }
 
