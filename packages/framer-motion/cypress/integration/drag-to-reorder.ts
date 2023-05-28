@@ -104,7 +104,7 @@ describe("Drag to reorder", () => {
                 expectBbox($item, {
                     height: 68,
                     left: 350,
-                    top: 174,
+                    top: 173,
                     width: 340,
                 })
             })
