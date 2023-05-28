@@ -4,11 +4,36 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [10.12.13] 2023-05-19
+## [10.12.28] 2023-05-19
 
 ### Fixed
 
 -   Fixed issue with `dragSnapToOrigin` not continuing animation when interupted
+
+## [10.12.16] 2023-05-24
+
+### Fixed
+
+-   Fixing unit conversion when animating `translateX`/`translateY`.
+
+## [10.12.15] 2023-05-24
+
+### Fixed
+
+-   Fixed timing bug when mixing `layout` prop and `animate()`.
+-   Removing errant log from `resolveConstraints`.
+
+## [10.12.14] 2023-05-23
+
+### Fixed
+
+-   Ensure new `layout` components animate correctly on the first re-render.
+
+## [10.12.13] 2023-05-23
+
+### Fixed
+
+-   Fixed scale correction in elements that have finished layout animations.
 
 ## [10.12.12] 2023-05-15
 

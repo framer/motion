@@ -47,6 +47,7 @@ import { ValueAnimationOptions } from "../../animation/types"
 import { frameData } from "../../dom-entry"
 import { isSVGElement } from "../../render/dom/utils/is-svg-element"
 import { animateSingleValue } from "../../animation/interfaces/single-value"
+import { clamp } from "../../utils/clamp"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -493,6 +494,7 @@ export function createProjectionNode<I>({
                              * finish it immediately. Otherwise it will be animating from a location
                              * that was probably never commited to screen and look like a jumpy box.
                              */
+
                             if (!hasLayoutChanged) {
                                 finishAnimation(this)
                             }
@@ -604,7 +606,9 @@ export function createProjectionNode<I>({
                 return
             }
 
-            if (!this.isUpdating) return
+            if (!this.isUpdating) {
+                this.nodes!.forEach(clearIsLayoutDirty)
+            }
 
             this.isUpdating = false
 
@@ -626,10 +630,19 @@ export function createProjectionNode<I>({
             this.nodes!.forEach(notifyLayoutUpdate)
             this.clearAllSnapshots()
 
-            // Flush any scheduled updates
+            /**
+             * Manually flush any pending updates. Ideally
+             * we could leave this to the following requestAnimationFrame but this seems
+             * to leave a flash of incorrectly styled content.
+             */
+            const now = performance.now()
+            frameData.delta = clamp(0, 1000 / 60, now - frameData.timestamp)
+            frameData.timestamp = now
+            frameData.isProcessing = true
             steps.update.process(frameData)
             steps.preRender.process(frameData)
             steps.render.process(frameData)
+            frameData.isProcessing = false
         }
 
         didUpdate() {
@@ -1226,6 +1239,12 @@ export function createProjectionNode<I>({
             copyBoxInto(this.layoutCorrected, this.layout.layoutBox)
 
             /**
+             * Record previous tree scales before updating.
+             */
+            const prevTreeScaleX = this.treeScale.x
+            const prevTreeScaleY = this.treeScale.y
+
+            /**
              * Apply all the parent deltas to this box to produce the corrected box. This
              * is the layout box, as it will appear on screen as a result of the transforms of its parents.
              */
@@ -1236,6 +1255,18 @@ export function createProjectionNode<I>({
                 isShared
             )
 
+            /**
+             * If this layer needs to perform scale correction but doesn't have a target,
+             * use the layout as the target.
+             */
+            if (
+                lead.layout &&
+                !lead.target &&
+                (this.treeScale.x !== 1 || this.treeScale.y !== 1)
+            ) {
+                lead.target = lead.layout.layoutBox
+            }
+
             const { target } = lead
 
             if (!target) {
@@ -1245,6 +1276,7 @@ export function createProjectionNode<I>({
                  * a render to ensure the elements reflect the removed transform.
                  */
                 if (this.projectionTransform) {
+                    this.projectionDelta = createDelta()
                     this.projectionTransform = "none"
                     this.scheduleRender()
                 }
@@ -1256,8 +1288,6 @@ export function createProjectionNode<I>({
                 this.projectionDeltaWithTransform = createDelta()
             }
 
-            const prevTreeScaleX = this.treeScale.x
-            const prevTreeScaleY = this.treeScale.y
             const prevProjectionTransform = this.projectionTransform
 
             /**
@@ -1994,6 +2024,10 @@ function clearSnapshot(node: IProjectionNode) {
 
 function clearMeasurements(node: IProjectionNode) {
     node.clearMeasurements()
+}
+
+function clearIsLayoutDirty(node: IProjectionNode) {
+    node.isLayoutDirty = false
 }
 
 function resetTransformStyle(node: IProjectionNode) {

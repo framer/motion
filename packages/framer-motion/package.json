@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "10.12.12",
+    "version": "10.12.16",
     "description": "A simple and powerful React and JavaScript animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -116,5 +116,5 @@
             "maxSize": "31.14 kB"
         }
     ],
-    "gitHead": "936e9ee810d2c720d273ab2d919526c6a096e730"
+    "gitHead": "121b8729f913341e71218ec433d45bb6907a86c8"
 }
