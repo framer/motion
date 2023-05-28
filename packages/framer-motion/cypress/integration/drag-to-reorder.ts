@@ -117,6 +117,7 @@ describe("Drag to reorder", () => {
             .trigger("pointerdown", 360, -100, { force: true })
             .wait(50)
             .trigger("pointerup", 360, -100, { force: true })
+            .wait(100)
             .get("#Tomato")
             .should(([$item]: any) => {
                 expectBbox($item, {
