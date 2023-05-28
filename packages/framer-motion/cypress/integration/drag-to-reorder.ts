@@ -77,7 +77,7 @@ describe("Drag to reorder", () => {
                 expectBbox($item, {
                     height: 68,
                     left: 350,
-                    top: 252,
+                    top: 250,
                     width: 340,
                 })
             })
@@ -98,6 +98,25 @@ describe("Drag to reorder", () => {
                     width: 340,
                 })
             })
+            .trigger("pointerup", 360, 220, { force: true })
+            .get("#Tomato")
+            .should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 350,
+                    top: 174,
+                    width: 340,
+                })
+            })
+            .trigger("pointerdown", 360, 0, { force: true })
+            .wait(100)
+            .trigger("pointermove", 360, -100, { force: true })
+            .wait(100)
+            .trigger("pointerup", 360, -100, { force: true })
+            .wait(20)
+            .trigger("pointerdown", 360, -100, { force: true })
+            .wait(50)
+            .trigger("pointerup", 360, -100, { force: true })
             .get("#Tomato")
             .should(([$item]: any) => {
                 expectBbox($item, {

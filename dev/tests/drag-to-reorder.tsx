@@ -33,7 +33,6 @@ const Item = ({ item, axis }) => {
         <Reorder.Item
             value={item}
             id={item}
-            drag
             // dragListener={false}
             // dragControls={dragControls}
             style={{ boxShadow, y }}
