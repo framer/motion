@@ -61,7 +61,7 @@
                  */
                 onAnimationStart: () => {
                     const { opacity: initialOpacity } =
-                        window.getComputedStyle(box)
+                    box ? window.getComputedStyle(box): {opacity: "0"};
                     const opacityAsNumber = parseFloat(initialOpacity)
                     if (opacityAsNumber < 0.4 || opacityAsNumber > 0.6) {
                         showError(

@@ -109,7 +109,7 @@ const convertChangedValueTypes = (
 ) => {
     const originBbox = visualElement.measureViewportBox()
     const element = visualElement.current
-    const elementComputedStyle = getComputedStyle(element!)
+    const elementComputedStyle = element ? getComputedStyle(element!) : {display: "block"}
     const { display } = elementComputedStyle
     const origin: ResolvedValues = {}
 

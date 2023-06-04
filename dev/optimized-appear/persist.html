@@ -61,7 +61,7 @@
                  */
                 onAnimationStart: () => {
                     console.log(
-                        getComputedStyle(document.getElementById("box")).opacity
+                        document.getElementById("box") ? getComputedStyle(document.getElementById("box")).opacity : "0"
                     )
                     matchOpacity(document.getElementById("box"), 1)
                 },

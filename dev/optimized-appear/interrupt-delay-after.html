@@ -91,7 +91,7 @@
                         ReactDOM.hydrateRoot(root, Component)
 
                         const { opacity: initialOpacity } =
-                            window.getComputedStyle(box)
+                            box ? window.getComputedStyle(box): {opacity: "0"};
                         if (initialOpacity === "0") {
                             showError(box, `opacity should have animated`)
                         }

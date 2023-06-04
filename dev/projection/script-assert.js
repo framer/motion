@@ -46,7 +46,7 @@ window.Assert = {
         }
     },
     matchOpacity: (element, expected) => {
-        const computedOpacity = window.getComputedStyle(element).opacity
+        const computedOpacity = element ? window.getComputedStyle(element).opacity: 1
         const elementOpacity =
             computedOpacity === "" ? 1 : parseFloat(computedOpacity)
 
