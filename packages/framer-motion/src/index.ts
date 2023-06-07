@@ -161,6 +161,7 @@ export { CreateVisualElement } from "./render/types"
 export * from "./projection/geometry/types"
 export { IProjectionNode } from "./projection/node/types"
 export * from "./animation/types"
+export * from "./animation/sequence/types"
 
 /**
  * Deprecated
