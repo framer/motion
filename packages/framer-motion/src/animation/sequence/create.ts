@@ -7,7 +7,7 @@ import { progress } from "../../utils/progress"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
 import type { MotionValue } from "../../value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
-import { DynamicAnimationOptions } from "../animate"
+import { DynamicAnimationOptions } from "../types"
 import {
     AnimationScope,
     DOMKeyframesDefinition,
