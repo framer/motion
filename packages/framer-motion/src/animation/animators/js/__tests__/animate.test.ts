@@ -1232,6 +1232,45 @@ describe("animate", () => {
         expect(output).toEqual([0, 20, 40, 20, 0])
     })
 
+    test("Reverse animation from the end", async () => {
+        const output: number[] = []
+
+        const animation = animateValue({
+            keyframes: [0, 100],
+            driver: syncDriver(20),
+            duration: 100,
+            ease: linear,
+            onUpdate: (v) => {
+                output.push(v)
+            },
+        })
+        animation.time = 100
+        animation.speed = -1
+
+        await animation
+
+        expect(output).toEqual([100, 80, 60, 40, 20, 0])
+    })
+
+    test("Reverse animation from the end with half speed", async () => {
+        const output: number[] = []
+
+        const animation = animateValue({
+            keyframes: [0, 100],
+            driver: syncDriver(20),
+            duration: 100,
+            ease: linear,
+            onUpdate: (v) => {
+                output.push(v)
+            },
+        })
+        animation.time = 100
+        animation.speed = -0.5
+
+        await animation
+        expect(output).toEqual([100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 0])
+    })
+
     test("Correctly ends animations with duration: 0", async () => {
         const animation = animateValue({
             keyframes: [0, 100],
