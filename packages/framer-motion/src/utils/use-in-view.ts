@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useState } from "react"
+import { RefObject, useEffect, useState, useRef } from "react"
 import { inView, InViewOptions } from "../render/dom/viewport"
 
 interface Options extends Omit<InViewOptions, "root" | "amount"> {
@@ -11,9 +11,15 @@ export function useInView(
     ref: RefObject<Element>,
     { root, margin, amount, once = false }: Options = {}
 ) {
-    const [isInView, setInView] = useState(false)
+    const [isInView, setInView] = useState(false);
+    const isInitialRender = useRef(true);
 
     useEffect(() => {
+        if (isInitialRender.current) {
+            isInitialRender.current = false;
+            return;
+        }
+
         if (!ref.current || (once && isInView)) return
 
         const onEnter = () => {
