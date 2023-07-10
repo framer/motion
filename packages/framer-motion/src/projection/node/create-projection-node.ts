@@ -697,7 +697,7 @@ export function createProjectionNode<I>({
                 projectionFrameData.resolvedTargetDeltas =
                 projectionFrameData.recalculatedProjection =
                     0
-            console.log("-------------")
+            console.log("-------------", this.nodes)
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
