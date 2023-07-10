@@ -4,6 +4,20 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.18] 2023-06-30
+
+### Fixed
+
+-   When layout animation is forced to be instant via `useInstantTransition`, ignore the delay option.
+
+## [10.12.17] 2023-06-23
+
+### Fixed
+
+-   Fixing `useInstantTransition` when called on subsequent frames.
+-   Fixing reverse animation with negative speed finishes too early when the
+    time is set to the duration.
+
 ## [10.12.16] 2023-05-24
 
 ### Fixed

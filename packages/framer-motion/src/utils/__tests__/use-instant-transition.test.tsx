@@ -4,6 +4,8 @@ import * as React from "react"
 import { useInstantTransition } from "../use-instant-transition"
 import { useEffect } from "react"
 import { act } from "@testing-library/react"
+import { renderHook } from "@testing-library/react"
+import { instantAnimationState } from "../use-instant-transition-state"
 
 describe("useInstantTransition", () => {
     test("Disables animations for a single render", async () => {
@@ -147,4 +149,48 @@ describe("useInstantTransition", () => {
 
         expect(values).not.toEqual([100, 200, 400])
     })
+
+    test("transitions stay blocked when called on multiple frames back-to-back", async () => {
+        const { result } = renderHook(() => useInstantTransition())
+
+        act(() => result.current(() => {}))
+        expect(instantAnimationState.current).toBe(true)
+
+        const promise = createResolvablePromise()
+
+        // On the next frame, call the callback again.
+        requestAnimationFrame(() => {
+            act(() => result.current(() => {}))
+
+            requestAnimationFrame(() => {
+                // If we hadn't called the callback a second time, we would have expected this to be `false` on this frame.
+                expect(instantAnimationState.current).toBe(true)
+                requestAnimationFrame(() => {
+                    // Finally 2 frames have passed since the final call to
+                    // start an instant transition, so we expect the state to be
+                    // unblocked.
+                    expect(instantAnimationState.current).toBe(false)
+                    promise.resolve()
+                })
+            })
+        })
+
+        await promise
+    })
 })
+
+type ResolvablePromise<T = void> = Promise<T> & {
+    resolve: (value: T) => void
+    reject: (reason?: unknown) => void
+}
+
+function createResolvablePromise<T = void>(): ResolvablePromise<T> {
+    let resolvePromise: any, rejectPromise: any
+    const promise: any = new Promise((resolve, reject) => {
+        resolvePromise = resolve
+        rejectPromise = reject
+    })
+    promise.resolve = resolvePromise
+    promise.reject = rejectPromise
+    return promise
+}

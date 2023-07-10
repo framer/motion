@@ -111,7 +111,6 @@ export { SwitchLayoutGroupContext } from "./context/SwitchLayoutGroupContext"
 export { HTMLMotionProps, ForwardRefComponent } from "./render/html/types"
 export { SVGMotionProps, SVGAttributesAsMotionValues } from "./render/svg/types"
 export { AnimationLifecycles } from "./render/types"
-export { AnimationPlaybackControls } from "./animation/types"
 export { CustomDomComponent } from "./render/dom/motion-proxy"
 export { ScrollMotionValues } from "./value/scroll/utils"
 export {
@@ -162,6 +161,7 @@ export { CreateVisualElement } from "./render/types"
 export * from "./projection/geometry/types"
 export { IProjectionNode } from "./projection/node/types"
 export * from "./animation/types"
+export * from "./animation/sequence/types"
 
 /**
  * Deprecated

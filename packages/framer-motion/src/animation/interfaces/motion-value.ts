@@ -107,7 +107,11 @@ export const animateMotionValue = (
              * If we can't animate this value, or the global instant animation flag is set,
              * or this is simply defined as an instant transition, return an instant transition.
              */
-            return createInstantAnimation(options)
+            return createInstantAnimation(
+                instantAnimationState.current
+                    ? { ...options, delay: 0 }
+                    : options
+            )
         }
 
         /**
