@@ -102,6 +102,10 @@ export const positionalValues: { [key: string]: GetActualMeasurementInPixels } =
         y: getTranslateFromMatrix(5, 14),
     }
 
+// Alias translate longform names
+positionalValues.translateX = positionalValues.x
+positionalValues.translateY = positionalValues.y
+
 const convertChangedValueTypes = (
     target: TargetWithKeyframes,
     visualElement: VisualElement<HTMLElement | SVGElement>,
