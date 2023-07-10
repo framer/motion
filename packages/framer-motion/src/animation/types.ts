@@ -62,6 +62,11 @@ export type AnimationOptionsWithValueOverrides<V = any> = StyleTransitions &
     VariableTransitions &
     ValueAnimationTransition<V>
 
+export interface DynamicAnimationOptions
+    extends Omit<AnimationOptionsWithValueOverrides, "delay"> {
+    delay?: number | DynamicOption<number>
+}
+
 export type ElementOrSelector =
     | Element
     | Element[]
