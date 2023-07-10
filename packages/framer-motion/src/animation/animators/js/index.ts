@@ -65,7 +65,6 @@ export function animateValue<V = number>({
      * WAAPI-compatible behaviour.
      */
     const updateFinishedPromise = () => {
-        resolveFinishedPromise && resolveFinishedPromise()
         currentFinishedPromise = new Promise((resolve) => {
             resolveFinishedPromise = resolve
         })
@@ -272,6 +271,7 @@ export function animateValue<V = number>({
     const cancel = () => {
         playState = "idle"
         stopAnimationDriver()
+        resolveFinishedPromise()
         updateFinishedPromise()
         startTime = cancelTime = null
     }
@@ -280,7 +280,7 @@ export function animateValue<V = number>({
         playState = "finished"
         onComplete && onComplete()
         stopAnimationDriver()
-        updateFinishedPromise()
+        resolveFinishedPromise()
     }
 
     const play = () => {
@@ -296,6 +296,10 @@ export function animateValue<V = number>({
             startTime = now - holdTime
         } else if (!startTime || playState === "finished") {
             startTime = now
+        }
+
+        if (playState === "finished") {
+            updateFinishedPromise()
         }
 
         cancelTime = startTime
