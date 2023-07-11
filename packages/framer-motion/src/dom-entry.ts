@@ -1,6 +1,7 @@
 export { motionValue, MotionValue, PassiveEffect, Subscriber } from "./value"
 export { animate, createScopedAnimate } from "./animation/animate"
 export { scroll } from "./render/dom/scroll"
+export { scrollProgress } from "./render/dom/scroll/progress"
 export { inView } from "./render/dom/viewport"
 
 /**
