@@ -9,6 +9,8 @@ export const App = () => {
         opacity: 0.5,
     }
 
+    React.useEffect(() => setVisible(!visible), [])
+
     return (
         <>
             <AnimatePresence>
@@ -16,7 +18,6 @@ export const App = () => {
                     <motion.div
                         id="box"
                         layout
-                        onTap={() => setVisible(!visible)}
                         style={{ width: 100, height: 100, background: "blue" }}
                         exit={animation}
                     />
