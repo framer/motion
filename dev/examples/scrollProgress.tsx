@@ -1,21 +1,38 @@
 import * as React from "react"
 import { useState, useEffect, useRef } from "react"
-import { motion, scrollProgress, useMotionValue } from "framer-motion"
+import { motion, animate, scrollProgress, useMotionValue } from "framer-motion"
+
+function block() {
+    const start = performance.now()
+    while (performance.now() - start < 2000) {}
+}
 
 export const Example = () => {
-    const scaleX = useMotionValue(0)
-    useEffect(
-        () =>
-            scrollProgress((progress) => {
-                scaleX.set(progress)
-                document.body.classList.add(progress.toString())
-            }),
-        []
-    )
+    const ref = useRef(null)
+
+    useEffect(() => {
+        // scrollProgress(
+        // animate(ref.current, { transform: ["scaleX(0)", "scaleX(1)"] })
+        // ),
+        // window.testAnimation = document.createElement("div").animate(
+        //     { opacity: [0, 1] },
+        //     {
+        //         timeline: new ScrollTimeline(),
+        //         rangeStart: "50%",
+        //     }
+        // )
+        // console.log(window.testAnimation)
+        // animate(
+        //     "#box",
+        //     { rotate: 360 },
+        //     { repeat: Infinity, ease: "linear", duration: 5 }
+        // )
+    }, [])
 
     return (
         <>
-            <motion.div className="progress-bar" style={{ scaleX }} />
+            <div ref={ref} className="progress-bar" />
+            <button onClick={block}>Block main thread</button>
             <h1>
                 <code>scroll()</code> demo
             </h1>
@@ -43,7 +60,7 @@ export const App = () => {
 
   margin: 0;
   padding: 0;
-  background-color: var(--background);
+  background-color: var(--background)!important;
   color: var(--accent);
   padding-bottom: 100px;
 }
@@ -53,6 +70,23 @@ export const App = () => {
   font-weight: 400;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
+}
+
+button { 
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  -webkit-appearance: button;
+  background: var(--accent);
+  color: var(--background);
+  border: none;
+  padding: 15px 25px;
+  border-radius: 50px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 50px;
+  z-index: 2;
 }
 
 h1,
@@ -139,9 +173,15 @@ article {
   top: 0;
   left: 0;
   right: 0;
-  height: 10px;
+  height: 20px;
   background: var(--red);
   transform-origin: 0%;
+}
+
+#box {
+  width: 200px;
+  height: 200px;
+  background: var(--blue);
 }
 `}</style>
             <div className="example-container">
@@ -167,6 +207,7 @@ export function LoremIpsum() {
                     Nulla facilisi. Vestibulum cursus ipsum tellus, eu tincidunt
                     neque tincidunt a.
                 </p>
+                <div id="box"></div>
                 <h2>Sub-header</h2>
                 <p>
                     In eget sodales arcu, consectetur efficitur metus. Duis

@@ -1,3 +1,4 @@
+import { GroupPlaybackControls } from "../../../animation/GroupPlaybackControls"
 import { createFeatureTest } from "../../../animation/animators/waapi/supports"
 import { frame, cancelFrame } from "../../../frameloop"
 import { scroll } from "./index"
@@ -63,7 +64,7 @@ function getTimeline(source: Element, axis: "x" | "y") {
 }
 
 export function scrollProgress(
-    onScroll: OnScrollProgress,
+    target: OnScrollProgress | GroupPlaybackControls,
     {
         source = document.documentElement,
         axis = "y",
@@ -71,22 +72,36 @@ export function scrollProgress(
 ) {
     const timeline = getTimeline(source, axis)
 
-    let prevProgress = 0
-
-    const onFrame = () => {
-        const { currentTime } = timeline
-        const percentage =
-            typeof currentTime === "number" ? currentTime : currentTime.value
-        const progress = percentage / 100
-
-        if (prevProgress !== progress) {
-            onScroll(progress)
-        }
-
-        prevProgress = progress
+    /**
+     *
+     */
+    if (
+        typeof target === "function" ||
+        timeline instanceof ScrollTimelinePolyfill
+    ) {
+    } else {
+        target.timeline = timeline
     }
 
-    frame.update(onFrame, true)
+    // const onScroll =
+    //     typeof target === "function" ? target : scrubAnimation(target)
 
-    return () => cancelFrame(onFrame)
+    // let prevProgress = 0
+
+    // const onFrame = () => {
+    //     const { currentTime } = timeline
+    //     const percentage =
+    //         typeof currentTime === "number" ? currentTime : currentTime.value
+    //     const progress = percentage / 100
+
+    //     if (prevProgress !== progress) {
+    //         onScroll(progress)
+    //     }
+
+    //     prevProgress = progress
+    // }
+
+    // frame.update(onFrame, true)
+
+    // return () => cancelFrame(onFrame)
 }

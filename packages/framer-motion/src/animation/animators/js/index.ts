@@ -53,6 +53,7 @@ export function animateValue<V = number>({
     onUpdate,
     ...options
 }: ValueAnimationOptions<V>): MainThreadAnimationControls<V> {
+    let timeline: any
     let speed = 1
 
     let hasStopped = false
@@ -353,6 +354,10 @@ export function animateValue<V = number>({
         get state() {
             return playState
         },
+        get timeline() {
+            return undefined
+        },
+        set timeline(newTimeline: any) {},
         play,
         pause: () => {
             playState = "paused"

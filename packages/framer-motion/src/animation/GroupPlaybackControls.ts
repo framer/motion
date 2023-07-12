@@ -1,6 +1,6 @@
 import { AnimationPlaybackControls } from "./types"
 
-type PropNames = "time" | "speed" | "duration"
+type PropNames = "time" | "speed" | "duration" | "timeline"
 
 export class GroupPlaybackControls implements AnimationPlaybackControls {
     animations: AnimationPlaybackControls[]
@@ -26,6 +26,14 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
         for (let i = 0; i < this.animations.length; i++) {
             this.animations[i][propName] = newValue
         }
+    }
+
+    get timeline() {
+        return this.getAll("timeline")
+    }
+
+    set timeline(timeline: any) {
+        this.setAll("timeline", timeline)
     }
 
     get time() {
