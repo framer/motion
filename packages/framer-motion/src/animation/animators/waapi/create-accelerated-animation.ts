@@ -164,6 +164,13 @@ export function createAcceleratedAnimation(
         then(resolve: VoidFunction, reject?: VoidFunction) {
             return currentFinishedPromise.then(resolve, reject)
         },
+        get timeline() {
+            return animation.timeline
+        },
+        set timeline(timeline) {
+            animation.timeline = timeline
+            animation.onfinish = null
+        },
         get time() {
             return millisecondsToSeconds(animation.currentTime || 0)
         },
