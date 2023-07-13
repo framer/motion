@@ -84,7 +84,7 @@ export function checkTargetForNewValues(
     visualElement: VisualElement,
     target: TargetWithKeyframes,
     origin: ResolvedValues
-) {
+): boolean {
     const newValueKeys = Object.keys(target).filter(
         (key) => !visualElement.hasValue(key)
     )
