@@ -54,7 +54,17 @@ export abstract class DOMVisualElement<
         }
 
         if (isMounted) {
-            checkTargetForNewValues(this, target, origin as any)
+            const newValues = checkTargetForNewValues(
+                this,
+                target,
+                origin as any
+            )
+
+            // If new values have been added, for instance named color values, transform these
+            if (transformValues && newValues) {
+                origin = transformValues(origin as any)
+            }
+
             const parsed = parseDomVariant(this, target, origin, transitionEnd)
             transitionEnd = parsed.transitionEnd
             target = parsed.target

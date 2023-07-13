@@ -91,7 +91,7 @@ export function checkTargetForNewValues(
 
     const numNewValues = newValueKeys.length
 
-    if (!numNewValues) return
+    if (!numNewValues) return false
 
     for (let i = 0; i < numNewValues; i++) {
         const key = newValueKeys[i]
@@ -140,6 +140,8 @@ export function checkTargetForNewValues(
         }
         if (value !== null) visualElement.setBaseTarget(key, value)
     }
+
+    return true
 }
 
 export function getOriginFromTransition(key: string, transition: Transition) {
