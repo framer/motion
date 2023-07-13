@@ -4,6 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.20] 2023-07-13
+
+### Fixed
+
+-   Fixing race condition with animation `Promise`.
+-   Attempt to read initial animation from props before reading from DOM.
+
 ## [10.12.19] 2023-06-30
 
 ### Fixed
