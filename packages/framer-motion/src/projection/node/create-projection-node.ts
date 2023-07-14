@@ -588,12 +588,7 @@ export function createProjectionNode<I>({
             shouldNotifyListeners && this.notifyListeners("willUpdate")
         }
 
-        // Note: Currently only running on root node
-        updateScheduled = false
-
         update() {
-            this.updateScheduled = false
-
             const updateWasBlocked = this.isUpdateBlocked()
 
             // When doing an instant transition, we skip the layout update,
@@ -608,6 +603,7 @@ export function createProjectionNode<I>({
 
             if (!this.isUpdating) {
                 this.nodes!.forEach(clearIsLayoutDirty)
+                return
             }
 
             this.isUpdating = false
