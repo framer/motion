@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.21] 2023-07-14
+
+### Fixed
+
+-   Transforming values if new values have been read from props.
+
 ## [10.12.20] 2023-07-13
 
 ### Fixed
