@@ -99,7 +99,9 @@ export const AnimatePresence: React.FunctionComponent<
     const filteredChildren = onlyElements(children)
     let childrenToRender = filteredChildren
 
-    const exitingChildren = useRef(new Map<ComponentKey, ReactElement<any> | undefined>()).current
+    const exitingChildren = useRef(
+        new Map<ComponentKey, ReactElement<any> | undefined>()
+    ).current
 
     // Keep a living record of the children we're actually rendering so we
     // can diff to figure out which are entering and exiting
@@ -181,7 +183,7 @@ export const AnimatePresence: React.FunctionComponent<
         const insertionIndex = presentKeys.indexOf(key)
 
         let exitingComponent = component
-        if (!exitingComponent) { 
+        if (!exitingComponent) {
             const onExit = () => {
                 allChildren.delete(key)
                 exitingChildren.delete(key)
@@ -202,7 +204,7 @@ export const AnimatePresence: React.FunctionComponent<
                     onExitComplete && onExitComplete()
                 }
             }
-            
+
             exitingComponent = (
                 <PresenceChild
                     key={getChildKey(child)}
@@ -216,14 +218,9 @@ export const AnimatePresence: React.FunctionComponent<
                 </PresenceChild>
             )
             exitingChildren.set(key, exitingComponent)
-
         }
 
-        childrenToRender.splice(
-            insertionIndex,
-            0,
-            exitingComponent
-        )
+        childrenToRender.splice(insertionIndex, 0, exitingComponent)
     })
 
     // Add `MotionContext` even to children that don't need it to ensure we're rendering

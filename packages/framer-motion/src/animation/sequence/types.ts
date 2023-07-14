@@ -1,6 +1,6 @@
 import { Easing } from "../../easing/types"
 import type { MotionValue } from "../../value"
-import { DynamicAnimationOptions } from "../animate"
+import { DynamicAnimationOptions } from "../types"
 import {
     DOMKeyframesDefinition,
     ElementOrSelector,

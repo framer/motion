@@ -744,4 +744,32 @@ describe("animate prop as object", () => {
         const { rerender } = render(<Component />)
         rerender(<Component />)
     })
+
+    test("Correctly animates complex value types on first rerender", async () => {
+        const result = await new Promise<string[]>((resolve) => {
+            const output: string[] = []
+            const Component = () => {
+                return (
+                    <motion.div
+                        animate={{
+                            background:
+                                "linear-gradient(0deg, hsl(216, 100%, 50%) 0%, hsl(301, 100%, 50%) 100%)",
+                        }}
+                        onUpdate={({ background }) =>
+                            output.push(background as string)
+                        }
+                        onAnimationComplete={() => resolve(output)}
+                        style={{
+                            background:
+                                "linear-gradient(180deg, hsl(216, 100%, 50%) 0%, hsl(301, 100%, 50%) 100%)",
+                        }}
+                    />
+                )
+            }
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(result.length).not.toBe(1)
+    })
 })

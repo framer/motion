@@ -68,9 +68,8 @@ export function createAcceleratedAnimation(
     let currentFinishedPromise: Promise<void>
 
     /**
-     * Create a new finished Promise every time we enter the
-     * finished state and resolve the old Promise. This is
-     * WAAPI-compatible behaviour.
+     * Resolve the current Promise every time we enter the
+     * finished state. This is WAAPI-compatible behaviour.
      */
     const updateFinishedPromise = () => {
         currentFinishedPromise = new Promise((resolve) => {

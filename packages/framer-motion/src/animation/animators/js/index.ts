@@ -60,12 +60,10 @@ export function animateValue<V = number>({
     let currentFinishedPromise: Promise<void>
 
     /**
-     * Create a new finished Promise every time we enter the
-     * finished state and resolve the old Promise. This is
-     * WAAPI-compatible behaviour.
+     * Resolve the current Promise every time we enter the
+     * finished state. This is WAAPI-compatible behaviour.
      */
     const updateFinishedPromise = () => {
-        resolveFinishedPromise && resolveFinishedPromise()
         currentFinishedPromise = new Promise((resolve) => {
             resolveFinishedPromise = resolve
         })
@@ -143,16 +141,22 @@ export function animateValue<V = number>({
          * a pending operation that gets resolved here.
          */
         if (speed > 0) startTime = Math.min(startTime, timestamp)
+        if (speed < 0)
+            startTime = Math.min(timestamp - totalDuration / speed, startTime)
 
         if (holdTime !== null) {
             currentTime = holdTime
         } else {
-            currentTime = (timestamp - startTime) * speed
+            // Rounding the time because floating point arithmetic is not always accurate, e.g. 3000.367 - 1000.367 =
+            // 2000.0000000000002. This is a problem when we are comparing the currentTime with the duration, for
+            // example.
+            currentTime = Math.round(timestamp - startTime) * speed
         }
 
         // Rebase on delay
-        const timeWithoutDelay = currentTime - delay
-        const isInDelayPhase = timeWithoutDelay < 0
+        const timeWithoutDelay = currentTime - delay * (speed >= 0 ? 1 : -1)
+        const isInDelayPhase =
+            speed >= 0 ? timeWithoutDelay < 0 : timeWithoutDelay > totalDuration
         currentTime = Math.max(timeWithoutDelay, 0)
 
         /**
@@ -240,14 +244,12 @@ export function animateValue<V = number>({
         let { done } = state
 
         if (!isInDelayPhase && calculatedDuration !== null) {
-            done = currentTime >= totalDuration
+            done = speed >= 0 ? currentTime >= totalDuration : currentTime <= 0
         }
 
         const isAnimationFinished =
             holdTime === null &&
-            (playState === "finished" ||
-                (playState === "running" && done) ||
-                (speed < 0 && currentTime <= 0))
+            (playState === "finished" || (playState === "running" && done))
 
         if (onUpdate) {
             onUpdate(state.value)
@@ -268,6 +270,7 @@ export function animateValue<V = number>({
     const cancel = () => {
         playState = "idle"
         stopAnimationDriver()
+        resolveFinishedPromise()
         updateFinishedPromise()
         startTime = cancelTime = null
     }
@@ -276,7 +279,7 @@ export function animateValue<V = number>({
         playState = "finished"
         onComplete && onComplete()
         stopAnimationDriver()
-        updateFinishedPromise()
+        resolveFinishedPromise()
     }
 
     const play = () => {
@@ -292,6 +295,10 @@ export function animateValue<V = number>({
             startTime = now - holdTime
         } else if (!startTime || playState === "finished") {
             startTime = now
+        }
+
+        if (playState === "finished") {
+            updateFinishedPromise()
         }
 
         cancelTime = startTime

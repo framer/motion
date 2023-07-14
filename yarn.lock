@@ -7844,8 +7844,8 @@ __metadata:
     cache-loader: ^1.2.5
     convert-tsconfig-paths-to-webpack-aliases: ^0.9.2
     fork-ts-checker-webpack-plugin: ^6.2.0
-    framer-motion: ^10.12.16
-    framer-motion-3d: ^10.12.16
+    framer-motion: ^10.12.21
+    framer-motion-3d: ^10.12.21
     path-browserify: ^1.0.1
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -7911,14 +7911,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion-3d@^10.12.16, framer-motion-3d@workspace:packages/framer-motion-3d":
+"framer-motion-3d@^10.12.21, framer-motion-3d@workspace:packages/framer-motion-3d":
   version: 0.0.0-use.local
   resolution: "framer-motion-3d@workspace:packages/framer-motion-3d"
   dependencies:
     "@react-three/fiber": ^8.2.2
     "@react-three/test-renderer": ^9.0.0
     "@rollup/plugin-commonjs": ^22.0.1
-    framer-motion: ^10.12.16
+    framer-motion: ^10.12.21
     react-merge-refs: ^2.0.1
   peerDependencies:
     "@react-three/fiber": ^8.2.2
@@ -7928,7 +7928,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion@^10.12.16, framer-motion@workspace:packages/framer-motion":
+"framer-motion@^10.12.21, framer-motion@workspace:packages/framer-motion":
   version: 0.0.0-use.local
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
@@ -14366,11 +14366,11 @@ __metadata:
   linkType: hard
 
 "semver@npm:2 || 3 || 4 || 5, semver@npm:^5.3.0, semver@npm:^5.4.1, semver@npm:^5.5.0, semver@npm:^5.6.0, semver@npm:^5.7.1":
-  version: 5.7.1
-  resolution: "semver@npm:5.7.1"
+  version: 5.7.2
+  resolution: "semver@npm:5.7.2"
   bin:
-    semver: ./bin/semver
-  checksum: 57fd0acfd0bac382ee87cd52cd0aaa5af086a7dc8d60379dfe65fea491fb2489b6016400813930ecd61fd0952dae75c115287a1b16c234b1550887117744dfaf
+    semver: bin/semver
+  checksum: fb4ab5e0dd1c22ce0c937ea390b4a822147a9c53dbd2a9a0132f12fe382902beef4fbf12cf51bb955248d8d15874ce8cd89532569756384f994309825f10b686
   languageName: node
   linkType: hard
 
