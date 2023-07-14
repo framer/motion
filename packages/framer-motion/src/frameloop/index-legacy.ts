@@ -1,4 +1,5 @@
-import { frame, cancelFrame, stepsOrder } from "."
+import { frame, cancelFrame } from "."
+import { stepsOrder } from "./batcher"
 import { Process } from "./types"
 
 /**
