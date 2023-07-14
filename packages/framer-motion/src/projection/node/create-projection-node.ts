@@ -2090,14 +2090,14 @@ const defaultLayoutTransition = {
     ease: [0.4, 0, 0.1, 1],
 }
 
-function roundAxis(axis: Axis): void {
-    axis.min = Math.round(axis.min)
-    axis.max = Math.round(axis.max)
-}
+// function roundAxis(axis: Axis): void {
+//     axis.min = Math.round(axis.min)
+//     axis.max = Math.round(axis.max)
+// }
 
-function roundBox(box: Box): void {
-    roundAxis(box.x)
-    roundAxis(box.y)
+function roundBox(_box: Box): void {
+    // roundAxis(box.x)
+    // roundAxis(box.y)
 }
 
 function shouldAnimatePositionOnly(
