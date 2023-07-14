@@ -825,8 +825,6 @@ export function createProjectionNode<I>({
                 layoutBox = this.removeTransform(layoutBox)
             }
 
-            roundBox(layoutBox)
-
             return {
                 animationId: this.root.animationId,
                 measuredBox: pageBox,
@@ -2088,16 +2086,6 @@ function hasOpacityCrossfade(node: IProjectionNode) {
 const defaultLayoutTransition = {
     duration: 0.45,
     ease: [0.4, 0, 0.1, 1],
-}
-
-// function roundAxis(axis: Axis): void {
-//     axis.min = Math.round(axis.min)
-//     axis.max = Math.round(axis.max)
-// }
-
-function roundBox(_box: Box): void {
-    // roundAxis(box.x)
-    // roundAxis(box.y)
 }
 
 function shouldAnimatePositionOnly(
