@@ -2091,8 +2091,9 @@ const defaultLayoutTransition = {
 }
 
 function roundAxis(axis: Axis): void {
-    axis.min = Math.round(axis.min)
-    axis.max = Math.round(axis.max)
+    // Round to the nearest .5 pixels to support subpixel layouts
+    axis.min = Math.round(axis.min * 2) / 2
+    axis.max = Math.round(axis.max * 2) / 2
 }
 
 function roundBox(box: Box): void {
