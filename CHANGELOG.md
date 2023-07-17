@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.12.22] 2023-07-17
+
+### Fixed
+
+-   Supporting subpixel layouts in layout animations.
+
 ## [10.12.21] 2023-07-14
 
 ### Fixed
