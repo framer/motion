@@ -5,7 +5,7 @@ import { scrollInfo } from "./track"
 declare class ScrollTimeline {
     constructor(options: ScrollProgressOptions)
 
-    currentTime: number | { value: number }
+    currentTime: null | number | { value: number }
 }
 
 declare global {
@@ -27,7 +27,7 @@ class ScrollTimelinePolyfill {
     constructor({ source, axis = "y" }: ScrollProgressOptions) {
         this.scrollInfo = scrollInfo(
             (info) => {
-                console.log("info")
+                console.log(info)
                 const axisInfo = info[axis]
                 this.currentTime = axisInfo.progress * 100
             },
@@ -68,6 +68,7 @@ export function scroll(
         axis = "y",
     }: ScrollProgressOptions = {}
 ) {
+    console.log(axis)
     const timeline = getTimeline(source, axis)
 
     let prevProgress = 0
@@ -75,7 +76,11 @@ export function scroll(
     const onFrame = () => {
         const { currentTime } = timeline
         const percentage =
-            typeof currentTime === "number" ? currentTime : currentTime.value
+            typeof currentTime === "number"
+                ? currentTime
+                : currentTime === null
+                ? 0
+                : currentTime.value
         const progress = percentage / 100
 
         if (prevProgress !== progress) {
