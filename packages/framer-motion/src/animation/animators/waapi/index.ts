@@ -24,7 +24,7 @@ export function animateStyle(
      */
     if (Array.isArray(easing)) keyframeOptions.easing = easing
 
-    element.animate(keyframeOptions, {
+    return element.animate(keyframeOptions, {
         delay,
         duration,
         easing: !Array.isArray(easing) ? easing : "linear",
