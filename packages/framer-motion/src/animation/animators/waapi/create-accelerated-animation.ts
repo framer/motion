@@ -5,15 +5,15 @@ import type { MotionValue } from "../../../value"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../../types"
 import { animateStyle } from "."
 import { isWaapiSupportedEasing } from "./easing"
-import { createFeatureTest } from "./supports"
 import { getFinalKeyframe } from "./utils/get-final-keyframe"
 import { animateValue } from "../js"
 import {
     millisecondsToSeconds,
     secondsToMilliseconds,
 } from "../../../utils/time-conversion"
+import { memo } from "../../../utils/memo"
 
-const supportsWaapi = createFeatureTest(() =>
+const supportsWaapi = memo(() =>
     Object.hasOwnProperty.call(Element.prototype, "animate")
 )
 
