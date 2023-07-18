@@ -19,10 +19,10 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
      * TODO: Filter out cancelled or stopped animations before returning
      */
     private getAll(propName: PropNames) {
-        return this.animations[0][propName]
+        return this.animations[0][propName] as any
     }
 
-    private setAll(propName: PropNames, newValue: number) {
+    private setAll(propName: PropNames, newValue: any) {
         for (let i = 0; i < this.animations.length; i++) {
             this.animations[i][propName] = newValue
         }

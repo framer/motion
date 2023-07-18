@@ -1,6 +1,5 @@
 import { GroupPlaybackControls } from "../../../animation/GroupPlaybackControls"
-import { createFeatureTest } from "../../../animation/animators/waapi/supports"
-import { frame, cancelFrame } from "../../../frameloop"
+import { memo } from "../../../utils/memo"
 import { scroll } from "./index"
 
 declare class ScrollTimeline {
@@ -38,9 +37,7 @@ class ScrollTimelinePolyfill {
     currentTime = 0
 }
 
-const supportsScrollTimeline = createFeatureTest(
-    () => window.ScrollTimeline !== undefined
-)
+const supportsScrollTimeline = memo(() => window.ScrollTimeline !== undefined)
 
 const timelineCache = new Map<
     Element,
