@@ -2,7 +2,7 @@ import { frame, cancelFrame, frameData } from "../../../frameloop"
 import { resize } from "../resize"
 import { createScrollInfo } from "./info"
 import { createOnScrollHandler } from "./on-scroll-handler"
-import { OnScroll, OnScrollHandler, ScrollOptions } from "./types"
+import { OnScrollInfo, OnScrollHandler, ScrollInfoOptions } from "./types"
 
 const scrollListeners = new WeakMap<Element, VoidFunction>()
 const resizeListeners = new WeakMap<Element, VoidFunction>()
@@ -14,8 +14,8 @@ const getEventTarget = (element: HTMLElement) =>
     element === document.documentElement ? window : element
 
 export function scrollInfo(
-    onScroll: OnScroll,
-    { container = document.documentElement, ...options }: ScrollOptions = {}
+    onScroll: OnScrollInfo,
+    { container = document.documentElement, ...options }: ScrollInfoOptions = {}
 ) {
     let containerHandlers = onScrollHandlers.get(container)
 
