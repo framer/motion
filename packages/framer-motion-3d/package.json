@@ -46,11 +46,7 @@
         "postpublish": "git push --tags"
     },
     "dependencies": {
-<<<<<<< HEAD
-        "framer-motion": "^10.12.23",
-=======
         "framer-motion": "^10.13.0-alpha.0",
->>>>>>> 824571e7 (v10.13.0-alpha.0)
         "react-merge-refs": "^2.0.1"
     },
     "peerDependencies": {
