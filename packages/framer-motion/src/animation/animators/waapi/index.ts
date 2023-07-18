@@ -24,18 +24,12 @@ export function animateStyle(
      */
     if (Array.isArray(easing)) keyframeOptions.easing = easing
 
-    const animation = element.animate(keyframeOptions, {
+    element.animate(keyframeOptions, {
         delay,
         duration,
         easing: !Array.isArray(easing) ? easing : "linear",
         fill: "both",
         iterations: repeat + 1,
         direction: repeatType === "reverse" ? "alternate" : "normal",
-        timeline: new ScrollTimeline(),
     })
-
-    animation.rangeStart = "10px"
-    animation.rangeEnd = "75%"
-
-    return animation
 }
