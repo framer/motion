@@ -6,12 +6,13 @@ describe("scroll()", () => {
             .wait(200)
             .get("#progress")
             .should(([$element]: any) => {
-                expect($element.value).to.equal("0.5")
+                expect($element.innerText).to.equal("0.5")
             })
-            .viewport(100, 800)
+        cy.viewport(100, 800)
             .wait(200)
+            .get("#progress")
             .should(([$element]: any) => {
-                expect($element.value).to.equal("0.25")
+                expect($element.innerText).to.equal("0.25")
             })
     })
 
@@ -22,12 +23,13 @@ describe("scroll()", () => {
             .wait(200)
             .get("#progress")
             .should(([$element]: any) => {
-                expect($element.value).to.equal("0.5")
+                expect($element.innerText).to.equal("0.5")
             })
-            .viewport(800, 100)
+        cy.viewport(800, 100)
             .wait(200)
+            .get("#progress")
             .should(([$element]: any) => {
-                expect($element.value).to.equal("0.25")
+                expect($element.innerText).to.equal("0.25")
             })
     })
 
@@ -39,7 +41,7 @@ describe("scroll()", () => {
             .wait(200)
             .get("#progress")
             .should(([$element]: any) => {
-                expect($element.value).to.equal("0.5")
+                expect($element.innerText).to.equal("0.5")
             })
     })
 
@@ -51,7 +53,7 @@ describe("scroll()", () => {
             .wait(200)
             .get("#progress")
             .should(([$element]: any) => {
-                expect($element.value).to.equal("0.5")
+                expect($element.innerText).to.equal("0.5")
             })
     })
 })

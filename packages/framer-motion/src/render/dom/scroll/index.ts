@@ -1,11 +1,16 @@
+import { ScrollOptions, OnScroll } from "./types"
 import { cancelFrame, frame } from "../../../frameloop"
 import { memo } from "../../../utils/memo"
 import { scrollInfo } from "./track"
 
-declare class ScrollTimeline {
-    constructor(options: ScrollProgressOptions)
+const supportsScrollTimeline = memo(() => window.ScrollTimeline !== undefined)
 
-    currentTime: null | number | { value: number }
+declare class ScrollTimeline {
+    constructor(options: ScrollOptions)
+
+    currentTime: null | { value: number }
+
+    cancel?: VoidFunction
 }
 
 declare global {
@@ -14,38 +19,29 @@ declare global {
     }
 }
 
-export interface ScrollProgressOptions {
-    source?: Element
-    axis?: "x" | "y"
+function scrollTimelineFallback({ source, axis = "y" }: ScrollOptions) {
+    // ScrollTimeline records progress as a percentage CSSUnitValue
+    const currentTime = { value: 0 }
+
+    const cancel = scrollInfo(
+        (info) => {
+            currentTime.value = info[axis].progress * 100
+        },
+        { container: source as HTMLElement, axis }
+    )
+
+    return { currentTime, cancel }
 }
-
-export type OnScrollProgress = (progress: number) => void
-
-class ScrollTimelinePolyfill {
-    scrollInfo: VoidFunction
-
-    constructor({ source, axis = "y" }: ScrollProgressOptions) {
-        this.scrollInfo = scrollInfo(
-            (info) => {
-                console.log(info)
-                const axisInfo = info[axis]
-                this.currentTime = axisInfo.progress * 100
-            },
-            { container: source as HTMLElement, axis }
-        )
-    }
-
-    currentTime = 0
-}
-
-const supportsScrollTimeline = memo(() => window.ScrollTimeline !== undefined)
 
 const timelineCache = new Map<
     Element,
     { x?: ScrollTimeline; y?: ScrollTimeline }
 >()
 
-function getTimeline(source: Element, axis: "x" | "y") {
+function getTimeline({
+    source = document.documentElement,
+    axis = "y",
+}: ScrollOptions = {}): ScrollTimeline {
     if (!timelineCache.has(source)) {
         timelineCache.set(source, {})
     }
@@ -55,32 +51,20 @@ function getTimeline(source: Element, axis: "x" | "y") {
     if (!elementCache[axis]) {
         elementCache[axis] = supportsScrollTimeline()
             ? new ScrollTimeline({ source, axis })
-            : new ScrollTimelinePolyfill({ source, axis })
+            : scrollTimelineFallback({ source, axis })
     }
 
     return elementCache[axis]!
 }
 
-export function scroll(
-    onScroll: OnScrollProgress,
-    {
-        source = document.documentElement,
-        axis = "y",
-    }: ScrollProgressOptions = {}
-) {
-    console.log(axis)
-    const timeline = getTimeline(source, axis)
+export function scroll(onScroll: OnScroll, options?: ScrollOptions) {
+    const timeline = getTimeline(options)
 
     let prevProgress = 0
 
     const onFrame = () => {
         const { currentTime } = timeline
-        const percentage =
-            typeof currentTime === "number"
-                ? currentTime
-                : currentTime === null
-                ? 0
-                : currentTime.value
+        const percentage = currentTime === null ? 0 : currentTime.value
         const progress = percentage / 100
 
         if (prevProgress !== progress) {
@@ -92,5 +76,8 @@ export function scroll(
 
     frame.update(onFrame, true)
 
-    return () => cancelFrame(onFrame)
+    return () => {
+        cancelFrame(onFrame)
+        if (timeline.cancel) timeline.cancel()
+    }
 }

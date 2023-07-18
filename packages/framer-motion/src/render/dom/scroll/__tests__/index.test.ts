@@ -1,5 +1,5 @@
 import { frame } from "../../../../frameloop"
-import { scroll } from "../index"
+import { scrollInfo } from "../track"
 import { ScrollOffset } from "../offsets/presets"
 import { ScrollInfo } from "../types"
 
@@ -55,7 +55,7 @@ describe("scroll", () => {
     test("Fires onScroll on creation.", async () => {
         const onScroll = jest.fn()
 
-        const stopScroll = scroll(onScroll)
+        const stopScroll = scrollInfo(onScroll)
 
         return new Promise<void>((resolve) => {
             window.requestAnimationFrame(() => {
@@ -71,7 +71,7 @@ describe("scroll", () => {
     test("Fires onScroll on scroll.", async () => {
         let latest: ScrollInfo
 
-        const stopScroll = scroll((info) => {
+        const stopScroll = scrollInfo((info) => {
             latest = info
         })
 
@@ -133,7 +133,7 @@ describe("scroll", () => {
             await nextFrame()
         }
 
-        const stopScroll = scroll(
+        const stopScroll = scrollInfo(
             (info) => {
                 latest = info
             },
@@ -201,7 +201,7 @@ describe("scroll", () => {
             await nextFrame()
         }
 
-        const stopScroll = scroll(
+        const stopScroll = scrollInfo(
             (info) => {
                 latest = info
             },
@@ -248,7 +248,7 @@ describe("scroll", () => {
         setTargetHeight(200)
         setTargetOffsetTop(100)
 
-        const stopScroll = scroll(
+        const stopScroll = scrollInfo(
             (info) => {
                 latest = info
             },
@@ -284,7 +284,7 @@ describe("scroll", () => {
     test("Fires onScroll on resize.", async () => {
         let latest: ScrollInfo
 
-        const stopScroll = scroll((info) => {
+        const stopScroll = scrollInfo((info) => {
             latest = info
         })
 
@@ -346,7 +346,7 @@ describe("scroll", () => {
             await nextFrame()
         }
 
-        const stopScroll = scroll(
+        const stopScroll = scrollInfo(
             (info) => {
                 latest = info
             },
