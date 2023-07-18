@@ -1,109 +1,91 @@
-import { frame, cancelFrame, frameData } from "../../../frameloop"
-import { resize } from "../resize"
-import { createScrollInfo } from "./info"
-import { createOnScrollHandler } from "./on-scroll-handler"
-import { OnScroll, OnScrollHandler, ScrollOptions } from "./types"
+import { cancelFrame, frame } from "../../../frameloop"
+import { memo } from "../../../utils/memo"
+import { scrollInfo } from "./track"
 
-const scrollListeners = new WeakMap<Element, VoidFunction>()
-const resizeListeners = new WeakMap<Element, VoidFunction>()
-const onScrollHandlers = new WeakMap<Element, Set<OnScrollHandler>>()
+declare class ScrollTimeline {
+    constructor(options: ScrollProgressOptions)
 
-export type ScrollTargets = Array<HTMLElement>
+    currentTime: number | { value: number }
+}
 
-const getEventTarget = (element: HTMLElement) =>
-    element === document.documentElement ? window : element
+declare global {
+    interface Window {
+        ScrollTimeline: ScrollTimeline
+    }
+}
+
+export interface ScrollProgressOptions {
+    source?: Element
+    axis?: "x" | "y"
+}
+
+export type OnScrollProgress = (progress: number) => void
+
+class ScrollTimelinePolyfill {
+    scrollInfo: VoidFunction
+
+    constructor({ source, axis = "y" }: ScrollProgressOptions) {
+        this.scrollInfo = scrollInfo(
+            (info) => {
+                console.log("info")
+                const axisInfo = info[axis]
+                this.currentTime = axisInfo.progress * 100
+            },
+            { container: source as HTMLElement, axis }
+        )
+    }
+
+    currentTime = 0
+}
+
+const supportsScrollTimeline = memo(() => window.ScrollTimeline !== undefined)
+
+const timelineCache = new Map<
+    Element,
+    { x?: ScrollTimeline; y?: ScrollTimeline }
+>()
+
+function getTimeline(source: Element, axis: "x" | "y") {
+    if (!timelineCache.has(source)) {
+        timelineCache.set(source, {})
+    }
+
+    const elementCache = timelineCache.get(source)!
+
+    if (!elementCache[axis]) {
+        elementCache[axis] = supportsScrollTimeline()
+            ? new ScrollTimeline({ source, axis })
+            : new ScrollTimelinePolyfill({ source, axis })
+    }
+
+    return elementCache[axis]!
+}
 
 export function scroll(
-    onScroll: OnScroll,
-    { container = document.documentElement, ...options }: ScrollOptions = {}
+    onScroll: OnScrollProgress,
+    {
+        source = document.documentElement,
+        axis = "y",
+    }: ScrollProgressOptions = {}
 ) {
-    let containerHandlers = onScrollHandlers.get(container)
+    const timeline = getTimeline(source, axis)
 
-    /**
-     * Get the onScroll handlers for this container.
-     * If one isn't found, create a new one.
-     */
-    if (!containerHandlers) {
-        containerHandlers = new Set()
-        onScrollHandlers.set(container, containerHandlers)
+    let prevProgress = 0
+
+    const onFrame = () => {
+        const { currentTime } = timeline
+        const percentage =
+            typeof currentTime === "number" ? currentTime : currentTime.value
+        const progress = percentage / 100
+
+        if (prevProgress !== progress) {
+            onScroll(progress)
+        }
+
+        prevProgress = progress
     }
 
-    /**
-     * Create a new onScroll handler for the provided callback.
-     */
-    const info = createScrollInfo()
-    const containerHandler = createOnScrollHandler(
-        container,
-        onScroll,
-        info,
-        options
-    )
-    containerHandlers.add(containerHandler)
+    frame.update(onFrame, true)
 
-    /**
-     * Check if there's a scroll event listener for this container.
-     * If not, create one.
-     */
-    if (!scrollListeners.has(container)) {
-        const measureAll = () => {
-            for (const handler of containerHandlers!) handler.measure()
-        }
-
-        const updateAll = () => {
-            for (const handler of containerHandlers!) {
-                handler.update(frameData.timestamp)
-            }
-        }
-
-        const notifyAll = () => {
-            for (const handler of containerHandlers!) handler.notify()
-        }
-
-        const listener = () => {
-            frame.read(measureAll, false, true)
-            frame.update(updateAll, false, true)
-            frame.update(notifyAll, false, true)
-        }
-
-        scrollListeners.set(container, listener)
-
-        const target = getEventTarget(container)
-        window.addEventListener("resize", listener, { passive: true })
-        if (container !== document.documentElement) {
-            resizeListeners.set(container, resize(container, listener))
-        }
-        target.addEventListener("scroll", listener, { passive: true })
-    }
-
-    const listener = scrollListeners.get(container)!
-    frame.read(listener, false, true)
-
-    return () => {
-        cancelFrame(listener)
-
-        /**
-         * Check if we even have any handlers for this container.
-         */
-        const currentHandlers = onScrollHandlers.get(container)
-        if (!currentHandlers) return
-
-        currentHandlers.delete(containerHandler)
-
-        if (currentHandlers.size) return
-
-        /**
-         * If no more handlers, remove the scroll listener too.
-         */
-        const scrollListener = scrollListeners.get(container)
-        scrollListeners.delete(container)
-
-        if (scrollListener) {
-            getEventTarget(container).removeEventListener(
-                "scroll",
-                scrollListener
-            )
-            resizeListeners.get(container)?.()
-            window.removeEventListener("resize", scrollListener)
-        }
-    }
+    return () => cancelFrame(onFrame)
 }
