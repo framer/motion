@@ -13,7 +13,6 @@ export function App() {
     const [selectedTab, setSelectedTab] = useState(tabs[0])
 
     const remove = (item: Ingredient) => {
-        console.log("removing", item.label)
         if (item === selectedTab) {
             setSelectedTab(closestItem(tabs, item))
         }
