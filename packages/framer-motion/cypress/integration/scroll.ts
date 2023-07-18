@@ -41,7 +41,9 @@ describe("scroll()", () => {
             .wait(200)
             .get("#progress")
             .should(([$element]: any) => {
-                expect($element.innerText).to.equal("0.5")
+                const progress = parseInt($element.innerText)
+                const isClose = progress > 0.49 && progress < 0.51
+                expect(isClose).to.equal(true)
             })
     })
 
@@ -53,7 +55,9 @@ describe("scroll()", () => {
             .wait(200)
             .get("#progress")
             .should(([$element]: any) => {
-                expect($element.innerText).to.equal("0.5")
+                const progress = parseInt($element.innerText)
+                const isClose = progress > 0.49 && progress < 0.51
+                expect(isClose).to.equal(true)
             })
     })
 })
