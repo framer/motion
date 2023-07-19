@@ -1,7 +1,7 @@
 import { ScrollInfo } from "../types"
 import { calcInset } from "./inset"
 import { ScrollOffset } from "./presets"
-import { ScrollOptions } from "../types"
+import { ScrollInfoOptions } from "../types"
 import { resolveOffset } from "./offset"
 import { interpolate } from "../../../../utils/interpolate"
 import { defaultOffset } from "../../../../utils/offsets/default"
@@ -11,7 +11,7 @@ const point = { x: 0, y: 0 }
 export function resolveOffsets(
     container: HTMLElement,
     info: ScrollInfo,
-    options: ScrollOptions
+    options: ScrollInfoOptions
 ) {
     let { offset: offsetDefinition = ScrollOffset.All } = options
     const { target = container, axis = "y" } = options

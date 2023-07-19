@@ -1,7 +1,7 @@
 {
     "name": "framer-motion",
-    "version": "10.12.23",
-    "description": "A simple and powerful React and JavaScript animation library",
+    "version": "10.13.0",
+    "description": "A simple and powerful JavaScript animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
     "exports": {
@@ -93,7 +93,7 @@
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
-            "maxSize": "15.37 kB"
+            "maxSize": "15.38 kB"
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
@@ -116,5 +116,5 @@
             "maxSize": "31.24 kB"
         }
     ],
-    "gitHead": "81fbbff282e8e6d2981fe542268c93ed7e40421d"
+    "gitHead": "3f43e1330b3fce8f7dbcd2da77a031d2cb1000ab"
 }

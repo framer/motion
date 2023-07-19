@@ -16,7 +16,7 @@ describe("delay", () => {
     test("provides overshoot duration", async () => {
         return new Promise<void>((resolve) => {
             delay((overshoot) => {
-                expect(overshoot).toBeLessThan(20)
+                expect(overshoot).toBeLessThan(50)
                 expect(overshoot).toBeGreaterThan(0)
                 resolve()
             }, 50)

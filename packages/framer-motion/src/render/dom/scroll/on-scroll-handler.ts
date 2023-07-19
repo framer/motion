@@ -1,6 +1,11 @@
 import { updateScrollInfo } from "./info"
 import { resolveOffsets } from "./offsets/index"
-import { OnScroll, OnScrollHandler, ScrollInfo, ScrollOptions } from "./types"
+import {
+    OnScrollInfo,
+    OnScrollHandler,
+    ScrollInfo,
+    ScrollInfoOptions,
+} from "./types"
 
 function measure(
     container: HTMLElement,
@@ -31,9 +36,9 @@ function measure(
 
 export function createOnScrollHandler(
     element: HTMLElement,
-    onScroll: OnScroll,
+    onScroll: OnScrollInfo,
     info: ScrollInfo,
-    options: ScrollOptions = {}
+    options: ScrollInfoOptions = {}
 ): OnScrollHandler {
     return {
         measure: () => measure(element, options.target, info),

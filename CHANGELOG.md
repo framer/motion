@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.13.0] 2023-07-19
+
+### Added
+
+-   `scroll()`, a universal API for powering scroll-driven animations via `ScrollTimeline`.
+
 ## [10.12.23] 2023-07-19
 
 ### Fixed

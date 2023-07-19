@@ -1,6 +1,6 @@
 import { AnimationPlaybackControls } from "./types"
 
-type PropNames = "time" | "speed" | "duration"
+type PropNames = "time" | "speed" | "duration" | "timeline"
 
 export class GroupPlaybackControls implements AnimationPlaybackControls {
     animations: AnimationPlaybackControls[]
@@ -19,13 +19,21 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
      * TODO: Filter out cancelled or stopped animations before returning
      */
     private getAll(propName: PropNames) {
-        return this.animations[0][propName]
+        return this.animations[0][propName] as any
     }
 
-    private setAll(propName: PropNames, newValue: number) {
+    private setAll(propName: PropNames, newValue: any) {
         for (let i = 0; i < this.animations.length; i++) {
             this.animations[i][propName] = newValue
         }
+    }
+
+    get timeline() {
+        return this.getAll("timeline")
+    }
+
+    set timeline(timeline: any) {
+        this.setAll("timeline", timeline)
     }
 
     get time() {

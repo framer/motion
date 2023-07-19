@@ -5,13 +5,17 @@ import type { MotionValue } from "../../../value"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../../types"
 import { animateStyle } from "."
 import { isWaapiSupportedEasing } from "./easing"
-import { supports } from "./supports"
 import { getFinalKeyframe } from "./utils/get-final-keyframe"
 import { animateValue } from "../js"
 import {
     millisecondsToSeconds,
     secondsToMilliseconds,
 } from "../../../utils/time-conversion"
+import { memo } from "../../../utils/memo"
+
+const supportsWaapi = memo(() =>
+    Object.hasOwnProperty.call(Element.prototype, "animate")
+)
 
 /**
  * A list of values that can be hardware-accelerated.
@@ -51,7 +55,7 @@ export function createAcceleratedAnimation(
     { onUpdate, onComplete, ...options }: ValueAnimationOptions
 ): AnimationPlaybackControls | false {
     const canAccelerateAnimation =
-        supports.waapi() &&
+        supportsWaapi() &&
         acceleratedValues.has(valueName) &&
         !options.repeatDelay &&
         options.repeatType !== "mirror" &&
@@ -159,6 +163,13 @@ export function createAcceleratedAnimation(
     return {
         then(resolve: VoidFunction, reject?: VoidFunction) {
             return currentFinishedPromise.then(resolve, reject)
+        },
+        get timeline() {
+            return animation.timeline
+        },
+        set timeline(timeline) {
+            animation.timeline = timeline
+            animation.onfinish = null
         },
         get time() {
             return millisecondsToSeconds(animation.currentTime || 0)
