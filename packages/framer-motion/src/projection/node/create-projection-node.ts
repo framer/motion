@@ -2105,8 +2105,8 @@ function roundBox(box: Box): void {
     // Detect browser only client-side
     if (!roundPoint) {
         roundPoint = isWebKit()
-            ? (point: number) => Math.round(point * 2) / 2
-            : Math.round
+            ? Math.round
+            : (point: number) => Math.round(point * 2) / 2
     }
 
     roundAxis(box.x)
