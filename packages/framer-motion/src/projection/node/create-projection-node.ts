@@ -2092,8 +2092,8 @@ const defaultLayoutTransition = {
 
 let roundPoint: (point: number) => number
 
-const isWebKit = () =>
-    navigator.userAgent.toLowerCase().includes("applewebkit/")
+const userAgentContaints = (string: string) =>
+    navigator.userAgent.toLowerCase().includes(string)
 
 function roundAxis(axis: Axis): void {
     // Round to the nearest .5 pixels to support subpixel layouts
@@ -2104,9 +2104,10 @@ function roundAxis(axis: Axis): void {
 function roundBox(box: Box): void {
     // Detect browser only client-side
     if (!roundPoint) {
-        roundPoint = isWebKit()
-            ? Math.round
-            : (point: number) => Math.round(point * 2) / 2
+        roundPoint =
+            userAgentContaints("applewebkit/") && !userAgentContaints("chrome/")
+                ? Math.round
+                : (point: number) => Math.round(point * 2) / 2
     }
 
     roundAxis(box.x)
