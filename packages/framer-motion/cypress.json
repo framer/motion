@@ -1,5 +1,8 @@
 {
     "baseUrl": "http://localhost:9990",
     "video": true,
-    "screenshots": false
+    "screenshots": false,
+    "retries": {
+        "runMode": 2
+    }
 }
