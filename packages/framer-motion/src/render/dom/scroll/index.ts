@@ -60,7 +60,7 @@ function getTimeline({
 export function scroll(onScroll: OnScroll, options?: ScrollOptions) {
     const timeline = getTimeline(options)
 
-    let prevProgress = 0
+    let prevProgress: number
 
     const onFrame = () => {
         const { currentTime } = timeline
