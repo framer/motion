@@ -1,4 +1,13 @@
 describe("scroll()", () => {
+    it("Fires callback on first frame, before scroll event", () => {
+        cy.visit("?test=scroll-callback-first-frame")
+            .wait(100)
+            .get("#progress")
+            .should(([$element]: any) => {
+                expect($element.innerText).to.equal("2")
+            })
+    })
+
     it("Correctly updates window scroll progress callback", () => {
         cy.visit("?test=scroll-callback-window").wait(100).viewport(100, 400)
 
