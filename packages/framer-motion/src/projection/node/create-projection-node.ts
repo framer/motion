@@ -609,6 +609,7 @@ export function createProjectionNode<I>({
 
             if (!this.isUpdating) {
                 this.nodes!.forEach(clearIsLayoutDirty)
+                return
             }
 
             this.isUpdating = false
