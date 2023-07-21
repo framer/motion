@@ -61,7 +61,7 @@
         "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
         "prepack": "yarn build",
         "postpublish": "git push --tags",
-        "measure": "rollup -c ./rollup.size.config.js && webpack --config webpack.size.config.js && bundlesize",
+        "measure": "",
         "start-dev-server": "webpack serve --config ../../dev/webpack/config.js --hot"
     },
     "dependencies": {
@@ -116,5 +116,5 @@
             "maxSize": "31.24 kB"
         }
     ],
-    "gitHead": "4af2206b65149b03ccb3812695f6c93e805f6861"
+    "gitHead": "8511117378b478d9c1375e345a1d51808ce42767"
 }
