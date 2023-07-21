@@ -649,7 +649,7 @@ export function createProjectionNode<I>({
         didUpdate() {
             if (!this.updateScheduled) {
                 this.updateScheduled = true
-                queueMicrotask(() => this.update())
+                this.update()
             }
         }
 
