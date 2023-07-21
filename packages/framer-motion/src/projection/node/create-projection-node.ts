@@ -584,7 +584,10 @@ export function createProjectionNode<I>({
             this.prevTransformTemplateValue = transformTemplate
                 ? transformTemplate(this.latestValues, "")
                 : undefined
-
+            console.log(
+                "taking snapshot, update already scheduled:",
+                this.updateScheduled
+            )
             this.updateSnapshot()
             shouldNotifyListeners && this.notifyListeners("willUpdate")
         }
@@ -609,7 +612,6 @@ export function createProjectionNode<I>({
 
             if (!this.isUpdating) {
                 this.nodes!.forEach(clearIsLayoutDirty)
-                return
             }
 
             this.isUpdating = false
@@ -650,7 +652,7 @@ export function createProjectionNode<I>({
         didUpdate() {
             if (!this.updateScheduled) {
                 this.updateScheduled = true
-                this.update()
+                queueMicrotask(() => this.update())
             }
         }
 
