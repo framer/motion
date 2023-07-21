@@ -2116,7 +2116,7 @@ function roundBox(box: Box): void {
         roundPoint =
             userAgentContaints("applewebkit/") && !userAgentContaints("chrome/")
                 ? Math.round
-                : (point: number) => Math.round(point * 2) / 2
+                : (point: number) => point
 
         console.log(
             "should do subpixel rounding",
