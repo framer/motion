@@ -584,10 +584,14 @@ export function createProjectionNode<I>({
             this.prevTransformTemplateValue = transformTemplate
                 ? transformTemplate(this.latestValues, "")
                 : undefined
-            console.log(
-                "taking snapshot, update already scheduled:",
-                this.updateScheduled
-            )
+
+            if ((this.instance as any).dataset?.framerName === "Why Framer") {
+                console.log(
+                    "taking snapshot, update already scheduled:",
+                    this.updateScheduled
+                )
+            }
+
             this.updateSnapshot()
             shouldNotifyListeners && this.notifyListeners("willUpdate")
         }
