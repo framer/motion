@@ -714,6 +714,10 @@ export function createProjectionNode<I>({
             if (this.snapshot || !this.instance) return
 
             this.snapshot = this.measure()
+
+            if ((this.instance as any).dataset?.framerName === "Why Framer") {
+                console.log("snapshot", this.snapshot.layoutBox.y)
+            }
         }
 
         updateLayout() {
@@ -745,6 +749,10 @@ export function createProjectionNode<I>({
 
             const prevLayout = this.layout
             this.layout = this.measure(false)
+
+            if ((this.instance as any).dataset?.framerName === "Why Framer") {
+                console.log("layout", this.layout.layoutBox.y)
+            }
 
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
@@ -2108,6 +2116,14 @@ function roundBox(box: Box): void {
             userAgentContaints("applewebkit/") && !userAgentContaints("chrome/")
                 ? Math.round
                 : (point: number) => Math.round(point * 2) / 2
+
+        console.log(
+            "should do subpixel rounding",
+            !(
+                userAgentContaints("applewebkit/") &&
+                !userAgentContaints("chrome/")
+            )
+        )
     }
 
     roundAxis(box.x)
