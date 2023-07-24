@@ -2016,7 +2016,6 @@ export function propagateDirtyNodes(node: IProjectionNode) {
     )
 
     node.isTransformDirty ||= node.parent.isTransformDirty
-    node.isProjectionDirty ||= node.parent.isProjectionDirty
 }
 
 export function cleanDirtyNodes(node: IProjectionNode) {
