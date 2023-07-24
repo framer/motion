@@ -2117,21 +2117,34 @@ function roundAxis(axis: Axis): void {
     axis.max = roundPoint(axis.max)
 }
 
+export function roundWithPrecision(number: number, precision = 2) {
+    number = number || 0
+    if (Number.isInteger(number)) return number
+
+    // Epsilon needs to be scaled to account for values < 1
+    const scaledEpsilon = 0.5 * Number.EPSILON * number
+    let multiplier = 1
+    // This looks like a potentially useless optimization, but after benchmarking,
+    // the code below is ~2x faster in Chrome (as of Sep, 2020) compared to using Math.pow.
+    while (precision-- > 0) multiplier *= 10
+    if (number < 0) multiplier *= -1
+    return Math.round((number + scaledEpsilon) * multiplier) / multiplier
+}
+
+function roundToLayoutUnit(point: number): number {
+    return roundWithPrecision(point * 64, 0) / 64
+}
+
 function roundBox(box: Box): void {
-    // Detect browser only client-side
     if (!roundPoint) {
+        const devicePixelRatio = window.devicePixelRatio || 0
         roundPoint =
             userAgentContaints("applewebkit/") && !userAgentContaints("chrome/")
                 ? Math.round
-                : (point: number) => point
-
-        console.log(
-            "should do subpixel rounding",
-            !(
-                userAgentContaints("applewebkit/") &&
-                !userAgentContaints("chrome/")
-            )
-        )
+                : devicePixelRatio < 2
+                ? (point: number) => Math.round(roundToLayoutUnit(point))
+                : (point: number) =>
+                      Math.round(roundToLayoutUnit(point) * 2) / 2
     }
 
     roundAxis(box.x)
