@@ -18,6 +18,15 @@ export function boxEquals(a: Box, b: Box) {
     )
 }
 
+export function boxEqualsRounded(a: Box, b: Box) {
+    return (
+        Math.round(a.x.min) === Math.round(b.x.min) &&
+        Math.round(a.x.max) === Math.round(b.x.max) &&
+        Math.round(a.y.min) === Math.round(b.y.min) &&
+        Math.round(a.y.max) === Math.round(b.y.max)
+    )
+}
+
 export function aspectRatio(box: Box): number {
     return calcLength(box.x) / calcLength(box.y)
 }

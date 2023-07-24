@@ -17,7 +17,12 @@ import { createBox, createDelta } from "../geometry/models"
 import { transformBox, translateAxis } from "../geometry/delta-apply"
 import { Axis, AxisDelta, Box, Delta, Point } from "../geometry/types"
 import { getValueTransition } from "../../animation/utils/transitions"
-import { aspectRatio, boxEquals, isDeltaZero } from "../geometry/utils"
+import {
+    aspectRatio,
+    boxEquals,
+    boxEqualsRounded,
+    isDeltaZero,
+} from "../geometry/utils"
 import { NodeStack } from "../shared/stack"
 import { scaleCorrectors } from "../styles/scale-correction"
 import { buildProjectionTransform } from "../styles/transform"
@@ -49,6 +54,7 @@ import { isSVGElement } from "../../render/dom/utils/is-svg-element"
 import { animateSingleValue } from "../../animation/interfaces/single-value"
 import { clamp } from "../../utils/clamp"
 import { steps } from "../../frameloop/frame"
+import { noop } from "../../utils/noop"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -443,7 +449,7 @@ export function createProjectionNode<I>({
                          */
                         const targetChanged =
                             !this.targetLayout ||
-                            !boxEquals(this.targetLayout, newLayout) ||
+                            !boxEqualsRounded(this.targetLayout, newLayout) ||
                             hasRelativeTargetChanged
 
                         /**
@@ -1946,7 +1952,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                         parentLayout.layoutBox
                     )
 
-                    if (!boxEquals(relativeSnapshot, relativeLayout)) {
+                    if (!boxEqualsRounded(relativeSnapshot, relativeLayout)) {
                         hasRelativeTargetChanged = true
                     }
 
@@ -2090,10 +2096,19 @@ const defaultLayoutTransition = {
     ease: [0.4, 0, 0.1, 1],
 }
 
-let roundPoint: (point: number) => number
+const userAgentContains = (string: string) =>
+    typeof navigator !== "undefined" &&
+    navigator.userAgent.toLowerCase().includes(string)
 
-const isWebKit = () =>
-    navigator.userAgent.toLowerCase().includes("applewebkit/")
+/**
+ * Measured bounding boxes must be rounded in Safari and
+ * left untouched in Chrome, otherwise non-integer layouts within scaled-up elements
+ * can appear to jump.
+ */
+const roundPoint =
+    userAgentContains("applewebkit/") && !userAgentContains("chrome/")
+        ? Math.round
+        : noop
 
 function roundAxis(axis: Axis): void {
     // Round to the nearest .5 pixels to support subpixel layouts
@@ -2102,13 +2117,6 @@ function roundAxis(axis: Axis): void {
 }
 
 function roundBox(box: Box): void {
-    // Detect browser only client-side
-    if (!roundPoint) {
-        roundPoint = isWebKit()
-            ? Math.round
-            : (point: number) => Math.round(point * 2) / 2
-    }
-
     roundAxis(box.x)
     roundAxis(box.y)
 }
