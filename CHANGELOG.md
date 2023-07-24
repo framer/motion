@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.13.1] 2023-07-24
+
+### Added
+
+-   Fixed subpixel layout rounding in Chrome.
+
 ## [10.13.0] 2023-07-19
 
 ### Added
