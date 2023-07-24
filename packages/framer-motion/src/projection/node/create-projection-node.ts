@@ -2121,8 +2121,8 @@ function roundBox(box: Box): void {
     if (!roundPoint) {
         roundPoint =
             userAgentContaints("applewebkit/") && !userAgentContaints("chrome/")
-                ? Math.round
-                : (point: number) => Math.round(point * 2) / 2
+                ? (point: number) => point
+                : (point: number) => point
     }
 
     roundAxis(box.x)
