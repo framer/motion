@@ -2117,7 +2117,7 @@ function roundAxis(axis: Axis): void {
     axis.max = roundPoint(axis.max)
 }
 
-export function roundWithPrecision(number: number, precision = 2) {
+function roundWithPrecision(number: number, precision = 2) {
     number = number || 0
     if (Number.isInteger(number)) return number
 
