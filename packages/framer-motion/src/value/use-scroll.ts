@@ -5,9 +5,10 @@ import { useEffect } from "react"
 import { useIsomorphicLayoutEffect } from "../three-entry"
 import { warning } from "../utils/errors"
 import { scrollInfo } from "../render/dom/scroll/track"
-import { ScrollOptions } from "../render/dom/scroll/types"
+import { ScrollInfoOptions } from "../render/dom/scroll/types"
 
-interface UseScrollOptions extends Omit<ScrollOptions, "container" | "target"> {
+interface UseScrollOptions
+    extends Omit<ScrollInfoOptions, "container" | "target"> {
     container?: RefObject<HTMLElement>
     target?: RefObject<HTMLElement>
     layoutEffect?: boolean
