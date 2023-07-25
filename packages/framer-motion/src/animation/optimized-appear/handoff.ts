@@ -1,7 +1,5 @@
-import { frameData } from "../../frameloop"
 import { Batcher } from "../../frameloop/types"
 import { transformProps } from "../../render/html/utils/transform"
-import { millisecondsToSeconds } from "../../utils/time-conversion"
 import type { MotionValue } from "../../value"
 import { appearAnimationStore } from "./store"
 import { appearStoreId } from "./store-id"
@@ -9,7 +7,7 @@ import { appearStoreId } from "./store-id"
 export function handoffOptimizedAppearAnimation(
     id: string,
     name: string,
-    value: MotionValue,
+    _value: MotionValue,
     /**
      * This function is loaded via window by startOptimisedAnimation.
      * By accepting `sync` as an argument, rather than using it via
