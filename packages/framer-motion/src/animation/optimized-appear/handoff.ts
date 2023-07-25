@@ -24,6 +24,8 @@ export function handoffOptimizedAppearAnimation(
 
     const appearAnimation = appearAnimationStore.get(storeId)
 
+    console.log("appear animation", storeId, appearAnimation)
+
     if (!appearAnimation) return 0
 
     const { animation, startTime } = appearAnimation
