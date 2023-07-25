@@ -7,6 +7,10 @@ import { appearStoreId } from "./store-id"
 export function handoffOptimizedAppearAnimation(
     id: string,
     name: string,
+    /**
+     * Legacy argument. This function is inlined apart from framer-motion so
+     * will co-ordinate with Shuang with how best to remove this.
+     */
     _value: MotionValue,
     /**
      * This function is loaded via window by startOptimisedAnimation.
@@ -24,8 +28,6 @@ export function handoffOptimizedAppearAnimation(
 
     const appearAnimation = appearAnimationStore.get(storeId)
 
-    console.log("appear animation", storeId, appearAnimation)
-
     if (!appearAnimation) return 0
 
     const { animation, startTime } = appearAnimation
@@ -38,40 +40,10 @@ export function handoffOptimizedAppearAnimation(
          */
         try {
             animation.cancel()
-            console.log("cancelled at", performance.now())
         } catch (e) {}
     }
 
     if (startTime !== null) {
-        const sampledTime = performance.now()
-        console.log({ sampledTime })
-        /**
-         * Resync handoff animation with optimised animation.
-         *
-         * This step would be unnecessary if we triggered animateChanges() in useEffect,
-         * but due to potential hydration errors we currently fire them in useLayoutEffect.
-         *
-         * By the time we're safely ready to cancel the optimised WAAPI animation,
-         * the main thread might have been blocked and desynced the two animations.
-         *
-         * Here, we resync the two animations before the optimised WAAPI animation is cancelled.
-         */
-        // frame.preRender(() => {
-        //     if (value.animation) {
-        //         console.log("initial time", value.animation.time)
-        //         value.animation.time = millisecondsToSeconds(
-        //             performance.now() - sampledTime
-        //         )
-
-        //         console.log(
-        //             "value animation time",
-        //             value.animation.time,
-        //             performance.now(),
-        //             frameData.timestamp
-        //         )
-        //     }
-        // })
-
         /**
          * We allow the animation to persist until the next frame:
          *   1. So it continues to play until Framer Motion is ready to render
@@ -87,8 +59,7 @@ export function handoffOptimizedAppearAnimation(
          * an updated value for several frames, even as the animation plays smoothly via
          * the GPU.
          */
-        console.log("start animation at", sampledTime - startTime || 0)
-        return sampledTime - startTime || 0
+        return performance.now() - startTime || 0
     } else {
         cancelOptimisedAnimation()
         return 0

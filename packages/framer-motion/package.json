@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "10.13.2-alpha.3",
+    "version": "10.13.2-alpha.0",
     "description": "A simple and powerful JavaScript animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -44,7 +44,7 @@
         "build": "yarn clean && tsc -p . && rollup -c && node ./scripts/check-bundle.js",
         "dev": "yarn watch",
         "clean": "rm -rf types dist lib",
-        "test": "",
+        "test": "yarn test-server && yarn test-client",
         "test-ci": "yarn test",
         "test-client": "jest --config jest.config.json --max-workers=2",
         "test-server": "jest --config jest.config.ssr.json ",
@@ -53,7 +53,7 @@
         "test-projection": "yarn run collect-projection-tests && start-server-and-test 'pushd ../../; python -m SimpleHTTPServer; popd' http://0.0.0.0:8000 'cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
         "test-e2e-chrome": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --browser chrome  --spec \"cypress/integration/layout-relative.chrome.ts\"'",
         "test-e2e-electron": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
-        "test-e2e": "",
+        "test-e2e": "yarn test-appear && yarn test-projection && yarn test-e2e-electron",
         "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/while-in-view.ts\"'",
         "collect-appear-tests": "node ../../dev/optimized-appear/collect-appear-tests.js",
         "collect-projection-tests": "node ../../dev/projection/collect-projection-tests.js",
@@ -85,7 +85,7 @@
     "bundlesize": [
         {
             "path": "./dist/size-rollup-motion.js",
-            "maxSize": "30.65 kB"
+            "maxSize": "30.63 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
@@ -93,11 +93,11 @@
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
-            "maxSize": "15.4 kB"
+            "maxSize": "15.38 kB"
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
-            "maxSize": "26.57 kB"
+            "maxSize": "26.55 kB"
         },
         {
             "path": "./dist/size-rollup-animate.js",
@@ -113,8 +113,8 @@
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "31.31 kB"
+            "maxSize": "31.3 kB"
         }
     ],
-    "gitHead": "e379475937181d322b119cfbe81a54d5be6f681d"
+    "gitHead": "22120647eb97b85b22f51d2eb356dc03d9839705"
 }

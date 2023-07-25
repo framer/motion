@@ -263,7 +263,6 @@ export function animateValue<V = number>({
     }
 
     const stopAnimationDriver = () => {
-        console.log("stopping animation")
         animationDriver && animationDriver.stop()
         animationDriver = undefined
     }
