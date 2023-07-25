@@ -1,3 +1,4 @@
+import { frameData } from "../../frameloop"
 import { Batcher } from "../../frameloop/types"
 import { transformProps } from "../../render/html/utils/transform"
 import { millisecondsToSeconds } from "../../utils/time-conversion"
@@ -37,12 +38,13 @@ export function handoffOptimizedAppearAnimation(
          */
         try {
             animation.cancel()
+            console.log("cancelled at", performance.now())
         } catch (e) {}
     }
 
     if (startTime !== null) {
         const sampledTime = performance.now()
-
+        console.log({ sampledTime })
         /**
          * Resync handoff animation with optimised animation.
          *
@@ -54,13 +56,21 @@ export function handoffOptimizedAppearAnimation(
          *
          * Here, we resync the two animations before the optimised WAAPI animation is cancelled.
          */
-        frame.update(() => {
-            if (value.animation) {
-                value.animation.time = millisecondsToSeconds(
-                    performance.now() - sampledTime
-                )
-            }
-        })
+        // frame.preRender(() => {
+        //     if (value.animation) {
+        //         console.log("initial time", value.animation.time)
+        //         value.animation.time = millisecondsToSeconds(
+        //             performance.now() - sampledTime
+        //         )
+
+        //         console.log(
+        //             "value animation time",
+        //             value.animation.time,
+        //             performance.now(),
+        //             frameData.timestamp
+        //         )
+        //     }
+        // })
 
         /**
          * We allow the animation to persist until the next frame:
@@ -77,6 +87,7 @@ export function handoffOptimizedAppearAnimation(
          * an updated value for several frames, even as the animation plays smoothly via
          * the GPU.
          */
+        console.log("start animation at", sampledTime - startTime || 0)
         return sampledTime - startTime || 0
     } else {
         cancelOptimisedAnimation()
