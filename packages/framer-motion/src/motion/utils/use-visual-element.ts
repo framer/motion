@@ -66,7 +66,7 @@ export function useVisualElement<Instance, RenderState>(
      * are running, we use useLayoutEffect to trigger animations.
      */
     const useAnimateChangesEffect = window.HandoffAppearAnimations
-        ? useIsomorphicLayoutEffect
+        ? useEffect
         : useEffect
     useAnimateChangesEffect(() => {
         if (visualElement && visualElement.animationState) {
