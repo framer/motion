@@ -7928,28 +7928,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion@npm:^10.13.2-alpha.3":
-  version: 10.13.2-alpha.3
-  resolution: "framer-motion@npm:10.13.2-alpha.3"
-  dependencies:
-    "@emotion/is-prop-valid": ^0.8.2
-    tslib: ^2.4.0
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  dependenciesMeta:
-    "@emotion/is-prop-valid":
-      optional: true
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-dom:
-      optional: true
-  checksum: 3ac7fb0475cf39220e8584d63d26fcd54fdf1ab79d00d6cdf73b6b63ae7d8b24f8ca91287382ac4dc74394c710ba0d4216c7b588d7b1bbf66d7fd7799a991b0e
-  languageName: node
-  linkType: hard
-
-"framer-motion@workspace:packages/framer-motion":
+"framer-motion@^10.13.2-alpha.3, framer-motion@workspace:packages/framer-motion":
   version: 0.0.0-use.local
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
