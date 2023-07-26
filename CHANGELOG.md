@@ -4,6 +4,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## Fixed
+
+-   Fixed offset not working with useScroll
+
 ## [10.13.1] 2023-07-24
 
 ### Added
