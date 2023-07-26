@@ -34,4 +34,4 @@ export * from "./frameloop"
 /**
  * Deprecated
  */
-export * from "./frameloop/index-legacy"
+export { sync, cancelSync } from "./frameloop/index-legacy"
