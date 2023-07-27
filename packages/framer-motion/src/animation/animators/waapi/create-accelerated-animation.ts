@@ -12,6 +12,7 @@ import {
     secondsToMilliseconds,
 } from "../../../utils/time-conversion"
 import { memo } from "../../../utils/memo"
+import { ProgressTimeline } from "../../../render/dom/scroll/observe"
 
 const supportsWaapi = memo(() =>
     Object.hasOwnProperty.call(Element.prototype, "animate")
@@ -165,10 +166,7 @@ export function createAcceleratedAnimation(
         then(resolve: VoidFunction, reject?: VoidFunction) {
             return currentFinishedPromise.then(resolve, reject)
         },
-        get timeline() {
-            return animation.timeline as any
-        },
-        set timeline(timeline) {
+        attachTimeline(timeline: any) {
             animation.timeline = timeline
             animation.onfinish = null
         },

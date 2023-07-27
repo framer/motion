@@ -31,9 +31,9 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
     }
 
     attachTimeline(timeline: any) {
-        const cancel = this.animations.map((animation) => {
-            if (supportsScrollTimeline() && animation.isAccelerated) {
-                animation.timeline = timeline
+        const cancelAll = this.animations.map((animation) => {
+            if (supportsScrollTimeline() && animation.attachTimeline) {
+                animation.attachTimeline(timeline)
             } else {
                 animation.pause()
                 return observeTimeline((progress) => {
@@ -43,10 +43,8 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
         })
 
         return () => {
-            cancel.forEach((destroy, i) => {
-                if (destroy) {
-                    destroy()
-                }
+            cancelAll.forEach((cancelTimeline, i) => {
+                if (cancelTimeline) cancelTimeline()
 
                 this.animations[i].stop()
             })

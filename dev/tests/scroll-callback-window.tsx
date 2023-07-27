@@ -13,7 +13,7 @@ export const App = () => {
             setProgress(p)
 
             if (prevFrameStamp === frameData.timestamp) {
-                setError("Concurrent event handlers detect")
+                setError("Concurrent event handlers detected")
             }
 
             prevFrameStamp = frameData.timestamp
