@@ -13,6 +13,7 @@ import {
 } from "../../../utils/time-conversion"
 import { memo } from "../../../utils/memo"
 import { ProgressTimeline } from "../../../render/dom/scroll/observe"
+import { noop } from "../../../utils/noop"
 
 const supportsWaapi = memo(() =>
     Object.hasOwnProperty.call(Element.prototype, "animate")
@@ -162,13 +163,13 @@ export function createAcceleratedAnimation(
      * Animation interrupt callback.
      */
     const controls = {
-        isAccelerated: true,
         then(resolve: VoidFunction, reject?: VoidFunction) {
             return currentFinishedPromise.then(resolve, reject)
         },
         attachTimeline(timeline: any) {
             animation.timeline = timeline
             animation.onfinish = null
+            return noop<void>
         },
         get time() {
             return millisecondsToSeconds(animation.currentTime || 0)

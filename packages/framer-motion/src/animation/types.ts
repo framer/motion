@@ -88,8 +88,6 @@ export interface AnimationPlaybackControls {
      */
     duration: number
 
-    isAccelerated?: boolean
-
     stop: () => void
     play: () => void
     pause: () => void
