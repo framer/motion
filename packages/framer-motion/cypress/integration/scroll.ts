@@ -106,10 +106,10 @@ describe("scroll() animation", () => {
             .get("#color")
             .should(([$element]: any) => {
                 expect(getComputedStyle($element).backgroundColor).to.equal(
-                    "rgb(64, 64, 64)"
+                    "rgb(221, 221, 221)"
                 )
                 expect(getComputedStyle($element).color).to.equal(
-                    "rgb(64, 64, 64)"
+                    "rgb(128, 128, 128)"
                 )
             })
     })
