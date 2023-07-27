@@ -37,7 +37,7 @@
             const { matchViewportBox } = window.Assert
             const root = document.getElementById("root")
 
-            const duration = 0.5
+            const duration = 1
             const x = motionValue(0)
 
             x.onChange((latest) => {
@@ -53,7 +53,7 @@
             const Component = React.createElement(() => {
                 React.useLayoutEffect(() => {
                     const startTime = performance.now()
-                    while (performance.now() - startTime < 500) {}
+                    while (performance.now() - startTime < 200) {}
                 })
 
                 return React.createElement(motion.div, {

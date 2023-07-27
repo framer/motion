@@ -1,6 +1,5 @@
 import { Batcher } from "../../frameloop/types"
 import { transformProps } from "../../render/html/utils/transform"
-import { millisecondsToSeconds } from "../../utils/time-conversion"
 import type { MotionValue } from "../../value"
 import { appearAnimationStore } from "./store"
 import { appearStoreId } from "./store-id"
@@ -8,7 +7,11 @@ import { appearStoreId } from "./store-id"
 export function handoffOptimizedAppearAnimation(
     id: string,
     name: string,
-    value: MotionValue,
+    /**
+     * Legacy argument. This function is inlined apart from framer-motion so
+     * will co-ordinate with Shuang with how best to remove this.
+     */
+    _value: MotionValue,
     /**
      * This function is loaded via window by startOptimisedAnimation.
      * By accepting `sync` as an argument, rather than using it via
@@ -41,27 +44,6 @@ export function handoffOptimizedAppearAnimation(
     }
 
     if (startTime !== null) {
-        const sampledTime = performance.now()
-
-        /**
-         * Resync handoff animation with optimised animation.
-         *
-         * This step would be unnecessary if we triggered animateChanges() in useEffect,
-         * but due to potential hydration errors we currently fire them in useLayoutEffect.
-         *
-         * By the time we're safely ready to cancel the optimised WAAPI animation,
-         * the main thread might have been blocked and desynced the two animations.
-         *
-         * Here, we resync the two animations before the optimised WAAPI animation is cancelled.
-         */
-        frame.update(() => {
-            if (value.animation) {
-                value.animation.time = millisecondsToSeconds(
-                    performance.now() - sampledTime
-                )
-            }
-        })
-
         /**
          * We allow the animation to persist until the next frame:
          *   1. So it continues to play until Framer Motion is ready to render
@@ -77,7 +59,7 @@ export function handoffOptimizedAppearAnimation(
          * an updated value for several frames, even as the animation plays smoothly via
          * the GPU.
          */
-        return sampledTime - startTime || 0
+        return performance.now() - startTime || 0
     } else {
         cancelOptimisedAnimation()
         return 0
