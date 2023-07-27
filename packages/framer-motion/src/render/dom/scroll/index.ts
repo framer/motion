@@ -1,11 +1,10 @@
 import { ScrollOptions, OnScroll } from "./types"
-import { cancelFrame, frame } from "../../../frameloop"
-import { memo } from "../../../utils/memo"
 import { scrollInfo } from "./track"
+import { GroupPlaybackControls } from "../../../animation/GroupPlaybackControls"
+import { ProgressTimeline, observeTimeline } from "./observe"
+import { supportsScrollTimeline } from "./supports"
 
-const supportsScrollTimeline = memo(() => window.ScrollTimeline !== undefined)
-
-declare class ScrollTimeline {
+declare class ScrollTimeline implements ProgressTimeline {
     constructor(options: ScrollOptions)
 
     currentTime: null | { value: number }
@@ -57,27 +56,15 @@ function getTimeline({
     return elementCache[axis]!
 }
 
-export function scroll(onScroll: OnScroll, options?: ScrollOptions) {
+export function scroll(
+    onScroll: OnScroll | GroupPlaybackControls,
+    options?: ScrollOptions
+): VoidFunction {
     const timeline = getTimeline(options)
 
-    let prevProgress: number
-
-    const onFrame = () => {
-        const { currentTime } = timeline
-        const percentage = currentTime === null ? 0 : currentTime.value
-        const progress = percentage / 100
-
-        if (prevProgress !== progress) {
-            onScroll(progress)
-        }
-
-        prevProgress = progress
-    }
-
-    frame.update(onFrame, true)
-
-    return () => {
-        cancelFrame(onFrame)
-        if (timeline.cancel) timeline.cancel()
+    if (typeof onScroll === "function") {
+        return observeTimeline(onScroll, timeline)
+    } else {
+        return onScroll.attachTimeline(timeline)
     }
 }

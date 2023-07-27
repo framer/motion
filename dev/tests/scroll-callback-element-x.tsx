@@ -10,7 +10,7 @@ export const App = () => {
 
     useEffect(() => {
         if (!ref.current) return
-        scroll(setProgress, { source: ref.current, axis: "x" })
+        return scroll(setProgress, { source: ref.current, axis: "x" })
     }, [])
 
     return (

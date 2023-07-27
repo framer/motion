@@ -1,4 +1,4 @@
-describe("scroll()", () => {
+describe("scroll() callbacks", () => {
     it("Fires callback on first frame, before scroll event", () => {
         cy.visit("?test=scroll-callback-first-frame")
             .wait(100)
@@ -23,6 +23,10 @@ describe("scroll()", () => {
             .should(([$element]: any) => {
                 expect($element.innerText).to.equal("0.25")
             })
+
+        cy.get("#error").should(([$element]: any) => {
+            expect($element.innerText).to.equal("")
+        })
     })
 
     it("Correctly updates window scroll progress callback, x axis", () => {
@@ -67,6 +71,46 @@ describe("scroll()", () => {
                 const progress = parseFloat($element.innerText)
                 const isClose = progress >= 0.49 && progress <= 0.51
                 expect(isClose).to.equal(true)
+            })
+    })
+})
+
+describe("scroll() animation", () => {
+    it("Updates aniamtion on first frame, before scroll event", () => {
+        cy.visit("?test=scroll-animate-window")
+            .wait(100)
+            .get("#color")
+            .should(([$element]: any) => {
+                expect(getComputedStyle($element).backgroundColor).to.equal(
+                    "rgb(255, 255, 255)"
+                )
+            })
+    })
+
+    it("Correctly updates window scroll progress callback", () => {
+        cy.visit("?test=scroll-animate-window").wait(100).viewport(100, 400)
+
+        cy.scrollTo(0, 600)
+            .wait(200)
+            .get("#color")
+            .should(([$element]: any) => {
+                expect(getComputedStyle($element).backgroundColor).to.equal(
+                    "rgb(180, 180, 180)"
+                )
+                expect(getComputedStyle($element).color).to.equal(
+                    "rgb(180, 180, 180)"
+                )
+            })
+        cy.viewport(100, 800)
+            .wait(200)
+            .get("#color")
+            .should(([$element]: any) => {
+                expect(getComputedStyle($element).backgroundColor).to.equal(
+                    "rgb(64, 64, 64)"
+                )
+                expect(getComputedStyle($element).color).to.equal(
+                    "rgb(64, 64, 64)"
+                )
             })
     })
 })

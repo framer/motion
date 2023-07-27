@@ -12,6 +12,7 @@ import {
     secondsToMilliseconds,
 } from "../../../utils/time-conversion"
 import { memo } from "../../../utils/memo"
+import { noop } from "../../../utils/noop"
 
 const supportsWaapi = memo(() =>
     Object.hasOwnProperty.call(Element.prototype, "animate")
@@ -160,16 +161,14 @@ export function createAcceleratedAnimation(
     /**
      * Animation interrupt callback.
      */
-    return {
+    const controls = {
         then(resolve: VoidFunction, reject?: VoidFunction) {
             return currentFinishedPromise.then(resolve, reject)
         },
-        get timeline() {
-            return animation.timeline
-        },
-        set timeline(timeline) {
+        attachTimeline(timeline: any) {
             animation.timeline = timeline
             animation.onfinish = null
+            return noop<void>
         },
         get time() {
             return millisecondsToSeconds(animation.currentTime || 0)
@@ -227,4 +226,6 @@ export function createAcceleratedAnimation(
         complete: () => animation.finish(),
         cancel: safeCancel,
     }
+
+    return controls
 }

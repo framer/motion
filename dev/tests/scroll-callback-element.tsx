@@ -9,7 +9,7 @@ export const App = () => {
     const ref = useRef(null)
 
     useEffect(() => {
-        scroll(setProgress, { source: ref.current })
+        return scroll(setProgress, { source: ref.current })
     }, [])
 
     return (
