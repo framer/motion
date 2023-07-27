@@ -12,7 +12,6 @@ import {
     secondsToMilliseconds,
 } from "../../../utils/time-conversion"
 import { memo } from "../../../utils/memo"
-import { ProgressTimeline } from "../../../render/dom/scroll/observe"
 import { noop } from "../../../utils/noop"
 
 const supportsWaapi = memo(() =>
