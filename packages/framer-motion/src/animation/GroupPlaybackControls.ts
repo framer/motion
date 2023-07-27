@@ -2,7 +2,7 @@ import { observeTimeline } from "../render/dom/scroll/observe"
 import { supportsScrollTimeline } from "../render/dom/scroll/supports"
 import { AnimationPlaybackControls } from "./types"
 
-type PropNames = "time" | "speed" | "duration"
+type PropNames = "time" | "speed" | "duration" | "attachTimeline"
 
 export class GroupPlaybackControls implements AnimationPlaybackControls {
     animations: AnimationPlaybackControls[]
