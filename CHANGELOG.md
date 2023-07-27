@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.14.0] 2023-07-27
+
+### Added
+
+-   `scroll()` now accepts animations from `animate()` to create hardware-accelerated animations.
+
 ## [10.13.2] 2023-07-27
 
 ### Fixed
