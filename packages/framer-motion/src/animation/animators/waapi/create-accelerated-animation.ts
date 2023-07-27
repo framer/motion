@@ -160,12 +160,13 @@ export function createAcceleratedAnimation(
     /**
      * Animation interrupt callback.
      */
-    return {
+    const controls = {
+        isAccelerated: true,
         then(resolve: VoidFunction, reject?: VoidFunction) {
             return currentFinishedPromise.then(resolve, reject)
         },
         get timeline() {
-            return animation.timeline
+            return animation.timeline as any
         },
         set timeline(timeline) {
             animation.timeline = timeline
@@ -227,4 +228,6 @@ export function createAcceleratedAnimation(
         complete: () => animation.finish(),
         cancel: safeCancel,
     }
+
+    return controls
 }

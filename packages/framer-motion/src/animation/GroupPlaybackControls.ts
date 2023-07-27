@@ -1,6 +1,8 @@
+import { observeTimeline } from "../render/dom/scroll/observe"
+import { supportsScrollTimeline } from "../render/dom/scroll/supports"
 import { AnimationPlaybackControls } from "./types"
 
-type PropNames = "time" | "speed" | "duration" | "timeline"
+type PropNames = "time" | "speed" | "duration"
 
 export class GroupPlaybackControls implements AnimationPlaybackControls {
     animations: AnimationPlaybackControls[]
@@ -28,12 +30,27 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
         }
     }
 
-    get timeline() {
-        return this.getAll("timeline")
-    }
+    attachTimeline(timeline: any) {
+        const cancel = this.animations.map((animation) => {
+            if (supportsScrollTimeline() && animation.isAccelerated) {
+                animation.timeline = timeline
+            } else {
+                animation.pause()
+                return observeTimeline((progress) => {
+                    animation.time = animation.duration * progress
+                }, timeline)
+            }
+        })
 
-    set timeline(timeline: any) {
-        this.setAll("timeline", timeline)
+        return () => {
+            cancel.forEach((destroy, i) => {
+                if (destroy) {
+                    destroy()
+                }
+
+                this.animations[i].stop()
+            })
+        }
     }
 
     get time() {

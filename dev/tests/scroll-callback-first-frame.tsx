@@ -6,7 +6,7 @@ export const App = () => {
     const [progress, setProgress] = useState(0)
 
     useEffect(() => {
-        scroll((p) => setProgress(2 - p))
+        return scroll((p) => setProgress(2 - p))
     }, [])
 
     return (

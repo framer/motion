@@ -4,6 +4,7 @@ import { Easing } from "../easing/types"
 import { Driver } from "./animators/js/types"
 import { SVGPathProperties, VariantLabels } from "../motion/types"
 import { SVGAttributes } from "../render/svg/types-attributes"
+import { Timeline } from "./animators/timeline"
 
 export interface AnimationPlaybackLifecycles<V> {
     onUpdate?: (latest: V) => void
@@ -87,13 +88,15 @@ export interface AnimationPlaybackControls {
      */
     duration: number
 
+    isAccelerated?: boolean
+
     stop: () => void
     play: () => void
     pause: () => void
     complete: () => void
     cancel: () => void
     then: (onResolve: VoidFunction, onReject?: VoidFunction) => Promise<void>
-    timeline?: AnimationTimeline | null
+    timeline?: Timeline | null
 }
 
 export type DynamicOption<T> = (i: number, total: number) => T

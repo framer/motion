@@ -1,12 +1,23 @@
-import { scroll } from "framer-motion"
+import { scroll, frameData } from "framer-motion"
 import * as React from "react"
 import { useEffect, useState } from "react"
 
 export const App = () => {
     const [progress, setProgress] = useState(0)
+    const [error, setError] = useState("")
 
     useEffect(() => {
-        scroll(setProgress)
+        let prevFrameStamp = 0
+
+        return scroll((p) => {
+            setProgress(p)
+
+            if (prevFrameStamp === frameData.timestamp) {
+                setError("Concurrent event handlers detect")
+            }
+
+            prevFrameStamp = frameData.timestamp
+        })
     }, [])
 
     return (
@@ -17,6 +28,9 @@ export const App = () => {
             <div style={{ ...spacer, backgroundColor: "yellow" }} />
             <div id="progress" style={progressStyle}>
                 {progress}
+            </div>
+            <div id="error" style={errorStyle}>
+                {error}
             </div>
         </>
     )
@@ -29,5 +43,11 @@ const spacer = {
 const progressStyle: React.CSSProperties = {
     position: "fixed",
     top: 0,
+    left: 0,
+}
+
+const errorStyle: React.CSSProperties = {
+    position: "fixed",
+    bottom: 0,
     left: 0,
 }
