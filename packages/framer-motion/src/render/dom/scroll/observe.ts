@@ -25,8 +25,5 @@ export function observeTimeline(update: Update, timeline: ProgressTimeline) {
 
     frame.update(onFrame, true)
 
-    return () => {
-        console.log("cancel timeline observation")
-        cancelFrame(onFrame)
-    }
+    return () => cancelFrame(onFrame)
 }
