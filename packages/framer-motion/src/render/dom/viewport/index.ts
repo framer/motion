@@ -6,18 +6,18 @@ export type ViewChangeHandler = (entry: IntersectionObserverEntry) => void
 export interface InViewOptions {
     root?: Element | Document
     margin?: string
-    amount?: "any" | "all" | number
+    amount?: "some" | "all" | number
 }
 
 const thresholds = {
-    any: 0,
+    some: 0,
     all: 1,
 }
 
 export function inView(
     elementOrSelector: ElementOrSelector,
     onStart: (entry: IntersectionObserverEntry) => void | ViewChangeHandler,
-    { root, margin: rootMargin, amount = "any" }: InViewOptions = {}
+    { root, margin: rootMargin, amount = "some" }: InViewOptions = {}
 ): VoidFunction {
     const elements = resolveElements(elementOrSelector)
 
