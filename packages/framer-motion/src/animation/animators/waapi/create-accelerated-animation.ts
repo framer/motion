@@ -168,6 +168,9 @@ export function createAcceleratedAnimation(
         attachTimeline(timeline: any) {
             animation.timeline = timeline
             animation.onfinish = null
+
+            animation.rangeStart = "100px"
+
             return noop<void>
         },
         get time() {
