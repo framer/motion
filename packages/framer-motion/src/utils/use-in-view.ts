@@ -25,7 +25,7 @@ export function useInView(
         const options: InViewOptions = {
             root: (root && root.current) || undefined,
             margin,
-            amount: amount === "some" ? "any" : amount,
+            amount,
         }
 
         return inView(ref.current, onEnter, options)
