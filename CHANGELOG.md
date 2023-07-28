@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.15.0] 2023-07-28
+
+### Added
+
+-   Updated types for public `inView` API.
+
 ## [10.14.0] 2023-07-27
 
 ### Added
