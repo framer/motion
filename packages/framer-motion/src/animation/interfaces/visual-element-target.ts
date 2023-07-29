@@ -43,6 +43,7 @@ export function animateTarget(
     if (transitionOverride) transition = transitionOverride
 
     const animations: AnimationPlaybackControls[] = []
+    const promises: (Promise<void>)[] = []
 
     const animationTypeState =
         type &&
@@ -101,10 +102,19 @@ export function animateTarget(
         }
 
         animations.push(animation)
+        promises.push(new Promise((resolve) => {
+            const subscriptions: (() => void)[] = []
+            const unsubscribe = () => subscriptions.forEach((fn) => fn())
+            subscriptions.push(value.on('animationComplete', () => {
+                unsubscribe()
+                resolve()
+            }))
+            subscriptions.push(value.on('animationCancel', unsubscribe))
+        }))
     }
 
     if (transitionEnd) {
-        Promise.all(animations).then(() => {
+        Promise.all(promises).then(() => {
             transitionEnd && setTarget(visualElement, transitionEnd)
         })
     }

@@ -136,6 +136,33 @@ describe("animate prop as object", () => {
         })
         return expect(promise).resolves.toBe(300)
     })
+    test("uses the latest styles on subsequent renders", async () => {
+        const promise = new Promise((resolve) => {
+            const x = motionValue(0)
+            const Component = ({ animate }: any) => (
+                <motion.div animate={animate} style={{ x }} />
+            )
+            const { rerender } = render(
+                <Component
+                    animate={{
+                        x: 10,
+                        transition: { type: false },
+                        transitionEnd: { x: 100 },
+                    }}
+                />
+            )
+            rerender(
+                <Component
+                    animate={{
+                        x: 20,
+                        transition: { type: false },
+                    }}
+                />
+            )
+            requestAnimationFrame(() => resolve(x.get()))
+        })
+        return expect(promise).resolves.toBe(20)
+    })
     test("animates to set prop and preserves existing initial transform props", async () => {
         const promise = new Promise((resolve) => {
             const onComplete = () => {
