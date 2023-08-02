@@ -13,6 +13,7 @@ import {
 } from "../../../utils/time-conversion"
 import { memo } from "../../../utils/memo"
 import { noop } from "../../../utils/noop"
+import { ScrollRange } from "../../../render/dom/scroll/types"
 
 const supportsWaapi = memo(() =>
     Object.hasOwnProperty.call(Element.prototype, "animate")
@@ -116,25 +117,22 @@ export function createAcceleratedAnimation(
         ease = "linear"
     }
 
-    const animation = animateStyle(
-        (value.owner as VisualElement<HTMLElement>).current!,
-        valueName,
-        keyframes,
-        {
-            ...options,
-            duration,
-            /**
-             * This function is currently not called if ease is provided
-             * as a function so the cast is safe.
-             *
-             * However it would be possible for a future refinement to port
-             * in easing pregeneration from Motion One for browsers that
-             * support the upcoming `linear()` easing function.
-             */
-            ease: ease as EasingDefinition,
-            times,
-        }
-    )
+    const element = (value.owner as VisualElement<HTMLElement>).current!
+
+    const animation = animateStyle(element, valueName, keyframes, {
+        ...options,
+        duration,
+        /**
+         * This function is currently not called if ease is provided
+         * as a function so the cast is safe.
+         *
+         * However it would be possible for a future refinement to port
+         * in easing pregeneration from Motion One for browsers that
+         * support the upcoming `linear()` easing function.
+         */
+        ease: ease as EasingDefinition,
+        times,
+    })
 
     const cancelAnimation = () => animation.cancel()
 
@@ -165,11 +163,25 @@ export function createAcceleratedAnimation(
         then(resolve: VoidFunction, reject?: VoidFunction) {
             return currentFinishedPromise.then(resolve, reject)
         },
-        attachTimeline(timeline: any) {
+        attachTimeline(timeline: any, range?: ScrollRange) {
             animation.timeline = timeline
             animation.onfinish = null
-
-            animation.rangeStart = "100px"
+            console.log(keyframes)
+            if (range) {
+                const numKeyframes = keyframes.length
+                animation.effect.setKeyframes(
+                    keyframes.map((k, i) => {
+                        const keyframe = { [valueName]: k }
+                        if (i === 0) {
+                            keyframe.offset = range[0]
+                        } else if (i === numKeyframes - 1) {
+                            keyframe.offset = range[1]
+                        }
+                        return keyframe
+                    })
+                )
+                console.log(animation.effect.getKeyframes())
+            }
 
             return noop<void>
         },

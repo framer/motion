@@ -3,6 +3,7 @@ import { EasingFunction } from "../../../easing/types"
 export interface ScrollOptions {
     source?: Element
     axis?: "x" | "y"
+    range?: ScrollRange
 }
 
 export type OnScroll = (progress: number) => void
@@ -60,3 +61,5 @@ export interface ScrollInfoOptions {
     offset?: ScrollOffset
     smooth?: number
 }
+
+export type ScrollRange = Array<EdgeUnit>

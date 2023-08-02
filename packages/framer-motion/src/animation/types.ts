@@ -5,6 +5,7 @@ import { Driver } from "./animators/js/types"
 import { SVGPathProperties, VariantLabels } from "../motion/types"
 import { SVGAttributes } from "../render/svg/types-attributes"
 import { ProgressTimeline } from "../render/dom/scroll/observe"
+import { ScrollRange } from "../render/dom/scroll/types"
 
 export interface AnimationPlaybackLifecycles<V> {
     onUpdate?: (latest: V) => void
@@ -94,7 +95,10 @@ export interface AnimationPlaybackControls {
     complete: () => void
     cancel: () => void
     then: (onResolve: VoidFunction, onReject?: VoidFunction) => Promise<void>
-    attachTimeline?: (timeline: ProgressTimeline) => VoidFunction
+    attachTimeline?: (
+        timeline: ProgressTimeline,
+        range?: ScrollRange
+    ) => VoidFunction
 }
 
 export type DynamicOption<T> = (i: number, total: number) => T

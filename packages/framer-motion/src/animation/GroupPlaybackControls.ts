@@ -1,5 +1,6 @@
 import { observeTimeline } from "../render/dom/scroll/observe"
 import { supportsScrollTimeline } from "../render/dom/scroll/supports"
+import { ScrollRange } from "../render/dom/scroll/types"
 import { AnimationPlaybackControls } from "./types"
 
 type PropNames = "time" | "speed" | "duration" | "attachTimeline"
@@ -30,10 +31,10 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
         }
     }
 
-    attachTimeline(timeline: any) {
+    attachTimeline(timeline: any, range?: ScrollRange) {
         const cancelAll = this.animations.map((animation) => {
             if (supportsScrollTimeline() && animation.attachTimeline) {
-                animation.attachTimeline(timeline)
+                animation.attachTimeline(timeline, range)
             } else {
                 animation.pause()
                 return observeTimeline((progress) => {

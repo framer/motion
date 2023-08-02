@@ -65,6 +65,6 @@ export function scroll(
     if (typeof onScroll === "function") {
         return observeTimeline(onScroll, timeline)
     } else {
-        return onScroll.attachTimeline(timeline)
+        return onScroll.attachTimeline(timeline, options?.range)
     }
 }
