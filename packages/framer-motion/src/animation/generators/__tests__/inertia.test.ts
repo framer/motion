@@ -2,7 +2,7 @@ import { inertia } from "../inertia"
 import { pregenerateKeyframes } from "./utils"
 
 describe("inertia", () => {
-    test("Runs animations with default values ", () => {
+    test("Runs animations with default values", () => {
         const generator = inertia({
             keyframes: [0],
         })
@@ -21,6 +21,18 @@ describe("inertia", () => {
         const { keyframes, duration } = pregenerateKeyframes(generator)
         expect(duration).toEqual(3)
         expect(keyframes).toEqual(expectedAnimationKeyframes)
+    })
+
+    test("Continues animation when time is 0", () => {
+        const generator = inertia({
+            keyframes: [100],
+            min: 0,
+            max: 0,
+        })
+
+        const state = generator.next(0)
+        expect(state.done).toEqual(false)
+        expect(state.value).toEqual(100)
     })
 
     test("modifyTarget changes calculated target", () => {
