@@ -41,11 +41,11 @@
             const duration = 0.5
             const x = motionValue(0)
 
-            x.onChange((latest) => {
-                if (latest < 50) {
+            x.on("change", (latest) => {
+                if (latest < 100) {
                     showError(
                         document.getElementById("box"),
-                        `x transform should never be less than 50`
+                        `x transform should never be less than 100`
                     )
                 }
             })
