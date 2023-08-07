@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.15.1] 2023-08-07
+
+### Fixed
+
+-   Replacing `requestAnimationFrame` timestamp with `performance.now()` to avoid [timestamp bug in Chrome](https://bugs.chromium.org/p/chromium/issues/detail?id=1470675#makechanges).
+
 ## [10.15.0] 2023-07-28
 
 ### Added
