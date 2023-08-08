@@ -72,7 +72,7 @@ export function scrollInfo(
         if (container !== document.documentElement) {
             resizeListeners.set(container, resize(container, listener))
         }
-        target.addEventListener("scroll", listener, { passive: true })
+        target.addEventListener("scroll", listener)
     }
 
     const listener = scrollListeners.get(container)!
