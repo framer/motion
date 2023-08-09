@@ -4,6 +4,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.16.0] 2023-08-09
+
+- Promise returned by `animate` now resolves with string `finished` or `canceled` indicating if animation was canceled or finished successfully.
+
 ## [10.15.1] 2023-08-07
 
 ### Fixed

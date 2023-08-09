@@ -74,6 +74,16 @@ export type ElementOrSelector =
     | NodeListOf<Element>
     | string
 
+
+
+export type AnimationPlaybackControlsResolveReason = "finished" | "canceled"
+
+export interface AnimationPlaybackControlsResolveDetails {
+    reason: AnimationPlaybackControlsResolveReason
+}
+
+export type AnimationPlaybackControlsOnResolve = (details: AnimationPlaybackControlsResolveDetails) => void
+
 /**
  * @public
  */
@@ -93,7 +103,7 @@ export interface AnimationPlaybackControls {
     pause: () => void
     complete: () => void
     cancel: () => void
-    then: (onResolve: VoidFunction, onReject?: VoidFunction) => Promise<void>
+    then: (onResolve: AnimationPlaybackControlsOnResolve, onReject?: VoidFunction) => Promise<void>
     attachTimeline?: (timeline: ProgressTimeline) => VoidFunction
 }
 
