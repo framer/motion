@@ -27,7 +27,7 @@ export function createInstantAnimation<V>({
             pause: noop<void>,
             stop: noop<void>,
             then: (resolve: AnimationPlaybackControlsOnResolve) => {
-                resolve('finished')
+                resolve({ reason: 'finished' })
                 return Promise.resolve()
             },
             cancel: noop<void>,

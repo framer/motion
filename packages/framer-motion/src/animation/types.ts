@@ -78,7 +78,11 @@ export type ElementOrSelector =
 
 export type AnimationPlaybackControlsResolveReason = "finished" | "canceled"
 
-export type AnimationPlaybackControlsOnResolve = (reason: AnimationPlaybackControlsResolveReason) => void
+export interface AnimationPlaybackControlsResolveDetails {
+    reason: AnimationPlaybackControlsResolveReason
+}
+
+export type AnimationPlaybackControlsOnResolve = (details: AnimationPlaybackControlsResolveDetails) => void
 
 /**
  * @public

@@ -14,9 +14,9 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
     }
 
     then(onResolve: AnimationPlaybackControlsOnResolve, onReject?: VoidFunction) {
-        return Promise.all(this.animations).then((reasons) => {
-            const allCanceled = reasons.every(reason => reason === 'canceled')
-            return onResolve(allCanceled ? 'canceled' : 'finished')
+        return Promise.all(this.animations).then((details) => {
+            const allCanceled = details.every(({ reason }) => reason === 'canceled')
+            return onResolve({ reason: allCanceled ? 'canceled' : 'finished' })
         }).catch(onReject)
     }
 

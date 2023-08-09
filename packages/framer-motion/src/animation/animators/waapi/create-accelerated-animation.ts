@@ -2,7 +2,7 @@ import { EasingDefinition } from "../../../easing/types"
 import { frame, cancelFrame } from "../../../frameloop"
 import type { VisualElement } from "../../../render/VisualElement"
 import type { MotionValue } from "../../../value"
-import { AnimationPlaybackControls, AnimationPlaybackControlsOnResolve, AnimationPlaybackControlsResolveReason, ValueAnimationOptions } from "../../types"
+import { AnimationPlaybackControls, AnimationPlaybackControlsOnResolve, AnimationPlaybackControlsResolveDetails, ValueAnimationOptions } from "../../types"
 import { animateStyle } from "."
 import { isWaapiSupportedEasing } from "./easing"
 import { getFinalKeyframe } from "./utils/get-final-keyframe"
@@ -70,14 +70,14 @@ export function createAcceleratedAnimation(
      */
     let hasStopped = false
     let resolveFinishedPromise: AnimationPlaybackControlsOnResolve
-    let currentFinishedPromise: Promise<AnimationPlaybackControlsResolveReason>
+    let currentFinishedPromise: Promise<AnimationPlaybackControlsResolveDetails>
 
     /**
      * Resolve the current Promise every time we enter the
      * finished state. This is WAAPI-compatible behaviour.
      */
     const updateFinishedPromise = () => {
-        currentFinishedPromise = new Promise<AnimationPlaybackControlsResolveReason>((resolve) => {
+        currentFinishedPromise = new Promise<AnimationPlaybackControlsResolveDetails>((resolve) => {
             resolveFinishedPromise = resolve
         })
     }
@@ -140,7 +140,7 @@ export function createAcceleratedAnimation(
 
     const safeCancel = () => {
         frame.update(cancelAnimation)
-        resolveFinishedPromise('canceled')
+        resolveFinishedPromise({ reason: 'canceled' })
         updateFinishedPromise()
     }
 

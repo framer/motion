@@ -1,4 +1,4 @@
-import { AnimationPlaybackControls, AnimationPlaybackControlsOnResolve, AnimationPlaybackControlsResolveReason } from "../../types"
+import { AnimationPlaybackControls, AnimationPlaybackControlsOnResolve, AnimationPlaybackControlsResolveDetails } from "../../types"
 import { keyframes as keyframesGeneratorFactory } from "../../generators/keyframes"
 import { spring } from "../../generators/spring/index"
 import { inertia } from "../../generators/inertia"
@@ -57,14 +57,14 @@ export function animateValue<V = number>({
 
     let hasStopped = false
     let resolveFinishedPromise: AnimationPlaybackControlsOnResolve
-    let currentFinishedPromise: Promise<AnimationPlaybackControlsResolveReason>
+    let currentFinishedPromise: Promise<AnimationPlaybackControlsResolveDetails>
 
     /**
      * Resolve the current Promise every time we enter the
      * finished state. This is WAAPI-compatible behaviour.
      */
     const updateFinishedPromise = () => {
-        currentFinishedPromise = new Promise<AnimationPlaybackControlsResolveReason>((resolve) => {
+        currentFinishedPromise = new Promise<AnimationPlaybackControlsResolveDetails>((resolve) => {
             resolveFinishedPromise = resolve
         })
     }
@@ -270,7 +270,7 @@ export function animateValue<V = number>({
     const cancel = () => {
         playState = "idle"
         stopAnimationDriver()
-        resolveFinishedPromise('canceled')
+        resolveFinishedPromise({ reason: 'canceled' })
         updateFinishedPromise()
         startTime = cancelTime = null
     }
@@ -279,7 +279,7 @@ export function animateValue<V = number>({
         playState = "finished"
         onComplete && onComplete()
         stopAnimationDriver()
-        resolveFinishedPromise('finished')
+        resolveFinishedPromise({ reason: 'finished' })
     }
 
     const play = () => {
