@@ -1110,7 +1110,7 @@ describe("animate", () => {
             ease: "linear",
         })
 
-        const reason = await animation
+        const { reason } = await animation
         expect(reason).toBe("finished")
     })
 
@@ -1130,7 +1130,7 @@ describe("animate", () => {
             },
         })
 
-        const reason = await animation
+        const { reason } = await animation
 
         expect(output).toEqual([0, 20, 40])
         expect(reason).toBe("canceled")
