@@ -1,4 +1,4 @@
-import { AnimationPlaybackControls } from "../../types"
+import { AnimationPlaybackControls, AnimationPlaybackControlsOnResolve, AnimationPlaybackControlsResolveReason } from "../../types"
 import { keyframes as keyframesGeneratorFactory } from "../../generators/keyframes"
 import { spring } from "../../generators/spring/index"
 import { inertia } from "../../generators/inertia"
@@ -56,15 +56,15 @@ export function animateValue<V = number>({
     let speed = 1
 
     let hasStopped = false
-    let resolveFinishedPromise: VoidFunction
-    let currentFinishedPromise: Promise<void>
+    let resolveFinishedPromise: AnimationPlaybackControlsOnResolve
+    let currentFinishedPromise: Promise<AnimationPlaybackControlsResolveReason>
 
     /**
      * Resolve the current Promise every time we enter the
      * finished state. This is WAAPI-compatible behaviour.
      */
     const updateFinishedPromise = () => {
-        currentFinishedPromise = new Promise((resolve) => {
+        currentFinishedPromise = new Promise<AnimationPlaybackControlsResolveReason>((resolve) => {
             resolveFinishedPromise = resolve
         })
     }
@@ -270,7 +270,7 @@ export function animateValue<V = number>({
     const cancel = () => {
         playState = "idle"
         stopAnimationDriver()
-        resolveFinishedPromise()
+        resolveFinishedPromise('canceled')
         updateFinishedPromise()
         startTime = cancelTime = null
     }
@@ -279,7 +279,7 @@ export function animateValue<V = number>({
         playState = "finished"
         onComplete && onComplete()
         stopAnimationDriver()
-        resolveFinishedPromise()
+        resolveFinishedPromise('finished')
     }
 
     const play = () => {
@@ -318,7 +318,7 @@ export function animateValue<V = number>({
     }
 
     const controls = {
-        then(resolve: VoidFunction, reject?: VoidFunction) {
+        then(resolve: AnimationPlaybackControlsOnResolve, reject?: VoidFunction) {
             return currentFinishedPromise.then(resolve, reject)
         },
         get time() {

@@ -1,4 +1,4 @@
-import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
+import { AnimationPlaybackControls, AnimationPlaybackControlsOnResolve, ValueAnimationOptions } from "../types"
 import { animateValue } from "./js"
 import { noop } from "../../utils/noop"
 
@@ -26,8 +26,8 @@ export function createInstantAnimation<V>({
             play: noop<void>,
             pause: noop<void>,
             stop: noop<void>,
-            then: (resolve: VoidFunction) => {
-                resolve()
+            then: (resolve: AnimationPlaybackControlsOnResolve) => {
+                resolve('finished')
                 return Promise.resolve()
             },
             cancel: noop<void>,

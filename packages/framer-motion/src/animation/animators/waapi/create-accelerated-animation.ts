@@ -2,7 +2,7 @@ import { EasingDefinition } from "../../../easing/types"
 import { frame, cancelFrame } from "../../../frameloop"
 import type { VisualElement } from "../../../render/VisualElement"
 import type { MotionValue } from "../../../value"
-import { AnimationPlaybackControls, ValueAnimationOptions } from "../../types"
+import { AnimationPlaybackControls, AnimationPlaybackControlsOnResolve, AnimationPlaybackControlsResolveReason, ValueAnimationOptions } from "../../types"
 import { animateStyle } from "."
 import { isWaapiSupportedEasing } from "./easing"
 import { getFinalKeyframe } from "./utils/get-final-keyframe"
@@ -69,15 +69,15 @@ export function createAcceleratedAnimation(
      * TODO: Unify with js/index
      */
     let hasStopped = false
-    let resolveFinishedPromise: VoidFunction
-    let currentFinishedPromise: Promise<void>
+    let resolveFinishedPromise: AnimationPlaybackControlsOnResolve
+    let currentFinishedPromise: Promise<AnimationPlaybackControlsResolveReason>
 
     /**
      * Resolve the current Promise every time we enter the
      * finished state. This is WAAPI-compatible behaviour.
      */
     const updateFinishedPromise = () => {
-        currentFinishedPromise = new Promise((resolve) => {
+        currentFinishedPromise = new Promise<AnimationPlaybackControlsResolveReason>((resolve) => {
             resolveFinishedPromise = resolve
         })
     }
@@ -140,7 +140,7 @@ export function createAcceleratedAnimation(
 
     const safeCancel = () => {
         frame.update(cancelAnimation)
-        resolveFinishedPromise()
+        resolveFinishedPromise('canceled')
         updateFinishedPromise()
     }
 
@@ -162,7 +162,7 @@ export function createAcceleratedAnimation(
      * Animation interrupt callback.
      */
     const controls = {
-        then(resolve: VoidFunction, reject?: VoidFunction) {
+        then(resolve: AnimationPlaybackControlsOnResolve, reject?: VoidFunction) {
             return currentFinishedPromise.then(resolve, reject)
         },
         attachTimeline(timeline: any) {

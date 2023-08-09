@@ -1,6 +1,6 @@
 import { observeTimeline } from "../render/dom/scroll/observe"
 import { supportsScrollTimeline } from "../render/dom/scroll/supports"
-import { AnimationPlaybackControls } from "./types"
+import { AnimationPlaybackControls, AnimationPlaybackControlsOnResolve } from "./types"
 
 type PropNames = "time" | "speed" | "duration" | "attachTimeline"
 
@@ -13,8 +13,11 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
         ) as AnimationPlaybackControls[]
     }
 
-    then(onResolve: VoidFunction, onReject?: VoidFunction) {
-        return Promise.all(this.animations).then(onResolve).catch(onReject)
+    then(onResolve: AnimationPlaybackControlsOnResolve, onReject?: VoidFunction) {
+        return Promise.all(this.animations).then((reasons) => {
+            const allCanceled = reasons.every(reason => reason === 'canceled')
+            return onResolve(allCanceled ? 'canceled' : 'finished')
+        }).catch(onReject)
     }
 
     /**

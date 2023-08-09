@@ -1103,6 +1103,17 @@ describe("animate", () => {
         })
     })
 
+    test(".then() provides correct reason to callback when animation finished", async () => {
+        const animation = animateValue({
+            keyframes: [0, 100],
+            duration: 100,
+            ease: "linear",
+        })
+
+        const reason = await animation
+        expect(reason).toBe("finished")
+    })
+
     test("Correctly resolves when stopped", async () => {
         const output: number[] = []
 
@@ -1119,9 +1130,10 @@ describe("animate", () => {
             },
         })
 
-        await animation
+        const reason = await animation
 
         expect(output).toEqual([0, 20, 40])
+        expect(reason).toBe("canceled")
     })
 
     test("Correctly cancels an animation", async () => {
