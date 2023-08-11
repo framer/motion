@@ -17,16 +17,17 @@ export const App = () => {
     const content = useMotionValue("")
 
     return (
-        <div style={{ "--a": "#00F", "--b": "360deg", "--c": 2 } as any}>
+        <div style={{ "--a": "#00F", "--b": "100px", "--c": 2 } as any}>
             <motion.div
                 animate={{
                     originX: 0,
                     originY: 0,
                     backgroundColor: "var(--a)",
                     scale: "var(--c)",
+                    x: "var(--b)",
                 }}
                 style={style}
-                onUpdate={({ scale }) => {
+                onUpdate={({ scale, x }) => {
                     if (isFirstFrame) {
                         content.set(scale === "2" ? "Fail" : "Success")
                     }
