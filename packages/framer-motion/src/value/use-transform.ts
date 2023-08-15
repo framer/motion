@@ -118,21 +118,26 @@ export function useTransform<I, O>(
         | MotionValue<string | number>[],
     transformer: MultiTransformer<I, O>
 ): MotionValue<O>
-
+export function useTransform<I, O>(transformer: () => O): MotionValue<O>
 export function useTransform<I, O>(
     input:
         | MotionValue<I>
         | MotionValue<string>[]
         | MotionValue<number>[]
-        | MotionValue<string | number>[],
-    inputRangeOrTransformer: InputRange | Transformer<I, O>,
+        | MotionValue<string | number>[]
+        | (() => O),
+    inputRangeOrTransformer?: InputRange | Transformer<I, O>,
     outputRange?: O[],
     options?: TransformOptions<O>
 ): MotionValue<O> {
+    if (typeof input === "function") {
+        return useComputed(input)
+    }
+
     const transformer =
         typeof inputRangeOrTransformer === "function"
             ? inputRangeOrTransformer
-            : transform(inputRangeOrTransformer, outputRange!, options)
+            : transform(inputRangeOrTransformer!, outputRange!, options)
 
     return Array.isArray(input)
         ? useListTransform(
