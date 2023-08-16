@@ -1,5 +1,6 @@
 import { Target, TargetWithKeyframes } from "../../../types"
 import { invariant } from "../../../utils/errors"
+import { isNumericalString } from "../../../utils/is-numerical-string"
 import type { VisualElement } from "../../VisualElement"
 import { isCSSVariableToken, CSSVariableToken } from "./is-css-variable"
 
@@ -27,7 +28,7 @@ function getVariableValue(
     current: CSSVariableToken,
     element: Element,
     depth = 1
-): string | undefined {
+): string | number | undefined {
     invariant(
         depth <= maxDepth,
         `Max CSS variable fallback depth detected in property "${current}". This may indicate a circular fallback dependency.`
@@ -42,7 +43,8 @@ function getVariableValue(
     const resolved = window.getComputedStyle(element).getPropertyValue(token)
 
     if (resolved) {
-        return resolved.trim()
+        const trimmed = resolved.trim()
+        return isNumericalString(trimmed) ? parseFloat(trimmed) : trimmed
     } else if (isCSSVariableToken(fallback)) {
         // The fallback might itself be a CSS variable, in which case we attempt to resolve it too.
         return getVariableValue(fallback, element, depth + 1)
@@ -86,6 +88,7 @@ export function resolveCSSVariables(
         if (!isCSSVariableToken(current)) continue
 
         const resolved = getVariableValue(current, element)
+
         if (!resolved) continue
 
         // Clone target if it hasn't already been
