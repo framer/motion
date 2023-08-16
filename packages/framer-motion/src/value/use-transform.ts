@@ -2,6 +2,7 @@ import { MotionValue } from "../value"
 import { transform, TransformOptions } from "../utils/transform"
 import { useCombineMotionValues } from "./use-combine-values"
 import { useConstant } from "../utils/use-constant"
+import { useComputed } from "./use-computed"
 
 export type InputRange = number[]
 type SingleTransformer<I, O> = (input: I) => O
