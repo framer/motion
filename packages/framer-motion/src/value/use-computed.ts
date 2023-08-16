@@ -1,13 +1,21 @@
-import type { MotionValue } from "."
+import { collectMotionValues, type MotionValue } from "."
 import { useCombineMotionValues } from "./use-combine-values"
 
-let collectMotionValues: MotionValue[] | undefined = undefined
-
 export function useComputed<O>(compute: () => O): MotionValue<O> {
-    collectMotionValues = []
+    /**
+     * Open session of collectMotionValues. Any MotionValue that calls get()
+     * will be saved into this array.
+     */
+    collectMotionValues.current = []
+
     compute()
-    const value = useCombineMotionValues(collectMotionValues, compute)
-    collectMotionValues = undefined
+
+    const value = useCombineMotionValues(collectMotionValues.current, compute)
+
+    /**
+     * Synchronously close session of collectMotionValues.
+     */
+    collectMotionValues.current = undefined
 
     return value
 }
