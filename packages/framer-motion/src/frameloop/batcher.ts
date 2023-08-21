@@ -32,7 +32,9 @@ export function createRenderBatcher(
 
     const processStep = (stepId: StepId) => steps[stepId].process(state)
 
-    const processBatch = (timestamp: number) => {
+    const processBatch = () => {
+        const timestamp = performance.now()
+
         runNextFrame = false
 
         state.delta = useDefaultElapsed
@@ -54,7 +56,9 @@ export function createRenderBatcher(
         runNextFrame = true
         useDefaultElapsed = true
 
-        if (!state.isProcessing) scheduleNextBatch(processBatch)
+        if (!state.isProcessing) {
+            scheduleNextBatch(processBatch)
+        }
     }
 
     const schedule = stepsOrder.reduce((acc, key) => {

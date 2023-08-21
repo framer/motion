@@ -28,12 +28,13 @@ export const App = () => {
             duration: 0.5,
             ease: "linear",
             onUpdate: (v: number) => output.push(v),
-            onComplete: () =>
+            onComplete: () => {
                 setResult(
-                    output[1] === 100 && output.length !== 2
+                    output[0] === 100 && output.length !== 2
                         ? "Success"
                         : "Fail"
-                ),
+                )
+            },
         })
         controls.time = controls.duration
         controls.speed = -1
