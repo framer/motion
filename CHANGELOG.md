@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.15.3] 2023-08-21
+
+### Fixed
+
+-   SVGs mount read/writes are now batched.
+
 ## [10.15.2] 2023-08-14
 
 ### Fixed
