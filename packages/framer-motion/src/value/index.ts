@@ -48,6 +48,10 @@ export interface MotionValueOptions {
     owner?: Owner
 }
 
+export const collectMotionValues: { current: MotionValue[] | undefined } = {
+    current: undefined,
+}
+
 /**
  * `MotionValue` is used to track the state and velocity of motion values.
  *
@@ -314,6 +318,10 @@ export class MotionValue<V = any> {
      * @public
      */
     get() {
+        if (collectMotionValues.current) {
+            collectMotionValues.current.push(this)
+        }
+
         return this.current
     }
 

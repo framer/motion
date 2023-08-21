@@ -1,6 +1,6 @@
 import { render } from "../../../jest.setup"
 import * as React from "react"
-import { motion } from "../../"
+import { frame, motion } from "../../"
 import { useMotionValue } from "../use-motion-value"
 import { useTransform } from "../use-transform"
 import { MotionValue, motionValue } from ".."
@@ -53,6 +53,33 @@ describe("as function with multiple values", () => {
         expect(container.firstChild).toHaveStyle(
             "transform: translateX(4px) translateY(5px) translateZ(20px)"
         )
+    })
+})
+
+describe("as function with no passed MotionValues", () => {
+    test("sets initial value", async () => {
+        const x = motionValue(4)
+        const Component = () => {
+            const y = useMotionValue("5px")
+            const z = useTransform(() => x.get() * parseFloat(y.get()))
+            return <motion.div style={{ x, y, z }} />
+        }
+
+        const { container } = render(<Component />)
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateX(4px) translateY(5px) translateZ(20px)"
+        )
+
+        x.set(5)
+
+        await new Promise<void>((resolve) => {
+            frame.postRender(() => {
+                expect(container.firstChild).toHaveStyle(
+                    "transform: translateX(5px) translateY(5px) translateZ(25px)"
+                )
+                resolve()
+            })
+        })
     })
 })
 
