@@ -1,10 +1,6 @@
 import * as React from "react"
 import { motion } from "framer-motion"
 
-/**
- * An example of providing a MotionValue to an SVG component via its props
- */
-
 export const App = () => {
     return (
         <svg
