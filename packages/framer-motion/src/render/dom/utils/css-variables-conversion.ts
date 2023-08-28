@@ -40,6 +40,7 @@ function getVariableValue(
     if (!token) return
 
     // Attempt to read this CSS variable off the element
+    console.log("read css var")
     const resolved = window.getComputedStyle(element).getPropertyValue(token)
 
     if (resolved) {

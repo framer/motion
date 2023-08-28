@@ -16,6 +16,7 @@ import type { ResolvedValues } from "../types"
 import type { IProjectionNode } from "../../projection/node/types"
 
 export function getComputedStyle(element: HTMLElement) {
+    console.log("read computed style")
     return window.getComputedStyle(element)
 }
 

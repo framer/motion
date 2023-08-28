@@ -10,6 +10,7 @@ export function measureViewportBox(
     instance: HTMLElement,
     transformPoint?: TransformPoint
 ) {
+    console.log("reading bounding box")
     return convertBoundingBoxToBox(
         transformBoxPoints(instance.getBoundingClientRect(), transformPoint)
     )

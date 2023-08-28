@@ -17,6 +17,33 @@ export const App = () => {
         <div style={{ "--a": "#00F", "--b": "360deg", "--c": "100px" } as any}>
             <motion.div animate={{ backgroundColor: "var(--a)" }} style={style}>
                 a
+                <motion.div
+                    animate={{ backgroundColor: "var(--a)" }}
+                    style={style}
+                >
+                    a
+                </motion.div>
+                <motion.div animate={{ y: 100 }} style={style}>
+                    a
+                </motion.div>
+                <svg>
+                    <motion.circle />
+                </svg>
+                <motion.div animate={{ opacity: 0.5 }} style={style}>
+                    a
+                </motion.div>
+                <motion.div
+                    animate={{ rotate: "var(--b)", top: "200px" }}
+                    style={style}
+                >
+                    a
+                </motion.div>
+                <svg>
+                    <motion.circle />
+                </svg>
+                <motion.div animate={{ x: "var(--c)" }} style={style}>
+                    a
+                </motion.div>
             </motion.div>
             <motion.div animate={{ y: 100 }} style={style}>
                 a
@@ -38,6 +65,33 @@ export const App = () => {
             </svg>
             <motion.div animate={{ x: "var(--c)" }} style={style}>
                 a
+                <motion.div
+                    animate={{ backgroundColor: "var(--a)" }}
+                    style={style}
+                >
+                    a
+                </motion.div>
+                <motion.div animate={{ y: 100 }} style={style}>
+                    a
+                </motion.div>
+                <svg>
+                    <motion.circle />
+                </svg>
+                <motion.div animate={{ opacity: 0.5 }} style={style}>
+                    a
+                </motion.div>
+                <motion.div
+                    animate={{ rotate: "var(--b)", top: "200px" }}
+                    style={style}
+                >
+                    a
+                </motion.div>
+                <svg>
+                    <motion.circle />
+                </svg>
+                <motion.div animate={{ x: "var(--c)" }} style={style}>
+                    a
+                </motion.div>
             </motion.div>
         </div>
     )
