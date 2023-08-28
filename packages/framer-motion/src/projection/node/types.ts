@@ -45,6 +45,9 @@ export interface IProjectionNode<I = unknown> {
     nodes?: FlatTree
     depth: number
     instance: I
+
+    treeDeltaLayout: Delta
+    treeDeltaShared: Delta
     mount: (node: I, isLayoutDirty?: boolean) => void
     unmount: () => void
     options: ProjectionNodeOptions

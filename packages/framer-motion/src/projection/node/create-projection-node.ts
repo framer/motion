@@ -4,7 +4,7 @@ import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { mixValues } from "../animation/mix-values"
 import { copyBoxInto } from "../geometry/copy"
-import { applyBoxDelta, applyTreeDeltas } from "../geometry/delta-apply"
+import { applyBoxDelta } from "../geometry/delta-apply"
 import {
     calcBoxDelta,
     calcLength,
@@ -1187,6 +1187,9 @@ export function createProjectionNode<I>({
 
         hasProjected: boolean = false
 
+        treeDeltaLayout = createDelta()
+        treeDeltaShared = createDelta()
+
         calcProjection() {
             const lead = this.getLead()
             const isShared = Boolean(this.resumingFrom) || this !== lead
@@ -1255,12 +1258,58 @@ export function createProjectionNode<I>({
              * Apply all the parent deltas to this box to produce the corrected box. This
              * is the layout box, as it will appear on screen as a result of the transforms of its parents.
              */
-            applyTreeDeltas(
-                this.layoutCorrected,
-                this.treeScale,
-                this.path,
-                isShared
-            )
+            if (this.parent) {
+                if (this.parent.projectionDelta) {
+                    const delta = this.parent.projectionDelta
+                    // Incoporate each ancestor's scale into a culmulative treeScale for this component
+                    this.treeScale.x *= delta.x.scale
+                    this.treeScale.y *= delta.y.scale
+                } else {
+                    this.treeScale.x = this.parent.treeScale!.x
+                    this.treeScale.y = this.parent.treeScale!.x
+                }
+
+                // Apply parent delta
+                applyBoxDelta(
+                    this.layoutCorrected,
+                    isShared
+                        ? this.parent.treeDeltaShared
+                        : this.parent.treeDeltaLayout
+                )
+
+                // Calculate delta for children
+                if (this.options.layoutScroll && this.scroll) {
+                    transformDelta(this.treeDeltaShared, {
+                        x: -this.scroll.offset.x,
+                        y: -this.scroll.offset.y,
+                    })
+                }
+
+                if (this.parent.projectionDelta) {
+                    applyDelta(
+                        this.treeDeltaLayout,
+                        this.parent.projectionDelta
+                    )
+                    applyDelta(
+                        this.treeDeltaShared,
+                        this.parent.projectionDelta
+                    )
+                }
+
+                if (this.latestValues) {
+                    transformDelta(this.treeDeltaShared, this.latestValues)
+                }
+            } else {
+                this.treeScale.x = 1
+                this.treeScale.y = 1
+            }
+
+            // applyTreeDeltas(
+            //     this.layoutCorrected,
+            //     this.treeScale,
+            //     this.path,
+            //     isShared
+            // )
 
             /**
              * If this layer needs to perform scale correction but doesn't have a target,
@@ -2131,4 +2180,20 @@ function shouldAnimatePositionOnly(
         (animationType === "preserve-aspect" &&
             !isNear(aspectRatio(snapshot), aspectRatio(layout), 0.2))
     )
+}
+
+function transformDelta(target: Delta, transforms: ResolvedValues) {
+    target.x.translate += (transforms.x as number) || 0
+    target.y.translate += (transforms.y as number) || 0
+}
+
+function applyDeltaAxis(target: AxisDelta, delta: AxisDelta) {
+    target.translate += delta.translate
+    target.originPoint += delta.originPoint
+    target.scale *= delta.scale
+}
+
+function applyDelta(target: Delta, delta: Delta) {
+    applyDeltaAxis(target.x, delta.x)
+    applyDeltaAxis(target.y, delta.y)
 }
