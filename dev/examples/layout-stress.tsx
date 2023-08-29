@@ -101,14 +101,24 @@ function Group({ children }: React.PropsWithChildren) {
         <motion.div layout className="a">
             <motion.div layout className="b"></motion.div>
             <motion.div layout className="c"></motion.div>
-            <motion.div layout className="d">
-                {children}
-            </motion.div>
+            <motion.div layout className="d"></motion.div>
             <motion.div layout className="e"></motion.div>
             <motion.div layout className="f">
                 <motion.div layout className="g"></motion.div>
                 <motion.div layout className="h">
-                    <motion.div layout className="i"></motion.div>
+                    <motion.div layout className="i">
+                        <motion.div layout className="h">
+                            <motion.div layout className="i">
+                                <motion.div layout className="h">
+                                    <motion.div
+                                        layout
+                                        className="i"
+                                    ></motion.div>
+                                    {children}
+                                </motion.div>
+                            </motion.div>
+                        </motion.div>
+                    </motion.div>
                 </motion.div>
             </motion.div>
         </motion.div>
@@ -127,45 +137,6 @@ export const App = () => {
                     setExpanded(!expanded)
                 }}
             >
-                <Group>
-                    <Group />
-                </Group>
-                <Group>
-                    <Group />
-                </Group>
-                <Group>
-                    <Group />
-                </Group>
-                <Group>
-                    <Group />
-                </Group>
-                <Group>
-                    <Group />
-                </Group>
-                <Group>
-                    <Group />
-                </Group>
-                <Group>
-                    <Group />
-                </Group>
-                <Group>
-                    <Group />
-                </Group>
-                <Group>
-                    <Group />
-                </Group>
-                <Group>
-                    <Group />
-                </Group>
-                <Group>
-                    <Group />
-                </Group>
-                <Group>
-                    <Group />
-                </Group>
-                <Group>
-                    <Group />
-                </Group>
                 <Group>
                     <Group />
                 </Group>

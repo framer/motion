@@ -8,6 +8,9 @@ export function createRenderStep(runNextFrame: () => void): Step {
     let toRun: Process[] = []
     let toRunNextFrame: Process[] = []
 
+    let scheduledThisFrame = new Map<Process, boolean>()
+    let scheduledNextFrame = new Map<Process, boolean>()
+
     /**
      *
      */
@@ -33,15 +36,16 @@ export function createRenderStep(runNextFrame: () => void): Step {
         schedule: (callback, keepAlive = false, immediate = false) => {
             const addToCurrentFrame = immediate && isProcessing
             const buffer = addToCurrentFrame ? toRun : toRunNextFrame
+            const scheduled = addToCurrentFrame
+                ? scheduledThisFrame
+                : scheduledNextFrame
 
             if (keepAlive) toKeepAlive.add(callback)
 
             // If the buffer doesn't already contain this callback, add it
-            if (buffer.indexOf(callback) === -1) {
+            if (!scheduled.has(callback)) {
                 buffer.push(callback)
-
-                // If we're adding it to the currently running buffer, update its measured size
-                if (addToCurrentFrame && isProcessing) numToRun = toRun.length
+                scheduled.set(callback, true)
             }
 
             return callback
@@ -75,13 +79,18 @@ export function createRenderStep(runNextFrame: () => void): Step {
 
             // Swap this frame and the next to avoid GC
             ;[toRun, toRunNextFrame] = [toRunNextFrame, toRun]
+            ;[scheduledThisFrame, scheduledNextFrame] = [
+                scheduledNextFrame,
+                scheduledThisFrame,
+            ]
 
             // Clear the next frame list
             toRunNextFrame.length = 0
+            scheduledNextFrame.clear()
 
             // Execute this frame
             numToRun = toRun.length
-
+            console.log(frameData.timestamp, numToRun)
             if (numToRun) {
                 for (let i = 0; i < numToRun; i++) {
                     const callback = toRun[i]

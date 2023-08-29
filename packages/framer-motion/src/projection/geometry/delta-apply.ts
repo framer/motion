@@ -8,9 +8,7 @@ import { Axis, Box, Delta, Point } from "./types"
  * Scales a point based on a factor and an originPoint
  */
 export function scalePoint(point: number, scale: number, originPoint: number) {
-    const distanceFromOrigin = point - originPoint
-    const scaled = scale * distanceFromOrigin
-    return originPoint + scaled
+    return originPoint + scale * (point - originPoint)
 }
 
 /**
