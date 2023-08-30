@@ -126,10 +126,10 @@ describe("SVG", () => {
         })
         cy.scrollTo(0, 25)
         cy.get("#rect-progress").should(([$element]: any) => {
-            expect($element.innerText).not.to.equal("0")
+            expect($element.innerText).to.equal("0")
         })
         cy.get("#svg-progress").should(([$element]: any) => {
-            expect($element.innerText).to.equal("0")
+            expect($element.innerText).not.to.equal("0")
         })
         cy.scrollTo(0, 75)
         cy.get("#rect-progress").should(([$element]: any) => {
