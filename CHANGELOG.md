@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.16.3] Unreleased
+
+### Fixed
+
+-   Improved compatibility of custom `RefObject` and `MutableRefObject` types.
+
 ## [10.16.2] 2023-08-30
 
 ### Fixed
