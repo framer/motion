@@ -57,7 +57,7 @@ export function useScroll({
                 target: target?.current || undefined,
             }
         )
-    }, [])
+    }, [JSON.stringify(options.offset)])
 
     return values
 }
