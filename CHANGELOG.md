@@ -9,6 +9,7 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Fixed
 
 -   Improved compatibility of custom `RefObject` and `MutableRefObject` types.
+-   Fixing `useScroll` dependencies array.
 
 ## [10.16.2] 2023-08-30
 
