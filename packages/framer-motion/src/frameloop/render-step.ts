@@ -1,16 +1,39 @@
 import { Step, Process } from "./types"
 
+class Queue {
+    order: Process[] = []
+    scheduled: Set<Process> = new Set()
+
+    add(process: Process) {
+        if (!this.scheduled.has(process)) {
+            this.scheduled.add(process)
+            this.order.push(process)
+            return true
+        }
+    }
+
+    remove(process: Process) {
+        const index = this.order.indexOf(process)
+        if (index !== -1) {
+            this.order.splice(index, 1)
+            this.scheduled.delete(process)
+        }
+    }
+
+    clear() {
+        this.order.length = 0
+        this.scheduled.clear()
+    }
+}
+
 export function createRenderStep(runNextFrame: () => void): Step {
     /**
-     * We create and reuse two arrays, one to queue jobs for the current frame
+     * We create and reuse two queues, one to queue jobs for the current frame
      * and one for the next. We reuse to avoid triggering GC after x frames.
      */
-    let toRun: Process[] = []
-    let toRunNextFrame: Process[] = []
+    let thisFrame = new Queue()
+    let nextFrame = new Queue()
 
-    /**
-     *
-     */
     let numToRun = 0
 
     /**
@@ -32,16 +55,13 @@ export function createRenderStep(runNextFrame: () => void): Step {
          */
         schedule: (callback, keepAlive = false, immediate = false) => {
             const addToCurrentFrame = immediate && isProcessing
-            const buffer = addToCurrentFrame ? toRun : toRunNextFrame
+            const queue = addToCurrentFrame ? thisFrame : nextFrame
 
             if (keepAlive) toKeepAlive.add(callback)
 
-            // If the buffer doesn't already contain this callback, add it
-            if (buffer.indexOf(callback) === -1) {
-                buffer.push(callback)
-
-                // If we're adding it to the currently running buffer, update its measured size
-                if (addToCurrentFrame && isProcessing) numToRun = toRun.length
+            if (queue.add(callback) && addToCurrentFrame && isProcessing) {
+                // If we're adding it to the currently running queue, update its measured size
+                numToRun = thisFrame.order.length
             }
 
             return callback
@@ -51,9 +71,7 @@ export function createRenderStep(runNextFrame: () => void): Step {
          * Cancel the provided callback from running on the next frame.
          */
         cancel: (callback) => {
-            const index = toRunNextFrame.indexOf(callback)
-            if (index !== -1) toRunNextFrame.splice(index, 1)
-
+            nextFrame.remove(callback)
             toKeepAlive.delete(callback)
         },
 
@@ -74,17 +92,17 @@ export function createRenderStep(runNextFrame: () => void): Step {
             isProcessing = true
 
             // Swap this frame and the next to avoid GC
-            ;[toRun, toRunNextFrame] = [toRunNextFrame, toRun]
+            ;[thisFrame, nextFrame] = [nextFrame, thisFrame]
 
-            // Clear the next frame list
-            toRunNextFrame.length = 0
+            // Clear the next frame queue
+            nextFrame.clear()
 
             // Execute this frame
-            numToRun = toRun.length
+            numToRun = thisFrame.order.length
 
             if (numToRun) {
                 for (let i = 0; i < numToRun; i++) {
-                    const callback = toRun[i]
+                    const callback = thisFrame.order[i]
 
                     callback(frameData)
 
