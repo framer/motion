@@ -8,6 +8,12 @@ import { defaultOffset } from "../../../../utils/offsets/default"
 
 const point = { x: 0, y: 0 }
 
+function getTargetSize(target: Element) {
+    return "getBBox" in target && target.tagName !== "svg"
+        ? (target as SVGGraphicsElement).getBBox()
+        : { width: target.clientWidth, height: target.clientHeight }
+}
+
 export function resolveOffsets(
     container: HTMLElement,
     info: ScrollInfo,
@@ -27,7 +33,7 @@ export function resolveOffsets(
     const targetSize =
         target === container
             ? { width: container.scrollWidth, height: container.scrollHeight }
-            : { width: target.clientWidth, height: target.clientHeight }
+            : getTargetSize(target)
 
     const containerSize = {
         width: container.clientWidth,
