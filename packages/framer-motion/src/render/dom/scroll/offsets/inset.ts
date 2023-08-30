@@ -20,10 +20,7 @@ export function calcInset(element: Element, container: HTMLElement) {
             const parentBoundingBox = current.getBoundingClientRect()
             inset.x += svgBoundingBox.left - parentBoundingBox.left
             inset.y += svgBoundingBox.top - parentBoundingBox.top
-        } else if (
-            current instanceof SVGGraphicsElement &&
-            "getBBox" in current
-        ) {
+        } else if (current instanceof SVGGraphicsElement) {
             const { x, y } = current.getBBox()
             inset.x += x
             inset.y += y
@@ -37,6 +34,8 @@ export function calcInset(element: Element, container: HTMLElement) {
                 parent = current.parentNode as SVGElement
             }
             current = svg
+        } else {
+            break
         }
     }
 
