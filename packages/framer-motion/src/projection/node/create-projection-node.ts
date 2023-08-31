@@ -620,6 +620,28 @@ export function createProjectionNode<I>({
             this.isUpdating = false
 
             /**
+             * If every node involved in the layout animation is new, we can skip.
+             */
+            let canSkip = true
+
+            for (let i = 0; i < this.nodes!.children.length; i++) {
+                const node = this.nodes!.children[i] as IProjectionNode<any>
+
+                if (
+                    node.resumeFrom ||
+                    ((node.snapshot || node.layout) && node.isLayoutDirty)
+                ) {
+                    canSkip = false
+                    break
+                }
+            }
+
+            if (canSkip) {
+                this.clearAllSnapshots()
+                return
+            }
+
+            /**
              * Write
              */
             this.nodes!.forEach(resetTransformStyle)
