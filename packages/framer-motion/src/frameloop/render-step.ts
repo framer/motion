@@ -1,15 +1,17 @@
 import { Step, Process } from "./types"
-
+window.addTimes = [] as number
 class Queue {
     order: Process[] = []
     scheduled: Set<Process> = new Set()
 
     add(process: Process) {
+        // const startTime = performance.now()
         if (!this.scheduled.has(process)) {
             this.scheduled.add(process)
             this.order.push(process)
             return true
         }
+        // window.addTimes.push(performance.now() - startTime)
     }
 
     remove(process: Process) {

@@ -11,7 +11,7 @@ export function renderHTML(
     Object.assign(
         element.style,
         style,
-        projection && projection.getProjectionStyles(styleProp)
+        projection ? projection.getProjectionStyles(styleProp) : undefined
     )
 
     // Loop over any CSS variables and assign those.
