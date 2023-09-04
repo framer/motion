@@ -1,5 +1,5 @@
 import { EasingDefinition } from "../../../easing/types"
-import { frame, cancelFrame } from "../../../frameloop"
+import { frame, cancelFrame, frameData } from "../../../frameloop"
 import type { VisualElement } from "../../../render/VisualElement"
 import type { MotionValue } from "../../../value"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../../types"
@@ -135,6 +135,18 @@ export function createAcceleratedAnimation(
             times,
         }
     )
+
+    /**
+     * WAAPI animations don't resolve startTime synchronously. But a blocked
+     * thread could delay the startTime resolution by a noticeable amount.
+     * For synching handoff animations with the new Motion animation we want
+     * to ensure startTime is synchronously set.
+     */
+    if (options.syncStart) {
+        animation.startTime = frameData.isProcessing
+            ? frameData.timestamp
+            : performance.now()
+    }
 
     const cancelAnimation = () => animation.cancel()
 

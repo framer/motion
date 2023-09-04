@@ -33,6 +33,7 @@
                 startOptimizedAppearAnimation,
                 optimizedAppearDataAttribute,
                 motionValue,
+                frame,
             } = window.Motion
             const { matchViewportBox } = window.Assert
             const root = document.getElementById("root")
@@ -66,12 +67,18 @@
                      * On animation start, check the values we expect to see here
                      */
                     onAnimationStart: () => {
-                        // matchViewportBox(document.getElementById("box"), {
-                        //     top: 100,
-                        //     right: 250,
-                        //     left: 150,
-                        //     bottom: 200,
-                        // })
+                        frame.postRender(() => {
+                            frame.postRender(() => {
+                                const box = document.getElementById("box")
+
+                                if (!box) return
+
+                                const { opacity } = window.getComputedStyle(box)
+                                if (parseFloat(opacity) < 0.65) {
+                                    showError(box, "Resync failed")
+                                }
+                            })
+                        })
                     },
                     [optimizedAppearDataAttribute]: "a",
                 })

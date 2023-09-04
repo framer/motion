@@ -8,7 +8,7 @@ import type { VisualElementAnimationOptions } from "./types"
 import { animateMotionValue } from "./motion-value"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { setTarget } from "../../render/utils/setters"
-import { AnimationPlaybackControls } from "../types"
+import { AnimationPlaybackControls, Transition } from "../types"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
@@ -62,7 +62,11 @@ export function animateTarget(
             continue
         }
 
-        const valueTransition = { delay, elapsed: 0, ...transition }
+        const valueTransition = {
+            delay,
+            elapsed: 0,
+            ...transition,
+        }
 
         /**
          * If this is the first time a value is being animated, check
@@ -79,6 +83,7 @@ export function animateTarget(
                     value,
                     frame
                 )
+                ;(valueTransition as Transition).syncStart = true
             }
         }
 
