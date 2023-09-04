@@ -1845,7 +1845,7 @@ export function createProjectionNode<I>({
             if (this.options.layoutId) {
                 styles.pointerEvents =
                     lead === this
-                        ? resolveMotionValue(styleProp.pointerEvents) || ""
+                        ? resolveMotionValue(styleProp?.pointerEvents) || ""
                         : "none"
             }
 
