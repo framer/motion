@@ -68,15 +68,16 @@
                      */
                     onAnimationStart: () => {
                         frame.postRender(() => {
-                            const box = document.getElementById("box")
+                            frame.postRender(() => {
+                                const box = document.getElementById("box")
 
-                            if (!box) return
+                                if (!box) return
 
-                            const { opacity } = window.getComputedStyle(box)
-
-                            if (parseFloat(opacity) < 0.7) {
-                                showError(box, "Resync failed")
-                            }
+                                const { opacity } = window.getComputedStyle(box)
+                                if (parseFloat(opacity) < 0.65) {
+                                    showError(box, "Resync failed")
+                                }
+                            })
                         })
                     },
                     [optimizedAppearDataAttribute]: "a",

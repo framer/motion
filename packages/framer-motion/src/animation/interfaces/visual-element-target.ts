@@ -2,7 +2,7 @@ import { frame } from "../../frameloop"
 import { transformProps } from "../../render/html/utils/transform"
 import type { AnimationTypeState } from "../../render/utils/animation-state"
 import type { VisualElement } from "../../render/VisualElement"
-import type { TargetAndTransition } from "../../types"
+import type { TargetAndTransition, Transition } from "../../types"
 import { optimizedAppearDataAttribute } from "../optimized-appear/data-id"
 import type { VisualElementAnimationOptions } from "./types"
 import { animateMotionValue } from "./motion-value"
@@ -62,7 +62,12 @@ export function animateTarget(
             continue
         }
 
-        const valueTransition = { delay, elapsed: 0, ...transition }
+        const valueTransition = {
+            delay,
+            syncStart: false,
+            elapsed: 0,
+            ...transition,
+        }
 
         /**
          * If this is the first time a value is being animated, check
@@ -79,6 +84,7 @@ export function animateTarget(
                     value,
                     frame
                 )
+                valueTransition.syncStart = true
             }
         }
 
