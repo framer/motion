@@ -75,7 +75,10 @@
 
                                 const { opacity } = window.getComputedStyle(box)
                                 if (parseFloat(opacity) < 0.65) {
-                                    showError(box, "Resync failed")
+                                    showError(
+                                        box,
+                                        "Resync failed with opacity: " + opacity
+                                    )
                                 }
                             })
                         })
