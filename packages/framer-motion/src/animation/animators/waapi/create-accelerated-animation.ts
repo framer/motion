@@ -142,10 +142,12 @@ export function createAcceleratedAnimation(
      * For synching handoff animations with the new Motion animation we want
      * to ensure startTime is synchronously set.
      */
-    if (options.syncStart && document.timeline) {
+    if (options.syncStart) {
         animation.startTime = frameData.isProcessing
             ? frameData.timestamp
-            : document.timeline.currentTime
+            : document.timeline
+            ? document.timeline.currentTime
+            : performance.now()
     }
 
     const cancelAnimation = () => animation.cancel()
