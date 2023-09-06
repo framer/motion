@@ -47,7 +47,7 @@ export class ThreeVisualElement extends VisualElement<
         ...target
     }: TargetAndTransition) {
         checkTargetForNewValues(this, target, {})
-        return { ...target, transition, transitionEnd }
+        return { ...target, transition, transitionFrom, transitionEnd }
     }
 
     removeValueFromRenderState() {}
