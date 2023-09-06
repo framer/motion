@@ -34,6 +34,7 @@ export function animateTarget(
 ): AnimationPlaybackControls[] {
     let {
         transition = visualElement.getDefaultTransition(),
+        transitionFrom,
         transitionEnd,
         ...target
     } = visualElement.makeTargetAnimatable(definition)
@@ -65,7 +66,7 @@ export function animateTarget(
         const valueTransition = {
             delay,
             elapsed: 0,
-            ...transition,
+            ...(transitionFrom?.[value.type || "initial"] || transition),
         }
 
         /**
@@ -97,6 +98,8 @@ export function animateTarget(
                     : valueTransition
             )
         )
+
+        value.type = type || "animate"
 
         const animation = value.animation!
 
