@@ -1,4 +1,4 @@
-import { pointerEnter, render } from "../../../jest.setup"
+import { pointerEnter, pointerLeave, render } from "../../../jest.setup"
 import { motion, motionValue, frame } from "../../"
 import * as React from "react"
 
@@ -79,14 +79,22 @@ describe("transitionFrom", () => {
     })
 
     test("transitionFrom works with gestures", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise<number[]>((resolve) => {
+            const output: number[] = []
             const opacity = motionValue(1)
             const Component = () => (
                 <motion.div
                     whileHover={{
                         opacity: 0,
                         transitionFrom: {
+                            animate: { type: false },
+                        },
+                    }}
+                    animate={{
+                        opacity: 0.5,
+                        transitionFrom: {
                             initial: { type: false },
+                            whileHover: { type: false },
                         },
                     }}
                     style={{ opacity }}
@@ -96,11 +104,20 @@ describe("transitionFrom", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 
+            output.push(opacity.get())
+
             pointerEnter(container.firstChild as Element)
 
-            resolve(opacity.get())
+            output.push(opacity.get())
+
+            setTimeout(() => {
+                pointerLeave(container.firstChild as Element)
+
+                output.push(opacity.get())
+                resolve(output)
+            }, 10)
         })
 
-        return expect(promise).resolves.toBe(0)
+        return expect(promise).resolves.toEqual([0.5, 0, 0.5])
     })
 })
