@@ -5,6 +5,7 @@ import { SubscriptionManager } from "../utils/subscription-manager"
 import { velocityPerSecond } from "../utils/velocity-per-second"
 import { warnOnce } from "../utils/warn-once"
 import { AnimationPlaybackControls } from "../animation/types"
+import { AnimationType } from "../render/utils/types"
 
 export type Transformer<T> = (v: T) => T
 
@@ -63,6 +64,11 @@ export class MotionValue<V = any> {
      * When MotionValues are provided to motion components, warn if versions are mixed.
      */
     version = "__VERSION__"
+
+    /**
+     * The type of animation responsible for the MotionValue's current state.
+     */
+    type?: AnimationType
 
     /**
      * If a MotionValue has an owner, it was created internally within Framer Motion
