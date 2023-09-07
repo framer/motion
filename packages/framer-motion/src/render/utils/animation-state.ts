@@ -128,7 +128,7 @@ export function createAnimationState(
          * lower priority props and flag for animation.
          */
         for (let i = 0; i < numAnimationTypes; i++) {
-            const type = reversePriorityOrder[i]
+            const type: AnimationType | "initial" = reversePriorityOrder[i]
             const typeState = state[type]
             const prop = props[type] !== undefined ? props[type] : context[type]
             const propIsVariant = isVariantLabel(prop)
@@ -321,7 +321,7 @@ export function createAnimationState(
          * defined in the style prop, or the last read value.
          */
         if (removedKeys.size) {
-            const fallbackAnimation = {}
+            const fallbackAnimation: TargetAndTransition = {}
             removedKeys.forEach((key) => {
                 const fallbackTarget = visualElement.getBaseTarget(key)
 
@@ -329,8 +329,21 @@ export function createAnimationState(
                     fallbackAnimation[key] = fallbackTarget
                 }
             })
+            const { initial } = props
+            if (initial && typeof initial !== "boolean") {
+                const { transition, transitionFrom } =
+                    resolveVariant(
+                        visualElement,
+                        Array.isArray(initial) ? initial[0] : initial
+                    ) || {}
+                fallbackAnimation.transition = transition
+                fallbackAnimation.transitionFrom = transitionFrom
+            }
 
-            animations.push({ animation: fallbackAnimation })
+            animations.push({
+                animation: fallbackAnimation,
+                options: { type: "initial" },
+            })
         }
 
         let shouldAnimate = Boolean(animations.length)

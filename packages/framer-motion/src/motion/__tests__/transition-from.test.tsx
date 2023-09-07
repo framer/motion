@@ -120,4 +120,46 @@ describe("transitionFrom", () => {
 
         return expect(promise).resolves.toEqual([0.5, 0, 0.5])
     })
+
+    test("transitionFrom works with gestures and initial", async () => {
+        return new Promise<void>((resolve) => {
+            const Component = () => (
+                <motion.div
+                    whileHover={{
+                        opacity: 0,
+                        transitionFrom: {
+                            initial: { type: false },
+                        },
+                    }}
+                    initial={{
+                        transitionFrom: {
+                            initial: { type: false },
+                            whileHover: { type: false },
+                        },
+                    }}
+                    style={{ opacity: 0.5 }}
+                />
+            )
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            expect(container.firstChild).toHaveStyle("opacity: 0.5")
+
+            pointerEnter(container.firstChild as Element)
+
+            frame.postRender(() => {
+                expect(container.firstChild).toHaveStyle("opacity: 0")
+
+                setTimeout(() => {
+                    pointerLeave(container.firstChild as Element)
+
+                    frame.postRender(() => {
+                        expect(container.firstChild).toHaveStyle("opacity: 0.5")
+                        resolve()
+                    })
+                }, 10)
+            })
+        })
+    })
 })
