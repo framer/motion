@@ -68,7 +68,7 @@ export class MotionValue<V = any> {
     /**
      * The type of animation responsible for the MotionValue's current state.
      */
-    type?: AnimationType
+    type?: AnimationType | "initial"
 
     /**
      * If a MotionValue has an owner, it was created internally within Framer Motion
