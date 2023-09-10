@@ -27,6 +27,7 @@ This repo contains the source code for [Framer Motion](https://github.com/framer
 
 ### 📚 Docs
 
+-   [Install](https://github.com/framer/motion/tree/main/packages/framer-motion#get-started) framer-motion with via your package manager.
 -   Check out [our documentation](https://www.framer.com/docs/?utm_source=motion-readme-docs) for guides and a full API reference.
 -   Or see [our examples](https://www.framer.com/docs/examples/?utm_source=motion-readme-docs) for inspiration.
 
