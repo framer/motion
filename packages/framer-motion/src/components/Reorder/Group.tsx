@@ -85,7 +85,6 @@ export function ReorderGroup<V>(
     const context: ReorderContextProps<any> = {
         axis,
         registerItem: (value, layout) => {
-            if (!layout) return;
             // If the entry was already added, update it rather than adding it again
             const idx = order.findIndex((entry) => value === entry.value)
             if (idx !== -1) {
