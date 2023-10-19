@@ -1,6 +1,7 @@
 export { motionValue, MotionValue, PassiveEffect, Subscriber } from "./value"
 export { animate, createScopedAnimate } from "./animation/animate"
 export { scroll } from "./render/dom/scroll"
+export { scrollInfo } from "./render/dom/scroll/track"
 export { inView } from "./render/dom/viewport"
 
 /**
@@ -29,9 +30,8 @@ export { pipe } from "./utils/pipe"
 export { progress } from "./utils/progress"
 export { wrap } from "./utils/wrap"
 export * from "./frameloop"
-export { frameData } from "./frameloop/data"
 
 /**
  * Deprecated
  */
-export * from "./frameloop/index-legacy"
+export { sync, cancelSync } from "./frameloop/index-legacy"

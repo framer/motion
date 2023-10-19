@@ -4,11 +4,10 @@ import { invariant } from "../utils/errors"
 import { MotionValue } from "../value"
 import { GroupPlaybackControls } from "./GroupPlaybackControls"
 import {
-    AnimationOptionsWithValueOverrides,
     AnimationPlaybackControls,
     AnimationScope,
     DOMKeyframesDefinition,
-    DynamicOption,
+    DynamicAnimationOptions,
     ElementOrSelector,
     ValueAnimationTransition,
 } from "./types"
@@ -20,11 +19,6 @@ import { animateSingleValue } from "./interfaces/single-value"
 import { AnimationSequence, SequenceOptions } from "./sequence/types"
 import { createAnimationsFromSequence } from "./sequence/create"
 import { isMotionValue } from "../value/utils/is-motion-value"
-
-export interface DynamicAnimationOptions
-    extends Omit<AnimationOptionsWithValueOverrides, "delay"> {
-    delay?: number | DynamicOption<number>
-}
 
 function animateElements(
     elementOrSelector: ElementOrSelector,

@@ -1,4 +1,4 @@
-import { frameData } from "../frameloop/data"
+import { frameData } from "../frameloop"
 import { FrameData } from "../frameloop/types"
 import { frame } from "../frameloop"
 import { SubscriptionManager } from "../utils/subscription-manager"
@@ -46,6 +46,10 @@ export interface Owner {
 
 export interface MotionValueOptions {
     owner?: Owner
+}
+
+export const collectMotionValues: { current: MotionValue[] | undefined } = {
+    current: undefined,
 }
 
 /**
@@ -314,6 +318,10 @@ export class MotionValue<V = any> {
      * @public
      */
     get() {
+        if (collectMotionValues.current) {
+            collectMotionValues.current.push(this)
+        }
+
         return this.current
     }
 

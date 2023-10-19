@@ -47,31 +47,48 @@ export function useVisualElement<Instance, RenderState>(
         visualElement && visualElement.update(props, presenceContext)
     })
 
+    /**
+     * Cache this value as we want to know whether HandoffAppearAnimations
+     * was present on initial render - it will be deleted after this.
+     */
+    const canHandoff = useRef(Boolean(window.HandoffAppearAnimations))
+
     useIsomorphicLayoutEffect(() => {
-        visualElement && visualElement.render()
+        if (!visualElement) return
+
+        visualElement.render()
+
+        /**
+         * Ideally this function would always run in a useEffect.
+         *
+         * However, if we have optimised appear animations to handoff from,
+         * it needs to happen synchronously to ensure there's no flash of
+         * incorrect styles in the event of a hydration error.
+         *
+         * So if we detect a situtation where optimised appear animations
+         * are running, we use useLayoutEffect to trigger animations.
+         */
+        if (canHandoff.current && visualElement.animationState) {
+            visualElement.animationState.animateChanges()
+        }
     })
 
     useEffect(() => {
-        visualElement && visualElement.updateFeatures()
-    })
+        if (!visualElement) return
 
-    /**
-     * Ideally this function would always run in a useEffect.
-     *
-     * However, if we have optimised appear animations to handoff from,
-     * it needs to happen synchronously to ensure there's no flash of
-     * incorrect styles in the event of a hydration error.
-     *
-     * So if we detect a situtation where optimised appear animations
-     * are running, we use useLayoutEffect to trigger animations.
-     */
-    const useAnimateChangesEffect = window.HandoffAppearAnimations
-        ? useIsomorphicLayoutEffect
-        : useEffect
-    useAnimateChangesEffect(() => {
-        if (visualElement && visualElement.animationState) {
+        visualElement.updateFeatures()
+
+        if (!canHandoff.current && visualElement.animationState) {
             visualElement.animationState.animateChanges()
         }
+
+        /**
+         * Once we've handed off animations we can delete HandoffAppearAnimations
+         * so components added after the initial render can animate changes
+         * in useEffect vs useLayoutEffect.
+         */
+        window.HandoffAppearAnimations = undefined
+        canHandoff.current = false
     })
 
     return visualElement

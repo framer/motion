@@ -41,11 +41,11 @@
             const duration = 0.5
             const x = motionValue(0)
 
-            x.onChange((latest) => {
-                if (latest < 50) {
+            x.on("change", (latest) => {
+                if (latest < 100) {
                     showError(
                         document.getElementById("box"),
-                        `x transform should never be less than 50`
+                        `x transform should never be less than 100`
                     )
                 }
             })
@@ -59,8 +59,8 @@
 
                 return React.createElement(motion.div, {
                     id: "box",
-                    initial: { x: 0 },
-                    animate: { x: 100 },
+                    initial: { x: 0, opacity: 0 },
+                    animate: { x: 100, opacity: 1 },
                     transition: { delay, duration, ease: "linear" },
                     style: { x },
                     /**
@@ -81,20 +81,28 @@
             // Emulate server rendering of element
             root.innerHTML = ReactDOMServer.renderToString(Component)
 
+            const options = {
+                delay: delay * 1000,
+                duration: duration * 1000,
+                ease: "linear",
+            }
+
             startOptimizedAppearAnimation(
                 document.getElementById("box"),
                 "transform",
                 ["translateX(0px)", "translateX(100px)"],
-                {
-                    delay: delay * 1000,
-                    duration: duration * 1000,
-                    ease: "linear",
-                },
+                options,
                 (animation) => {
                     setTimeout(() => {
                         ReactDOM.hydrateRoot(root, Component)
                     }, duration * 1000)
                 }
+            )
+            startOptimizedAppearAnimation(
+                document.getElementById("box"),
+                "opacity",
+                [0, 1],
+                options
             )
         </script>
     </body>

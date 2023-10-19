@@ -1,17 +1,22 @@
 import { EasingDefinition } from "../../../easing/types"
-import { frame, cancelFrame } from "../../../frameloop"
+import { frame, cancelFrame, frameData } from "../../../frameloop"
 import type { VisualElement } from "../../../render/VisualElement"
 import type { MotionValue } from "../../../value"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../../types"
 import { animateStyle } from "."
 import { isWaapiSupportedEasing } from "./easing"
-import { supports } from "./supports"
 import { getFinalKeyframe } from "./utils/get-final-keyframe"
 import { animateValue } from "../js"
 import {
     millisecondsToSeconds,
     secondsToMilliseconds,
 } from "../../../utils/time-conversion"
+import { memo } from "../../../utils/memo"
+import { noop } from "../../../utils/noop"
+
+const supportsWaapi = memo(() =>
+    Object.hasOwnProperty.call(Element.prototype, "animate")
+)
 
 /**
  * A list of values that can be hardware-accelerated.
@@ -51,7 +56,7 @@ export function createAcceleratedAnimation(
     { onUpdate, onComplete, ...options }: ValueAnimationOptions
 ): AnimationPlaybackControls | false {
     const canAccelerateAnimation =
-        supports.waapi() &&
+        supportsWaapi() &&
         acceleratedValues.has(valueName) &&
         !options.repeatDelay &&
         options.repeatType !== "mirror" &&
@@ -68,9 +73,8 @@ export function createAcceleratedAnimation(
     let currentFinishedPromise: Promise<void>
 
     /**
-     * Create a new finished Promise every time we enter the
-     * finished state and resolve the old Promise. This is
-     * WAAPI-compatible behaviour.
+     * Resolve the current Promise every time we enter the
+     * finished state. This is WAAPI-compatible behaviour.
      */
     const updateFinishedPromise = () => {
         currentFinishedPromise = new Promise((resolve) => {
@@ -132,6 +136,20 @@ export function createAcceleratedAnimation(
         }
     )
 
+    /**
+     * WAAPI animations don't resolve startTime synchronously. But a blocked
+     * thread could delay the startTime resolution by a noticeable amount.
+     * For synching handoff animations with the new Motion animation we want
+     * to ensure startTime is synchronously set.
+     */
+    if (options.syncStart) {
+        animation.startTime = frameData.isProcessing
+            ? frameData.timestamp
+            : document.timeline
+            ? document.timeline.currentTime
+            : performance.now()
+    }
+
     const cancelAnimation = () => animation.cancel()
 
     const safeCancel = () => {
@@ -157,9 +175,14 @@ export function createAcceleratedAnimation(
     /**
      * Animation interrupt callback.
      */
-    return {
+    const controls = {
         then(resolve: VoidFunction, reject?: VoidFunction) {
             return currentFinishedPromise.then(resolve, reject)
+        },
+        attachTimeline(timeline: any) {
+            animation.timeline = timeline
+            animation.onfinish = null
+            return noop<void>
         },
         get time() {
             return millisecondsToSeconds(animation.currentTime || 0)
@@ -217,4 +240,6 @@ export function createAcceleratedAnimation(
         complete: () => animation.finish(),
         cancel: safeCancel,
     }
+
+    return controls
 }

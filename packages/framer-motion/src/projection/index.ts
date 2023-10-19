@@ -5,8 +5,7 @@ export { calcBoxDelta } from "./geometry/delta-calc"
 /**
  * For debugging purposes
  */
-import { frame } from "../frameloop"
-import { frameData } from "../frameloop/data"
+import { frame, frameData } from "../frameloop"
 import { mix } from "../utils/mix"
 import { animateValue } from "../animation/animators/js"
 export { frame, animateValue as animate, mix, frameData }

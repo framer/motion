@@ -5,10 +5,10 @@
  * offer entry points that don't depend on React.
  */
 
-export interface MutableRefObject<T> {
+export type MutableRefObject<T> = {
     current: T
 }
 
-export interface RefObject<T> {
+export type RefObject<T> = {
     current: T | null
 }

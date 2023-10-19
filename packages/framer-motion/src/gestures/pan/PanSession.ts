@@ -9,7 +9,7 @@ import { addPointerEvent } from "../../events/add-pointer-event"
 import { Point, TransformPoint } from "../../projection/geometry/types"
 import { pipe } from "../../utils/pipe"
 import { distance2D } from "../../utils/distance"
-import { frameData } from "../../frameloop/data"
+import { frameData } from "../../frameloop"
 import { isPrimaryPointer } from "../../events/utils/is-primary-pointer"
 
 /**

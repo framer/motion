@@ -55,6 +55,7 @@ export abstract class DOMVisualElement<
 
         if (isMounted) {
             checkTargetForNewValues(this, target, origin as any)
+
             const parsed = parseDomVariant(this, target, origin, transitionEnd)
             transitionEnd = parsed.transitionEnd
             target = parsed.target

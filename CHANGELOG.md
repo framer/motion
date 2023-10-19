@@ -4,11 +4,138 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [10.12.28] 2023-05-19
+
+## [10.16.5] 2023-05-19
 
 ### Fixed
 
 -   Fixed issue with `dragSnapToOrigin` not continuing animation when interupted
+
+## [10.16.4] 2023-05-09
+
+### Fixed
+
+-   Changed handoff `startTime` source from `performance.now()` to `document.timeline.currentTime`.
+
+## [10.16.3] 2023-04-09
+
+### Fixed
+
+-   Improved compatibility of custom `RefObject` and `MutableRefObject` types.
+-   Fixing `useScroll` dependencies array.
+-   Fixing optimised handoff to WAAPI animations.
+
+## [10.16.2] 2023-08-30
+
+### Fixed
+
+-   Improved performance of frameloop scheduling.
+-   Fixed crasher when using SVGs as scroll animation targets.
+
+## [10.16.1] 2023-08-21
+
+### Fixed
+
+-   SVGs mount read/writes are now batched.
+
+## [10.16.0] 2023-08-16
+
+### Added
+
+-   New function syntax for `useTransform`.
+
+### Improved
+
+-   Improved handoff animation performance.
+
+## [10.15.2] 2023-08-14
+
+### Fixed
+
+-   Numerical CSS variables are now read correctly.
+
+## [10.15.1] 2023-08-07
+
+### Fixed
+
+-   Replacing `requestAnimationFrame` timestamp with `performance.now()` to avoid [timestamp bug in Chrome](https://bugs.chromium.org/p/chromium/issues/detail?id=1470675#makechanges).
+
+## [10.15.0] 2023-07-28
+
+### Added
+
+-   Updated types for public `inView` API.
+
+## [10.14.0] 2023-07-27
+
+### Added
+
+-   `scroll()` now accepts animations from `animate()` to create hardware-accelerated animations.
+
+## [10.13.2] 2023-07-27
+
+### Fixed
+
+-   Removed animation resync for optimised animation handoff.
+-   Fixed offset not working with useScroll.
+
+## [10.13.1] 2023-07-24
+
+### Added
+
+-   Fixed subpixel layout rounding in Chrome.
+
+## [10.13.0] 2023-07-19
+
+### Added
+
+-   `scroll()`, a universal API for powering scroll-driven animations via `ScrollTimeline`.
+
+## [10.12.23] 2023-07-19
+
+### Fixed
+
+-   Fixing subpixel layout support in Webkit.
+
+## [10.12.22] 2023-07-17
+
+### Fixed
+
+-   Supporting subpixel layouts in layout animations.
+
+## [10.12.21] 2023-07-14
+
+### Fixed
+
+-   Transforming values if new values have been read from props.
+
+## [10.12.20] 2023-07-13
+
+### Fixed
+
+-   Fixing race condition with animation `Promise`.
+-   Attempt to read initial animation from props before reading from DOM.
+
+## [10.12.19] 2023-06-30
+
+### Fixed
+
+-   Fixing unit conversion for `translateX`/`translateY`.
+
+## [10.12.18] 2023-06-30
+
+### Fixed
+
+-   When layout animation is forced to be instant via `useInstantTransition`, ignore the delay option.
+
+## [10.12.17] 2023-06-23
+
+### Fixed
+
+-   Fixing `useInstantTransition` when called on subsequent frames.
+-   Fixing reverse animation with negative speed finishes too early when the
+    time is set to the duration.
+
 
 ## [10.12.16] 2023-05-24
 

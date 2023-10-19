@@ -1,5 +1,5 @@
 import { frame, cancelFrame } from "../../../frameloop"
-import { frameData } from "../../../frameloop/data"
+import { frameData } from "../../../frameloop"
 import { FrameData } from "../../../frameloop/types"
 import { Driver } from "./types"
 

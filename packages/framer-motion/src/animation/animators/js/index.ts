@@ -60,12 +60,10 @@ export function animateValue<V = number>({
     let currentFinishedPromise: Promise<void>
 
     /**
-     * Create a new finished Promise every time we enter the
-     * finished state and resolve the old Promise. This is
-     * WAAPI-compatible behaviour.
+     * Resolve the current Promise every time we enter the
+     * finished state. This is WAAPI-compatible behaviour.
      */
     const updateFinishedPromise = () => {
-        resolveFinishedPromise && resolveFinishedPromise()
         currentFinishedPromise = new Promise((resolve) => {
             resolveFinishedPromise = resolve
         })
@@ -272,6 +270,7 @@ export function animateValue<V = number>({
     const cancel = () => {
         playState = "idle"
         stopAnimationDriver()
+        resolveFinishedPromise()
         updateFinishedPromise()
         startTime = cancelTime = null
     }
@@ -280,7 +279,7 @@ export function animateValue<V = number>({
         playState = "finished"
         onComplete && onComplete()
         stopAnimationDriver()
-        updateFinishedPromise()
+        resolveFinishedPromise()
     }
 
     const play = () => {
@@ -296,6 +295,10 @@ export function animateValue<V = number>({
             startTime = now - holdTime
         } else if (!startTime || playState === "finished") {
             startTime = now
+        }
+
+        if (playState === "finished") {
+            updateFinishedPromise()
         }
 
         cancelTime = startTime

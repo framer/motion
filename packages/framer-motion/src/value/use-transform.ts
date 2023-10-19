@@ -2,6 +2,7 @@ import { MotionValue } from "../value"
 import { transform, TransformOptions } from "../utils/transform"
 import { useCombineMotionValues } from "./use-combine-values"
 import { useConstant } from "../utils/use-constant"
+import { useComputed } from "./use-computed"
 
 export type InputRange = number[]
 type SingleTransformer<I, O> = (input: I) => O
@@ -118,21 +119,26 @@ export function useTransform<I, O>(
         | MotionValue<string | number>[],
     transformer: MultiTransformer<I, O>
 ): MotionValue<O>
-
+export function useTransform<I, O>(transformer: () => O): MotionValue<O>
 export function useTransform<I, O>(
     input:
         | MotionValue<I>
         | MotionValue<string>[]
         | MotionValue<number>[]
-        | MotionValue<string | number>[],
-    inputRangeOrTransformer: InputRange | Transformer<I, O>,
+        | MotionValue<string | number>[]
+        | (() => O),
+    inputRangeOrTransformer?: InputRange | Transformer<I, O>,
     outputRange?: O[],
     options?: TransformOptions<O>
 ): MotionValue<O> {
+    if (typeof input === "function") {
+        return useComputed(input)
+    }
+
     const transformer =
         typeof inputRangeOrTransformer === "function"
             ? inputRangeOrTransformer
-            : transform(inputRangeOrTransformer, outputRange!, options)
+            : transform(inputRangeOrTransformer!, outputRange!, options)
 
     return Array.isArray(input)
         ? useListTransform(

@@ -7,7 +7,7 @@ import { SpringOptions } from "../animation/types"
 import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
 import { AnimationPlaybackControls } from "../animation/types"
 import { animateValue } from "../animation/animators/js"
-import { frameData } from "../frameloop/data"
+import { frameData } from "../frameloop"
 import { millisecondsToSeconds } from "../utils/time-conversion"
 
 /**

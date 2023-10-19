@@ -4,6 +4,7 @@ import { Easing } from "../easing/types"
 import { Driver } from "./animators/js/types"
 import { SVGPathProperties, VariantLabels } from "../motion/types"
 import { SVGAttributes } from "../render/svg/types-attributes"
+import { ProgressTimeline } from "../render/dom/scroll/observe"
 
 export interface AnimationPlaybackLifecycles<V> {
     onUpdate?: (latest: V) => void
@@ -24,6 +25,7 @@ export interface Transition
     type?: "decay" | "spring" | "keyframes" | "tween" | "inertia"
     duration?: number
     autoplay?: boolean
+    syncStart?: boolean
 }
 
 export interface ValueAnimationTransition<V = any>
@@ -62,6 +64,11 @@ export type AnimationOptionsWithValueOverrides<V = any> = StyleTransitions &
     VariableTransitions &
     ValueAnimationTransition<V>
 
+export interface DynamicAnimationOptions
+    extends Omit<AnimationOptionsWithValueOverrides, "delay"> {
+    delay?: number | DynamicOption<number>
+}
+
 export type ElementOrSelector =
     | Element
     | Element[]
@@ -89,6 +96,7 @@ export interface AnimationPlaybackControls {
     complete: () => void
     cancel: () => void
     then: (onResolve: VoidFunction, onReject?: VoidFunction) => Promise<void>
+    attachTimeline?: (timeline: ProgressTimeline) => VoidFunction
 }
 
 export type DynamicOption<T> = (i: number, total: number) => T

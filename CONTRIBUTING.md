@@ -20,11 +20,7 @@ Before adding any features, open a [Feature Proposal](https://github.com/framer/
 
 This will let us talk through your proposal API and/or implementation before you spend time on it.
 
-An added caveat is that this API is ultimately consumed by the Library in Framer X, so our target audience is designers as well as developers. This can tend us towards simplicity and power over composability.
-
-## Documentation
-
-If a PR introduces or changes API, it should link to a sister PR on the [API docs repo](https://github.com/framer/api-docs/blob/master/CONTRIBUTING.md).
+An added caveat is that this API is offered within Framer, so our target audience is designers as well as developers. This can tend us towards simplicity and power over composability.
 
 ## Development
 

@@ -1,6 +1,8 @@
+import { observeTimeline } from "../render/dom/scroll/observe"
+import { supportsScrollTimeline } from "../render/dom/scroll/supports"
 import { AnimationPlaybackControls } from "./types"
 
-type PropNames = "time" | "speed" | "duration"
+type PropNames = "time" | "speed" | "duration" | "attachTimeline"
 
 export class GroupPlaybackControls implements AnimationPlaybackControls {
     animations: AnimationPlaybackControls[]
@@ -19,12 +21,33 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
      * TODO: Filter out cancelled or stopped animations before returning
      */
     private getAll(propName: PropNames) {
-        return this.animations[0][propName]
+        return this.animations[0][propName] as any
     }
 
-    private setAll(propName: PropNames, newValue: number) {
+    private setAll(propName: PropNames, newValue: any) {
         for (let i = 0; i < this.animations.length; i++) {
             this.animations[i][propName] = newValue
+        }
+    }
+
+    attachTimeline(timeline: any) {
+        const cancelAll = this.animations.map((animation) => {
+            if (supportsScrollTimeline() && animation.attachTimeline) {
+                animation.attachTimeline(timeline)
+            } else {
+                animation.pause()
+                return observeTimeline((progress) => {
+                    animation.time = animation.duration * progress
+                }, timeline)
+            }
+        })
+
+        return () => {
+            cancelAll.forEach((cancelTimeline, i) => {
+                if (cancelTimeline) cancelTimeline()
+
+                this.animations[i].stop()
+            })
         }
     }
 

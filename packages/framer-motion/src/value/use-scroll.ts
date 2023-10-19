@@ -4,10 +4,11 @@ import { useConstant } from "../utils/use-constant"
 import { useEffect } from "react"
 import { useIsomorphicLayoutEffect } from "../three-entry"
 import { warning } from "../utils/errors"
-import { scroll } from "../render/dom/scroll"
-import { ScrollOptions } from "../render/dom/scroll/types"
+import { scrollInfo } from "../render/dom/scroll/track"
+import { ScrollInfoOptions } from "../render/dom/scroll/types"
 
-interface UseScrollOptions extends Omit<ScrollOptions, "container" | "target"> {
+interface UseScrollOptions
+    extends Omit<ScrollInfoOptions, "container" | "target"> {
     container?: RefObject<HTMLElement>
     target?: RefObject<HTMLElement>
     layoutEffect?: boolean
@@ -43,7 +44,7 @@ export function useScroll({
         refWarning("target", target)
         refWarning("container", container)
 
-        return scroll(
+        return scrollInfo(
             ({ x, y }) => {
                 values.scrollX.set(x.current)
                 values.scrollXProgress.set(x.progress)
@@ -56,7 +57,7 @@ export function useScroll({
                 target: target?.current || undefined,
             }
         )
-    }, [])
+    }, [container, target, JSON.stringify(options.offset)])
 
     return values
 }

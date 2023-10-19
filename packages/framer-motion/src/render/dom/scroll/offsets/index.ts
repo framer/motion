@@ -1,17 +1,23 @@
 import { ScrollInfo } from "../types"
 import { calcInset } from "./inset"
 import { ScrollOffset } from "./presets"
-import { ScrollOptions } from "../types"
+import { ScrollInfoOptions } from "../types"
 import { resolveOffset } from "./offset"
 import { interpolate } from "../../../../utils/interpolate"
 import { defaultOffset } from "../../../../utils/offsets/default"
 
 const point = { x: 0, y: 0 }
 
+function getTargetSize(target: Element) {
+    return "getBBox" in target && target.tagName !== "svg"
+        ? (target as SVGGraphicsElement).getBBox()
+        : { width: target.clientWidth, height: target.clientHeight }
+}
+
 export function resolveOffsets(
     container: HTMLElement,
     info: ScrollInfo,
-    options: ScrollOptions
+    options: ScrollInfoOptions
 ) {
     let { offset: offsetDefinition = ScrollOffset.All } = options
     const { target = container, axis = "y" } = options
@@ -27,7 +33,7 @@ export function resolveOffsets(
     const targetSize =
         target === container
             ? { width: container.scrollWidth, height: container.scrollHeight }
-            : { width: target.clientWidth, height: target.clientHeight }
+            : getTargetSize(target)
 
     const containerSize = {
         width: container.clientWidth,

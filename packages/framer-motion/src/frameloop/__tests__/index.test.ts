@@ -1,5 +1,4 @@
-import { frame, cancelFrame, steps } from ".."
-import { frameData } from "../data"
+import { frame, cancelFrame, steps, frameData } from ".."
 
 describe("frame", () => {
     it("fires callbacks in the correct order", () => {

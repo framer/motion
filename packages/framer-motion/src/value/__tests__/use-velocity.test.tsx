@@ -4,7 +4,7 @@ import { useVelocity } from "../use-velocity"
 import { useMotionValue } from "../use-motion-value"
 import { animate } from "../../animation/animate"
 import { frame } from "../../frameloop"
-import { frameData } from "../../frameloop/data"
+import { frameData } from "../../frameloop"
 import { useMotionValueEvent } from "../../utils/use-motion-value-event"
 import { mirrorEasing } from "../../easing/modifiers/mirror"
 

@@ -827,7 +827,8 @@ export abstract class VisualElement<
     readValue(key: string) {
         return this.latestValues[key] !== undefined || !this.current
             ? this.latestValues[key]
-            : this.readValueFromInstance(this.current, key, this.options)
+            : this.getBaseTargetFromProps(this.props, key) ??
+                  this.readValueFromInstance(this.current, key, this.options)
     }
 
     /**
