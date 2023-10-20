@@ -2098,7 +2098,7 @@ const defaultLayoutTransition = {
 
 const userAgentContains = (string: string) =>
     typeof navigator !== "undefined" &&
-    navigator.userAgent.toLowerCase().includes(string)
+    navigator.userAgent?.toLowerCase().includes(string)
 
 /**
  * Measured bounding boxes must be rounded in Safari and
