@@ -273,7 +273,13 @@ export class VisualElementDragControls {
 
     private resolveConstraints() {
         const { dragConstraints, dragElastic } = this.getProps()
-        const { layout } = this.visualElement.projection || {}
+
+        const layout =
+            this.visualElement.projection &&
+            !this.visualElement.projection.layout
+                ? this.visualElement.projection.measure(false)
+                : this.visualElement.projection?.layout
+
         const prevConstraints = this.constraints
 
         if (dragConstraints && isRefObject(dragConstraints)) {
