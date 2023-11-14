@@ -185,19 +185,37 @@ export const AnimatePresence: React.FunctionComponent<
         let exitingComponent = component
         if (!exitingComponent) {
             const onExit = () => {
-                allChildren.delete(key)
+                // clean up the exiting children map
                 exitingChildren.delete(key)
 
-                // Remove this child from the present children
-                const removeIndex = presentChildren.current.findIndex(
-                    (presentChild) => presentChild.key === key
+                // compute the keys of children that were rendered once but are no longer present
+                // this could happen in case of too many fast consequent renderings
+                // @link https://github.com/framer/motion/issues/2023
+                const leftOverKeys = Array.from(allChildren.keys()).filter(
+                    (childKey) => !targetKeys.includes(childKey)
                 )
-                presentChildren.current.splice(removeIndex, 1)
+
+                // clean up the all children map
+                leftOverKeys.forEach((leftOverKey) =>
+                    allChildren.delete(leftOverKey)
+                )
+
+                // make sure to render only the children that are actually visible
+                presentChildren.current = filteredChildren.filter(
+                    (presentChild) => {
+                        const presentChildKey = getChildKey(presentChild)
+
+                        return (
+                            // filter out the node exiting
+                            presentChildKey === key ||
+                            // filter out the leftover children
+                            leftOverKeys.includes(presentChildKey)
+                        )
+                    }
+                )
 
                 // Defer re-rendering until all exiting children have indeed left
                 if (!exitingChildren.size) {
-                    presentChildren.current = filteredChildren
-
                     if (isMounted.current === false) return
 
                     forceRender()
