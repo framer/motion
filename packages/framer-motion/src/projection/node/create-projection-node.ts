@@ -58,6 +58,8 @@ import { noop } from "../../utils/noop"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
+const hiddenVisibility: ResolvedValues = { visibility: "hidden" }
+
 /**
  * We use 1000 as the animation target as 0-1000 maps better to pixels than 0-1
  * which has a noticeable difference in spring animations
@@ -1717,7 +1719,7 @@ export function createProjectionNode<I>({
             if (!this.instance || this.isSVG) return undefined
 
             if (!this.isVisible) {
-                return { visibility: "hidden" }
+                return hiddenVisibility
             }
 
             const styles: ResolvedValues = {
@@ -1755,10 +1757,9 @@ export function createProjectionNode<I>({
                         : "none"
                     this.hasProjected = false
                 }
-                console.log("returning empty")
+
                 return emptyStyles
             }
-            console.log("returning prpojhection")
 
             const valuesToRender = lead.animationValues || lead.latestValues
 
