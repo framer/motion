@@ -58,6 +58,8 @@ import { noop } from "../../utils/noop"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
+const hiddenVisibility: ResolvedValues = { visibility: "hidden" }
+
 /**
  * We use 1000 as the animation target as 0-1000 maps better to pixels than 0-1
  * which has a noticeable difference in spring animations
@@ -664,8 +666,12 @@ export function createProjectionNode<I>({
             this.sharedNodes.forEach(removeLeadSnapshots)
         }
 
+        projectionUpdateScheduled = false
         scheduleUpdateProjection() {
-            frame.preRender(this.updateProjection, false, true)
+            if (!this.projectionUpdateScheduled) {
+                this.projectionUpdateScheduled = true
+                frame.preRender(this.updateProjection, false, true)
+            }
         }
 
         scheduleCheckAfterUnmount() {
@@ -696,6 +702,8 @@ export function createProjectionNode<I>({
          * the next step.
          */
         updateProjection = () => {
+            this.projectionUpdateScheduled = false
+
             /**
              * Reset debug counts. Manually resetting rather than creating a new
              * object each frame.
@@ -1707,15 +1715,15 @@ export function createProjectionNode<I>({
             visualElement.scheduleRender()
         }
 
-        getProjectionStyles(styleProp: MotionStyle = {}) {
-            // TODO: Return lifecycle-persistent object
-            const styles: ResolvedValues = {}
-            if (!this.instance || this.isSVG) return styles
+        getProjectionStyles(styleProp?: MotionStyle) {
+            if (!this.instance || this.isSVG) return undefined
 
             if (!this.isVisible) {
-                return { visibility: "hidden" }
-            } else {
-                styles.visibility = ""
+                return hiddenVisibility
+            }
+
+            const styles: ResolvedValues = {
+                visibility: "",
             }
 
             const transformTemplate = this.getTransformTemplate()
@@ -1725,7 +1733,7 @@ export function createProjectionNode<I>({
 
                 styles.opacity = ""
                 styles.pointerEvents =
-                    resolveMotionValue(styleProp.pointerEvents) || ""
+                    resolveMotionValue(styleProp?.pointerEvents) || ""
                 styles.transform = transformTemplate
                     ? transformTemplate(this.latestValues, "")
                     : "none"
@@ -1741,7 +1749,7 @@ export function createProjectionNode<I>({
                             ? this.latestValues.opacity
                             : 1
                     emptyStyles.pointerEvents =
-                        resolveMotionValue(styleProp.pointerEvents) || ""
+                        resolveMotionValue(styleProp?.pointerEvents) || ""
                 }
                 if (this.hasProjected && !hasTransform(this.latestValues)) {
                     emptyStyles.transform = transformTemplate
@@ -1749,6 +1757,7 @@ export function createProjectionNode<I>({
                         : "none"
                     this.hasProjected = false
                 }
+
                 return emptyStyles
             }
 
@@ -1837,7 +1846,7 @@ export function createProjectionNode<I>({
             if (this.options.layoutId) {
                 styles.pointerEvents =
                     lead === this
-                        ? resolveMotionValue(styleProp.pointerEvents) || ""
+                        ? resolveMotionValue(styleProp?.pointerEvents) || ""
                         : "none"
             }
 
