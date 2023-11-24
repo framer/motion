@@ -30,15 +30,13 @@ export interface Props<V> {
      */
     axis?: "x" | "y"
 
-    // TODO: This would be better typed as V, but that doesn't seem
-    // to correctly infer type from values
     /**
      * A callback to fire with the new value order. For instance, if the values
      * are provided as a state from `useState`, this could be the set state function.
      *
      * @public
      */
-    onReorder: (newOrder: any[]) => void
+    onReorder: (newOrder: V[]) => void
 
     /**
      * The latest values state.
@@ -82,7 +80,7 @@ export function ReorderGroup<V>(
 
     invariant(Boolean(values), "Reorder.Group must be provided a values prop")
 
-    const context: ReorderContextProps<any> = {
+    const context: ReorderContextProps<V> = {
         axis,
         registerItem: (value, layout) => {
             /**
@@ -96,10 +94,10 @@ export function ReorderGroup<V>(
                 order.sort(compareMin)
             }
         },
-        updateOrder: (id, offset, velocity) => {
+        updateOrder: (item, offset, velocity) => {
             if (isReordering.current) return
 
-            const newOrder = checkReorder(order, id, offset, velocity)
+            const newOrder = checkReorder(order, item, offset, velocity)
 
             if (order !== newOrder) {
                 isReordering.current = true
