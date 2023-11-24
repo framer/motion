@@ -3,7 +3,7 @@ import { renderToString, renderToStaticMarkup } from "react-dom/server"
 import { motion, useMotionValue } from "../../"
 import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
-import { Reorder } from "../../components/Reorder"
+import { ReorderGroup, ReorderItem } from "../../components/Reorder"
 
 function runTests(render: (components: any) => string) {
     test("doesn't throw", () => {
@@ -150,9 +150,9 @@ function runTests(render: (components: any) => string) {
         function Component() {
             const [state, setState] = React.useState([0])
             return (
-                <Reorder.Group onReorder={setState} values={state}>
-                    <Reorder.Item value="a" />
-                </Reorder.Group>
+                <ReorderGroup onReorder={setState} values={state}>
+                    <ReorderItem value="a" />
+                </ReorderGroup>
             )
         }
         const div = render(<Component />)
@@ -166,9 +166,9 @@ function runTests(render: (components: any) => string) {
         function Component() {
             const [state, setState] = React.useState([0])
             return (
-                <Reorder.Group onReorder={setState} values={state}>
-                    <Reorder.Item value="a" dragListener={false} />
-                </Reorder.Group>
+                <ReorderGroup onReorder={setState} values={state}>
+                    <ReorderItem value="a" dragListener={false} />
+                </ReorderGroup>
             )
         }
         const div = render(<Component />)
@@ -182,9 +182,9 @@ function runTests(render: (components: any) => string) {
         function Component() {
             const [state, setState] = React.useState([0])
             return (
-                <Reorder.Group as="div" onReorder={setState} values={state}>
-                    <Reorder.Item as="div" value="a" />
-                </Reorder.Group>
+                <ReorderGroup as="div" onReorder={setState} values={state}>
+                    <ReorderItem as="div" value="a" />
+                </ReorderGroup>
             )
         }
         const div = render(<Component />)

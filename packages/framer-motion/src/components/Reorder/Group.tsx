@@ -31,7 +31,7 @@ export interface Props<V> {
 
     /**
      * The axis to reorder along. By default, items will be draggable on this axis.
-     * To make draggable on both axes, set `<Reorder.Item drag />`
+     * To make draggable on both axes, set `<ReorderItem drag />`
      *
      * @public
      */
@@ -53,9 +53,9 @@ export interface Props<V> {
      *   const [items, setItems] = useState([0, 1, 2])
      *
      *   return (
-     *     <Reorder.Group values={items} onReorder={setItems}>
-     *         {items.map((item) => <Reorder.Item key={item} value={item} />)}
-     *     </Reorder.Group>
+     *     <ReorderGroup values={items} onReorder={setItems}>
+     *         {items.map((item) => <ReorderItem key={item} value={item} />)}
+     *     </ReorderGroup>
      *   )
      * }
      * ```
@@ -85,7 +85,7 @@ export function ReorderGroup<V>(
     const order: ItemData<V>[] = []
     const isReordering = useRef(false)
 
-    invariant(Boolean(values), "Reorder.Group must be provided a values prop")
+    invariant(Boolean(values), "ReorderGroup must be provided a values prop")
 
     const context: ReorderContextProps<V> = {
         axis,

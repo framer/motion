@@ -1,6 +1,7 @@
 import {
     motion,
-    Reorder,
+    ReorderGroup,
+    ReorderItem,
     AnimatePresence,
     MotionConfig,
     LayoutGroup,
@@ -45,7 +46,7 @@ export function App() {
             <div className="window">
                 <nav>
                     <LayoutGroup>
-                        <Reorder.Group
+                        <ReorderGroup
                             as="ul"
                             axis="x"
                             onReorder={setTabs}
@@ -63,7 +64,7 @@ export function App() {
                                     />
                                 ))}
                             </AnimatePresence>
-                        </Reorder.Group>
+                        </ReorderGroup>
                         <motion.button
                             className="add-item"
                             onClick={add}
@@ -105,7 +106,7 @@ interface Props {
 
 export const Item = ({ item, onClick, onRemove, isSelected }: Props) => {
     return (
-        <Reorder.Item
+        <ReorderItem
             value={item}
             id={item.label + "-tab"}
             initial={{ opacity: 0, y: 30, transition: { duration: 0.15 } }}
@@ -140,7 +141,7 @@ export const Item = ({ item, onClick, onRemove, isSelected }: Props) => {
                     <CloseIcon />
                 </motion.button>
             </motion.div>
-        </Reorder.Item>
+        </ReorderItem>
     )
 }
 

@@ -1,6 +1,11 @@
 import * as React from "react"
 import { useEffect, useState } from "react"
-import { Reorder, useMotionValue, animate } from "framer-motion"
+import {
+    ReorderGroup,
+    ReorderItem,
+    useMotionValue,
+    animate,
+} from "framer-motion"
 
 const inactiveShadow = "0px 0px 0px rgba(0,0,0,0.8)"
 
@@ -30,7 +35,7 @@ const Item = ({ item, axis }) => {
     }, [y, boxShadow])
 
     return (
-        <Reorder.Item
+        <ReorderItem
             value={item}
             id={item}
             drag
@@ -44,7 +49,7 @@ const Item = ({ item, axis }) => {
             <ReorderIcon
             // dragControls={dragControls}
             />
-        </Reorder.Item>
+        </ReorderItem>
     )
 }
 
@@ -54,7 +59,7 @@ export const App = () => {
     const axis = params.get("axis") || "y"
 
     return (
-        <Reorder.Group
+        <ReorderGroup
             axis={axis}
             onReorder={setItems}
             style={axis === "y" ? verticalList : horizontalList}
@@ -64,7 +69,7 @@ export const App = () => {
                 <Item axis={axis} key={item} item={item} />
             ))}
             <style>{styles}</style>
-        </Reorder.Group>
+        </ReorderGroup>
     )
 }
 

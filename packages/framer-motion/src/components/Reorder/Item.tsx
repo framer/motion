@@ -80,7 +80,7 @@ export function ReorderItem<V>(
 
     const measuredLayout = useRef<Box | null>(null)
 
-    invariant(Boolean(context), "Reorder.Item must be a child of Reorder.Group")
+    invariant(Boolean(context), "ReorderItem must be a child of ReorderGroup")
 
     const { axis, registerItem, updateOrder } = context!
 

@@ -1,7 +1,7 @@
 import { render } from "../../../../jest.setup"
 import * as React from "react"
 import { useRef, useLayoutEffect } from "react"
-import { Reorder } from ".."
+import { ReorderGroup, ReorderItem } from ".."
 
 describe("Reorder", () => {
     it("Correctly hydrates ref", () => {
@@ -23,14 +23,14 @@ describe("Reorder", () => {
             })
 
             return (
-                <Reorder.Group
+                <ReorderGroup
                     as="article"
                     ref={groupRef}
                     onReorder={() => {}}
                     values={[]}
                 >
-                    <Reorder.Item as="main" ref={itemRef} value={0} />
-                </Reorder.Group>
+                    <ReorderItem as="main" ref={itemRef} value={0} />
+                </ReorderGroup>
             )
         }
 
