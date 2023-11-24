@@ -26,6 +26,13 @@ export interface Props<V> {
     as?: keyof ReactHTML
 
     /**
+     * A ref that gets passed to the item component.
+     *
+     * @public
+     */
+    ref?: React.RefObject<HTMLElement>
+
+    /**
      * The value in the list that this component represents.
      *
      * @public

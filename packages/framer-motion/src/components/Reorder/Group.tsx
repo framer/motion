@@ -23,6 +23,13 @@ export interface Props<V> {
     as?: keyof ReactHTML
 
     /**
+     * A ref that gets passed to the group component.
+     *
+     * @public
+     */
+    ref?: React.RefObject<HTMLElement>
+
+    /**
      * The axis to reorder along. By default, items will be draggable on this axis.
      * To make draggable on both axes, set `<Reorder.Item drag />`
      *
