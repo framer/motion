@@ -9,7 +9,7 @@ export { AnimatePresence } from "./components/AnimatePresence"
 export { MotionConfig } from "./components/MotionConfig"
 export { LazyMotion } from "./components/LazyMotion"
 export { LayoutGroup } from "./components/LayoutGroup"
-export { Reorder } from "./components/Reorder"
+export { ReorderGroup, ReorderItem } from "./components/Reorder"
 
 export * from "./dom-entry"
 export * from "./three-entry"
