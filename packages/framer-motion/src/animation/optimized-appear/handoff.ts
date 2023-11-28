@@ -43,6 +43,15 @@ export function handoffOptimizedAppearAnimation(
         } catch (e) {}
     }
 
+    console.log({
+        animation,
+        startTime,
+        calculatedElapsed: performance.now() - (startTime || 0),
+        animationComputedLocalTime:
+            animation.effect?.getComputedTiming?.().localTime,
+        currentTime: animation.currentTime,
+    })
+
     if (startTime !== null) {
         /**
          * We allow the animation to persist until the next frame:

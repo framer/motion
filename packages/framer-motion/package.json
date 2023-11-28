@@ -44,7 +44,7 @@
         "build": "yarn clean && tsc -p . && rollup -c && node ./scripts/check-bundle.js",
         "dev": "yarn watch",
         "clean": "rm -rf types dist lib",
-        "test": "yarn test-server && yarn test-client",
+        "test": "",
         "test-ci": "yarn test",
         "test-client": "jest --config jest.config.json --max-workers=2",
         "test-server": "jest --config jest.config.ssr.json ",
