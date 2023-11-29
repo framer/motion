@@ -157,4 +157,44 @@ describe("Drag to reorder", () => {
                 })
             })
     })
+
+    it("Move around", () => {
+        const checkBox = (chain: Cypress.Chainable) => {
+            return chain.should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 350,
+                    top: 174,
+                    width: 340,
+                })
+            })
+        }
+
+        const moveAround = (chain: Cypress.Chainable, steps: number[]) => {
+            const baseY = 175
+            const delta = 20
+            chain = chain
+                .trigger("pointerdown", 360, baseY, { force: true })
+                .wait(50)
+            steps.forEach(step => {
+                Array.from({length: Math.abs(step)}).forEach(() => {
+                    const y = step > 0 ? delta : -delta
+                    chain = chain
+                        .trigger("pointermove", 360, baseY + y, { force: true })
+                        .wait(50)
+                })
+            })
+            return chain
+                .trigger("pointerup", 360, baseY, { force: true })
+                .wait(100)
+        }
+
+        const chain = checkBox(
+            cy.visit("?test=drag-to-reorder")
+                .wait(50)
+                .get("#Tomato")
+        )
+
+        checkBox(moveAround(chain, [-4, 14, -8, 4, -5, 2, -6]))
+    })
 })

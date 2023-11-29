@@ -85,16 +85,14 @@ export function ReorderGroup<V>(
     const context: ReorderContextProps<V> = {
         axis,
         registerItem: (value, layout) => {
-            /**
-             * Ensure entries can't add themselves more than once
-             */
-            if (
-                layout &&
-                order.findIndex((entry) => value === entry.value) === -1
-            ) {
-                order.push({ value, layout: layout[axis] })
-                order.sort(compareMin)
+            // If the entry was already added, update it rather than adding it again
+            const idx = order.findIndex((entry) => value === entry.value)
+            if (idx !== -1) {
+                order[idx].layout = layout[axis]
+            } else {
+                order.push({ value: value, layout: layout[axis] })
             }
+            order.sort(compareMin)
         },
         updateOrder: (item, offset, velocity) => {
             if (isReordering.current) return
