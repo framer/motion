@@ -87,7 +87,7 @@ export function useVisualElement<Instance, RenderState>(
          * so components added after the initial render can animate changes
          * in useEffect vs useLayoutEffect.
          */
-        window.HandoffAppearAnimations = false
+        window.HandoffAppearAnimations = undefined
         canHandoff.current = false
     })
 
