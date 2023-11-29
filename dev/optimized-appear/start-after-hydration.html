@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 100px;
+                margin: 0;
+            }
+
+            #box {
+                width: 100px;
+                height: 100px;
+                background-color: #0077ff;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 1 !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script src="../../node_modules/react/umd/react.development.js"></script>
+        <script src="../../node_modules/react-dom/umd/react-dom.development.js"></script>
+        <script src="../../node_modules/react-dom/umd/react-dom-server-legacy.browser.development.js"></script>
+        <script src="../../packages/framer-motion/dist/framer-motion.dev.js"></script>
+        <script src="../projection/script-assert.js"></script>
+
+        <script>
+            const {
+                motion,
+                animateStyle,
+                startOptimizedAppearAnimation,
+                optimizedAppearDataAttribute,
+                motionValue,
+            } = window.Motion
+            const { matchViewportBox } = window.Assert
+            const root = document.getElementById("root")
+
+            const duration = 1
+
+            // This is the tree to be rendered "server" and client-side.
+            const Component = React.createElement(motion.div, {
+                id: "box",
+                initial: { x: 0, opacity: 0.5 },
+                animate: { x: 100, opacity: 1 },
+                transition: { duration, ease: "linear" },
+                /**
+                 * On animation start, check the values we expect to see here
+                 */
+                onAnimationStart: () => {
+                    setTimeout(() => {
+                        // Start WAAPI animation
+                        startOptimizedAppearAnimation(
+                            document.getElementById("box"),
+                            "transform",
+                            ["translateX(0px)", "translateX(100px)"],
+                            {
+                                duration: duration * 1000,
+                                ease: "linear",
+                            }
+                        )
+
+                        // Start WAAPI animation
+                        startOptimizedAppearAnimation(
+                            document.getElementById("box"),
+                            "opacity",
+                            [0.5, 1],
+                            {
+                                duration: duration * 1000,
+                                ease: "linear",
+                            }
+                        )
+                        requestAnimationFrame(() => {
+                            const { top, left } = document
+                                .getElementById("box")
+                                .getBoundingClientRect()
+
+                            // Fuzzy to be permissive towards Cypress runner
+                            if (left < 130) {
+                                showError(box, `unexpected viewport box`)
+                            }
+                        })
+                    }, 500)
+                },
+                [optimizedAppearDataAttribute]: "a",
+                children: "Content",
+            })
+            // Emulate server rendering of element
+            root.innerHTML = ReactDOMServer.renderToString(Component)
+
+            ReactDOM.hydrateRoot(root, Component)
+        </script>
+    </body>
+</html>
