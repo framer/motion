@@ -4,6 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.16.6] 2023-11-29
+
+### Fixed
+
+-   Fixing `Reorder` component types.
+-   Fixing broken `dragConstraints` if component re-renders during resize.
+
 ## [10.16.5] 2023-11-14
 
 ### Fixed
