@@ -13,6 +13,9 @@ export function startOptimizedAppearAnimation(
     options: NativeAnimationOptions,
     onReady?: (animation: Animation) => void
 ): void {
+    // Prevent optimised appear animations if Motion has already started animating.
+    if (window.HandoffAppearAnimations === false) return
+
     const id = element.dataset[optimizedAppearDataId]
 
     if (!id) return
