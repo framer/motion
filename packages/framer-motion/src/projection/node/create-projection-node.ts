@@ -55,6 +55,7 @@ import { animateSingleValue } from "../../animation/interfaces/single-value"
 import { clamp } from "../../utils/clamp"
 import { steps } from "../../frameloop/frame"
 import { noop } from "../../utils/noop"
+import { microtask } from "../../frameloop/microtask"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -657,7 +658,7 @@ export function createProjectionNode<I>({
         didUpdate() {
             if (!this.updateScheduled) {
                 this.updateScheduled = true
-                queueMicrotask(() => this.update())
+                microtask.read(() => this.update())
             }
         }
 
