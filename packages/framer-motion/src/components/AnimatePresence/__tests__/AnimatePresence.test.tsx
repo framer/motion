@@ -382,6 +382,76 @@ describe("AnimatePresence", () => {
         return await expect(promise).resolves.toBeTruthy()
     })
 
+    test("Fast animations with wait render the child content correctly", async () => {
+        const promise = new Promise<boolean>((resolve) => {
+            const Component = ({ i }: { i: number }) => {
+                return (
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={i}
+                            data-testid={i}
+                            exit={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.1 }}
+                        >
+                            {i}
+                        </motion.div>
+                    </AnimatePresence>
+                )
+            }
+
+            const { rerender, getByTestId } = render(<Component i={0} />)
+            rerender(<Component i={0} />)
+            setTimeout(() => {
+                rerender(<Component i={1} />)
+            }, 50)
+            setTimeout(() => {
+                rerender(<Component i={2} />)
+                // wait for the exit animation to check the DOM again
+                setTimeout(() => {
+                    resolve(getByTestId("2").textContent === "2")
+                }, 250)
+            }, 150)
+        })
+
+        return await expect(promise).resolves.toBeTruthy()
+    })
+
+    test("Fast animations with wait render the child content correctly (strict mode disabled)", async () => {
+        const promise = new Promise<boolean>((resolve) => {
+            const Component = ({ i }: { i: number }) => {
+                return (
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={i}
+                            data-testid={i}
+                            exit={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.1 }}
+                        >
+                            {i}
+                        </motion.div>
+                    </AnimatePresence>
+                )
+            }
+
+            const { rerender, getByTestId } = render(<Component i={0} />, false)
+            rerender(<Component i={0} />)
+            setTimeout(() => {
+                rerender(<Component i={1} />)
+            }, 50)
+            setTimeout(() => {
+                rerender(<Component i={2} />)
+                // wait for the exit animation to check the DOM again
+                setTimeout(() => {
+                    resolve(getByTestId("2").textContent === "2")
+                }, 250)
+            }, 150)
+        })
+
+        return await expect(promise).resolves.toBeTruthy()
+    })
+
     test("Exit variants are triggered with `AnimatePresence.custom`, not that of the element.", async () => {
         const variants = {
             enter: { x: 0, transition: { type: false } },
