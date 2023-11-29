@@ -44,6 +44,7 @@ export function handoffOptimizedAppearAnimation(
     }
 
     console.log({
+        hello: 2,
         animation,
         startTime,
         calculatedElapsed: performance.now() - (startTime || 0),

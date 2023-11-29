@@ -14,7 +14,7 @@ export function startOptimizedAppearAnimation(
     onReady?: (animation: Animation) => void
 ): void {
     const id = element.dataset[optimizedAppearDataId]
-
+    console.log(id)
     if (!id) return
 
     window.HandoffAppearAnimations = handoffOptimizedAppearAnimation
