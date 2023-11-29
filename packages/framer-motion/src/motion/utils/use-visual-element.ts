@@ -9,6 +9,7 @@ import { VisualState } from "./use-visual-state"
 import { LazyContext } from "../../context/LazyContext"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import type { VisualElement } from "../../render/VisualElement"
+import { microtask } from "../../frameloop/microtask"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -69,7 +70,8 @@ export function useVisualElement<Instance, RenderState>(
          * are running, we use useLayoutEffect to trigger animations.
          */
         if (canHandoff.current && visualElement.animationState) {
-            visualElement.animationState.animateChanges()
+            console.log("microtask")
+            microtask.read(() => visualElement.animationState!.animateChanges())
         }
     })
 
@@ -87,7 +89,7 @@ export function useVisualElement<Instance, RenderState>(
          * so components added after the initial render can animate changes
          * in useEffect vs useLayoutEffect.
          */
-        window.HandoffAppearAnimations = undefined
+        window.HandoffAppearAnimations = false
         canHandoff.current = false
     })
 

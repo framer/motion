@@ -21,6 +21,7 @@ export function handoffOptimizedAppearAnimation(
      */
     frame: Batcher
 ): number {
+    if (window.HandoffAppearAnimations === false) return
     const storeId = appearStoreId(
         id,
         transformProps.has(name) ? "transform" : name
@@ -44,7 +45,7 @@ export function handoffOptimizedAppearAnimation(
     }
 
     console.log({
-        hello: 2,
+        hello: 4,
         animation,
         startTime,
         calculatedElapsed: performance.now() - (startTime || 0),
