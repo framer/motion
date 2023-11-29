@@ -9,6 +9,7 @@ import { animateMotionValue } from "./motion-value"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { setTarget } from "../../render/utils/setters"
 import { AnimationPlaybackControls, Transition } from "../types"
+import { getValueTransition } from "../utils/transitions"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
@@ -65,18 +66,20 @@ export function animateTarget(
         const valueTransition = {
             delay,
             elapsed: 0,
-            ...transition,
+            ...getValueTransition(transition || {}, key),
         }
 
         /**
          * If this is the first time a value is being animated, check
          * to see if we're handling off from an existing animation.
          */
+        let canSkipHandoff = true
         if (window.HandoffAppearAnimations && !value.hasAnimated) {
             const appearId =
                 visualElement.getProps()[optimizedAppearDataAttribute]
 
             if (appearId) {
+                canSkipHandoff = false
                 valueTransition.elapsed = window.HandoffAppearAnimations(
                     appearId,
                     key,
@@ -85,6 +88,15 @@ export function animateTarget(
                 )
                 ;(valueTransition as Transition).syncStart = true
             }
+        }
+
+        if (
+            canSkipHandoff &&
+            valueTarget === value.get() &&
+            (valueTransition.type !== "spring" ||
+                (!value.getVelocity() && !valueTransition.velocity))
+        ) {
+            continue
         }
 
         value.start(
