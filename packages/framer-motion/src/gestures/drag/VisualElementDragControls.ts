@@ -32,6 +32,7 @@ import { mix } from "../../utils/mix"
 import { percent } from "../../value/types/numbers/units"
 import { animateMotionValue } from "../../animation/interfaces/motion-value"
 import { frame } from "../../frameloop"
+import { getContextWindow } from "../../utils/getContextWindow";
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -214,7 +215,7 @@ export class VisualElementDragControls {
                 onMove,
                 onSessionEnd,
             },
-            { transformPagePoint: this.visualElement.getTransformPagePoint() }
+            { transformPagePoint: this.visualElement.getTransformPagePoint() , contextWindow: getContextWindow(this.visualElement) }
         )
     }
 
