@@ -4,6 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.16.8] 2023-11-29
+
+### Fixed
+
+-   Added `disableInstantAnimation` private API.
+-   Ensure optimised appear animations don't run post-hydration.
+
 ## [10.16.7] 2023-11-29
 
 ### Fixed
