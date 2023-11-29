@@ -14,6 +14,6 @@ type HandoffFunction = (
  */
 declare global {
     interface Window {
-        HandoffAppearAnimations: undefined | false | HandoffFunction
+        HandoffAppearAnimations?: false | HandoffFunction
     }
 }
