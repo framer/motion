@@ -90,6 +90,21 @@ export function animateTarget(
             }
         }
 
+        let canSkip = canSkipHandoff && valueTarget === value.get()
+
+        if (
+            valueTransition.type === "spring" &&
+            (value.getVelocity() || valueTransition.velocity)
+        ) {
+            canSkip = false
+        }
+
+        if (canSkip) continue
+
+        /**
+         * Skip this animation if the value hasn't changed. With an exception
+         * that we can't skip if it's a spring animation
+         */
         if (
             canSkipHandoff &&
             valueTarget === value.get() &&
