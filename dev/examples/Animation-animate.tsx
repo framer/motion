@@ -62,25 +62,6 @@ const Child = ({ setState }: any) => {
 
 export const App = () => {
     const [state, setState] = useState(true)
-    let isAnimating = false
-    frame.postRender(() => {
-        frame.postRender(() => console.log(isAnimating))
-    })
-    return (
-        <motion.div
-            initial={{ opacity: 1, x: 0 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{
-                opacity: { duration: 2, type: "tween" },
-                // x: { type: "spring", velocity: 1000 },
-            }}
-            onAnimationStart={() => {
-                isAnimating = true
-            }}
-            onAnimationComplete={() => {
-                isAnimating = false
-            }}
-        />
-    )
+
     return state && <Child setState={setState} />
 }
