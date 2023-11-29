@@ -9,6 +9,7 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Fixed
 
 -   Fixing `Reorder` component types.
+-   Fixing `Reorder.Item` order calculation.
 -   Fixing broken `dragConstraints` if component re-renders during resize.
 
 ## [10.16.5] 2023-11-14
