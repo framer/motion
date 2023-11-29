@@ -37,3 +37,7 @@ export function useInstantTransition() {
         })
     }
 }
+
+export function disableInstantTransitions() {
+    instantAnimationState.current = false
+}
