@@ -45,6 +45,10 @@ function useDefaultMotionValue(value: any, defaultValue: number = 0) {
     return isMotionValue(value) ? value : useMotionValue(defaultValue)
 }
 
+type ReorderItemProps<V> = Props<V> &
+    HTMLMotionProps<any> &
+    React.PropsWithChildren<{}>
+
 export function ReorderItem<V>(
     {
         children,
@@ -54,8 +58,8 @@ export function ReorderItem<V>(
         onDrag,
         layout = true,
         ...props
-    }: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
-    externalRef?: React.Ref<any>
+    }: ReorderItemProps<V>,
+    externalRef?: React.ForwardedRef<any>
 ) {
     const Component = useConstant(() => motion(as)) as FunctionComponent<
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
@@ -106,4 +110,6 @@ export function ReorderItem<V>(
     )
 }
 
-export const Item = forwardRef(ReorderItem)
+export const Item = forwardRef(ReorderItem) as <V>(
+    props: ReorderItemProps<V> & { ref?: React.ForwardedRef<any> }
+) => ReturnType<typeof ReorderItem>
