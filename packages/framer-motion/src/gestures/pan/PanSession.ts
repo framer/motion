@@ -97,8 +97,8 @@ interface PanSessionHandlers {
 }
 
 interface PanSessionOptions {
-    transformPagePoint?: TransformPoint,
-    contextWindow?: (Window & typeof globalThis) | null;
+    transformPagePoint?: TransformPoint
+    contextWindow?: (Window & typeof globalThis) | null
 }
 
 interface TimestampedPoint extends Point {
@@ -147,7 +147,7 @@ export class PanSession {
     /**
      * @internal
      */
-    private contextWindow: PanSessionOptions['contextWindow'] = window;
+    private contextWindow: PanSessionOptions["contextWindow"] = window
 
     constructor(
         event: PointerEvent,
@@ -159,7 +159,7 @@ export class PanSession {
 
         this.handlers = handlers
         this.transformPagePoint = transformPagePoint
-        this.contextWindow = contextWindow || window;
+        this.contextWindow = contextWindow || window
 
         const info = extractEventInfo(event)
         const initialInfo = transformPoint(info, this.transformPagePoint)
@@ -174,9 +174,21 @@ export class PanSession {
             onSessionStart(event, getPanInfo(initialInfo, this.history))
 
         this.removeListeners = pipe(
-            addPointerEvent(this.contextWindow, "pointermove", this.handlePointerMove),
-            addPointerEvent(this.contextWindow, "pointerup", this.handlePointerUp),
-            addPointerEvent(this.contextWindow, "pointercancel", this.handlePointerUp)
+            addPointerEvent(
+                this.contextWindow,
+                "pointermove",
+                this.handlePointerMove
+            ),
+            addPointerEvent(
+                this.contextWindow,
+                "pointerup",
+                this.handlePointerUp
+            ),
+            addPointerEvent(
+                this.contextWindow,
+                "pointercancel",
+                this.handlePointerUp
+            )
         )
     }
 

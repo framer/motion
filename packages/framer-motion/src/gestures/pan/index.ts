@@ -3,7 +3,7 @@ import { addPointerEvent } from "../../events/add-pointer-event"
 import { Feature } from "../../motion/features/Feature"
 import { noop } from "../../utils/noop"
 import { frame } from "../../frameloop"
-import { getContextWindow } from "../../utils/getContextWindow";
+import { getContextWindow } from "../../utils/get-context-window"
 
 type PanEventHandler = (event: PointerEvent, info: PanInfo) => void
 const asyncHandler =
@@ -22,7 +22,10 @@ export class PanGesture extends Feature<Element> {
         this.session = new PanSession(
             pointerDownEvent,
             this.createPanHandlers(),
-            { transformPagePoint: this.node.getTransformPagePoint(), contextWindow: getContextWindow(this.node) }
+            {
+                transformPagePoint: this.node.getTransformPagePoint(),
+                contextWindow: getContextWindow(this.node),
+            }
         )
     }
 
