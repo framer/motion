@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.16.9] 2023-11-30
+
+### Fixed
+
+-   Skipping no-op animations.
+
 ## [10.16.8] 2023-11-29
 
 ### Fixed
