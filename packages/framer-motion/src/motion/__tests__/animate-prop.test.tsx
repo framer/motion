@@ -289,6 +289,64 @@ describe("animate prop as object", () => {
 
         return expect(promise).resolves.toBe(false)
     })
+    test("doesn't animate no-op keyframes", async () => {
+        const promise = new Promise((resolve) => {
+            let isAnimating = false
+            const Component = () => (
+                <motion.div
+                    initial={{ opacity: 1, x: 0 }}
+                    animate={{ opacity: [1, 1], x: [0, 0] }}
+                    transition={{
+                        opacity: { duration: 2, type: "tween", velocity: 100 },
+                        x: { type: "spring", velocity: 0 },
+                    }}
+                    onAnimationStart={() => {
+                        isAnimating = true
+                    }}
+                    onAnimationComplete={() => {
+                        isAnimating = false
+                    }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+
+            frame.postRender(() => {
+                frame.postRender(() => resolve(isAnimating))
+            })
+        })
+
+        return expect(promise).resolves.toBe(false)
+    })
+    test("doesn't animate different keyframes", async () => {
+        const promise = new Promise((resolve) => {
+            let isAnimating = false
+            const Component = () => (
+                <motion.div
+                    initial={{ opacity: 1, x: 0 }}
+                    animate={{ opacity: [0, 1], x: [0, 1] }}
+                    transition={{
+                        opacity: { duration: 2, type: "tween", velocity: 100 },
+                        x: { type: "spring", velocity: 0 },
+                    }}
+                    onAnimationStart={() => {
+                        isAnimating = true
+                    }}
+                    onAnimationComplete={() => {
+                        isAnimating = false
+                    }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+
+            frame.postRender(() => {
+                frame.postRender(() => resolve(isAnimating))
+            })
+        })
+
+        return expect(promise).resolves.toBe(false)
+    })
     test("does animate no-op values if velocity is non-zero and animation type is spring", async () => {
         const promise = new Promise<boolean>((resolve) => {
             let isAnimating = false
