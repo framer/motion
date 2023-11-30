@@ -38,7 +38,7 @@ export function animateTarget(
         transitionEnd,
         ...target
     } = visualElement.makeTargetAnimatable(definition)
-    console.log("animating", visualElement.current)
+
     const willChange = visualElement.getValue("willChange")
 
     if (transitionOverride) transition = transitionOverride
