@@ -1,6 +1,5 @@
 {
     "typescript.tsdk": "node_modules/typescript/lib",
-    "eslint.alwaysShowStatus": true,
     "eslint.validate": [
         "javascript",
         "javascriptreact",
