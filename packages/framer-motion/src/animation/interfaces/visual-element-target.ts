@@ -92,14 +92,18 @@ export function animateTarget(
                 visualElement.getProps()[optimizedAppearDataAttribute]
 
             if (appearId) {
-                canSkipHandoff = false
-                valueTransition.elapsed = window.HandoffAppearAnimations(
+                const elapsed = window.HandoffAppearAnimations(
                     appearId,
                     key,
                     value,
                     frame
                 )
-                ;(valueTransition as Transition).syncStart = true
+
+                if (elapsed) {
+                    canSkipHandoff = false
+                    valueTransition.elapsed = elapsed
+                    ;(valueTransition as Transition).syncStart = true
+                }
             }
         }
 

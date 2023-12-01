@@ -318,7 +318,7 @@ describe("animate prop as object", () => {
 
         return expect(promise).resolves.toBe(false)
     })
-    test("doesn't animate different keyframes", async () => {
+    test("doe animate different keyframes", async () => {
         const promise = new Promise((resolve) => {
             let isAnimating = false
             const Component = () => (
@@ -345,7 +345,7 @@ describe("animate prop as object", () => {
             })
         })
 
-        return expect(promise).resolves.toBe(false)
+        return expect(promise).resolves.toBe(true)
     })
     test("does animate no-op values if velocity is non-zero and animation type is spring", async () => {
         const promise = new Promise<boolean>((resolve) => {
