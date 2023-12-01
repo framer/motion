@@ -6,6 +6,21 @@ import { handoffOptimizedAppearAnimation } from "./handoff"
 import { appearAnimationStore } from "./store"
 import { noop } from "../../utils/noop"
 
+/**
+ * A single time to use across all animations to manually set startTime
+ * and ensure they're all in sync.
+ */
+let startFrameTime: number
+
+/**
+ * A dummy animation to detect when Chrome is ready to start
+ * painting the page and hold off from triggering the real animation
+ * until then. We only need one animation to detect paint ready.
+ *
+ * https://bugs.chromium.org/p/chromium/issues/detail?id=1406850
+ */
+let readyAnimation: Animation
+
 export function startOptimizedAppearAnimation(
     element: HTMLElement,
     name: string,
@@ -24,40 +39,43 @@ export function startOptimizedAppearAnimation(
 
     const storeId = appearStoreId(id, name)
 
-    /**
-     * Use a dummy animation to detect when Chrome is ready to start
-     * painting the page and hold off from triggering the real animation
-     * until then.
-     *
-     * https://bugs.chromium.org/p/chromium/issues/detail?id=1406850
-     */
-    const readyAnimation = animateStyle(
-        element,
-        name,
-        [keyframes[0] as number, keyframes[0] as number],
-        /**
-         * 10 secs is basically just a super-safe duration to give Chrome
-         * long enough to get the animation ready.
-         */
-        { duration: 10000, ease: "linear" }
-    )
+    if (!readyAnimation) {
+        readyAnimation = animateStyle(
+            element,
+            name,
+            [keyframes[0] as number, keyframes[0] as number],
+            /**
+             * 10 secs is basically just a super-safe duration to give Chrome
+             * long enough to get the animation ready.
+             */
+            { duration: 10000, ease: "linear" }
+        )
 
-    appearAnimationStore.set(storeId, {
-        animation: readyAnimation,
-        startTime: null,
-    })
+        appearAnimationStore.set(storeId, {
+            animation: readyAnimation,
+            startTime: null,
+        })
+    }
 
     const startAnimation = () => {
         readyAnimation.cancel()
 
         const appearAnimation = animateStyle(element, name, keyframes, options)
-        if (document.timeline) {
-            appearAnimation.startTime = document.timeline.currentTime
+
+        /**
+         * Record the time of the first started animation. We call performance.now() once
+         * here and once in handoff to ensure we're getting
+         * close to a frame-locked time. This keeps all animations in sync.
+         */
+        if (startFrameTime === undefined) {
+            startFrameTime = performance.now()
         }
+
+        appearAnimation.startTime = startFrameTime
 
         appearAnimationStore.set(storeId, {
             animation: appearAnimation,
-            startTime: performance.now(),
+            startTime: startFrameTime,
         })
 
         if (onReady) onReady(appearAnimation)
