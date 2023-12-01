@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "10.16.9",
+    "version": "10.16.10",
     "description": "A simple and powerful JavaScript animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -105,7 +105,7 @@
         },
         {
             "path": "./dist/size-webpack-m.js",
-            "maxSize": "5.4 kB"
+            "maxSize": "5.45 kB"
         },
         {
             "path": "./dist/size-webpack-dom-animation.js",
@@ -116,5 +116,5 @@
             "maxSize": "31.8 kB"
         }
     ],
-    "gitHead": "bfbe6a51a8b809199bdd16ced7092c279d6b6345"
+    "gitHead": "2a7784f99527afe8bcbb2ddbacd37d6975bcdef1"
 }

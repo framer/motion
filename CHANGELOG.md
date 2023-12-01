@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.16.10] 2023-11-30
+
+### Fixed
+
+-   Fixing appear animation optimisation when React portal is present.
+
 ## [10.16.9] 2023-11-30
 
 ### Fixed

@@ -9,6 +9,7 @@ import { VisualState } from "./use-visual-state"
 import { LazyContext } from "../../context/LazyContext"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import type { VisualElement } from "../../render/VisualElement"
+import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/data-id"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -51,7 +52,7 @@ export function useVisualElement<Instance, RenderState>(
      * Cache this value as we want to know whether HandoffAppearAnimations
      * was present on initial render - it will be deleted after this.
      */
-    const canHandoff = useRef(Boolean(window.HandoffAppearAnimations))
+    const wantsHandoff = useRef(Boolean(props[optimizedAppearDataAttribute]))
 
     useIsomorphicLayoutEffect(() => {
         if (!visualElement) return
@@ -68,7 +69,7 @@ export function useVisualElement<Instance, RenderState>(
          * So if we detect a situtation where optimised appear animations
          * are running, we use useLayoutEffect to trigger animations.
          */
-        if (canHandoff.current && visualElement.animationState) {
+        if (wantsHandoff.current && visualElement.animationState) {
             visualElement.animationState.animateChanges()
         }
     })
@@ -78,17 +79,17 @@ export function useVisualElement<Instance, RenderState>(
 
         visualElement.updateFeatures()
 
-        if (!canHandoff.current && visualElement.animationState) {
+        if (!wantsHandoff.current && visualElement.animationState) {
             visualElement.animationState.animateChanges()
         }
 
         /**
-         * Once we've handed off animations we can delete HandoffAppearAnimations
-         * so components added after the initial render can animate changes
-         * in useEffect vs useLayoutEffect.
+         * Once we've handed animations off, we can delete the global reference.
          */
-        window.HandoffAppearAnimations = false
-        canHandoff.current = false
+        if (wantsHandoff.current) {
+            window.HandoffAppearAnimations = false
+            wantsHandoff.current = false
+        }
     })
 
     return visualElement
