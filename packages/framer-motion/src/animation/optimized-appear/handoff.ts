@@ -33,11 +33,6 @@ export function handoffOptimizedAppearAnimation(
     const { animation, startTime } = appearAnimation
 
     const cancelOptimisedAnimation = () => {
-        /**
-         * Once we've handed animations off, we can delete the global reference.
-         */
-        window.HandoffAppearAnimations = false
-
         appearAnimationStore.delete(storeId)
 
         /**
