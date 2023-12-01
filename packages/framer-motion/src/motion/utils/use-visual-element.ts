@@ -82,11 +82,6 @@ export function useVisualElement<Instance, RenderState>(
             visualElement.animationState.animateChanges()
         }
 
-        /**
-         * Once we've handed off animations we can delete HandoffAppearAnimations
-         * so components added after the initial render can animate changes
-         * in useEffect vs useLayoutEffect.
-         */
         canHandoff.current = false
     })
 
