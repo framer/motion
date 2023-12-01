@@ -6,7 +6,7 @@ export function App() {
     return (
         <motion.div
             whileHover={{
-                scale,
+                opacity: 0.5,
                 transition: {
                     type: "spring",
                     mass: 0.5,

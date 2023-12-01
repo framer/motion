@@ -99,20 +99,16 @@ export function animateTarget(
             canSkip = false
         }
 
-        if (canSkip) continue
-
         /**
-         * Skip this animation if the value hasn't changed. With an exception
-         * that we can't skip if it's a spring animation
+         * Temporarily disable skipping animations if there's an animation in
+         * progress. Better would be to track the current target of a value
+         * and compare that against valueTarget.
          */
-        if (
-            canSkipHandoff &&
-            valueTarget === value.get() &&
-            (valueTransition.type !== "spring" ||
-                (!value.getVelocity() && !valueTransition.velocity))
-        ) {
-            continue
+        if (value.animation) {
+            canSkip = false
         }
+
+        if (canSkip) continue
 
         value.start(
             animateMotionValue(
