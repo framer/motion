@@ -4,6 +4,19 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.16.12] 2023-12-01
+
+### Fixed
+
+-   Use single animation to detect document paint ready before triggering optimised animations.
+-   Measure one time for optimised animation start and one for handoff to emulate frame scheduling.
+
+## [10.16.11] 2023-12-01
+
+### Fixed
+
+-   Ensure animation is never skipped if it's an interrupting animation.
+
 ## [10.16.10] 2023-11-30
 
 ### Fixed
