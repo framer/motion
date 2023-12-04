@@ -5,11 +5,10 @@ export type ViewChangeHandler = (entry: IntersectionObserverEntry) => void
 
 type PxValue = `${number}px`
 
-type MarinType =
-    PxValue |
-  `${PxValue} ${PxValue}` |
-  `${PxValue} ${PxValue} ${PxValue}` |
-  `${PxValue} ${PxValue} ${PxValue} ${PxValue}`
+type MarinType = PxValue |
+    `${PxValue} ${PxValue}` |
+    `${PxValue} ${PxValue} ${PxValue}` |
+    `${PxValue} ${PxValue} ${PxValue} ${PxValue}`
 
 export interface InViewOptions {
     root?: Element | Document
