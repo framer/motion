@@ -3,9 +3,17 @@ import { resolveElements } from "../utils/resolve-element"
 
 export type ViewChangeHandler = (entry: IntersectionObserverEntry) => void
 
+type PxValue = `${number}px`
+
+type MarinType =
+    PxValue |
+  `${PxValue} ${PxValue}` |
+  `${PxValue} ${PxValue} ${PxValue}` |
+  `${PxValue} ${PxValue} ${PxValue} ${PxValue}`
+
 export interface InViewOptions {
     root?: Element | Document
-    margin?: string
+    margin?: MarinType
     amount?: "some" | "all" | number
 }
 
