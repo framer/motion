@@ -8,6 +8,12 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
+-   Ensure animations don't attempt to fire when `initial` equals `animate`.
+
+## [10.16.13] 2023-12-05
+
+### Fixed
+
 -   Improved animation skipping for keyframe lists.
 
 ## [10.16.12] 2023-12-01
