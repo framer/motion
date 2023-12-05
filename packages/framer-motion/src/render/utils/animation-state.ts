@@ -340,14 +340,13 @@ export function createAnimationState(
 
         if (
             isInitialRender &&
-            props.initial === false &&
+            (props.initial === false || props.initial === props.animate) &&
             !visualElement.manuallyAnimateOnMount
         ) {
             shouldAnimate = false
         }
 
         isInitialRender = false
-
         return shouldAnimate ? animate(animations) : Promise.resolve()
     }
 
