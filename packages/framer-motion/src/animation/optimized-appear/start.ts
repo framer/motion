@@ -29,7 +29,10 @@ export function startOptimizedAppearAnimation(
     onReady?: (animation: Animation) => void
 ): void {
     // Prevent optimised appear animations if Motion has already started animating.
-    if (window.HandoffComplete) return
+    if (window.HandoffComplete) {
+        window.HandoffAppearAnimations = undefined
+        return
+    }
 
     const id = element.dataset[optimizedAppearDataId]
 
