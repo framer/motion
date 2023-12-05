@@ -4,6 +4,18 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.16.13] 2023-12-05
+
+### Fixed
+
+-   Ensure animations don't attempt to fire when `initial` equals `animate`.
+
+## [10.16.13] 2023-12-05
+
+### Fixed
+
+-   Improved animation skipping for keyframe lists.
+
 ## [10.16.12] 2023-12-01
 
 ### Fixed

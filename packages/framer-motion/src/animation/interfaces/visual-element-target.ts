@@ -2,7 +2,7 @@ import { frame } from "../../frameloop"
 import { transformProps } from "../../render/html/utils/transform"
 import type { AnimationTypeState } from "../../render/utils/animation-state"
 import type { VisualElement } from "../../render/VisualElement"
-import type { TargetAndTransition } from "../../types"
+import type { Target, TargetAndTransition } from "../../types"
 import { optimizedAppearDataAttribute } from "../optimized-appear/data-id"
 import type { VisualElementAnimationOptions } from "./types"
 import { animateMotionValue } from "./motion-value"
@@ -10,6 +10,7 @@ import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { setTarget } from "../../render/utils/setters"
 import { AnimationPlaybackControls, Transition } from "../types"
 import { getValueTransition } from "../utils/transitions"
+import { MotionValue } from "../../value"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
@@ -26,6 +27,18 @@ function shouldBlockAnimation(
 
     needsAnimating[key] = false
     return shouldBlock
+}
+
+function hasKeyframesChanged(value: MotionValue, target: Target) {
+    const current = value.get()
+
+    if (Array.isArray(target)) {
+        for (let i = 0; i < target.length; i++) {
+            if (target[i] !== current) return true
+        }
+    } else {
+        return current !== target
+    }
 }
 
 export function animateTarget(
@@ -79,18 +92,22 @@ export function animateTarget(
                 visualElement.getProps()[optimizedAppearDataAttribute]
 
             if (appearId) {
-                canSkipHandoff = false
-                valueTransition.elapsed = window.HandoffAppearAnimations(
+                const elapsed = window.HandoffAppearAnimations(
                     appearId,
                     key,
                     value,
                     frame
                 )
-                ;(valueTransition as Transition).syncStart = true
+
+                if (elapsed) {
+                    canSkipHandoff = false
+                    valueTransition.elapsed = elapsed
+                    ;(valueTransition as Transition).syncStart = true
+                }
             }
         }
 
-        let canSkip = canSkipHandoff && valueTarget === value.get()
+        let canSkip = canSkipHandoff && !hasKeyframesChanged(value, valueTarget)
 
         if (
             valueTransition.type === "spring" &&

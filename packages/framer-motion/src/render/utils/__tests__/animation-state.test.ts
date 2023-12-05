@@ -145,6 +145,22 @@ describe("Animation state - Initiating props", () => {
         expect(animate).not.toBeCalled()
     })
 
+    test("Initial animation with prop as variant when initial === animate", () => {
+        const { state } = createTest()
+
+        const animate = mockAnimate(state)
+        state.update({
+            initial: "test",
+            animate: "test",
+            variants: {
+                test: { opacity: 1 },
+            },
+        })
+
+        expect(state.getState()["animate"].protectedKeys).toEqual({})
+        expect(animate).not.toBeCalled()
+    })
+
     test("Initial animation with prop as variant list with initial=false", () => {
         const { state } = createTest()
 
