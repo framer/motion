@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.16.14] 2023-12-05
+
+### Fixed
+
+-   Ensure `animateChanges` only runs in layout effect in initial render.
+
 ## [10.16.13] 2023-12-05
 
 ### Fixed
