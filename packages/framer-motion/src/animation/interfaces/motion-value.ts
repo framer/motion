@@ -120,7 +120,8 @@ export const animateMotionValue = (
         if (
             value.owner &&
             value.owner.current instanceof HTMLElement &&
-            !value.owner.getProps().onUpdate
+            !value.owner.getProps().onUpdate &&
+            !(transition as any).syncStart
         ) {
             const acceleratedAnimation = createAcceleratedAnimation(
                 value,

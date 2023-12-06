@@ -69,6 +69,8 @@ export function handoffOptimizedAppearAnimation(
         console.log({
             calculated: handoffFrameTime - startTime,
             animationCurrentTime: animation.currentTime,
+            animationStartTime: animation.startTime,
+            animationElapsed: animation.currentTime - animation.startTime,
             timelineCurrentTime: document.timeline.currentTime,
             performanceNow: performance.now(),
         })
