@@ -13,9 +13,21 @@ export function renderHTML(
     Object.assign(element.style, style, projectionStyles)
 
     if (element.dataset.framerAppearId === "smxowt") {
-        console.log(style.opacity, projectionStyles?.opacity)
-
-        console.log("computed opacity", getComputedStyle(element).opacity)
+        console.log(
+            "seting opacity",
+            style.opacity,
+            // "computed opacity",
+            // getComputedStyle(element).opacity,
+            "num opacity waapi animations",
+            element.getAnimations().filter((animation) => {
+                // return animations that are running and have an opacity keyframe
+                return (
+                    animation.playState === "running" &&
+                    (animation.effect as KeyframeEffect).getKeyframes()[0]
+                        .opacity !== undefined
+                )
+            }).length
+        )
     }
 
     // Loop over any CSS variables and assign those.
