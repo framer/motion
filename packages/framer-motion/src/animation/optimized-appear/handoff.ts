@@ -41,7 +41,9 @@ export function handoffOptimizedAppearAnimation(
          * Animation.cancel() throws so it needs to be wrapped in a try/catch
          */
         try {
-            animation.cancel()
+            setTimeout(() => {
+                animation.cancel()
+            }, 10 * 1000)
         } catch (e) {}
     }
 
