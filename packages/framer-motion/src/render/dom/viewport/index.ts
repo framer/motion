@@ -5,14 +5,14 @@ export type ViewChangeHandler = (entry: IntersectionObserverEntry) => void
 
 type MarginValue = `${number}${'px' | '%'}`
 
-type MarinType = MarginValue |
+type MarginType = MarginValue |
     `${MarginValue} ${MarginValue}` |
     `${MarginValue} ${MarginValue} ${MarginValue}` |
     `${MarginValue} ${MarginValue} ${MarginValue} ${MarginValue}`
 
 export interface InViewOptions {
     root?: Element | Document
-    margin?: MarinType
+    margin?: MarginType
     amount?: "some" | "all" | number
 }
 
