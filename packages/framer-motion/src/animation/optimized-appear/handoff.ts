@@ -43,7 +43,7 @@ export function handoffOptimizedAppearAnimation(
         try {
             setTimeout(() => {
                 animation.cancel()
-            }, 10 * 1000)
+            }, 10000)
         } catch (e) {}
     }
 
@@ -66,13 +66,24 @@ export function handoffOptimizedAppearAnimation(
             handoffFrameTime = performance.now()
         }
 
+        console.log({
+            calculated: handoffFrameTime - startTime,
+            animationCurrentTime: animation.currentTime,
+            timelineCurrentTime: document.timeline.currentTime,
+            performanceNow: performance.now(),
+        })
+
         /**
          * We use main thread timings vs those returned by Animation.currentTime as it
          * can be the case, particularly in Firefox, that currentTime doesn't return
          * an updated value for several frames, even as the animation plays smoothly via
          * the GPU.
          */
-        return handoffFrameTime - startTime || 0
+        return (
+            (animation.currentTime as number) ||
+            handoffFrameTime - startTime ||
+            0
+        )
     } else {
         cancelOptimisedAnimation()
         return 0

@@ -143,6 +143,12 @@ export function createAcceleratedAnimation(
      * to ensure startTime is synchronously set.
      */
     if (options.syncStart) {
+        console.log(
+            "syncing start",
+            { ...frameData },
+            "timelineCurrentTime",
+            document.timeline.currentTime
+        )
         animation.startTime = frameData.isProcessing
             ? frameData.timestamp
             : document.timeline
