@@ -70,7 +70,9 @@ export function handoffOptimizedAppearAnimation(
             calculated: handoffFrameTime - startTime,
             animationCurrentTime: animation.currentTime,
             animationStartTime: animation.startTime,
-            animationElapsed: animation.currentTime - animation.startTime,
+            animationElapsed:
+                (animation.currentTime as number) -
+                (animation.startTime as number),
             timelineCurrentTime: document.timeline.currentTime,
             performanceNow: performance.now(),
         })
