@@ -8,11 +8,15 @@ export function renderHTML(
     styleProp?: MotionStyle,
     projection?: IProjectionNode
 ) {
-    Object.assign(
-        element.style,
-        style,
+    const projectionStyles =
         projection && projection.getProjectionStyles(styleProp)
-    )
+    Object.assign(element.style, style, projectionStyles)
+
+    if (element.dataset.framerAppearId === "smxowt") {
+        console.log(style.opacity, projectionStyles?.opacity)
+
+        console.log("computed opacity", getComputedStyle(element).opacity)
+    }
 
     // Loop over any CSS variables and assign those.
     for (const key in vars) {

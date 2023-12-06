@@ -123,6 +123,9 @@ export const animateMotionValue = (
             !value.owner.getProps().onUpdate &&
             !(transition as any).syncStart
         ) {
+            if (value.owner.current.dataset.framerAppearId === "smxowt") {
+                console.log("firing accelerated animation for opacity")
+            }
             const acceleratedAnimation = createAcceleratedAnimation(
                 value,
                 valueName,
