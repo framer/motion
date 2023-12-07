@@ -87,6 +87,7 @@ export function useVisualElement<Instance, RenderState>(
 
         if (wantsHandoff.current) {
             wantsHandoff.current = false
+            // This ensures all future calls to animateChanges() will run in useEffect
             window.HandoffComplete = true
         }
     })
