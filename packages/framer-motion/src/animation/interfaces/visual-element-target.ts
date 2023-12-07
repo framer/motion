@@ -86,7 +86,7 @@ export function animateTarget(
          * If this is the first time a value is being animated, check
          * to see if we're handling off from an existing animation.
          */
-        let canSkipHandoff = true
+        let isHandoff = false
         if (window.HandoffAppearAnimations && !value.hasAnimated) {
             const appearId =
                 visualElement.getProps()[optimizedAppearDataAttribute]
@@ -95,19 +95,17 @@ export function animateTarget(
                 const elapsed = window.HandoffAppearAnimations(
                     appearId,
                     key,
-                    value,
-                    frame
+                    value
                 )
 
                 if (elapsed) {
-                    canSkipHandoff = false
+                    isHandoff = true
                     valueTransition.elapsed = elapsed
-                    ;(valueTransition as Transition).syncStart = true
                 }
             }
         }
 
-        let canSkip = canSkipHandoff && !hasKeyframesChanged(value, valueTarget)
+        let canSkip = !isHandoff && !hasKeyframesChanged(value, valueTarget)
 
         if (
             valueTransition.type === "spring" &&
@@ -134,7 +132,8 @@ export function animateTarget(
                 valueTarget,
                 visualElement.shouldReduceMotion && transformProps.has(key)
                     ? { type: false }
-                    : valueTransition
+                    : valueTransition,
+                isHandoff
             )
         )
 

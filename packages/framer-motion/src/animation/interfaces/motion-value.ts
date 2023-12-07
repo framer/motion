@@ -16,7 +16,8 @@ export const animateMotionValue = (
     valueName: string,
     value: MotionValue,
     target: ResolvedValueTarget,
-    transition: Transition & { elapsed?: number } = {}
+    transition: Transition & { elapsed?: number } = {},
+    isHandoff = false
 ): StartAnimation => {
     return (onComplete: VoidFunction): AnimationPlaybackControls => {
         const valueTransition = getValueTransition(transition, valueName) || {}
@@ -118,6 +119,7 @@ export const animateMotionValue = (
          * Animate via WAAPI if possible.
          */
         if (
+            !isHandoff &&
             value.owner &&
             value.owner.current instanceof HTMLElement &&
             !value.owner.getProps().onUpdate

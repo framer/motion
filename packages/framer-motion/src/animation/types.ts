@@ -25,7 +25,6 @@ export interface Transition
     type?: "decay" | "spring" | "keyframes" | "tween" | "inertia"
     duration?: number
     autoplay?: boolean
-    syncStart?: boolean
 }
 
 export interface ValueAnimationTransition<V = any>
