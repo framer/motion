@@ -41,7 +41,6 @@ interface ResolvedValues {
 
 export interface Owner {
     current: HTMLElement | unknown
-    cancelOptimisedAnimation?: { [key: string]: VoidFunction }
     getProps: () => { onUpdate?: (latest: ResolvedValues) => void }
 }
 
