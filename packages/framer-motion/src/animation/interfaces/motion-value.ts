@@ -11,7 +11,6 @@ import { getKeyframes } from "../utils/keyframes"
 import { getValueTransition, isTransitionDefined } from "../utils/transitions"
 import { animateValue } from "../animators/js"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
-import { transformProps } from "../../render/html/utils/transform"
 
 export const animateMotionValue = (
     valueName: string,
