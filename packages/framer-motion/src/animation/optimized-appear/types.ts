@@ -1,11 +1,9 @@
-import { Batcher } from "../../frameloop/types"
 import { MotionValue } from "../../value"
 
 type HandoffFunction = (
     storeId: string,
     valueName: string,
-    value: MotionValue,
-    sync: Batcher
+    value: MotionValue
 ) => number
 
 /**

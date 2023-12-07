@@ -136,20 +136,6 @@ export function createAcceleratedAnimation(
         }
     )
 
-    /**
-     * WAAPI animations don't resolve startTime synchronously. But a blocked
-     * thread could delay the startTime resolution by a noticeable amount.
-     * For synching handoff animations with the new Motion animation we want
-     * to ensure startTime is synchronously set.
-     */
-    if (options.syncStart) {
-        animation.startTime = frameData.isProcessing
-            ? frameData.timestamp
-            : document.timeline
-            ? document.timeline.currentTime
-            : performance.now()
-    }
-
     const cancelAnimation = () => animation.cancel()
 
     const safeCancel = () => {

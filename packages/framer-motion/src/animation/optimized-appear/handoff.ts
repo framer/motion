@@ -1,4 +1,3 @@
-import { Batcher } from "../../frameloop/types"
 import { transformProps } from "../../render/html/utils/transform"
 import type { MotionValue } from "../../value"
 import { appearAnimationStore } from "./store"
@@ -9,19 +8,7 @@ let handoffFrameTime: number
 export function handoffOptimizedAppearAnimation(
     id: string,
     name: string,
-    /**
-     * Legacy argument. This function is inlined apart from framer-motion so
-     * will co-ordinate with Shuang with how best to remove this.
-     */
-    _value: MotionValue,
-    /**
-     * This function is loaded via window by startOptimisedAnimation.
-     * By accepting `sync` as an argument, rather than using it via
-     * import, it can be kept out of the first-load Framer bundle,
-     * while also allowing this function to not be included in
-     * Framer Motion bundles where it's not needed.
-     */
-    frame: Batcher
+    value: MotionValue
 ): number {
     const storeId = appearStoreId(
         id,
@@ -36,6 +23,7 @@ export function handoffOptimizedAppearAnimation(
 
     const cancelOptimisedAnimation = () => {
         appearAnimationStore.delete(storeId)
+        delete value.cancelHandoffAnimation
 
         /**
          * Animation.cancel() throws so it needs to be wrapped in a try/catch
@@ -46,14 +34,7 @@ export function handoffOptimizedAppearAnimation(
     }
 
     if (startTime !== null) {
-        /**
-         * We allow the animation to persist until the next frame:
-         *   1. So it continues to play until Framer Motion is ready to render
-         *      (avoiding a potential flash of the element's original state)
-         *   2. As all independent transforms share a single transform animation, stopping
-         *      it synchronously would prevent subsequent transforms from handing off.
-         */
-        frame.render(cancelOptimisedAnimation)
+        value.cancelHandoffAnimation = cancelOptimisedAnimation
 
         /**
          * Record the time of the first handoff. We call performance.now() once
