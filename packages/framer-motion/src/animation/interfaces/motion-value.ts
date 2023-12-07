@@ -116,13 +116,6 @@ export const animateMotionValue = (
         }
 
         /**
-         * If we have an optimised animation running for this value, cancel it.
-         */
-        value.owner?.cancelOptimisedAnimation?.[
-            transformProps.has(valueName) ? "transform" : valueName
-        ]?.()
-
-        /**
          * Animate via WAAPI if possible.
          */
         if (
