@@ -10,8 +10,6 @@ import { setTarget } from "../../render/utils/setters"
 import { AnimationPlaybackControls } from "../types"
 import { getValueTransition } from "../utils/transitions"
 import { MotionValue } from "../../value"
-import { appearStoreId } from "../optimized-appear/store-id"
-import { appearAnimationStore } from "../optimized-appear/store"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
