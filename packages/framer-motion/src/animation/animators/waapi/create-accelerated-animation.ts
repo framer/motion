@@ -1,5 +1,5 @@
 import { EasingDefinition } from "../../../easing/types"
-import { frame, cancelFrame, frameData } from "../../../frameloop"
+import { frame, cancelFrame } from "../../../frameloop"
 import type { VisualElement } from "../../../render/VisualElement"
 import type { MotionValue } from "../../../value"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../../types"
