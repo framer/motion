@@ -21,6 +21,7 @@ export function handoffOptimizedAppearAnimation(
     const { animation, startTime } = optimisedAnimation
 
     const cancelAnimation = () => {
+        appearAnimationStore.delete(storeId)
         try {
             animation.cancel()
         } catch (error) {}
