@@ -1,4 +1,3 @@
-import { frame } from "../../frameloop"
 import { transformProps } from "../../render/html/utils/transform"
 import type { AnimationTypeState } from "../../render/utils/animation-state"
 import type { VisualElement } from "../../render/VisualElement"
@@ -8,7 +7,7 @@ import type { VisualElementAnimationOptions } from "./types"
 import { animateMotionValue } from "./motion-value"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { setTarget } from "../../render/utils/setters"
-import { AnimationPlaybackControls, Transition } from "../types"
+import { AnimationPlaybackControls } from "../types"
 import { getValueTransition } from "../utils/transitions"
 import { MotionValue } from "../../value"
 
