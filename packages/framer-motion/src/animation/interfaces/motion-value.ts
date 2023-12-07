@@ -118,12 +118,6 @@ export const animateMotionValue = (
         /**
          * If we have an optimised animation running for this value, cancel it.
          */
-        console.log(
-            valueName,
-            value,
-            value.owner,
-            value.owner?.cancelOptimisedAnimation
-        )
         value.owner?.cancelOptimisedAnimation?.[
             transformProps.has(valueName) ? "transform" : valueName
         ]?.()
