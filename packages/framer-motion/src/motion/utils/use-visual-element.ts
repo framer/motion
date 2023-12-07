@@ -52,7 +52,9 @@ export function useVisualElement<Instance, RenderState>(
      * Cache this value as we want to know whether HandoffAppearAnimations
      * was present on initial render - it will be deleted after this.
      */
-    const wantsHandoff = useRef(Boolean(props[optimizedAppearDataAttribute]))
+    const wantsHandoff = useRef(
+        Boolean(props[optimizedAppearDataAttribute] && !window.HandoffComplete)
+    )
 
     useIsomorphicLayoutEffect(() => {
         if (!visualElement) return
@@ -83,12 +85,9 @@ export function useVisualElement<Instance, RenderState>(
             visualElement.animationState.animateChanges()
         }
 
-        /**
-         * Once we've handed animations off, we can delete the global reference.
-         */
         if (wantsHandoff.current) {
-            window.HandoffAppearAnimations = false
             wantsHandoff.current = false
+            window.HandoffComplete = true
         }
     })
 
