@@ -41,6 +41,7 @@ interface ResolvedValues {
 
 export interface Owner {
     current: HTMLElement | unknown
+    cancelOptimisedAnimation?: { [key: string]: VoidFunction }
     getProps: () => { onUpdate?: (latest: ResolvedValues) => void }
 }
 
@@ -116,13 +117,6 @@ export class MotionValue<V = any> {
      * @internal
      */
     animation?: AnimationPlaybackControls
-
-    /**
-     * If we have a handoff animation current playing over the top of this value,
-     * we need to cancel it when we interrupt an animation.
-     * @internal
-     */
-    cancelHandoffAnimation?: () => void
 
     /**
      * Tracks whether this value can output a velocity. Currently this is only true
@@ -405,10 +399,6 @@ export class MotionValue<V = any> {
         this.stop()
 
         return new Promise<void>((resolve) => {
-            if (this.hasAnimated && this.cancelHandoffAnimation) {
-                this.cancelHandoffAnimation()
-            }
-
             this.hasAnimated = true
             this.animation = startAnimation(resolve)
 

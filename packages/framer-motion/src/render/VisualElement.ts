@@ -334,6 +334,8 @@ export abstract class VisualElement<
         [key: string]: VoidFunction
     } = {}
 
+    cancelOptimisedAnimation?: { [key: string]: VoidFunction }
+
     constructor(
         {
             parent,
