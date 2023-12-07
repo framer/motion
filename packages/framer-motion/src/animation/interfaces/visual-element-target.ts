@@ -10,6 +10,8 @@ import { setTarget } from "../../render/utils/setters"
 import { AnimationPlaybackControls } from "../types"
 import { getValueTransition } from "../utils/transitions"
 import { MotionValue } from "../../value"
+import { appearStoreId } from "../optimized-appear/store-id"
+import { appearAnimationStore } from "../optimized-appear/store"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
@@ -85,26 +87,23 @@ export function animateTarget(
          * If this is the first time a value is being animated, check
          * to see if we're handling off from an existing animation.
          */
-        let isHandoff = false
-        if (window.HandoffAppearAnimations && !value.hasAnimated) {
+        if (window.HandoffAppearAnimations) {
             const appearId =
                 visualElement.getProps()[optimizedAppearDataAttribute]
 
             if (appearId) {
-                const elapsed = window.HandoffAppearAnimations(
-                    appearId,
-                    key,
-                    value
-                )
+                const elapsed = window.HandoffAppearAnimations(appearId, key)
 
-                if (elapsed) {
-                    isHandoff = true
+                if (elapsed !== null) {
                     valueTransition.elapsed = elapsed
+                    valueTransition.isHandoff = true
                 }
             }
         }
 
-        let canSkip = !isHandoff && !hasKeyframesChanged(value, valueTarget)
+        let canSkip =
+            !valueTransition.isHandoff &&
+            !hasKeyframesChanged(value, valueTarget)
 
         if (
             valueTransition.type === "spring" &&
@@ -131,8 +130,7 @@ export function animateTarget(
                 valueTarget,
                 visualElement.shouldReduceMotion && transformProps.has(key)
                     ? { type: false }
-                    : valueTransition,
-                isHandoff
+                    : valueTransition
             )
         )
 

@@ -11,13 +11,13 @@ import { getKeyframes } from "../utils/keyframes"
 import { getValueTransition, isTransitionDefined } from "../utils/transitions"
 import { animateValue } from "../animators/js"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
+import { transformProps } from "../../render/html/utils/transform"
 
 export const animateMotionValue = (
     valueName: string,
     value: MotionValue,
     target: ResolvedValueTarget,
-    transition: Transition & { elapsed?: number } = {},
-    isHandoff = false
+    transition: Transition & { elapsed?: number; isHandoff?: boolean } = {}
 ): StartAnimation => {
     return (onComplete: VoidFunction): AnimationPlaybackControls => {
         const valueTransition = getValueTransition(transition, valueName) || {}
@@ -116,10 +116,23 @@ export const animateMotionValue = (
         }
 
         /**
+         * If we have an optimised animation running for this value, cancel it.
+         */
+        console.log(
+            valueName,
+            value,
+            value.owner,
+            value.owner?.cancelOptimisedAnimation
+        )
+        value.owner?.cancelOptimisedAnimation?.[
+            transformProps.has(valueName) ? "transform" : valueName
+        ]?.()
+
+        /**
          * Animate via WAAPI if possible.
          */
         if (
-            !isHandoff &&
+            !transition.isHandoff &&
             value.owner &&
             value.owner.current instanceof HTMLElement &&
             !value.owner.getProps().onUpdate

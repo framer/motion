@@ -29,7 +29,9 @@ export interface Transition
 
 export interface ValueAnimationTransition<V = any>
     extends Transition,
-        AnimationPlaybackLifecycles<V> {}
+        AnimationPlaybackLifecycles<V> {
+    isHandoff?: boolean
+}
 
 export interface ValueAnimationOptions<V = any>
     extends ValueAnimationTransition {

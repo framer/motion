@@ -1,10 +1,7 @@
-import { MotionValue } from "../../value"
-
-type HandoffFunction = (
+export type HandoffFunction = (
     storeId: string,
-    valueName: string,
-    value: MotionValue
-) => number
+    valueName: string
+) => null | number
 
 /**
  * The window global object acts as a bridge between our inline script
