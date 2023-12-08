@@ -1,3 +1,5 @@
+import type { Batcher } from "../../frameloop/types"
+import type { MotionValue } from "../../value"
 import { transformProps } from "../../render/html/utils/transform"
 import { appearAnimationStore } from "./store"
 import { appearStoreId } from "./store-id"
@@ -6,7 +8,15 @@ let handoffFrameTime: number
 
 export function handoffOptimizedAppearAnimation(
     elementId: string,
-    valueName: string
+    valueName: string,
+    /**
+     * Legacy arguments. This function is inlined as part of SSG so it can be there's
+     * a version mismatch between the main included Motion and the inlined script.
+     *
+     * Remove in early 2024.
+     */
+    _value: MotionValue,
+    _frame: Batcher
 ): number | null {
     const optimisedValueName = transformProps.has(valueName)
         ? "transform"
