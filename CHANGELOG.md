@@ -9,6 +9,7 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Fixed
 
 -   `circInOut` easing fixed.
+-   Improved optimised animation handoff.
 
 ## [10.16.15] 2023-12-07
 
