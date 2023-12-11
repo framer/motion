@@ -25,12 +25,13 @@ export interface Transition
     type?: "decay" | "spring" | "keyframes" | "tween" | "inertia"
     duration?: number
     autoplay?: boolean
-    syncStart?: boolean
 }
 
 export interface ValueAnimationTransition<V = any>
     extends Transition,
-        AnimationPlaybackLifecycles<V> {}
+        AnimationPlaybackLifecycles<V> {
+    isHandoff?: boolean
+}
 
 export interface ValueAnimationOptions<V = any>
     extends ValueAnimationTransition {

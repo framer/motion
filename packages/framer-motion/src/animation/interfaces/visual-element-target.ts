@@ -1,4 +1,3 @@
-import { frame } from "../../frameloop"
 import { transformProps } from "../../render/html/utils/transform"
 import type { AnimationTypeState } from "../../render/utils/animation-state"
 import type { VisualElement } from "../../render/VisualElement"
@@ -8,9 +7,10 @@ import type { VisualElementAnimationOptions } from "./types"
 import { animateMotionValue } from "./motion-value"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { setTarget } from "../../render/utils/setters"
-import { AnimationPlaybackControls, Transition } from "../types"
+import { AnimationPlaybackControls } from "../types"
 import { getValueTransition } from "../utils/transitions"
 import { MotionValue } from "../../value"
+import { frame } from "../../frameloop"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
@@ -86,8 +86,7 @@ export function animateTarget(
          * If this is the first time a value is being animated, check
          * to see if we're handling off from an existing animation.
          */
-        let canSkipHandoff = true
-        if (window.HandoffAppearAnimations && !value.hasAnimated) {
+        if (window.HandoffAppearAnimations) {
             const appearId =
                 visualElement.getProps()[optimizedAppearDataAttribute]
 
@@ -99,15 +98,16 @@ export function animateTarget(
                     frame
                 )
 
-                if (elapsed) {
-                    canSkipHandoff = false
+                if (elapsed !== null) {
                     valueTransition.elapsed = elapsed
-                    ;(valueTransition as Transition).syncStart = true
+                    valueTransition.isHandoff = true
                 }
             }
         }
 
-        let canSkip = canSkipHandoff && !hasKeyframesChanged(value, valueTarget)
+        let canSkip =
+            !valueTransition.isHandoff &&
+            !hasKeyframesChanged(value, valueTarget)
 
         if (
             valueTransition.type === "spring" &&

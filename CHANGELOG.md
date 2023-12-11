@@ -4,6 +4,19 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.16.16] 2023-12-08
+
+### Fixed
+
+-   `circInOut` easing fixed.
+-   Improved optimised animation handoff.
+
+## [10.16.15] 2023-12-07
+
+### Fixed
+
+-   Ensure `animateChanges` only runs in layout effect in initial render.
+
 ## [10.16.13] 2023-12-05
 
 ### Fixed
