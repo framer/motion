@@ -3,9 +3,16 @@ import { resolveElements } from "../utils/resolve-element"
 
 export type ViewChangeHandler = (entry: IntersectionObserverEntry) => void
 
+type MarginValue = `${number}${'px' | '%'}`
+
+type MarginType = MarginValue |
+    `${MarginValue} ${MarginValue}` |
+    `${MarginValue} ${MarginValue} ${MarginValue}` |
+    `${MarginValue} ${MarginValue} ${MarginValue} ${MarginValue}`
+
 export interface InViewOptions {
     root?: Element | Document
-    margin?: string
+    margin?: MarginType
     amount?: "some" | "all" | number
 }
 
