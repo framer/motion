@@ -1,7 +1,6 @@
 import { focus, blur, render } from "../../../jest.setup"
 import * as React from "react"
 import { motion, motionValue } from "../../"
-import { frame } from "../../frameloop"
 
 describe("focus", () => {
     test("whileFocus applied", async () => {
