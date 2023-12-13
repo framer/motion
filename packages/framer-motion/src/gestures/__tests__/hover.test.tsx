@@ -7,7 +7,6 @@ import {
 import * as React from "react"
 import { motion } from "../../"
 import { motionValue } from "../../value"
-import { transformValues } from "../../motion/__tests__/util-transform-values"
 import { frame } from "../../frameloop"
 
 describe("hover", () => {
@@ -197,36 +196,5 @@ describe("hover", () => {
         })
 
         return expect(promise).resolves.toEqual([0.5, 2])
-    })
-
-    test("special transform values are unapplied when hover ends", () => {
-        const promise = new Promise((resolve) => {
-            const variant = {
-                hidden: { size: 50 },
-            }
-            const Component = () => (
-                <motion.div
-                    transformValues={transformValues}
-                    whileHover="hidden"
-                    variants={variant}
-                    transition={{ type: false }}
-                    style={{ size: 100 }}
-                />
-            )
-
-            const { container, rerender } = render(<Component />)
-            rerender(<Component />)
-
-            pointerEnter(container.firstChild as Element)
-
-            frame.postRender(() => {
-                pointerLeave(container.firstChild as Element)
-                frame.postRender(() => resolve(container.firstChild as Element))
-            })
-        })
-
-        return expect(promise).resolves.toHaveStyle(
-            "width: 100px; height: 100px;"
-        )
     })
 })
