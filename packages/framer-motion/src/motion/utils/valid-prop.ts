@@ -16,7 +16,6 @@ const validMotionProps = new Set<keyof MotionProps>([
     "variants",
     "transition",
     "transformTemplate",
-    "transformValues",
     "custom",
     "inherit",
     "onBeforeLayoutMeasure",

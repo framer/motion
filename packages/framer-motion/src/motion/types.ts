@@ -11,7 +11,7 @@ import {
 } from "../types"
 import { DraggableProps } from "../gestures/drag/types"
 import { LayoutProps } from "./features/layout/types"
-import { ResolvedValues, EventProps } from "../render/types"
+import { EventProps } from "../render/types"
 import {
     PanHandlers,
     TapHandlers,
