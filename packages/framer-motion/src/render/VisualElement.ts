@@ -86,7 +86,6 @@ export abstract class VisualElement<
      */
     abstract makeTargetAnimatableFromInstance(
         target: TargetAndTransition,
-        props: MotionProps,
         isLive: boolean
     ): TargetAndTransition
 
@@ -645,11 +644,7 @@ export abstract class VisualElement<
         target: TargetAndTransition,
         canMutate = true
     ): TargetAndTransition {
-        return this.makeTargetAnimatableFromInstance(
-            target,
-            this.props,
-            canMutate
-        )
+        return this.makeTargetAnimatableFromInstance(target, canMutate)
     }
 
     /**
