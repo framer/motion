@@ -3,12 +3,15 @@ import { createRenderStep } from "./render-step"
 import { Batcher, Process, StepId, Steps, FrameData } from "./types"
 
 export const stepsOrder: StepId[] = [
-    "prepare",
-    "read",
-    "update",
-    "preRender",
-    "render",
-    "postRender",
+    "read", // Read
+    "unsetTransforms", // Write
+    "measure", // Read
+    "renderTemporaryStyles", // Write
+    "readTemporaryStyles", // Read
+    "update", // None
+    "preRender", // None
+    "render", // Write
+    "postRender", // None
 ]
 
 const maxElapsed = 40

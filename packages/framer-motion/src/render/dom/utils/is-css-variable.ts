@@ -4,7 +4,7 @@ export type CSSVariableToken = `var(${CSSVariableName})`
 
 const checkStringStartsWith =
     <T extends string>(token: string) =>
-    (key?: string): key is T =>
+    (key?: string | number | null): key is T =>
         typeof key === "string" && key.startsWith(token)
 
 export const isCSSVariableName = checkStringStartsWith<CSSVariableName>("--")
