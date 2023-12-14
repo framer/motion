@@ -43,14 +43,14 @@ function hasKeyframesChanged(value: MotionValue, target: Target) {
 
 export function animateTarget(
     visualElement: VisualElement,
-    definition: TargetAndTransition,
+    targetAndTransition: TargetAndTransition,
     { delay = 0, transitionOverride, type }: VisualElementAnimationOptions = {}
 ): AnimationPlaybackControls[] {
     let {
         transition = visualElement.getDefaultTransition(),
         transitionEnd,
         ...target
-    } = visualElement.makeTargetAnimatable(definition)
+    } = targetAndTransition
 
     const willChange = visualElement.getValue("willChange")
 
@@ -66,6 +66,10 @@ export function animateTarget(
     for (const key in target) {
         const value = visualElement.getValue(key)
         const valueTarget = target[key]
+
+        /**
+         * TODO Probably need to make a motion value here if it doesnt exist
+         */
 
         if (
             !value ||
