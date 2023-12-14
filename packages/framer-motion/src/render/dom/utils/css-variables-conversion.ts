@@ -26,7 +26,7 @@ export function parseCSSVariable(current: string) {
 }
 
 const maxDepth = 4
-function getVariableValue(
+export function getVariableValue(
     current: CSSVariableToken,
     element: Element,
     depth = 1
