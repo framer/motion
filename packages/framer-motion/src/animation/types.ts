@@ -117,14 +117,15 @@ export interface CSSStyleDeclarationWithTransform
     skewY: number | string
 }
 
-export type ValueKeyframe = string | number
+export type ValueKeyframe<T extends string | number = number> = T
 
-export type UnresolvedValueKeyframe = ValueKeyframe | null
+export type UnresolvedValueKeyframe<T extends string | number = number> =
+    ValueKeyframe<T> | null
 
-export type ValueKeyframesDefinition =
-    | ValueKeyframe
-    | ValueKeyframe[]
-    | UnresolvedValueKeyframe[]
+export type ValueKeyframesDefinition<T extends string | number = number> =
+    | T
+    | T[]
+    | Array<T | null>
 
 export type StyleKeyframesDefinition = {
     [K in keyof CSSStyleDeclarationWithTransform]?: ValueKeyframesDefinition

@@ -13,8 +13,11 @@ export interface Step {
 }
 
 export type StepId =
-    | "prepare"
     | "read"
+    | "unsetTransforms"
+    | "measure"
+    | "renderTemporaryStyles"
+    | "readTemporaryStyles"
     | "update"
     | "preRender"
     | "render"
