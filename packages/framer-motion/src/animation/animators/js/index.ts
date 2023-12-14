@@ -15,6 +15,7 @@ import { calcGeneratorDuration } from "../../generators/utils/calc-duration"
 import { invariant } from "../../../utils/errors"
 import { mix } from "../../../utils/mix"
 import { pipe } from "../../../utils/pipe"
+import { Keyframes } from "../../../keyframes/Keyframes"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -57,6 +58,12 @@ export function animateValue<V = number>({
     onUpdate,
     ...options
 }: ValueAnimationOptions<V>): MainThreadAnimationControls<V> {
+    new Keyframes(undefined as any, "opacity", keyframes as any).ready.then(
+        () => {
+            console.log("keyframes ready")
+        }
+    )
+
     let speed = 1
 
     let hasStopped = false

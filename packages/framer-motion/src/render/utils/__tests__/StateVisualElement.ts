@@ -1,9 +1,7 @@
 import { ResolvedValues } from "../../types"
-import { checkTargetForNewValues, getOrigin } from "../setters"
 import { MotionProps } from "../../../motion/types"
 import { createBox } from "../../../projection/geometry/models"
 import { VisualElement } from "../../VisualElement"
-import { TargetAndTransition } from "../../.."
 
 export class StateVisualElement extends VisualElement<
     ResolvedValues,
@@ -33,15 +31,5 @@ export class StateVisualElement extends VisualElement<
         options: { initialState: ResolvedValues }
     ) {
         return options.initialState[key] || 0
-    }
-
-    makeTargetAnimatableFromInstance({
-        transition,
-        transitionEnd,
-        ...target
-    }: TargetAndTransition) {
-        const origin = getOrigin(target as any, transition || {}, this)
-        checkTargetForNewValues(this, target, origin as any)
-        return { transition, transitionEnd, ...target }
     }
 }
