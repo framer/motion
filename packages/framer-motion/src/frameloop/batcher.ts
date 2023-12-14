@@ -8,10 +8,10 @@ export const stepsOrder: StepId[] = [
     "measure", // Read
     "renderTemporaryStyles", // Write
     "readTemporaryStyles", // Read
-    "update", // None
-    "preRender", // None
+    "update", // Compute
+    "preRender", // Compute
     "render", // Write
-    "postRender", // None
+    "postRender", // Compute
 ]
 
 const maxElapsed = 40

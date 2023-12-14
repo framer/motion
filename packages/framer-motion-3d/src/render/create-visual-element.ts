@@ -1,15 +1,10 @@
 import type {
     CreateVisualElement,
-    TargetAndTransition,
     ResolvedValues,
     MotionProps,
 } from "framer-motion"
 
-import {
-    createBox,
-    checkTargetForNewValues,
-    VisualElement,
-} from "framer-motion"
+import { createBox, VisualElement } from "framer-motion"
 import { Object3DNode } from "@react-three/fiber"
 
 import { setThreeValue } from "./utils/set-value"
@@ -39,15 +34,6 @@ export class ThreeVisualElement extends VisualElement<
         b: Object3DNode<any, any>
     ) {
         return a.id - b.id
-    }
-
-    makeTargetAnimatableFromInstance({
-        transition,
-        transitionEnd,
-        ...target
-    }: TargetAndTransition) {
-        checkTargetForNewValues(this, target, {})
-        return { ...target, transition, transitionEnd }
     }
 
     removeValueFromRenderState() {}

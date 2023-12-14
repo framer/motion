@@ -10,7 +10,6 @@ import { MotionProps, MotionStyle } from "../motion/types"
 import { createBox } from "../projection/geometry/models"
 import { Box } from "../projection/geometry/types"
 import { IProjectionNode } from "../projection/node/types"
-import { TargetAndTransition } from "../types"
 import { isRefObject } from "../utils/is-ref-object"
 import { initPrefersReducedMotion } from "../utils/reduced-motion"
 import {
@@ -79,15 +78,6 @@ export abstract class VisualElement<
      * compare their respective positions within the tree.
      */
     abstract sortInstanceNodePosition(a: Instance, b: Instance): number
-
-    /**
-     * Take a target and make it animatable. For instance if provided
-     * height: "auto" we need to measure height in pixels and animate that instead.
-     */
-    abstract makeTargetAnimatableFromInstance(
-        target: TargetAndTransition,
-        isLive: boolean
-    ): TargetAndTransition
 
     /**
      * Measure the viewport-relative bounding box of the Instance.
@@ -631,20 +621,6 @@ export abstract class VisualElement<
 
     setStaticValue(key: string, value: string | number) {
         this.latestValues[key] = value
-    }
-
-    /**
-     * Make a target animatable by Popmotion. For instance, if we're
-     * trying to animate width from 100px to 100vw we need to measure 100vw
-     * in pixels to determine what we really need to animate to. This is also
-     * pluggable to support Framer's custom value types like Color,
-     * and CSS variables.
-     */
-    makeTargetAnimatable(
-        target: TargetAndTransition,
-        canMutate = true
-    ): TargetAndTransition {
-        return this.makeTargetAnimatableFromInstance(target, canMutate)
     }
 
     /**

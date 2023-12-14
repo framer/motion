@@ -1,10 +1,7 @@
-import { checkTargetForNewValues, getOrigin } from "../utils/setters"
 import { DOMVisualElementOptions } from "../dom/types"
-import { parseDomVariant } from "../dom/utils/parse-dom-variant"
 import { VisualElement } from "../VisualElement"
 import { MotionProps } from "../../motion/types"
 import { MotionValue } from "../../value"
-import { TargetAndTransition } from "../.."
 import { HTMLRenderState } from "../html/types"
 
 export abstract class DOMVisualElement<
@@ -34,26 +31,5 @@ export abstract class DOMVisualElement<
     ): void {
         delete vars[key]
         delete style[key]
-    }
-
-    makeTargetAnimatableFromInstance(
-        { transition, transitionEnd, ...target }: TargetAndTransition,
-        isMounted: boolean
-    ): TargetAndTransition {
-        const origin = getOrigin(target as any, transition || {}, this)
-
-        if (isMounted) {
-            checkTargetForNewValues(this, target, origin as any)
-
-            const parsed = parseDomVariant(this, target, origin, transitionEnd)
-            transitionEnd = parsed.transitionEnd
-            target = parsed.target
-        }
-
-        return {
-            transition,
-            transitionEnd,
-            ...target,
-        }
     }
 }
