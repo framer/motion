@@ -4,10 +4,6 @@ import { Batcher, Process, StepId, Steps, FrameData } from "./types"
 
 export const stepsOrder: StepId[] = [
     "read", // Read
-    "unsetTransforms", // Write
-    "measure", // Read
-    "renderTemporaryStyles", // Write
-    "readTemporaryStyles", // Read
     "update", // Compute
     "preRender", // Compute
     "render", // Write

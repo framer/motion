@@ -12,16 +12,7 @@ export interface Step {
     process: (data: FrameData) => void
 }
 
-export type StepId =
-    | "read"
-    | "unsetTransforms"
-    | "measure"
-    | "renderTemporaryStyles"
-    | "readTemporaryStyles"
-    | "update"
-    | "preRender"
-    | "render"
-    | "postRender"
+export type StepId = "read" | "update" | "preRender" | "render" | "postRender"
 
 export type CancelProcess = (process: Process) => void
 
