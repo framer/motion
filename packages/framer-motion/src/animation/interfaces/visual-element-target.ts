@@ -64,15 +64,10 @@ export function animateTarget(
         visualElement.animationState.getState()[type]
 
     for (const key in target) {
-        const value = visualElement.getValue(key)
+        const value = visualElement.getValue(key, null)
         const valueTarget = target[key]
 
-        /**
-         * TODO Probably need to make a motion value here if it doesnt exist
-         */
-
         if (
-            !value ||
             valueTarget === undefined ||
             (animationTypeState &&
                 shouldBlockAnimation(animationTypeState, key))
@@ -95,12 +90,7 @@ export function animateTarget(
                 visualElement.getProps()[optimizedAppearDataAttribute]
 
             if (appearId) {
-                const elapsed = window.HandoffAppearAnimations(
-                    appearId,
-                    key,
-                    value,
-                    frame
-                )
+                const elapsed = window.HandoffAppearAnimations(appearId, key)
 
                 if (elapsed !== null) {
                     valueTransition.elapsed = elapsed
@@ -138,7 +128,8 @@ export function animateTarget(
                 valueTarget,
                 visualElement.shouldReduceMotion && transformProps.has(key)
                     ? { type: false }
-                    : valueTransition
+                    : valueTransition,
+                visualElement
             )
         )
 

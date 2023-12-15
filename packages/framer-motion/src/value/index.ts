@@ -77,7 +77,7 @@ export class MotionValue<V = any> {
     /**
      * The current state of the `MotionValue`.
      */
-    private current: V
+    private current: V | undefined
 
     /**
      * The previous state of the `MotionValue`.

@@ -36,6 +36,8 @@ export interface ValueAnimationTransition<V = any>
 export interface ValueAnimationOptions<V = any>
     extends ValueAnimationTransition {
     keyframes: V[]
+    visualElement?: VisualElement
+    name?: string
 }
 
 export interface AnimationScope<T = any> {
