@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 /**
  * An example of the tween transition type
  *
- * Base effect time at 6x speed reduction ~256ms
+ * Base effect time at 6x CPU throttle with no pregenerated WAAPI animations - 130-160ms
  */
 
 const style = {
