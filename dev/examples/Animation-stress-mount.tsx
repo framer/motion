@@ -3,6 +3,8 @@ import { motion } from "framer-motion"
 
 /**
  * An example of the tween transition type
+ *
+ * Effect time at 6x speed, ~120ms
  */
 
 const style = {
