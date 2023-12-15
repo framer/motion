@@ -15,7 +15,7 @@ import { calcGeneratorDuration } from "../../generators/utils/calc-duration"
 import { invariant } from "../../../utils/errors"
 import { mix } from "../../../utils/mix"
 import { pipe } from "../../../utils/pipe"
-import { Keyframes } from "../../../keyframes/Keyframes"
+import { Keyframes, ResolvedKeyframes } from "../../../keyframes/Keyframes"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -43,11 +43,13 @@ const percentToProgress = (percent: number) => percent / 100
  * to be largely spec-compliant with WAAPI to allow fungibility
  * between the two.
  */
-export function animateValue<V = number>({
+export function animateValue<V extends string | number = number>({
     autoplay = true,
     delay = 0,
     driver = frameloopDriver,
-    keyframes,
+    keyframes: unresolvedKeyframes,
+    visualElement,
+    name,
     type = "keyframes",
     repeat = 0,
     repeatDelay = 0,
@@ -58,17 +60,27 @@ export function animateValue<V = number>({
     onUpdate,
     ...options
 }: ValueAnimationOptions<V>): MainThreadAnimationControls<V> {
-    new Keyframes(undefined as any, "opacity", keyframes as any).ready.then(
-        () => {
-            console.log("keyframes ready")
-        }
-    )
-
+    let playState: AnimationPlayState = "idle"
+    let holdTime: number | null = null
+    let startTime: number | null = null
+    let cancelTime: number | null = null
     let speed = 1
-
+    let currentTime = 0
+    let resolvedDuration = Infinity
+    let calculatedDuration: number | null = null
+    let totalDuration = Infinity
     let hasStopped = false
     let resolveFinishedPromise: VoidFunction
     let currentFinishedPromise: Promise<void>
+
+    let generator: KeyframeGenerator<V> | undefined
+    let mirroredGenerator: KeyframeGenerator<unknown> | undefined
+    /**
+     * If this isn't the keyframes generator and we've been provided
+     * strings as keyframes, we need to interpolate these.
+     * TODO: Support velocity for units and complex value types/
+     */
+    let mapNumbersToKeyframes: undefined | ((t: number) => V)
 
     /**
      * Resolve the current Promise every time we enter the
@@ -85,22 +97,52 @@ export function animateValue<V = number>({
 
     let animationDriver: DriverControls | undefined
 
-    const generatorFactory = types[type] || keyframesGeneratorFactory
+    const createGenerator = (keyframes: ResolvedKeyframes<any>) => {
+        const generatorFactory = types[type] || keyframesGeneratorFactory
+        if (
+            generatorFactory !== keyframesGeneratorFactory &&
+            typeof keyframes[0] !== "number"
+        ) {
+            if (process.env.NODE_ENV !== "production") {
+                invariant(
+                    keyframes.length === 2,
+                    `Only two keyframes currently supported with spring and inertia animations. Trying to animate ${keyframes}`
+                )
+            }
 
-    /**
-     * If this isn't the keyframes generator and we've been provided
-     * strings as keyframes, we need to interpolate these.
-     */
-    let mapNumbersToKeyframes: undefined | ((t: number) => V)
-    if (
-        generatorFactory !== keyframesGeneratorFactory &&
-        typeof keyframes[0] !== "number"
-    ) {
-        if (process.env.NODE_ENV !== "production") {
-            invariant(
-                keyframes.length === 2,
-                `Only two keyframes currently supported with spring and inertia animations. Trying to animate ${keyframes}`
-            )
+            mapNumbersToKeyframes = interpolate([0, 100], keyframes, {
+                clamp: false,
+            })
+            keyframes = [0, 100] as any
+        }
+
+        generator = generatorFactory({ ...options, keyframes })
+
+        if (repeatType === "mirror") {
+            mirroredGenerator = generatorFactory({
+                ...options,
+                keyframes: [...keyframes].reverse(),
+                velocity: -(options.velocity || 0),
+            })
+        }
+
+        /**
+         * If duration is undefined and we have repeat options,
+         * we need to calculate a duration from the generator.
+         *
+         * We set it to the generator itself to cache the duration.
+         * Any timeline resolver will need to have already precalculated
+         * the duration by this step.
+         */
+        if (generator.calculatedDuration === null && repeat) {
+            generator.calculatedDuration = calcGeneratorDuration(generator)
+        }
+
+        calculatedDuration = generator.calculatedDuration
+
+        if (calculatedDuration !== null) {
+            resolvedDuration = calculatedDuration + repeatDelay
+            totalDuration = resolvedDuration * (repeat + 1) - repeatDelay
         }
 
         mapNumbersToKeyframes = pipe(
@@ -111,47 +153,8 @@ export function animateValue<V = number>({
         keyframes = [0, 100] as any
     }
 
-    const generator = generatorFactory({ ...options, keyframes })
-
-    let mirroredGenerator: KeyframeGenerator<unknown> | undefined
-    if (repeatType === "mirror") {
-        mirroredGenerator = generatorFactory({
-            ...options,
-            keyframes: [...keyframes].reverse(),
-            velocity: -(options.velocity || 0),
-        })
-    }
-
-    let playState: AnimationPlayState = "idle"
-    let holdTime: number | null = null
-    let startTime: number | null = null
-    let cancelTime: number | null = null
-
-    /**
-     * If duration is undefined and we have repeat options,
-     * we need to calculate a duration from the generator.
-     *
-     * We set it to the generator itself to cache the duration.
-     * Any timeline resolver will need to have already precalculated
-     * the duration by this step.
-     */
-    if (generator.calculatedDuration === null && repeat) {
-        generator.calculatedDuration = calcGeneratorDuration(generator)
-    }
-
-    const { calculatedDuration } = generator
-
-    let resolvedDuration = Infinity
-    let totalDuration = Infinity
-
-    if (calculatedDuration !== null) {
-        resolvedDuration = calculatedDuration + repeatDelay
-        totalDuration = resolvedDuration * (repeat + 1) - repeatDelay
-    }
-
-    let currentTime = 0
     const tick = (timestamp: number) => {
-        if (startTime === null) return
+        if (startTime === null || !generator) return
 
         /**
          * requestAnimationFrame timestamps can come through as lower than
@@ -301,6 +304,7 @@ export function animateValue<V = number>({
 
         if (!animationDriver) animationDriver = driver(tick)
 
+        // TODO Create microtask to set a time for this event stack
         const now = animationDriver.now()
 
         onPlay && onPlay()
@@ -327,8 +331,16 @@ export function animateValue<V = number>({
         animationDriver.start()
     }
 
-    if (autoplay) {
-        play()
+    if (visualElement && name) {
+        visualElement.resolveKeyframes(
+            name,
+            unresolvedKeyframes,
+            (resolvedKeyframes) => {
+                createGenerator(resolvedKeyframes)
+
+                autoplay && play()
+            }
+        )
     }
 
     const controls = {
