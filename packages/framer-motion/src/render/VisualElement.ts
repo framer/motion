@@ -41,6 +41,8 @@ import { Feature } from "../motion/features/Feature"
 import type { PresenceContextProps } from "../context/PresenceContext"
 import { variantProps } from "./utils/variant-props"
 import { visualElementStore } from "./store"
+import { ResolvedKeyframes, UnresolvedKeyframes } from "../keyframes/Keyframes"
+import { KeyframeResolver } from "./utils/KeyframesResolver"
 
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
@@ -140,6 +142,15 @@ export abstract class VisualElement<
         styleProp?: MotionStyle,
         projection?: IProjectionNode
     ): void
+
+    abstract resolveKeyframes<T extends string | number>(
+        name: string,
+        keyframes: UnresolvedKeyframes<T>,
+        // We use an onComplete callback here rather than a Promise as a Promise
+        // resolution is a microtask and we want to retain the ability to force
+        // the resolution of keyframes synchronously.
+        onComplete: (resolvedKeyframes: ResolvedKeyframes<T>) => void
+    ): KeyframeResolver<T>
 
     /**
      * If the component child is provided as a motion value, handle subscriptions
@@ -775,10 +786,10 @@ export abstract class VisualElement<
      * value, we'll create one if none exists.
      */
     getValue(key: string): MotionValue | undefined
-    getValue(key: string, defaultValue: string | number): MotionValue
+    getValue(key: string, defaultValue: string | number | null): MotionValue
     getValue(
         key: string,
-        defaultValue?: string | number
+        defaultValue?: string | number | null
     ): MotionValue | undefined {
         if (this.props.values && this.props.values[key]) {
             return this.props.values[key]
@@ -787,7 +798,10 @@ export abstract class VisualElement<
         let value = this.values.get(key)
 
         if (value === undefined && defaultValue !== undefined) {
-            value = motionValue(defaultValue, { owner: this })
+            value = motionValue(
+                defaultValue === null ? undefined : defaultValue,
+                { owner: this }
+            )
             this.addValue(key, value)
         }
 

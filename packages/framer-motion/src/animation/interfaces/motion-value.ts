@@ -12,15 +12,17 @@ import { getValueTransition, isTransitionDefined } from "../utils/transitions"
 import { animateValue } from "../animators/js"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
 import { MotionGlobalConfig } from "../../utils/GlobalConfig"
+import { VisualElement } from "../../render/VisualElement"
 
 export const animateMotionValue = (
-    valueName: string,
+    name: string,
     value: MotionValue,
     target: ResolvedValueTarget,
-    transition: Transition & { elapsed?: number; isHandoff?: boolean } = {}
+    transition: Transition & { elapsed?: number; isHandoff?: boolean } = {},
+    visualElement: VisualElement
 ): StartAnimation => {
     return (onComplete: VoidFunction): AnimationPlaybackControls => {
-        const valueTransition = getValueTransition(transition, valueName) || {}
+        const valueTransition = getValueTransition(transition, name) || {}
 
         /**
          * Most transition values are currently completely overwritten by value-specific
@@ -36,30 +38,8 @@ export const animateMotionValue = (
         let { elapsed = 0 } = transition
         elapsed = elapsed - secondsToMilliseconds(delay)
 
-        const keyframes = getKeyframes(
-            value,
-            valueName,
-            target,
-            valueTransition
-        )
-
-        /**
-         * Check if we're able to animate between the start and end keyframes,
-         * and throw a warning if we're attempting to animate between one that's
-         * animatable and another that isn't.
-         */
-        const originKeyframe = keyframes[0]
-        const targetKeyframe = keyframes[keyframes.length - 1]
-        const isOriginAnimatable = isAnimatable(valueName, originKeyframe)
-        const isTargetAnimatable = isAnimatable(valueName, targetKeyframe)
-
-        warning(
-            isOriginAnimatable === isTargetAnimatable,
-            `You are trying to animate ${valueName} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`
-        )
-
         let options: ValueAnimationOptions = {
-            keyframes,
+            keyframes: Array.isArray(target) ? target : [null, target],
             velocity: value.getVelocity(),
             ease: "easeOut",
             ...valueTransition,
@@ -72,6 +52,8 @@ export const animateMotionValue = (
                 onComplete()
                 valueTransition.onComplete && valueTransition.onComplete()
             },
+            name,
+            visualElement,
         }
 
         /**
@@ -81,7 +63,7 @@ export const animateMotionValue = (
         if (!isTransitionDefined(valueTransition)) {
             options = {
                 ...options,
-                ...getDefaultTransition(valueName, options),
+                ...getDefaultTransition(name, options),
             }
         }
 
@@ -93,59 +75,80 @@ export const animateMotionValue = (
         if (options.duration) {
             options.duration = secondsToMilliseconds(options.duration)
         }
-
         if (options.repeatDelay) {
             options.repeatDelay = secondsToMilliseconds(options.repeatDelay)
         }
 
-        if (
-            !isOriginAnimatable ||
-            !isTargetAnimatable ||
-            instantAnimationState.current ||
-            valueTransition.type === false ||
-            MotionGlobalConfig.skipAnimations
-        ) {
-            /**
-             * If we can't animate this value, or the global instant animation flag is set,
-             * or this is simply defined as an instant transition, return an instant transition.
-             */
-            return createInstantAnimation(
-                instantAnimationState.current
-                    ? { ...options, delay: 0 }
-                    : options
-            )
-        }
-
-        /**
-         * Animate via WAAPI if possible.
-         */
-        if (
-            /**
-             * If this is a handoff animation, the optimised animation will be running via
-             * WAAPI. Therefore, this animation must be JS to ensure it runs "under" the
-             * optimised animation.
-             */
-            !transition.isHandoff &&
-            value.owner &&
-            value.owner.current instanceof HTMLElement &&
-            /**
-             * If we're outputting values to onUpdate then we can't use WAAPI as there's
-             * no way to read the value from WAAPI every frame.
-             */
-            !value.owner.getProps().onUpdate
-        ) {
-            const acceleratedAnimation = createAcceleratedAnimation(
-                value,
-                valueName,
-                options
-            )
-
-            if (acceleratedAnimation) return acceleratedAnimation
-        }
-
-        /**
-         * If we didn't create an accelerated animation, create a JS animation
-         */
         return animateValue(options)
     }
 }
+
+// export const animateMotionValue = (
+//     valueName: string,
+//     value: MotionValue,
+//     target: ResolvedValueTarget,
+//     transition: Transition & { elapsed?: number; isHandoff?: boolean } = {}
+// ): StartAnimation => {
+//     return (onComplete: VoidFunction): AnimationPlaybackControls => {
+
+// /**
+//  * Check if we're able to animate between the start and end keyframes,
+//  * and throw a warning if we're attempting to animate between one that's
+//  * animatable and another that isn't.
+//  */
+// const originKeyframe = keyframes[0]
+// const targetKeyframe = keyframes[keyframes.length - 1]
+// const isOriginAnimatable = isAnimatable(valueName, originKeyframe)
+// const isTargetAnimatable = isAnimatable(valueName, targetKeyframe)
+// warning(
+//     isOriginAnimatable === isTargetAnimatable,
+//     `You are trying to animate ${valueName} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`
+// )
+
+// if (
+//     !isOriginAnimatable ||
+//     !isTargetAnimatable ||
+//     instantAnimationState.current ||
+//     valueTransition.type === false
+// ) {
+//     /**
+//      * If we can't animate this value, or the global instant animation flag is set,
+//      * or this is simply defined as an instant transition, return an instant transition.
+//      */
+//     return createInstantAnimation(
+//         instantAnimationState.current
+//             ? { ...options, delay: 0 }
+//             : options
+//     )
+// }
+// /**
+//  * Animate via WAAPI if possible.
+//  */
+// if (
+//     /**
+//      * If this is a handoff animation, the optimised animation will be running via
+//      * WAAPI. Therefore, this animation must be JS to ensure it runs "under" the
+//      * optimised animation.
+//      */
+//     !transition.isHandoff &&
+//     value.owner &&
+//     value.owner.current instanceof HTMLElement &&
+//     /**
+//      * If we're outputting values to onUpdate then we can't use WAAPI as there's
+//      * no way to read the value from WAAPI every frame.
+//      */
+//     !value.owner.getProps().onUpdate
+// ) {
+//     const acceleratedAnimation = createAcceleratedAnimation(
+//         value,
+//         valueName,
+//         options
+//     )
+//     if (acceleratedAnimation) return acceleratedAnimation
+// }
+// /**
+//  * If we didn't create an accelerated animation, create a JS animation
+//  */
+// return animateValue(options)
+//     }
+// }
