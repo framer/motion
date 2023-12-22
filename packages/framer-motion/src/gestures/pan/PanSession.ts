@@ -99,6 +99,7 @@ interface PanSessionHandlers {
 
 interface PanSessionOptions {
     transformPagePoint?: TransformPoint,
+    contextWindow?: (Window & typeof globalThis) | null
     dragSnapToOrigin?: boolean
 }
 
@@ -151,11 +152,16 @@ export class PanSession {
      * @internal
      */
     private dragSnapToOrigin: boolean
+    
+    /**
+     * @internal
+     */
+    private contextWindow: PanSessionOptions["contextWindow"] = window
 
     constructor(
         event: PointerEvent,
         handlers: Partial<PanSessionHandlers>,
-        { transformPagePoint, dragSnapToOrigin = false }: PanSessionOptions = {},
+        { transformPagePoint, contextWindow, dragSnapToOrigin = false }: PanSessionOptions = {}
     ) {
         // If we have more than one touch, don't start detecting this gesture
         if (!isPrimaryPointer(event)) return
@@ -163,6 +169,7 @@ export class PanSession {
         this.dragSnapToOrigin = dragSnapToOrigin
         this.handlers = handlers
         this.transformPagePoint = transformPagePoint
+        this.contextWindow = contextWindow || window
 
         const info = extractEventInfo(event)
         const initialInfo = transformPoint(info, this.transformPagePoint)
@@ -177,9 +184,21 @@ export class PanSession {
             onSessionStart(event, getPanInfo(initialInfo, this.history))
 
         this.removeListeners = pipe(
-            addPointerEvent(window, "pointermove", this.handlePointerMove),
-            addPointerEvent(window, "pointerup", this.handlePointerUp),
-            addPointerEvent(window, "pointercancel", this.handlePointerUp)
+            addPointerEvent(
+                this.contextWindow,
+                "pointermove",
+                this.handlePointerMove
+            ),
+            addPointerEvent(
+                this.contextWindow,
+                "pointerup",
+                this.handlePointerUp
+            ),
+            addPointerEvent(
+                this.contextWindow,
+                "pointercancel",
+                this.handlePointerUp
+            )
         )
     }
 

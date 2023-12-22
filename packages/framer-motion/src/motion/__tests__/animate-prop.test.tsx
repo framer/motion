@@ -260,6 +260,121 @@ describe("animate prop as object", () => {
         })
         return expect(promise).resolves.toHaveStyle("font-weight: 100")
     })
+    test("doesn't animate no-op values", async () => {
+        const promise = new Promise((resolve) => {
+            let isAnimating = false
+            const Component = () => (
+                <motion.div
+                    initial={{ opacity: 1, x: 0 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                        opacity: { duration: 2, type: "tween", velocity: 100 },
+                        x: { type: "spring", velocity: 0 },
+                    }}
+                    onAnimationStart={() => {
+                        isAnimating = true
+                    }}
+                    onAnimationComplete={() => {
+                        isAnimating = false
+                    }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+
+            frame.postRender(() => {
+                frame.postRender(() => resolve(isAnimating))
+            })
+        })
+
+        return expect(promise).resolves.toBe(false)
+    })
+    test("doesn't animate no-op keyframes", async () => {
+        const promise = new Promise((resolve) => {
+            let isAnimating = false
+            const Component = () => (
+                <motion.div
+                    initial={{ opacity: 1, x: 0 }}
+                    animate={{ opacity: [1, 1], x: [0, 0] }}
+                    transition={{
+                        opacity: { duration: 2, type: "tween", velocity: 100 },
+                        x: { type: "spring", velocity: 0 },
+                    }}
+                    onAnimationStart={() => {
+                        isAnimating = true
+                    }}
+                    onAnimationComplete={() => {
+                        isAnimating = false
+                    }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+
+            frame.postRender(() => {
+                frame.postRender(() => resolve(isAnimating))
+            })
+        })
+
+        return expect(promise).resolves.toBe(false)
+    })
+    test("doe animate different keyframes", async () => {
+        const promise = new Promise((resolve) => {
+            let isAnimating = false
+            const Component = () => (
+                <motion.div
+                    initial={{ opacity: 1, x: 0 }}
+                    animate={{ opacity: [0, 1], x: [0, 1] }}
+                    transition={{
+                        opacity: { duration: 2, type: "tween", velocity: 100 },
+                        x: { type: "spring", velocity: 0 },
+                    }}
+                    onAnimationStart={() => {
+                        isAnimating = true
+                    }}
+                    onAnimationComplete={() => {
+                        isAnimating = false
+                    }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+
+            frame.postRender(() => {
+                frame.postRender(() => resolve(isAnimating))
+            })
+        })
+
+        return expect(promise).resolves.toBe(true)
+    })
+    test("does animate no-op values if velocity is non-zero and animation type is spring", async () => {
+        const promise = new Promise<boolean>((resolve) => {
+            let isAnimating = false
+            const Component = () => (
+                <motion.div
+                    initial={{ opacity: 1 }}
+                    animate={{
+                        opacity: 1,
+                        transition: { type: "spring", velocity: 100 },
+                    }}
+                    onAnimationStart={() => {
+                        isAnimating = true
+                    }}
+                    onAnimationComplete={() => {
+                        isAnimating = false
+                    }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+
+            frame.postRender(() => {
+                frame.postRender(() => resolve(isAnimating))
+            })
+        })
+
+        return expect(promise).resolves.toBe(true)
+    })
     test("doesn't animate zIndex", async () => {
         const promise = new Promise((resolve) => {
             const Component = () => <motion.div animate={{ zIndex: 100 }} />

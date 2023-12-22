@@ -32,6 +32,7 @@ import { mix } from "../../utils/mix"
 import { percent } from "../../value/types/numbers/units"
 import { animateMotionValue } from "../../animation/interfaces/motion-value"
 import { frame } from "../../frameloop"
+import { getContextWindow } from "../../utils/get-context-window"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -224,9 +225,9 @@ export class VisualElementDragControls {
             },
             {
                 transformPagePoint: this.visualElement.getTransformPagePoint(),
-                dragSnapToOrigin
-            },
-
+                dragSnapToOrigin,
+                contextWindow: getContextWindow(this.visualElement),
+            }
         )
     }
 
@@ -285,7 +286,13 @@ export class VisualElementDragControls {
 
     private resolveConstraints() {
         const { dragConstraints, dragElastic } = this.getProps()
-        const { layout } = this.visualElement.projection || {}
+
+        const layout =
+            this.visualElement.projection &&
+            !this.visualElement.projection.layout
+                ? this.visualElement.projection.measure(false)
+                : this.visualElement.projection?.layout
+
         const prevConstraints = this.constraints
 
         if (dragConstraints && isRefObject(dragConstraints)) {

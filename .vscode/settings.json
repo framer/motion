@@ -1,6 +1,5 @@
 {
     "typescript.tsdk": "node_modules/typescript/lib",
-    "eslint.alwaysShowStatus": true,
     "eslint.validate": [
         "javascript",
         "javascriptreact",
@@ -8,6 +7,6 @@
         "typescriptreact"
     ],
     "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": false
+        "source.fixAll.eslint": "never"
     }
 }

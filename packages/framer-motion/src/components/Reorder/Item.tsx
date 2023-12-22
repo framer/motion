@@ -4,12 +4,9 @@ import {
     ReactHTML,
     FunctionComponent,
     useContext,
-    useEffect,
-    useRef,
     forwardRef,
 } from "react"
 import { ReorderContext } from "../../context/ReorderContext"
-import { Box } from "../../projection/geometry/types"
 import { motion } from "../../render/dom/motion"
 import { HTMLMotionProps } from "../../render/html/types"
 import { useConstant } from "../../utils/use-constant"
@@ -45,6 +42,10 @@ function useDefaultMotionValue(value: any, defaultValue: number = 0) {
     return isMotionValue(value) ? value : useMotionValue(defaultValue)
 }
 
+type ReorderItemProps<V> = Props<V> &
+    HTMLMotionProps<any> &
+    React.PropsWithChildren<{}>
+
 export function ReorderItem<V>(
     {
         children,
@@ -54,8 +55,8 @@ export function ReorderItem<V>(
         onDrag,
         layout = true,
         ...props
-    }: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
-    externalRef?: React.Ref<any>
+    }: ReorderItemProps<V>,
+    externalRef?: React.ForwardedRef<any>
 ) {
     const Component = useConstant(() => motion(as)) as FunctionComponent<
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
@@ -71,15 +72,9 @@ export function ReorderItem<V>(
         latestX || latestY ? 1 : "unset"
     )
 
-    const measuredLayout = useRef<Box | null>(null)
-
     invariant(Boolean(context), "Reorder.Item must be a child of Reorder.Group")
 
     const { axis, registerItem, updateOrder } = context!
-
-    useEffect(() => {
-        registerItem(value, measuredLayout.current!)
-    }, [context])
 
     return (
         <Component
@@ -95,9 +90,7 @@ export function ReorderItem<V>(
 
                 onDrag && onDrag(event, gesturePoint)
             }}
-            onLayoutMeasure={(measured) => {
-                measuredLayout.current = measured
-            }}
+            onLayoutMeasure={(measured) => registerItem(value, measured)}
             ref={externalRef}
             ignoreStrict
         >
@@ -106,4 +99,6 @@ export function ReorderItem<V>(
     )
 }
 
-export const Item = forwardRef(ReorderItem)
+export const Item = forwardRef(ReorderItem) as <V>(
+    props: ReorderItemProps<V> & { ref?: React.ForwardedRef<any> }
+) => ReturnType<typeof ReorderItem>

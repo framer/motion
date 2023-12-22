@@ -84,16 +84,14 @@ export const blur = (element: HTMLElement, testId: string) =>
         getByTestId(element, testId).blur()
     })
 
-export const render = (children: any) => {
-    const renderReturn = testRender(
-        <React.StrictMode>{children}</React.StrictMode>
-    )
+export const render = (children: any, isStrict = true) => {
+    const Wrapper = isStrict ? React.StrictMode : React.Fragment
+
+    const renderReturn = testRender(<Wrapper>{children}</Wrapper>)
 
     return {
         ...renderReturn,
         rerender: (children: any) =>
-            renderReturn.rerender(
-                <React.StrictMode>{children}</React.StrictMode>
-            ),
+            renderReturn.rerender(<Wrapper>{children}</Wrapper>),
     }
 }

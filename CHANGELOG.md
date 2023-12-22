@@ -5,19 +5,96 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 Undocumented APIs should be considered internal and may change without warning.
 
 
-## [10.16.5] 2023-05-19
+## [10.16.17] 2023-12-21
 
 ### Fixed
 
 -   Fixed issue with `dragSnapToOrigin` not continuing animation when interupted
 
-## [10.16.4] 2023-05-09
+## [10.16.16] 2023-12-08
+
+### Fixed
+
+-   `circInOut` easing fixed.
+-   Improved optimised animation handoff.
+
+## [10.16.15] 2023-12-07
+
+### Fixed
+
+-   Ensure `animateChanges` only runs in layout effect in initial render.
+
+## [10.16.13] 2023-12-05
+
+### Fixed
+
+-   Ensure animations don't attempt to fire when `initial` equals `animate`.
+
+## [10.16.13] 2023-12-05
+
+### Fixed
+
+-   Improved animation skipping for keyframe lists.
+
+## [10.16.12] 2023-12-01
+
+### Fixed
+
+-   Use single animation to detect document paint ready before triggering optimised animations.
+-   Measure one time for optimised animation start and one for handoff to emulate frame scheduling.
+
+## [10.16.11] 2023-12-01
+
+### Fixed
+
+-   Ensure animation is never skipped if it's an interrupting animation.
+
+## [10.16.10] 2023-11-30
+
+### Fixed
+
+-   Fixing appear animation optimisation when React portal is present.
+
+## [10.16.9] 2023-11-30
+
+### Fixed
+
+-   Skipping no-op animations.
+
+## [10.16.8] 2023-11-29
+
+### Fixed
+
+-   Added `disableInstantAnimation` private API.
+-   Ensure optimised appear animations don't run post-hydration.
+
+## [10.16.7] 2023-11-29
+
+### Fixed
+
+-   Fixing pan events within React portal.
+
+## [10.16.6] 2023-11-29
+
+### Fixed
+
+-   Fixing `Reorder` component types.
+-   Fixing `Reorder.Item` order calculation.
+-   Fixing broken `dragConstraints` if component re-renders during resize.
+
+## [10.16.5] 2023-11-14
+
+### Fixed
+
+-   Fixing `AnimatePresence` fast rerender bug.
+
+## [10.16.4] 2023-09-05
 
 ### Fixed
 
 -   Changed handoff `startTime` source from `performance.now()` to `document.timeline.currentTime`.
 
-## [10.16.3] 2023-04-09
+## [10.16.3] 2023-09-04
 
 ### Fixed
 

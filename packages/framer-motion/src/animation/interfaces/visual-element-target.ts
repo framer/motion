@@ -1,14 +1,16 @@
-import { frame } from "../../frameloop"
 import { transformProps } from "../../render/html/utils/transform"
 import type { AnimationTypeState } from "../../render/utils/animation-state"
 import type { VisualElement } from "../../render/VisualElement"
-import type { TargetAndTransition } from "../../types"
+import type { Target, TargetAndTransition } from "../../types"
 import { optimizedAppearDataAttribute } from "../optimized-appear/data-id"
 import type { VisualElementAnimationOptions } from "./types"
 import { animateMotionValue } from "./motion-value"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { setTarget } from "../../render/utils/setters"
-import { AnimationPlaybackControls, Transition } from "../types"
+import { AnimationPlaybackControls } from "../types"
+import { getValueTransition } from "../utils/transitions"
+import { MotionValue } from "../../value"
+import { frame } from "../../frameloop"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
@@ -25,6 +27,18 @@ function shouldBlockAnimation(
 
     needsAnimating[key] = false
     return shouldBlock
+}
+
+function hasKeyframesChanged(value: MotionValue, target: Target) {
+    const current = value.get()
+
+    if (Array.isArray(target)) {
+        for (let i = 0; i < target.length; i++) {
+            if (target[i] !== current) return true
+        }
+    } else {
+        return current !== target
+    }
 }
 
 export function animateTarget(
@@ -65,27 +79,53 @@ export function animateTarget(
         const valueTransition = {
             delay,
             elapsed: 0,
-            ...transition,
+            ...getValueTransition(transition || {}, key),
         }
 
         /**
          * If this is the first time a value is being animated, check
          * to see if we're handling off from an existing animation.
          */
-        if (window.HandoffAppearAnimations && !value.hasAnimated) {
+        if (window.HandoffAppearAnimations) {
             const appearId =
                 visualElement.getProps()[optimizedAppearDataAttribute]
 
             if (appearId) {
-                valueTransition.elapsed = window.HandoffAppearAnimations(
+                const elapsed = window.HandoffAppearAnimations(
                     appearId,
                     key,
                     value,
                     frame
                 )
-                ;(valueTransition as Transition).syncStart = true
+
+                if (elapsed !== null) {
+                    valueTransition.elapsed = elapsed
+                    valueTransition.isHandoff = true
+                }
             }
         }
+
+        let canSkip =
+            !valueTransition.isHandoff &&
+            !hasKeyframesChanged(value, valueTarget)
+
+        if (
+            valueTransition.type === "spring" &&
+            (value.getVelocity() || valueTransition.velocity)
+        ) {
+            canSkip = false
+        }
+
+        /**
+         * Temporarily disable skipping animations if there's an animation in
+         * progress. Better would be to track the current target of a value
+         * and compare that against valueTarget.
+         */
+        if (value.animation) {
+            canSkip = false
+        }
+
+        if (canSkip) continue
 
         value.start(
             animateMotionValue(

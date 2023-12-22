@@ -30,15 +30,13 @@ export interface Props<V> {
      */
     axis?: "x" | "y"
 
-    // TODO: This would be better typed as V, but that doesn't seem
-    // to correctly infer type from values
     /**
      * A callback to fire with the new value order. For instance, if the values
      * are provided as a state from `useState`, this could be the set state function.
      *
      * @public
      */
-    onReorder: (newOrder: any[]) => void
+    onReorder: (newOrder: V[]) => void
 
     /**
      * The latest values state.
@@ -60,6 +58,10 @@ export interface Props<V> {
     values: V[]
 }
 
+type ReorderGroupProps<V> = Props<V> &
+    Omit<HTMLMotionProps<any>, "values"> &
+    React.PropsWithChildren<{}>
+
 export function ReorderGroup<V>(
     {
         children,
@@ -68,10 +70,8 @@ export function ReorderGroup<V>(
         onReorder,
         values,
         ...props
-    }: Props<V> &
-        Omit<HTMLMotionProps<any>, "values"> &
-        React.PropsWithChildren<{}>,
-    externalRef?: React.Ref<any>
+    }: ReorderGroupProps<V>,
+    externalRef?: React.ForwardedRef<any>
 ) {
     const Component = useConstant(() => motion(as)) as FunctionComponent<
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
@@ -82,24 +82,22 @@ export function ReorderGroup<V>(
 
     invariant(Boolean(values), "Reorder.Group must be provided a values prop")
 
-    const context: ReorderContextProps<any> = {
+    const context: ReorderContextProps<V> = {
         axis,
         registerItem: (value, layout) => {
-            /**
-             * Ensure entries can't add themselves more than once
-             */
-            if (
-                layout &&
-                order.findIndex((entry) => value === entry.value) === -1
-            ) {
-                order.push({ value, layout: layout[axis] })
-                order.sort(compareMin)
+            // If the entry was already added, update it rather than adding it again
+            const idx = order.findIndex((entry) => value === entry.value)
+            if (idx !== -1) {
+                order[idx].layout = layout[axis]
+            } else {
+                order.push({ value: value, layout: layout[axis] })
             }
+            order.sort(compareMin)
         },
-        updateOrder: (id, offset, velocity) => {
+        updateOrder: (item, offset, velocity) => {
             if (isReordering.current) return
 
-            const newOrder = checkReorder(order, id, offset, velocity)
+            const newOrder = checkReorder(order, item, offset, velocity)
 
             if (order !== newOrder) {
                 isReordering.current = true
@@ -125,7 +123,9 @@ export function ReorderGroup<V>(
     )
 }
 
-export const Group = forwardRef(ReorderGroup)
+export const Group = forwardRef(ReorderGroup) as <V>(
+    props: ReorderGroupProps<V> & { ref?: React.ForwardedRef<any> }
+) => ReturnType<typeof ReorderGroup>
 
 function getValue<V>(item: ItemData<V>) {
     return item.value

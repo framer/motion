@@ -1,0 +1,123 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 100px;
+                margin: 0;
+            }
+
+            #box {
+                width: 100px;
+                height: 100px;
+                background-color: #0077ff;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 1 !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <div id="portal"></div>
+        <script src="../../node_modules/react/umd/react.development.js"></script>
+        <script src="../../node_modules/react-dom/umd/react-dom.development.js"></script>
+        <script src="../../node_modules/react-dom/umd/react-dom-server-legacy.browser.development.js"></script>
+        <script src="../../packages/framer-motion/dist/framer-motion.dev.js"></script>
+        <script src="../projection/script-assert.js"></script>
+
+        <script>
+            const {
+                motion,
+                animateStyle,
+                startOptimizedAppearAnimation,
+                optimizedAppearDataAttribute,
+                motionValue,
+            } = window.Motion
+            const { matchViewportBox } = window.Assert
+            const root = document.getElementById("root")
+
+            const duration = 0.5
+            const y = motionValue(0)
+
+            let isFirstFrame = true
+            y.on("change", (latest) => {
+                if (latest < 50) {
+                    showError(
+                        document.getElementById("box"),
+                        `y transform should never be less than 50, but was ${latest}`
+                    )
+                }
+
+                if (isFirstFrame && latest === 100) {
+                    showError(
+                        document.getElementById("box"),
+                        `y transform shouldn't be 100 on the first frame`
+                    )
+                }
+                isFirstFrame = false
+            })
+
+            // This is the tree to be rendered "server" and client-side.
+            const Component = React.createElement(motion.div, {
+                id: "box",
+                initial: { y: 0, scale: 1 },
+                animate: { y: 100, scale: 2 },
+                transition: { duration, ease: "linear" },
+                style: { y },
+                /**
+                 * On animation start, check the values we expect to see here
+                 */
+                onAnimationStart: () => {
+                    const { top, left } = document
+                        .getElementById("box")
+                        .getBoundingClientRect()
+
+                    if (top < 120 || top > 130 || left < 70 || left > 85) {
+                        showError(box, `unexpected viewport box`)
+                    }
+                },
+                [optimizedAppearDataAttribute]: "a",
+            })
+
+            // Emulate server rendering of element
+            root.innerHTML = ReactDOMServer.renderToString(Component)
+
+            // Start Motion One animation
+            const animation = startOptimizedAppearAnimation(
+                document.getElementById("box"),
+                "transform",
+                ["translateY(0px) scale(1)", "translateY(100px) scale(2)"],
+                {
+                    duration: duration * 1000,
+                    ease: "linear",
+                },
+                (animation) => {
+                    // Hydrate root mid-way through animation
+                    setTimeout(() => {
+                        ReactDOM.createRoot(
+                            document.getElementById("portal")
+                        ).render(
+                            React.createElement(motion.div, {
+                                id: "box-2",
+                                initial: { y: 0 },
+                                animate: { y: 100, scale: 2 },
+                                transition: {
+                                    duration,
+                                    ease: "linear",
+                                },
+                                style: {
+                                    width: 100,
+                                    height: 100,
+                                    background: "red",
+                                },
+                            })
+                        )
+                        ReactDOM.hydrateRoot(root, Component)
+                    }, (duration * 1000) / 2)
+                }
+            )
+        </script>
+    </body>
+</html>

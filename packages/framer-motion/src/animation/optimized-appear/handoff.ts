@@ -1,57 +1,63 @@
-import { Batcher } from "../../frameloop/types"
-import { transformProps } from "../../render/html/utils/transform"
+import type { Batcher } from "../../frameloop/types"
 import type { MotionValue } from "../../value"
+import { transformProps } from "../../render/html/utils/transform"
 import { appearAnimationStore } from "./store"
 import { appearStoreId } from "./store-id"
 
+let handoffFrameTime: number
+
 export function handoffOptimizedAppearAnimation(
-    id: string,
-    name: string,
+    elementId: string,
+    valueName: string,
     /**
-     * Legacy argument. This function is inlined apart from framer-motion so
-     * will co-ordinate with Shuang with how best to remove this.
+     * Legacy arguments. This function is inlined as part of SSG so it can be there's
+     * a version mismatch between the main included Motion and the inlined script.
+     *
+     * Remove in early 2024.
      */
     _value: MotionValue,
-    /**
-     * This function is loaded via window by startOptimisedAnimation.
-     * By accepting `sync` as an argument, rather than using it via
-     * import, it can be kept out of the first-load Framer bundle,
-     * while also allowing this function to not be included in
-     * Framer Motion bundles where it's not needed.
-     */
-    frame: Batcher
-): number {
-    const storeId = appearStoreId(
-        id,
-        transformProps.has(name) ? "transform" : name
-    )
+    _frame: Batcher
+): number | null {
+    const optimisedValueName = transformProps.has(valueName)
+        ? "transform"
+        : valueName
+    const storeId = appearStoreId(elementId, optimisedValueName)
+    const optimisedAnimation = appearAnimationStore.get(storeId)
 
-    const appearAnimation = appearAnimationStore.get(storeId)
-
-    if (!appearAnimation) return 0
-
-    const { animation, startTime } = appearAnimation
-
-    const cancelOptimisedAnimation = () => {
-        appearAnimationStore.delete(storeId)
-
-        /**
-         * Animation.cancel() throws so it needs to be wrapped in a try/catch
-         */
-        try {
-            animation.cancel()
-        } catch (e) {}
+    if (!optimisedAnimation) {
+        return null
     }
 
-    if (startTime !== null) {
+    const { animation, startTime } = optimisedAnimation
+
+    const cancelAnimation = () => {
+        appearAnimationStore.delete(storeId)
+        try {
+            animation.cancel()
+        } catch (error) {}
+    }
+
+    /**
+     * If the startTime is null, this animation is the Paint Ready detection animation
+     * and we can cancel it immediately without handoff.
+     *
+     * Or if we've already handed off the animation then we're now interrupting it.
+     * In which case we need to cancel it.
+     */
+    if (startTime === null || window.HandoffComplete) {
+        cancelAnimation()
+        return null
+    } else {
         /**
-         * We allow the animation to persist until the next frame:
-         *   1. So it continues to play until Framer Motion is ready to render
-         *      (avoiding a potential flash of the element's original state)
-         *   2. As all independent transforms share a single transform animation, stopping
-         *      it synchronously would prevent subsequent transforms from handing off.
+         * Otherwise we're handing off this animation to the main thread.
+         *
+         * Record the time of the first handoff. We call performance.now() once
+         * here and once in startOptimisedAnimation to ensure we're getting
+         * close to a frame-locked time. This keeps all animations in sync.
          */
-        frame.render(cancelOptimisedAnimation)
+        if (handoffFrameTime === undefined) {
+            handoffFrameTime = performance.now()
+        }
 
         /**
          * We use main thread timings vs those returned by Animation.currentTime as it
@@ -59,9 +65,6 @@ export function handoffOptimizedAppearAnimation(
          * an updated value for several frames, even as the animation plays smoothly via
          * the GPU.
          */
-        return performance.now() - startTime || 0
-    } else {
-        cancelOptimisedAnimation()
-        return 0
+        return handoffFrameTime - startTime || 0
     }
 }
