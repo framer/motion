@@ -78,7 +78,10 @@ export { isMotionComponent } from "./motion/utils/is-motion-component"
 export { unwrapMotionComponent } from "./motion/utils/unwrap-motion-component"
 export { VisualElement } from "./render/VisualElement"
 export { addScaleCorrector } from "./projection/styles/scale-correction"
-export { useInstantTransition, disableInstantTransitions } from "./utils/use-instant-transition"
+export {
+    useInstantTransition,
+    disableInstantTransitions,
+} from "./utils/use-instant-transition"
 export { useInstantLayoutTransition } from "./projection/use-instant-layout-transition"
 export { useResetProjection } from "./projection/use-reset-projection"
 export { buildTransform } from "./render/html/utils/build-transform"
@@ -88,6 +91,7 @@ export { color } from "./value/types/color"
 export { complex } from "./value/types/complex"
 export { px } from "./value/types/numbers/units"
 export { ValueType } from "./value/types/types"
+export { MotionGlobalConfig } from "./utils/GlobalConfig"
 
 /**
  * Appear animations
