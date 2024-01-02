@@ -44,7 +44,6 @@
         "@types/three": "^0.143.0",
         "@typescript-eslint/eslint-plugin": "^5.9.1",
         "@typescript-eslint/parser": "^5.9.1",
-        "bundlesize": "^0.18.1",
         "concurrently": "^7.3.0",
         "convert-tsconfig-paths-to-webpack-aliases": "^0.9.2",
         "cypress": "^3.4.0",
@@ -77,6 +76,7 @@
     },
     "packageManager": "yarn@3.1.0",
     "dependencies": {
+        "bundlesize": "^0.18.1",
         "start-server-and-test": "^1.14.0"
     }
 }
