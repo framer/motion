@@ -11,6 +11,7 @@ import { getKeyframes } from "../utils/keyframes"
 import { getValueTransition, isTransitionDefined } from "../utils/transitions"
 import { animateValue } from "../animators/js"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
+import { MotionGlobalConfig } from "../../utils/GlobalConfig"
 
 export const animateMotionValue = (
     valueName: string,
@@ -101,7 +102,8 @@ export const animateMotionValue = (
             !isOriginAnimatable ||
             !isTargetAnimatable ||
             instantAnimationState.current ||
-            valueTransition.type === false
+            valueTransition.type === false ||
+            MotionGlobalConfig.skipAnimations
         ) {
             /**
              * If we can't animate this value, or the global instant animation flag is set,
