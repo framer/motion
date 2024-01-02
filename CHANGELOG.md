@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.17.0] 2024-02-01
+
+### Added
+
+-   Adding `MotionGlobalConfig.skipAnimations` to globally disable animations when testing.
+
 ## [10.16.16] 2023-12-08
 
 ### Fixed
