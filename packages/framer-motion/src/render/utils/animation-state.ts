@@ -200,6 +200,8 @@ export function createAnimationState(
                 // If we removed a higher-priority variant (i is in reverse order)
                 (i > removedVariantIndex && propIsVariant)
 
+            let handledRemovedValues = false
+
             /**
              * As animations can be set as variant lists, variants or target objects, we
              * coerce everything to an array if it isn't one already
@@ -234,7 +236,10 @@ export function createAnimationState(
             }
             const markToAnimate = (key: string) => {
                 shouldAnimateType = true
-                removedKeys.delete(key)
+                if (removedKeys.has(key)) {
+                    handledRemovedValues = true
+                    removedKeys.delete(key)
+                }
                 typeState.needsAnimating[key] = true
             }
 
@@ -305,10 +310,8 @@ export function createAnimationState(
 
             /**
              * If this is an inherited prop we want to hard-block animations
-             * TODO: Test as this should probably still handle animations triggered
-             * by removed values?
              */
-            if (shouldAnimateType && !isInherited) {
+            if (shouldAnimateType && (!isInherited || handledRemovedValues)) {
                 animations.push(
                     ...definitionList.map((animation) => ({
                         animation: animation as AnimationDefinition,

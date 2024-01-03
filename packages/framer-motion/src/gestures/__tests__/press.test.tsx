@@ -451,6 +451,45 @@ describe("press", () => {
         return expect(promise).resolves.toEqual([0.5, 1, 0.5])
     })
 
+    test("press gesture on children returns to parent-defined variant", () => {
+        const promise = new Promise((resolve) => {
+            const opacityHistory: number[] = []
+            const opacity = motionValue(0.5)
+            const logOpacity = () => opacityHistory.push(opacity.get())
+            const Component = () => (
+                <motion.div animate="visible" initial="hidden">
+                    <motion.div
+                        data-testid="child"
+                        variants={{
+                            visible: { opacity: 1 },
+                            hidden: { opacity: 0 },
+                        }}
+                        style={{ opacity }}
+                        transition={{ type: false }}
+                        whileTap={{ opacity: 0.5 }}
+                    />
+                </motion.div>
+            )
+
+            const { rerender, getByTestId } = render(<Component />)
+            rerender(<Component />)
+
+            logOpacity() // 1
+
+            // Trigger mouse down
+            pointerDown(getByTestId("child") as Element)
+
+            logOpacity() // 0.5
+
+            // Trigger mouse up
+            pointerUp(getByTestId("child") as Element)
+            logOpacity() // 1
+            resolve(opacityHistory)
+        })
+
+        return expect(promise).resolves.toEqual([1, 0.5, 1])
+    })
+
     test("press gesture works with animation state", async () => {
         const [a, b] = await new Promise((resolve) => {
             const childProps = {
@@ -495,52 +534,6 @@ describe("press", () => {
         expect(a).toHaveStyle("opacity: 0.8")
         expect(b).toHaveStyle("opacity: 0.8")
     })
-
-    /**
-     * TODO: We want the behaviour that we can override individual componnets with their
-     * own whileX props to apply gesture behaviour just on that component.
-     *
-     * We want to add it in a way that maintains propagation of `animate`.
-     */
-    // test.skip("press gesture variants - children can override with own variant", () => {
-    //     const promise = new Promise(resolve => {
-    //         const opacityHistory: number[] = []
-    //         const opacity = motionValue(0.5)
-    //         const logOpacity = () => opacityHistory.push(opacity.get())
-
-    //         const Component = () => (
-    //             <motion.div whileTap="pressed">
-    //                 <motion.div
-    //                     data-testid="child"
-    //                     variants={{
-    //                         pressed: { opacity: 1 },
-    //                         childPressed: { opacity: 0.1 },
-    //                     }}
-    //                     style={{ opacity }}
-    //                     transition={{ type: false }}
-    //                     whileTap="childPressed"
-    //                 />
-    //             </motion.div>
-    //         )
-
-    //         const { getByTestId, rerender } = render(<Component />)
-    //         rerender(<Component />)
-
-    //         logOpacity() // 0.5
-
-    //         // Trigger mouse down
-    //         pointerDown(getByTestId("child") as Element)
-    //         logOpacity() // 1
-
-    //         // Trigger mouse up
-    //         pointerUp(getByTestId("child") as Element)
-    //         logOpacity() // 0.5
-
-    //         resolve(opacityHistory)
-    //     })
-
-    //     return expect(promise).resolves.toEqual([0.5, 0.1, 0.5])
-    // })
 
     test("press gesture variant applies and unapplies with whileHover", () => {
         const promise = new Promise((resolve) => {
