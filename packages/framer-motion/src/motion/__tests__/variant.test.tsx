@@ -856,6 +856,57 @@ describe("animate prop as variant", () => {
         expect(element).toHaveStyle("opacity: 0")
     })
 
+    test("variants work the same whether defined inline or not", async () => {
+        const variants = {
+            foo: { opacity: [1, 0, 1] },
+        }
+        const outputA: number[] = []
+        const outputB: number[] = []
+        const Component = ({
+            activeVariants,
+        }: {
+            activeVariants: string[]
+        }) => {
+            return (
+                <>
+                    <motion.div
+                        className="box bg-blue"
+                        animate={activeVariants}
+                        variants={{
+                            foo: {
+                                opacity: [1, 0, 1],
+                            },
+                        }}
+                        transition={{ duration: 0.1 }}
+                        onUpdate={({ opacity }) =>
+                            outputA.push(opacity as number)
+                        }
+                    />
+                    <motion.div
+                        className="box bg-green"
+                        animate={activeVariants}
+                        variants={variants}
+                        transition={{ duration: 0.1 }}
+                        onUpdate={({ opacity }) =>
+                            outputB.push(opacity as number)
+                        }
+                    />
+                </>
+            )
+        }
+
+        const { rerender } = render(<Component activeVariants={["foo"]} />)
+        rerender(<Component activeVariants={["foo"]} />)
+        await new Promise((resolve) => {
+            setTimeout(() => {
+                rerender(<Component activeVariants={["foo", "bar"]} />)
+                setTimeout(resolve, 100)
+            }, 100)
+        })
+
+        expect(outputA).toEqual(outputB)
+    })
+
     test("style is used as fallback when a variant changes to not contain that style", async () => {
         const Component = ({ animate }: { animate?: string }) => {
             return (
