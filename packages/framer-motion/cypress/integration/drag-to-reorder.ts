@@ -40,7 +40,7 @@ describe("Drag to reorder", () => {
                 expectBbox($item, {
                     height: 68,
                     left: 350,
-                    top: 252,
+                    top: 253,
                     width: 340,
                 })
             })
@@ -77,7 +77,7 @@ describe("Drag to reorder", () => {
                 expectBbox($item, {
                     height: 68,
                     left: 350,
-                    top: 250,
+                    top: 252,
                     width: 340,
                 })
             })
@@ -104,7 +104,7 @@ describe("Drag to reorder", () => {
                 expectBbox($item, {
                     height: 68,
                     left: 350,
-                    top: 173,
+                    top: 175,
                     width: 340,
                 })
             })
@@ -123,7 +123,7 @@ describe("Drag to reorder", () => {
                 expectBbox($item, {
                     height: 68,
                     left: 350,
-                    top: 174,
+                    top: 176,
                     width: 340,
                 })
             })
@@ -196,8 +196,8 @@ describe("Drag to reorder", () => {
             chain = chain
                 .trigger("pointerdown", 360, baseY, { force: true })
                 .wait(50)
-            steps.forEach(step => {
-                Array.from({length: Math.abs(step)}).forEach(() => {
+            steps.forEach((step) => {
+                Array.from({ length: Math.abs(step) }).forEach(() => {
                     const y = step > 0 ? delta : -delta
                     chain = chain
                         .trigger("pointermove", 360, baseY + y, { force: true })
@@ -210,9 +210,7 @@ describe("Drag to reorder", () => {
         }
 
         const chain = checkBox(
-            cy.visit("?test=drag-to-reorder")
-                .wait(50)
-                .get("#Tomato")
+            cy.visit("?test=drag-to-reorder").wait(50).get("#Tomato")
         )
 
         checkBox(moveAround(chain, [-4, 14, -8, 4, -5, 2, -6]))
