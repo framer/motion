@@ -31,7 +31,6 @@ function getSpringOptions(options: SpringOptions) {
         springOptions = {
             ...springOptions,
             ...derived,
-            velocity: 0.0,
             mass: 1.0,
         }
         springOptions.isResolvedFromDuration = true
@@ -59,12 +58,14 @@ export function spring({
         stiffness,
         damping,
         mass,
-        velocity,
         duration,
+        velocity,
         isResolvedFromDuration,
-    } = getSpringOptions(options)
-
-    const initialVelocity = velocity ? -millisecondsToSeconds(velocity) : 0.0
+    } = getSpringOptions({
+        ...options,
+        velocity: -millisecondsToSeconds(options.velocity || 0),
+    })
+    const initialVelocity = velocity || 0.0
     const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass))
 
     const initialDelta = target - origin
