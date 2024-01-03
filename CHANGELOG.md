@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.17.4] 2024-02-03
+
+### Fixed
+
+-   Ensure keyframe animations don't rerun if all values are the same.
+
 ## [10.17.3] 2024-02-03
 
 ### Fixed
