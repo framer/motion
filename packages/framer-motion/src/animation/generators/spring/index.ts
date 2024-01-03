@@ -65,7 +65,6 @@ export function spring({
         ...options,
         velocity: -millisecondsToSeconds(options.velocity || 0),
     })
-    console.log(keyframes, stiffness, damping, velocity)
     const initialVelocity = velocity || 0.0
     const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass))
 
