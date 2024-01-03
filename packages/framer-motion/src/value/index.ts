@@ -113,7 +113,7 @@ export class MotionValue<V = any> {
     /**
      * A reference to the currently-controlling Popmotion animation
      *
-     * @internal
+     *
      */
     animation?: AnimationPlaybackControls
 

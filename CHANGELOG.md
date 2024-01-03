@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.16.17] 2023-12-21
+
+### Fixed
+
+-   Fixed issue with `dragSnapToOrigin` not continuing animation when interupted
+
 ## [10.17.0] 2024-02-01
 
 ### Added
@@ -211,6 +217,7 @@ Undocumented APIs should be considered internal and may change without warning.
 -   Fixing `useInstantTransition` when called on subsequent frames.
 -   Fixing reverse animation with negative speed finishes too early when the
     time is set to the duration.
+
 
 ## [10.12.16] 2023-05-24
 

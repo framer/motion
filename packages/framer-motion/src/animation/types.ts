@@ -82,6 +82,7 @@ export type ElementOrSelector =
 export interface AnimationPlaybackControls {
     time: number
     speed: number
+    state?: AnimationPlayState
 
     /*
      * The duration is the duration of time calculated for the active part
