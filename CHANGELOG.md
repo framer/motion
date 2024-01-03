@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.17.2] 2024-02-03
+
+### Fixed
+
+-   Fixed issues with duration-based springs appearing stuck or snapping.
+
 ## [10.17.1] 2024-02-03
 
 ### Fixed
