@@ -1,7 +1,7 @@
 import { render } from "../../../jest.setup"
 import * as React from "react"
 import { useEffect } from "react"
-import { motion } from "../.."
+import { motion, MotionGlobalConfig } from "../.."
 import { animate } from "../animate"
 import { useMotionValue } from "../../value/use-motion-value"
 import { motionValue, MotionValue } from "../../value"
@@ -225,6 +225,19 @@ describe("animate", () => {
         )
         await animation.then(() => {
             expect(div).toHaveStyle("opacity: 0.2")
+        })
+    })
+
+    test("Skips animations", async () => {
+        const div = document.createElement("div")
+        MotionGlobalConfig.skipAnimations = true
+        animate(div, { opacity: [0.2, 0.5] }, { duration: 1 })
+        await new Promise<void>((resolve) => {
+            setTimeout(() => {
+                MotionGlobalConfig.skipAnimations = false
+                expect(div).toHaveStyle("opacity: 0.5")
+                resolve()
+            }, 100)
         })
     })
 
