@@ -138,4 +138,16 @@ describe("spring", () => {
         // Check duration order of magnitude is correct
         expect(withoutDuration.length).toBeGreaterThan(4)
     })
+
+    test("Spring defined as bounce and duration is resolved with correct velocity", () => {
+        const settings = {
+            keyframes: [500, 10],
+            bounce: 0.2,
+            duration: 1000,
+        }
+        const resolvedSpring = spring({ ...settings, velocity: 1000 })
+
+        expect(resolvedSpring.next(0).value).toBe(500)
+        expect(Math.floor(resolvedSpring.next(100).value)).toBe(420)
+    })
 })
