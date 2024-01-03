@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.17.3] 2024-02-03
+
+### Fixed
+
+-   Unset gestures correctly animate back to values defined in parent variant.
+
 ## [10.17.2] 2024-02-03
 
 ### Fixed
