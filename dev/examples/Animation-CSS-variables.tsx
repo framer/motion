@@ -1,48 +1,54 @@
 import * as React from "react"
-import { useEffect } from "react"
+import { useState } from "react"
 import { motion } from "framer-motion"
 
 /**
  * An example of Motion's CSS variable support, including fallback support
  */
 
-const style = {
-    width: 100,
-    height: 100,
-    background: "var(--from)",
-    x: "var(--x)",
+let variants = {
+    foo: { opacity: [1, 0, 1] },
 }
 
-export const App = () => {
-    const transition = {
-        type: "tween",
-        ease: "anticipate",
-        duration: 1,
+export function App() {
+    let [pressed, setPressed] = useState(false)
+
+    let activeVariants = ["foo"]
+    if (pressed) {
+        activeVariants.push("bar")
     }
 
-    const ref = React.useRef<HTMLDivElement>(null)
-    useEffect(() => {
-        function changeToVar() {
-            ref.current.style.setProperty("--to", "cyan")
-        }
-        const timer = setTimeout(changeToVar, 2000)
-        return () => clearTimeout(timer)
-    })
-
     return (
-        <div ref={ref}>
-            <motion.div
-                initial={{
-                    background: `var(--token-31a8b72b-4f05-4fb3-b778-63a7fb0d9454, hsl(224, 78%, 54%)) /* {"name":"Midnight Blue"} */`,
-                }}
-                animate={{
-                    background: `var(--token-666a5765-0e05-4d0e-b396-a6c555d9cdb3, hsl(125, 74%, 43%)) /* {"name":"Goblin Green"} */`,
-                    "--x": "100px",
-                }}
-                transition={transition}
-                onUpdate={(v) => console.log(v)}
-                style={style}
-            />
+        <div className="p-20">
+            <button
+                className="rounded border border-gray-300 px-3 py-2"
+                onClick={() => setPressed(!pressed)}
+            >
+                Toggle
+            </button>
+
+            <div className="mt-8">
+                <p>Active variants: {activeVariants.join(", ")}</p>
+            </div>
+
+            <div className="mt-8">
+                <motion.div
+                    className="box bg-blue"
+                    animate={activeVariants}
+                    variants={{
+                        foo: {
+                            opacity: [1, 0, 1],
+                        },
+                    }}
+                    style={{ width: 100, height: 100, background: "blue" }}
+                />
+                <motion.div
+                    className="box bg-green"
+                    animate={activeVariants}
+                    style={{ width: 100, height: 100, background: "green" }}
+                    variants={variants}
+                />
+            </div>
         </div>
     )
 }

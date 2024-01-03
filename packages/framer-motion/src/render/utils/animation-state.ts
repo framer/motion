@@ -253,22 +253,15 @@ export function createAnimationState(
                 /**
                  * If the value has changed, we probably want to animate it.
                  */
-                if (next !== prev) {
-                    /**
-                     * If both values are keyframes, we need to shallow compare them to
-                     * detect whether any value has changed. If it has, we animate it.
-                     */
-                    if (isKeyframesTarget(next) && isKeyframesTarget(prev)) {
-                        if (!shallowCompare(next, prev) || variantDidChange) {
-                            markToAnimate(key)
-                        } else {
-                            /**
-                             * If it hasn't changed, we want to ensure it doesn't animate by
-                             * adding it to the list of protected keys.
-                             */
-                            typeState.protectedKeys[key] = true
-                        }
-                    } else if (next !== undefined) {
+                let valueHasChanged = false
+                if (isKeyframesTarget(next) && isKeyframesTarget(prev)) {
+                    valueHasChanged = !shallowCompare(next, prev)
+                } else {
+                    valueHasChanged = next !== prev
+                }
+
+                if (valueHasChanged) {
+                    if (next !== undefined) {
                         // If next is defined and doesn't equal prev, it needs animating
                         markToAnimate(key)
                     } else {
