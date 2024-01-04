@@ -35,8 +35,7 @@ describe("useAnimationFrame", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
         })
-        expect(totalFrameCount).toBeGreaterThan(0)
-        expect(totalFrameCount).toBeLessThan(0)
+        expect(totalFrameCount).toBe(0)
     })
 
     test("Updates callback", async () => {
