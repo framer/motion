@@ -222,7 +222,7 @@ export function animateValue<V = number>({
             let p = clamp(0, 1, iterationProgress)
 
             if (currentTime > totalDuration) {
-                p = repeatType === "reverse" && iterationIsOdd ? 1 : 0
+                p = repeatType === "reverse" && Boolean(repeat % 2) ? 0 : 1
             }
 
             elapsed = p * resolvedDuration
