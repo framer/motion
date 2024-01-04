@@ -3,8 +3,7 @@ name: Bug report
 about: Let us know about some broken functionality
 title: "[BUG]"
 labels: bug
-assignees: ''
-
+assignees: ""
 ---
 
 **1. Read the [FAQs](#faqs) 👇**
@@ -20,6 +19,7 @@ A CodeSandbox minimal reproduction will allow us to quickly follow the reproduct
 **4. Steps to reproduce**
 
 Steps to reproduce the behavior:
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
@@ -39,9 +39,22 @@ If applicable, let us know which OS, browser, browser version etc you're using.
 
 ## FAQs
 
+### `"use client"` error
+
+We would accept a PR implementing `"use client"` (see [previous discussion](https://github.com/framer/motion/issues/2054)). In the meantime a workaround is:
+
+```javascript
+// motion.js
+"use client"
+export * from "framer-motion"
+
+// other.js
+import { motion } from "./motion"
+```
+
 ### Framer Motion won't install
 
-Framer Motion 7+ uses React 18 as a minimum. If you can't upgrade React, install the latest version of Framer Motion 6. 
+Framer Motion 7+ uses React 18 as a minimum. If you can't upgrade React, install the latest version of Framer Motion 6.
 
 ### `height: "auto"` is jumping
 
@@ -55,7 +68,7 @@ The recommended solution is to move padding to a child element. See [this issue]
 
 ### Preact isn't working
 
-Framer Motion isn't compatible with Preact. 
+Framer Motion isn't compatible with Preact.
 
 ### `AnimatePresence` isn't working
 
@@ -64,14 +77,18 @@ Have all of its immediate children got a unique `key` prop that **remains the sa
 ```jsx
 // Bad: The index could be given to a different component if the order of items changes
 <AnimatePresence>
-  {items.map((item, index) => <Component key={index} />)}
+    {items.map((item, index) => (
+        <Component key={index} />
+    ))}
 </AnimatePresence>
 ```
 
-```jsx 
+```jsx
 // Good: The item ID is unique to each component
 <AnimatePresence>
-  {items.map((item, index) => <Component key={item.id} />)}
+    {items.map((item, index) => (
+        <Component key={item.id} />
+    ))}
 </AnimatePresence>
 ```
 
@@ -79,16 +96,16 @@ Is the `AnimatePresence` correctly outside of the controlling conditional? `Anim
 
 ```jsx
 // Bad: AnimatePresence is unmounted - exit animations won't run
-{isVisible && (
-  <AnimatePresence>
-    <Component />
-  </AnimatePresence>
-)}
+{
+    isVisible && (
+        <AnimatePresence>
+            <Component />
+        </AnimatePresence>
+    )
+}
 ```
 
 ```jsx
 // Good: Only the children are unmounted - exit animations will run
-<AnimatePresence>
-  {isVisible && <Component />}
-</AnimatePresence>
+<AnimatePresence>{isVisible && <Component />}</AnimatePresence>
 ```
