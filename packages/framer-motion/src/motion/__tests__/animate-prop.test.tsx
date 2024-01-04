@@ -582,6 +582,169 @@ describe("animate prop as object", () => {
         })
         return expect(promise).resolves.toBe(20)
     })
+
+    test("Correctly applies final keyframe with repeatType reverse and odd numbered repeat", async () => {
+        const promise = new Promise<number>((resolve) => {
+            const x = motionValue(0)
+            const Component = () => (
+                <motion.div
+                    animate={{ x: [0, 20] }}
+                    transition={{
+                        x: {
+                            type: "tween",
+                            duration: 0.1,
+                            repeatDelay: 0.1,
+                            repeat: 1,
+                            repeatType: "reverse",
+                        },
+                    }}
+                    onAnimationComplete={() => {
+                        frame.postRender(() => resolve(x.get()))
+                    }}
+                    style={{ x }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toBe(0)
+    })
+
+    test("Correctly applies final keyframe with repeatType mirror and odd numbered repeat", async () => {
+        const promise = new Promise<number>((resolve) => {
+            const x = motionValue(0)
+            const Component = () => (
+                <motion.div
+                    animate={{ x: [0, 20] }}
+                    transition={{
+                        x: {
+                            type: "tween",
+                            duration: 0.1,
+                            repeatDelay: 0.1,
+                            repeat: 1,
+                            repeatType: "mirror",
+                        },
+                    }}
+                    onAnimationComplete={() => {
+                        frame.postRender(() => resolve(x.get()))
+                    }}
+                    style={{ x }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toBe(0)
+    })
+
+    test("Correctly applies final keyframe with repeatType loop and odd numbered repeat", async () => {
+        const promise = new Promise<number>((resolve) => {
+            const x = motionValue(0)
+            const Component = () => (
+                <motion.div
+                    animate={{ x: [0, 20] }}
+                    transition={{
+                        x: {
+                            type: "tween",
+                            duration: 0.1,
+                            repeatDelay: 0.1,
+                            repeat: 1,
+                            repeatType: "loop",
+                        },
+                    }}
+                    onAnimationComplete={() => {
+                        frame.postRender(() => resolve(x.get()))
+                    }}
+                    style={{ x }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toBe(20)
+    })
+
+    test("Correctly applies final keyframe with repeatType reverse and even numbered repeat", async () => {
+        const promise = new Promise<number>((resolve) => {
+            const x = motionValue(0)
+            const Component = () => (
+                <motion.div
+                    animate={{ x: [0, 20] }}
+                    transition={{
+                        x: {
+                            type: "tween",
+                            duration: 0.1,
+                            repeatDelay: 0.1,
+                            repeat: 2,
+                            repeatType: "reverse",
+                        },
+                    }}
+                    onAnimationComplete={() => {
+                        frame.postRender(() => resolve(x.get()))
+                    }}
+                    style={{ x }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toBe(20)
+    })
+
+    test("Correctly applies final keyframe with repeatType mirror and even numbered repeat", async () => {
+        const promise = new Promise<number>((resolve) => {
+            const x = motionValue(0)
+            const Component = () => (
+                <motion.div
+                    animate={{ x: [0, 20] }}
+                    transition={{
+                        x: {
+                            type: "tween",
+                            duration: 0.1,
+                            repeatDelay: 0.1,
+                            repeat: 2,
+                            repeatType: "mirror",
+                        },
+                    }}
+                    onAnimationComplete={() => {
+                        frame.postRender(() => resolve(x.get()))
+                    }}
+                    style={{ x }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toBe(20)
+    })
+
+    test("Correctly applies final keyframe with repeatType loop and even numbered repeat", async () => {
+        const promise = new Promise<number>((resolve) => {
+            const x = motionValue(0)
+            const Component = () => (
+                <motion.div
+                    animate={{ x: [0, 20] }}
+                    transition={{
+                        x: {
+                            type: "tween",
+                            duration: 0.1,
+                            repeatDelay: 0.1,
+                            repeat: 2,
+                            repeatType: "loop",
+                        },
+                    }}
+                    onAnimationComplete={() => {
+                        frame.postRender(() => resolve(x.get()))
+                    }}
+                    style={{ x }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toBe(20)
+    })
+
     test("animates previously unseen properties", () => {
         const Component = ({ animate }: any) => (
             <motion.div animate={animate} transition={{ type: false }} />
