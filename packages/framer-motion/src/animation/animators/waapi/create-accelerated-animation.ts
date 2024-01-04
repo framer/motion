@@ -73,6 +73,13 @@ export function createAcceleratedAnimation(
     let currentFinishedPromise: Promise<void>
 
     /**
+     * Cancelling an animation will write to the DOM. For safety we want to defer
+     * this until the next `update` frame lifecycle. This flag tracks whether we
+     * have a pending cancel, if so we shouldn't allow animations to finish.
+     */
+    let pendingCancel = false
+
+    /**
      * Resolve the current Promise every time we enter the
      * finished state. This is WAAPI-compatible behaviour.
      */
@@ -136,9 +143,13 @@ export function createAcceleratedAnimation(
         }
     )
 
-    const cancelAnimation = () => animation.cancel()
+    const cancelAnimation = () => {
+        pendingCancel = false
+        animation.cancel()
+    }
 
     const safeCancel = () => {
+        pendingCancel = true
         frame.update(cancelAnimation)
         resolveFinishedPromise()
         updateFinishedPromise()
@@ -153,6 +164,7 @@ export function createAcceleratedAnimation(
      * be removed from the element which would then revert to its old styles.
      */
     animation.onfinish = () => {
+        if (pendingCancel) return
         value.set(getFinalKeyframe(keyframes, options))
         onComplete && onComplete()
         safeCancel()
@@ -223,7 +235,10 @@ export function createAcceleratedAnimation(
             }
             safeCancel()
         },
-        complete: () => animation.finish(),
+        complete: () => {
+            if (pendingCancel) return
+            animation.finish()
+        },
         cancel: safeCancel,
     }
 

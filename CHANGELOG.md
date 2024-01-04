@@ -4,12 +4,19 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.17.6] 2024-02-04
+
+### Fixed
+
+-   Ensure cancelled WAAPI animations can't finish.
+
 ## [10.17.5] 2024-02-04
 
 ### Fixed
 
 -   Fixing final keyframe when using `repeatType` `"reverse"` and `"mirror"`.
 -   Display warning if scroll `container` is `position: static`.
+-   Move more scroll measurements to `read` frame lifecycle.
 -   Adding `amount` to `useInView` dependencies.
 
 ## [10.17.4] 2024-02-03
