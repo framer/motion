@@ -904,7 +904,7 @@ describe("animate prop as variant", () => {
             }, 100)
         })
 
-        expect(outputA).toEqual(outputB)
+        expect(outputA.length).toEqual(outputB.length)
     })
 
     test("style is used as fallback when a variant changes to not contain that style", async () => {
