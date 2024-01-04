@@ -96,8 +96,9 @@ export const AnimatePresence: React.FunctionComponent<
     const isMounted = useIsMounted()
 
     // Filter out any children that aren't ReactElements. We can only track ReactElements with a props.key
-    const filteredChildren = onlyElements(children)
-    let childrenToRender = filteredChildren
+    const filteredChildren = useRef(onlyElements(children))
+    filteredChildren.current = onlyElements(children)
+    let childrenToRender = filteredChildren.current
 
     const exitingChildren = useRef(
         new Map<ComponentKey, ReactElement<any> | undefined>()
@@ -105,7 +106,6 @@ export const AnimatePresence: React.FunctionComponent<
 
     // Keep a living record of the children we're actually rendering so we
     // can diff to figure out which are entering and exiting
-    const presentChildren = useRef(childrenToRender)
 
     // A lookup table to quickly reference components by key
     const allChildren = useRef(
@@ -118,9 +118,7 @@ export const AnimatePresence: React.FunctionComponent<
 
     useIsomorphicLayoutEffect(() => {
         isInitialRender.current = false
-
-        updateChildLookup(filteredChildren, allChildren)
-        presentChildren.current = childrenToRender
+        updateChildLookup(filteredChildren.current, allChildren)
     })
 
     useUnmountEffect(() => {
@@ -152,8 +150,8 @@ export const AnimatePresence: React.FunctionComponent<
 
     // Diff the keys of the currently-present and target children to update our
     // exiting list.
-    const presentKeys = presentChildren.current.map(getChildKey)
-    const targetKeys = filteredChildren.map(getChildKey)
+    const presentKeys = Array.from(allChildren.keys())
+    const targetKeys = filteredChildren.current.map(getChildKey)
 
     // Diff the present children with our target children and mark those that are exiting
     const numPresent = presentKeys.length
@@ -173,12 +171,12 @@ export const AnimatePresence: React.FunctionComponent<
 
     // Loop through all currently exiting components and clone them to overwrite `animate`
     // with any `exit` prop they might have defined.
-    exitingChildren.forEach((component, key) => {
+    for (const [key, component] of exitingChildren) {
         // If this component is actually entering again, early return
-        if (targetKeys.indexOf(key) !== -1) return
+        if (targetKeys.indexOf(key) !== -1) continue
 
         const child = allChildren.get(key)
-        if (!child) return
+        if (!child) continue
 
         const insertionIndex = presentKeys.indexOf(key)
 
@@ -187,6 +185,16 @@ export const AnimatePresence: React.FunctionComponent<
             const onExit = () => {
                 // clean up the exiting children map
                 exitingChildren.delete(key)
+
+                // Accounts for the edge case where there are still exiting children when the
+                // children list is already empty from React's POV, which results in React not
+                // auto re-rendering
+                if (
+                    filteredChildren.current.length === 0 &&
+                    exitingChildren.size > 0
+                ) {
+                    forceRender()
+                }
 
                 // compute the keys of children that were rendered once but are no longer present
                 // this could happen in case of too many fast consequent renderings
@@ -198,20 +206,6 @@ export const AnimatePresence: React.FunctionComponent<
                 // clean up the all children map
                 leftOverKeys.forEach((leftOverKey) =>
                     allChildren.delete(leftOverKey)
-                )
-
-                // make sure to render only the children that are actually visible
-                presentChildren.current = filteredChildren.filter(
-                    (presentChild) => {
-                        const presentChildKey = getChildKey(presentChild)
-
-                        return (
-                            // filter out the node exiting
-                            presentChildKey === key ||
-                            // filter out the leftover children
-                            leftOverKeys.includes(presentChildKey)
-                        )
-                    }
                 )
 
                 // Defer re-rendering until all exiting children have indeed left
@@ -239,7 +233,7 @@ export const AnimatePresence: React.FunctionComponent<
         }
 
         childrenToRender.splice(insertionIndex, 0, exitingComponent)
-    })
+    }
 
     // Add `MotionContext` even to children that don't need it to ensure we're rendering
     // the same tree between renders
