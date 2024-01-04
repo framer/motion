@@ -10,6 +10,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 -   Fixing final keyframe when using `repeatType` `"reverse"` and `"mirror"`.
 -   Display warning if scroll `container` is `position: static`.
+-   Adding `amount` to `useInView` dependencies.
 
 ## [10.17.4] 2024-02-03
 
