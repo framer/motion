@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.18.0] 2024-02-05
+
+### Fixed
+
+-   Add `isActive` flag to `useAnimationFrame`.
+
 ## [10.17.6] 2024-02-04
 
 ### Fixed
