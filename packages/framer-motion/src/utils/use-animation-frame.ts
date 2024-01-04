@@ -5,12 +5,12 @@ import { FrameData } from "../frameloop/types"
 
 export type FrameCallback = (timestamp: number, delta: number) => void
 
-export function useAnimationFrame(callback: FrameCallback) {
+export function useAnimationFrame(callback: FrameCallback, isActive = true) {
     const initialTimestamp = useRef(0)
     const { isStatic } = useContext(MotionConfigContext)
 
     useEffect(() => {
-        if (isStatic) return
+        if (isStatic || !isActive) return
 
         const provideTimeSinceStart = ({ timestamp, delta }: FrameData) => {
             if (!initialTimestamp.current) initialTimestamp.current = timestamp
@@ -20,5 +20,5 @@ export function useAnimationFrame(callback: FrameCallback) {
 
         frame.update(provideTimeSinceStart, true)
         return () => cancelFrame(provideTimeSinceStart)
-    }, [callback])
+    }, [callback, isActive])
 }

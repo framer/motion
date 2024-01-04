@@ -21,6 +21,24 @@ describe("useAnimationFrame", () => {
         expect(totalFrameCount).toBeLessThan(50)
     })
 
+    test("Doesn't fire if isActive is false", async () => {
+        const totalFrameCount = await new Promise((resolve) => {
+            let frameCount = 0
+            const Component = () => {
+                useAnimationFrame((timeSinceStart) => {
+                    frameCount++
+                    if (frameCount > 2) resolve(timeSinceStart)
+                }, false)
+
+                return null
+            }
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        expect(totalFrameCount).toBeGreaterThan(0)
+        expect(totalFrameCount).toBeLessThan(0)
+    })
+
     test("Updates callback", async () => {
         const totalOutput = await new Promise<number[]>((resolve) => {
             const output: number[] = [0]

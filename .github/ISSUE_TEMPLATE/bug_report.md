@@ -52,6 +52,10 @@ export * from "framer-motion"
 import { motion } from "./motion"
 ```
 
+### I'm having a problem with Next/React Router etc
+
+Please reproduce the bug in a CodeSandbox without the use of this library.
+
 ### Framer Motion won't install
 
 Framer Motion 7+ uses React 18 as a minimum. If you can't upgrade React, install the latest version of Framer Motion 6.
