@@ -62,10 +62,6 @@ Animating to/from `auto` requires measuring the DOM. There's no perfect way to d
 
 The recommended solution is to move padding to a child element. See [this issue](https://github.com/framer/motion/issues/368) for the full discussion.
 
-### Type error with `AnimateSharedLayout`
-
-`AnimateSharedLayout` was deprecated in 5.0. Refer to the [upgrade guide](https://www.framer.com/docs/guide-upgrade/##shared-layout-animations) for instructions on how to remove.
-
 ### Preact isn't working
 
 Framer Motion isn't compatible with Preact.
