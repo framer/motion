@@ -32,6 +32,9 @@ describe("useAnimationFrame", () => {
 
                 return null
             }
+            setTimeout(() => {
+                resolve(0)
+            }, 100)
             const { rerender } = render(<Component />)
             rerender(<Component />)
         })
