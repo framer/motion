@@ -221,10 +221,10 @@ describe("animate", () => {
         const animation = animate(
             div,
             { opacity: [0.2, 0.5] },
-            { duration, repeat: 1, repeatType: "mirror" }
+            { duration, repeat: 2, repeatType: "mirror" }
         )
         await animation.then(() => {
-            expect(div).toHaveStyle("opacity: 0.2")
+            expect(div).toHaveStyle("opacity: 0.5")
         })
     })
 

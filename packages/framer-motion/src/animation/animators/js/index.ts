@@ -177,7 +177,8 @@ export function animateValue<V = number>({
              * than duration we'll get values like 2.5 (midway through the
              * third iteration)
              */
-            const progress = currentTime / resolvedDuration
+            const progress =
+                Math.min(currentTime, totalDuration) / resolvedDuration
 
             /**
              * Get the current iteration (0 indexed). For instance the floor of
@@ -206,9 +207,9 @@ export function animateValue<V = number>({
             /**
              * Reverse progress if we're not running in "normal" direction
              */
-            const iterationIsOdd = Boolean(currentIteration % 2)
 
-            if (iterationIsOdd) {
+            const isOddIteration = Boolean(currentIteration % 2)
+            if (isOddIteration) {
                 if (repeatType === "reverse") {
                     iterationProgress = 1 - iterationProgress
                     if (repeatDelay) {
@@ -219,13 +220,7 @@ export function animateValue<V = number>({
                 }
             }
 
-            let p = clamp(0, 1, iterationProgress)
-
-            if (currentTime > totalDuration) {
-                p = repeatType === "reverse" && Boolean(repeat % 2) ? 0 : 1
-            }
-
-            elapsed = p * resolvedDuration
+            elapsed = clamp(0, 1, iterationProgress) * resolvedDuration
         }
 
         /**
