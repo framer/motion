@@ -1,3 +1,4 @@
+import { warnOnce } from "../../../utils/warn-once"
 import { updateScrollInfo } from "./info"
 import { resolveOffsets } from "./offsets/index"
 import {
@@ -32,6 +33,19 @@ function measure(
         target === container ? target.scrollHeight : target.clientHeight
     info.x.containerLength = container.clientWidth
     info.y.containerLength = container.clientHeight
+
+    /**
+     * In development mode ensure scroll containers aren't position: static as this makes
+     * it difficult to measure their relative positions.
+     */
+    if (process.env.NODE_ENV !== "production") {
+        if (container && target && target !== container) {
+            warnOnce(
+                getComputedStyle(container).position !== "static",
+                "Please ensure that the container has a non-static position, like 'relative', 'fixed', or 'absolute' to ensure scroll offset is calculated correctly."
+            )
+        }
+    }
 }
 
 export function createOnScrollHandler(
