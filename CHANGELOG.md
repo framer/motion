@@ -4,6 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.17.6] 2024-02-04
+
+### Fixed
+
+-   Fixing erroneous `console.log` introduced in `10.17.5`.
+-   Fixing final keyframe when using `repeatType` `"reverse"` and `"mirror"`.
+
 ## [10.17.5] 2024-02-04
 
 ### Fixed

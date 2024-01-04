@@ -610,7 +610,7 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toBe(0)
     })
 
-    test.only("Correctly applies final keyframe with repeatType mirror and odd numbered repeat", async () => {
+    test("Correctly applies final keyframe with repeatType mirror and odd numbered repeat", async () => {
         const promise = new Promise<number>((resolve) => {
             const x = motionValue(0)
             const Component = () => (
