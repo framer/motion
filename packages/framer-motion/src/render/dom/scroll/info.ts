@@ -59,8 +59,6 @@ function updateAxisInfo(
         elapsed > maxElapsed
             ? 0
             : velocityPerSecond(axis.current - prev, elapsed)
-
-    if (axisName === "y") console.log(axis)
 }
 
 export function updateScrollInfo(
