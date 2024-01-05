@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.17.9] 2024-02-05
+
+### Fixed
+
+-   Improve error message when trying to animate multiple keyframes via spring.
+
 ## [10.17.8] 2024-02-05
 
 ### Fixed

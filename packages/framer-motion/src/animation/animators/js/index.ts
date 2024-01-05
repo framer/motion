@@ -13,6 +13,7 @@ import {
     secondsToMilliseconds,
 } from "../../../utils/time-conversion"
 import { calcGeneratorDuration } from "../../generators/utils/calc-duration"
+import { invariant } from "../../../utils/errors"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -79,13 +80,18 @@ export function animateValue<V = number>({
     /**
      * If this isn't the keyframes generator and we've been provided
      * strings as keyframes, we need to interpolate these.
-     * TODO: Support velocity for units and complex value types/
      */
     let mapNumbersToKeyframes: undefined | ((t: number) => V)
     if (
         generatorFactory !== keyframesGeneratorFactory &&
         typeof keyframes[0] !== "number"
     ) {
+        if (process.env.NODE_ENV !== "production") {
+            invariant(
+                keyframes.length === 2,
+                `Only two keyframes currently supported with spring and inertia animations. Trying to animate ${keyframes}`
+            )
+        }
         mapNumbersToKeyframes = interpolate([0, 100], keyframes, {
             clamp: false,
         })
