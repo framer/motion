@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.17.10] 2024-02-05
+
+### Fixed
+
+-   Export `UseInViewOptions`.
+
 ## [10.17.9] 2024-02-05
 
 ### Fixed
