@@ -11,6 +11,7 @@ import {
 } from "../../.."
 import { motionValue } from "../../../value"
 import { ResolvedValues } from "../../../render/types"
+import { prettyDOM } from "@testing-library/dom"
 
 describe("AnimatePresence", () => {
     test("Allows initial animation if no `initial` prop defined", async () => {
@@ -329,7 +330,7 @@ describe("AnimatePresence", () => {
                             key={i}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 0.5 }}
+                            transition={{ duration: 0.1 }}
                         />
                     </AnimatePresence>
                 )
@@ -345,7 +346,7 @@ describe("AnimatePresence", () => {
                 rerender(<Component i={2} />)
                 rerender(<Component i={2} />)
                 resolve(container.childElementCount)
-            }, 150)
+            }, 200)
         })
 
         return await expect(promise).resolves.toBe(1)
@@ -410,8 +411,8 @@ describe("AnimatePresence", () => {
                 // wait for the exit animation to check the DOM again
                 setTimeout(() => {
                     resolve(getByTestId("2").textContent === "2")
-                }, 250)
-            }, 150)
+                }, 150)
+            }, 200)
         })
 
         return await expect(promise).resolves.toBeTruthy()
@@ -445,11 +446,74 @@ describe("AnimatePresence", () => {
                 // wait for the exit animation to check the DOM again
                 setTimeout(() => {
                     resolve(getByTestId("2").textContent === "2")
-                }, 250)
-            }, 150)
+                }, 150)
+            }, 200)
         })
 
         return await expect(promise).resolves.toBeTruthy()
+    })
+
+    test("Elements exit in sequence during fast renders", async () => {
+        const Component = ({ nums }: { nums: number[] }) => {
+            return (
+                <AnimatePresence>
+                    {nums.map((i) => (
+                        <motion.div
+                            key={i}
+                            data-testid={i}
+                            exit={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.01 }}
+                        >
+                            {i}
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
+            )
+        }
+
+        const { rerender, container, getAllByTestId } = render(
+            <Component nums={[0, 1, 2, 3]} />
+        )
+
+        const getTextContents = () => {
+            return getAllByTestId(/./).flatMap((element) =>
+                element.textContent !== null
+                    ? parseInt(element.textContent)
+                    : []
+            )
+        }
+
+        await new Promise<void>((resolve) => {
+            setTimeout(() => {
+                act(() => rerender(<Component nums={[1, 2, 3]} />))
+                setTimeout(() => {
+                    const textContents = getTextContents()
+                    console.log(textContents)
+                    console.log(prettyDOM(container))
+                    expect(getTextContents()).toEqual([1, 2, 3])
+                }, 100)
+            }, 100)
+            setTimeout(() => {
+                act(() => rerender(<Component nums={[2, 3]} />))
+                setTimeout(() => {
+                    const textContents = getTextContents()
+                    console.log(textContents)
+                    console.log(prettyDOM(container))
+                    expect(getTextContents()).toEqual([2, 3])
+                }, 100)
+            }, 250)
+            setTimeout(() => {
+                act(() => rerender(<Component nums={[3]} />))
+                setTimeout(() => {
+                    const textContents = getTextContents()
+                    console.log(textContents)
+                    console.log(prettyDOM(container))
+                    expect(getTextContents()).toEqual([3])
+                    resolve()
+                }, 100)
+            }, 400)
+        })
     })
 
     test("Exit variants are triggered with `AnimatePresence.custom`, not that of the element.", async () => {
