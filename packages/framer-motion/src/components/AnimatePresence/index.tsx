@@ -104,9 +104,6 @@ export const AnimatePresence: React.FunctionComponent<
         new Map<ComponentKey, ReactElement<any> | undefined>()
     ).current
 
-    // Keep a living record of the children we're actually rendering so we
-    // can diff to figure out which are entering and exiting
-
     // A lookup table to quickly reference components by key
     const allChildren = useRef(
         new Map<ComponentKey, ReactElement<any>>()
