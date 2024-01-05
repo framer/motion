@@ -8,7 +8,7 @@ import * as React from "react"
 /**
  * Stub PointerEvent - this is so we can pass through PointerEvent.isPrimary
  */
-const pointerEventProps = ["isPrimary"]
+const pointerEventProps = ["isPrimary", "pointerType", "button"]
 class PointerEventFake extends Event {
     constructor(type: any, props: any) {
         super(type, props)
@@ -39,19 +39,27 @@ export const click = (element: Element) =>
     act(() => {
         fireEvent.click(element)
     })
-export const pointerEnter = (element: Element) =>
+export const pointerEnter = (element: Element, options?: any) =>
     act(() => {
         fireEvent.pointerEnter(
             element,
             // Emulate buttonless pointer event for enter/leave
-            new PointerEventFake("pointerenter", { type: "mouse", button: -1 })
+            new PointerEventFake("pointerenter", {
+                pointerType: "mouse",
+                button: -1,
+                ...options,
+            })
         )
     })
-export const pointerLeave = (element: Element) =>
+export const pointerLeave = (element: Element, options?: any) =>
     act(() => {
         fireEvent.pointerLeave(
             element,
-            new PointerEventFake("pointerleave", { type: "mouse", button: -1 })
+            new PointerEventFake("pointerleave", {
+                pointerType: "mouse",
+                button: -1,
+                ...options,
+            })
         )
     })
 export const pointerDown = (element: Element) =>
