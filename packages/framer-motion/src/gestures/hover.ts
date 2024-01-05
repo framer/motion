@@ -11,7 +11,8 @@ function addHoverEvent(node: VisualElement<Element>, isActive: boolean) {
     const callbackName = "onHover" + (isActive ? "Start" : "End")
 
     const handleEvent = (event: PointerEvent, info: EventInfo) => {
-        if (event.type === "touch" || isDragActive()) return
+        console.log(event)
+        if (event.pointerType === "touch" || isDragActive()) return
 
         const props = node.getProps()
 
