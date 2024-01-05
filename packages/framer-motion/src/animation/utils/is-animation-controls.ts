@@ -1,5 +1,9 @@
 import { AnimationControls } from "../types"
 
 export function isAnimationControls(v?: unknown): v is AnimationControls {
-    return typeof v === "object" && typeof (v as any).start === "function"
+    return (
+        v !== null &&
+        typeof v === "object" &&
+        typeof (v as AnimationControls).start === "function"
+    )
 }
