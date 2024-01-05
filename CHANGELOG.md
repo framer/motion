@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.17.8] 2024-02-05
+
+### Fixed
+
+-   Adding `null` safeguard for `useAnimationControls`.
+
 ## [10.17.7] 2024-02-05
 
 ### Fixed
