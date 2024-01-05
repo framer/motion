@@ -11,7 +11,6 @@ import {
 } from "../../.."
 import { motionValue } from "../../../value"
 import { ResolvedValues } from "../../../render/types"
-import { prettyDOM } from "@testing-library/dom"
 
 describe("AnimatePresence", () => {
     test("Allows initial animation if no `initial` prop defined", async () => {
@@ -472,7 +471,7 @@ describe("AnimatePresence", () => {
             )
         }
 
-        const { rerender, container, getAllByTestId } = render(
+        const { rerender, getAllByTestId } = render(
             <Component nums={[0, 1, 2, 3]} />
         )
 
@@ -488,27 +487,18 @@ describe("AnimatePresence", () => {
             setTimeout(() => {
                 act(() => rerender(<Component nums={[1, 2, 3]} />))
                 setTimeout(() => {
-                    const textContents = getTextContents()
-                    console.log(textContents)
-                    console.log(prettyDOM(container))
                     expect(getTextContents()).toEqual([1, 2, 3])
                 }, 100)
             }, 100)
             setTimeout(() => {
                 act(() => rerender(<Component nums={[2, 3]} />))
                 setTimeout(() => {
-                    const textContents = getTextContents()
-                    console.log(textContents)
-                    console.log(prettyDOM(container))
                     expect(getTextContents()).toEqual([2, 3])
                 }, 100)
             }, 250)
             setTimeout(() => {
                 act(() => rerender(<Component nums={[3]} />))
                 setTimeout(() => {
-                    const textContents = getTextContents()
-                    console.log(textContents)
-                    console.log(prettyDOM(container))
                     expect(getTextContents()).toEqual([3])
                     resolve()
                 }, 100)
