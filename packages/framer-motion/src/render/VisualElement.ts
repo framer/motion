@@ -536,7 +536,7 @@ export abstract class VisualElement<
         }
 
         if (
-            this.type === "html" &&
+            (this.type === "html" || this.type === "svg") &&
             !this.projection &&
             ProjectionNodeConstructor
         ) {
