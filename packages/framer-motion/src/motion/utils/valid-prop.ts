@@ -19,9 +19,6 @@ const validMotionProps = new Set<keyof MotionProps>([
     "transformValues",
     "custom",
     "inherit",
-    "onLayoutAnimationStart",
-    "onLayoutAnimationComplete",
-    "onLayoutMeasure",
     "onBeforeLayoutMeasure",
     "onAnimationStart",
     "onAnimationComplete",
@@ -38,6 +35,7 @@ const validMotionProps = new Set<keyof MotionProps>([
     "onHoverEnd",
     "onViewportEnter",
     "onViewportLeave",
+    "globalTapTarget",
     "ignoreStrict",
     "viewport",
 ])
@@ -57,6 +55,7 @@ export function isValidMotionProp(key: string) {
         key.startsWith("layout") ||
         key.startsWith("onTap") ||
         key.startsWith("onPan") ||
+        key.startsWith("onLayout") ||
         validMotionProps.has(key as keyof MotionProps)
     )
 }
