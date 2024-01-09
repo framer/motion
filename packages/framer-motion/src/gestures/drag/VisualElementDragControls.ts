@@ -210,8 +210,11 @@ export class VisualElementDragControls {
             this.stop(event, info)
 
         const resumeAnimation = () =>
-            eachAxis((axis) => (this.getAnimationState(axis) === 'paused') && this.getAxisMotionValue(axis).animation?.play())
-
+            eachAxis(
+                (axis) =>
+                    this.getAnimationState(axis) === "paused" &&
+                    this.getAxisMotionValue(axis).animation?.play()
+            )
 
         const { dragSnapToOrigin } = this.getProps()
         this.panSession = new PanSession(
@@ -221,7 +224,7 @@ export class VisualElementDragControls {
                 onStart,
                 onMove,
                 onSessionEnd,
-                resumeAnimation
+                resumeAnimation,
             },
             {
                 transformPagePoint: this.visualElement.getTransformPagePoint(),

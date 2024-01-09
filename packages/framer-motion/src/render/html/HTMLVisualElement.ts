@@ -24,7 +24,7 @@ export class HTMLVisualElement extends DOMVisualElement<
     HTMLRenderState,
     DOMVisualElementOptions
 > {
-    type: "html"
+    type = "html"
 
     readValueFromInstance(
         instance: HTMLElement,
