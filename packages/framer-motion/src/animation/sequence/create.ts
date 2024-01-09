@@ -230,10 +230,10 @@ export function createAnimationsFromSequence(
                     )
                 }
             }
-
-            prevTime = currentTime
-            currentTime += maxDuration
         }
+
+        prevTime = currentTime
+        currentTime += maxDuration
     }
 
     /**
