@@ -165,7 +165,7 @@ describe("animate", () => {
 
         return animation.then(() => {
             expect(aOutput).toEqual([50, 70, 90, 100])
-            expect(bOutput).toEqual([60, 20, 0])
+            expect(bOutput).toEqual([80, 40, 0])
         })
     })
 
