@@ -32,6 +32,26 @@ describe("press", () => {
         expect(press).toBeCalledTimes(1)
     })
 
+    test("global press event listeners fire", async () => {
+        const press = jest.fn()
+        const Component = () => (
+            <>
+                <div data-testid="target" />
+                <motion.div globalTapTarget onTap={() => press()} />
+            </>
+        )
+
+        const { getByTestId, rerender } = render(<Component />)
+        rerender(<Component />)
+
+        pointerDown(getByTestId("target") as Element)
+        pointerUp(getByTestId("target") as Element)
+
+        await nextFrame()
+
+        expect(press).toBeCalledTimes(1)
+    })
+
     test("press event listeners fire via keyboard", async () => {
         const press = jest.fn()
         const pressStart = jest.fn()
