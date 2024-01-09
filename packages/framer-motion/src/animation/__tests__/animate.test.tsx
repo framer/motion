@@ -112,6 +112,33 @@ describe("animate", () => {
         animate(motionValue("#fff"), ["#fff", "#000"])
     })
 
+    test("animates a motion value in sequence", async () => {
+        const a = motionValue(0)
+
+        const aOutput: number[] = []
+
+        a.on("change", (v) => aOutput.push(Math.round(v)))
+
+        const animation = animate(
+            [
+                [a, 2, { duration: 0.2 }],
+                [a, 0, { duration: 0.2 }],
+            ],
+            {
+                defaultTransition: {
+                    ease: "linear",
+                    driver: syncDriver(20),
+                },
+            }
+        )
+
+        return animation.then(() => {
+            expect(aOutput).toEqual([
+                0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 0, 0, 0,
+            ])
+        })
+    })
+
     test("animates motion values in sequence", async () => {
         const a = motionValue(0)
         const b = motionValue(100)
@@ -138,7 +165,7 @@ describe("animate", () => {
 
         return animation.then(() => {
             expect(aOutput).toEqual([50, 70, 90, 100])
-            expect(bOutput).toEqual([60, 20, 0])
+            expect(bOutput).toEqual([80, 40, 0])
         })
     })
 
