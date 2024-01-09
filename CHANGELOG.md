@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.17.12] 2024-01-09
+
+### Fixed
+
+-   Fixed `animate` sequencing for `MotionValue`s.
+
 ## [10.17.11] 2024-01-09
 
 ### Fixed
