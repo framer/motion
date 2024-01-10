@@ -4,6 +4,7 @@ import { motion } from "../../"
 import { useMotionValue } from "../use-motion-value"
 import { useMotionTemplate } from "../use-motion-template"
 import { MotionValue, motionValue } from ".."
+import { nextMicrotask } from "../../gestures/__tests__/utils"
 
 describe("useMotionTemplate", () => {
     test("sets initial value", async () => {
@@ -62,6 +63,8 @@ describe("useMotionTemplate", () => {
 
         rerender(<Component value={b} />)
 
+        await nextMicrotask()
+
         expect(container.firstChild).toHaveStyle(`transform: translateX(2px)`)
     })
 
@@ -78,6 +81,7 @@ describe("useMotionTemplate", () => {
             `transform: translateX(1px) translateY(1px)`
         )
         rerender(<Component y={2} />)
+        await nextMicrotask()
         expect(container.firstChild).toHaveStyle(
             `transform: translateX(1px) translateY(2px)`
         )

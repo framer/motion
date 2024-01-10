@@ -8,6 +8,7 @@ import {
 } from "../../"
 import * as React from "react"
 import { createRef } from "react"
+import { nextFrame, nextMicrotask } from "../../gestures/__tests__/utils"
 
 describe("animate prop as object", () => {
     test("animates to set prop", async () => {
@@ -388,7 +389,7 @@ describe("animate prop as object", () => {
     })
 
     test("when value is removed from animate, animates back to value originally defined in initial prop", async () => {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>(async (resolve) => {
             const ref = createRef()
 
             const props: any = {
@@ -402,10 +403,14 @@ describe("animate prop as object", () => {
 
             rerender(<motion.div {...props} />)
 
+            await nextFrame()
+
             expect(ref.current).toHaveStyle("opacity: 1")
 
             rerender(<motion.div {...props} animate={{}} />)
             rerender(<motion.div {...props} animate={{}} />)
+
+            await nextMicrotask()
 
             expect(ref.current).toHaveStyle("opacity: 0")
 
@@ -414,7 +419,7 @@ describe("animate prop as object", () => {
     })
 
     test("when value is removed from animate, animates back to value currently defined in initial prop", async () => {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>(async (resolve) => {
             const ref = createRef()
 
             const props: any = {
@@ -427,6 +432,8 @@ describe("animate prop as object", () => {
             const { rerender } = render(<motion.div {...props} />)
 
             rerender(<motion.div {...props} />)
+
+            await nextFrame()
 
             expect(ref.current).toHaveStyle("opacity: 1")
 
@@ -444,6 +451,8 @@ describe("animate prop as object", () => {
                     animate={{}}
                 />
             )
+
+            await nextMicrotask()
 
             expect(ref.current).toHaveStyle("opacity: 0.5")
 
@@ -452,7 +461,7 @@ describe("animate prop as object", () => {
     })
 
     test("when value is removed from both animate and initial, perform no animation", async () => {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>(async (resolve) => {
             const ref = createRef()
 
             const props: any = {
@@ -466,10 +475,14 @@ describe("animate prop as object", () => {
 
             rerender(<motion.div {...props} />)
 
+            await nextFrame()
+
             expect(ref.current).toHaveStyle("opacity: 1")
 
             rerender(<motion.div {...props} initial={{}} animate={{}} />)
             rerender(<motion.div {...props} initial={{}} animate={{}} />)
+
+            await nextFrame()
 
             expect(ref.current).toHaveStyle("opacity: 1")
 
@@ -531,7 +544,7 @@ describe("animate prop as object", () => {
     })
 
     test("when value is removed from animate, animate back to value read from DOM", async () => {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>(async (resolve) => {
             const ref = createRef()
 
             const props: any = {
@@ -545,10 +558,14 @@ describe("animate prop as object", () => {
 
             rerender(<motion.div {...props} />)
 
+            await nextFrame()
+
             expect(ref.current).toHaveStyle("opacity: 1")
 
             rerender(<motion.div {...props} animate={{}} />)
             rerender(<motion.div {...props} animate={{}} />)
+
+            await nextFrame()
 
             expect(ref.current).toHaveStyle("opacity: 0.5")
 
@@ -745,7 +762,7 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toBe(20)
     })
 
-    test("animates previously unseen properties", () => {
+    test("animates previously unseen properties", async () => {
         const Component = ({ animate }: any) => (
             <motion.div animate={animate} transition={{ type: false }} />
         )
@@ -755,6 +772,9 @@ describe("animate prop as object", () => {
         rerender(<Component animate={{ x: 100 }} />)
         rerender(<Component animate={{ y: 100 }} />)
         rerender(<Component animate={{ y: 100 }} />)
+
+        await nextMicrotask()
+
         return expect(container.firstChild as Element).toHaveStyle(
             "transform: translateX(0px) translateY(100px) translateZ(0)"
         )

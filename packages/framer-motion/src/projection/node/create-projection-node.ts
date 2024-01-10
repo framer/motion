@@ -55,6 +55,7 @@ import { animateSingleValue } from "../../animation/interfaces/single-value"
 import { clamp } from "../../utils/clamp"
 import { steps } from "../../frameloop/frame"
 import { noop } from "../../utils/noop"
+import { microtask } from "../../frameloop/microtask"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -554,6 +555,7 @@ export function createProjectionNode<I>({
         // Note: currently only running on root node
         startUpdate() {
             if (this.isUpdateBlocked()) return
+
             this.isUpdating = true
             this.nodes && this.nodes.forEach(resetRotation)
             this.animationId++
@@ -570,6 +572,7 @@ export function createProjectionNode<I>({
                 this.options.onExitComplete && this.options.onExitComplete()
                 return
             }
+
             !this.root.isUpdating && this.root.startUpdate()
             if (this.isLayoutDirty) return
 
@@ -592,7 +595,7 @@ export function createProjectionNode<I>({
             this.prevTransformTemplateValue = transformTemplate
                 ? transformTemplate(this.latestValues, "")
                 : undefined
-
+            // if (this.instance.id === "open") console.trace()
             this.updateSnapshot()
             shouldNotifyListeners && this.notifyListeners("willUpdate")
         }
@@ -657,7 +660,7 @@ export function createProjectionNode<I>({
         didUpdate() {
             if (!this.updateScheduled) {
                 this.updateScheduled = true
-                queueMicrotask(() => this.update())
+                microtask.read(() => this.update())
             }
         }
 
@@ -1055,9 +1058,7 @@ export function createProjectionNode<I>({
              * a relativeParent. This will allow a component to perform scale correction
              * even if no animation has started.
              */
-            // TODO If this is unsuccessful this currently happens every frame
             if (!this.targetDelta && !this.relativeTarget) {
-                // TODO: This is a semi-repetition of further down this function, make DRY
                 const relativeParent = this.getClosestProjectingParent()
                 if (
                     relativeParent &&

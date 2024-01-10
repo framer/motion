@@ -1100,3 +1100,26 @@ describe("Shared pointer events", () => {
             })
     })
 })
+
+describe("Shared layout: Works with queueMicrotasks", () => {
+    it("queueMicrotasks doesn't break layout measurements", () => {
+        cy.visit("?test=layout-queuemicrotask")
+            .wait(50)
+            .get("#target")
+            .trigger("click")
+            .wait(150)
+            .get("#open")
+            .trigger("click")
+            .wait(150)
+            .get("#target")
+            .trigger("click")
+            .wait(150)
+            .get("#open")
+            .trigger("click")
+            .wait(150)
+            .get("#error")
+            .should(([$error]: any) => {
+                expect($error.innerText).to.equal("")
+            })
+    })
+})
