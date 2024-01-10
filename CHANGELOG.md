@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.18.0] 2024-01-10
+
+### Added
+
+-   `globalTapTarget` for use in Framer.
+
 ## [10.17.12] 2024-01-09
 
 ### Fixed
