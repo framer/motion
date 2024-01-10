@@ -122,7 +122,7 @@ export interface TapHandlers {
     /**
      * If `true`, the tap gesture will attach its start listener to window.
      *
-     * @internal
+     * Note: This is not supported publically.
      */
     globalTapTarget?: boolean
 }
