@@ -92,7 +92,6 @@ export function createAnimationState(
         options?: VisualElementAnimationOptions,
         changedActiveType?: AnimationType
     ) {
-        console.log("animating changes", options, changedActiveType)
         const props = visualElement.getProps()
         const context = visualElement.getVariantContext(true) || {}
 

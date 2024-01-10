@@ -596,7 +596,7 @@ export function createProjectionNode<I>({
             this.prevTransformTemplateValue = transformTemplate
                 ? transformTemplate(this.latestValues, "")
                 : undefined
-            // if (this.instance.id === "open") console.trace()
+
             this.updateSnapshot()
             shouldNotifyListeners && this.notifyListeners("willUpdate")
         }
