@@ -1,45 +1,26 @@
-import { isNone } from "../../../animation/utils/is-none"
-import {
-    ResolvedKeyframes,
-    UnresolvedKeyframes,
-} from "../../../keyframes/Keyframes"
-import { VisualElement } from "../../VisualElement"
-import { getVariableValue } from "../../dom/utils/css-variables-conversion"
-import { isCSSVariableToken } from "../../dom/utils/is-css-variable"
+import { isNone } from "../../animation/utils/is-none"
+import { getVariableValue } from "./utils/css-variables-conversion"
+import { isCSSVariableToken } from "./utils/is-css-variable"
 import {
     isNumOrPxType,
     positionalKeys,
     positionalValues,
     removeNonTranslationalTransform,
-} from "../../dom/utils/unit-conversion"
-import { findDimensionValueType } from "../../dom/value-types/dimensions"
-import { KeyframeResolver } from "../../utils/KeyframesResolver"
-import { makeNoneKeyframesAnimatable } from "./make-none-animatable"
+} from "./utils/unit-conversion"
+import { findDimensionValueType } from "./value-types/dimensions"
+import { KeyframeResolver } from "../utils/KeyframesResolver"
+import { makeNoneKeyframesAnimatable } from "../html/utils/make-none-animatable"
 
 /**
  * TODO: Use information about whether we are animating via JS or WAAPI to
  * decide whether to we need to resolve CSS vars / do type conversion here.
  */
-export class HTMLKeyframesResolver<
+export class DOMKeyframesResolver<
     T extends string | number
-> extends KeyframeResolver {
-    private element: VisualElement<HTMLElement>
-    private name: string
+> extends KeyframeResolver<T, HTMLElement | SVGElement> {
     private removedTransforms?: [string, string | number][]
-    private restoreScrollY?: number
+    // private restoreScrollY?: number
     private measuredOrigin?: string | number
-    unresolvedKeyframes: UnresolvedKeyframes<string | number>
-
-    constructor(
-        element: VisualElement<HTMLElement>,
-        name: string,
-        unresolvedKeyframes: UnresolvedKeyframes<T>,
-        onComplete: (resolvedKeyframes: ResolvedKeyframes<T>) => void
-    ) {
-        super(unresolvedKeyframes, onComplete)
-        this.element = element
-        this.name = name
-    }
 
     readKeyframes() {
         const { unresolvedKeyframes, element, name } = this
@@ -149,9 +130,9 @@ export class HTMLKeyframesResolver<
 
         if (!element.current) return
 
-        if (name === "height") {
-            this.restoreScrollY = window.pageYOffset
-        }
+        // if (name === "height") {
+        //     this.restoreScrollY = window.pageYOffset
+        // }
 
         this.measuredOrigin = positionalValues[name](
             element.measureViewportBox(),

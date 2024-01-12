@@ -4,16 +4,14 @@ import { isMotionValue } from "../../value/utils/is-motion-value"
 import { GenericKeyframesTarget } from "../../types"
 import { AnimationPlaybackControls, ValueAnimationTransition } from "../types"
 
-export function animateSingleValue<V>(
+export function animateSingleValue<V extends string | number>(
     value: MotionValue<V> | V,
     keyframes: V | GenericKeyframesTarget<V>,
     options?: ValueAnimationTransition
 ): AnimationPlaybackControls {
     const motionValue = isMotionValue(value) ? value : createMotionValue(value)
 
-    motionValue.start(
-        animateMotionValue("", motionValue, keyframes as any, options)
-    )
+    motionValue.start(animateMotionValue("", motionValue, keyframes, options))
 
     return motionValue.animation!
 }

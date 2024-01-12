@@ -1,25 +1,19 @@
-import { warning } from "../../utils/errors"
-import { ResolvedValueTarget, Transition } from "../../types"
+import { Transition } from "../../types"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
-import { instantAnimationState } from "../../utils/use-instant-transition-state"
 import type { MotionValue, StartAnimation } from "../../value"
-import { createAcceleratedAnimation } from "../animators/waapi/create-accelerated-animation"
-import { createInstantAnimation } from "../animators/instant"
 import { getDefaultTransition } from "../utils/default-transitions"
-import { isAnimatable } from "../utils/is-animatable"
-import { getKeyframes } from "../utils/keyframes"
 import { getValueTransition, isTransitionDefined } from "../utils/transitions"
 import { animateValue } from "../animators/js"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
-import { MotionGlobalConfig } from "../../utils/GlobalConfig"
 import { VisualElement } from "../../render/VisualElement"
+import type { UnresolvedKeyframes } from "../../render/utils/KeyframesResolver"
 
-export const animateMotionValue = (
+export const animateMotionValue = <V extends string | number>(
     name: string,
-    value: MotionValue,
-    target: ResolvedValueTarget,
+    value: MotionValue<V>,
+    target: V | UnresolvedKeyframes<V>,
     transition: Transition & { elapsed?: number; isHandoff?: boolean } = {},
-    visualElement: VisualElement
+    visualElement?: VisualElement
 ): StartAnimation => {
     return (onComplete: VoidFunction): AnimationPlaybackControls => {
         const valueTransition = getValueTransition(transition, name) || {}
@@ -105,7 +99,7 @@ export const animateMotionValue = (
 //     `You are trying to animate ${valueName} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`
 // )
 
-// if (
+// if (MotionGlobalConfig.skipAnimations ||
 //     !isOriginAnimatable ||
 //     !isTargetAnimatable ||
 //     instantAnimationState.current ||

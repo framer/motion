@@ -14,12 +14,6 @@ import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 import type { ResolvedValues } from "../types"
 import type { IProjectionNode } from "../../projection/node/types"
-import {
-    UnresolvedKeyframes,
-    ResolvedKeyframes,
-} from "../../keyframes/Keyframes"
-import { HTMLKeyframesResolver } from "./utils/HTMLKeyframesResolver"
-import { KeyframeResolver } from "../utils/KeyframesResolver"
 
 export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)
@@ -88,14 +82,6 @@ export class HTMLVisualElement extends DOMVisualElement<
                 if (this.current) this.current.textContent = `${latest}`
             })
         }
-    }
-
-    resolveKeyframes<T extends string | number>(
-        name: string,
-        keyframes: UnresolvedKeyframes<T>,
-        onComplete: (resolvedKeyframes: ResolvedKeyframes<T>) => void
-    ): KeyframeResolver {
-        return new HTMLKeyframesResolver(this, name, keyframes, onComplete)
     }
 
     renderInstance(

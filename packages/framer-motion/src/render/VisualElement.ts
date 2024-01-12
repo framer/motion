@@ -41,8 +41,11 @@ import { Feature } from "../motion/features/Feature"
 import type { PresenceContextProps } from "../context/PresenceContext"
 import { variantProps } from "./utils/variant-props"
 import { visualElementStore } from "./store"
-import { ResolvedKeyframes, UnresolvedKeyframes } from "../keyframes/Keyframes"
-import { KeyframeResolver } from "./utils/KeyframesResolver"
+import {
+    KeyframeResolver,
+    ResolvedKeyframes,
+    UnresolvedKeyframes,
+} from "./utils/KeyframesResolver"
 
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
@@ -143,14 +146,16 @@ export abstract class VisualElement<
         projection?: IProjectionNode
     ): void
 
-    abstract resolveKeyframes<T extends string | number>(
+    resolveKeyframes<T extends string | number>(
         name: string,
         keyframes: UnresolvedKeyframes<T>,
         // We use an onComplete callback here rather than a Promise as a Promise
         // resolution is a microtask and we want to retain the ability to force
         // the resolution of keyframes synchronously.
         onComplete: (resolvedKeyframes: ResolvedKeyframes<T>) => void
-    ): KeyframeResolver<T>
+    ): KeyframeResolver<T> {
+        return new KeyframeResolver(this, name, keyframes, onComplete)
+    }
 
     /**
      * If the component child is provided as a motion value, handle subscriptions

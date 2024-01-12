@@ -1,4 +1,5 @@
 import { frame } from "../../frameloop"
+import type { VisualElement } from "../VisualElement"
 
 export type UnresolvedKeyframes<T extends string | number> = Array<T | null>
 
@@ -46,15 +47,21 @@ function readAllKeyframes() {
     frame.resolveKeyframes(measureAllKeyframes)
 }
 
-export abstract class KeyframeResolver<T extends string | number = any> {
+export class KeyframeResolver<T extends string | number = any, E = any> {
+    element: VisualElement<E>
+    name: string
     resolvedKeyframes: ResolvedKeyframes<T> | undefined
     unresolvedKeyframes: UnresolvedKeyframes<string | number>
     private onComplete: (resolvedKeyframes: ResolvedKeyframes<T>) => void
 
     constructor(
+        element: VisualElement<E>,
+        name: string,
         unresolvedKeyframes: UnresolvedKeyframes<string | number>,
         onComplete: (resolvedKeyframes: ResolvedKeyframes<T>) => void
     ) {
+        this.element = element
+        this.name = name
         this.unresolvedKeyframes = unresolvedKeyframes
         this.onComplete = onComplete
 
@@ -68,11 +75,11 @@ export abstract class KeyframeResolver<T extends string | number = any> {
 
     needsMeasurement = false
 
-    abstract readKeyframes(): void
-    abstract unsetTransforms(): void
-    abstract measureInitialState(): void
-    abstract renderEndStyles(): void
-    abstract measureEndState(): void
+    readKeyframes() {}
+    unsetTransforms() {}
+    measureInitialState() {}
+    renderEndStyles() {}
+    measureEndState() {}
 
     complete() {
         this.onComplete(this.unresolvedKeyframes as ResolvedKeyframes<T>)
