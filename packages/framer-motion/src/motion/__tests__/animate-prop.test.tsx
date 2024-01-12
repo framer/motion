@@ -817,7 +817,7 @@ describe("animate prop as object", () => {
     })
 
     test("forces an animation to fallback if has been set to `null`", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const complete = () => resolve(true)
             const Component = ({ animate, onAnimationComplete }: any) => (
                 <motion.div
@@ -829,8 +829,10 @@ describe("animate prop as object", () => {
             const { container, rerender } = render(
                 <Component animate={{ x: 100 }} />
             )
+            await nextFrame()
             rerender(<Component animate={{ x: null }} />)
             rerender(<Component animate={{ x: null }} />)
+            await nextFrame()
             expect(container.firstChild as Element).toHaveStyle(
                 "transform: none"
             )

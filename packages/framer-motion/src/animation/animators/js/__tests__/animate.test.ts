@@ -7,7 +7,7 @@ import { syncDriver } from "./utils"
 
 const linear = noop
 
-function testAnimate<V>(
+function testAnimate<V extends string | number>(
     options: ValueAnimationOptions<V>,
     expected: V[],
     resolve: () => void
