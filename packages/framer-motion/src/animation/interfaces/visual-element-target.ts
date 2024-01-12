@@ -144,6 +144,7 @@ export function animateTarget(
 
     if (transitionEnd) {
         Promise.all(animations).then(() => {
+            console.log("transitionEnd", transitionEnd)
             transitionEnd && setTarget(visualElement, transitionEnd)
         })
     }
