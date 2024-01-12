@@ -47,7 +47,7 @@
         "test": "yarn test-server && yarn test-client",
         "test-ci": "yarn test",
         "test-client": "jest --config jest.config.json --max-workers=2",
-        "test-server": "jest --config jest.config.ssr.json ",
+        "test-server": "jest --config jest.config.ssr.json",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov --config jest.config.json",
         "test-appear": "yarn run collect-appear-tests && start-server-and-test 'pushd ../../; python -m SimpleHTTPServer; popd' http://0.0.0.0:8000 'cypress run -s cypress/integration/appear.chrome.ts --config baseUrl=http://localhost:8000/'",
         "test-projection": "yarn run collect-projection-tests && start-server-and-test 'pushd ../../; python -m SimpleHTTPServer; popd' http://0.0.0.0:8000 'cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
@@ -116,5 +116,5 @@
             "maxSize": "32.1 kB"
         }
     ],
-    "gitHead": "096b391f74645d7ba093ad60d7980df61bee9aa7"
+    "gitHead": "1e046fc053585ac09da43b8c8672de2b88b16e03"
 }

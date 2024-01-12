@@ -79,11 +79,17 @@ export function animateTarget(
 
         let transitionFromType: Transition | undefined
         if (transitionFrom) {
-            const prevType =
-                value.currentAnimationType || visualElement.getProps().initial
-                    ? "initial"
-                    : "animate"
-            transitionFromType = transitionFrom[prevType]
+            if (value.currentAnimationType) {
+                transitionFromType = transitionFrom[value.currentAnimationType]
+            } else {
+                // This is the first time the value has been animated.
+                const initialType =
+                    visualElement.getProps().initial || type === "animate"
+                        ? "initial"
+                        : "animate"
+
+                transitionFromType = transitionFrom[initialType]
+            }
         }
 
         const valueTransition = {
