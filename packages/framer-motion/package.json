@@ -46,7 +46,7 @@
         "clean": "rm -rf types dist lib",
         "test": "yarn test-server && yarn test-client",
         "test-ci": "yarn test",
-        "test-client": "jest --config jest.config.json --max-workers=2 transition-from",
+        "test-client": "jest --config jest.config.json --max-workers=2",
         "test-server": "jest --config jest.config.ssr.json ",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov --config jest.config.json",
         "test-appear": "yarn run collect-appear-tests && start-server-and-test 'pushd ../../; python -m SimpleHTTPServer; popd' http://0.0.0.0:8000 'cypress run -s cypress/integration/appear.chrome.ts --config baseUrl=http://localhost:8000/'",
@@ -116,5 +116,5 @@
             "maxSize": "31.9 kB"
         }
     ],
-    "gitHead": "75992e6edcd37344df01c3cb772bc70580e68515"
+    "gitHead": "d4fd3685cbe0316232b1510b191f81a33fe8ce21"
 }

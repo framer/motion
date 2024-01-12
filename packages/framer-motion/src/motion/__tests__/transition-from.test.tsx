@@ -170,7 +170,7 @@ describe("transitionFrom", () => {
         })
     })
 
-    test.only("transitionFrom works between gestures", async () => {
+    test("transitionFrom works between gestures", async () => {
         const promise = new Promise<number[]>(async (resolve) => {
             const output: number[] = []
             const opacity = motionValue(1)
