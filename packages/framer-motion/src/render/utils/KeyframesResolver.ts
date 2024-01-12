@@ -75,7 +75,29 @@ export class KeyframeResolver<T extends string | number = any, E = any> {
 
     needsMeasurement = false
 
-    readKeyframes() {}
+    readKeyframes() {
+        const { unresolvedKeyframes, element, name } = this
+
+        if (!element.current) return
+
+        /**
+         * If a keyframe is null, we hydrate it either by reading it from
+         * the instance, or propagating from previous keyframes.
+         */
+        for (let i = 0; i < unresolvedKeyframes.length; i++) {
+            if (unresolvedKeyframes[i] === null) {
+                /**
+                 * If the first keyframe is null, we need to find its value by sampling the element
+                 */
+                if (i === 0) {
+                    unresolvedKeyframes[0] = element.readValue(name) as T
+                } else {
+                    unresolvedKeyframes[i] = unresolvedKeyframes[i - 1]
+                }
+            }
+        }
+    }
+
     unsetTransforms() {}
     measureInitialState() {}
     renderEndStyles() {}

@@ -29,21 +29,12 @@ export class DOMKeyframesResolver<
 
         const noneKeyframeIndexes: number[] = []
 
+        super.readKeyframes()
+
         /**
          * If any keyframe is a CSS variable, we need to find its value by sampling the element
          */
         for (let i = 0; i < unresolvedKeyframes.length; i++) {
-            if (unresolvedKeyframes[i] === null) {
-                /**
-                 * If the first keyframe is null, we need to find its value by sampling the element
-                 */
-                if (i === 0) {
-                    unresolvedKeyframes[0] = element.readValue(name) as T
-                } else {
-                    unresolvedKeyframes[i] = unresolvedKeyframes[i - 1]
-                }
-            }
-
             const keyframe = unresolvedKeyframes[i]
             if (isCSSVariableToken(keyframe)) {
                 const resolved = getVariableValue(keyframe, element.current)
