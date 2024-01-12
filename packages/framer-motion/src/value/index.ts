@@ -112,9 +112,7 @@ export class MotionValue<V = any> {
     private stopPassiveEffect?: VoidFunction
 
     /**
-     * A reference to the currently-controlling Popmotion animation
-     *
-     *
+     * A reference to the currently-controlling animation.
      */
     animation?: AnimationPlaybackControls
 
@@ -334,7 +332,7 @@ export class MotionValue<V = any> {
             collectMotionValues.current.push(this)
         }
 
-        return this.current
+        return this.current!
     }
 
     /**

@@ -441,7 +441,13 @@ export class VisualElementDragControls {
     ) {
         const axisValue = this.getAxisMotionValue(axis)
         return axisValue.start(
-            animateMotionValue(axis, axisValue, 0, transition)
+            animateMotionValue(
+                axis,
+                axisValue,
+                0,
+                transition,
+                this.visualElement
+            )
         )
     }
 
