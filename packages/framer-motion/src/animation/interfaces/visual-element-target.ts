@@ -10,7 +10,6 @@ import { setTarget } from "../../render/utils/setters"
 import { AnimationPlaybackControls } from "../types"
 import { getValueTransition } from "../utils/transitions"
 import { MotionValue } from "../../value"
-import { frame } from "../../frameloop"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this

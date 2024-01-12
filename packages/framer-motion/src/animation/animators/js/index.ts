@@ -15,7 +15,7 @@ import { calcGeneratorDuration } from "../../generators/utils/calc-duration"
 import { invariant } from "../../../utils/errors"
 import { mix } from "../../../utils/mix"
 import { pipe } from "../../../utils/pipe"
-import { Keyframes, ResolvedKeyframes } from "../../../keyframes/Keyframes"
+import { ResolvedKeyframes } from "../../../render/utils/KeyframesResolver"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -74,7 +74,7 @@ export function animateValue<V extends string | number = number>({
     let currentFinishedPromise: Promise<void>
 
     let generator: KeyframeGenerator<V> | undefined
-    let mirroredGenerator: KeyframeGenerator<unknown> | undefined
+    let mirroredGenerator: KeyframeGenerator<V> | undefined
     /**
      * If this isn't the keyframes generator and we've been provided
      * strings as keyframes, we need to interpolate these.
@@ -97,8 +97,12 @@ export function animateValue<V extends string | number = number>({
 
     let animationDriver: DriverControls | undefined
 
+    let initialKeyframe: V
+
     const createGenerator = (keyframes: ResolvedKeyframes<any>) => {
+        initialKeyframe = keyframes[0]
         const generatorFactory = types[type] || keyframesGeneratorFactory
+
         if (
             generatorFactory !== keyframesGeneratorFactory &&
             typeof keyframes[0] !== "number"
@@ -110,9 +114,11 @@ export function animateValue<V extends string | number = number>({
                 )
             }
 
-            mapNumbersToKeyframes = interpolate([0, 100], keyframes, {
-                clamp: false,
-            })
+            mapNumbersToKeyframes = pipe(
+                percentToProgress,
+                mix(keyframes[0], keyframes[1])
+            ) as (t: number) => V
+
             keyframes = [0, 100] as any
         }
 
@@ -144,13 +150,6 @@ export function animateValue<V extends string | number = number>({
             resolvedDuration = calculatedDuration + repeatDelay
             totalDuration = resolvedDuration * (repeat + 1) - repeatDelay
         }
-
-        mapNumbersToKeyframes = pipe(
-            percentToProgress,
-            mix(keyframes[0], keyframes[1])
-        ) as (t: number) => V
-
-        keyframes = [0, 100] as any
     }
 
     const tick = (timestamp: number) => {
@@ -251,11 +250,11 @@ export function animateValue<V extends string | number = number>({
          * instantly.
          */
         const state = isInDelayPhase
-            ? { done: false, value: keyframes[0] }
+            ? { done: false, value: initialKeyframe }
             : frameGenerator.next(elapsed)
 
         if (mapNumbersToKeyframes) {
-            state.value = mapNumbersToKeyframes(state.value)
+            state.value = mapNumbersToKeyframes(state.value as number)
         }
 
         let { done } = state
@@ -337,7 +336,6 @@ export function animateValue<V extends string | number = number>({
             unresolvedKeyframes,
             (resolvedKeyframes) => {
                 createGenerator(resolvedKeyframes)
-
                 autoplay && play()
             }
         )
@@ -361,6 +359,11 @@ export function animateValue<V extends string | number = number>({
             }
         },
         get duration() {
+            // TODO: If no generator, flush pending keyframes
+            if (!generator) {
+                return 0
+            }
+
             const duration =
                 generator.calculatedDuration === null
                     ? calcGeneratorDuration(generator)
