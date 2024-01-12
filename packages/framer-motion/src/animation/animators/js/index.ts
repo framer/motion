@@ -44,12 +44,11 @@ const percentToProgress = (percent: number) => percent / 100
  * between the two.
  */
 export function animateValue<V extends string | number = number>({
+    name,
+    keyframes: unresolvedKeyframes,
     autoplay = true,
     delay = 0,
     driver = frameloopDriver,
-    keyframes: unresolvedKeyframes,
-    visualElement,
-    name,
     type = "keyframes",
     repeat = 0,
     repeatDelay = 0,
@@ -58,6 +57,7 @@ export function animateValue<V extends string | number = number>({
     onStop,
     onComplete,
     onUpdate,
+    visualElement,
     ...options
 }: ValueAnimationOptions<V>): MainThreadAnimationControls<V> {
     let playState: AnimationPlayState = "idle"
@@ -91,6 +91,8 @@ export function animateValue<V extends string | number = number>({
             resolveFinishedPromise = resolve
         })
     }
+
+    console.log("start animation for", name)
 
     // Create the first finished promise
     updateFinishedPromise()
