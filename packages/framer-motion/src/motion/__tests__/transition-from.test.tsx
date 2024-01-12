@@ -1,5 +1,12 @@
-import { pointerEnter, pointerLeave, render } from "../../../jest.setup"
+import {
+    pointerDown,
+    pointerEnter,
+    pointerLeave,
+    pointerUp,
+    render,
+} from "../../../jest.setup"
 import { motion, motionValue, frame } from "../../"
+import { nextFrame } from "../../gestures/__tests__/utils"
 import * as React from "react"
 
 describe("transitionFrom", () => {
@@ -161,5 +168,63 @@ describe("transitionFrom", () => {
                 }, 10)
             })
         })
+    })
+
+    test.only("transitionFrom works between gestures", async () => {
+        const promise = new Promise<number[]>(async (resolve) => {
+            const output: number[] = []
+            const opacity = motionValue(1)
+            const Component = () => (
+                <motion.div
+                    whileTap={{
+                        opacity: 1,
+                        transitionFrom: { whileHover: { type: false } },
+                    }}
+                    whileHover={{
+                        opacity: 0,
+                        transitionFrom: {
+                            animate: { type: false },
+                            whileTap: { type: false },
+                        },
+                    }}
+                    animate={{
+                        opacity: 0.5,
+                    }}
+                    initial={false}
+                    transition={{ duration: 5 }}
+                    style={{ opacity }}
+                />
+            )
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            output.push(opacity.get())
+
+            pointerEnter(container.firstChild as Element)
+
+            await nextFrame()
+
+            output.push(opacity.get())
+
+            setTimeout(async () => {
+                pointerDown(container.firstChild as Element)
+
+                await nextFrame()
+
+                output.push(opacity.get())
+
+                setTimeout(async () => {
+                    pointerUp(container.firstChild as Element)
+
+                    await nextFrame()
+
+                    output.push(opacity.get())
+                    resolve(output)
+                }, 10)
+            }, 10)
+        })
+
+        return expect(promise).resolves.toEqual([0.5, 0, 1, 0])
     })
 })

@@ -1,7 +1,7 @@
 import { transformProps } from "../../render/html/utils/transform"
 import type { AnimationTypeState } from "../../render/utils/animation-state"
 import type { VisualElement } from "../../render/VisualElement"
-import type { Target, TargetAndTransition } from "../../types"
+import type { Target, TargetAndTransition, Transition } from "../../types"
 import { optimizedAppearDataAttribute } from "../optimized-appear/data-id"
 import type { VisualElementAnimationOptions } from "./types"
 import { animateMotionValue } from "./motion-value"
@@ -77,7 +77,18 @@ export function animateTarget(
             continue
         }
 
-        const transitionFromType = transitionFrom?.[value.type || "initial"]
+        let transitionFromType: Transition | undefined
+        if (transitionFrom) {
+            if (value.currentAnimationType) {
+                transitionFromType = transitionFrom[value.currentAnimationType]
+            } else {
+                const initialType = visualElement.getProps().initial
+                    ? "initial"
+                    : "animate"
+                transitionFromType = transitionFrom[initialType]
+            }
+        }
+
         const valueTransition = {
             delay,
             elapsed: 0,
@@ -140,7 +151,7 @@ export function animateTarget(
             )
         )
 
-        value.type = type || "animate"
+        value.currentAnimationType = type || "animate"
 
         const animation = value.animation!
 
