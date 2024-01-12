@@ -7,6 +7,8 @@ import { animateValue } from "../animators/js"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
 import { VisualElement } from "../../render/VisualElement"
 import type { UnresolvedKeyframes } from "../../render/utils/KeyframesResolver"
+import { MotionGlobalConfig } from "../../utils/GlobalConfig"
+import { instantAnimationState } from "../../utils/use-instant-transition-state"
 
 export const animateMotionValue = <V extends string | number>(
     name: string,
@@ -71,6 +73,19 @@ export const animateMotionValue = <V extends string | number>(
         }
         if (options.repeatDelay) {
             options.repeatDelay = secondsToMilliseconds(options.repeatDelay)
+        }
+
+        if ((options as any).type === false) {
+            options.type = "keyframes"
+            options.duration = 0
+        }
+
+        if (
+            MotionGlobalConfig.skipAnimations ||
+            instantAnimationState.current
+        ) {
+            options.duration = 0
+            options.delay = 0
         }
 
         return animateValue(options)
