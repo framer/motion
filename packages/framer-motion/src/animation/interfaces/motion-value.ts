@@ -88,6 +88,8 @@ export const animateMotionValue = <V extends string | number>(
             options.delay = 0
         }
 
+        console.log("animating", name, options)
+
         return animateValue(options)
     }
 }
