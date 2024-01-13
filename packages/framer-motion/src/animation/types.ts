@@ -38,6 +38,8 @@ export interface ValueAnimationOptions<V = any>
     keyframes: V[]
     visualElement?: VisualElement
     name?: string
+    // Legacy
+    from?: V
 }
 
 export interface AnimationScope<T = any> {
