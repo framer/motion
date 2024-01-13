@@ -10,6 +10,11 @@ import type { UnresolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { MotionGlobalConfig } from "../../utils/GlobalConfig"
 import { instantAnimationState } from "../../utils/use-instant-transition-state"
 
+function makeTransitionInstant(options: ValueAnimationOptions<any>) {
+    options.duration = 0
+    options.type = "keyframes"
+}
+
 export const animateMotionValue = <V extends string | number>(
     name: string,
     value: MotionValue<V>,
@@ -76,19 +81,20 @@ export const animateMotionValue = <V extends string | number>(
         }
 
         if ((options as any).type === false) {
-            options.type = "keyframes"
-            options.duration = 0
+            makeTransitionInstant(options)
         }
 
         if (
             MotionGlobalConfig.skipAnimations ||
             instantAnimationState.current
         ) {
-            options.duration = 0
+            makeTransitionInstant(options)
             options.delay = 0
         }
 
-        console.log("animating", name, options)
+        if (options.from !== undefined) {
+            options.keyframes[0] = options.from
+        }
 
         return animateValue(options)
     }

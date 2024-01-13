@@ -90,12 +90,24 @@ export class KeyframeResolver<T extends string | number = any, E = any> {
                  * If the first keyframe is null, we need to find its value by sampling the element
                  */
                 if (i === 0) {
-                    unresolvedKeyframes[0] = element.readValue(name) as T
+                    const currentValue = element.getValue(name)!.get()
+
+                    // TODO Clean this up a bit
+                    unresolvedKeyframes[0] =
+                        currentValue ??
+                        (element.readValue(name) as T) ??
+                        unresolvedKeyframes[unresolvedKeyframes.length - 1]
+
+                    if (currentValue === undefined) {
+                        element.getValue(name)!.set(unresolvedKeyframes[0])
+                    }
                 } else {
                     unresolvedKeyframes[i] = unresolvedKeyframes[i - 1]
                 }
             }
         }
+
+        console.log(unresolvedKeyframes)
     }
 
     unsetTransforms() {}
