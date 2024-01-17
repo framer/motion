@@ -323,13 +323,10 @@ export class MotionValue<V = any> {
      * @public
      */
     getVelocity() {
-        console.log("can track velocity", this.canTrackVelocity)
         if (!this.canTrackVelocity) return 0
 
-        console.log("updated at", this.prevUpdatedAt, this.currentUpdatedAt)
         if (this.prevUpdatedAt === this.currentUpdatedAt) return 0
 
-        console.log("framestamp", frameData.timestamp)
         // TODO This will result in the wrong velocity if read before
         // the update part of the render loop.
         if (this.currentUpdatedAt !== frameData.timestamp) return 0
