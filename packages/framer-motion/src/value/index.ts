@@ -1,5 +1,4 @@
 import { frameData } from "../frameloop"
-import { FrameData } from "../frameloop/types"
 import { frame } from "../frameloop"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { velocityPerSecond } from "../utils/velocity-per-second"
@@ -28,7 +27,6 @@ export interface MotionValueEventCallbacks<V> {
     animationCancel: () => void
     change: (latestValue: V) => void
     renderRequest: () => void
-    velocityChange: (latestVelocity: number) => void
 }
 
 const isFloat = (value: any): value is string => {
@@ -77,6 +75,8 @@ export class MotionValue<V = any> {
      */
     private current: V
 
+    private currentUpdatedAt: number = 0
+
     /**
      * The previous state of the `MotionValue`.
      *
@@ -84,19 +84,7 @@ export class MotionValue<V = any> {
      */
     private prev: V
 
-    /**
-     * Duration, in milliseconds, since last updating frame.
-     *
-     * @internal
-     */
-    private timeDelta: number = 0
-
-    /**
-     * Timestamp of the last time this `MotionValue` was updated.
-     *
-     * @internal
-     */
-    private lastUpdated: number = 0
+    private prevUpdatedAt: number = 0
 
     /**
      * Add a passive effect to this `MotionValue`.
@@ -268,7 +256,7 @@ export class MotionValue<V = any> {
     setWithVelocity(prev: V, current: V, delta: number) {
         this.set(current)
         this.prev = prev
-        this.timeDelta = delta
+        this.prevUpdatedAt = this.currentUpdatedAt - delta
     }
 
     /**
@@ -278,30 +266,25 @@ export class MotionValue<V = any> {
     jump(v: V) {
         this.updateAndNotify(v)
         this.prev = v
+        this.prevUpdatedAt = this.currentUpdatedAt
         this.stop()
         if (this.stopPassiveEffect) this.stopPassiveEffect()
     }
 
     updateAndNotify = (v: V, render = true) => {
         this.prev = this.current
+        this.prevUpdatedAt = this.currentUpdatedAt
         this.current = v
 
         // Update timestamp
-        const { delta, timestamp } = frameData
-        if (this.lastUpdated !== timestamp) {
-            this.timeDelta = delta
-            this.lastUpdated = timestamp
-            frame.postRender(this.scheduleVelocityCheck)
+        const { timestamp } = frameData
+        if (this.currentUpdatedAt !== timestamp) {
+            this.currentUpdatedAt = timestamp
         }
 
         // Update update subscribers
         if (this.prev !== this.current && this.events.change) {
             this.events.change.notify(this.current)
-        }
-
-        // Update velocity subscribers
-        if (this.events.velocityChange) {
-            this.events.velocityChange.notify(this.getVelocity())
         }
 
         // Update render subscribers
@@ -340,44 +323,22 @@ export class MotionValue<V = any> {
      * @public
      */
     getVelocity() {
-        // This could be isFloat(this.prev) && isFloat(this.current), but that would be wasteful
-        return this.canTrackVelocity
-            ? // These casts could be avoided if parseFloat would be typed better
-              velocityPerSecond(
-                  parseFloat(this.current as any) -
-                      parseFloat(this.prev as any),
-                  this.timeDelta
-              )
-            : 0
-    }
+        console.log("can track velocity", this.canTrackVelocity)
+        if (!this.canTrackVelocity) return 0
 
-    /**
-     * Schedule a velocity check for the next frame.
-     *
-     * This is an instanced and bound function to prevent generating a new
-     * function once per frame.
-     *
-     * @internal
-     */
-    private scheduleVelocityCheck = () => frame.postRender(this.velocityCheck)
+        console.log("updated at", this.prevUpdatedAt, this.currentUpdatedAt)
+        if (this.prevUpdatedAt === this.currentUpdatedAt) return 0
 
-    /**
-     * Updates `prev` with `current` if the value hasn't been updated this frame.
-     * This ensures velocity calculations return `0`.
-     *
-     * This is an instanced and bound function to prevent generating a new
-     * function once per frame.
-     *
-     * @internal
-     */
-    private velocityCheck = ({ timestamp }: FrameData) => {
-        if (timestamp !== this.lastUpdated) {
-            this.prev = this.current
+        console.log("framestamp", frameData.timestamp)
+        // TODO This will result in the wrong velocity if read before
+        // the update part of the render loop.
+        if (this.currentUpdatedAt !== frameData.timestamp) return 0
 
-            if (this.events.velocityChange) {
-                this.events.velocityChange.notify(this.getVelocity())
-            }
-        }
+        // Casts because of parseFloat's poor typing
+        return velocityPerSecond(
+            parseFloat(this.current as any) - parseFloat(this.prev as any),
+            this.currentUpdatedAt - this.prevUpdatedAt
+        )
     }
 
     hasAnimated = false

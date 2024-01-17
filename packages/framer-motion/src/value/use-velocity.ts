@@ -1,4 +1,5 @@
 import { MotionValue } from "."
+import { frame } from "../frameloop"
 import { useMotionValueEvent } from "../utils/use-motion-value-event"
 import { useMotionValue } from "./use-motion-value"
 /**
@@ -15,8 +16,13 @@ import { useMotionValue } from "./use-motion-value"
 export function useVelocity(value: MotionValue<number>): MotionValue<number> {
     const velocity = useMotionValue(value.getVelocity())
 
-    useMotionValueEvent(value, "velocityChange", (newVelocity) => {
-        velocity.set(newVelocity)
+    const updateVelocity = () => {
+        velocity.set(value.getVelocity())
+    }
+
+    useMotionValueEvent(value, "change", () => {
+        updateVelocity()
+        frame.update(updateVelocity)
     })
 
     return velocity

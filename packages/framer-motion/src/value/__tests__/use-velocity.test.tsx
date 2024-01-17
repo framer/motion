@@ -71,13 +71,9 @@ describe("useVelocity", () => {
                              * all values to settle.
                              */
                             frame.postRender(() => {
-                                setFrameData(10, 110)
                                 frame.postRender(() => {
-                                    setFrameData(10, 120)
                                     frame.postRender(() => {
-                                        setFrameData(10, 130)
                                         frame.postRender(() => {
-                                            setFrameData(10, 140)
                                             resolve(undefined)
                                         })
                                     })
