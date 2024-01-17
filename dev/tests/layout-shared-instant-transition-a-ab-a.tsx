@@ -1,4 +1,8 @@
-import { motion, useInstantLayoutTransition, AnimatePresence } from "framer-motion"
+import {
+    motion,
+    useInstantLayoutTransition,
+    AnimatePresence,
+} from "framer-motion"
 import * as React from "react"
 
 const transition = {

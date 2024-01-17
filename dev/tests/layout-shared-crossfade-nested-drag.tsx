@@ -1,4 +1,9 @@
-import { motion, AnimatePresence, transform, useMotionValue } from "framer-motion"
+import {
+    motion,
+    AnimatePresence,
+    transform,
+    useMotionValue,
+} from "framer-motion"
 import * as React from "react"
 
 const transition = { duration: 2 }

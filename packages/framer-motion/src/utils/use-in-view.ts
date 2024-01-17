@@ -1,7 +1,8 @@
 import { RefObject, useEffect, useState } from "react"
 import { inView, InViewOptions } from "../render/dom/viewport"
 
-interface Options extends Omit<InViewOptions, "root" | "amount"> {
+export interface UseInViewOptions
+    extends Omit<InViewOptions, "root" | "amount"> {
     root?: RefObject<Element>
     once?: boolean
     amount?: "some" | "all" | number
@@ -9,7 +10,7 @@ interface Options extends Omit<InViewOptions, "root" | "amount"> {
 
 export function useInView(
     ref: RefObject<Element>,
-    { root, margin, amount, once = false }: Options = {}
+    { root, margin, amount, once = false }: UseInViewOptions = {}
 ) {
     const [isInView, setInView] = useState(false)
 
@@ -29,7 +30,7 @@ export function useInView(
         }
 
         return inView(ref.current, onEnter, options)
-    }, [root, ref, margin, once])
+    }, [root, ref, margin, once, amount])
 
     return isInView
 }

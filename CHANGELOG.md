@@ -4,6 +4,93 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [10.18.0] 2024-01-10
+
+### Added
+
+-   `globalTapTarget` for use in Framer.
+
+## [10.17.12] 2024-01-09
+
+### Fixed
+
+-   Fixed `animate` sequencing for `MotionValue`s.
+
+## [10.17.11] 2024-01-09
+
+### Fixed
+
+-   Fixed `layout` prop crashing Framer Motion 3D.
+
+## [10.17.10] 2024-01-05
+
+### Fixed
+
+-   Export `UseInViewOptions`.
+
+## [10.17.9] 2024-01-05
+
+### Fixed
+
+-   Improve error message when trying to animate multiple keyframes via spring.
+
+## [10.17.8] 2024-01-05
+
+### Fixed
+
+-   Adding `null` safeguard for `useAnimationControls`.
+
+## [10.17.7] 2024-01-05
+
+### Fixed
+
+-   Fix touch event filtering for hover gesture.
+
+## [10.17.6] 2024-01-04
+
+### Fixed
+
+-   Ensure cancelled WAAPI animations can't finish.
+
+## [10.17.5] 2024-01-04
+
+### Fixed
+
+-   Fixing final keyframe when using `repeatType` `"reverse"` and `"mirror"`.
+-   Display warning if scroll `container` is `position: static`.
+-   Move more scroll measurements to `read` frame lifecycle.
+-   Adding `amount` to `useInView` dependencies.
+
+## [10.17.4] 2024-01-03
+
+### Fixed
+
+-   Ensure keyframe animations don't rerun if all values are the same.
+
+## [10.17.3] 2024-01-03
+
+### Fixed
+
+-   Unset gestures correctly animate back to values defined in parent variant.
+
+## [10.17.2] 2024-01-03
+
+### Fixed
+
+-   Fixed issues with duration-based springs appearing stuck or snapping.
+
+## [10.17.1] 2024-01-03
+
+### Fixed
+
+-   Fixed issue with `dragSnapToOrigin` not continuing animation when interrupted.
+
+## [10.17.0] 2024-01-01
+
+### Added
+
+-   Adding `MotionGlobalConfig.skipAnimations` to globally disable animations when testing.
+
 ## [10.16.16] 2023-12-08
 
 ### Fixed

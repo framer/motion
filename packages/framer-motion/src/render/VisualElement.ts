@@ -535,7 +535,11 @@ export abstract class VisualElement<
             }
         }
 
-        if (!this.projection && ProjectionNodeConstructor) {
+        if (
+            (this.type === "html" || this.type === "svg") &&
+            !this.projection &&
+            ProjectionNodeConstructor
+        ) {
             this.projection = new ProjectionNodeConstructor(
                 this.latestValues,
                 this.parent && this.parent.projection

@@ -21,7 +21,7 @@ export class SVGVisualElement extends DOMVisualElement<
     SVGRenderState,
     DOMVisualElementOptions
 > {
-    type: "svg"
+    type = "svg"
 
     isSVGTag = false
 

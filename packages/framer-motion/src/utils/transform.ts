@@ -31,7 +31,7 @@ export interface TransformOptions<T> {
 }
 
 const isCustomValueType = (v: any): v is CustomValueType => {
-    return typeof v === "object" && v.mix
+    return v && typeof v === "object" && v.mix
 }
 
 const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)

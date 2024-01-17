@@ -9,6 +9,17 @@ describe("scroll() callbacks", () => {
     })
 
     it("Correctly updates window scroll progress callback", () => {
+        cy.visit("?test=scroll-container").wait(100)
+
+        cy.get("#container")
+            .scrollTo(0, 50)
+            .get("#label")
+            .should(([$element]: any) => {
+                expect($element.innerText).to.equal("0.5")
+            })
+    })
+
+    it("Correctly measures scroll position", () => {
         cy.visit("?test=scroll-callback-window").wait(100).viewport(100, 400)
 
         cy.scrollTo(0, 600)

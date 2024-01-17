@@ -120,7 +120,7 @@ describe("dragging", () => {
         expect(onDragEnd).toBeCalledTimes(1)
     })
 
-    test.only("drag handlers aren't frozen at drag session start", async () => {
+    test("drag handlers aren't frozen at drag session start", async () => {
         let count = 0
         const onDragEnd = deferred()
         const Component = () => {

@@ -1,7 +1,7 @@
 import { render } from "../../../jest.setup"
 import * as React from "react"
 import { useEffect } from "react"
-import { motion } from "../.."
+import { motion, MotionGlobalConfig } from "../.."
 import { animate } from "../animate"
 import { useMotionValue } from "../../value/use-motion-value"
 import { motionValue, MotionValue } from "../../value"
@@ -112,6 +112,33 @@ describe("animate", () => {
         animate(motionValue("#fff"), ["#fff", "#000"])
     })
 
+    test("animates a motion value in sequence", async () => {
+        const a = motionValue(0)
+
+        const aOutput: number[] = []
+
+        a.on("change", (v) => aOutput.push(Math.round(v)))
+
+        const animation = animate(
+            [
+                [a, 2, { duration: 0.2 }],
+                [a, 0, { duration: 0.2 }],
+            ],
+            {
+                defaultTransition: {
+                    ease: "linear",
+                    driver: syncDriver(20),
+                },
+            }
+        )
+
+        return animation.then(() => {
+            expect(aOutput).toEqual([
+                0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 0, 0, 0,
+            ])
+        })
+    })
+
     test("animates motion values in sequence", async () => {
         const a = motionValue(0)
         const b = motionValue(100)
@@ -138,7 +165,7 @@ describe("animate", () => {
 
         return animation.then(() => {
             expect(aOutput).toEqual([50, 70, 90, 100])
-            expect(bOutput).toEqual([60, 20, 0])
+            expect(bOutput).toEqual([80, 40, 0])
         })
     })
 
@@ -221,10 +248,23 @@ describe("animate", () => {
         const animation = animate(
             div,
             { opacity: [0.2, 0.5] },
-            { duration, repeat: 1, repeatType: "mirror" }
+            { duration, repeat: 2, repeatType: "mirror" }
         )
         await animation.then(() => {
-            expect(div).toHaveStyle("opacity: 0.2")
+            expect(div).toHaveStyle("opacity: 0.5")
+        })
+    })
+
+    test("Skips animations", async () => {
+        const div = document.createElement("div")
+        MotionGlobalConfig.skipAnimations = true
+        animate(div, { opacity: [0.2, 0.5] }, { duration: 1 })
+        await new Promise<void>((resolve) => {
+            setTimeout(() => {
+                MotionGlobalConfig.skipAnimations = false
+                expect(div).toHaveStyle("opacity: 0.5")
+                resolve()
+            }, 100)
         })
     })
 

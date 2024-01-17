@@ -13,6 +13,7 @@ import {
     secondsToMilliseconds,
 } from "../../../utils/time-conversion"
 import { calcGeneratorDuration } from "../../generators/utils/calc-duration"
+import { invariant } from "../../../utils/errors"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -79,13 +80,18 @@ export function animateValue<V = number>({
     /**
      * If this isn't the keyframes generator and we've been provided
      * strings as keyframes, we need to interpolate these.
-     * TODO: Support velocity for units and complex value types/
      */
     let mapNumbersToKeyframes: undefined | ((t: number) => V)
     if (
         generatorFactory !== keyframesGeneratorFactory &&
         typeof keyframes[0] !== "number"
     ) {
+        if (process.env.NODE_ENV !== "production") {
+            invariant(
+                keyframes.length === 2,
+                `Only two keyframes currently supported with spring and inertia animations. Trying to animate ${keyframes}`
+            )
+        }
         mapNumbersToKeyframes = interpolate([0, 100], keyframes, {
             clamp: false,
         })
@@ -177,7 +183,8 @@ export function animateValue<V = number>({
              * than duration we'll get values like 2.5 (midway through the
              * third iteration)
              */
-            const progress = currentTime / resolvedDuration
+            const progress =
+                Math.min(currentTime, totalDuration) / resolvedDuration
 
             /**
              * Get the current iteration (0 indexed). For instance the floor of
@@ -206,9 +213,9 @@ export function animateValue<V = number>({
             /**
              * Reverse progress if we're not running in "normal" direction
              */
-            const iterationIsOdd = Boolean(currentIteration % 2)
 
-            if (iterationIsOdd) {
+            const isOddIteration = Boolean(currentIteration % 2)
+            if (isOddIteration) {
                 if (repeatType === "reverse") {
                     iterationProgress = 1 - iterationProgress
                     if (repeatDelay) {
@@ -219,13 +226,7 @@ export function animateValue<V = number>({
                 }
             }
 
-            let p = clamp(0, 1, iterationProgress)
-
-            if (currentTime > totalDuration) {
-                p = repeatType === "reverse" && iterationIsOdd ? 1 : 0
-            }
-
-            elapsed = p * resolvedDuration
+            elapsed = clamp(0, 1, iterationProgress) * resolvedDuration
         }
 
         /**

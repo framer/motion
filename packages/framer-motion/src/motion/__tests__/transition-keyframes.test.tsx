@@ -88,7 +88,7 @@ describe("keyframes transition", () => {
         expect(xResult).toBe(100)
     })
 
-    test("keyframes animation reruns when variants change and keyframes are the same", async () => {
+    test("keyframes animation doesn't rerun when variants change and keyframes are the same", async () => {
         const xResult = await new Promise((resolve) => {
             const x = motionValue(0)
             const Component = ({ animate }: any) => {
@@ -112,7 +112,7 @@ describe("keyframes transition", () => {
             setTimeout(() => resolve(x.get()), 50)
         })
 
-        expect(xResult).toBe(50)
+        expect(xResult).toBe(100)
     })
 
     test("times works as expected", async () => {

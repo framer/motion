@@ -62,9 +62,9 @@ export class PressGesture extends Feature<Element> {
         startEvent: PointerEvent,
         startInfo: EventInfo
     ) => {
-        this.removeEndListeners()
-
         if (this.isPressing) return
+
+        this.removeEndListeners()
 
         const props = this.node.getProps()
 
@@ -74,13 +74,14 @@ export class PressGesture extends Feature<Element> {
         ) => {
             if (!this.checkPressEnd()) return
 
-            const { onTap, onTapCancel } = this.node.getProps()
+            const { onTap, onTapCancel, globalTapTarget } = this.node.getProps()
 
             frame.update(() => {
                 /**
                  * We only count this as a tap gesture if the event.target is the same
                  * as, or a child of, this component's element
                  */
+                !globalTapTarget &&
                 !isNodeOrChild(this.node.current, endEvent.target as Element)
                     ? onTapCancel && onTapCancel(endEvent, endInfo)
                     : onTap && onTap(endEvent, endInfo)
@@ -176,7 +177,7 @@ export class PressGesture extends Feature<Element> {
         const props = this.node.getProps()
 
         const removePointerListener = addPointerEvent(
-            this.node.current!,
+            props.globalTapTarget ? window : this.node.current!,
             "pointerdown",
             this.startPointerPress,
             { passive: !(props.onTapStart || props["onPointerStart"]) }

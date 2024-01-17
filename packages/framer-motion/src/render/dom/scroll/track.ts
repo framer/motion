@@ -61,7 +61,7 @@ export function scrollInfo(
 
         const listener = () => {
             frame.read(measureAll, false, true)
-            frame.update(updateAll, false, true)
+            frame.read(updateAll, false, true)
             frame.update(notifyAll, false, true)
         }
 

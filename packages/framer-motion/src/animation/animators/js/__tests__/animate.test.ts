@@ -236,7 +236,61 @@ describe("animate", () => {
         })
     })
 
+    test("Correctly applies repeat type 'loop'", async () => {
+        // Large currentTime
+        const animation = animateValue({
+            keyframes: [0, 100],
+            duration: 100,
+            repeat: 1,
+            repeatType: "loop",
+        })
+
+        expect(animation.sample(201).value).toEqual(100)
+
+        // Odd repeat animation
+        await new Promise<void>((resolve) => {
+            testAnimate(
+                {
+                    keyframes: [0, 100],
+                    ease: "linear",
+                    repeat: 1,
+                    repeatType: "loop",
+                },
+                [0, 20, 40, 60, 80, 100, 20, 40, 60, 80, 100],
+                resolve
+            )
+        })
+
+        // Even repeat animation
+        return new Promise<void>((resolve) => {
+            testAnimate(
+                {
+                    keyframes: [0, 100],
+                    ease: "linear",
+                    repeat: 2,
+                    repeatType: "loop",
+                },
+                [
+                    0, 20, 40, 60, 80, 100, 20, 40, 60, 80, 100, 20, 40, 60, 80,
+                    100,
+                ],
+                resolve
+            )
+        })
+    })
+
     test("Correctly applies repeat type 'reverse'", async () => {
+        // Large currentTime
+        const animation = animateValue({
+            keyframes: [0, 100],
+            duration: 100,
+            repeat: 1,
+            repeatType: "reverse",
+        })
+
+        expect(animation.sample(201).value).toEqual(0)
+
+        // Odd repeat animation
         await new Promise<void>((resolve) => {
             testAnimate(
                 {
@@ -250,6 +304,7 @@ describe("animate", () => {
             )
         })
 
+        // Even repeat animation
         return new Promise<void>((resolve) => {
             testAnimate(
                 {
@@ -268,6 +323,16 @@ describe("animate", () => {
     })
 
     test("Correctly applies repeat type 'mirror'", async () => {
+        // Large currentTime
+        const animation = animateValue({
+            keyframes: [0, 100],
+            duration: 100,
+            repeat: 1,
+            repeatType: "mirror",
+        })
+
+        expect(animation.sample(201).value).toEqual(0)
+
         await new Promise<void>((resolve) => {
             testAnimate(
                 {

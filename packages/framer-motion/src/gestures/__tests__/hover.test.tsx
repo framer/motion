@@ -31,6 +31,26 @@ describe("hover", () => {
         })
     })
 
+    test("filters touch events", async () => {
+        const hoverIn = jest.fn()
+        const hoverOut = jest.fn()
+        const Component = () => (
+            <motion.div onHoverStart={hoverIn} onHoverEnd={hoverOut} />
+        )
+
+        const { container } = render(<Component />)
+        pointerEnter(container.firstChild as Element, { pointerType: "touch" })
+        pointerLeave(container.firstChild as Element, { pointerType: "touch" })
+
+        return new Promise<void>((resolve) => {
+            frame.render(() => {
+                expect(hoverIn).toBeCalledTimes(0)
+                expect(hoverOut).toBeCalledTimes(0)
+                resolve()
+            })
+        })
+    })
+
     test("whileHover applied", async () => {
         const promise = new Promise((resolve) => {
             const opacity = motionValue(1)

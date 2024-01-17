@@ -200,6 +200,8 @@ export function createAnimationState(
                 // If we removed a higher-priority variant (i is in reverse order)
                 (i > removedVariantIndex && propIsVariant)
 
+            let handledRemovedValues = false
+
             /**
              * As animations can be set as variant lists, variants or target objects, we
              * coerce everything to an array if it isn't one already
@@ -234,7 +236,10 @@ export function createAnimationState(
             }
             const markToAnimate = (key: string) => {
                 shouldAnimateType = true
-                removedKeys.delete(key)
+                if (removedKeys.has(key)) {
+                    handledRemovedValues = true
+                    removedKeys.delete(key)
+                }
                 typeState.needsAnimating[key] = true
             }
 
@@ -248,22 +253,15 @@ export function createAnimationState(
                 /**
                  * If the value has changed, we probably want to animate it.
                  */
-                if (next !== prev) {
-                    /**
-                     * If both values are keyframes, we need to shallow compare them to
-                     * detect whether any value has changed. If it has, we animate it.
-                     */
-                    if (isKeyframesTarget(next) && isKeyframesTarget(prev)) {
-                        if (!shallowCompare(next, prev) || variantDidChange) {
-                            markToAnimate(key)
-                        } else {
-                            /**
-                             * If it hasn't changed, we want to ensure it doesn't animate by
-                             * adding it to the list of protected keys.
-                             */
-                            typeState.protectedKeys[key] = true
-                        }
-                    } else if (next !== undefined) {
+                let valueHasChanged = false
+                if (isKeyframesTarget(next) && isKeyframesTarget(prev)) {
+                    valueHasChanged = !shallowCompare(next, prev)
+                } else {
+                    valueHasChanged = next !== prev
+                }
+
+                if (valueHasChanged) {
+                    if (next !== undefined) {
                         // If next is defined and doesn't equal prev, it needs animating
                         markToAnimate(key)
                     } else {
@@ -305,10 +303,8 @@ export function createAnimationState(
 
             /**
              * If this is an inherited prop we want to hard-block animations
-             * TODO: Test as this should probably still handle animations triggered
-             * by removed values?
              */
-            if (shouldAnimateType && !isInherited) {
+            if (shouldAnimateType && (!isInherited || handledRemovedValues)) {
                 animations.push(
                     ...definitionList.map((animation) => ({
                         animation: animation as AnimationDefinition,

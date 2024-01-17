@@ -118,6 +118,13 @@ export interface TapHandlers {
      * ```
      */
     whileTap?: VariantLabels | TargetAndTransition
+
+    /**
+     * If `true`, the tap gesture will attach its start listener to window.
+     *
+     * Note: This is not supported publically.
+     */
+    globalTapTarget?: boolean
 }
 export type PanHandler = (event: Event, info: PanInfo) => void
 
