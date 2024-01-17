@@ -1,6 +1,6 @@
 import { motionValue } from "../"
 import { animate } from "../../animation/animate"
-import { frame } from "../../frameloop"
+import { frame, frameData } from "../../frameloop"
 
 describe("motionValue", () => {
     test("change event is type-inferred", () => {
@@ -98,5 +98,49 @@ describe("motionValue", () => {
                 resolve()
             })
         })
+    })
+
+    test("Velocity is reported correctly when value and timestamp has changed", () => {
+        const value = motionValue(0)
+
+        frameData.timestamp = 0
+        value.set(0)
+
+        frameData.timestamp = 10
+        value.set(1)
+
+        expect(value.getVelocity()).toEqual(100)
+    })
+
+    test("Velocity is reported correctly when value has changed twice in one frame", () => {
+        const value = motionValue(0)
+
+        frameData.timestamp = 0
+        value.set(0)
+
+        frameData.timestamp = 10
+        value.set(1)
+
+        expect(value.getVelocity()).toEqual(100)
+
+        value.set(2)
+
+        expect(value.getVelocity()).toEqual(200)
+    })
+
+    test("Velocity is reported as zero when time has been too long", () => {
+        const value = motionValue(0)
+
+        frameData.timestamp = 0
+        value.set(0)
+
+        frameData.timestamp = 100
+        value.set(1)
+
+        expect(value.getVelocity()).toEqual(100)
+
+        value.set(2)
+
+        expect(value.getVelocity()).toEqual(200)
     })
 })

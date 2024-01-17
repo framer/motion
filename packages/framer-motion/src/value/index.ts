@@ -29,6 +29,12 @@ export interface MotionValueEventCallbacks<V> {
     renderRequest: () => void
 }
 
+/**
+ * Maxoimum time between the value of two frames, beyond which we
+ * assume the velocity has since been 0.
+ */
+const MAX_VELOCITY_DELTA = 50
+
 const isFloat = (value: any): value is string => {
     return !isNaN(parseFloat(value))
 }
@@ -68,22 +74,11 @@ export class MotionValue<V = any> {
      */
     owner?: Owner
 
-    /**
-     * The current state of the `MotionValue`.
-     *
-     * @internal
-     */
     private current: V
+    private prev: V | undefined
+    private prevFrameValue: V | undefined
 
-    private currentUpdatedAt: number = 0
-
-    /**
-     * The previous state of the `MotionValue`.
-     *
-     * @internal
-     */
-    private prev: V
-
+    private updatedAt: number = 0
     private prevUpdatedAt: number = 0
 
     /**
@@ -123,7 +118,7 @@ export class MotionValue<V = any> {
      * @internal
      */
     constructor(init: V, options: MotionValueOptions = {}) {
-        this.prev = this.current = init
+        this.current = init
         this.canTrackVelocity = isFloat(this.current)
         this.owner = options.owner
     }
@@ -256,7 +251,7 @@ export class MotionValue<V = any> {
     setWithVelocity(prev: V, current: V, delta: number) {
         this.set(current)
         this.prev = prev
-        this.prevUpdatedAt = this.currentUpdatedAt - delta
+        this.prevUpdatedAt = this.updatedAt - delta
     }
 
     /**
@@ -266,21 +261,25 @@ export class MotionValue<V = any> {
     jump(v: V) {
         this.updateAndNotify(v)
         this.prev = v
-        this.prevUpdatedAt = this.currentUpdatedAt
+        this.prevUpdatedAt = this.updatedAt
+        this.prevFrameValue = undefined
         this.stop()
         if (this.stopPassiveEffect) this.stopPassiveEffect()
     }
 
     updateAndNotify = (v: V, render = true) => {
-        this.prev = this.current
-        this.prevUpdatedAt = this.currentUpdatedAt
-        this.current = v
-
-        // Update timestamp
+        // Update timestamp and, if this is a different frame than
+        // the previous update, update prev too
         const { timestamp } = frameData
-        if (this.currentUpdatedAt !== timestamp) {
-            this.currentUpdatedAt = timestamp
+        if (this.updatedAt !== timestamp) {
+            this.prevFrameValue = this.current
+            this.prevUpdatedAt = this.updatedAt
+            this.updatedAt = timestamp
         }
+
+        this.prev = this.current
+
+        this.current = v
 
         // Update update subscribers
         if (this.prev !== this.current && this.events.change) {
@@ -323,18 +322,23 @@ export class MotionValue<V = any> {
      * @public
      */
     getVelocity() {
-        if (!this.canTrackVelocity) return 0
+        if (
+            !this.canTrackVelocity ||
+            this.prevFrameValue === undefined ||
+            this.prevUpdatedAt === this.updatedAt
+        ) {
+            return 0
+        }
 
-        if (this.prevUpdatedAt === this.currentUpdatedAt) return 0
+        const delta = this.updatedAt - this.prevUpdatedAt
 
-        // TODO This will result in the wrong velocity if read before
-        // the update part of the render loop.
-        if (this.currentUpdatedAt !== frameData.timestamp) return 0
+        if (delta > MAX_VELOCITY_DELTA) return 0
 
         // Casts because of parseFloat's poor typing
         return velocityPerSecond(
-            parseFloat(this.current as any) - parseFloat(this.prev as any),
-            this.currentUpdatedAt - this.prevUpdatedAt
+            parseFloat(this.current as any) -
+                parseFloat(this.prevFrameValue as any),
+            delta
         )
     }
 

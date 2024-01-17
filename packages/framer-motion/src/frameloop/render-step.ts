@@ -1,8 +1,6 @@
 import { Step, Process } from "./types"
 
-let id = 0
 class Queue {
-    id = id++
     order: Process[] = []
     scheduled: Set<Process> = new Set()
 
