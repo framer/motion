@@ -303,7 +303,7 @@ export class MotionValue<V = any> {
         this.current = v
 
         // Update update subscribers
-        if (this.events.change) {
+        if (this.current !== this.prev && this.events.change) {
             this.events.change.notify(this.current)
         }
 

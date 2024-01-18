@@ -7,9 +7,11 @@ import { frame } from "../../frameloop"
 import { frameData } from "../../frameloop"
 import { useMotionValueEvent } from "../../utils/use-motion-value-event"
 import { mirrorEasing } from "../../easing/modifiers/mirror"
+import { time } from "../../frameloop/sync-time"
 
-const setFrameData = (interval: number, time: number) => {
-    frameData.timestamp = time
+const setFrameData = (interval: number, newTime: number) => {
+    time.set(newTime)
+    frameData.timestamp = newTime
     frameData.delta = interval
 }
 

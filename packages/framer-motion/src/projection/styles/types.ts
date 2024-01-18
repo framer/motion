@@ -13,18 +13,3 @@ export interface ScaleCorrectorDefinition {
 export interface ScaleCorrectorMap {
     [key: string]: ScaleCorrectorDefinition
 }
-
-// export type ScaleCorrection = (
-//     latest: string | number,
-//     layoutState: LayoutState,
-//     projection: TargetProjection
-// ) => string | number
-
-// export interface ScaleCorrectionDefinition {
-//     process: ScaleCorrection
-//     applyTo?: string[]
-// }
-
-// export type ScaleCorrectionDefinitionMap = {
-//     [key: string]: ScaleCorrectionDefinition
-// }

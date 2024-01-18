@@ -32,7 +32,8 @@ export function createRenderBatcher(
 
     const processStep = (stepId: StepId) => steps[stepId].process(state)
 
-    const processBatch = (timestamp = performance.now()) => {
+    const processBatch = () => {
+        const timestamp = performance.now()
         runNextFrame = false
 
         state.delta = useDefaultElapsed
