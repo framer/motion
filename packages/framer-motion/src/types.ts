@@ -5,6 +5,7 @@ import {
     CustomStyles,
     SVGPathProperties,
 } from "./motion/types"
+import { AnimationType } from "./render/utils/types"
 
 export type GenericKeyframesTarget<V> = [null, ...V[]] | V[]
 
@@ -1035,6 +1036,10 @@ export type MakeKeyframes<T> = {
  */
 export type TargetWithKeyframes = MakeKeyframes<Target>
 
+export type TransitionFrom = {
+    [K in AnimationType | "initial"]?: Transition
+}
+
 /**
  * An object that specifies values to animate to. Each value may be set either as
  * a single value, or an array of values.
@@ -1058,6 +1063,7 @@ export type TargetWithKeyframes = MakeKeyframes<Target>
 export type TargetAndTransition = TargetWithKeyframes & {
     transition?: Transition
     transitionEnd?: Target
+    transitionFrom?: TransitionFrom
 }
 
 export type TargetResolver = (

@@ -1,7 +1,7 @@
 import { transformProps } from "../../render/html/utils/transform"
 import type { AnimationTypeState } from "../../render/utils/animation-state"
 import type { VisualElement } from "../../render/VisualElement"
-import type { Target, TargetAndTransition } from "../../types"
+import type { Target, TargetAndTransition, Transition } from "../../types"
 import { optimizedAppearDataAttribute } from "../optimized-appear/data-id"
 import type { VisualElementAnimationOptions } from "./types"
 import { animateMotionValue } from "./motion-value"
@@ -48,6 +48,7 @@ export function animateTarget(
 ): AnimationPlaybackControls[] {
     let {
         transition = visualElement.getDefaultTransition(),
+        transitionFrom,
         transitionEnd,
         ...target
     } = visualElement.makeTargetAnimatable(definition)
@@ -76,10 +77,25 @@ export function animateTarget(
             continue
         }
 
+        let transitionFromType: Transition | undefined
+        if (transitionFrom) {
+            if (value.currentAnimationType) {
+                transitionFromType = transitionFrom[value.currentAnimationType]
+            } else {
+                // This is the first time the value has been animated.
+                const initialType =
+                    visualElement.getProps().initial || type === "animate"
+                        ? "initial"
+                        : "animate"
+
+                transitionFromType = transitionFrom[initialType]
+            }
+        }
+
         const valueTransition = {
             delay,
             elapsed: 0,
-            ...getValueTransition(transition || {}, key),
+            ...getValueTransition(transitionFromType || transition || {}, key),
         }
 
         /**
@@ -137,6 +153,8 @@ export function animateTarget(
                     : valueTransition
             )
         )
+
+        value.currentAnimationType = type || "animate"
 
         const animation = value.animation!
 

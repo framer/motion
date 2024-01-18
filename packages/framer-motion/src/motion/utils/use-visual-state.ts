@@ -117,7 +117,8 @@ function makeLatestValues(
             const resolved = resolveVariantFromProps(props, definition)
             if (!resolved) return
 
-            const { transitionEnd, transition, ...target } = resolved
+            const { transitionEnd, transitionFrom, transition, ...target } =
+                resolved
 
             for (const key in target) {
                 let valueTarget = target[key]
