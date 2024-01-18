@@ -1,5 +1,4 @@
 import * as React from "react"
-import { useEffect, useState, useRef } from "react"
 import {
     motion,
     useMotionValue,
@@ -27,7 +26,12 @@ export const App = () => {
     )
 
     useMotionValueEvent(xAcceleration, "change", (v: number) =>
-        console.log("x acceleration", Math.round(v))
+        console.log(
+            "x acceleration",
+            Math.round(v),
+            "at",
+            Math.round(frameData.timestamp)
+        )
     )
 
     return (
