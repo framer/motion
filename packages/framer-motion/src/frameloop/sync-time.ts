@@ -1,3 +1,4 @@
+import { MotionGlobalConfig } from "../utils/GlobalConfig"
 import { frameData } from "./frame"
 import { microtask } from "./microtask"
 
@@ -19,7 +20,9 @@ export const time = {
     now: (): number => {
         if (now === undefined) {
             time.set(
-                frameData.isProcessing ? frameData.timestamp : performance.now()
+                frameData.isProcessing || MotionGlobalConfig.useManualTiming
+                    ? frameData.timestamp
+                    : performance.now()
             )
         }
 

@@ -1,3 +1,4 @@
+import { MotionGlobalConfig } from "../utils/GlobalConfig"
 import { createRenderStep } from "./render-step"
 import { Batcher, Process, StepId, Steps, FrameData } from "./types"
 
@@ -33,7 +34,9 @@ export function createRenderBatcher(
     const processStep = (stepId: StepId) => steps[stepId].process(state)
 
     const processBatch = () => {
-        const timestamp = performance.now()
+        const timestamp = MotionGlobalConfig.useManualTiming
+            ? state.timestamp
+            : performance.now()
         runNextFrame = false
 
         state.delta = useDefaultElapsed

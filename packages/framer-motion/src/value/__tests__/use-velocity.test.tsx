@@ -3,11 +3,14 @@ import * as React from "react"
 import { useVelocity } from "../use-velocity"
 import { useMotionValue } from "../use-motion-value"
 import { animate } from "../../animation/animate"
-import { frame } from "../../frameloop"
+import { frame, steps } from "../../frameloop"
 import { frameData } from "../../frameloop"
 import { useMotionValueEvent } from "../../utils/use-motion-value-event"
 import { mirrorEasing } from "../../easing/modifiers/mirror"
 import { time } from "../../frameloop/sync-time"
+import { MotionGlobalConfig } from "../../utils/GlobalConfig"
+
+MotionGlobalConfig.useManualTiming = true
 
 const setFrameData = (interval: number, newTime: number) => {
     time.set(newTime)
@@ -29,6 +32,7 @@ const syncDriver =
                         elapsed += interval
                         setFrameData(interval, elapsed)
                         update(elapsed)
+                        steps.update.process(frameData)
                     }
                 }, 0)
             },
@@ -45,6 +49,8 @@ describe("useVelocity", () => {
 
         const promise = new Promise((resolve) => {
             const Component = () => {
+                time.set(0)
+
                 const x = useMotionValue(0)
                 const xVelocity = useVelocity(x)
                 const xAcceleration = useVelocity(xVelocity)
@@ -72,13 +78,16 @@ describe("useVelocity", () => {
                              * The more derivatives we have the more frames it'll take for
                              * all values to settle.
                              */
+                            frameData.timestamp = 110
                             frame.postRender(() => {
+                                frameData.timestamp = 120
                                 frame.postRender(() => {
+                                    frameData.timestamp = 130
                                     frame.postRender(() => {
+                                        frameData.timestamp = 140
                                         frame.postRender(() => {
-                                            frame.postRender(() => {
-                                                resolve(undefined)
-                                            })
+                                            frameData.timestamp = 150
+                                            resolve(undefined)
                                         })
                                     })
                                 })

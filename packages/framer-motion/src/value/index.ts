@@ -92,7 +92,7 @@ export class MotionValue<V = any> {
     /**
      * The last time the `MotionValue` was updated.
      */
-    private updatedAt: number
+    private updatedAt: number | undefined
 
     /**
      * The time `prevFrameValue` was updated.
@@ -269,7 +269,7 @@ export class MotionValue<V = any> {
     setWithVelocity(prev: V, current: V, delta: number) {
         this.set(current)
         this.prev = prev
-        this.prevUpdatedAt = this.updatedAt - delta
+        this.prevUpdatedAt = this.updatedAt! - delta
     }
 
     /**
@@ -348,6 +348,7 @@ export class MotionValue<V = any> {
         if (
             !this.canTrackVelocity ||
             this.prevFrameValue === undefined ||
+            this.updatedAt === undefined ||
             currentTime - this.updatedAt > MAX_VELOCITY_DELTA
         ) {
             return 0
