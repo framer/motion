@@ -2,6 +2,12 @@ import { motionValue } from "../"
 import { animate } from "../../animation/animate"
 import { frame, frameData } from "../../frameloop"
 
+async function wait(time: number) {
+    return new Promise<void>((resolve) => {
+        setTimeout(resolve, time)
+    })
+}
+
 describe("motionValue", () => {
     test("change event is type-inferred", () => {
         const value = motionValue(0)
@@ -100,9 +106,19 @@ describe("motionValue", () => {
         })
     })
 
-    test("Velocity is reported correctly when value and timestamp has changed", () => {
+    test("Velocity is calculated as zero when value is arbitrarily changed after creation", () => {
+        const value = motionValue(0)
+        frameData.isProcessing = false
+
+        value.set(100)
+
+        expect(value.getVelocity()).toEqual(0)
+    })
+
+    test("Velocity is calculated correctly when value and timestamp has changed, within frame", () => {
         const value = motionValue(0)
 
+        frameData.isProcessing = true
         frameData.timestamp = 0
         value.set(0)
 
@@ -112,9 +128,10 @@ describe("motionValue", () => {
         expect(value.getVelocity()).toEqual(100)
     })
 
-    test("Velocity is reported correctly when value has changed twice in one frame", () => {
+    test("Velocity is calculated correctly when value has changed twice in one frame", () => {
         const value = motionValue(0)
 
+        frameData.isProcessing = true
         frameData.timestamp = 0
         value.set(0)
 
@@ -128,19 +145,66 @@ describe("motionValue", () => {
         expect(value.getVelocity()).toEqual(200)
     })
 
-    test("Velocity is reported as zero when time has been too long", () => {
+    test("Velocity is calculated correctly when value hasn't been updated in a long time, frameloop active", async () => {
         const value = motionValue(0)
 
+        frameData.isProcessing = true
         frameData.timestamp = 0
         value.set(0)
 
-        frameData.timestamp = 100
+        frameData.timestamp = 10
         value.set(1)
 
-        expect(value.getVelocity()).toEqual(100)
+        frameData.timestamp = 1000
+        value.set(2)
 
+        expect(value.getVelocity()).toEqual(100)
+    })
+
+    test("Velocity is calculated correctly when value hasn't been updated in a long time, frameloop inactive", async () => {
+        const value = motionValue(0)
+
+        frameData.isProcessing = true
+        frameData.timestamp = 0
+        value.set(0)
+
+        frameData.timestamp = 10
+        value.set(1)
+        frameData.isProcessing = false
+
+        await wait(100)
+        value.set(2)
+
+        expect(value.getVelocity()).toEqual(100)
+    })
+
+    test("Velocity is calculated correctly when value hasn't been updated in a long time, double set, frameloop inactive", async () => {
+        const value = motionValue(0)
+
+        frameData.isProcessing = true
+        frameData.timestamp = 0
+        value.set(0)
+
+        frameData.isProcessing = false
+        await wait(100)
+        value.set(1)
         value.set(2)
 
         expect(value.getVelocity()).toEqual(200)
+    })
+
+    test("Velocity is calculated as zero when queried a long time after previous set", async () => {
+        const value = motionValue(0)
+
+        frameData.isProcessing = true
+        frameData.timestamp = 0
+        value.set(0)
+
+        frameData.timestamp = 10
+        value.set(1)
+
+        await wait(1000)
+
+        expect(value.getVelocity()).toEqual(0)
     })
 })

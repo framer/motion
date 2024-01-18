@@ -74,7 +74,9 @@ describe("useVelocity", () => {
                                 frame.postRender(() => {
                                     frame.postRender(() => {
                                         frame.postRender(() => {
-                                            resolve(undefined)
+                                            frame.postRender(() => {
+                                                resolve(undefined)
+                                            })
                                         })
                                     })
                                 })
