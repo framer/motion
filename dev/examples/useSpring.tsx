@@ -27,7 +27,8 @@ function AnimationExample() {
                 animate={{
                     x: [-200, 200],
                     transition: {
-                        duration: 1,
+                        duration: 0.5,
+                        ease: "linear",
                         repeat: Infinity,
                         repeatType: "reverse",
                     },
