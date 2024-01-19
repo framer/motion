@@ -5,10 +5,11 @@ import { useMotionValue } from "./use-motion-value"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { SpringOptions } from "../animation/types"
 import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
-import { AnimationPlaybackControls } from "../animation/types"
-import { animateValue } from "../animation/animators/js"
+import {
+    MainThreadAnimationControls,
+    animateValue,
+} from "../animation/animators/js"
 import { frameData } from "../frameloop"
-import { millisecondsToSeconds } from "../utils/time-conversion"
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
@@ -34,7 +35,8 @@ export function useSpring(
     config: SpringOptions = {}
 ) {
     const { isStatic } = useContext(MotionConfigContext)
-    const activeSpringAnimation = useRef<AnimationPlaybackControls | null>(null)
+    const activeSpringAnimation =
+        useRef<MainThreadAnimationControls<number> | null>(null)
     const value = useMotionValue(isMotionValue(source) ? source.get() : source)
 
     const stopAnimation = () => {
@@ -51,6 +53,14 @@ export function useSpring(
              */
             if (isStatic) return set(v)
 
+            /**
+             * If the previous animation hasn't had the chance to even render a frame, render it now.
+             */
+            const animation = activeSpringAnimation.current
+            if (animation && animation.time === 0) {
+                animation.sample(frameData.delta)
+            }
+
             stopAnimation()
 
             activeSpringAnimation.current = animateValue({
@@ -62,18 +72,6 @@ export function useSpring(
                 ...config,
                 onUpdate: set,
             })
-
-            /**
-             * If we're between frames, resync the animation to the frameloop.
-             */
-            if (!frameData.isProcessing) {
-                const delta = performance.now() - frameData.timestamp
-
-                if (delta < 30) {
-                    activeSpringAnimation.current.time =
-                        millisecondsToSeconds(delta)
-                }
-            }
 
             return value.get()
         }, stopAnimation)

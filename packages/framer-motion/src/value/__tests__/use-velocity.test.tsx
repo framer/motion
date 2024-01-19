@@ -3,13 +3,18 @@ import * as React from "react"
 import { useVelocity } from "../use-velocity"
 import { useMotionValue } from "../use-motion-value"
 import { animate } from "../../animation/animate"
-import { frame } from "../../frameloop"
+import { frame, steps } from "../../frameloop"
 import { frameData } from "../../frameloop"
 import { useMotionValueEvent } from "../../utils/use-motion-value-event"
 import { mirrorEasing } from "../../easing/modifiers/mirror"
+import { time } from "../../frameloop/sync-time"
+import { MotionGlobalConfig } from "../../utils/GlobalConfig"
 
-const setFrameData = (interval: number, time: number) => {
-    frameData.timestamp = time
+MotionGlobalConfig.useManualTiming = true
+
+const setFrameData = (interval: number, newTime: number) => {
+    time.set(newTime)
+    frameData.timestamp = newTime
     frameData.delta = interval
 }
 
@@ -27,6 +32,7 @@ const syncDriver =
                         elapsed += interval
                         setFrameData(interval, elapsed)
                         update(elapsed)
+                        steps.update.process(frameData)
                     }
                 }, 0)
             },
@@ -43,6 +49,8 @@ describe("useVelocity", () => {
 
         const promise = new Promise((resolve) => {
             const Component = () => {
+                time.set(0)
+
                 const x = useMotionValue(0)
                 const xVelocity = useVelocity(x)
                 const xAcceleration = useVelocity(xVelocity)
@@ -50,12 +58,12 @@ describe("useVelocity", () => {
                 useMotionValueEvent(x, "change", (v) =>
                     output.push(Math.round(v))
                 )
-                useMotionValueEvent(xVelocity, "change", (v) =>
+                useMotionValueEvent(xVelocity, "change", (v) => {
                     outputVelocity.push(Math.round(v))
-                )
-                useMotionValueEvent(xAcceleration, "change", (v) =>
+                })
+                useMotionValueEvent(xAcceleration, "change", (v) => {
                     outputAcceleration.push(Math.round(v))
-                )
+                })
 
                 React.useEffect(() => {
                     const animation = animate(x, 1000, {
@@ -70,14 +78,20 @@ describe("useVelocity", () => {
                              * The more derivatives we have the more frames it'll take for
                              * all values to settle.
                              */
+                            frameData.timestamp = 110
+                            steps.update.process(frameData)
                             frame.postRender(() => {
-                                setFrameData(10, 110)
+                                frameData.timestamp = 120
+                                steps.update.process(frameData)
                                 frame.postRender(() => {
-                                    setFrameData(10, 120)
+                                    frameData.timestamp = 130
+                                    steps.update.process(frameData)
                                     frame.postRender(() => {
-                                        setFrameData(10, 130)
+                                        frameData.timestamp = 140
+                                        steps.update.process(frameData)
                                         frame.postRender(() => {
-                                            setFrameData(10, 140)
+                                            frameData.timestamp = 150
+                                            steps.update.process(frameData)
                                             resolve(undefined)
                                         })
                                     })

@@ -55,6 +55,7 @@ import { animateSingleValue } from "../../animation/interfaces/single-value"
 import { clamp } from "../../utils/clamp"
 import { steps } from "../../frameloop/frame"
 import { noop } from "../../utils/noop"
+import { time } from "../../frameloop/sync-time"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -644,7 +645,7 @@ export function createProjectionNode<I>({
              * we could leave this to the following requestAnimationFrame but this seems
              * to leave a flash of incorrectly styled content.
              */
-            const now = performance.now()
+            const now = time.now()
             frameData.delta = clamp(0, 1000 / 60, now - frameData.timestamp)
             frameData.timestamp = now
             frameData.isProcessing = true

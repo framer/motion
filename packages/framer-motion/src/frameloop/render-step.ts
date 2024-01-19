@@ -104,12 +104,12 @@ export function createRenderStep(runNextFrame: () => void): Step {
                 for (let i = 0; i < numToRun; i++) {
                     const callback = thisFrame.order[i]
 
-                    callback(frameData)
-
                     if (toKeepAlive.has(callback)) {
                         step.schedule(callback)
                         runNextFrame()
                     }
+
+                    callback(frameData)
                 }
             }
 
