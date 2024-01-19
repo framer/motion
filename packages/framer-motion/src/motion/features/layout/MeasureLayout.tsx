@@ -12,6 +12,7 @@ import { correctBoxShadow } from "../../../projection/styles/scale-box-shadow"
 import { addScaleCorrector } from "../../../projection/styles/scale-correction"
 import { MotionProps } from "../../types"
 import { VisualElement } from "../../../render/VisualElement"
+import { microtask } from "../../../frameloop/microtask"
 
 interface MeasureContextProps {
     layoutGroup: LayoutGroupContextProps
@@ -107,7 +108,7 @@ class MeasureLayoutWithContext extends React.Component<MeasureProps> {
         if (projection) {
             projection.root!.didUpdate()
 
-            queueMicrotask(() => {
+            microtask.postRender(() => {
                 if (!projection.currentAnimation && projection.isLead()) {
                     this.safeToRemove()
                 }

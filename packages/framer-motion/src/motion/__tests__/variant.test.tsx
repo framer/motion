@@ -849,10 +849,14 @@ describe("animate prop as variant", () => {
 
         rerender(<Component animate="a" />)
         rerender(<Component animate="a" />)
+
+        await nextFrame()
         expect(element).toHaveStyle("opacity: 1")
 
         rerender(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
         expect(element).toHaveStyle("opacity: 0")
     })
 
@@ -925,10 +929,15 @@ describe("animate prop as variant", () => {
 
         rerender(<Component animate="a" />)
         rerender(<Component animate="a" />)
+
+        await nextFrame()
+
         expect(element).toHaveStyle("opacity: 1")
 
         rerender(<Component animate="b" />)
         rerender(<Component animate="b" />)
+
+        await nextFrame()
         expect(element).toHaveStyle("opacity: 0")
     })
 
@@ -943,22 +952,30 @@ describe("animate prop as variant", () => {
             />
         ))
 
-        const Parent = ({ isVisible }: { isVisible: boolean }) => (
-            <motion.div
-                initial={{ x: 0 }}
-                animate={isVisible ? "hidden" : "visible"}
-            >
-                <Child />
-            </motion.div>
-        )
+        const Parent = ({ isVisible }: { isVisible: boolean }) => {
+            return (
+                <motion.div
+                    initial={{ x: 0 }}
+                    animate={isVisible ? "visible" : "hidden"}
+                >
+                    <Child />
+                </motion.div>
+            )
+        }
 
         const { container, rerender } = render(<Parent isVisible={false} />)
         const element = container.firstChild?.firstChild as Element
+
         rerender(<Parent isVisible={true} />)
+
+        await nextFrame()
+
         expect(element).toHaveStyle(
             "transform: translateX(100px) translateZ(0)"
         )
         rerender(<Parent isVisible={false} />)
+
+        await nextFrame()
         expect(element).toHaveStyle("transform: none")
     })
 

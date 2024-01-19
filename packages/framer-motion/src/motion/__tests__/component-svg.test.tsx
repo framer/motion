@@ -1,6 +1,7 @@
 import { render } from "../../../jest.setup"
 import { motion, motionValue, useMotionValue, useTransform } from "../../"
 import * as React from "react"
+import { nextMicrotask } from "../../gestures/__tests__/utils"
 
 describe("SVG", () => {
     test("doesn't add translateZ", () => {
@@ -109,7 +110,7 @@ describe("SVG", () => {
         )
     })
 
-    test("animates viewBox", () => {
+    test("animates viewBox", async () => {
         const Component = () => {
             return (
                 <motion.svg
@@ -120,6 +121,7 @@ describe("SVG", () => {
             )
         }
         const { container } = render(<Component />)
+        await nextMicrotask()
         expect(container.firstChild as Element).toHaveAttribute(
             "viewBox",
             "100 100 200 200"
