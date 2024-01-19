@@ -20,6 +20,10 @@ export function useVelocity(value: MotionValue<number>): MotionValue<number> {
         const latest = value.getVelocity()
         velocity.set(latest)
 
+        /**
+         * If we still have velocity, schedule an update for the next frame
+         * to keep checking until it is zero.
+         */
         if (latest) frame.update(updateVelocity)
     }
 
