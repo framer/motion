@@ -4,8 +4,8 @@ import { motion, useMotionValue, useSpring } from "framer-motion"
 function DragExample() {
     const dragX = useMotionValue(0)
     const dragY = useMotionValue(0)
-    const x = useSpring(dragX)
-    const y = useSpring(dragY)
+    const x = useSpring(dragX, { stiffness: 300, damping: 28 })
+    const y = useSpring(dragY, { stiffness: 300, damping: 28 })
     return (
         <motion.div
             drag
