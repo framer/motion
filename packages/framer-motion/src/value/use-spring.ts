@@ -10,7 +10,6 @@ import {
     animateValue,
 } from "../animation/animators/js"
 import { frameData } from "../frameloop"
-import { millisecondsToSeconds } from "../utils/time-conversion"
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
@@ -58,14 +57,11 @@ export function useSpring(
              * If the previous animation hasn't had the chance to even render a frame, render it now.
              */
             const animation = activeSpringAnimation.current
-            // TODO Actually measure time from previous frame
             if (animation && animation.time === 0) {
                 animation.sample(frameData.delta)
             }
 
             stopAnimation()
-
-            console.log("reading value as ", value.get(), value.getVelocity())
 
             activeSpringAnimation.current = animateValue({
                 keyframes: [value.get(), v],
