@@ -1,6 +1,8 @@
 import { motionValue } from "../"
 import { animate } from "../../animation/animate"
 import { frame, frameData } from "../../frameloop"
+import { time } from "../../frameloop/sync-time"
+import { MotionGlobalConfig } from "../../utils/GlobalConfig"
 
 async function wait(time: number) {
     return new Promise<void>((resolve) => {
@@ -114,97 +116,102 @@ describe("motionValue", () => {
 
         expect(value.getVelocity()).toEqual(0)
     })
+})
 
-    test("Velocity is calculated correctly when value and timestamp has changed, within frame", () => {
-        const value = motionValue(0)
-
-        frameData.isProcessing = true
-        frameData.timestamp = 0
-        value.set(0)
-
-        frameData.timestamp = 10
-        value.set(1)
-
-        expect(value.getVelocity()).toEqual(100)
+describe("MotionValue velocity calculations", () => {
+    beforeEach(() => {
+        MotionGlobalConfig.useManualTiming = true
+    })
+    afterEach(() => {
+        MotionGlobalConfig.useManualTiming = false
     })
 
-    test("Velocity is calculated correctly when value has changed twice in one frame", () => {
+    test("Velocity is correct when value changes each animation frame", () => {
         const value = motionValue(0)
 
         frameData.isProcessing = true
-        frameData.timestamp = 0
+        time.set(0)
         value.set(0)
-
-        frameData.timestamp = 10
+        time.set(10)
         value.set(1)
-
         expect(value.getVelocity()).toEqual(100)
-
-        value.set(2)
-
-        expect(value.getVelocity()).toEqual(200)
-    })
-
-    test("Velocity is calculated correctly when value hasn't been updated in a long time, frameloop active", async () => {
-        const value = motionValue(0)
-
-        frameData.isProcessing = true
-        frameData.timestamp = 0
-        value.set(0)
-
-        frameData.timestamp = 10
-        value.set(1)
-
-        frameData.timestamp = 1000
-        value.set(2)
-
-        expect(value.getVelocity()).toEqual(100)
-    })
-
-    test("Velocity is calculated correctly when value hasn't been updated in a long time, frameloop inactive", async () => {
-        const value = motionValue(0)
-
-        frameData.isProcessing = true
-        frameData.timestamp = 0
-        value.set(0)
-
-        frameData.timestamp = 10
-        value.set(1)
         frameData.isProcessing = false
-
-        await wait(100)
-        value.set(2)
-
-        expect(value.getVelocity()).toEqual(100)
     })
 
-    test("Velocity is calculated correctly when value hasn't been updated in a long time, double set, frameloop inactive", async () => {
+    test("Velocity is correct when value changes twice within one frame", () => {
+        time.set(0)
         const value = motionValue(0)
 
         frameData.isProcessing = true
-        frameData.timestamp = 0
+
         value.set(0)
+        time.set(10)
+        value.set(1)
+        expect(value.getVelocity()).toEqual(100)
+        value.set(2)
+        expect(value.getVelocity()).toEqual(200)
 
         frameData.isProcessing = false
-        await wait(100)
-        value.set(1)
-        value.set(2)
-
-        expect(value.getVelocity()).toEqual(200)
     })
 
-    test("Velocity is calculated as zero when queried a long time after previous set", async () => {
+    test("Velocity is capped to the last estimated frame when value hasn't been updated in a long time, and is then updated", () => {
         const value = motionValue(0)
 
         frameData.isProcessing = true
-        frameData.timestamp = 0
+
         value.set(0)
-
-        frameData.timestamp = 10
+        time.set(10)
         value.set(1)
+        time.set(1000)
+        value.set(2)
 
+        expect(Math.round(value.getVelocity())).toEqual(33)
+
+        frameData.isProcessing = false
+    })
+
+    test("Velocity is capped to the last estimated frame when value hasn't been updated in a long time, and is then updated outside frameloop", async () => {
+        const value = motionValue(0)
+
+        frameData.isProcessing = true
+
+        value.set(0)
+        time.set(10)
+        value.set(1)
+        frameData.isProcessing = false
+        await wait(1000)
+        value.set(2)
+
+        expect(Math.round(value.getVelocity())).toEqual(33)
+    })
+
+    test("Velocity is capped to the last estimated frame when value hasn't been updated in a long time, and is then double updated outside frameloop", async () => {
+        const value = motionValue(0)
+
+        frameData.isProcessing = true
+
+        value.set(0)
+        time.set(10)
+        value.set(1)
+        frameData.isProcessing = false
+        await wait(1000)
+        value.set(2)
+        value.set(3)
+
+        expect(Math.round(value.getVelocity())).toEqual(67)
+    })
+
+    test("Velocity is zero when queried a long time after the previous set", async () => {
+        const value = motionValue(0)
+
+        frameData.isProcessing = true
+
+        value.set(0)
+        time.set(10)
+        value.set(1)
+        frameData.isProcessing = false
         await wait(1000)
 
-        expect(value.getVelocity()).toEqual(0)
+        expect(Math.round(value.getVelocity())).toEqual(0)
     })
 })

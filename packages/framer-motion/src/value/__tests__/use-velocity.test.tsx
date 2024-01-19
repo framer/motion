@@ -58,12 +58,12 @@ describe("useVelocity", () => {
                 useMotionValueEvent(x, "change", (v) =>
                     output.push(Math.round(v))
                 )
-                useMotionValueEvent(xVelocity, "change", (v) =>
+                useMotionValueEvent(xVelocity, "change", (v) => {
                     outputVelocity.push(Math.round(v))
-                )
-                useMotionValueEvent(xAcceleration, "change", (v) =>
+                })
+                useMotionValueEvent(xAcceleration, "change", (v) => {
                     outputAcceleration.push(Math.round(v))
-                )
+                })
 
                 React.useEffect(() => {
                     const animation = animate(x, 1000, {
@@ -79,14 +79,19 @@ describe("useVelocity", () => {
                              * all values to settle.
                              */
                             frameData.timestamp = 110
+                            steps.update.process(frameData)
                             frame.postRender(() => {
                                 frameData.timestamp = 120
+                                steps.update.process(frameData)
                                 frame.postRender(() => {
                                     frameData.timestamp = 130
+                                    steps.update.process(frameData)
                                     frame.postRender(() => {
                                         frameData.timestamp = 140
+                                        steps.update.process(frameData)
                                         frame.postRender(() => {
                                             frameData.timestamp = 150
+                                            steps.update.process(frameData)
                                             resolve(undefined)
                                         })
                                     })

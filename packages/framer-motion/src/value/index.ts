@@ -92,7 +92,7 @@ export class MotionValue<V = any> {
     /**
      * The last time the `MotionValue` was updated.
      */
-    private updatedAt: number | undefined
+    private updatedAt: number
 
     /**
      * The time `prevFrameValue` was updated.
@@ -136,9 +136,19 @@ export class MotionValue<V = any> {
      * @internal
      */
     constructor(init: V, options: MotionValueOptions = {}) {
-        this.current = init
+        this.setCurrent(init)
         this.canTrackVelocity = isFloat(this.current)
         this.owner = options.owner
+    }
+
+    setCurrent(current: V) {
+        this.current = current
+        this.updatedAt = time.now()
+    }
+
+    setPrevFrameValue(prevFrameValue: V | undefined = this.current) {
+        this.prevFrameValue = prevFrameValue
+        this.prevUpdatedAt = this.updatedAt
     }
 
     /**
@@ -269,7 +279,7 @@ export class MotionValue<V = any> {
     setWithVelocity(prev: V, current: V, delta: number) {
         this.set(current)
         this.prev = prev
-        this.prevUpdatedAt = this.updatedAt! - delta
+        this.prevUpdatedAt = this.updatedAt - delta
     }
 
     /**
@@ -293,14 +303,12 @@ export class MotionValue<V = any> {
          * to current.
          */
         if (this.updatedAt !== currentTime) {
-            this.prevFrameValue = this.current
-            this.prevUpdatedAt = this.updatedAt
-            this.updatedAt = currentTime
+            this.setPrevFrameValue()
         }
 
         this.prev = this.current
 
-        this.current = v
+        this.setCurrent(v)
 
         // Update update subscribers
         if (this.current !== this.prev && this.events.change) {
@@ -348,7 +356,6 @@ export class MotionValue<V = any> {
         if (
             !this.canTrackVelocity ||
             this.prevFrameValue === undefined ||
-            this.updatedAt === undefined ||
             currentTime - this.updatedAt > MAX_VELOCITY_DELTA
         ) {
             return 0

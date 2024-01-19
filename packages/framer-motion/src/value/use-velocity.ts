@@ -17,16 +17,15 @@ export function useVelocity(value: MotionValue<number>): MotionValue<number> {
     const velocity = useMotionValue(value.getVelocity())
 
     const updateVelocity = () => {
-        velocity.set(value.getVelocity())
+        const latest = value.getVelocity()
+        velocity.set(latest)
+
+        if (latest) frame.update(updateVelocity)
     }
 
     useMotionValueEvent(value, "change", () => {
         // Schedule an update to this value at the end of the current frame.
         frame.update(updateVelocity, false, true)
-
-        // Schedule an update for the following frame in case the tracked
-        // value doesn't update.
-        frame.update(updateVelocity)
     })
 
     return velocity
