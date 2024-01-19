@@ -30,7 +30,7 @@ export interface MotionValueEventCallbacks<V> {
 }
 
 /**
- * Maxoimum time between the value of two frames, beyond which we
+ * Maximum time between the value of two frames, beyond which we
  * assume the velocity has since been 0.
  */
 const MAX_VELOCITY_DELTA = 30
