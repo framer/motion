@@ -53,6 +53,8 @@ export function useSpring(
 
             stopAnimation()
 
+            console.log("reading value as ", value.getVelocity())
+
             activeSpringAnimation.current = animateValue({
                 keyframes: [value.get(), v],
                 velocity: value.getVelocity(),
