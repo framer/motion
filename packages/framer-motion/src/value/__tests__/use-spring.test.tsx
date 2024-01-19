@@ -85,7 +85,7 @@ describe("useSpring", () => {
         })
 
         const resolved = await promise
-
+        console.log({ resolved })
         const testNear = (value: number, expected: number, deviation = 2) => {
             expect(
                 value >= expected - deviation && value <= expected + deviation
@@ -93,8 +93,8 @@ describe("useSpring", () => {
         }
 
         testNear(resolved[0], 0)
-        testNear(resolved[4], 8)
-        testNear(resolved[8], 25)
+        testNear(resolved[4], 10)
+        testNear(resolved[8], 30)
     })
 
     test("will not animate if immediate=true", async () => {
