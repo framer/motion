@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.2] 2024-01-23
+
+### Fixed
+
+-   Fixed velocity calculations when interrupting WAAPI animations.
+
 ## [11.0.1] 2024-01-23
 
 ### Removed
