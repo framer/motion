@@ -99,7 +99,6 @@ export function createRenderStep(runNextFrame: () => void): Step {
 
             // Execute this frame
             numToRun = thisFrame.order.length
-            // console.log({ name, numToRun })
 
             if (numToRun) {
                 for (let i = 0; i < numToRun; i++) {

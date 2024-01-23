@@ -32,16 +32,10 @@ export function createRenderBatcher(
     }, {} as Steps)
 
     const processStep = (stepId: StepId) => {
-        console.log(
-            "processing step",
-            stepId,
-            allowKeepAlive ? "raf" : "microtask"
-        )
         steps[stepId].process(state)
     }
 
     const processBatch = () => {
-        if (!allowKeepAlive) console.log("process microtasks")
         const timestamp = MotionGlobalConfig.useManualTiming
             ? state.timestamp
             : performance.now()
@@ -60,7 +54,6 @@ export function createRenderBatcher(
             useDefaultElapsed = false
             scheduleNextBatch(processBatch)
         }
-        if (!allowKeepAlive) console.log("end process microtasks")
     }
 
     const wake = () => {

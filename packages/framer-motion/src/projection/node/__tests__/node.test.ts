@@ -4,7 +4,7 @@ import { IProjectionNode } from "../types"
 import { nextFrame, nextMicrotask } from "../../../gestures/__tests__/utils"
 
 describe("node", () => {
-    test.only("If a child updates layout, and parent has scale, parent resetsTransform during measurement", async () => {
+    test("If a child updates layout, and parent has scale, parent resetsTransform during measurement", async () => {
         const parent = createTestNode(undefined, {}, { scale: 2 })
 
         const parentInstance = {
@@ -60,7 +60,7 @@ describe("node", () => {
             x: { min: 0, max: 150 },
             y: { min: 0, max: 150 },
         }
-        console.log("calling did update")
+
         child.root.didUpdate()
 
         await nextFrame()
