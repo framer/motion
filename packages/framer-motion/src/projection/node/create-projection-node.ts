@@ -763,7 +763,6 @@ export function createProjectionNode<I>({
 
             const prevLayout = this.layout
             this.layout = this.measure(false)
-
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
             this.projectionDelta = undefined
@@ -1282,6 +1281,7 @@ export function createProjectionNode<I>({
                 (this.treeScale.x !== 1 || this.treeScale.y !== 1)
             ) {
                 lead.target = lead.layout.layoutBox
+                lead.targetWithTransforms = createBox()
             }
 
             const { target } = lead
