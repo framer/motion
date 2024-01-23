@@ -1,8 +1,6 @@
 import { focus, blur, render } from "../../../jest.setup"
 import * as React from "react"
 import { motion, motionValue } from "../../"
-import { transformValues } from "../../motion/__tests__/util-transform-values"
-import { frame } from "../../frameloop"
 
 describe("focus", () => {
     test("whileFocus applied", async () => {
@@ -166,43 +164,5 @@ describe("focus", () => {
         })
 
         return expect(promise).resolves.toBe(1)
-    })
-
-    test("special transform values are unapplied when focus ends", () => {
-        const promise = new Promise((resolve) => {
-            const variant = {
-                hidden: { size: 50 },
-            }
-            const ref = React.createRef<HTMLAnchorElement>()
-
-            const Component = () => (
-                <motion.a
-                    ref={ref}
-                    transformValues={transformValues}
-                    data-testid="myAnchorElement"
-                    href="#"
-                    whileFocus="hidden"
-                    variants={variant}
-                    transition={{ type: false }}
-                    style={{ size: 100 }}
-                ></motion.a>
-            )
-
-            const { container, rerender } = render(<Component />)
-            rerender(<Component />)
-
-            ref.current!.matches = () => true
-
-            focus(container, "myAnchorElement")
-
-            frame.postRender(() => {
-                blur(container, "myAnchorElement")
-                frame.postRender(() => resolve(container.firstChild as Element))
-            })
-        })
-
-        return expect(promise).resolves.toHaveStyle(
-            "width: 100px; height: 100px;"
-        )
     })
 })

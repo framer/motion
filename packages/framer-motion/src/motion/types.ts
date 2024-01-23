@@ -11,7 +11,7 @@ import {
 } from "../types"
 import { DraggableProps } from "../gestures/drag/types"
 import { LayoutProps } from "./features/layout/types"
-import { ResolvedValues, EventProps } from "../render/types"
+import { EventProps } from "../render/types"
 import {
     PanHandlers,
     TapHandlers,
@@ -333,22 +333,6 @@ export interface MotionProps
         transform: TransformProperties,
         generatedTransform: string
     ): string
-
-    /**
-     * Internal.
-     *
-     * This allows values to be transformed before being animated or set as styles.
-     *
-     * For instance, this allows custom values in Framer Library like `size` to be converted into `width` and `height`.
-     * It also allows us a chance to take a value like `Color` and convert it to an animatable color string.
-     *
-     * A few structural typing changes need making before this can be a public property:
-     * - Allow `Target` values to be appended by user-defined types (delete `CustomStyles` - does `size` throw a type error?)
-     * - Extract `CustomValueType` as a separate user-defined type (delete `CustomValueType` and animate a `Color` - does this throw a type error?).
-     *
-     * @param values -
-     */
-    transformValues?<V extends ResolvedValues>(values: V): V
 
     children?: React.ReactNode | MotionValue<number> | MotionValue<string>
 }

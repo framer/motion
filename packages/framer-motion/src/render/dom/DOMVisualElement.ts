@@ -38,20 +38,9 @@ export abstract class DOMVisualElement<
 
     makeTargetAnimatableFromInstance(
         { transition, transitionEnd, ...target }: TargetAndTransition,
-        { transformValues }: MotionProps,
         isMounted: boolean
     ): TargetAndTransition {
-        let origin = getOrigin(target as any, transition || {}, this)
-
-        /**
-         * If Framer has provided a function to convert `Color` etc value types, convert them
-         */
-        if (transformValues) {
-            if (transitionEnd)
-                transitionEnd = transformValues(transitionEnd as any)
-            if (target) target = transformValues(target as any)
-            if (origin) origin = transformValues(origin as any)
-        }
+        const origin = getOrigin(target as any, transition || {}, this)
 
         if (isMounted) {
             checkTargetForNewValues(this, target, origin as any)

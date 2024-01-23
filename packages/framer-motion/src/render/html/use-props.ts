@@ -53,7 +53,7 @@ function useStyle(
 
     Object.assign(style, useInitialMotionValues(props, visualState, isStatic))
 
-    return props.transformValues ? props.transformValues(style) : style
+    return style
 }
 
 export function useHTMLProps(
