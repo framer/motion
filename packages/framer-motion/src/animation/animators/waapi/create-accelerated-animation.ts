@@ -227,15 +227,6 @@ export function createAcceleratedAnimation(
                     autoplay: false,
                 })
 
-                console.log(
-                    "setting with velocity",
-                    "currentTime",
-                    currentTime,
-                    "value",
-                    sampleAnimation.sample(currentTime - sampleDelta).value,
-                    options
-                )
-
                 value.setWithVelocity(
                     sampleAnimation.sample(currentTime - sampleDelta).value,
                     sampleAnimation.sample(currentTime).value,
