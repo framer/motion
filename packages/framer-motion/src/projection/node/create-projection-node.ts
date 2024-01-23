@@ -1281,7 +1281,7 @@ export function createProjectionNode<I>({
                 (this.treeScale.x !== 1 || this.treeScale.y !== 1)
             ) {
                 lead.target = lead.layout.layoutBox
-                lead.targetWithTransforms = createBox()
+                // lead.targetWithTransforms = createBox()
             }
 
             const { target } = lead
