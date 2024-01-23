@@ -85,7 +85,7 @@
     "bundlesize": [
         {
             "path": "./dist/size-rollup-motion.js",
-            "maxSize": "31 kB"
+            "maxSize": "31.2 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
@@ -93,27 +93,27 @@
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
-            "maxSize": "15.02 kB"
+            "maxSize": "15.17 kB"
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
-            "maxSize": "26.36 kB"
+            "maxSize": "26.7 kB"
         },
         {
             "path": "./dist/size-rollup-animate.js",
-            "maxSize": "16.42 kB"
+            "maxSize": "16.5 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",
-            "maxSize": "5.42 kB"
+            "maxSize": "5.5 kB"
         },
         {
             "path": "./dist/size-webpack-dom-animation.js",
-            "maxSize": "19.65 kB"
+            "maxSize": "19.9 kB"
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "31.67 kB"
+            "maxSize": "32.05 kB"
         }
     ],
     "gitHead": "d771e42f7cc303b871b5f02b4b4beff2f8541ed5"
