@@ -1,6 +1,8 @@
 {
-    "version": "10.18.0-alpha.1",
-    "packages": ["packages/*"],
+    "version": "11.0.0",
+    "packages": [
+        "packages/*"
+    ],
     "npmClient": "yarn",
     "useWorkspaces": true
 }
