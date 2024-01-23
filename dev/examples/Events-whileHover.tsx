@@ -7,17 +7,17 @@ export function App() {
         <motion.div
             whileHover={{
                 opacity: 0.5,
-                transition: {
-                    type: "spring",
-                    mass: 0.5,
-                    damping: 10,
-                    stiffness: 20,
-                    restDelta: 0.00001,
-                    restSpeed: 0.00001,
-                },
             }}
             onClick={() => setScale(scale + 1)}
             style={{ width: 100, height: 100, background: "white" }}
+            transition={{
+                type: "spring",
+                mass: 1,
+                damping: 10,
+                stiffness: 60,
+                restDelta: 0.00001,
+                restSpeed: 0.00001,
+            }}
         />
     )
 }
