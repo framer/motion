@@ -68,8 +68,6 @@ export function createRenderBatcher(
     const schedule = stepsOrder.reduce((acc, key) => {
         const step = steps[key]
         acc[key] = (process: Process, keepAlive = false, immediate = false) => {
-            if (!allowKeepAlive) console.log("schedule", { runNextFrame, key })
-
             if (!runNextFrame) wake()
             return step.schedule(process, keepAlive, immediate)
         }
