@@ -278,7 +278,8 @@ export class MotionValue<V = any> {
 
     setWithVelocity(prev: V, current: V, delta: number) {
         this.set(current)
-        this.prev = prev
+        this.prev = undefined
+        this.prevFrameValue = prev
         this.prevUpdatedAt = this.updatedAt - delta
     }
 
