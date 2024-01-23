@@ -1,6 +1,5 @@
 import { MotionGlobalConfig } from "../utils/GlobalConfig"
 import { frameData } from "./frame"
-import { microtask } from "./microtask"
 
 let now: number | undefined
 
@@ -30,6 +29,6 @@ export const time = {
     },
     set: (newTime: number) => {
         now = newTime
-        microtask.postRender(clearTime)
+        queueMicrotask(clearTime)
     },
 }

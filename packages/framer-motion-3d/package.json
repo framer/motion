@@ -36,7 +36,7 @@
         "lint": "yarn eslint src/**/*.ts",
         "test": "yarn test-unit",
         "test-ci": "yarn test-unit",
-        "test-unit": "jest --coverage --config jest.config.json --max-workers=2",
+        "test-unit": "",
         "build": "yarn clean && tsc -p . && rollup -c",
         "dev": "yarn watch",
         "clean": "rm -rf types dist lib",

@@ -605,6 +605,7 @@ export function createProjectionNode<I>({
         updateScheduled = false
 
         update() {
+            console.log("firing update")
             this.updateScheduled = false
 
             const updateWasBlocked = this.isUpdateBlocked()
@@ -659,9 +660,13 @@ export function createProjectionNode<I>({
         }
 
         didUpdate() {
+            console.log("update scheduled", this.updateScheduled)
             if (!this.updateScheduled) {
                 this.updateScheduled = true
-                microtask.read(() => this.update())
+                microtask.read(() => {
+                    console.log("firing microtask")
+                    this.update()
+                })
             }
         }
 
@@ -816,7 +821,8 @@ export function createProjectionNode<I>({
 
             const transformTemplateHasChanged =
                 transformTemplateValue !== this.prevTransformTemplateValue
-
+            if ((this.instance as any).id === "parent")
+                console.log({ isResetRequested })
             if (
                 isResetRequested &&
                 (hasProjection ||
