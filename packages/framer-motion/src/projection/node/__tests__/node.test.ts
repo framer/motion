@@ -8,7 +8,7 @@ async function nextFrame() {
 }
 
 describe("node", () => {
-    test("If a child updates layout, and parent has scale, parent resetsTransform during measurement", async () => {
+    test.only("If a child updates layout, and parent has scale, parent resetsTransform during measurement", async () => {
         const parent = createTestNode(undefined, {}, { scale: 2 })
 
         const parentInstance = {
