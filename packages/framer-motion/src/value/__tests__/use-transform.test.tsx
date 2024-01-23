@@ -4,6 +4,7 @@ import { frame, motion } from "../../"
 import { useMotionValue } from "../use-motion-value"
 import { useTransform } from "../use-transform"
 import { MotionValue, motionValue } from ".."
+import { nextFrame, nextMicrotask } from "../../gestures/__tests__/utils"
 
 class Custom {
     value: number = 0
@@ -109,6 +110,9 @@ describe("as input/output range", () => {
 
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
+
         expect(container.firstChild).toHaveStyle("opacity: 0.1")
     })
 
@@ -123,12 +127,16 @@ describe("as input/output range", () => {
 
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextMicrotask()
         expect(container.firstChild).toHaveStyle("opacity: 0.2")
         rerender(<Component b={50} />)
         rerender(<Component b={50} />)
+        await nextMicrotask()
         expect(container.firstChild).toHaveStyle("opacity: 0.4")
         rerender(<Component b={50} d={0.5} />)
         rerender(<Component b={50} d={0.5} />)
+        await nextMicrotask()
         expect(container.firstChild).toHaveStyle("opacity: 0.2")
         x.set(40)
 
@@ -158,6 +166,8 @@ describe("as input/output range", () => {
 
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
+        await nextFrame()
+
         expect(container.firstChild).toHaveStyle(
             "transform: translateX(20px) translateY(120px) translateZ(0)"
         )
@@ -187,11 +197,14 @@ test("can be re-pointed to another `MotionValue`", async () => {
 
     const { container, rerender } = render(<Component target={a} />)
     rerender(<Component target={b} />)
+
+    await nextMicrotask()
     expect(container.firstChild as Element).toHaveStyle(
         "transform: translateX(4px) translateZ(0)"
     )
 
     rerender(<Component target={a} />)
+    await nextMicrotask()
     expect(container.firstChild as Element).toHaveStyle(
         "transform: translateX(2px) translateZ(0)"
     )

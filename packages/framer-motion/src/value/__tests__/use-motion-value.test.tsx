@@ -3,6 +3,7 @@ import * as React from "react"
 import { motion } from "../../"
 import { useMotionValue } from "../use-motion-value"
 import { motionValue, MotionValue } from ".."
+import { nextMicrotask } from "../../gestures/__tests__/utils"
 
 describe("useMotionValue", () => {
     test("sets initial value", async () => {
@@ -41,7 +42,11 @@ describe("useMotionValue", () => {
 
         const { container, rerender } = render(<Component x={a} />)
         expect(container.firstChild).toHaveStyle("transform: none")
+
         rerender(<Component x={b} />)
+
+        await nextMicrotask()
+
         expect(container.firstChild).toHaveStyle(
             "transform: translateX(5px) translateZ(0)"
         )

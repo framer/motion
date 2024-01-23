@@ -1,6 +1,7 @@
 import { render } from "../../../jest.setup"
 import { motion, MotionConfig, useMotionValue } from "../.."
 import * as React from "react"
+import { nextMicrotask } from "../../gestures/__tests__/utils"
 
 describe("style prop", () => {
     test("should remove non-set styles", () => {
@@ -23,7 +24,7 @@ describe("style prop", () => {
         expect(getByTestId("child")).not.toHaveStyle("position: absolute")
     })
 
-    test("should update transforms when passed a new value", () => {
+    test("should update transforms when passed a new value", async () => {
         const Component = ({ x = 0 }) => {
             return <motion.div style={{ x }} />
         }
@@ -34,11 +35,15 @@ describe("style prop", () => {
 
         rerender(<Component x={1} />)
 
+        await nextMicrotask()
+
         expect(container.firstChild as Element).toHaveStyle(
             "transform: translateX(1px) translateZ(0)"
         )
 
         rerender(<Component x={0} />)
+
+        await nextMicrotask()
 
         expect(container.firstChild as Element).toHaveStyle("transform: none")
     })
@@ -91,11 +96,15 @@ describe("style prop", () => {
 
         rerender(<Component useX />)
 
+        await nextMicrotask()
+
         expect(container.firstChild as Element).toHaveStyle(
             "transform: translateX(1px) translateY(0px) translateZ(0px)"
         )
 
         rerender(<Component />)
+
+        await nextMicrotask()
 
         expect(container.firstChild as Element).toHaveStyle(
             "transform: translateX(0px) translateY(2px) translateZ(3px)"
@@ -124,11 +133,15 @@ describe("style prop", () => {
 
         rerender(<Component />)
 
+        await nextMicrotask()
+
         expect(container.firstChild as Element).toHaveStyle(
             "background-color: rgb(0, 0, 0)"
         )
 
         rerender(<Component useBackgroundColor />)
+
+        await nextMicrotask()
 
         expect(container.firstChild as Element).toHaveStyle(
             "background-color: rgb(255, 255, 255)"

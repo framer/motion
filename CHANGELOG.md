@@ -9,6 +9,7 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Changed
 
 -   Replaced velocity-check jobs in favour of passive detection.
+-   Post-commit render moved to a microtask.
 
 ## [10.18.0] 2024-01-10
 

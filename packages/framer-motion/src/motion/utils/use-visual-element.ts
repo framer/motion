@@ -10,6 +10,7 @@ import { LazyContext } from "../../context/LazyContext"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import type { VisualElement } from "../../render/VisualElement"
 import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/data-id"
+import { microtask } from "../../frameloop/microtask"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -59,7 +60,7 @@ export function useVisualElement<Instance, RenderState>(
     useIsomorphicLayoutEffect(() => {
         if (!visualElement) return
 
-        visualElement.render()
+        microtask.postRender(visualElement.render)
 
         /**
          * Ideally this function would always run in a useEffect.

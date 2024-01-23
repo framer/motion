@@ -31,7 +31,9 @@ export function createRenderBatcher(
         return acc
     }, {} as Steps)
 
-    const processStep = (stepId: StepId) => steps[stepId].process(state)
+    const processStep = (stepId: StepId) => {
+        steps[stepId].process(state)
+    }
 
     const processBatch = () => {
         const timestamp = MotionGlobalConfig.useManualTiming

@@ -1,11 +1,7 @@
 import { createTestNode } from "./TestProjectionNode"
 import { propagateDirtyNodes, cleanDirtyNodes } from "../create-projection-node"
 import { IProjectionNode } from "../types"
-import { frame } from "../../../frameloop"
-
-async function nextFrame() {
-    return new Promise((resolve) => frame.postRender(resolve))
-}
+import { nextFrame, nextMicrotask } from "../../../gestures/__tests__/utils"
 
 describe("node", () => {
     test("If a child updates layout, and parent has scale, parent resetsTransform during measurement", async () => {
@@ -68,6 +64,7 @@ describe("node", () => {
         child.root.didUpdate()
 
         await nextFrame()
+        await nextMicrotask()
 
         expect(parentInstance.resetTransform).toBeCalledTimes(2)
         expect(childInstance.resetTransform).toBeCalledTimes(0)
