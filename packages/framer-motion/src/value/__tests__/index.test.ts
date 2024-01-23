@@ -214,4 +214,11 @@ describe("MotionValue velocity calculations", () => {
 
         expect(Math.round(value.getVelocity())).toEqual(0)
     })
+
+    test("Velocity is correctly calculated after being set with setWithVelocity", async () => {
+        const value = motionValue(0)
+        value.set(100)
+        value.setWithVelocity(200, 100, 10)
+        expect(Math.round(value.getVelocity())).toBe(-10000)
+    })
 })
