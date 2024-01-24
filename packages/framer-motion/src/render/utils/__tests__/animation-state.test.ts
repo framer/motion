@@ -30,15 +30,10 @@ function createTest(
         element: element,
         state: {
             ...element.animationState,
-            update(
-                newProps: any,
-                options: any,
-                type: any,
-                animateChanges = true
-            ): any {
+            update(newProps: any, type: any, animateChanges = true): any {
                 element.update(newProps, null)
                 return animateChanges === true
-                    ? element.animationState?.animateChanges(options, type)
+                    ? element.animationState?.animateChanges(type)
                     : undefined
             },
         },

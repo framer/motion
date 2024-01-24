@@ -1,3 +1,4 @@
+import { nextFrame } from "../../gestures/__tests__/utils"
 import { animate } from "../animate"
 import { defaultOptions } from "../animators/waapi/__tests__/setup"
 import { stagger } from "../utils/stagger"
@@ -11,6 +12,8 @@ describe("animate() with WAAPI", () => {
             { opacity: [0, 1], transform: ["scale(0)", "scale(1)"] },
             { duration: 1, transform: { duration: 2 } }
         )
+
+        await nextFrame()
 
         expect(a.animate).toBeCalledWith(
             { opacity: [0, 1], offset: undefined },
@@ -65,6 +68,8 @@ describe("animate() with WAAPI", () => {
 
         animate(a, { opacity: [0.2, 0.5] }, { ease: "easeIn" })
 
+        await nextFrame()
+
         expect(a.animate).toBeCalledWith(
             { opacity: [0.2, 0.5], offset: undefined },
             {
@@ -80,6 +85,8 @@ describe("animate() with WAAPI", () => {
         const b = document.createElement("div")
 
         animate(b, { opacity: [0.2, 0.5] }, { ease: ["easeIn"] })
+
+        await nextFrame()
 
         expect(b.animate).toBeCalledWith(
             { opacity: [0.2, 0.5], offset: undefined, easing: ["ease-in"] },
@@ -100,6 +107,8 @@ describe("animate() with WAAPI", () => {
             { opacity: [0.2, 0.5, 1] },
             { times: [0.2, 0.3, 1], ease: [[0, 1, 2, 3], "linear"] }
         )
+
+        await nextFrame()
 
         expect(c.animate).toBeCalledWith(
             {
@@ -138,6 +147,8 @@ describe("animate() with WAAPI", () => {
                 { duration: 1, transform: { duration: 2 } },
             ],
         ])
+
+        await nextFrame()
 
         expect(a.animate).toBeCalledWith(
             {
