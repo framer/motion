@@ -13,6 +13,10 @@ import {
 } from "../../../utils/time-conversion"
 import { memo } from "../../../utils/memo"
 import { noop } from "../../../utils/noop"
+import {
+    ResolvedKeyframes,
+    flushKeyframeResolvers,
+} from "../../../render/utils/KeyframesResolver"
 
 const supportsWaapi = memo(() =>
     Object.hasOwnProperty.call(Element.prototype, "animate")
@@ -52,7 +56,13 @@ const requiresPregeneratedKeyframes = (
 export function createAcceleratedAnimation(
     value: MotionValue,
     valueName: string,
-    { onUpdate, onComplete, ...options }: ValueAnimationOptions
+    {
+        onUpdate,
+        onComplete,
+        visualElement,
+        name,
+        ...options
+    }: ValueAnimationOptions
 ): AnimationPlaybackControls | false {
     const canAccelerateAnimation =
         supportsWaapi() &&
@@ -91,60 +101,88 @@ export function createAcceleratedAnimation(
     // Create the first finished promise
     updateFinishedPromise()
 
-    let { keyframes, duration = 300, ease, times } = options
+    let {
+        keyframes: unresolvedKeyframes,
+        duration = 300,
+        ease,
+        times,
+    } = options
 
-    /**
-     * If this animation needs pre-generated keyframes then generate.
-     */
-    if (requiresPregeneratedKeyframes(valueName, options)) {
-        const sampleAnimation = animateValue({
-            ...options,
-            repeat: 0,
-            delay: 0,
-        })
-        let state = { done: false, value: keyframes[0] }
-        const pregeneratedKeyframes: number[] = []
+    let animation: Animation | undefined
+    const createWaapiAnimation = (keyframes: ResolvedKeyframes<any>) => {
+        /**
+         * If this animation needs pre-generated keyframes then generate.
+         */
+        if (requiresPregeneratedKeyframes(valueName, options)) {
+            const sampleAnimation = animateValue({
+                ...options,
+                repeat: 0,
+                delay: 0,
+            })
+            let state = { done: false, value: keyframes[0] }
+            const pregeneratedKeyframes: number[] = []
+
+            /**
+             * Bail after 20 seconds of pre-generated keyframes as it's likely
+             * we're heading for an infinite loop.
+             */
+            let t = 0
+            while (!state.done && t < maxDuration) {
+                state = sampleAnimation.sample(t)
+                pregeneratedKeyframes.push(state.value)
+                t += sampleDelta
+            }
+
+            times = undefined
+            keyframes = pregeneratedKeyframes
+            duration = t - sampleDelta
+            ease = "linear"
+        }
+
+        animation = animateStyle(
+            (value.owner as VisualElement<HTMLElement>).current!,
+            valueName,
+            keyframes,
+            {
+                ...options,
+                duration,
+                /**
+                 * This function is currently not called if ease is provided
+                 * as a function so the cast is safe.
+                 *
+                 * However it would be possible for a future refinement to port
+                 * in easing pregeneration from Motion One for browsers that
+                 * support the upcoming `linear()` easing function.
+                 */
+                ease: ease as EasingDefinition,
+                times,
+            }
+        )
 
         /**
-         * Bail after 20 seconds of pre-generated keyframes as it's likely
-         * we're heading for an infinite loop.
+         * Prefer the `onfinish` prop as it's more widely supported than
+         * the `finished` promise.
+         *
+         * Here, we synchronously set the provided MotionValue to the end
+         * keyframe. If we didn't, when the WAAPI animation is finished it would
+         * be removed from the element which would then revert to its old styles.
          */
-        let t = 0
-        while (!state.done && t < maxDuration) {
-            state = sampleAnimation.sample(t)
-            pregeneratedKeyframes.push(state.value)
-            t += sampleDelta
+        animation.onfinish = () => {
+            if (pendingCancel) return
+            value.set(getFinalKeyframe(keyframes, options))
+            onComplete && onComplete()
+            safeCancel()
         }
-
-        times = undefined
-        keyframes = pregeneratedKeyframes
-        duration = t - sampleDelta
-        ease = "linear"
     }
-
-    const animation = animateStyle(
-        (value.owner as VisualElement<HTMLElement>).current!,
-        valueName,
-        keyframes,
-        {
-            ...options,
-            duration,
-            /**
-             * This function is currently not called if ease is provided
-             * as a function so the cast is safe.
-             *
-             * However it would be possible for a future refinement to port
-             * in easing pregeneration from Motion One for browsers that
-             * support the upcoming `linear()` easing function.
-             */
-            ease: ease as EasingDefinition,
-            times,
-        }
-    )
 
     const cancelAnimation = () => {
         pendingCancel = false
-        animation.cancel()
+
+        if (animation) {
+            animation.cancel()
+        } else {
+            resolver.cancel()
+        }
     }
 
     const safeCancel = () => {
@@ -154,20 +192,11 @@ export function createAcceleratedAnimation(
         updateFinishedPromise()
     }
 
-    /**
-     * Prefer the `onfinish` prop as it's more widely supported than
-     * the `finished` promise.
-     *
-     * Here, we synchronously set the provided MotionValue to the end
-     * keyframe. If we didn't, when the WAAPI animation is finished it would
-     * be removed from the element which would then revert to its old styles.
-     */
-    animation.onfinish = () => {
-        if (pendingCancel) return
-        value.set(getFinalKeyframe(keyframes, options))
-        onComplete && onComplete()
-        safeCancel()
-    }
+    const resolver = visualElement!.resolveKeyframes(
+        name!,
+        unresolvedKeyframes,
+        createWaapiAnimation
+    )
 
     /**
      * Animation interrupt callback.
@@ -177,38 +206,51 @@ export function createAcceleratedAnimation(
             return currentFinishedPromise.then(resolve, reject)
         },
         attachTimeline(timeline: any) {
-            animation.timeline = timeline
-            animation.onfinish = null
+            if (!animation) flushKeyframeResolvers()
+            animation!.timeline = timeline
+            animation!.onfinish = null
             return noop<void>
         },
         get time() {
-            return millisecondsToSeconds(animation.currentTime || 0)
+            if (!animation) flushKeyframeResolvers()
+            return millisecondsToSeconds(animation!.currentTime || 0)
         },
         set time(newTime: number) {
-            animation.currentTime = secondsToMilliseconds(newTime)
+            if (!animation) flushKeyframeResolvers()
+            animation!.currentTime = secondsToMilliseconds(newTime)
         },
         get speed() {
-            return animation.playbackRate
+            if (!animation) flushKeyframeResolvers()
+            return animation!.playbackRate
         },
         set speed(newSpeed: number) {
-            animation.playbackRate = newSpeed
+            if (!animation) flushKeyframeResolvers()
+            animation!.playbackRate = newSpeed
         },
         get duration() {
+            // TODO allow async
             return millisecondsToSeconds(duration)
         },
         play: () => {
+            if (!animation) flushKeyframeResolvers()
             if (hasStopped) return
-            animation.play()
+            animation!.play()
 
             /**
              * Cancel any pending cancel tasks
              */
             cancelFrame(cancelAnimation)
         },
-        pause: () => animation.pause(),
+        // TODO allow async
+        pause: () => {
+            if (!animation) flushKeyframeResolvers()
+            animation!.pause()
+        },
         stop: () => {
+            if (!animation) flushKeyframeResolvers()
+
             hasStopped = true
-            if (animation.playState === "idle") return
+            if (animation!.playState === "idle") return
 
             /**
              * WAAPI doesn't natively have any interruption capabilities.
@@ -218,7 +260,7 @@ export function createAcceleratedAnimation(
              * its current value, "previous" value, and therefore allow
              * Motion to calculate velocity for any subsequent animation.
              */
-            const { currentTime } = animation
+            const { currentTime } = animation!
 
             if (currentTime) {
                 const sampleAnimation = animateValue({
@@ -236,7 +278,8 @@ export function createAcceleratedAnimation(
         },
         complete: () => {
             if (pendingCancel) return
-            animation.finish()
+            if (!animation) flushKeyframeResolvers()
+            animation!.finish()
         },
         cancel: safeCancel,
     }

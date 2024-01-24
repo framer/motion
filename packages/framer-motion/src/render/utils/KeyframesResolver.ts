@@ -1,4 +1,4 @@
-import { frame } from "../../frameloop"
+import { cancelFrame, frame } from "../../frameloop"
 import type { VisualElement } from "../VisualElement"
 
 export type UnresolvedKeyframes<T extends string | number> = Array<T | null>
@@ -45,6 +45,14 @@ function readAllKeyframes() {
     })
 
     frame.resolveKeyframes(measureAllKeyframes)
+}
+
+export function flushKeyframeResolvers() {
+    readAllKeyframes()
+    measureAllKeyframes()
+
+    cancelFrame(readAllKeyframes)
+    cancelFrame(measureAllKeyframes)
 }
 
 export class KeyframeResolver<T extends string | number = any, E = any> {
@@ -106,8 +114,6 @@ export class KeyframeResolver<T extends string | number = any, E = any> {
                 }
             }
         }
-
-        console.log(unresolvedKeyframes)
     }
 
     unsetTransforms() {}
@@ -117,6 +123,10 @@ export class KeyframeResolver<T extends string | number = any, E = any> {
 
     complete() {
         this.onComplete(this.unresolvedKeyframes as ResolvedKeyframes<T>)
+        toResolve.delete(this)
+    }
+
+    cancel() {
         toResolve.delete(this)
     }
 }
