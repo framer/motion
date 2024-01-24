@@ -8,7 +8,7 @@ import {
 } from "../../"
 import * as React from "react"
 import { createRef } from "react"
-import { nextFrame, nextMicrotask } from "../../gestures/__tests__/utils"
+import { nextFrame } from "../../gestures/__tests__/utils"
 
 describe("animate prop as object", () => {
     test("animates to set prop", async () => {
@@ -266,7 +266,7 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toHaveStyle("font-weight: 100")
     })
     test("doesn't animate no-op values", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             let isAnimating = false
             const Component = () => (
                 <motion.div
@@ -287,15 +287,16 @@ describe("animate prop as object", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
 
-            frame.postRender(() => {
-                frame.postRender(() => resolve(isAnimating))
-            })
+            await nextFrame()
+            await nextFrame()
+
+            resolve(isAnimating)
         })
 
         return expect(promise).resolves.toBe(false)
     })
     test("doesn't animate no-op keyframes", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             let isAnimating = false
             const Component = () => (
                 <motion.div
@@ -316,14 +317,15 @@ describe("animate prop as object", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
 
-            frame.postRender(() => {
-                frame.postRender(() => resolve(isAnimating))
-            })
+            await nextFrame()
+            await nextFrame()
+
+            resolve(isAnimating)
         })
 
         return expect(promise).resolves.toBe(false)
     })
-    test("doe animate different keyframes", async () => {
+    test("does animate different keyframes", async () => {
         const promise = new Promise((resolve) => {
             let isAnimating = false
             const Component = () => (
@@ -381,13 +383,13 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toBe(true)
     })
     test("doesn't animate zIndex", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const Component = () => <motion.div animate={{ zIndex: 100 }} />
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
-            requestAnimationFrame(() =>
-                resolve(container.firstChild as Element)
-            )
+
+            await nextFrame()
+            resolve(container.firstChild as Element)
         })
         return expect(promise).resolves.toHaveStyle("z-index: 100")
     })
@@ -414,7 +416,7 @@ describe("animate prop as object", () => {
             rerender(<motion.div {...props} animate={{}} />)
             rerender(<motion.div {...props} animate={{}} />)
 
-            await nextMicrotask()
+            await nextFrame()
 
             expect(ref.current).toHaveStyle("opacity: 0")
 
@@ -456,7 +458,7 @@ describe("animate prop as object", () => {
                 />
             )
 
-            await nextMicrotask()
+            await nextFrame()
 
             expect(ref.current).toHaveStyle("opacity: 0.5")
 
@@ -774,10 +776,11 @@ describe("animate prop as object", () => {
             <Component animate={{ x: 100 }} />
         )
         rerender(<Component animate={{ x: 100 }} />)
+
         rerender(<Component animate={{ y: 100 }} />)
         rerender(<Component animate={{ y: 100 }} />)
 
-        await nextMicrotask()
+        await nextFrame()
 
         return expect(container.firstChild as Element).toHaveStyle(
             "transform: translateX(0px) translateY(100px) translateZ(0)"
@@ -805,11 +808,17 @@ describe("animate prop as object", () => {
 
     test("animates previously unseen CSS variables", async () => {
         const promise = new Promise<string>((resolve) => {
+            let latestColor = ""
             const Component = () => (
                 <motion.div
                     style={{ "--foo": "#fff" } as any}
                     animate={{ "--foo": "#000" } as any}
-                    onUpdate={(latest) => resolve(latest["--foo"] as string)}
+                    onUpdate={(latest) => {
+                        latestColor = latest["--foo"] as string
+                    }}
+                    onAnimationComplete={() => {
+                        resolve(latestColor)
+                    }}
                     transition={{ type: false }}
                 />
             )
@@ -817,10 +826,10 @@ describe("animate prop as object", () => {
             rerender(<Component />)
         })
 
-        return expect(promise).resolves.toBe("#000")
+        return expect(promise).resolves.toBe("rgba(0, 0, 0, 1)")
     })
 
-    test.only("forces an animation to fallback if has been set to `null`", async () => {
+    test("forces an animation to fallback if has been set to `null`", async () => {
         const promise = new Promise(async (resolve) => {
             const complete = () => resolve(true)
             const Component = ({ animate, onAnimationComplete }: any) => (

@@ -15,7 +15,14 @@ import { calcGeneratorDuration } from "../../generators/utils/calc-duration"
 import { invariant } from "../../../utils/errors"
 import { mix } from "../../../utils/mix"
 import { pipe } from "../../../utils/pipe"
-import { ResolvedKeyframes } from "../../../render/utils/KeyframesResolver"
+import {
+    KeyframeResolver,
+    OnKeyframesResolved,
+    ResolvedKeyframes,
+} from "../../../render/utils/KeyframesResolver"
+import { instantAnimationState } from "../../../utils/use-instant-transition-state"
+import { getFinalKeyframe } from "../waapi/utils/get-final-keyframe"
+import { canSkipAnimation } from "../utils/can-skip"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -36,6 +43,15 @@ export interface MainThreadAnimationControls<V>
 
 const percentToProgress = (percent: number) => percent / 100
 
+function defaultResolveKeyframes<V extends string | number>(
+    keyframes: V[],
+    onComplete: OnKeyframesResolved<V>,
+    name?: string,
+    motionValue?: any
+) {
+    return new KeyframeResolver(keyframes, onComplete, name, motionValue)
+}
+
 /**
  * Animate a single value on the main thread.
  *
@@ -44,8 +60,10 @@ const percentToProgress = (percent: number) => percent / 100
  * between the two.
  */
 export function animateValue<V extends string | number = number>({
-    name,
     keyframes: unresolvedKeyframes,
+    name,
+    motionValue,
+    resolveKeyframes = defaultResolveKeyframes,
     autoplay = true,
     delay = 0,
     driver = frameloopDriver,
@@ -57,7 +75,6 @@ export function animateValue<V extends string | number = number>({
     onStop,
     onComplete,
     onUpdate,
-    visualElement,
     ...options
 }: ValueAnimationOptions<V>): MainThreadAnimationControls<V> {
     let playState: AnimationPlayState = "idle"
@@ -95,11 +112,40 @@ export function animateValue<V extends string | number = number>({
     // Create the first finished promise
     updateFinishedPromise()
 
+    const finish = () => {
+        playState = "finished"
+        onComplete && onComplete()
+        stopAnimationDriver()
+        resolveFinishedPromise()
+    }
+
     let animationDriver: DriverControls | undefined
 
     let initialKeyframe: V
     const createGenerator = (keyframes: ResolvedKeyframes<any>) => {
-        // resolvedKeyframes = keyframes
+        if (
+            canSkipAnimation(
+                keyframes,
+                name,
+                motionValue,
+                type,
+                options.isHandoff,
+                options.velocity
+            )
+        ) {
+            if (instantAnimationState.current || !delay) {
+                if (onUpdate) {
+                    onUpdate(
+                        getFinalKeyframe(keyframes, { repeat, repeatType })
+                    )
+                }
+                finish()
+                return
+            } else {
+                options.duration = 0
+            }
+        }
+
         initialKeyframe = keyframes[0]
         const generatorFactory = types[type] || keyframesGeneratorFactory
 
@@ -280,6 +326,13 @@ export function animateValue<V extends string | number = number>({
         return state
     }
 
+    const keyframeResolver = resolveKeyframes(
+        unresolvedKeyframes,
+        createGenerator,
+        name,
+        motionValue
+    )
+
     const stopAnimationDriver = () => {
         animationDriver && animationDriver.stop()
         animationDriver = undefined
@@ -291,13 +344,7 @@ export function animateValue<V extends string | number = number>({
         resolveFinishedPromise()
         updateFinishedPromise()
         startTime = cancelTime = null
-    }
-
-    const finish = () => {
-        playState = "finished"
-        onComplete && onComplete()
-        stopAnimationDriver()
-        resolveFinishedPromise()
+        keyframeResolver.cancel()
     }
 
     const play = () => {
@@ -331,17 +378,6 @@ export function animateValue<V extends string | number = number>({
         playState = "running"
 
         animationDriver.start()
-    }
-
-    if (visualElement && name) {
-        visualElement.resolveKeyframes(
-            name,
-            unresolvedKeyframes,
-            createGenerator
-        )
-    } else {
-        // TODO: If any keyframe is null, propagate
-        createGenerator(unresolvedKeyframes)
     }
 
     const controls = {

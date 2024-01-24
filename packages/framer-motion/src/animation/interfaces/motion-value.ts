@@ -5,7 +5,6 @@ import { getDefaultTransition } from "../utils/default-transitions"
 import { getValueTransition, isTransitionDefined } from "../utils/transitions"
 import { animateValue } from "../animators/js"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
-import { VisualElement } from "../../render/VisualElement"
 import type { UnresolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { MotionGlobalConfig } from "../../utils/GlobalConfig"
 import { instantAnimationState } from "../../utils/use-instant-transition-state"
@@ -20,8 +19,7 @@ export const animateMotionValue = <V extends string | number>(
     name: string,
     value: MotionValue<V>,
     target: V | UnresolvedKeyframes<V>,
-    transition: Transition & { elapsed?: number; isHandoff?: boolean } = {},
-    visualElement?: VisualElement
+    transition: Transition & { elapsed?: number; isHandoff?: boolean } = {}
 ): StartAnimation => {
     return (onComplete: VoidFunction): AnimationPlaybackControls => {
         const valueTransition = getValueTransition(transition, name) || {}
@@ -55,7 +53,7 @@ export const animateMotionValue = <V extends string | number>(
                 valueTransition.onComplete && valueTransition.onComplete()
             },
             name,
-            visualElement,
+            motionValue: value,
         }
 
         /**
@@ -127,49 +125,3 @@ export const animateMotionValue = <V extends string | number>(
         return animateValue(options)
     }
 }
-
-// export const animateMotionValue = (
-//     valueName: string,
-//     value: MotionValue,
-//     target: ResolvedValueTarget,
-//     transition: Transition & { elapsed?: number; isHandoff?: boolean } = {}
-// ): StartAnimation => {
-//     return (onComplete: VoidFunction): AnimationPlaybackControls => {
-
-// /**
-//  * Check if we're able to animate between the start and end keyframes,
-//  * and throw a warning if we're attempting to animate between one that's
-//  * animatable and another that isn't.
-//  */
-// const originKeyframe = keyframes[0]
-// const targetKeyframe = keyframes[keyframes.length - 1]
-// const isOriginAnimatable = isAnimatable(valueName, originKeyframe)
-// const isTargetAnimatable = isAnimatable(valueName, targetKeyframe)
-// warning(
-//     isOriginAnimatable === isTargetAnimatable,
-//     `You are trying to animate ${valueName} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`
-// )
-
-// if (MotionGlobalConfig.skipAnimations ||
-//     !isOriginAnimatable ||
-//     !isTargetAnimatable ||
-//     instantAnimationState.current ||
-//     valueTransition.type === false
-// ) {
-//     /**
-//      * If we can't animate this value, or the global instant animation flag is set,
-//      * or this is simply defined as an instant transition, return an instant transition.
-//      */
-//     return createInstantAnimation(
-//         instantAnimationState.current
-//             ? { ...options, delay: 0 }
-//             : options
-//     )
-// }
-
-// /**
-//  * If we didn't create an accelerated animation, create a JS animation
-//  */
-// return animateValue(options)
-//     }
-// }

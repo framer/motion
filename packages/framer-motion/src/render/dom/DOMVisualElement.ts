@@ -3,11 +3,6 @@ import { VisualElement } from "../VisualElement"
 import { MotionProps } from "../../motion/types"
 import { MotionValue } from "../../value"
 import { HTMLRenderState } from "../html/types"
-import type {
-    KeyframeResolver,
-    ResolvedKeyframes,
-    UnresolvedKeyframes,
-} from "../utils/KeyframesResolver"
 import { DOMKeyframesResolver } from "./DOMKeyframesResolver"
 
 export abstract class DOMVisualElement<
@@ -39,11 +34,5 @@ export abstract class DOMVisualElement<
         delete style[key]
     }
 
-    resolveKeyframes<T extends string | number>(
-        name: string,
-        keyframes: UnresolvedKeyframes<T>,
-        onComplete: (resolvedKeyframes: ResolvedKeyframes<T>) => void
-    ): KeyframeResolver {
-        return new DOMKeyframesResolver(this, name, keyframes, onComplete)
-    }
+    KeyframeResolver = DOMKeyframesResolver
 }
