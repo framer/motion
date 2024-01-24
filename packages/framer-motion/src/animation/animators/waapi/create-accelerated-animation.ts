@@ -14,9 +14,13 @@ import {
 import { memo } from "../../../utils/memo"
 import { noop } from "../../../utils/noop"
 import {
+    KeyframeResolver,
+    OnKeyframesResolved,
     ResolvedKeyframes,
     flushKeyframeResolvers,
 } from "../../../render/utils/KeyframesResolver"
+import { canSkipAnimation } from "../utils/can-skip"
+import { instantAnimationState } from "../../../utils/use-instant-transition-state"
 
 const supportsWaapi = memo(() =>
     Object.hasOwnProperty.call(Element.prototype, "animate")
@@ -45,6 +49,15 @@ const sampleDelta = 10 //ms
  */
 const maxDuration = 20_000
 
+function defaultResolveKeyframes<V extends string | number>(
+    keyframes: V[],
+    onComplete: OnKeyframesResolved<V>,
+    name?: string,
+    motionValue?: any
+) {
+    return new KeyframeResolver(keyframes, onComplete, name, motionValue)
+}
+
 const requiresPregeneratedKeyframes = (
     valueName: string,
     options: ValueAnimationOptions
@@ -59,8 +72,9 @@ export function createAcceleratedAnimation(
     {
         onUpdate,
         onComplete,
-        visualElement,
+        resolveKeyframes = defaultResolveKeyframes,
         name,
+        motionValue,
         ...options
     }: ValueAnimationOptions
 ): AnimationPlaybackControls | false {
@@ -110,6 +124,31 @@ export function createAcceleratedAnimation(
 
     let animation: Animation | undefined
     const createWaapiAnimation = (keyframes: ResolvedKeyframes<any>) => {
+        const finish = () => {
+            if (pendingCancel) return
+            value.set(getFinalKeyframe(keyframes, options))
+            onComplete && onComplete()
+            safeCancel()
+        }
+
+        if (
+            canSkipAnimation(
+                keyframes,
+                valueName,
+                value,
+                options.type,
+                options.isHandoff,
+                options.velocity
+            )
+        ) {
+            if (instantAnimationState.current || !options.delay) {
+                finish()
+                return
+            } else {
+                options.duration = 0
+            }
+        }
+
         /**
          * If this animation needs pre-generated keyframes then generate.
          */
@@ -167,12 +206,7 @@ export function createAcceleratedAnimation(
          * keyframe. If we didn't, when the WAAPI animation is finished it would
          * be removed from the element which would then revert to its old styles.
          */
-        animation.onfinish = () => {
-            if (pendingCancel) return
-            value.set(getFinalKeyframe(keyframes, options))
-            onComplete && onComplete()
-            safeCancel()
-        }
+        animation.onfinish = finish
     }
 
     const cancelAnimation = () => {
@@ -192,10 +226,11 @@ export function createAcceleratedAnimation(
         updateFinishedPromise()
     }
 
-    const resolver = visualElement!.resolveKeyframes(
-        name!,
+    const resolver = resolveKeyframes(
         unresolvedKeyframes,
-        createWaapiAnimation
+        createWaapiAnimation,
+        name,
+        motionValue
     )
 
     /**

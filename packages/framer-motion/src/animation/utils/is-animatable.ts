@@ -10,9 +10,12 @@ import { ValueKeyframesDefinition } from "../types"
  *
  * @internal
  */
-export const isAnimatable = (key: string, value: ValueKeyframesDefinition) => {
+export const isAnimatable = (
+    value: ValueKeyframesDefinition,
+    name?: string
+) => {
     // If the list of keys tat might be non-animatable grows, replace with Set
-    if (key === "zIndex") return false
+    if (name === "zIndex") return false
 
     // If it's a number or a keyframes array, we can animate it. We might at some point
     // need to do a deep isAnimatable check of keyframes, or let Popmotion handle this,

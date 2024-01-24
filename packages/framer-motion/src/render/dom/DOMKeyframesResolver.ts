@@ -17,7 +17,9 @@ import { makeNoneKeyframesAnimatable } from "../html/utils/make-none-animatable"
  */
 export class DOMKeyframesResolver<
     T extends string | number
-> extends KeyframeResolver<T, HTMLElement | SVGElement> {
+> extends KeyframeResolver<T> {
+    name: string
+
     private removedTransforms?: [string, string | number][]
     // private restoreScrollY?: number
     private measuredOrigin?: string | number
