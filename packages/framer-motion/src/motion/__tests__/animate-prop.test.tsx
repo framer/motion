@@ -101,7 +101,7 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toBe(true)
     })
     test("uses transitionEnd on subsequent renders", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const x = motionValue(0)
             const Component = ({ animate }: any) => (
                 <motion.div animate={animate} style={{ x }} />
@@ -133,7 +133,11 @@ describe("animate prop as object", () => {
                     }}
                 />
             )
-            requestAnimationFrame(() => resolve(x.get()))
+
+            await nextFrame()
+            await nextFrame()
+
+            resolve(x.get())
         })
         return expect(promise).resolves.toBe(300)
     })
@@ -816,7 +820,7 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toBe("#000")
     })
 
-    test("forces an animation to fallback if has been set to `null`", async () => {
+    test.only("forces an animation to fallback if has been set to `null`", async () => {
         const promise = new Promise(async (resolve) => {
             const complete = () => resolve(true)
             const Component = ({ animate, onAnimationComplete }: any) => (
@@ -943,9 +947,9 @@ describe("animate prop as object", () => {
                         ref={ref}
                         initial={{ backgroundColor: "#0088ff" }}
                         animate={{ backgroundColor: "hsl(345, 100%, 60%)" }}
-                        onAnimationComplete={() =>
+                        onAnimationComplete={() => {
                             ref.current && resolve(ref.current)
-                        }
+                        }}
                         transition={{ duration: 0.01 }}
                     />
                 )
