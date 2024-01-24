@@ -215,10 +215,7 @@ describe("useAnimation", () => {
             rerender(<Component />)
         })
 
-        return await expect(promise).resolves.toEqual([
-            100,
-            "rgba(255, 255, 255, 1)",
-        ])
+        return await expect(promise).resolves.toEqual([100, "#fff"])
     })
 
     it("respects initial even if passed controls", () => {
@@ -268,7 +265,7 @@ describe("useAnimation", () => {
             rerender(<Component />)
         })
 
-        return await expect(promise).resolves.toEqual("rgba(255, 255, 255, 1)")
+        return await expect(promise).resolves.toEqual("#fff")
     })
 
     test("accepts array of variants", async () => {

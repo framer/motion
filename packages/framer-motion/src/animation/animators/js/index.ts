@@ -16,7 +16,6 @@ import { invariant } from "../../../utils/errors"
 import { mix } from "../../../utils/mix"
 import { pipe } from "../../../utils/pipe"
 import { ResolvedKeyframes } from "../../../render/utils/KeyframesResolver"
-import { getFinalKeyframe } from "../waapi/utils/get-final-keyframe"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -99,9 +98,8 @@ export function animateValue<V extends string | number = number>({
     let animationDriver: DriverControls | undefined
 
     let initialKeyframe: V
-    let resolvedKeyframes: ResolvedKeyframes<any>
     const createGenerator = (keyframes: ResolvedKeyframes<any>) => {
-        resolvedKeyframes = keyframes
+        // resolvedKeyframes = keyframes
         initialKeyframe = keyframes[0]
         const generatorFactory = types[type] || keyframesGeneratorFactory
 
@@ -271,17 +269,6 @@ export function animateValue<V extends string | number = number>({
             holdTime === null &&
             (playState === "finished" || (playState === "running" && done))
 
-        /**
-         * If the animation has finished return the final keyframe rather than
-         * the interpolated value to ensure we don't emit rounding errors.
-         */
-        if (isAnimationFinished) {
-            state.value = getFinalKeyframe(resolvedKeyframes, {
-                repeat,
-                repeatType,
-            })
-        }
-
         if (onUpdate) {
             onUpdate(state.value)
         }
@@ -346,13 +333,15 @@ export function animateValue<V extends string | number = number>({
         animationDriver.start()
     }
 
-    // TODO Resolve back to vanilla keyframe generator
     if (visualElement && name) {
         visualElement.resolveKeyframes(
             name,
             unresolvedKeyframes,
             createGenerator
         )
+    } else {
+        // TODO: If any keyframe is null, propagate
+        createGenerator(unresolvedKeyframes)
     }
 
     const controls = {
