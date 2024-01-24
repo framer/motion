@@ -9,6 +9,7 @@ import { VisualElement } from "../../render/VisualElement"
 import type { UnresolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { MotionGlobalConfig } from "../../utils/GlobalConfig"
 import { instantAnimationState } from "../../utils/use-instant-transition-state"
+import { createAcceleratedAnimation } from "../animators/waapi/create-accelerated-animation"
 
 function makeTransitionInstant(options: ValueAnimationOptions<any>) {
     options.duration = 0
@@ -96,6 +97,33 @@ export const animateMotionValue = <V extends string | number>(
             options.keyframes[0] = options.from
         }
 
+        /**
+         * Animate via WAAPI if possible.
+         */
+        if (
+            /**
+             * If this is a handoff animation, the optimised animation will be running via
+             * WAAPI. Therefore, this animation must be JS to ensure it runs "under" the
+             * optimised animation.
+             */
+            !transition.isHandoff &&
+            value.owner &&
+            value.owner.current instanceof HTMLElement &&
+            /**
+             * If we're outputting values to onUpdate then we can't use WAAPI as there's
+             * no way to read the value from WAAPI every frame.
+             */
+            !value.owner.getProps().onUpdate
+        ) {
+            const acceleratedAnimation = createAcceleratedAnimation(
+                value,
+                name,
+                options
+            )
+
+            if (acceleratedAnimation) return acceleratedAnimation
+        }
+
         return animateValue(options)
     }
 }
@@ -138,31 +166,7 @@ export const animateMotionValue = <V extends string | number>(
 //             : options
 //     )
 // }
-// /**
-//  * Animate via WAAPI if possible.
-//  */
-// if (
-//     /**
-//      * If this is a handoff animation, the optimised animation will be running via
-//      * WAAPI. Therefore, this animation must be JS to ensure it runs "under" the
-//      * optimised animation.
-//      */
-//     !transition.isHandoff &&
-//     value.owner &&
-//     value.owner.current instanceof HTMLElement &&
-//     /**
-//      * If we're outputting values to onUpdate then we can't use WAAPI as there's
-//      * no way to read the value from WAAPI every frame.
-//      */
-//     !value.owner.getProps().onUpdate
-// ) {
-//     const acceleratedAnimation = createAcceleratedAnimation(
-//         value,
-//         valueName,
-//         options
-//     )
-//     if (acceleratedAnimation) return acceleratedAnimation
-// }
+
 // /**
 //  * If we didn't create an accelerated animation, create a JS animation
 //  */

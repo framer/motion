@@ -13,10 +13,7 @@ import { AnimationDefinition } from "../../animation/types"
 import { animateVisualElement } from "../../animation/interfaces/visual-element"
 
 export interface AnimationState {
-    animateChanges: (
-        options?: VisualElementAnimationOptions,
-        type?: AnimationType
-    ) => Promise<any>
+    animateChanges: (type?: AnimationType) => Promise<any>
     setActive: (
         type: AnimationType,
         isActive: boolean,
@@ -56,19 +53,27 @@ export function createAnimationState(
      * This function will be used to reduce the animation definitions for
      * each active animation type into an object of resolved values for it.
      */
-    const buildResolvedTypeValues = (
-        acc: { [key: string]: any },
-        definition: string | TargetAndTransition | undefined
-    ) => {
-        const resolved = resolveVariant(visualElement, definition)
+    const buildResolvedTypeValues =
+        (type: AnimationType) =>
+        (
+            acc: { [key: string]: any },
+            definition: string | TargetAndTransition | undefined
+        ) => {
+            const resolved = resolveVariant(
+                visualElement,
+                definition,
+                type === "exit"
+                    ? visualElement.presenceContext?.custom
+                    : undefined
+            )
 
-        if (resolved) {
-            const { transition, transitionEnd, ...target } = resolved
-            acc = { ...acc, ...target, ...transitionEnd }
+            if (resolved) {
+                const { transition, transitionEnd, ...target } = resolved
+                acc = { ...acc, ...target, ...transitionEnd }
+            }
+
+            return acc
         }
-
-        return acc
-    }
 
     /**
      * This just allows us to inject mocked animation functions
@@ -88,10 +93,7 @@ export function createAnimationState(
      * 3. Determine if any values have been removed from a type and figure out
      *    what to animate those to.
      */
-    function animateChanges(
-        options?: VisualElementAnimationOptions,
-        changedActiveType?: AnimationType
-    ) {
+    function animateChanges(changedActiveType?: AnimationType) {
         const props = visualElement.getProps()
         const context = visualElement.getVariantContext(true) || {}
 
@@ -212,8 +214,9 @@ export function createAnimationState(
              * Build an object of all the resolved values. We'll use this in the subsequent
              * animateChanges calls to determine whether a value has changed.
              */
+            // TODO Resolve with options
             let resolvedValues = definitionList.reduce(
-                buildResolvedTypeValues,
+                buildResolvedTypeValues(type),
                 {}
             )
 
@@ -308,7 +311,7 @@ export function createAnimationState(
                 animations.push(
                     ...definitionList.map((animation) => ({
                         animation: animation as AnimationDefinition,
-                        options: { type, ...options },
+                        options: { type },
                     }))
                 )
             }
@@ -349,11 +352,7 @@ export function createAnimationState(
     /**
      * Change whether a certain animation type is active.
      */
-    function setActive(
-        type: AnimationType,
-        isActive: boolean,
-        options?: VisualElementAnimationOptions
-    ) {
+    function setActive(type: AnimationType, isActive: boolean) {
         // If the active state hasn't changed, we can safely do nothing here
         if (state[type].isActive === isActive) return Promise.resolve()
 
@@ -364,7 +363,7 @@ export function createAnimationState(
 
         state[type].isActive = isActive
 
-        const animations = animateChanges(options, type)
+        const animations = animateChanges(type)
 
         for (const key in state) {
             state[key].protectedKeys = {}

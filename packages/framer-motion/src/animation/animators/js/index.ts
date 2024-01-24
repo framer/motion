@@ -16,6 +16,7 @@ import { invariant } from "../../../utils/errors"
 import { mix } from "../../../utils/mix"
 import { pipe } from "../../../utils/pipe"
 import { ResolvedKeyframes } from "../../../render/utils/KeyframesResolver"
+import { getFinalKeyframe } from "../waapi/utils/get-final-keyframe"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -92,16 +93,15 @@ export function animateValue<V extends string | number = number>({
         })
     }
 
-    console.log("start animation for", name)
-
     // Create the first finished promise
     updateFinishedPromise()
 
     let animationDriver: DriverControls | undefined
 
     let initialKeyframe: V
-
+    let resolvedKeyframes: ResolvedKeyframes<any>
     const createGenerator = (keyframes: ResolvedKeyframes<any>) => {
+        resolvedKeyframes = keyframes
         initialKeyframe = keyframes[0]
         const generatorFactory = types[type] || keyframesGeneratorFactory
 
@@ -152,6 +152,8 @@ export function animateValue<V extends string | number = number>({
             resolvedDuration = calculatedDuration + repeatDelay
             totalDuration = resolvedDuration * (repeat + 1) - repeatDelay
         }
+
+        autoplay && play()
     }
 
     const tick = (timestamp: number) => {
@@ -269,6 +271,17 @@ export function animateValue<V extends string | number = number>({
             holdTime === null &&
             (playState === "finished" || (playState === "running" && done))
 
+        /**
+         * If the animation has finished return the final keyframe rather than
+         * the interpolated value to ensure we don't emit rounding errors.
+         */
+        if (isAnimationFinished) {
+            state.value = getFinalKeyframe(resolvedKeyframes, {
+                repeat,
+                repeatType,
+            })
+        }
+
         if (onUpdate) {
             onUpdate(state.value)
         }
@@ -301,6 +314,7 @@ export function animateValue<V extends string | number = number>({
     }
 
     const play = () => {
+        // TODO allow async
         if (hasStopped) return
 
         if (!animationDriver) animationDriver = driver(tick)
@@ -332,14 +346,12 @@ export function animateValue<V extends string | number = number>({
         animationDriver.start()
     }
 
+    // TODO Resolve back to vanilla keyframe generator
     if (visualElement && name) {
         visualElement.resolveKeyframes(
             name,
             unresolvedKeyframes,
-            (resolvedKeyframes) => {
-                createGenerator(resolvedKeyframes)
-                autoplay && play()
-            }
+            createGenerator
         )
     }
 

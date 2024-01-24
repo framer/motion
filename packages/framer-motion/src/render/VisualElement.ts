@@ -345,6 +345,7 @@ export abstract class VisualElement<
             props,
             presenceContext,
             reducedMotionConfig,
+            blockInitialAnimation,
             visualState,
         }: VisualElementOptions<Instance, RenderState>,
         options: Options = {} as any
@@ -360,6 +361,7 @@ export abstract class VisualElement<
         this.depth = parent ? parent.depth + 1 : 0
         this.reducedMotionConfig = reducedMotionConfig
         this.options = options
+        this.blockInitialAnimation = Boolean(blockInitialAnimation)
 
         this.isControllingVariants = checkIsControllingVariants(props)
         this.isVariantNode = checkIsVariantNode(props)
@@ -841,7 +843,11 @@ export abstract class VisualElement<
         const { initial } = this.props
         const valueFromInitial =
             typeof initial === "string" || typeof initial === "object"
-                ? resolveVariantFromProps(this.props, initial as any)?.[key]
+                ? resolveVariantFromProps(
+                      this.props,
+                      initial as any,
+                      this.presenceContext?.custom
+                  )?.[key]
                 : undefined
 
         /**

@@ -8,7 +8,14 @@ export function animateVariant(
     variant: string,
     options: VisualElementAnimationOptions = {}
 ) {
-    const resolved = resolveVariant(visualElement, variant, options.custom)
+    const resolved = resolveVariant(
+        visualElement,
+        variant,
+        options.type === "exit"
+            ? visualElement.presenceContext?.custom
+            : undefined
+    )
+
     let { transition = visualElement.getDefaultTransition() || {} } =
         resolved || {}
 
