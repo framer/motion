@@ -344,7 +344,7 @@ export function createAnimationState(
         ) {
             shouldAnimate = false
         }
-
+        console.log({ animations: animations[0]?.animation })
         isInitialRender = false
         return shouldAnimate ? animate(animations) : Promise.resolve()
     }
