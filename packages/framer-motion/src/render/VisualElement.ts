@@ -821,10 +821,17 @@ export abstract class VisualElement<
      * directly from the instance (which might have performance implications).
      */
     readValue(key: string) {
-        return this.latestValues[key] !== undefined || !this.current
-            ? this.latestValues[key]
-            : this.getBaseTargetFromProps(this.props, key) ??
+        const value =
+            this.latestValues[key] !== undefined || !this.current
+                ? this.latestValues[key]
+                : this.getBaseTargetFromProps(this.props, key) ??
                   this.readValueFromInstance(this.current, key, this.options)
+
+        if (value !== undefined && value !== null) {
+            this.setBaseTarget(key, isMotionValue(value) ? value.get() : value)
+        }
+
+        return value
     }
 
     /**

@@ -263,8 +263,10 @@ export function createAnimationState(
                     valueHasChanged = next !== prev
                 }
 
+                console.log({ valueHasChanged, next, prev })
+
                 if (valueHasChanged) {
-                    if (next !== undefined) {
+                    if (next !== undefined && next !== null) {
                         // If next is defined and doesn't equal prev, it needs animating
                         markToAnimate(key)
                     } else {
@@ -317,6 +319,8 @@ export function createAnimationState(
             }
         }
 
+        console.log({ removedKeys })
+
         /**
          * If there are some removed value that haven't been dealt with,
          * we need to create a new animation that falls back either to the value
@@ -326,7 +330,7 @@ export function createAnimationState(
             const fallbackAnimation = {}
             removedKeys.forEach((key) => {
                 const fallbackTarget = visualElement.getBaseTarget(key)
-
+                console.log({ fallbackTarget })
                 if (fallbackTarget !== undefined) {
                     fallbackAnimation[key] = fallbackTarget
                 }
