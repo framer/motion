@@ -69,6 +69,7 @@ export function createRenderBatcher(
         const step = steps[key]
         acc[key] = (process: Process, keepAlive = false, immediate = false) => {
             if (!runNextFrame) wake()
+
             return step.schedule(process, keepAlive, immediate)
         }
         return acc

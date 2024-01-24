@@ -46,6 +46,11 @@ import {
     ResolvedKeyframes,
     UnresolvedKeyframes,
 } from "./utils/KeyframesResolver"
+import { isNumericalString } from "../utils/is-numerical-string"
+import { isZeroValueString } from "../utils/is-zero-value-string"
+import { findValueType } from "./dom/value-types/find"
+import { complex } from "../value/types/complex"
+import { getAnimatableNone } from "./dom/value-types/animatable-none"
 
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
@@ -154,7 +159,13 @@ export abstract class VisualElement<
         // the resolution of keyframes synchronously.
         onComplete: (resolvedKeyframes: ResolvedKeyframes<T>) => void
     ): KeyframeResolver<T> {
-        return new KeyframeResolver(this, name, keyframes, onComplete)
+        return new this.KeyframeResolver(
+            keyframes,
+            onComplete,
+            name,
+            this.getValue(name),
+            (target?: any) => this.readValue(name, target) as any
+        )
     }
 
     /**
@@ -265,6 +276,8 @@ export abstract class VisualElement<
      * The AnimationState, this is hydrated by the animation Feature.
      */
     animationState?: AnimationState
+
+    KeyframeResolver = KeyframeResolver
 
     /**
      * The options used to create this VisualElement. The Options type is defined
@@ -458,8 +471,8 @@ export abstract class VisualElement<
             "change",
             (latestValue: string | number) => {
                 this.latestValues[key] = latestValue
-                this.props.onUpdate &&
-                    frame.update(this.notifyUpdate, false, true)
+
+                this.props.onUpdate && frame.preRender(this.notifyUpdate)
 
                 if (valueIsTransform && this.projection) {
                     this.projection.isTransformDirty = true
@@ -820,14 +833,24 @@ export abstract class VisualElement<
      * we need to check for it in our state and as a last resort read it
      * directly from the instance (which might have performance implications).
      */
-    readValue(key: string) {
-        const value =
+    readValue(key: string, target?: string | number | null) {
+        let value =
             this.latestValues[key] !== undefined || !this.current
                 ? this.latestValues[key]
                 : this.getBaseTargetFromProps(this.props, key) ??
                   this.readValueFromInstance(this.current, key, this.options)
 
         if (value !== undefined && value !== null) {
+            if (
+                typeof value === "string" &&
+                (isNumericalString(value) || isZeroValueString(value))
+            ) {
+                // If this is a number read as a string, ie "0" or "200", convert it to a number
+                value = parseFloat(value)
+            } else if (!findValueType(value) && complex.test(target)) {
+                value = getAnimatableNone(key, target as string)
+            }
+
             this.setBaseTarget(key, isMotionValue(value) ? value.get() : value)
         }
 

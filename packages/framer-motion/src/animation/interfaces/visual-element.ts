@@ -1,3 +1,4 @@
+import { frame } from "../../frameloop"
 import { resolveVariant } from "../../render/utils/resolve-dynamic-variants"
 import { VisualElement } from "../../render/VisualElement"
 import { AnimationDefinition } from "../types"
@@ -31,7 +32,9 @@ export function animateVisualElement(
         )
     }
 
-    return animation.then(() =>
-        visualElement.notify("AnimationComplete", definition)
-    )
+    return animation.then(() => {
+        frame.postRender(() => {
+            visualElement.notify("AnimationComplete", definition)
+        })
+    })
 }

@@ -4,7 +4,7 @@ import { UnresolvedKeyframes } from "../../utils/KeyframesResolver"
 export function makeNoneKeyframesAnimatable(
     unresolvedKeyframes: UnresolvedKeyframes<string | number>,
     noneKeyframeIndexes: number[],
-    name: string
+    name?: string
 ) {
     /**
      * If we detected "none"-equivalent keyframes, we need to find a template
@@ -22,7 +22,7 @@ export function makeNoneKeyframesAnimatable(
         i++
     }
 
-    if (animatableTemplate) {
+    if (animatableTemplate && name) {
         for (const noneIndex of noneKeyframeIndexes) {
             unresolvedKeyframes[noneIndex] = getAnimatableNone(
                 name,

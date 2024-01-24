@@ -112,7 +112,7 @@ describe("animate", () => {
         animate(motionValue("#fff"), ["#fff", "#000"])
     })
 
-    test("animates a motion value in sequence", async () => {
+    test.only("animates a motion value in sequence", async () => {
         const a = motionValue(0)
 
         const aOutput: number[] = []

@@ -5,6 +5,11 @@ import { Driver } from "./animators/js/types"
 import { SVGPathProperties, VariantLabels } from "../motion/types"
 import { SVGAttributes } from "../render/svg/types-attributes"
 import { ProgressTimeline } from "../render/dom/scroll/observe"
+import { MotionValue } from "../value"
+import {
+    KeyframeResolver,
+    OnKeyframesResolved,
+} from "../render/utils/KeyframesResolver"
 
 export interface AnimationPlaybackLifecycles<V> {
     onUpdate?: (latest: V) => void
@@ -33,12 +38,17 @@ export interface ValueAnimationTransition<V = any>
     isHandoff?: boolean
 }
 
-export interface ValueAnimationOptions<V = any>
+export interface ValueAnimationOptions<V extends string | number = number>
     extends ValueAnimationTransition {
     keyframes: V[]
-    visualElement?: VisualElement
     name?: string
-    // Legacy
+    motionValue?: MotionValue<V>
+    resolveKeyframes?: (
+        keyframes: V[],
+        onComplete: OnKeyframesResolved<V>,
+        name?: string,
+        motionValue?: any
+    ) => KeyframeResolver<V>
     from?: V
 }
 
