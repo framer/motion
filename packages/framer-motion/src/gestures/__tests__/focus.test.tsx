@@ -1,10 +1,11 @@
 import { focus, blur, render } from "../../../jest.setup"
 import * as React from "react"
 import { motion, motionValue } from "../../"
+import { nextFrame } from "./utils"
 
 describe("focus", () => {
     test("whileFocus applied", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const opacity = motionValue(1)
             const ref = React.createRef<HTMLAnchorElement>()
             const Component = () => (
@@ -24,6 +25,8 @@ describe("focus", () => {
             ref.current!.matches = () => true
 
             focus(container, "myAnchorElement")
+
+            await nextFrame()
 
             resolve(opacity.get())
         })
@@ -60,7 +63,7 @@ describe("focus", () => {
     })
 
     test("whileFocus applied if focus-visible selector throws unsupported", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const opacity = motionValue(1)
             const ref = React.createRef<HTMLAnchorElement>()
             const Component = () => (
@@ -87,6 +90,8 @@ describe("focus", () => {
 
             focus(container, "myAnchorElement")
 
+            await nextFrame()
+
             resolve(opacity.get())
         })
 
@@ -95,7 +100,7 @@ describe("focus", () => {
 
     test("whileFocus applied as variant", async () => {
         const target = 0.5
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const variant = {
                 hidden: { opacity: target },
             }
@@ -119,6 +124,8 @@ describe("focus", () => {
             ref.current!.matches = () => true
 
             focus(container, "myAnchorElement")
+
+            await nextFrame()
 
             resolve(opacity.get())
         })

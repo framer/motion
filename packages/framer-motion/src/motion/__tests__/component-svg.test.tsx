@@ -1,7 +1,7 @@
 import { render } from "../../../jest.setup"
 import { motion, motionValue, useMotionValue, useTransform } from "../../"
 import * as React from "react"
-import { nextMicrotask } from "../../gestures/__tests__/utils"
+import { nextFrame } from "../../gestures/__tests__/utils"
 
 describe("SVG", () => {
     test("doesn't add translateZ", () => {
@@ -24,7 +24,7 @@ describe("SVG", () => {
         render(<motion.circle animate={{ attrX: 1, attrY: 2, attrScale: 3 }} />)
     })
 
-    test("recognises MotionValues in attributes", () => {
+    test("recognises MotionValues in attributes", async () => {
         let r = motionValue(0)
         let fill = motionValue("#000")
 
@@ -49,6 +49,8 @@ describe("SVG", () => {
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
+        await nextFrame()
+
         expect(r.get()).toBe(100)
         expect(fill.get()).toBe("rgba(255, 0, 0, 1)")
     })
@@ -65,11 +67,14 @@ describe("SVG", () => {
         render(<Component />)
     })
 
-    test("doesn't calculate transformOrigin for <svg /> elements", () => {
+    test("doesn't calculate transformOrigin for <svg /> elements", async () => {
         const Component = () => {
             return <motion.svg animate={{ rotate: 100 }} />
         }
         const { container } = render(<Component />)
+
+        await nextFrame()
+
         expect(container.firstChild as Element).not.toHaveStyle(
             "transform-origin: 0px 0px"
         )
@@ -93,7 +98,7 @@ describe("SVG", () => {
         render(<Component />)
     })
 
-    test("doesn't read viewBox as '0 0 0 0'", () => {
+    test("doesn't read viewBox as '0 0 0 0'", async () => {
         const Component = () => {
             return (
                 <motion.svg
@@ -104,6 +109,9 @@ describe("SVG", () => {
             )
         }
         const { container } = render(<Component />)
+
+        await nextFrame()
+
         expect(container.firstChild as Element).toHaveAttribute(
             "viewBox",
             "0 0 100 100"
@@ -121,7 +129,9 @@ describe("SVG", () => {
             )
         }
         const { container } = render(<Component />)
-        await nextMicrotask()
+
+        await nextFrame()
+
         expect(container.firstChild as Element).toHaveAttribute(
             "viewBox",
             "100 100 200 200"

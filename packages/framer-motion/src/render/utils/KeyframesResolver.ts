@@ -81,11 +81,16 @@ export class KeyframeResolver<T extends string | number = any> {
         this.motionValue = motionValue
         this.element = element
 
-        toResolve.add(this)
+        if (this.element) {
+            toResolve.add(this)
 
-        if (!isScheduled) {
-            isScheduled = true
-            frame.read(readAllKeyframes)
+            if (!isScheduled) {
+                isScheduled = true
+                frame.read(readAllKeyframes)
+            }
+        } else {
+            this.readKeyframes()
+            this.complete()
         }
     }
 

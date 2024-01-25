@@ -8,6 +8,7 @@ import * as React from "react"
 import { motion } from "../../"
 import { motionValue } from "../../value"
 import { frame } from "../../frameloop"
+import { nextFrame } from "./utils"
 
 describe("hover", () => {
     test("hover event listeners fire", async () => {
@@ -51,7 +52,7 @@ describe("hover", () => {
     })
 
     test("whileHover applied", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const opacity = motionValue(1)
             const Component = () => (
                 <motion.div
@@ -66,6 +67,8 @@ describe("hover", () => {
 
             pointerEnter(container.firstChild as Element)
 
+            await nextFrame()
+
             resolve(opacity.get())
         })
 
@@ -74,7 +77,7 @@ describe("hover", () => {
 
     test("whileHover applied as variant", async () => {
         const target = 0.5
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const variant = {
                 hidden: { opacity: target },
             }
@@ -93,6 +96,8 @@ describe("hover", () => {
 
             pointerEnter(container.firstChild as Element)
 
+            await nextFrame()
+
             resolve(opacity.get())
         })
 
@@ -101,7 +106,7 @@ describe("hover", () => {
 
     test("whileHover propagates to children", async () => {
         const target = 0.2
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const parent = {
                 hidden: { opacity: 0.8 },
             }
@@ -128,6 +133,8 @@ describe("hover", () => {
             const { container } = render(<Component />)
 
             pointerEnter(container.firstChild as Element)
+
+            await nextFrame()
             resolve(opacity.get())
         })
 
@@ -169,7 +176,7 @@ describe("hover", () => {
     })
 
     test("whileHover only animates values that arent being controlled by a higher-priority gesture ", () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const variant = {
                 hovering: { opacity: 0.5, scale: 0.5 },
                 tapping: { scale: 2 },
@@ -189,8 +196,13 @@ describe("hover", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 
+            await nextFrame()
             pointerDown(container.firstChild as Element)
+
+            await nextFrame()
             pointerEnter(container.firstChild as Element)
+
+            await nextFrame()
 
             resolve([opacity.get(), scale.get()])
         })

@@ -50,7 +50,10 @@ export function animateTarget(
         visualElement.animationState.getState()[type]
 
     for (const key in target) {
-        const value = visualElement.getValue(key, null)
+        const value = visualElement.getValue(
+            key,
+            visualElement.latestValues[key] ?? null
+        )
         const valueTarget = target[key]
 
         if (
