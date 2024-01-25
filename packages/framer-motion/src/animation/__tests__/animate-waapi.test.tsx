@@ -127,7 +127,7 @@ describe("animate() with WAAPI", () => {
         )
     })
 
-    test.only("Returns duration correctly", async () => {
+    test("Returns duration correctly", async () => {
         const a = document.createElement("div")
 
         const animation = animate(
