@@ -151,20 +151,21 @@ export abstract class VisualElement<
         projection?: IProjectionNode
     ): void
 
-    resolveKeyframes<T extends string | number>(
-        name: string,
+    resolveKeyframes = <T extends string | number>(
         keyframes: UnresolvedKeyframes<T>,
         // We use an onComplete callback here rather than a Promise as a Promise
         // resolution is a microtask and we want to retain the ability to force
         // the resolution of keyframes synchronously.
-        onComplete: (resolvedKeyframes: ResolvedKeyframes<T>) => void
-    ): KeyframeResolver<T> {
+        onComplete: (resolvedKeyframes: ResolvedKeyframes<T>) => void,
+        name: string,
+        value: MotionValue<T>
+    ): KeyframeResolver<T> => {
         return new this.KeyframeResolver(
             keyframes,
             onComplete,
             name,
-            this.getValue(name),
-            (target?: any) => this.readValue(name, target) as any
+            value,
+            this
         )
     }
 
@@ -854,7 +855,7 @@ export abstract class VisualElement<
             this.setBaseTarget(key, isMotionValue(value) ? value.get() : value)
         }
 
-        return value
+        return isMotionValue(value) ? value.get() : value
     }
 
     /**

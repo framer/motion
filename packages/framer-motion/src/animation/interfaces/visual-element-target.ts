@@ -92,7 +92,8 @@ export function animateTarget(
                 valueTarget,
                 visualElement.shouldReduceMotion && transformProps.has(key)
                     ? { type: false }
-                    : valueTransition
+                    : valueTransition,
+                visualElement
             )
         )
 
