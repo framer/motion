@@ -1064,7 +1064,7 @@ describe("animate prop as variant", () => {
         expect(inner).toHaveStyle("background-color: rgb(0, 150,150)")
     })
 
-    test.only("child onAnimationComplete triggers from parent animations", async () => {
+    test("child onAnimationComplete triggers from parent animations", async () => {
         const variants: Variants = {
             hidden: { opacity: 0, x: -100, transition: { type: false } },
             visible: { opacity: 1, x: 100, transition: { type: false } },

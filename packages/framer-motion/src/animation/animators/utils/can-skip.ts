@@ -1,6 +1,6 @@
 import { ResolvedKeyframes } from "../../../render/utils/KeyframesResolver"
 import { MotionGlobalConfig } from "../../../utils/GlobalConfig"
-import { invariant } from "../../../utils/errors"
+import { warning } from "../../../utils/errors"
 import { instantAnimationState } from "../../../utils/use-instant-transition-state"
 import { isAnimatable } from "../../utils/is-animatable"
 
@@ -36,10 +36,12 @@ export function canSkipAnimation(
     const isOriginAnimatable = isAnimatable(originKeyframe, name)
     const isTargetAnimatable = isAnimatable(targetKeyframe, name)
 
-    invariant(
-        isOriginAnimatable === isTargetAnimatable,
-        `You are trying to animate ${name} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`
-    )
+    if (originKeyframe !== null) {
+        warning(
+            isOriginAnimatable === isTargetAnimatable,
+            `You are trying to animate ${name} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`
+        )
+    }
 
     // Always skip if any of these are true
     if (

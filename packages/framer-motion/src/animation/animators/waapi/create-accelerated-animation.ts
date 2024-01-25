@@ -113,9 +113,11 @@ export function createAcceleratedAnimation(
     } = options
 
     const isInterruptingAnimation = Boolean(value.animation)
+    let resolvedKeyframes: ResolvedKeyframes<any>
 
     let animation: Animation | undefined
     const createWaapiAnimation = (keyframes: ResolvedKeyframes<any>) => {
+        resolvedKeyframes = keyframes
         const finish = () => {
             if (pendingCancel) return
             value.set(getFinalKeyframe(keyframes, options))
@@ -147,6 +149,7 @@ export function createAcceleratedAnimation(
         if (requiresPregeneratedKeyframes(valueName, options)) {
             const sampleAnimation = animateValue({
                 ...options,
+                keyframes: resolvedKeyframes,
                 repeat: 0,
                 delay: 0,
             })
@@ -218,6 +221,7 @@ export function createAcceleratedAnimation(
         updateFinishedPromise()
     }
 
+    console.log("resolving", options.keyframes, name)
     const resolver =
         element && name && motionValue
             ? element.resolveKeyframes(
@@ -301,6 +305,7 @@ export function createAcceleratedAnimation(
             if (currentTime) {
                 const sampleAnimation = animateValue({
                     ...options,
+                    keyframes: resolvedKeyframes,
                     autoplay: false,
                 })
 

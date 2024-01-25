@@ -4,6 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.6] Unreleased
+
+### Changed
+
+-   Keyframes now resolved asynchronously.
+-   External event handlers now fired synchronously.
+
 ## [11.0.5] 2024-02-13
 
 ### Updated
