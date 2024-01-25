@@ -126,6 +126,7 @@ export function animateValue<V extends string | number = number>({
 
     let initialKeyframe: V
     const createGenerator = (keyframes: ResolvedKeyframes<any>) => {
+        console.log("create generator")
         if (
             canSkipAnimation(
                 keyframes,
@@ -136,6 +137,7 @@ export function animateValue<V extends string | number = number>({
                 options.velocity
             )
         ) {
+            console.log("skipping", keyframes)
             if (instantAnimationState.current || !delay) {
                 if (onUpdate) {
                     onUpdate(
@@ -204,6 +206,7 @@ export function animateValue<V extends string | number = number>({
     }
 
     const tick = (timestamp: number) => {
+        console.log({ startTime, hasGenerator: !!generator })
         if (startTime === null || !generator) return
 
         /**
@@ -317,7 +320,7 @@ export function animateValue<V extends string | number = number>({
         const isAnimationFinished =
             holdTime === null &&
             (playState === "finished" || (playState === "running" && done))
-
+        console.log("Updating with", state.value)
         if (onUpdate) {
             onUpdate(state.value)
         }
@@ -455,6 +458,7 @@ export function animateValue<V extends string | number = number>({
         },
         sample: (elapsed: number) => {
             startTime = 0
+            console.log("sample")
             return tick(elapsed)!
         },
     }
