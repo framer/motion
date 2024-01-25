@@ -10,6 +10,7 @@ import * as React from "react"
 import { createRef } from "react"
 import { nextFrame } from "../../gestures/__tests__/utils"
 import "../../animation/animators/waapi/__tests__/setup"
+import { act } from "react-dom/test-utils"
 
 describe("WAAPI animations", () => {
     test("opacity animates with WAAPI at default settings", async () => {
@@ -290,8 +291,8 @@ describe("WAAPI animations", () => {
                 <motion.div
                     initial="none"
                     animate={isHovered ? "hover" : "none"}
-                    onHoverStart={() => setIsHovered(true)}
-                    onHoverEnd={() => setIsHovered(false)}
+                    onHoverStart={() => act(() => setIsHovered(true))}
+                    onHoverEnd={() => act(() => setIsHovered(false))}
                 >
                     <motion.div
                         ref={ref}
@@ -308,6 +309,7 @@ describe("WAAPI animations", () => {
         pointerLeave(container.firstChild as Element)
         await nextFrame()
         rerender(<Component />)
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalledTimes(2)
     })
@@ -335,6 +337,7 @@ describe("WAAPI animations", () => {
         const { container, rerender } = render(<Component />)
         pointerDown(container.firstChild as Element)
 
+        await nextFrame()
         await nextFrame()
         pointerUp(container.firstChild as Element)
 

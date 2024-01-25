@@ -53,7 +53,7 @@ describe("css variables", () => {
     beforeAll(stubGetComputedStyles)
     afterAll(resetComputedStyles)
 
-    test.only("should animate css color variables", async () => {
+    test("should animate css color variables", async () => {
         const promise = new Promise((resolve) => {
             let frameCount = 0
 
