@@ -15,7 +15,6 @@ import { memo } from "../../../utils/memo"
 import { noop } from "../../../utils/noop"
 import {
     KeyframeResolver,
-    OnKeyframesResolved,
     ResolvedKeyframes,
     flushKeyframeResolvers,
 } from "../../../render/utils/KeyframesResolver"
@@ -49,15 +48,6 @@ const sampleDelta = 10 //ms
  */
 const maxDuration = 20_000
 
-function defaultResolveKeyframes<V extends string | number>(
-    keyframes: V[],
-    onComplete: OnKeyframesResolved<V>,
-    name?: string,
-    motionValue?: any
-) {
-    return new KeyframeResolver(keyframes, onComplete, name, motionValue)
-}
-
 const requiresPregeneratedKeyframes = (
     valueName: string,
     options: ValueAnimationOptions
@@ -72,7 +62,7 @@ export function createAcceleratedAnimation(
     {
         onUpdate,
         onComplete,
-        resolveKeyframes = defaultResolveKeyframes,
+        element,
         name,
         motionValue,
         ...options
@@ -226,12 +216,21 @@ export function createAcceleratedAnimation(
         updateFinishedPromise()
     }
 
-    const resolver = resolveKeyframes(
-        unresolvedKeyframes,
-        createWaapiAnimation,
-        name,
-        motionValue
-    )
+    const resolver =
+        element && name && motionValue
+            ? element.resolveKeyframes(
+                  unresolvedKeyframes,
+                  createWaapiAnimation,
+                  name,
+                  motionValue
+              )
+            : new KeyframeResolver(
+                  unresolvedKeyframes,
+                  createWaapiAnimation,
+                  name,
+                  motionValue,
+                  element
+              )
 
     /**
      * Animation interrupt callback.

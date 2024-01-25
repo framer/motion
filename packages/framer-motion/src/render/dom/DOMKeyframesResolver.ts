@@ -10,6 +10,7 @@ import {
 import { findDimensionValueType } from "./value-types/dimensions"
 import { KeyframeResolver } from "../utils/KeyframesResolver"
 import { makeNoneKeyframesAnimatable } from "../html/utils/make-none-animatable"
+import { VisualElement } from "../VisualElement"
 
 /**
  * TODO: Use information about whether we are animating via JS or WAAPI to
@@ -19,6 +20,7 @@ export class DOMKeyframesResolver<
     T extends string | number
 > extends KeyframeResolver<T> {
     name: string
+    element: VisualElement<HTMLElement | SVGElement>
 
     private removedTransforms?: [string, string | number][]
     // private restoreScrollY?: number

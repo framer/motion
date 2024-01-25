@@ -38,17 +38,19 @@ export interface ValueAnimationTransition<V = any>
     isHandoff?: boolean
 }
 
+export type ResolveKeyframes<V extends string | number> = (
+    keyframes: V[],
+    onComplete: OnKeyframesResolved<V>,
+    name?: string,
+    motionValue?: any
+) => KeyframeResolver<V>
+
 export interface ValueAnimationOptions<V extends string | number = number>
     extends ValueAnimationTransition {
     keyframes: V[]
     name?: string
     motionValue?: MotionValue<V>
-    resolveKeyframes?: (
-        keyframes: V[],
-        onComplete: OnKeyframesResolved<V>,
-        name?: string,
-        motionValue?: any
-    ) => KeyframeResolver<V>
+    element?: VisualElement<any>
     from?: V
 }
 

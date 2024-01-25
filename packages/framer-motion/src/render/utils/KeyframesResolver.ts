@@ -60,17 +60,12 @@ export type OnKeyframesResolved<T extends string | number> = (
     resolvedKeyframes: ResolvedKeyframes<T>
 ) => void
 
-type ReadValue = (
-    target?: string | number | null
-) => string | number | undefined | null
-
 export class KeyframeResolver<T extends string | number = any> {
-    element: VisualElement<any>
+    element?: VisualElement<any>
     name?: string
     resolvedKeyframes: ResolvedKeyframes<T> | undefined
     unresolvedKeyframes: UnresolvedKeyframes<string | number>
     motionValue?: MotionValue<T>
-    readValueFromInstance?: ReadValue
     private onComplete: OnKeyframesResolved<T>
 
     constructor(
@@ -78,13 +73,13 @@ export class KeyframeResolver<T extends string | number = any> {
         onComplete: OnKeyframesResolved<T>,
         name?: string,
         motionValue?: MotionValue<T>,
-        readValueFromInstance?: ReadValue
+        element?: VisualElement<any>
     ) {
         this.unresolvedKeyframes = unresolvedKeyframes
         this.onComplete = onComplete
         this.name = name
         this.motionValue = motionValue
-        this.readValueFromInstance = readValueFromInstance
+        this.element = element
 
         toResolve.add(this)
 
@@ -97,12 +92,7 @@ export class KeyframeResolver<T extends string | number = any> {
     needsMeasurement = false
 
     readKeyframes() {
-        const {
-            unresolvedKeyframes,
-            readValueFromInstance,
-            name,
-            motionValue,
-        } = this
+        const { unresolvedKeyframes, name, element, motionValue } = this
 
         /**
          * If a keyframe is null, we hydrate it either by reading it from
@@ -121,10 +111,13 @@ export class KeyframeResolver<T extends string | number = any> {
 
                     if (currentValue !== undefined) {
                         unresolvedKeyframes[0] = currentValue
-                    } else if (readValueFromInstance && name) {
-                        const valueAsRead = readValueFromInstance(finalKeyframe)
+                    } else if (element && name) {
+                        const valueAsRead = element.readValue(
+                            name,
+                            finalKeyframe
+                        )
 
-                        if (valueAsRead !== undefined) {
+                        if (valueAsRead !== undefined && valueAsRead !== null) {
                             unresolvedKeyframes[0] = valueAsRead
                         }
                     }
