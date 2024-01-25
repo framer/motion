@@ -21,7 +21,10 @@ const originalGetComputedStyle = window.getComputedStyle
 
 function getComputedStyleStub() {
     return {
-        getPropertyValue(variableName: "--from" | "--to" | "--a" | "--color") {
+        background: fromValue,
+        getPropertyValue(
+            variableName: "background" | "--from" | "--to" | "--a" | "--color"
+        ) {
             switch (variableName) {
                 case fromName:
                     return fromValue
