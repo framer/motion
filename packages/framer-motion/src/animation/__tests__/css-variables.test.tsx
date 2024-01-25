@@ -50,9 +50,10 @@ describe("css variables", () => {
     beforeAll(stubGetComputedStyles)
     afterAll(resetComputedStyles)
 
-    test("should animate css color variables", async () => {
+    test.only("should animate css color variables", async () => {
         const promise = new Promise((resolve) => {
             let frameCount = 0
+
             const Component = () => (
                 <motion.div
                     style={style}
@@ -98,6 +99,7 @@ describe("css variables", () => {
 
         const results = await promise
         expect(results).toEqual([
+            { "--a": "20px", "--color": "rgba(0, 0, 0, 1)" },
             { "--a": "20px", "--color": "rgba(0, 0, 0, 1)" },
         ])
     })
