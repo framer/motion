@@ -313,7 +313,7 @@ export function animateValue<V extends string | number = number>({
         const isAnimationFinished =
             holdTime === null &&
             (playState === "finished" || (playState === "running" && done))
-
+        console.log(state.value)
         if (onUpdate) {
             onUpdate(state.value)
         }
