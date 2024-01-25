@@ -17,7 +17,6 @@ import { mix } from "../../../utils/mix"
 import { pipe } from "../../../utils/pipe"
 import {
     KeyframeResolver,
-    OnKeyframesResolved,
     ResolvedKeyframes,
 } from "../../../render/utils/KeyframesResolver"
 import { instantAnimationState } from "../../../utils/use-instant-transition-state"
@@ -62,8 +61,8 @@ function defaultResolveKeyframes<V extends string | number>(
 export function animateValue<V extends string | number = number>({
     keyframes: unresolvedKeyframes,
     name,
+    element,
     motionValue,
-    resolveKeyframes = defaultResolveKeyframes,
     autoplay = true,
     delay = 0,
     driver = frameloopDriver,
@@ -326,12 +325,21 @@ export function animateValue<V extends string | number = number>({
         return state
     }
 
-    const keyframeResolver = resolveKeyframes(
-        unresolvedKeyframes,
-        createGenerator,
-        name,
-        motionValue
-    )
+    const keyframeResolver =
+        element && name && motionValue
+            ? element.resolveKeyframes(
+                  unresolvedKeyframes,
+                  createGenerator,
+                  name,
+                  motionValue
+              )
+            : new KeyframeResolver(
+                  unresolvedKeyframes,
+                  createGenerator,
+                  name,
+                  motionValue,
+                  element
+              )
 
     const stopAnimationDriver = () => {
         animationDriver && animationDriver.stop()

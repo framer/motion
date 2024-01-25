@@ -45,7 +45,7 @@ export function canSkipAnimation(
     const targetKeyframe = keyframes[keyframes.length - 1]
     const isOriginAnimatable = isAnimatable(originKeyframe, name)
     const isTargetAnimatable = isAnimatable(targetKeyframe, name)
-
+    console.log(keyframes)
     warning(
         isOriginAnimatable === isTargetAnimatable,
         `You are trying to animate ${name} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`

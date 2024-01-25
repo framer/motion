@@ -9,6 +9,7 @@ import type { UnresolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { MotionGlobalConfig } from "../../utils/GlobalConfig"
 import { instantAnimationState } from "../../utils/use-instant-transition-state"
 import { createAcceleratedAnimation } from "../animators/waapi/create-accelerated-animation"
+import type { VisualElement } from "../../render/VisualElement"
 
 function makeTransitionInstant(options: ValueAnimationOptions<any>) {
     options.duration = 0
@@ -19,7 +20,8 @@ export const animateMotionValue = <V extends string | number>(
     name: string,
     value: MotionValue<V>,
     target: V | UnresolvedKeyframes<V>,
-    transition: Transition & { elapsed?: number; isHandoff?: boolean } = {}
+    transition: Transition & { elapsed?: number; isHandoff?: boolean } = {},
+    element?: VisualElement<any>
 ): StartAnimation => {
     return (onComplete: VoidFunction): AnimationPlaybackControls => {
         const valueTransition = getValueTransition(transition, name) || {}
@@ -54,6 +56,7 @@ export const animateMotionValue = <V extends string | number>(
             },
             name,
             motionValue: value,
+            element,
         }
 
         /**
