@@ -19,7 +19,7 @@ export class DOMKeyframesResolver<
     element: VisualElement<HTMLElement | SVGElement>
 
     private removedTransforms?: [string, string | number][]
-    // private restoreScrollY?: number
+    restoreScrollY?: number
     private measuredOrigin?: string | number
 
     readKeyframes() {
@@ -122,9 +122,9 @@ export class DOMKeyframesResolver<
 
         if (!element.current) return
 
-        // if (name === "height") {
-        //     this.restoreScrollY = window.pageYOffset
-        // }
+        if (name === "height") {
+            this.restoreScrollY = window.pageYOffset
+        }
 
         this.measuredOrigin = positionalValues[name](
             element.measureViewportBox(),

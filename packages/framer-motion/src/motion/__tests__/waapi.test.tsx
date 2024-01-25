@@ -298,6 +298,7 @@ describe("WAAPI animations", () => {
                         ref={ref}
                         style={{ opacity: 0.5 }}
                         variants={{ hover: { opacity: 1 } }}
+                        transition={{ type: false }}
                     />
                 </motion.div>
             )
@@ -305,6 +306,7 @@ describe("WAAPI animations", () => {
         const { container, rerender } = render(<Component />)
         pointerEnter(container.firstChild as Element)
 
+        await nextFrame()
         await nextFrame()
         pointerLeave(container.firstChild as Element)
         await nextFrame()
