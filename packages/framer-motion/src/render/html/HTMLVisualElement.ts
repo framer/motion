@@ -30,11 +30,18 @@ export class HTMLVisualElement extends DOMVisualElement<
         instance: HTMLElement,
         key: string
     ): string | number | null | undefined {
+        console.log("read value from instanance")
         if (transformProps.has(key)) {
             const defaultType = getDefaultValueType(key)
             return defaultType ? defaultType.default || 0 : 0
         } else {
             const computedStyle = getComputedStyle(instance)
+            console.log(
+                key,
+                isCSSVariableName(key),
+                computedStyle.getPropertyValue(key),
+                computedStyle[key]
+            )
             const value =
                 (isCSSVariableName(key)
                     ? computedStyle.getPropertyValue(key)

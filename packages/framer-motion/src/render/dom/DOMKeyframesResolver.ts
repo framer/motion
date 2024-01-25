@@ -42,7 +42,7 @@ export class DOMKeyframesResolver<
             const keyframe = unresolvedKeyframes[i]
             if (isCSSVariableToken(keyframe)) {
                 const resolved = getVariableValue(keyframe, element.current)
-                console.log("this is a css variable resolved as ", keyframe)
+
                 if (resolved !== undefined) {
                     unresolvedKeyframes[i] = resolved as T
                 }
