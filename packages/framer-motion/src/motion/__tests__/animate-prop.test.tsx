@@ -326,7 +326,7 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toBe(false)
     })
     test("does animate different keyframes", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             let isAnimating = false
             const Component = () => (
                 <motion.div
@@ -347,9 +347,10 @@ describe("animate prop as object", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
 
-            frame.postRender(() => {
-                frame.postRender(() => resolve(isAnimating))
-            })
+            await nextFrame()
+            await nextFrame()
+
+            resolve(isAnimating)
         })
 
         return expect(promise).resolves.toBe(true)
@@ -826,7 +827,7 @@ describe("animate prop as object", () => {
             rerender(<Component />)
         })
 
-        return expect(promise).resolves.toBe("rgba(0, 0, 0, 1)")
+        return expect(promise).resolves.toBe("#000")
     })
 
     test("forces an animation to fallback if has been set to `null`", async () => {

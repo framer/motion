@@ -1,8 +1,7 @@
 import { ResolvedKeyframes } from "../../../render/utils/KeyframesResolver"
 import { MotionGlobalConfig } from "../../../utils/GlobalConfig"
-import { warning } from "../../../utils/errors"
+import { invariant } from "../../../utils/errors"
 import { instantAnimationState } from "../../../utils/use-instant-transition-state"
-import type { MotionValue } from "../../../value"
 import { isAnimatable } from "../../utils/is-animatable"
 
 function hasKeyframesChanged(keyframes: ResolvedKeyframes<any>) {
@@ -15,26 +14,17 @@ function hasKeyframesChanged(keyframes: ResolvedKeyframes<any>) {
 
 export function canSkipAnimation(
     keyframes: ResolvedKeyframes<any>,
+    isInterruptingAnimation: boolean,
     name?: string,
-    value?: MotionValue<any>,
     type?: string,
     isHandoff?: boolean,
     velocity?: number
 ) {
-    let canSkip = !isHandoff && !hasKeyframesChanged(keyframes)
-
-    if (type === "spring" && velocity) {
-        canSkip = false
-    }
-
-    /**
-     * Temporarily disable skipping animations if there's an animation in
-     * progress. Better would be to track the current target of a value
-     * and compare that against valueTarget.
-     */
-    if (value && value.animation) {
-        canSkip = false
-    }
+    let canSkip =
+        !isHandoff &&
+        !hasKeyframesChanged(keyframes) &&
+        !isInterruptingAnimation &&
+        !(type === "spring" && velocity)
 
     /**
      * Check if we're able to animate between the start and end keyframes,
@@ -46,7 +36,7 @@ export function canSkipAnimation(
     const isOriginAnimatable = isAnimatable(originKeyframe, name)
     const isTargetAnimatable = isAnimatable(targetKeyframe, name)
 
-    warning(
+    invariant(
         isOriginAnimatable === isTargetAnimatable,
         `You are trying to animate ${name} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`
     )

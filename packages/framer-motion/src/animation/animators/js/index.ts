@@ -120,13 +120,17 @@ export function animateValue<V extends string | number = number>({
 
     let animationDriver: DriverControls | undefined
 
+    const isInterruptingAnimation = Boolean(
+        motionValue && motionValue.animation
+    )
+
     let initialKeyframe: V
     const createGenerator = (keyframes: ResolvedKeyframes<any>) => {
         if (
             canSkipAnimation(
                 keyframes,
+                isInterruptingAnimation,
                 name,
-                motionValue,
                 type,
                 options.isHandoff,
                 options.velocity
@@ -313,7 +317,7 @@ export function animateValue<V extends string | number = number>({
         const isAnimationFinished =
             holdTime === null &&
             (playState === "finished" || (playState === "running" && done))
-        console.log(state.value)
+
         if (onUpdate) {
             onUpdate(state.value)
         }
@@ -324,22 +328,6 @@ export function animateValue<V extends string | number = number>({
 
         return state
     }
-
-    const keyframeResolver =
-        element && name && motionValue
-            ? element.resolveKeyframes(
-                  unresolvedKeyframes,
-                  createGenerator,
-                  name,
-                  motionValue
-              )
-            : new KeyframeResolver(
-                  unresolvedKeyframes,
-                  createGenerator,
-                  name,
-                  motionValue,
-                  element
-              )
 
     const stopAnimationDriver = () => {
         animationDriver && animationDriver.stop()
@@ -387,6 +375,22 @@ export function animateValue<V extends string | number = number>({
 
         animationDriver.start()
     }
+
+    const keyframeResolver =
+        element && name && motionValue
+            ? element.resolveKeyframes(
+                  unresolvedKeyframes,
+                  createGenerator,
+                  name,
+                  motionValue
+              )
+            : new KeyframeResolver(
+                  unresolvedKeyframes,
+                  createGenerator,
+                  name,
+                  motionValue,
+                  element
+              )
 
     const controls = {
         then(resolve: VoidFunction, reject?: VoidFunction) {

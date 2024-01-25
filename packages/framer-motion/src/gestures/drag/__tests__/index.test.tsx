@@ -496,6 +496,8 @@ describe("dragging", () => {
         expect(opacity.get()).toBe(0.5)
         await pointer.to(10, 200)
         pointer.end()
+
+        await nextFrame()
         expect(opacity.get()).toBe(0)
     })
 

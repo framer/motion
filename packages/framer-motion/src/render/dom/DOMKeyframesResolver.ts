@@ -12,10 +12,6 @@ import { KeyframeResolver } from "../utils/KeyframesResolver"
 import { makeNoneKeyframesAnimatable } from "../html/utils/make-none-animatable"
 import { VisualElement } from "../VisualElement"
 
-/**
- * TODO: Use information about whether we are animating via JS or WAAPI to
- * decide whether to we need to resolve CSS vars / do type conversion here.
- */
 export class DOMKeyframesResolver<
     T extends string | number
 > extends KeyframeResolver<T> {
