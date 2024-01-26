@@ -221,7 +221,6 @@ export function createAcceleratedAnimation(
         updateFinishedPromise()
     }
 
-    console.log("resolving", options.keyframes, name)
     const resolver =
         element && name && motionValue
             ? element.resolveKeyframes(

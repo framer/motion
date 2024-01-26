@@ -114,11 +114,11 @@ export class DOMKeyframesResolver<
         //     this.resolvedFinalKeyframe = finalKeyframe
         // }
 
-        element.getValue(name, finalKeyframe).jump(finalKeyframe)
+        element.getValue(name, finalKeyframe).jump(finalKeyframe, false)
     }
 
     measureInitialState() {
-        const { element, name } = this
+        const { element, unresolvedKeyframes, name } = this
 
         if (!element.current) return
 
@@ -130,6 +130,8 @@ export class DOMKeyframesResolver<
             element.measureViewportBox(),
             window.getComputedStyle(element.current)
         )
+
+        unresolvedKeyframes[0] = this.measuredOrigin
     }
 
     renderEndStyles() {
@@ -142,7 +144,7 @@ export class DOMKeyframesResolver<
         if (!element.current) return
 
         const value = element.getValue(name)
-        value && value.jump(this.measuredOrigin)
+        value && value.jump(this.measuredOrigin, false)
 
         unresolvedKeyframes[unresolvedKeyframes.length - 1] = positionalValues[
             name
