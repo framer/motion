@@ -1,9 +1,9 @@
 <html>
     <!--
-    Cold Start: GSAP
+    Warm Start: GSAP
 
-    This benchmarks cold start - when an animation library has to
-    read values from the DOM.
+    This benchmarks warm start - when an animation library already knows
+    the initial values to animate.
 
     Run in private browsing mode to avoid browser plugins interfering with
     benchmark.
@@ -48,8 +48,15 @@
 
             const boxes = document.querySelectorAll(".box")
 
+            gsap.set(boxes, {
+                rotate: 0,
+                backgroundColor: "#fff",
+                width: "0%",
+                x: 0,
+            })
+
             setTimeout(() => {
-                // Cold start (read from DOM)
+                // Warm start
                 boxes.forEach((box) =>
                     gsap.to(box, {
                         rotate: Math.random() * 360,
@@ -60,16 +67,17 @@
                     })
                 )
 
-                setTimeout(() => {
-                    // Unit conversion
-                    boxes.forEach((box) =>
-                        gsap.to(box, {
-                            width: Math.random() * 100 + "px",
-                            x: "50%",
-                            duration: 1,
-                        })
-                    )
-                }, 1500)
+                // setTimeout(() => {
+                //     // Unit conversion
+                //     boxes.forEach((box) =>
+                //         gsap.to(box, {
+                //             width: Math.random() * 100 + "px",
+                //             x: "50%",
+                //             duration: 1,
+                //             easing: "linear",
+                //         })
+                //     )
+                // }, 1500)
             }, 1000)
         </script>
     </body>
