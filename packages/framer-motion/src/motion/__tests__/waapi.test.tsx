@@ -166,7 +166,8 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test.skip("backgroundColor animates with WAAPI at default settings", () => {
+    // backgroundColor currently disabled for performance reasons
+    test.skip("backgroundColor animates with WAAPI at default settings", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
