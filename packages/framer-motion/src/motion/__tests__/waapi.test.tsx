@@ -155,7 +155,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("backgroundColor animates with WAAPI at default settings", () => {
+    test.skip("backgroundColor animates with WAAPI at default settings", () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div

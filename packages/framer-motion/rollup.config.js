@@ -77,6 +77,19 @@ const umdProd = Object.assign({}, umd, {
     ],
 })
 
+const umdDomProd = Object.assign({}, umd, {
+    input: "lib/dom-entry.js",
+    output: Object.assign({}, umd.output, {
+        file: `dist/dom.js`,
+    }),
+    plugins: [
+        resolve(),
+        replaceSettings("production"),
+        pureClass,
+        terser({ output: { comments: false } }),
+    ],
+})
+
 const cjs = Object.assign({}, config, {
     input: ["lib/index.js", "lib/dom-entry.js"],
     output: {
@@ -134,6 +147,7 @@ export default [
     projection,
     umd,
     umdProd,
+    umdDomProd,
     cjs,
     es,
     types,
