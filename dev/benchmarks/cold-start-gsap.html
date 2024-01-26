@@ -46,13 +46,39 @@
             }
             document.querySelector(".container").innerHTML = html
 
+            const boxes = document.querySelectorAll(".box")
+
+            // Warm
+            gsap.to(document.querySelector(".box"), {
+                rotate: Math.random() * 360,
+                backgroundColor: "#f00",
+                width: Math.random() * 100 + "%",
+                duration: 0.1,
+                easing: "linear",
+            })
+
             setTimeout(() => {
-                gsap.to(".box", {
-                    rotate: 360,
-                    backgroundColor: "#f00",
-                    width: "100%",
-                    duration: 1,
-                })
+                boxes.forEach((box) =>
+                    gsap.to(box, {
+                        rotate: Math.random() * 360,
+                        backgroundColor: "#f00",
+                        width: Math.random() * 100 + "%",
+                        duration: 1,
+                        easing: "linear",
+                    })
+                )
+
+                setTimeout(() => {
+                    boxes.forEach((box) =>
+                        gsap.to(box, {
+                            rotate: Math.random() * 360,
+                            backgroundColor: "#fff",
+                            width: Math.random() * 100 + "%",
+                            duration: 1,
+                            easing: "linear",
+                        })
+                    )
+                }, 1500)
             }, 1000)
         </script>
     </body>

@@ -28,7 +28,7 @@
             }
 
             .box {
-                width: 10px;
+                width: 10%;
                 height: 100px;
                 background-color: #fff;
             }
@@ -36,7 +36,7 @@
     </head>
     <body>
         <div class="container"></div>
-        <script src="../../node_modules/animejs/lib/anime.min.js"></script>
+        <script src="../../node_modules/animejs/lib/anime.js"></script>
         <script>
             // Create boxes
             const numBoxes = 100
@@ -45,16 +45,41 @@
                 html += `<div><div class="box"></div></div>`
             }
             document.querySelector(".container").innerHTML = html
+            const boxes = document.querySelectorAll(".box")
+
+            anime({
+                targets: boxes[0],
+                rotate: Math.random() * 360,
+                backgroundColor: "#f00",
+                width: Math.random() * 100 + "%",
+                duration: 100,
+                easing: "linear",
+            })
 
             setTimeout(() => {
-                anime({
-                    targets: ".box",
-                    rotate: 360,
-                    backgroundColor: "#f00",
-                    width: "100%",
-                    duration: 1000,
-                    easing: "linear",
-                })
+                boxes.forEach((box) =>
+                    anime({
+                        targets: box,
+                        rotate: Math.random() * 360,
+                        backgroundColor: "#f00",
+                        width: Math.random() * 100 + "%",
+                        duration: 1000,
+                        easing: "linear",
+                    })
+                )
+
+                setTimeout(() => {
+                    boxes.forEach((box) =>
+                        anime({
+                            targets: box,
+                            rotate: Math.random() * 360,
+                            backgroundColor: "#fff",
+                            width: Math.random() * 100 + "%",
+                            duration: 1000,
+                            easing: "linear",
+                        })
+                    )
+                }, 1500)
             }, 1000)
         </script>
     </body>

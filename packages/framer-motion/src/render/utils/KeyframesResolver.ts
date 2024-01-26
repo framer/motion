@@ -89,7 +89,6 @@ export class KeyframeResolver<T extends string | number = any> {
                 frame.read(readAllKeyframes)
             }
         } else {
-            console.log("synchronus resolition")
             this.readKeyframes()
             this.complete()
         }
@@ -111,7 +110,7 @@ export class KeyframeResolver<T extends string | number = any> {
                  */
                 if (i === 0) {
                     const currentValue = motionValue?.get()
-                    console.log({ currentValue })
+
                     const finalKeyframe =
                         unresolvedKeyframes[unresolvedKeyframes.length - 1]
 
@@ -148,7 +147,6 @@ export class KeyframeResolver<T extends string | number = any> {
     measureEndState() {}
 
     complete() {
-        console.log("resolved keyframes", this.unresolvedKeyframes)
         this.onComplete(this.unresolvedKeyframes as ResolvedKeyframes<T>)
         toResolve.delete(this)
     }
