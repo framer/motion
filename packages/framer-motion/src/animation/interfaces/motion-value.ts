@@ -56,7 +56,7 @@ export const animateMotionValue = <V extends string | number>(
             },
             name,
             motionValue: value,
-            element,
+            element: transition.isHandoff ? undefined : element,
         }
 
         /**
