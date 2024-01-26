@@ -26,7 +26,6 @@ const acceleratedValues = new Set<string>([
     "clipPath",
     "filter",
     "transform",
-    "backgroundColor",
 ])
 
 /**
