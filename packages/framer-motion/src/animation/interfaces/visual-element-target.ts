@@ -38,6 +38,8 @@ export function animateTarget(
         ...target
     } = targetAndTransition
 
+    console.log({ delay })
+
     const willChange = visualElement.getValue("willChange")
 
     if (transitionOverride) transition = transitionOverride
