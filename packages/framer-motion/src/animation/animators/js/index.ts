@@ -18,6 +18,7 @@ import { pipe } from "../../../utils/pipe"
 import {
     KeyframeResolver,
     ResolvedKeyframes,
+    flushKeyframeResolvers,
 } from "../../../render/utils/KeyframesResolver"
 import { instantAnimationState } from "../../../utils/use-instant-transition-state"
 import { getFinalKeyframe } from "../waapi/utils/get-final-keyframe"
@@ -343,12 +344,12 @@ export function animateValue<V extends string | number = number>({
     }
 
     const play = () => {
-        // TODO allow async
+        if (!generator) flushKeyframeResolvers()
+
         if (hasStopped) return
 
         if (!animationDriver) animationDriver = driver(tick)
 
-        // TODO Create microtask to set a time for this event stack
         const now = animationDriver.now()
 
         onPlay && onPlay()
