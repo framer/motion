@@ -1,7 +1,5 @@
 import { ResolvedKeyframes } from "../../../render/utils/KeyframesResolver"
-import { MotionGlobalConfig } from "../../../utils/GlobalConfig"
 import { warning } from "../../../utils/errors"
-import { instantAnimationState } from "../../../utils/use-instant-transition-state"
 import { isAnimatable } from "../../utils/is-animatable"
 
 function hasKeyframesChanged(keyframes: ResolvedKeyframes<any>) {
@@ -17,12 +15,10 @@ export function canSkipAnimation(
     isInterruptingAnimation: boolean,
     name?: string,
     type?: string,
-    isHandoff?: boolean,
     velocity?: number
 ) {
     // TODO Skip before animation instantiation when possible
     let canSkip =
-        !isHandoff &&
         !hasKeyframesChanged(keyframes) &&
         !isInterruptingAnimation &&
         !(type === "spring" && velocity)
@@ -45,12 +41,7 @@ export function canSkipAnimation(
     }
 
     // Always skip if any of these are true
-    if (
-        !isOriginAnimatable ||
-        !isTargetAnimatable ||
-        instantAnimationState.current ||
-        MotionGlobalConfig.skipAnimations
-    ) {
+    if (!isOriginAnimatable || !isTargetAnimatable) {
         canSkip = true
     }
 

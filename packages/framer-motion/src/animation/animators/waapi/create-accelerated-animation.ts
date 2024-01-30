@@ -131,7 +131,6 @@ export function createAcceleratedAnimation(
                 isInterruptingAnimation,
                 valueName,
                 options.type,
-                options.isHandoff,
                 options.velocity
             )
         ) {

@@ -20,8 +20,9 @@ export const animateMotionValue = <V extends string | number>(
     name: string,
     value: MotionValue<V>,
     target: V | UnresolvedKeyframes<V>,
-    transition: Transition & { elapsed?: number; isHandoff?: boolean } = {},
-    element?: VisualElement<any>
+    transition: Transition & { elapsed?: number } = {},
+    element?: VisualElement<any>,
+    isHandoff?: boolean
 ): StartAnimation => {
     return (onComplete: VoidFunction): AnimationPlaybackControls => {
         const valueTransition = getValueTransition(transition, name) || {}
@@ -56,7 +57,7 @@ export const animateMotionValue = <V extends string | number>(
             },
             name,
             motionValue: value,
-            element: transition.isHandoff ? undefined : element,
+            element: isHandoff ? undefined : element,
         }
 
         /**
@@ -107,7 +108,7 @@ export const animateMotionValue = <V extends string | number>(
              * WAAPI. Therefore, this animation must be JS to ensure it runs "under" the
              * optimised animation.
              */
-            !transition.isHandoff &&
+            !isHandoff &&
             value.owner &&
             value.owner.current instanceof HTMLElement &&
             /**
