@@ -134,7 +134,7 @@ describe("focus", () => {
     })
 
     test("whileFocus is unapplied when blur", () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const ref = React.createRef<HTMLAnchorElement>()
             const variant = {
                 hidden: { opacity: 0.5, transitionEnd: { opacity: 0.75 } },
@@ -164,6 +164,7 @@ describe("focus", () => {
             ref.current!.matches = () => true
 
             focus(container, "myAnchorElement")
+            await nextFrame()
             setTimeout(() => {
                 blurred = true
                 blur(container, "myAnchorElement")

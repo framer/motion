@@ -17,7 +17,7 @@ export class DOMKeyframesResolver<
 > extends KeyframeResolver<T> {
     name: string
     element: VisualElement<HTMLElement | SVGElement>
-
+    async = true
     private removedTransforms?: [string, string | number][]
     restoreScrollY?: number
     private measuredOrigin?: string | number

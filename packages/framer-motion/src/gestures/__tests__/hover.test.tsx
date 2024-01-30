@@ -142,7 +142,7 @@ describe("hover", () => {
     })
 
     test("whileHover is unapplied when hover ends", () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const variant = {
                 hidden: { opacity: 0.5, transitionEnd: { opacity: 0.75 } },
             }
@@ -166,6 +166,8 @@ describe("hover", () => {
             )
 
             pointerEnter(container.firstChild as Element)
+
+            await nextFrame()
             setTimeout(() => {
                 hasMousedOut = true
                 pointerLeave(container.firstChild as Element)
