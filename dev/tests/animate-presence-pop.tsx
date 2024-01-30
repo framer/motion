@@ -1,6 +1,6 @@
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion, animate } from "framer-motion"
 import * as React from "react"
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import styled from "styled-components"
 
 const Container = styled.section`
@@ -22,6 +22,15 @@ export const App = () => {
     const position = params.get("position") || ("static" as any)
     const itemStyle =
         position === "relative" ? { position, top: 100, left: 100 } : {}
+
+    const ref = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        if (!ref.current) return
+
+        animate(ref.current, { opacity: [0, 1] }, { duration: 1 })
+        animate(ref.current, { opacity: [1, 0.5] }, { duration: 1 })
+    }, [])
 
     return (
         <Container onClick={() => setState(!state)}>
@@ -54,6 +63,10 @@ export const App = () => {
                     style={{ ...itemStyle, backgroundColor: "blue" }}
                 />
             </AnimatePresence>
+            <div
+                ref={ref}
+                style={{ ...itemStyle, backgroundColor: "purple" }}
+            />
         </Container>
     )
 }

@@ -38,8 +38,6 @@ export function animateTarget(
         ...target
     } = targetAndTransition
 
-    console.log({ delay })
-
     const willChange = visualElement.getValue("willChange")
 
     if (transitionOverride) transition = transitionOverride
@@ -89,6 +87,8 @@ export function animateTarget(
                 }
             }
         }
+
+        // TODO Skip animation with a set
 
         value.start(
             animateMotionValue(
