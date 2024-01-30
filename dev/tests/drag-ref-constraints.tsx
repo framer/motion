@@ -14,6 +14,7 @@ export const App = () => {
         window.scrollTo(0, 100)
     }, [])
     const x = useMotionValue("100%")
+
     return (
         <div style={{ height: 2000, paddingTop: 100 }}>
             <motion.div
