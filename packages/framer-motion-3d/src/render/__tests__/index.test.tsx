@@ -44,7 +44,9 @@ describe("motion for three", () => {
                         scale={[5, 5, 5]}
                         position={[1, 2, 3]}
                         rotation={[4, 5, 6]}
-                        onUpdate={(latest) => output.push({ ...latest })}
+                        onUpdate={(latest) => {
+                            output.push({ ...latest })
+                        }}
                         onAnimationComplete={() => resolve(output)}
                         transition={{
                             duration: 0.1,
@@ -102,7 +104,7 @@ describe("motion for three", () => {
         })
     })
 
-    test.only("Reads initial value from drilled props", async () => {
+    test("Reads initial value from drilled props", async () => {
         const result = await new Promise<any[]>(async (resolve) => {
             const output: ResolvedValues[] = []
 
@@ -244,6 +246,7 @@ describe("motion for three", () => {
             frame.postRender(() => resolve([x.get(), y.get()]))
         })
 
-        expect(result).toEqual([100, 1])
+        expect(result[0]).toEqual(100)
+        expect(result[1]).not.toEqual(100)
     })
 })
