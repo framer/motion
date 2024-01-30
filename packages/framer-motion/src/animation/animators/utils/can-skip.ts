@@ -20,6 +20,7 @@ export function canSkipAnimation(
     isHandoff?: boolean,
     velocity?: number
 ) {
+    // TODO Skip before animation instantiation when possible
     let canSkip =
         !isHandoff &&
         !hasKeyframesChanged(keyframes) &&
