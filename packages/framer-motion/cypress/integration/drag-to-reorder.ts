@@ -201,7 +201,7 @@ describe("Drag to reorder", () => {
                     const y = step > 0 ? delta : -delta
                     chain = chain
                         .trigger("pointermove", 360, baseY + y, { force: true })
-                        .wait(50)
+                        .wait(100)
                 })
             })
             return chain

@@ -246,8 +246,10 @@ export function createAcceleratedAnimation(
         },
         attachTimeline(timeline: any) {
             if (!animation) flushKeyframeResolvers()
+
             animation!.timeline = timeline
             animation!.onfinish = null
+
             return noop<void>
         },
         get time() {

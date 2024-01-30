@@ -35,6 +35,7 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
             if (supportsScrollTimeline() && animation.attachTimeline) {
                 animation.attachTimeline(timeline)
             } else {
+                animation.play()
                 animation.pause()
                 return observeTimeline((progress) => {
                     animation.time = animation.duration * progress
@@ -76,7 +77,10 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
     }
 
     private runAll(
-        methodName: keyof Omit<AnimationPlaybackControls, PropNames | "then" | "state">
+        methodName: keyof Omit<
+            AnimationPlaybackControls,
+            PropNames | "then" | "state"
+        >
     ) {
         this.animations.forEach((controls) => controls[methodName]())
     }
