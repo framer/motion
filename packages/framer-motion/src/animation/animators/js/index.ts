@@ -133,7 +133,6 @@ export function animateValue<V extends string | number = number>({
                 isInterruptingAnimation,
                 name,
                 type,
-                options.isHandoff,
                 options.velocity
             )
         ) {

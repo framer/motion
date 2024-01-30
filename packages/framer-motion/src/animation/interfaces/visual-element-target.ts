@@ -9,6 +9,9 @@ import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { setTarget } from "../../render/utils/setters"
 import { AnimationPlaybackControls } from "../types"
 import { getValueTransition } from "../utils/transitions"
+import { getFinalKeyframe } from "../animators/waapi/utils/get-final-keyframe"
+import { instantAnimationState } from "../../utils/use-instant-transition-state"
+import { MotionGlobalConfig } from "../../utils/GlobalConfig"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
@@ -74,6 +77,7 @@ export function animateTarget(
          * If this is the first time a value is being animated, check
          * to see if we're handling off from an existing animation.
          */
+        let isHandoff = false
         if (window.HandoffAppearAnimations) {
             const appearId =
                 visualElement.getProps()[optimizedAppearDataAttribute]
@@ -83,8 +87,26 @@ export function animateTarget(
 
                 if (elapsed !== null) {
                     valueTransition.elapsed = elapsed
-                    valueTransition.isHandoff = true
+                    isHandoff = true
                 }
+            }
+        }
+
+        /**
+         * If we can or must skip creating the animation, and apply only
+         * the final keyframe, do so.
+         */
+        const finalKeyframe = getFinalKeyframe(
+            Array.isArray(valueTarget) ? valueTarget : [valueTarget],
+            valueTransition
+        )
+        if (finalKeyframe !== null && !isHandoff) {
+            if (
+                instantAnimationState.current ||
+                MotionGlobalConfig.skipAnimations
+            ) {
+                value.set(finalKeyframe)
+                continue
             }
         }
 
@@ -96,7 +118,8 @@ export function animateTarget(
                 visualElement.shouldReduceMotion && transformProps.has(key)
                     ? { type: false }
                     : valueTransition,
-                visualElement
+                visualElement,
+                isHandoff
             )
         )
 
