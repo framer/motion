@@ -88,8 +88,6 @@ export function animateTarget(
             }
         }
 
-        // TODO Skip animation with a set
-
         value.start(
             animateMotionValue(
                 key,

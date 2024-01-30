@@ -66,6 +66,7 @@ export class KeyframeResolver<T extends string | number = any> {
     resolvedKeyframes: ResolvedKeyframes<T> | undefined
     unresolvedKeyframes: UnresolvedKeyframes<string | number>
     motionValue?: MotionValue<T>
+    async = false
     private onComplete: OnKeyframesResolved<T>
 
     constructor(
@@ -81,7 +82,7 @@ export class KeyframeResolver<T extends string | number = any> {
         this.motionValue = motionValue
         this.element = element
 
-        if (this.element) {
+        if (this.async) {
             toResolve.add(this)
 
             if (!isScheduled) {
