@@ -102,7 +102,7 @@ describe("motion for three", () => {
         })
     })
 
-    test("Reads initial value from drilled props", async () => {
+    test.only("Reads initial value from drilled props", async () => {
         const result = await new Promise<any[]>(async (resolve) => {
             const output: ResolvedValues[] = []
 

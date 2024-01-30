@@ -51,7 +51,7 @@
             const boxes = document.querySelectorAll(".box")
 
             setTimeout(() => {
-                // Warm start (read from DOM)
+                // Warm start
                 boxes.forEach((box) =>
                     animate(
                         box,
@@ -67,23 +67,6 @@
                         }
                     )
                 )
-
-                // setTimeout(() => {
-                //     // Value conversion
-                //     boxes.forEach((box) =>
-                //         animate(
-                //             box,
-                //             {
-                //                 width: Math.random() * 100 + "px",
-                //                 x: "10%",
-                //             },
-                //             {
-                //                 easing: "linear",
-                //                 duration: 1,
-                //             }
-                //         )
-                //     )
-                // }, 1500)
             }, 1000)
         </script>
     </body>
