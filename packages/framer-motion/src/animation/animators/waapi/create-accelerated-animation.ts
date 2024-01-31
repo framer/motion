@@ -112,7 +112,6 @@ export function createAcceleratedAnimation(
         times,
     } = options
 
-    const isInterruptingAnimation = Boolean(value.animation)
     let resolvedKeyframes: ResolvedKeyframes<any>
 
     let animation: Animation | undefined
@@ -128,7 +127,6 @@ export function createAcceleratedAnimation(
         if (
             canSkipAnimation(
                 keyframes,
-                isInterruptingAnimation,
                 valueName,
                 options.type,
                 options.velocity

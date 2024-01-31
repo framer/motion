@@ -95,19 +95,19 @@ export function animateTarget(
         /**
          * If we can or must skip creating the animation, and apply only
          * the final keyframe, do so.
+         *
+         * TODO: Coerce target to array here
          */
         const finalKeyframe = getFinalKeyframe(
             Array.isArray(valueTarget) ? valueTarget : [valueTarget],
             valueTransition
         )
-        if (finalKeyframe !== null && !isHandoff) {
-            if (
-                instantAnimationState.current ||
-                MotionGlobalConfig.skipAnimations
-            ) {
-                value.set(finalKeyframe)
-                continue
-            }
+        const canSkip = finalKeyframe !== null && !isHandoff && !value.animation
+        const shouldSkip =
+            instantAnimationState.current || MotionGlobalConfig.skipAnimations
+        if (canSkip && shouldSkip) {
+            value.set(finalKeyframe)
+            continue
         }
 
         value.start(
