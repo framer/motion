@@ -22,7 +22,7 @@ import {
 } from "../../../render/utils/KeyframesResolver"
 import { instantAnimationState } from "../../../utils/use-instant-transition-state"
 import { getFinalKeyframe } from "../waapi/utils/get-final-keyframe"
-import { canSkipAnimation } from "../utils/can-skip"
+import { canAnimate } from "../utils/can-animate"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -123,7 +123,7 @@ export function animateValue<V extends string | number = number>({
 
     let initialKeyframe: V
     const createGenerator = (keyframes: ResolvedKeyframes<any>) => {
-        if (canSkipAnimation(keyframes, name, type, options.velocity)) {
+        if (!canAnimate(keyframes, name, type, options.velocity)) {
             if (instantAnimationState.current || !delay) {
                 if (onUpdate) {
                     onUpdate(

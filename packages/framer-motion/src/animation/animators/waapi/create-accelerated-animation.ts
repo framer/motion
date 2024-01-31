@@ -18,7 +18,7 @@ import {
     ResolvedKeyframes,
     flushKeyframeResolvers,
 } from "../../../render/utils/KeyframesResolver"
-import { canSkipAnimation } from "../utils/can-skip"
+import { canAnimate } from "../utils/can-animate"
 import { instantAnimationState } from "../../../utils/use-instant-transition-state"
 
 const supportsWaapi = memo(() =>
@@ -124,14 +124,7 @@ export function createAcceleratedAnimation(
             safeCancel()
         }
 
-        if (
-            canSkipAnimation(
-                keyframes,
-                valueName,
-                options.type,
-                options.velocity
-            )
-        ) {
+        if (!canAnimate(keyframes, valueName, options.type, options.velocity)) {
             if (instantAnimationState.current || !options.delay) {
                 finish()
                 return

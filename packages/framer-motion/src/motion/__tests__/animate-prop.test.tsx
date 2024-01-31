@@ -769,7 +769,7 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toBe(20)
     })
 
-    test("animates previously unseen properties", async () => {
+    test("animates previously unseen properties, instant animation", async () => {
         const Component = ({ animate }: any) => (
             <motion.div animate={animate} transition={{ type: false }} />
         )
@@ -781,6 +781,26 @@ describe("animate prop as object", () => {
         rerender(<Component animate={{ y: 100 }} />)
         rerender(<Component animate={{ y: 100 }} />)
 
+        await nextFrame()
+
+        return expect(container.firstChild as Element).toHaveStyle(
+            "transform: translateX(0px) translateY(100px) translateZ(0)"
+        )
+    })
+
+    test("animates previously unseen properties", async () => {
+        const Component = ({ animate }: any) => (
+            <motion.div animate={animate} transition={{ duration: 0 }} />
+        )
+        const { container, rerender } = render(
+            <Component animate={{ x: 100 }} />
+        )
+        rerender(<Component animate={{ x: 100 }} />)
+
+        rerender(<Component animate={{ y: 100 }} />)
+        rerender(<Component animate={{ y: 100 }} />)
+
+        await nextFrame()
         await nextFrame()
 
         return expect(container.firstChild as Element).toHaveStyle(

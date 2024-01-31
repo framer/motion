@@ -4,27 +4,25 @@ import type { MotionValue, StartAnimation } from "../../value"
 import { getDefaultTransition } from "../utils/default-transitions"
 import { getValueTransition, isTransitionDefined } from "../utils/transitions"
 import { animateValue } from "../animators/js"
-import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
+import { ValueAnimationOptions } from "../types"
 import type { UnresolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { MotionGlobalConfig } from "../../utils/GlobalConfig"
 import { instantAnimationState } from "../../utils/use-instant-transition-state"
 import { createAcceleratedAnimation } from "../animators/waapi/create-accelerated-animation"
 import type { VisualElement } from "../../render/VisualElement"
+import { getFinalKeyframe } from "../animators/waapi/utils/get-final-keyframe"
+import { frame } from "../../frameloop/frame"
 
-function makeTransitionInstant(options: ValueAnimationOptions<any>) {
-    options.duration = 0
-    options.type = "keyframes"
-}
-
-export const animateMotionValue = <V extends string | number>(
-    name: string,
-    value: MotionValue<V>,
-    target: V | UnresolvedKeyframes<V>,
-    transition: Transition & { elapsed?: number } = {},
-    element?: VisualElement<any>,
-    isHandoff?: boolean
-): StartAnimation => {
-    return (onComplete: VoidFunction): AnimationPlaybackControls => {
+export const animateMotionValue =
+    <V extends string | number>(
+        name: string,
+        value: MotionValue<V>,
+        target: V | UnresolvedKeyframes<V>,
+        transition: Transition & { elapsed?: number } = {},
+        element?: VisualElement<any>,
+        isHandoff?: boolean
+    ): StartAnimation =>
+    (onComplete) => {
         const valueTransition = getValueTransition(transition, name) || {}
 
         /**
@@ -43,8 +41,8 @@ export const animateMotionValue = <V extends string | number>(
 
         let options: ValueAnimationOptions = {
             keyframes: Array.isArray(target) ? target : [null, target],
-            velocity: value.getVelocity(),
             ease: "easeOut",
+            velocity: value.getVelocity(),
             ...valueTransition,
             delay: -elapsed,
             onUpdate: (v) => {
@@ -83,20 +81,54 @@ export const animateMotionValue = <V extends string | number>(
             options.repeatDelay = secondsToMilliseconds(options.repeatDelay)
         }
 
+        if (options.from !== undefined) {
+            options.keyframes[0] = options.from
+        }
+
+        let shouldSkip = false
+
         if ((options as any).type === false) {
-            makeTransitionInstant(options)
+            options.duration = 0
+            if (options.delay === 0) {
+                shouldSkip = true
+            }
         }
 
         if (
-            MotionGlobalConfig.skipAnimations ||
-            instantAnimationState.current
+            instantAnimationState.current ||
+            MotionGlobalConfig.skipAnimations
         ) {
-            makeTransitionInstant(options)
+            shouldSkip = true
+            options.duration = 0
             options.delay = 0
         }
 
-        if (options.from !== undefined) {
-            options.keyframes[0] = options.from
+        if (shouldSkip && !isHandoff && value.get() !== undefined) {
+            /**
+             * If we can or must skip creating the animation, and apply only
+             * the final keyframe, do so.
+             */
+            const finalKeyframe = getFinalKeyframe<V>(
+                options.keyframes as V[],
+                valueTransition
+            )
+
+            if (finalKeyframe !== undefined) {
+                // value.stop()
+
+                // if (element) {
+                //     frame.read(() => {
+                //         element.readValue(name, finalKeyframe)
+                //     })
+                // }
+
+                frame.update(() => {
+                    options.onUpdate!(finalKeyframe)
+                    options.onComplete!()
+                })
+
+                return
+            }
         }
 
         /**
@@ -128,4 +160,3 @@ export const animateMotionValue = <V extends string | number>(
 
         return animateValue(options)
     }
-}
