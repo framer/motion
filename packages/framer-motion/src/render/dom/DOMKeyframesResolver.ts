@@ -8,9 +8,14 @@ import {
     removeNonTranslationalTransform,
 } from "./utils/unit-conversion"
 import { findDimensionValueType } from "./value-types/dimensions"
-import { KeyframeResolver } from "../utils/KeyframesResolver"
+import {
+    KeyframeResolver,
+    OnKeyframesResolved,
+    UnresolvedKeyframes,
+} from "../utils/KeyframesResolver"
 import { makeNoneKeyframesAnimatable } from "../html/utils/make-none-animatable"
 import { VisualElement } from "../VisualElement"
+import { MotionValue } from "../../value"
 
 export class DOMKeyframesResolver<
     T extends string | number
@@ -19,8 +24,17 @@ export class DOMKeyframesResolver<
     element: VisualElement<HTMLElement | SVGElement>
     async = true
     private removedTransforms?: [string, string | number][]
-    restoreScrollY?: number
     private measuredOrigin?: string | number
+    restoreScrollY?: number
+    constructor(
+        unresolvedKeyframes: UnresolvedKeyframes<string | number>,
+        onComplete: OnKeyframesResolved<T>,
+        name?: string,
+        motionValue?: MotionValue<T>,
+        element?: VisualElement<any>
+    ) {
+        super(unresolvedKeyframes, onComplete, name, motionValue, element, true)
+    }
 
     readKeyframes() {
         const { unresolvedKeyframes, element, name } = this

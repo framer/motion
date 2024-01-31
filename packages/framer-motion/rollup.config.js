@@ -86,7 +86,7 @@ const umdDomProd = Object.assign({}, umd, {
         resolve(),
         replaceSettings("production"),
         pureClass,
-        terser({ output: { comments: false } }),
+        // terser({ output: { comments: false } }),
     ],
 })
 
