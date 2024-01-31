@@ -121,21 +121,9 @@ export function animateValue<V extends string | number = number>({
 
     let animationDriver: DriverControls | undefined
 
-    const isInterruptingAnimation = Boolean(
-        motionValue && motionValue.animation
-    )
-
     let initialKeyframe: V
     const createGenerator = (keyframes: ResolvedKeyframes<any>) => {
-        if (
-            canSkipAnimation(
-                keyframes,
-                isInterruptingAnimation,
-                name,
-                type,
-                options.velocity
-            )
-        ) {
+        if (canSkipAnimation(keyframes, name, type, options.velocity)) {
             if (instantAnimationState.current || !delay) {
                 if (onUpdate) {
                     onUpdate(
