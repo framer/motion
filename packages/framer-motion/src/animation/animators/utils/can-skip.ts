@@ -12,16 +12,13 @@ function hasKeyframesChanged(keyframes: ResolvedKeyframes<any>) {
 
 export function canSkipAnimation(
     keyframes: ResolvedKeyframes<any>,
-    isInterruptingAnimation: boolean,
     name?: string,
     type?: string,
     velocity?: number
 ) {
     // TODO Skip before animation instantiation when possible
     let canSkip =
-        !hasKeyframesChanged(keyframes) &&
-        !isInterruptingAnimation &&
-        !(type === "spring" && velocity)
+        !hasKeyframesChanged(keyframes) && !(type === "spring" && velocity)
 
     /**
      * Check if we're able to animate between the start and end keyframes,
