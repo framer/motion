@@ -10,16 +10,12 @@ function hasKeyframesChanged(keyframes: ResolvedKeyframes<any>) {
     }
 }
 
-export function canSkipAnimation(
+export function canAnimate(
     keyframes: ResolvedKeyframes<any>,
     name?: string,
     type?: string,
     velocity?: number
 ) {
-    // TODO Skip before animation instantiation when possible
-    let canSkip =
-        !hasKeyframesChanged(keyframes) && !(type === "spring" && velocity)
-
     /**
      * Check if we're able to animate between the start and end keyframes,
      * and throw a warning if we're attempting to animate between one that's
@@ -39,8 +35,8 @@ export function canSkipAnimation(
 
     // Always skip if any of these are true
     if (!isOriginAnimatable || !isTargetAnimatable) {
-        canSkip = true
+        return false
     }
 
-    return canSkip
+    return hasKeyframesChanged(keyframes) || (type === "spring" && velocity)
 }

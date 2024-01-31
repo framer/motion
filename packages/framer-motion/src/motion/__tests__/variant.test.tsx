@@ -979,6 +979,7 @@ describe("animate prop as variant", () => {
         rerender(<Parent isVisible={false} />)
 
         await nextFrame()
+
         expect(element).toHaveStyle("transform: none")
     })
 

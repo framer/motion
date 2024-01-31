@@ -299,7 +299,7 @@ describe("WAAPI animations", () => {
                         ref={ref}
                         style={{ opacity: 0.5 }}
                         variants={{ hover: { opacity: 1 } }}
-                        transition={{ type: false }}
+                        transition={{ duration: 0.001 }}
                     />
                 </motion.div>
             )

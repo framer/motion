@@ -9,9 +9,7 @@ import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { setTarget } from "../../render/utils/setters"
 import { AnimationPlaybackControls } from "../types"
 import { getValueTransition } from "../utils/transitions"
-import { getFinalKeyframe } from "../animators/waapi/utils/get-final-keyframe"
-import { instantAnimationState } from "../../utils/use-instant-transition-state"
-import { MotionGlobalConfig } from "../../utils/GlobalConfig"
+import { frame } from "../../frameloop"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
@@ -92,24 +90,6 @@ export function animateTarget(
             }
         }
 
-        /**
-         * If we can or must skip creating the animation, and apply only
-         * the final keyframe, do so.
-         *
-         * TODO: Coerce target to array here
-         */
-        const finalKeyframe = getFinalKeyframe(
-            Array.isArray(valueTarget) ? valueTarget : [valueTarget],
-            valueTransition
-        )
-        const canSkip = finalKeyframe !== null && !isHandoff && !value.animation
-        const shouldSkip =
-            instantAnimationState.current || MotionGlobalConfig.skipAnimations
-        if (canSkip && shouldSkip) {
-            value.set(finalKeyframe)
-            continue
-        }
-
         value.start(
             animateMotionValue(
                 key,
@@ -123,19 +103,23 @@ export function animateTarget(
             )
         )
 
-        const animation = value.animation!
+        const animation = value.animation
 
-        if (isWillChangeMotionValue(willChange)) {
-            willChange.add(key)
-            animation.then(() => willChange.remove(key))
+        if (animation) {
+            if (isWillChangeMotionValue(willChange)) {
+                willChange.add(key)
+                animation.then(() => willChange.remove(key))
+            }
+
+            animations.push(animation)
         }
-
-        animations.push(animation)
     }
 
     if (transitionEnd) {
         Promise.all(animations).then(() => {
-            transitionEnd && setTarget(visualElement, transitionEnd)
+            frame.update(() => {
+                transitionEnd && setTarget(visualElement, transitionEnd)
+            })
         })
     }
 
