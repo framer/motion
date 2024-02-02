@@ -2108,7 +2108,7 @@ const defaultLayoutTransition = {
 }
 
 const userAgentContains = (string: string) =>
-    typeof navigator !== "undefined" &&
+    typeof window !== "undefined" &&
     navigator.userAgent.toLowerCase().includes(string)
 
 /**
