@@ -19,9 +19,6 @@
   @param [number]: The progress between lower and upper limits expressed 0-1
   @return [number]: Value as calculated from progress within range (not limited within range)
 */
-// export const mixNumber = (from: number, to: number, progress: number) =>
-//     -progress * from + progress * to + from
-
 export const mixNumber = (from: number, to: number, progress: number) => {
     return from + (to - from) * progress
 }

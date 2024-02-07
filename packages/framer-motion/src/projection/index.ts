@@ -6,7 +6,7 @@ export { calcBoxDelta } from "./geometry/delta-calc"
  * For debugging purposes
  */
 import { frame, frameData } from "../frameloop"
-import { mixNumber as mix } from "../utils/mix/number"
+import { mix } from "../utils/mix"
 import { animateValue } from "../animation/animators/js"
 export { frame, animateValue as animate, mix, frameData }
 export { buildTransform } from "../render/html/utils/build-transform"
