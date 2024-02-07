@@ -32,15 +32,15 @@
     </head>
     <body>
         <div class="container"></div>
-        <script src="../../packages/framer-motion/dist/dom.js"></script>
-        <script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+        <script src="../../node_modules/gsap/dist/gsap.js"></script>
         <script>
-            const { interpolate } = window.Motion
-
             /**
              * Create an interpolate function that mixes unit values.
              */
-            const px = interpolate([0, 1], ["0px", "100px"])
+            const px = gsap.utils.interpolate(
+                [100, 100, 100, 100],
+                [0, 0, 0, 0]
+            )
 
             const numRuns = 1000000
             let startTime = performance.now()

@@ -1,7 +1,7 @@
 import { Easing } from "../../../easing/types"
 import { getEasingForSegment } from "../../../easing/utils/get-easing-for-segment"
 import { removeItem } from "../../../utils/array"
-import { mix } from "../../../utils/mix"
+import { mixNumber } from "../../../utils/mix/number"
 import { UnresolvedValueKeyframe } from "../../types"
 import type { ValueSequence } from "../types"
 
@@ -40,7 +40,7 @@ export function addKeyframes(
     for (let i = 0; i < keyframes.length; i++) {
         sequence.push({
             value: keyframes[i],
-            at: mix(startTime, endTime, offset[i]),
+            at: mixNumber(startTime, endTime, offset[i]),
             easing: getEasingForSegment(easing, i),
         })
     }

@@ -7,7 +7,7 @@ import {
     Point,
 } from "../../../projection/geometry/types"
 import { clamp } from "../../../utils/clamp"
-import { mix } from "../../../utils/mix"
+import { mixNumber } from "../../../utils/mix/number"
 import { DragElastic, ResolvedConstraints } from "../types"
 
 /**
@@ -22,10 +22,14 @@ export function applyConstraints(
 ): number {
     if (min !== undefined && point < min) {
         // If we have a min point defined, and this is outside of that, constrain
-        point = elastic ? mix(min, point, elastic.min) : Math.max(point, min)
+        point = elastic
+            ? mixNumber(min, point, elastic.min)
+            : Math.max(point, min)
     } else if (max !== undefined && point > max) {
         // If we have a max point defined, and this is outside of that, constrain
-        point = elastic ? mix(max, point, elastic.max) : Math.min(point, max)
+        point = elastic
+            ? mixNumber(max, point, elastic.max)
+            : Math.min(point, max)
     }
 
     return point
@@ -162,7 +166,11 @@ export function calcPositionFromProgress(
     progress: number
 ): Axis {
     const axisLength = axis.max - axis.min
-    const min = mix(constraints.min, constraints.max - axisLength, progress)
+    const min = mixNumber(
+        constraints.min,
+        constraints.max - axisLength,
+        progress
+    )
     return { min, max: min + axisLength }
 }
 

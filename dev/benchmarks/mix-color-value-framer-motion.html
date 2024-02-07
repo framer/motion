@@ -33,21 +33,24 @@
     <body>
         <div class="container"></div>
         <script src="../../packages/framer-motion/dist/dom.js"></script>
-        <script src="../../node_modules/gsap/dist/gsap.min.js"></script>
         <script>
-            const { interpolate } = window.Motion
+            const { interpolate, mixColor } = window.Motion
 
             /**
              * Create an interpolate function that mixes unit values.
              */
-            const px = interpolate([0, 1], ["0px", "100px"])
-
-            const numRuns = 1000000
+            const mixer = interpolate(
+                [0, 1],
+                ["rgba(255, 255, 255, 0)", "rgba(0, 0, 0, 0)"]
+            )
+            const numRuns = 10
             let startTime = performance.now()
             for (let i = 0; i < numRuns; i++) {
-                px(i / numRuns)
+                console.log(mixer(i / numRuns))
             }
-            console.log(`First run: ${performance.now() - startTime}ms`)
+
+            const finish = performance.now() - startTime
+            console.log(`Total time: ${finish}ms`)
         </script>
     </body>
 </html>

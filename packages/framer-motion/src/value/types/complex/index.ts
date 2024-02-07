@@ -1,10 +1,5 @@
-import {
-    cssVariableRegex,
-    CSSVariableToken,
-} from "../../../render/dom/utils/is-css-variable"
-import { noop } from "../../../utils/noop"
-import { color } from "../color"
-import { number } from "../numbers"
+import { CSSVariableToken } from "../../../render/dom/utils/is-css-variable"
+import { isNumericalString } from "../../../utils/is-numerical-string"
 import { Color } from "../types"
 import { colorRegex, floatRegex, isString, sanitize } from "../utils"
 
@@ -18,72 +13,38 @@ function test(v: any) {
     )
 }
 
+type ComplexValues = Array<CSSVariableToken | Color | number>
+
 export interface ComplexValueInfo {
-    value: string
-    values: Array<CSSVariableToken | Color | number>
-    numVars: number
-    numColors: number
-    numNumbers: number
-    tokenised: string
+    values: ComplexValues
+    split: string[]
 }
 
-interface Tokeniser {
-    regex: RegExp
-    countKey: string
-    token: string
-    parse: (value: string) => any
-}
+const complexRegex =
+    /(var\s*\(\s*--[\w-]+(\s*,\s*(?:(?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)+)?\s*\))|(#[0-9a-f]{3,8}|(rgb|hsl)a?\((-?[\d\.]+%?[,\s]+){2}(-?[\d\.]+%?)\s*[\,\/]?\s*[\d\.]*%?\))|((-)?([\d]*\.?[\d])+)/gi
 
-const cssVarTokeniser: Tokeniser = {
-    regex: cssVariableRegex,
-    countKey: "Vars",
-    token: "${v}",
-    parse: noop,
-}
-
-const colorTokeniser: Tokeniser = {
-    regex: colorRegex,
-    countKey: "Colors",
-    token: "${c}",
-    parse: color.parse,
-}
-
-const numberTokeniser: Tokeniser = {
-    regex: floatRegex,
-    countKey: "Numbers",
-    token: "${n}",
-    parse: number.parse,
-}
-
-function tokenise(
-    info: ComplexValueInfo,
-    { regex, countKey, token, parse }: Tokeniser
-) {
-    const matches = info.tokenised.match(regex)
-
-    if (!matches) return
-
-    info["num" + countKey] = matches.length
-    info.tokenised = info.tokenised.replace(regex, token)
-    info.values.push(...(matches.map(parse) as any))
-}
+const splitToken = "${}"
 
 export function analyseComplexValue(value: string | number): ComplexValueInfo {
     const originalValue = value.toString()
-    const info = {
-        value: originalValue,
-        tokenised: originalValue,
-        values: [],
-        numVars: 0,
-        numColors: 0,
-        numNumbers: 0,
+
+    const matchedValues = originalValue.match(complexRegex)
+    const values: ComplexValues =
+        matchedValues === null ? [] : (matchedValues as ComplexValues)
+
+    /**
+     * match() returns strings - convert numerical strings to actual numbers.
+     */
+    for (let i = 0; i < values?.length; i++) {
+        if (isNumericalString(values[i] as string)) {
+            values[i] = parseFloat(values[i] as string)
+        }
     }
 
-    if (info.value.includes("var(--")) tokenise(info, cssVarTokeniser)
-    tokenise(info, colorTokeniser)
-    tokenise(info, numberTokeniser)
+    const tokenised = originalValue.replace(complexRegex, splitToken)
+    const split = tokenised.split(splitToken)
 
-    return info
+    return { values, split }
 }
 
 function parseComplexValue(v: string | number) {
@@ -91,26 +52,15 @@ function parseComplexValue(v: string | number) {
 }
 
 function createTransformer(source: string | number) {
-    const { values, numColors, numVars, tokenised } =
-        analyseComplexValue(source)
-    const numValues = values.length
+    const { split } = analyseComplexValue(source)
 
+    const numSections = split.length
     return (v: Array<CSSVariableToken | Color | number | string>) => {
-        let output = tokenised
-
-        for (let i = 0; i < numValues; i++) {
-            if (i < numVars) {
-                output = output.replace(cssVarTokeniser.token, v[i] as any)
-            } else if (i < numVars + numColors) {
-                output = output.replace(
-                    colorTokeniser.token,
-                    color.transform(v[i] as any)
-                )
-            } else {
-                output = output.replace(
-                    numberTokeniser.token,
-                    sanitize(v[i] as number) as any
-                )
+        let output = ""
+        for (let i = 0; i < numSections; i++) {
+            output += split[i]
+            if (v[i] !== undefined) {
+                output += typeof v === "number" ? sanitize(v[i]) : v[i]
             }
         }
 

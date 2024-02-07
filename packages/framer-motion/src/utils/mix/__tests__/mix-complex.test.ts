@@ -1,4 +1,4 @@
-import { mixComplex } from "../mix-complex"
+import { mixComplex } from "../complex"
 
 test("mixComplex", () => {
     expect(mixComplex("20px", "10px")(0.5)).toBe("15px")
@@ -33,14 +33,14 @@ test("mixComplex can interpolate out-of-order values", () => {
 })
 
 test("mixComplex can animate from a value-less prop", () => {
-    expect(mixComplex("#fff 0 0px", "20px 0px #000")(0.5)).toBe(
-        "10px 0px rgba(180, 180, 180, 1)"
+    expect(mixComplex("#fff 0 0px", "#000 20px 0px")(0.5)).toBe(
+        "rgba(180, 180, 180, 1) 10px 0px"
     )
 })
 
 test("mixComplex can animate from a value with extra zeros", () => {
-    expect(mixComplex("#fff 0 0px 0px", "20px 0px #000")(0.5)).toBe(
-        "10px 0px rgba(180, 180, 180, 1)"
+    expect(mixComplex("#000 #fff 0 0px 0px", "20px 0px")(0.5)).toBe(
+        "rgba(180, 180, 180, 1) 10px 0px"
     )
 })
 

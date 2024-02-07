@@ -1,5 +1,5 @@
 import { ResolvedValues } from "../../render/types"
-import { mix } from "../../utils/mix"
+import { mixNumber } from "../../utils/mix/number"
 import { percent } from "../../value/types/numbers/units"
 import { scalePoint } from "./delta-apply"
 import { Axis, Box } from "./types"
@@ -38,7 +38,7 @@ export function removeAxisDelta(
 ): void {
     if (percent.test(translate)) {
         translate = parseFloat(translate as string)
-        const relativeProgress = mix(
+        const relativeProgress = mixNumber(
             sourceAxis.min,
             sourceAxis.max,
             translate / 100
@@ -48,7 +48,7 @@ export function removeAxisDelta(
 
     if (typeof translate !== "number") return
 
-    let originPoint = mix(originAxis.min, originAxis.max, origin)
+    let originPoint = mixNumber(originAxis.min, originAxis.max, origin)
     if (axis === originAxis) originPoint -= translate
 
     axis.min = removePointDelta(

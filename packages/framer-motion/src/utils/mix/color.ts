@@ -1,17 +1,18 @@
-import { mix } from "./mix"
-import { invariant } from "../utils/errors"
-import { hslaToRgba } from "./hsla-to-rgba"
-import { hex } from "../value/types/color/hex"
-import { rgba } from "../value/types/color/rgba"
-import { hsla } from "../value/types/color/hsla"
-import { Color, HSLA, RGBA } from "../value/types/types"
+import { mixNumber } from "./number"
+import { invariant } from "../errors"
+import { hslaToRgba } from "../hsla-to-rgba"
+import { hex } from "../../value/types/color/hex"
+import { rgba } from "../../value/types/color/rgba"
+import { hsla } from "../../value/types/color/hsla"
+import { Color, HSLA, RGBA } from "../../value/types/types"
 
 // Linear color space blending
 // Explained https://www.youtube.com/watch?v=LKnqECcg6Gw
 // Demonstrated http://codepen.io/osublake/pen/xGVVaN
 export const mixLinearColor = (from: number, to: number, v: number) => {
     const fromExpo = from * from
-    return Math.sqrt(Math.max(0, v * (to * to - fromExpo) + fromExpo))
+    const expo = v * (to * to - fromExpo) + fromExpo
+    return expo < 0 ? 0 : Math.sqrt(expo)
 }
 
 const colorTypes = [hex, rgba, hsla]
@@ -46,7 +47,7 @@ export const mixColor = (from: Color | string, to: Color | string) => {
         blended.red = mixLinearColor(fromRGBA.red, toRGBA.red, v)
         blended.green = mixLinearColor(fromRGBA.green, toRGBA.green, v)
         blended.blue = mixLinearColor(fromRGBA.blue, toRGBA.blue, v)
-        blended.alpha = mix(fromRGBA.alpha, toRGBA.alpha, v)
+        blended.alpha = mixNumber(fromRGBA.alpha, toRGBA.alpha, v)
         return rgba.transform!(blended)
     }
 }
