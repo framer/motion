@@ -3,7 +3,8 @@ name: Bug report
 about: Let us know about some broken functionality
 title: "[BUG]"
 labels: bug
-assignees: ""
+assignees: ''
+
 ---
 
 **1. Read the [FAQs](#faqs) 👇**
