@@ -1,5 +1,5 @@
 import { CSSVariableToken } from "../../../render/dom/utils/is-css-variable"
-import { isNumericalString } from "../../../utils/is-numerical-string"
+import { color } from "../color"
 import { Color } from "../types"
 import { colorRegex, floatRegex, isString, sanitize } from "../utils"
 
@@ -13,11 +13,19 @@ function test(v: any) {
     )
 }
 
-type ComplexValues = Array<CSSVariableToken | Color | number>
+export type ComplexValues = Array<CSSVariableToken | string | number | Color>
+
+export type ValueIndexes = {
+    color: number[]
+    number: number[]
+    var: number[]
+}
 
 export interface ComplexValueInfo {
     values: ComplexValues
     split: string[]
+    indexes: ValueIndexes
+    types: Array<keyof ValueIndexes>
 }
 
 const complexRegex =
@@ -28,23 +36,37 @@ const splitToken = "${}"
 export function analyseComplexValue(value: string | number): ComplexValueInfo {
     const originalValue = value.toString()
 
-    const matchedValues = originalValue.match(complexRegex)
-    const values: ComplexValues =
-        matchedValues === null ? [] : (matchedValues as ComplexValues)
+    const matchedValues = originalValue.match(complexRegex) || []
+    const values: ComplexValues = []
+    const indexes: ValueIndexes = {
+        color: [],
+        number: [],
+        var: [],
+    }
+    const types: Array<keyof ValueIndexes> = []
 
-    /**
-     * match() returns strings - convert numerical strings to actual numbers.
-     */
-    for (let i = 0; i < values?.length; i++) {
-        if (isNumericalString(values[i] as string)) {
-            values[i] = parseFloat(values[i] as string)
+    for (let i = 0; i < matchedValues.length; i++) {
+        const parsedValue: string | number = matchedValues[i]
+
+        if (color.test(parsedValue)) {
+            indexes.color.push(i)
+            types.push("color")
+            values.push(color.parse(parsedValue))
+        } else if (parsedValue.startsWith("var(")) {
+            indexes.var.push(i)
+            types.push("var")
+            values.push(parsedValue)
+        } else {
+            indexes.number.push(i)
+            types.push("number")
+            values.push(parseFloat(parsedValue))
         }
     }
 
     const tokenised = originalValue.replace(complexRegex, splitToken)
     const split = tokenised.split(splitToken)
 
-    return { values, split }
+    return { values, split, indexes, types }
 }
 
 function parseComplexValue(v: string | number) {
@@ -52,7 +74,7 @@ function parseComplexValue(v: string | number) {
 }
 
 function createTransformer(source: string | number) {
-    const { split } = analyseComplexValue(source)
+    const { split, types } = analyseComplexValue(source)
 
     const numSections = split.length
     return (v: Array<CSSVariableToken | Color | number | string>) => {
@@ -60,7 +82,14 @@ function createTransformer(source: string | number) {
         for (let i = 0; i < numSections; i++) {
             output += split[i]
             if (v[i] !== undefined) {
-                output += typeof v === "number" ? sanitize(v[i]) : v[i]
+                const type = types[i]
+                if (type === "number") {
+                    output += sanitize(v[i] as number)
+                } else if (type === "color") {
+                    output += color.transform(v[i] as Color)
+                } else {
+                    output += v[i]
+                }
             }
         }
 
@@ -68,7 +97,7 @@ function createTransformer(source: string | number) {
     }
 }
 
-const convertNumbersToZero = (v: number | Color) =>
+const convertNumbersToZero = (v: number | string) =>
     typeof v === "number" ? 0 : v
 
 function getAnimatableNone(v: string | number) {

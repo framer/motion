@@ -39,8 +39,8 @@ test("mixComplex can animate from a value-less prop", () => {
 })
 
 test("mixComplex can animate from a value with extra zeros", () => {
-    expect(mixComplex("#000 #fff 0 0px 0px", "20px 0px")(0.5)).toBe(
-        "rgba(180, 180, 180, 1) 10px 0px"
+    expect(mixComplex("#fff 0 0px 0px", "20px 0px #000")(0.5)).toBe(
+        "10px 0px rgba(180, 180, 180, 1)"
     )
 })
 

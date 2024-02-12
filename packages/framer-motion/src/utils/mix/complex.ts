@@ -4,7 +4,12 @@ import { pipe } from "../pipe"
 import { warning } from "../errors"
 import { HSLA, RGBA } from "../../value/types/types"
 import { color } from "../../value/types/color"
-import { analyseComplexValue, complex } from "../../value/types/complex"
+import {
+    ComplexValueInfo,
+    ComplexValues,
+    analyseComplexValue,
+    complex,
+} from "../../value/types/complex"
 
 type MixableArray = Array<number | RGBA | HSLA | string>
 type MixableObject = {
@@ -23,7 +28,7 @@ export function getMixer<T>(a: T) {
     if (typeof a === "number") {
         return mixNumber
     } else if (typeof a === "string") {
-        if (a.startsWith("var(") || a.startsWith("url(")) {
+        if (a.startsWith("var(")) {
             return mixImmediate
         } else if (color.test(a)) {
             return mixColor
@@ -73,6 +78,29 @@ export function mixObject(a: MixableObject, b: MixableObject) {
     }
 }
 
+function matchOrder(
+    origin: ComplexValueInfo,
+    target: ComplexValueInfo
+): ComplexValues {
+    const orderedOrigin: ComplexValues = []
+
+    const pointers = { color: 0, var: 0, number: 0 }
+
+    for (let i = 0; i < target.values.length; i++) {
+        const type = target.types[i]
+        const originIndex = origin.indexes[type][pointers[type]]
+        const originValue = origin.values[originIndex] ?? 0
+
+        orderedOrigin[i] = originValue
+
+        pointers[type]++
+    }
+
+    console.log({ orderedOrigin })
+
+    return orderedOrigin
+}
+
 export const mixComplex = (
     origin: string | number,
     target: string | number
@@ -80,14 +108,16 @@ export const mixComplex = (
     const template = complex.createTransformer(target)
     const originStats = analyseComplexValue(origin)
     const targetStats = analyseComplexValue(target)
-
     const canInterpolate =
-        originStats.values &&
-        targetStats.values &&
-        originStats.values.length === targetStats.values.length
+        originStats.indexes.var.length === targetStats.indexes.var.length &&
+        originStats.indexes.color.length === targetStats.indexes.color.length &&
+        originStats.indexes.number.length >= targetStats.indexes.number.length
 
     if (canInterpolate) {
-        return pipe(mixArray(originStats.values, targetStats.values), template)
+        return pipe(
+            mixArray(matchOrder(originStats, targetStats), targetStats.values),
+            template
+        )
     } else {
         warning(
             true,
