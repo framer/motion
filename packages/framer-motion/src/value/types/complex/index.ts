@@ -13,6 +13,12 @@ function test(v: any) {
     )
 }
 
+const NUMBER_TOKEN = "number"
+const COLOR_TOKEN = "color"
+const VAR_TOKEN = "var"
+const VAR_FUNCTION_TOKEN = "var("
+const SPLIT_TOKEN = "${}"
+
 export type ComplexValues = Array<CSSVariableToken | string | number | Color>
 
 export type ValueIndexes = {
@@ -31,8 +37,6 @@ export interface ComplexValueInfo {
 const complexRegex =
     /(var\s*\(\s*--[\w-]+(\s*,\s*(?:(?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)+)?\s*\))|(#[0-9a-f]{3,8}|(rgb|hsl)a?\((-?[\d\.]+%?[,\s]+){2}(-?[\d\.]+%?)\s*[\,\/]?\s*[\d\.]*%?\))|((-)?([\d]*\.?[\d])+)/gi
 
-const splitToken = "${}"
-
 export function analyseComplexValue(value: string | number): ComplexValueInfo {
     const originalValue = value.toString()
 
@@ -50,21 +54,21 @@ export function analyseComplexValue(value: string | number): ComplexValueInfo {
 
         if (color.test(parsedValue)) {
             indexes.color.push(i)
-            types.push("color")
+            types.push(COLOR_TOKEN)
             values.push(color.parse(parsedValue))
-        } else if (parsedValue.startsWith("var(")) {
+        } else if (parsedValue.startsWith(VAR_FUNCTION_TOKEN)) {
             indexes.var.push(i)
-            types.push("var")
+            types.push(VAR_TOKEN)
             values.push(parsedValue)
         } else {
             indexes.number.push(i)
-            types.push("number")
+            types.push(NUMBER_TOKEN)
             values.push(parseFloat(parsedValue))
         }
     }
 
-    const tokenised = originalValue.replace(complexRegex, splitToken)
-    const split = tokenised.split(splitToken)
+    const tokenised = originalValue.replace(complexRegex, SPLIT_TOKEN)
+    const split = tokenised.split(SPLIT_TOKEN)
 
     return { values, split, indexes, types }
 }
@@ -83,9 +87,9 @@ function createTransformer(source: string | number) {
             output += split[i]
             if (v[i] !== undefined) {
                 const type = types[i]
-                if (type === "number") {
+                if (type === NUMBER_TOKEN) {
                     output += sanitize(v[i] as number)
-                } else if (type === "color") {
+                } else if (type === COLOR_TOKEN) {
                     output += color.transform(v[i] as Color)
                 } else {
                     output += v[i]
