@@ -109,12 +109,12 @@
         },
         {
             "path": "./dist/size-webpack-dom-animation.js",
-            "maxSize": "19.9 kB"
+            "maxSize": "19.92 kB"
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
             "maxSize": "32.1 kB"
         }
     ],
-    "gitHead": "079347dab1cf881a80cabbd0e113cb924d44800c"
+    "gitHead": "789e502ed2ae98982e7f0ec10f42896fb82ee6e1"
 }
