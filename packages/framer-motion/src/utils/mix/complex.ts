@@ -96,8 +96,6 @@ function matchOrder(
         pointers[type]++
     }
 
-    console.log({ orderedOrigin })
-
     return orderedOrigin
 }
 
