@@ -37,7 +37,7 @@ export function getMixer<T>(a: T) {
     } else if (Array.isArray(a)) {
         return mixArray
     } else if (typeof a === "object") {
-        return mixObject
+        return color.test(a) ? mixColor : mixObject
     }
 
     return mixImmediate
