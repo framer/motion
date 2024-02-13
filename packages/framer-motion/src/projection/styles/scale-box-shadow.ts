@@ -1,4 +1,4 @@
-import { mix } from "../../utils/mix"
+import { mixNumber } from "../../utils/mix/number"
 import { complex } from "../../value/types/complex"
 import { ScaleCorrectorDefinition } from "./types"
 
@@ -27,7 +27,7 @@ export const correctBoxShadow: ScaleCorrectorDefinition = {
          * We could potentially improve the outcome of this by incorporating the ratio between
          * the two scales.
          */
-        const averageScale = mix(xScale, yScale, 0.5)
+        const averageScale = mixNumber(xScale, yScale, 0.5)
 
         // Blur
         if (typeof shadow[2 + offset] === "number")

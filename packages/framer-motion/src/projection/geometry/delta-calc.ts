@@ -1,5 +1,5 @@
 import { ResolvedValues } from "../../render/types"
-import { mix } from "../../utils/mix"
+import { mixNumber } from "../../utils/mix/number"
 import { Axis, AxisDelta, Box, Delta } from "./types"
 
 export function calcLength(axis: Axis) {
@@ -17,13 +17,13 @@ export function calcAxisDelta(
     origin: number = 0.5
 ) {
     delta.origin = origin
-    delta.originPoint = mix(source.min, source.max, delta.origin)
+    delta.originPoint = mixNumber(source.min, source.max, delta.origin)
 
     delta.scale = calcLength(target) / calcLength(source)
     if (isNear(delta.scale, 1, 0.0001) || isNaN(delta.scale)) delta.scale = 1
 
     delta.translate =
-        mix(target.min, target.max, delta.origin) - delta.originPoint
+        mixNumber(target.min, target.max, delta.origin) - delta.originPoint
     if (isNear(delta.translate) || isNaN(delta.translate)) delta.translate = 0
 }
 

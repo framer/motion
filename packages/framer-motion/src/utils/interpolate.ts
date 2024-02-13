@@ -1,13 +1,10 @@
 import { invariant } from "../utils/errors"
 import { EasingFunction } from "../easing/types"
-import { color } from "../value/types/color"
 import { clamp } from "./clamp"
-import { mix } from "./mix"
-import { mixColor } from "./mix-color"
-import { mixArray, mixComplex, mixObject } from "./mix-complex"
 import { pipe } from "./pipe"
 import { progress } from "./progress"
 import { noop } from "./noop"
+import { mix } from "./mix"
 
 type Mix<T> = (v: number) => T
 export type MixerFactory<T> = (from: T, to: T) => Mix<T>
@@ -18,29 +15,13 @@ export interface InterpolateOptions<T> {
     mixer?: MixerFactory<T>
 }
 
-const mixNumber = (from: number, to: number) => (p: number) => mix(from, to, p)
-
-function detectMixerFactory<T>(v: T): MixerFactory<any> {
-    if (typeof v === "number") {
-        return mixNumber
-    } else if (typeof v === "string") {
-        return color.test(v) ? mixColor : mixComplex
-    } else if (Array.isArray(v)) {
-        return mixArray
-    } else if (typeof v === "object") {
-        return mixObject
-    }
-    return mixNumber
-}
-
 function createMixers<T>(
     output: T[],
     ease?: EasingFunction | EasingFunction[],
     customMixer?: MixerFactory<T>
 ) {
     const mixers: Array<Mix<T>> = []
-    const mixerFactory: MixerFactory<T> =
-        customMixer || detectMixerFactory(output[0])
+    const mixerFactory: MixerFactory<T> = customMixer || mix
     const numMixers = output.length - 1
 
     for (let i = 0; i < numMixers; i++) {

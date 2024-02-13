@@ -1,4 +1,4 @@
-import { mixColor, mixLinearColor } from "../mix-color"
+import { mixColor, mixLinearColor } from "../color"
 
 test("mixColor hex", () => {
     expect(mixColor("#fff", "#000")(0.5)).toBe("rgba(180, 180, 180, 1)")

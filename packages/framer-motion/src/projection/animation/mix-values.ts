@@ -2,7 +2,7 @@ import { circOut } from "../../easing/circ"
 import { EasingFunction } from "../../easing/types"
 import { ResolvedValues } from "../../render/types"
 import { progress as calcProgress } from "../../utils/progress"
-import { mix } from "../../utils/mix"
+import { mixNumber } from "../../utils/mix/number"
 import { noop } from "../../utils/noop"
 import { percent, px } from "../../value/types/numbers/units"
 
@@ -24,19 +24,19 @@ export function mixValues(
     isOnlyMember: boolean
 ) {
     if (shouldCrossfadeOpacity) {
-        target.opacity = mix(
+        target.opacity = mixNumber(
             0,
             // TODO Reinstate this if only child
             lead.opacity !== undefined ? (lead.opacity as number) : 1,
             easeCrossfadeIn(progress)
         )
-        target.opacityExit = mix(
+        target.opacityExit = mixNumber(
             follow.opacity !== undefined ? (follow.opacity as number) : 1,
             0,
             easeCrossfadeOut(progress)
         )
     } else if (isOnlyMember) {
-        target.opacity = mix(
+        target.opacity = mixNumber(
             follow.opacity !== undefined ? (follow.opacity as number) : 1,
             lead.opacity !== undefined ? (lead.opacity as number) : 1,
             progress
@@ -63,7 +63,11 @@ export function mixValues(
 
         if (canMix) {
             target[borderLabel] = Math.max(
-                mix(asNumber(followRadius), asNumber(leadRadius), progress),
+                mixNumber(
+                    asNumber(followRadius),
+                    asNumber(leadRadius),
+                    progress
+                ),
                 0
             )
 
@@ -79,7 +83,7 @@ export function mixValues(
      * Mix rotation
      */
     if (follow.rotate || lead.rotate) {
-        target.rotate = mix(
+        target.rotate = mixNumber(
             (follow.rotate as number) || 0,
             (lead.rotate as number) || 0,
             progress

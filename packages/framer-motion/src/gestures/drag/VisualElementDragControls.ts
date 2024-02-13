@@ -28,7 +28,7 @@ import {
 import { LayoutUpdateData } from "../../projection/node/types"
 import { addDomEvent } from "../../events/add-dom-event"
 import { calcLength } from "../../projection/geometry/delta-calc"
-import { mix } from "../../utils/mix"
+import { mixNumber } from "../../utils/mix/number"
 import { percent } from "../../value/types/numbers/units"
 import { animateMotionValue } from "../../animation/interfaces/motion-value"
 import { frame } from "../../frameloop"
@@ -489,7 +489,7 @@ export class VisualElementDragControls {
             if (projection && projection.layout) {
                 const { min, max } = projection.layout.layoutBox[axis]
 
-                axisValue.set(point[axis] - mix(min, max, 0.5))
+                axisValue.set(point[axis] - mixNumber(min, max, 0.5))
             }
         })
     }
@@ -552,7 +552,7 @@ export class VisualElementDragControls {
              */
             const axisValue = this.getAxisMotionValue(axis)
             const { min, max } = this.constraints[axis]
-            axisValue.set(mix(min, max, boxProgress[axis]))
+            axisValue.set(mixNumber(min, max, boxProgress[axis]))
         })
     }
 

@@ -82,34 +82,34 @@ describe("complex value type", () => {
         expect(complex.parse(PATH)).toEqual(PATH_VALUES)
         expect(complex.parse(GREYSCALE)).toEqual([100])
         expect(complex.parse(MIXED)).toEqual([
+            0,
+            0,
+            0,
             { red: 161, green: 0, blue: 246, alpha: 0 },
-            0,
-            0,
-            0,
         ])
         expect(complex.parse("0px 0px 0px rgba(161 0 246 / 0.5)")).toEqual([
+            0,
+            0,
+            0,
             { red: 161, green: 0, blue: 246, alpha: 0.5 },
-            0,
-            0,
-            0,
         ])
         expect(complex.parse("0px 0px 0px #F00")).toEqual([
+            0,
+            0,
+            0,
             { red: 255, green: 0, blue: 0, alpha: 1 },
-            0,
-            0,
-            0,
         ])
         expect(complex.parse("0px 0px 0px #F000")).toEqual([
+            0,
+            0,
+            0,
             { red: 255, green: 0, blue: 0, alpha: 0 },
-            0,
-            0,
-            0,
         ])
         expect(complex.parse("0px 0px 0px #00FF0000")).toEqual([
+            0,
+            0,
+            0,
             { red: 0, green: 255, blue: 0, alpha: 0 },
-            0,
-            0,
-            0,
         ])
     })
 
@@ -122,15 +122,15 @@ describe("complex value type", () => {
         )
         expect(
             transformMixedExpo([
+                0,
+                1.5999999547489097e-8,
+                3.199999909497819e-8,
                 {
                     red: 161,
                     green: 0,
                     blue: 246,
                     alpha: 6.399999974426862e-10,
                 },
-                0,
-                1.5999999547489097e-8,
-                3.199999909497819e-8,
             ])
         ).toBe("0px 0px 0px rgba(161, 0, 246, 0)")
 
@@ -410,52 +410,52 @@ describe("combination values", () => {
 
     it("should parse into an array", () => {
         expect(complex.parse("0px 10px #fff")).toEqual([
-            { red: 255, green: 255, blue: 255, alpha: 1 },
             0,
             10,
+            { red: 255, green: 255, blue: 255, alpha: 1 },
         ])
         expect(complex.parse("20px 20px 10px inset #fff")).toEqual([
-            { red: 255, green: 255, blue: 255, alpha: 1 },
             20,
             20,
             10,
+            { red: 255, green: 255, blue: 255, alpha: 1 },
         ])
         expect(
             complex.parse("20px 20px 10px inset rgba(255, 255, 255, 1)")
-        ).toEqual([{ red: 255, green: 255, blue: 255, alpha: 1 }, 20, 20, 10])
+        ).toEqual([20, 20, 10, { red: 255, green: 255, blue: 255, alpha: 1 }])
         expect(
             complex.parse(
                 "20px 20px 10px inset #fff, 20px 20px 10px inset rgba(255, 255, 255, 1)"
             )
         ).toEqual([
-            { red: 255, green: 255, blue: 255, alpha: 1 },
+            20,
+            20,
+            10,
             { red: 255, green: 255, blue: 255, alpha: 1 },
             20,
             20,
             10,
-            20,
-            20,
-            10,
+            { red: 255, green: 255, blue: 255, alpha: 1 },
         ])
         expect(complex.parse("linear-gradient(0.25turn, #fff)")).toEqual([
+            0.25,
             {
                 red: 255,
                 green: 255,
                 blue: 255,
                 alpha: 1,
             },
-            0.25,
         ])
         expect(
             complex.parse("linear-gradient(1deg, rgba(255, 255, 255, 1))")
         ).toEqual([
+            1,
             {
                 red: 255,
                 green: 255,
                 blue: 255,
                 alpha: 1,
             },
-            1,
         ])
 
         expect(
@@ -463,6 +463,7 @@ describe("combination values", () => {
                 "linear-gradient(217deg, rgba(255,0,0,.8), rgba(255,0,0,0) 70.71%)"
             )
         ).toEqual([
+            217,
             {
                 red: 255,
                 green: 0,
@@ -475,7 +476,6 @@ describe("combination values", () => {
                 blue: 0,
                 alpha: 0,
             },
-            217,
             70.71,
         ])
 
@@ -484,10 +484,10 @@ describe("combination values", () => {
                 "radial-gradient(circle at 50% 25%, #e66465, #9198e5)"
             )
         ).toEqual([
-            { alpha: 1, blue: 101, green: 100, red: 230 },
-            { alpha: 1, blue: 229, green: 152, red: 145 },
             50,
             25,
+            { alpha: 1, blue: 101, green: 100, red: 230 },
+            { alpha: 1, blue: 229, green: 152, red: 145 },
         ])
     })
 

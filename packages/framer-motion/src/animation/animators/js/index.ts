@@ -6,7 +6,6 @@ import { AnimationState, KeyframeGenerator } from "../../generators/types"
 import { DriverControls } from "./types"
 import { ValueAnimationOptions } from "../../types"
 import { frameloopDriver } from "./driver-frameloop"
-import { interpolate } from "../../../utils/interpolate"
 import { clamp } from "../../../utils/clamp"
 import {
     millisecondsToSeconds,
@@ -14,6 +13,8 @@ import {
 } from "../../../utils/time-conversion"
 import { calcGeneratorDuration } from "../../generators/utils/calc-duration"
 import { invariant } from "../../../utils/errors"
+import { mix } from "../../../utils/mix"
+import { pipe } from "../../../utils/pipe"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -31,6 +32,8 @@ export interface MainThreadAnimationControls<V>
     extends AnimationPlaybackControls {
     sample: (t: number) => AnimationState<V>
 }
+
+const percentToProgress = (percent: number) => percent / 100
 
 /**
  * Animate a single value on the main thread.
@@ -92,9 +95,12 @@ export function animateValue<V = number>({
                 `Only two keyframes currently supported with spring and inertia animations. Trying to animate ${keyframes}`
             )
         }
-        mapNumbersToKeyframes = interpolate([0, 100], keyframes, {
-            clamp: false,
-        })
+
+        mapNumbersToKeyframes = pipe(
+            percentToProgress,
+            mix(keyframes[0], keyframes[1])
+        ) as (t: number) => V
+
         keyframes = [0, 100] as any
     }
 

@@ -1,4 +1,4 @@
-import { mixObject } from "../mix-complex"
+import { mixObject } from "../complex"
 
 test("mixObject", () => {
     expect(
