@@ -10,6 +10,7 @@ import {
     analyseComplexValue,
     complex,
 } from "../../value/types/complex"
+import { isCSSVariableToken } from "../../render/dom/utils/is-css-variable"
 
 type MixableArray = Array<number | RGBA | HSLA | string>
 type MixableObject = {
@@ -28,12 +29,11 @@ export function getMixer<T>(a: T) {
     if (typeof a === "number") {
         return mixNumber
     } else if (typeof a === "string") {
-        if (a.startsWith("var(")) {
-            return mixImmediate
-        } else if (color.test(a)) {
-            return mixColor
-        }
-        return mixComplex
+        return isCSSVariableToken(a)
+            ? mixImmediate
+            : color.test(a)
+            ? mixColor
+            : mixComplex
     } else if (Array.isArray(a)) {
         return mixArray
     } else if (typeof a === "object") {

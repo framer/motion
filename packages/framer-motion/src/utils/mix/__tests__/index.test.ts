@@ -28,4 +28,13 @@ describe("mix", () => {
 
         expect(mixer(0.5)).toEqual([[1, 2], { c: 0.5, d: "1.5px" }])
     })
+
+    test("mixes complex values", () => {
+        expect(mix("var(--test) 0px", "var(--test) 20px")(0.5)).toBe(
+            "var(--test) 10px"
+        )
+        expect(mix("var(--test-1) 10px", "var(--test-9) 60px")(0.5)).toBe(
+            "var(--test-9) 35px"
+        )
+    })
 })

@@ -37,12 +37,15 @@
             /**
              * Create an interpolate function that mixes unit values.
              */
-            const px = gsap.utils.interpolate("0px", "100px")
+            const px = gsap.utils.interpolate(
+                "var(--test-1, 1) 10px",
+                "var(--test-9, 3) 60px"
+            )
 
-            const numRuns = 1000000
+            const numRuns = 10
             let startTime = performance.now()
             for (let i = 0; i < numRuns; i++) {
-                px(i / numRuns)
+                console.log(px(i / numRuns))
             }
             console.log(`First run: ${performance.now() - startTime}ms`)
         </script>

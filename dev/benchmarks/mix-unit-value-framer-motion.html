@@ -35,17 +35,18 @@
         <script src="../../packages/framer-motion/dist/dom.js"></script>
         <script src="../../node_modules/gsap/dist/gsap.min.js"></script>
         <script>
-            const { interpolate } = window.Motion
+            const { mix } = window.Motion
 
             /**
              * Create an interpolate function that mixes unit values.
              */
-            const px = interpolate([0, 1], ["0px", "100px"])
+            const px = mix("var(--test-1) 10px", "var(--test-9) 60px")
 
-            const numRuns = 1000000
+            const numRuns = 10
             let startTime = performance.now()
             for (let i = 0; i < numRuns; i++) {
-                px(i / numRuns)
+                console.log(i / numRuns)
+                console.log(px(i / numRuns))
             }
             console.log(`First run: ${performance.now() - startTime}ms`)
         </script>

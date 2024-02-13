@@ -26,6 +26,15 @@ test("mixComplex errors", () => {
     )
 })
 
+test("mixComplex mixes var() and unit types", () => {
+    expect(mixComplex("var(--test) 0px", "var(--test) 20px")(0.5)).toBe(
+        "var(--test) 10px"
+    )
+    expect(mixComplex("var(--test-1) 10px", "var(--test-9) 60px")(0.5)).toBe(
+        "var(--test-9) 35px"
+    )
+})
+
 test("mixComplex can interpolate out-of-order values", () => {
     expect(mixComplex("#fff 0px 0px", "20px 0px #000")(0.5)).toBe(
         "10px 0px rgba(180, 180, 180, 1)"
