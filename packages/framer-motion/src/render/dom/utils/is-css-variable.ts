@@ -8,8 +8,12 @@ const checkStringStartsWith =
         typeof key === "string" && key.startsWith(token)
 
 export const isCSSVariableName = checkStringStartsWith<CSSVariableName>("--")
-export const isCSSVariableToken =
-    checkStringStartsWith<CSSVariableToken>("var(--")
+
+const startsAsVariableToken = checkStringStartsWith<CSSVariableToken>("var(--")
+export const isCSSVariableToken = (key?: string): key is CSSVariableToken =>
+    startsAsVariableToken(key) && singleCssVariableRegex.test(key)
 
 export const cssVariableRegex =
     /var\s*\(\s*--[\w-]+(\s*,\s*(?:(?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)+)?\s*\)/g
+const singleCssVariableRegex =
+    /var\s*\(\s*--[\w-]+(\s*,\s*(?:(?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)+)?\s*\)$/i

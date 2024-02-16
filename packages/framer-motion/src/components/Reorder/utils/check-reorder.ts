@@ -1,5 +1,5 @@
 import { moveItem } from "../../../utils/array"
-import { mix } from "../../../utils/mix"
+import { mixNumber } from "../../../utils/mix/number"
 import { ItemData } from "../types"
 
 export function checkReorder<T>(
@@ -21,7 +21,7 @@ export function checkReorder<T>(
 
     const item = order[index]
     const nextLayout = nextItem.layout
-    const nextItemCenter = mix(nextLayout.min, nextLayout.max, 0.5)
+    const nextItemCenter = mixNumber(nextLayout.min, nextLayout.max, 0.5)
 
     if (
         (nextOffset === 1 && item.layout.max + offset > nextItemCenter) ||

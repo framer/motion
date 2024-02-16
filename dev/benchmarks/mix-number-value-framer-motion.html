@@ -40,13 +40,12 @@
             /**
              * Create an interpolate function that mixes unit values.
              */
-            const px = mix("var(--test-1) 10px", "var(--test-9) 60px")
+            const px = mix(0, 100)
 
-            const numRuns = 10
+            const numRuns = 100000000
             let startTime = performance.now()
             for (let i = 0; i < numRuns; i++) {
-                console.log(i / numRuns)
-                console.log(px(i / numRuns))
+                px(i / numRuns)
             }
             console.log(`First run: ${performance.now() - startTime}ms`)
         </script>

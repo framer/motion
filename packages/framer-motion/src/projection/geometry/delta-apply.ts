@@ -1,5 +1,5 @@
 import { ResolvedValues } from "../../render/types"
-import { mix } from "../../utils/mix"
+import { mixNumber } from "../../utils/mix/number"
 import { IProjectionNode } from "../node/types"
 import { hasTransform } from "../utils/has-transform"
 import { Axis, Box, Delta, Point } from "./types"
@@ -160,7 +160,7 @@ export function transformAxis(
     const axisOrigin =
         transforms[originKey] !== undefined ? transforms[originKey] : 0.5
 
-    const originPoint = mix(axis.min, axis.max, axisOrigin as number)
+    const originPoint = mixNumber(axis.min, axis.max, axisOrigin as number)
 
     // Apply the axis delta to the final axis
     applyAxisDelta(

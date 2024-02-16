@@ -44,7 +44,7 @@ import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { MotionStyle } from "../../motion/types"
 import { globalProjectionState } from "./state"
 import { delay } from "../../utils/delay"
-import { mix } from "../../utils/mix"
+import { mixNumber } from "../../utils/mix/number"
 import { Process } from "../../frameloop/types"
 import { ProjectionFrame } from "../../debug/types"
 import { record } from "../../debug/record"
@@ -2080,15 +2080,15 @@ function removeLeadSnapshots(stack: NodeStack) {
 }
 
 export function mixAxisDelta(output: AxisDelta, delta: AxisDelta, p: number) {
-    output.translate = mix(delta.translate, 0, p)
-    output.scale = mix(delta.scale, 1, p)
+    output.translate = mixNumber(delta.translate, 0, p)
+    output.scale = mixNumber(delta.scale, 1, p)
     output.origin = delta.origin
     output.originPoint = delta.originPoint
 }
 
 export function mixAxis(output: Axis, from: Axis, to: Axis, p: number) {
-    output.min = mix(from.min, to.min, p)
-    output.max = mix(from.max, to.max, p)
+    output.min = mixNumber(from.min, to.min, p)
+    output.max = mixNumber(from.max, to.max, p)
 }
 
 export function mixBox(output: Box, from: Box, to: Box, p: number) {
@@ -2109,6 +2109,7 @@ const defaultLayoutTransition = {
 
 const userAgentContains = (string: string) =>
     typeof navigator !== "undefined" &&
+    navigator.userAgent &&
     navigator.userAgent.toLowerCase().includes(string)
 
 /**

@@ -32,21 +32,20 @@
     </head>
     <body>
         <div class="container"></div>
-        <script src="../../packages/framer-motion/dist/dom.js"></script>
-        <script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+        <script src="../../node_modules/gsap/dist/gsap.js"></script>
         <script>
-            const { mix } = window.Motion
-
             /**
              * Create an interpolate function that mixes unit values.
              */
-            const px = mix("var(--test-1) 10px", "var(--test-9) 60px")
+            const px = gsap.utils.interpolate(
+                "rgba(255, 255, 255, 0) 100px 40% 20px rgba(255, 255, 255, 0) var(--test) 67% 20vh 1vw",
+                "rgba(0, 0, 0, 0) 0px 0% 100px rgba(255, 255, 255, 0) var(--test) 45% 0vh 1vw"
+            )
 
             const numRuns = 10
             let startTime = performance.now()
             for (let i = 0; i < numRuns; i++) {
-                console.log(i / numRuns)
-                console.log(px(i / numRuns))
+                px(i / numRuns)
             }
             console.log(`First run: ${performance.now() - startTime}ms`)
         </script>

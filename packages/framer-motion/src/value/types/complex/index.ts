@@ -1,10 +1,5 @@
-import {
-    cssVariableRegex,
-    CSSVariableToken,
-} from "../../../render/dom/utils/is-css-variable"
-import { noop } from "../../../utils/noop"
+import { CSSVariableToken } from "../../../render/dom/utils/is-css-variable"
 import { color } from "../color"
-import { number } from "../numbers"
 import { Color } from "../types"
 import { colorRegex, floatRegex, isString, sanitize } from "../utils"
 
@@ -18,72 +13,64 @@ function test(v: any) {
     )
 }
 
+const NUMBER_TOKEN = "number"
+const COLOR_TOKEN = "color"
+const VAR_TOKEN = "var"
+const VAR_FUNCTION_TOKEN = "var("
+const SPLIT_TOKEN = "${}"
+
+export type ComplexValues = Array<CSSVariableToken | string | number | Color>
+
+export type ValueIndexes = {
+    color: number[]
+    number: number[]
+    var: number[]
+}
+
 export interface ComplexValueInfo {
-    value: string
-    values: Array<CSSVariableToken | Color | number>
-    numVars: number
-    numColors: number
-    numNumbers: number
-    tokenised: string
+    values: ComplexValues
+    split: string[]
+    indexes: ValueIndexes
+    types: Array<keyof ValueIndexes>
 }
 
-interface Tokeniser {
-    regex: RegExp
-    countKey: string
-    token: string
-    parse: (value: string) => any
-}
-
-const cssVarTokeniser: Tokeniser = {
-    regex: cssVariableRegex,
-    countKey: "Vars",
-    token: "${v}",
-    parse: noop,
-}
-
-const colorTokeniser: Tokeniser = {
-    regex: colorRegex,
-    countKey: "Colors",
-    token: "${c}",
-    parse: color.parse,
-}
-
-const numberTokeniser: Tokeniser = {
-    regex: floatRegex,
-    countKey: "Numbers",
-    token: "${n}",
-    parse: number.parse,
-}
-
-function tokenise(
-    info: ComplexValueInfo,
-    { regex, countKey, token, parse }: Tokeniser
-) {
-    const matches = info.tokenised.match(regex)
-
-    if (!matches) return
-
-    info["num" + countKey] = matches.length
-    info.tokenised = info.tokenised.replace(regex, token)
-    info.values.push(...(matches.map(parse) as any))
-}
+const complexRegex =
+    /(var\s*\(\s*--[\w-]+(\s*,\s*(?:(?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)+)?\s*\))|(#[0-9a-f]{3,8}|(rgb|hsl)a?\((-?[\d\.]+%?[,\s]+){2}(-?[\d\.]+%?)\s*[\,\/]?\s*[\d\.]*%?\))|((-)?([\d]*\.?[\d])+)/gi
 
 export function analyseComplexValue(value: string | number): ComplexValueInfo {
     const originalValue = value.toString()
-    const info = {
-        value: originalValue,
-        tokenised: originalValue,
-        values: [],
-        numVars: 0,
-        numColors: 0,
-        numNumbers: 0,
+
+    const matchedValues = originalValue.match(complexRegex) || []
+    const values: ComplexValues = []
+    const indexes: ValueIndexes = {
+        color: [],
+        number: [],
+        var: [],
+    }
+    const types: Array<keyof ValueIndexes> = []
+
+    for (let i = 0; i < matchedValues.length; i++) {
+        const parsedValue: string | number = matchedValues[i]
+
+        if (color.test(parsedValue)) {
+            indexes.color.push(i)
+            types.push(COLOR_TOKEN)
+            values.push(color.parse(parsedValue))
+        } else if (parsedValue.startsWith(VAR_FUNCTION_TOKEN)) {
+            indexes.var.push(i)
+            types.push(VAR_TOKEN)
+            values.push(parsedValue)
+        } else {
+            indexes.number.push(i)
+            types.push(NUMBER_TOKEN)
+            values.push(parseFloat(parsedValue))
+        }
     }
 
-    if (info.value.includes("var(--")) tokenise(info, cssVarTokeniser)
-    tokenise(info, colorTokeniser)
-    tokenise(info, numberTokeniser)
+    const tokenised = originalValue.replace(complexRegex, SPLIT_TOKEN)
+    const split = tokenised.split(SPLIT_TOKEN)
 
-    return info
+    return { values, split, indexes, types }
 }
 
 function parseComplexValue(v: string | number) {
@@ -91,26 +78,22 @@ function parseComplexValue(v: string | number) {
 }
 
 function createTransformer(source: string | number) {
-    const { values, numColors, numVars, tokenised } =
-        analyseComplexValue(source)
-    const numValues = values.length
+    const { split, types } = analyseComplexValue(source)
 
+    const numSections = split.length
     return (v: Array<CSSVariableToken | Color | number | string>) => {
-        let output = tokenised
-
-        for (let i = 0; i < numValues; i++) {
-            if (i < numVars) {
-                output = output.replace(cssVarTokeniser.token, v[i] as any)
-            } else if (i < numVars + numColors) {
-                output = output.replace(
-                    colorTokeniser.token,
-                    color.transform(v[i] as any)
-                )
-            } else {
-                output = output.replace(
-                    numberTokeniser.token,
-                    sanitize(v[i] as number) as any
-                )
+        let output = ""
+        for (let i = 0; i < numSections; i++) {
+            output += split[i]
+            if (v[i] !== undefined) {
+                const type = types[i]
+                if (type === NUMBER_TOKEN) {
+                    output += sanitize(v[i] as number)
+                } else if (type === COLOR_TOKEN) {
+                    output += color.transform(v[i] as Color)
+                } else {
+                    output += v[i]
+                }
             }
         }
 
@@ -118,7 +101,7 @@ function createTransformer(source: string | number) {
     }
 }
 
-const convertNumbersToZero = (v: number | Color) =>
+const convertNumbersToZero = (v: number | string) =>
     typeof v === "number" ? 0 : v
 
 function getAnimatableNone(v: string | number) {

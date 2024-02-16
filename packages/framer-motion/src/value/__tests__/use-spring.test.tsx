@@ -85,7 +85,7 @@ describe("useSpring", () => {
         })
 
         const resolved = await promise
-        console.log({ resolved })
+
         const testNear = (value: number, expected: number, deviation = 2) => {
             expect(
                 value >= expected - deviation && value <= expected + deviation
