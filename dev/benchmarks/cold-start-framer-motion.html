@@ -30,7 +30,7 @@
             .box {
                 width: 10px;
                 height: 100px;
-                background-color: #fff;
+                background-color: #0f0;
             }
         </style>
     </head>
@@ -40,7 +40,7 @@
         <script src="../../packages/framer-motion/dist/dom.js"></script>
         <script>
             // Create boxes
-            const numBoxes = 100
+            const numBoxes = 500
             let html = ``
             for (let i = 0; i < numBoxes; i++) {
                 html += `<div><div class="box"></div></div>`
@@ -56,34 +56,41 @@
                     animate(
                         box,
                         {
-                            rotate: Math.random() * 360,
+                            transform: [
+                                `translateX(0px) rotate(0deg)`,
+                                `translateX(5px) rotate(${
+                                    Math.random() * 360
+                                }deg)`,
+                            ],
+                            // rotate: Math.random() * 360,
                             backgroundColor: "#f00",
                             width: Math.random() * 100 + "%",
-                            x: 5,
+                            // x: 5,
                         },
                         {
                             ease: "linear",
                             duration: 1,
+                            repeat: Infinity,
                         }
                     )
                 )
 
-                setTimeout(() => {
-                    // Value conversion
-                    boxes.forEach((box) =>
-                        animate(
-                            box,
-                            {
-                                width: Math.random() * 100 + "px",
-                                x: "10%",
-                            },
-                            {
-                                ease: "linear",
-                                duration: 1,
-                            }
-                        )
-                    )
-                }, 1500)
+                // setTimeout(() => {
+                //     // Value conversion
+                //     boxes.forEach((box) =>
+                //         animate(
+                //             box,
+                //             {
+                //                 width: Math.random() * 100 + "px",
+                //                 x: "10%",
+                //             },
+                //             {
+                //                 ease: "linear",
+                //                 duration: 1,
+                //             }
+                //         )
+                //     )
+                // }, 1500)
             }, 1000)
         </script>
     </body>

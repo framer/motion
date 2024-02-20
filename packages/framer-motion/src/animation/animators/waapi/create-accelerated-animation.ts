@@ -92,18 +92,18 @@ export function createAcceleratedAnimation(
      */
     let pendingCancel = false
 
-    /**
-     * Resolve the current Promise every time we enter the
-     * finished state. This is WAAPI-compatible behaviour.
-     */
-    const updateFinishedPromise = () => {
-        currentFinishedPromise = new Promise((resolve) => {
-            resolveFinishedPromise = resolve
-        })
-    }
+    // /**
+    //  * Resolve the current Promise every time we enter the
+    //  * finished state. This is WAAPI-compatible behaviour.
+    //  */
+    // const updateFinishedPromise = () => {
+    //     currentFinishedPromise = new Promise((resolve) => {
+    //         resolveFinishedPromise = resolve
+    //     })
+    // }
 
-    // Create the first finished promise
-    updateFinishedPromise()
+    // // Create the first finished promise
+    // updateFinishedPromise()
 
     let {
         keyframes: unresolvedKeyframes,
@@ -124,14 +124,14 @@ export function createAcceleratedAnimation(
             safeCancel()
         }
 
-        if (!canAnimate(keyframes, valueName, options.type, options.velocity)) {
-            if (instantAnimationState.current || !options.delay) {
-                finish()
-                return
-            } else {
-                options.duration = 0
-            }
-        }
+        // if (!canAnimate(keyframes, valueName, options.type, options.velocity)) {
+        //     if (instantAnimationState.current || !options.delay) {
+        //         finish()
+        //         return
+        //     } else {
+        //         options.duration = 0
+        //     }
+        // }
 
         /**
          * If this animation needs pre-generated keyframes then generate.
@@ -182,6 +182,8 @@ export function createAcceleratedAnimation(
                 times,
             }
         )
+
+        animation.startTime = time.now()
 
         /**
          * Prefer the `onfinish` prop as it's more widely supported than

@@ -50,7 +50,7 @@ export class DOMKeyframesResolver<
          */
         for (let i = 0; i < unresolvedKeyframes.length; i++) {
             const keyframe = unresolvedKeyframes[i]
-            if (isCSSVariableToken(keyframe)) {
+            if (typeof keyframe === "string" && isCSSVariableToken(keyframe)) {
                 const resolved = getVariableValue(keyframe, element.current)
 
                 if (resolved !== undefined) {

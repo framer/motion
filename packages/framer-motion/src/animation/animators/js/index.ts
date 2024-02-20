@@ -23,6 +23,7 @@ import {
 import { instantAnimationState } from "../../../utils/use-instant-transition-state"
 import { getFinalKeyframe } from "../waapi/utils/get-final-keyframe"
 import { canAnimate } from "../utils/can-animate"
+import { time } from "../../../frameloop/sync-time"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -42,15 +43,6 @@ export interface MainThreadAnimationControls<V>
 }
 
 const percentToProgress = (percent: number) => percent / 100
-
-function defaultResolveKeyframes<V extends string | number>(
-    keyframes: V[],
-    onComplete: OnKeyframesResolved<V>,
-    name?: string,
-    motionValue?: any
-) {
-    return new KeyframeResolver(keyframes, onComplete, name, motionValue)
-}
 
 /**
  * Animate a single value on the main thread.
@@ -108,7 +100,6 @@ export function animateValue<V extends string | number = number>({
             resolveFinishedPromise = resolve
         })
     }
-
     // Create the first finished promise
     updateFinishedPromise()
 
@@ -337,7 +328,9 @@ export function animateValue<V extends string | number = number>({
 
         if (!animationDriver) animationDriver = driver(tick)
 
-        const now = animationDriver.now()
+        const now = time.now()
+
+        console.log("start time sync", startTime)
 
         onPlay && onPlay()
 
