@@ -7,7 +7,7 @@ import { warning } from "../utils/errors"
 import { scrollInfo } from "../render/dom/scroll/track"
 import { ScrollInfoOptions } from "../render/dom/scroll/types"
 
-interface UseScrollOptions
+export interface UseScrollOptions
     extends Omit<ScrollInfoOptions, "container" | "target"> {
     container?: RefObject<HTMLElement>
     target?: RefObject<HTMLElement>
