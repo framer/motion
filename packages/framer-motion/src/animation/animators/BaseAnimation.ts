@@ -9,11 +9,21 @@ import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
 import { canAnimate } from "./utils/can-animate"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
 
-export abstract class GenericAnimation<T extends string | number, Resolved>
+export interface ValueAnimationOptionsWithDefaults<T extends string | number>
+    extends ValueAnimationOptions<T> {
+    autoplay: ValueAnimationOptions["autoplay"]
+    delay: ValueAnimationOptions["delay"]
+    duration: ValueAnimationOptions["duration"]
+    repeat: ValueAnimationOptions["repeat"]
+    repeatDelay: ValueAnimationOptions["repeatDelay"]
+    repeatType: ValueAnimationOptions["repeatType"]
+}
+
+export abstract class BaseAnimation<T extends string | number, Resolved>
     implements AnimationPlaybackControls
 {
     // Persistent reference to the options used to create this animation
-    protected options: ValueAnimationOptions<T>
+    protected options: ValueAnimationOptionsWithDefaults<T>
 
     // Resolve the current finished promise
     protected resolveFinishedPromise: VoidFunction
@@ -56,15 +66,16 @@ export abstract class GenericAnimation<T extends string | number, Resolved>
         this.resolver = this.initKeyframeResolver()
     }
 
-    abstract initPlayback(
+    protected abstract initPlayback(
         keyframes: ResolvedKeyframes<T>,
         startTime: number
     ): Resolved
+    protected abstract initKeyframeResolver(): KeyframeResolver<T>
+
     abstract play(): void
     abstract pause(): void
     abstract stop(): void
     abstract cancel(): void
-    abstract initKeyframeResolver(): KeyframeResolver<T>
     abstract get speed(): number
     abstract set speed(newSpeed: number)
     abstract get time(): number

@@ -8,7 +8,10 @@ import {
 } from "../../utils/time-conversion"
 import { MotionValue } from "../../value"
 import { ValueAnimationOptions } from "../types"
-import { GenericAnimation } from "./GenericAnimation"
+import {
+    BaseAnimation,
+    ValueAnimationOptionsWithDefaults,
+} from "./BaseAnimation"
 import { MainThreadAnimation } from "./MainThreadAnimation"
 import { animateStyle } from "./waapi"
 import { isWaapiSupportedEasing } from "./waapi/easing"
@@ -85,8 +88,9 @@ function pregenerateKeyframes<T extends string | number>(
     }
 }
 
-export interface AcceleratedValueAnimationOptions<T extends string | number>
-    extends ValueAnimationOptions<T> {
+export interface AcceleratedValueAnimationOptions<
+    T extends string | number = number
+> extends ValueAnimationOptions<T> {
     name: string
     motionValue: MotionValue<T>
 }
@@ -98,7 +102,7 @@ interface ResolvedAcceleratedAnimation {
 
 export class AcceleratedAnimation<
     T extends string | number
-> extends GenericAnimation<T, ResolvedAcceleratedAnimation> {
+> extends BaseAnimation<T, ResolvedAcceleratedAnimation> {
     /**
      * Cancelling an animation will write to the DOM. For safety we want to defer
      * this until the next `update` frame lifecycle. This flag tracks whether we
@@ -106,7 +110,10 @@ export class AcceleratedAnimation<
      */
     private pendingCancel = false
 
-    private options: AcceleratedValueAnimationOptions<T>
+    protected options: ValueAnimationOptionsWithDefaults<T> & {
+        name: string
+        motionValue: MotionValue<T>
+    }
 
     constructor(options: AcceleratedValueAnimationOptions<T>) {
         super(options)
@@ -116,7 +123,7 @@ export class AcceleratedAnimation<
         keyframes: ResolvedKeyframes<T>,
         startTime: number
     ): ResolvedAcceleratedAnimation {
-        const { name, motionValue, duration = 300, ...options } = this.options
+        const { name, motionValue, duration, ...options } = this.options
 
         /**
          * If this animation needs pre-generated keyframes then generate.
@@ -153,7 +160,7 @@ export class AcceleratedAnimation<
     }
 
     protected initKeyframeResolver() {
-        return new DOMKeyframesResolver()
+        return new DOMKeyframesResolver<T>()
     }
 
     get duration() {
@@ -272,14 +279,12 @@ export class AcceleratedAnimation<
 
     cancel() {}
 
-    static supports({
-        motionValue,
-        name,
-        repeatDelay,
-        repeatType,
-        damping,
-        type,
-    }: ValueAnimationOptions) {
+    static supports(
+        options: ValueAnimationOptions
+    ): options is AcceleratedValueAnimationOptions {
+        const { motionValue, name, repeatDelay, repeatType, damping, type } =
+            options
+
         return (
             supportsWaapi() &&
             name &&

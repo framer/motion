@@ -6,7 +6,7 @@ import { spring } from "../generators/spring/index"
 import { inertia } from "../generators/inertia"
 import { keyframes as keyframesGeneratorFactory } from "../generators/keyframes"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
-import { GenericAnimation } from "./GenericAnimation"
+import { BaseAnimation } from "./BaseAnimation"
 import { AnimationState, KeyframeGenerator } from "../generators/types"
 import { invariant } from "../../dom-entry"
 import { pipe } from "../../utils/pipe"
@@ -30,7 +30,7 @@ const percentToProgress = (percent: number) => percent / 100
 
 export class MainThreadAnimation<
     T extends string | number
-> extends GenericAnimation<T, {}> {
+> extends BaseAnimation<T, {}> {
     private playState: AnimationPlayState = "idle"
 
     private holdTime: number | null = null
