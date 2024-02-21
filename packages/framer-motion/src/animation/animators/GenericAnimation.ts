@@ -20,9 +20,28 @@ export abstract class GenericAnimation<T extends string | number>
 
     hasStopped = false
 
-    constructor(value: MotionValue, options: ValueAnimationOptions) {
+    constructor(
+        value: MotionValue,
+        {
+            autoplay = true,
+            delay = 0,
+            type = "keyframes",
+            repeat = 0,
+            repeatDelay = 0,
+            repeatType = "loop",
+            ...options
+        }: ValueAnimationOptions
+    ) {
         this.value = value
-        this.options = options
+        this.options = {
+            autoplay,
+            delay,
+            type,
+            repeat,
+            repeatDelay,
+            repeatType,
+            ...options,
+        }
         this.updateFinishedPromise()
     }
 

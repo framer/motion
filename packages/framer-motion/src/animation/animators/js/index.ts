@@ -23,7 +23,6 @@ import {
 import { instantAnimationState } from "../../../utils/use-instant-transition-state"
 import { getFinalKeyframe } from "../waapi/utils/get-final-keyframe"
 import { canAnimate } from "../utils/can-animate"
-import { time } from "../../../frameloop/sync-time"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -100,6 +99,7 @@ export function animateValue<V extends string | number = number>({
             resolveFinishedPromise = resolve
         })
     }
+
     // Create the first finished promise
     updateFinishedPromise()
 
@@ -114,19 +114,19 @@ export function animateValue<V extends string | number = number>({
 
     let initialKeyframe: V
     const createGenerator = (keyframes: ResolvedKeyframes<any>) => {
-        if (!canAnimate(keyframes, name, type, options.velocity)) {
-            if (instantAnimationState.current || !delay) {
-                if (onUpdate) {
-                    onUpdate(
-                        getFinalKeyframe(keyframes, { repeat, repeatType })
-                    )
-                }
-                finish()
-                return
-            } else {
-                options.duration = 0
-            }
-        }
+        // if (!canAnimate(keyframes, name, type, options.velocity)) {
+        //     if (instantAnimationState.current || !delay) {
+        //         if (onUpdate) {
+        //             onUpdate(
+        //                 getFinalKeyframe(keyframes, { repeat, repeatType })
+        //             )
+        //         }
+        //         finish()
+        //         return
+        //     } else {
+        //         options.duration = 0
+        //     }
+        // }
 
         initialKeyframe = keyframes[0]
         const generatorFactory = types[type] || keyframesGeneratorFactory
@@ -328,9 +328,7 @@ export function animateValue<V extends string | number = number>({
 
         if (!animationDriver) animationDriver = driver(tick)
 
-        const now = time.now()
-
-        console.log("start time sync", startTime)
+        const now = animationDriver.now()
 
         onPlay && onPlay()
 
