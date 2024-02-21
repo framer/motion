@@ -53,7 +53,7 @@ export class MainThreadAnimation<
 
     constructor(options: ValueAnimationOptions) {}
 
-    initPlayback(keyframes: ResolvedKeyframes<T>, startTime: number) {
+    protected initPlayback(keyframes: ResolvedKeyframes<T>, startTime: number) {
         this.initialKeyframe = keyframes[0]
 
         const {
@@ -131,17 +131,35 @@ export class MainThreadAnimation<
 
     set time() {}
 
-    get speed() {}
+    get speed() {
+        return this.playbackSpeed
+    }
 
-    set speed() {}
+    set speed(newSpeed: number) {
+        const hasChanged = this.playbackSpeed !== newSpeed
+        this.playbackSpeed = newSpeed
+        if (hasChanged) {
+            this.time = millisecondsToSeconds(currentTime)
+        }
+    }
+
+    get state() {
+        return this.playState
+    }
 
     play() {}
 
-    pause() {}
+    pause() {
+        this.state = "paused"
+        this.holdTime = this.currentTime
+    }
 
     stop() {}
 
-    complete() {}
+    complete() {
+        this.state = "finished"
+        this.holdTime = null
+    }
 
     cancel() {}
 }

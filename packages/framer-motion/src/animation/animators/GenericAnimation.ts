@@ -8,17 +8,17 @@ import { canAnimate } from "./utils/can-animate"
 export abstract class GenericAnimation<T extends string | number>
     implements AnimationPlaybackControls
 {
-    value: MotionValue
+    protected value: MotionValue
 
-    options: ValueAnimationOptions
+    protected options: ValueAnimationOptions
 
-    resolvedKeyframes: ResolvedKeyframes<T> | null = null
+    protected resolvedKeyframes: ResolvedKeyframes<T> | null = null
 
-    resolveFinishedPromise: VoidFunction
+    protected resolveFinishedPromise: VoidFunction
 
-    currentFinishedPromise: Promise<void>
+    protected currentFinishedPromise: Promise<void>
 
-    hasStopped = false
+    protected hasStopped = false
 
     constructor(
         value: MotionValue,
@@ -55,11 +55,12 @@ export abstract class GenericAnimation<T extends string | number>
     abstract stop(): void
     abstract cancel(): void
     abstract get speed(): number
-    abstract set speed(speed: number)
+    abstract set speed(newSpeed: number)
     abstract get time(): number
-    abstract set time(time: number)
+    abstract set time(newTime: number)
     abstract get duration(): number
-    abstract set duration(duration: number)
+    abstract set duration(newDuration: number)
+    abstract get state(): AnimationPlayState
 
     onKeyframesResolved(keyframes: ResolvedKeyframes<T>) {
         this.resolvedKeyframes = keyframes
