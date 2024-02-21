@@ -4,7 +4,7 @@ import { inertia } from "../generators/inertia"
 import { keyframes as keyframesGeneratorFactory } from "../generators/keyframes"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
 import { GenericAnimation } from "./GenericAnimation"
-import { KeyframeGenerator } from "../generators/types"
+import { AnimationState, KeyframeGenerator } from "../generators/types"
 import { invariant } from "../../dom-entry"
 import { pipe } from "../../utils/pipe"
 import { mix } from "../../utils/mix"
@@ -162,4 +162,9 @@ export class MainThreadAnimation<
     }
 
     cancel() {}
+
+    sample(time: number): AnimationState<T> {
+        this.startTime = 0
+        return this.tick(time)
+    }
 }

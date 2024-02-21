@@ -81,9 +81,9 @@ export function createAcceleratedAnimation(
     /**
      * TODO: Unify with js/index
      */
-    let hasStopped = false
-    let resolveFinishedPromise: VoidFunction
-    let currentFinishedPromise: Promise<void>
+    // let hasStopped = false
+    // let resolveFinishedPromise: VoidFunction
+    // let currentFinishedPromise: Promise<void>
 
     /**
      * Cancelling an animation will write to the DOM. For safety we want to defer

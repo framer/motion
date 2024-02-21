@@ -24,6 +24,7 @@ export abstract class GenericAnimation<T extends string | number>
         value: MotionValue,
         {
             autoplay = true,
+            duration = 300,
             delay = 0,
             type = "keyframes",
             repeat = 0,
@@ -35,6 +36,7 @@ export abstract class GenericAnimation<T extends string | number>
         this.value = value
         this.options = {
             autoplay,
+            duration,
             delay,
             type,
             repeat,
