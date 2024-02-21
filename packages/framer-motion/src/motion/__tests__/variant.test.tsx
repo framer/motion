@@ -941,6 +941,48 @@ describe("animate prop as variant", () => {
         expect(element).toHaveStyle("opacity: 0")
     })
 
+    test("initial is used as fallback when a parent variant changes to not contain that value", async () => {
+        const Component = ({ animate }: { animate?: string }) => {
+            return (
+                <motion.div initial="a" animate={animate}>
+                    <motion.div
+                        data-testid="child"
+                        variants={{
+                            a: { opacity: 0.5 },
+                            b: { opacity: 1 },
+                            c: {},
+                        }}
+                        transition={{ type: false }}
+                        style={{ opacity: 0 }}
+                    />
+                </motion.div>
+            )
+        }
+
+        const { getByTestId, rerender } = render(<Component />)
+        const element = getByTestId("child")
+        expect(element).toHaveStyle("opacity: 0.5")
+
+        rerender(<Component animate="a" />)
+        rerender(<Component animate="a" />)
+
+        await nextFrame()
+
+        expect(element).toHaveStyle("opacity: 0.5")
+
+        rerender(<Component animate="b" />)
+        rerender(<Component animate="b" />)
+
+        await nextFrame()
+        expect(element).toHaveStyle("opacity: 1")
+
+        rerender(<Component animate="c" />)
+        rerender(<Component animate="c" />)
+
+        await nextFrame()
+        expect(element).toHaveStyle("opacity: 0.5") // Contained in variant a, which is set as initial
+    })
+
     test("Children correctly animate to removed values even when not rendering along with parents", async () => {
         const Child = React.memo(() => (
             <motion.div

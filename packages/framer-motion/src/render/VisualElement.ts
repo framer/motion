@@ -843,7 +843,10 @@ export abstract class VisualElement<
      * props.
      */
     getBaseTarget(key: string) {
-        const { initial } = this.props
+        const { initial: contextInitial } = this.getVariantContext(true) || {}
+        const { initial: propsInitial } = this.props
+        const initial =
+            propsInitial !== undefined ? propsInitial : contextInitial
         const valueFromInitial =
             typeof initial === "string" || typeof initial === "object"
                 ? resolveVariantFromProps(this.props, initial as any)?.[key]

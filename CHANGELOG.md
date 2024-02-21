@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.6] 2024-02-21
+
+### Fixed
+
+-   Measure fallback value from context `initial` if provided.
+
 ## [11.0.5] 2024-02-13
 
 ### Updated
