@@ -50,30 +50,45 @@
             const { animate } = Motion
             const boxes = document.querySelectorAll(".box")
 
+            let animations = []
+
             setTimeout(() => {
                 // Cold start (read from DOM)
-                boxes.forEach((box) =>
-                    animate(
-                        box,
-                        {
-                            transform: [
-                                `translateX(0px) rotate(0deg)`,
-                                `translateX(5px) rotate(${
-                                    Math.random() * 360
-                                }deg)`,
+                boxes.forEach((box) => {
+                    animations.push(
+                        box.animate(
+                            [
+                                {
+                                    transform: `translateX(0px) rotate(0deg)`,
+                                },
+                                {
+                                    transform: `translateX(5px) rotate(${
+                                        Math.random() * 360
+                                    }deg)`,
+                                },
                             ],
-                            // rotate: Math.random() * 360,
-                            backgroundColor: "#f00",
-                            width: Math.random() * 100 + "%",
-                            // x: 5,
-                        },
-                        {
-                            ease: "linear",
-                            duration: 1,
-                            repeat: Infinity,
-                        }
+                            {
+                                duration: 1000,
+                                iterations: Infinity,
+                                easing: "linear",
+                            }
+                        )
                     )
-                )
+                })
+
+                setTimeout(() => {
+                    requestAnimationFrame(() => {
+                        animations.forEach((animation) => {
+                            animation.commitStyles()
+                        })
+
+                        requestAnimationFrame(() => {
+                            animations.forEach((animation) => {
+                                animation.cancel()
+                            })
+                        })
+                    })
+                }, 1000)
 
                 // setTimeout(() => {
                 //     // Value conversion

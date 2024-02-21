@@ -1,5 +1,11 @@
+import { DOMKeyframesResolver } from "../../render/dom/DOMKeyframesResolver"
 import { ResolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { memo } from "../../utils/memo"
+import { noop } from "../../utils/noop"
+import {
+    millisecondsToSeconds,
+    secondsToMilliseconds,
+} from "../../utils/time-conversion"
 import { MotionValue } from "../../value"
 import { ValueAnimationOptions } from "../types"
 import { GenericAnimation } from "./GenericAnimation"
@@ -35,19 +41,64 @@ const sampleDelta = 10 //ms
  */
 const maxDuration = 20_000
 
-const requiresPregeneratedKeyframes = (
+function requiresPregeneratedKeyframes<T extends string | number>(
     name: string,
-    options: ValueAnimationOptions
-) =>
-    options.type === "spring" ||
-    name === "backgroundColor" ||
-    !isWaapiSupportedEasing(options.ease)
+    options: ValueAnimationOptions<T>
+) {
+    return (
+        options.type === "spring" ||
+        name === "backgroundColor" ||
+        !isWaapiSupportedEasing(options.ease)
+    )
+}
+
+function pregenerateKeyframes<T extends string | number>(
+    keyframes: ResolvedKeyframes<T>,
+    options: ValueAnimationOptions<T>
+): ValueAnimationOptions<T> {
+    const sampleAnimation = new MainThreadAnimation({
+        ...options,
+        keyframes,
+        repeat: 0,
+        delay: 0,
+    })
+
+    let state = { done: false, value: keyframes[0] }
+    const pregeneratedKeyframes: T[] = []
+
+    /**
+     * Bail after 20 seconds of pre-generated keyframes as it's likely
+     * we're heading for an infinite loop.
+     */
+    let t = 0
+    while (!state.done && t < maxDuration) {
+        state = sampleAnimation.sample(t)
+        pregeneratedKeyframes.push(state.value)
+        t += sampleDelta
+    }
+
+    return {
+        times: undefined,
+        keyframes: pregeneratedKeyframes,
+        duration: t - sampleDelta,
+        ease: "linear",
+    }
+}
+
+export interface AcceleratedValueAnimationOptions<T extends string | number>
+    extends ValueAnimationOptions<T> {
+    name: string
+    motionValue: MotionValue<T>
+}
+
+interface ResolvedAcceleratedAnimation {
+    animation: Animation
+    duration: number
+}
 
 export class AcceleratedAnimation<
     T extends string | number
-> extends GenericAnimation<T> {
-    private animation: Animation | undefined
-
+> extends GenericAnimation<T, ResolvedAcceleratedAnimation> {
     /**
      * Cancelling an animation will write to the DOM. For safety we want to defer
      * this until the next `update` frame lifecycle. This flag tracks whether we
@@ -55,56 +106,38 @@ export class AcceleratedAnimation<
      */
     private pendingCancel = false
 
-    constructor(value: MotionValue, options: ValueAnimationOptions) {
-        super(value, options)
+    private options: AcceleratedValueAnimationOptions<T>
+
+    constructor(options: AcceleratedValueAnimationOptions<T>) {
+        super(options)
     }
 
-    protected initPlayback(keyframes: ResolvedKeyframes<T>, startTime: number) {
-        const { name } = this.options
+    protected initPlayback(
+        keyframes: ResolvedKeyframes<T>,
+        startTime: number
+    ): ResolvedAcceleratedAnimation {
+        const { name, motionValue, duration = 300, ...options } = this.options
 
         /**
          * If this animation needs pre-generated keyframes then generate.
          */
         if (requiresPregeneratedKeyframes(name, this.options)) {
-            const sampleAnimation = new MainThreadAnimation({
-                ...this.options,
-                keyframes,
-                repeat: 0,
-                delay: 0,
-            })
-            let state = { done: false, value: keyframes[0] }
-            const pregeneratedKeyframes: number[] = []
-
-            /**
-             * Bail after 20 seconds of pre-generated keyframes as it's likely
-             * we're heading for an infinite loop.
-             */
-            let t = 0
-            while (!state.done && t < maxDuration) {
-                state = sampleAnimation.sample(t)
-                pregeneratedKeyframes.push(state.value)
-                t += sampleDelta
-            }
-
             this.options = {
                 ...this.options,
-                times: undefined,
-                keyframes: pregeneratedKeyframes,
-                duration: t - sampleDelta,
-                ease: "linear",
+                ...pregenerateKeyframes(keyframes, { ...options, duration }),
             }
         }
 
-        this.animation = animateStyle(
-            this.value.owner as HTMLElement,
+        const animation = animateStyle(
+            motionValue.owner as unknown as HTMLElement,
             name,
-            keyframes,
+            keyframes as string[],
             this.options
         )
 
         // Override the browser calculated startTime with one synchronised to other JS
         // and WAAPI animations starting this event loop.
-        this.animation.startTime = startTime
+        animation.startTime = startTime
 
         /**
          * Prefer the `onfinish` prop as it's more widely supported than
@@ -114,44 +147,121 @@ export class AcceleratedAnimation<
          * keyframe. If we didn't, when the WAAPI animation is finished it would
          * be removed from the element which would then revert to its old styles.
          */
-        this.animation.onfinish = () => this.complete()
+        animation.onfinish = () => this.complete()
+
+        return { animation, duration: this.options.duration! }
     }
 
-    get duration() {}
+    protected initKeyframeResolver() {
+        return new DOMKeyframesResolver()
+    }
 
-    set duration() {}
+    get duration() {
+        const { duration } = this.resolved
+        return millisecondsToSeconds(duration)
+    }
 
-    get time() {}
+    get time() {
+        const { animation } = this.resolved
+        return millisecondsToSeconds((animation.currentTime as number) || 0)
+    }
 
-    set time() {}
+    set time(newTime: number) {
+        const { animation } = this.resolved
+        animation.currentTime = secondsToMilliseconds(newTime)
+    }
 
-    get speed() {}
+    get speed() {
+        const { animation } = this.resolved
+        return animation.playbackRate
+    }
 
-    set speed() {}
+    set speed(newSpeed: number) {
+        const { animation } = this.resolved
+        animation.playbackRate = newSpeed
+    }
 
     get state() {
-        return this.animation ? this.animation.playState : "idle"
+        const { animation } = this.resolved
+        return animation.playState
     }
 
-    play() {}
+    /**
+     * Replace the default DocumentTimeline with another AnimationTimeline.
+     * Currently used for scroll animations.
+     */
+    attachTimeline(timeline: AnimationTimeline) {
+        const { animation } = this.resolved
 
-    pause() {}
+        animation.timeline = timeline
+        animation.onfinish = null
 
-    stop() {}
+        return noop<void>
+    }
 
-    // TODO Protect
+    play() {
+        if (this.isStopped) return
+
+        const { animation } = this.resolved
+        animation.play()
+    }
+
+    pause() {
+        const { animation } = this.resolved
+        animation.pause()
+    }
+
+    stop() {
+        this.isStopped = true
+        const { animation, keyframes } = this.resolved
+
+        if (
+            animation.playState === "idle" ||
+            animation.playState === "finished"
+        ) {
+            return
+        }
+
+        /**
+         * WAAPI doesn't natively have any interruption capabilities.
+         *
+         * Rather than read commited styles back out of the DOM, we can
+         * create a renderless JS animation and sample it twice to calculate
+         * its current value, "previous" value, and therefore allow
+         * Motion to calculate velocity for any subsequent animation.
+         */
+        const { time } = this
+
+        // If the currentTime is 0 we can deduce the animation has no velocity
+        if (time) {
+            const { motionValue, onUpdate, onComplete, ...options } =
+                this.options
+            const sampleAnimation = new MainThreadAnimation({
+                ...options,
+                keyframes,
+            })
+
+            motionValue.setWithVelocity(
+                sampleAnimation.sample(time - sampleDelta).value,
+                sampleAnimation.sample(time).value,
+                sampleDelta
+            )
+        }
+
+        // TODO safe ancel animation here
+    }
+
     complete() {
-        // TODO If pending cancel, don't complete
-
         const { onComplete } = this.options
+        const { animation } = this.resolved
 
-        if (this.animation) {
+        if (animation) {
             this.value.set(
                 getFinalKeyframe(this.resolvedKeyframes, this.options)
             )
-            if (this.animation.playState !== "finished") {
-                this.animation.onfinish = null
-                this.animation.finish()
+            if (animation.playState !== "finished") {
+                animation.onfinish = null
+                animation.finish()
             }
         } else {
             // cancel keyframe resolution
@@ -162,21 +272,26 @@ export class AcceleratedAnimation<
 
     cancel() {}
 
-    static supports(
-        value: MotionValue,
-        { name, repeatDelay, repeatType, damping, type }: ValueAnimationOptions
-    ) {
+    static supports({
+        motionValue,
+        name,
+        repeatDelay,
+        repeatType,
+        damping,
+        type,
+    }: ValueAnimationOptions) {
         return (
             supportsWaapi() &&
-            value.owner &&
-            value.owner.current instanceof HTMLElement &&
+            name &&
+            acceleratedValues.has(name) &&
+            motionValue &&
+            motionValue.owner &&
+            motionValue.owner.current instanceof HTMLElement &&
             /**
              * If we're outputting values to onUpdate then we can't use WAAPI as there's
              * no way to read the value from WAAPI every frame.
              */
-            !value.owner.getProps().onUpdate &&
-            name &&
-            acceleratedValues.has(name) &&
+            !motionValue.owner.getProps().onUpdate &&
             !repeatDelay &&
             repeatType !== "mirror" &&
             damping !== 0 &&

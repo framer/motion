@@ -1,4 +1,7 @@
-import { ResolvedKeyframes } from "../../render/utils/KeyframesResolver"
+import {
+    KeyframeResolver,
+    ResolvedKeyframes,
+} from "../../render/utils/KeyframesResolver"
 import { spring } from "../generators/spring/index"
 import { inertia } from "../generators/inertia"
 import { keyframes as keyframesGeneratorFactory } from "../generators/keyframes"
@@ -9,6 +12,7 @@ import { invariant } from "../../dom-entry"
 import { pipe } from "../../utils/pipe"
 import { mix } from "../../utils/mix"
 import { calcGeneratorDuration } from "../generators/utils/calc-duration"
+import { DOMKeyframesResolver } from "../../render/dom/DOMKeyframesResolver"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -26,7 +30,7 @@ const percentToProgress = (percent: number) => percent / 100
 
 export class MainThreadAnimation<
     T extends string | number
-> extends GenericAnimation<T> {
+> extends GenericAnimation<T, {}> {
     private playState: AnimationPlayState = "idle"
 
     private holdTime: number | null = null
@@ -51,7 +55,13 @@ export class MainThreadAnimation<
 
     private mirroredGenerator?: KeyframeGenerator<T>
 
-    constructor(options: ValueAnimationOptions) {}
+    protected initKeyframeResolver() {
+        const { element, name, value } = this.options
+        const Resolver =
+            element && name && value ? KeyframeResolver : DOMKeyframesResolver
+
+        return new Resolver(options)
+    }
 
     protected initPlayback(keyframes: ResolvedKeyframes<T>, startTime: number) {
         this.initialKeyframe = keyframes[0]
@@ -124,8 +134,6 @@ export class MainThreadAnimation<
     tick(timestamp: number) {}
 
     get duration() {}
-
-    set duration() {}
 
     get time() {}
 

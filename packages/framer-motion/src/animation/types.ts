@@ -48,7 +48,6 @@ export interface ValueAnimationOptions<V extends string | number = number>
     keyframes: V[]
     name?: string
     motionValue?: MotionValue<V>
-    element?: VisualElement<any>
     from?: V
 }
 

@@ -1,39 +1,45 @@
 import { time } from "../../frameloop/sync-time"
-import { ResolvedKeyframes } from "../../render/utils/KeyframesResolver"
+import {
+    KeyframeResolver,
+    ResolvedKeyframes,
+    flushKeyframeResolvers,
+} from "../../render/utils/KeyframesResolver"
 import { instantAnimationState } from "../../utils/use-instant-transition-state"
-import { MotionValue } from "../../value"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
 import { canAnimate } from "./utils/can-animate"
+import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
 
-export abstract class GenericAnimation<T extends string | number>
+export abstract class GenericAnimation<T extends string | number, Resolved>
     implements AnimationPlaybackControls
 {
-    protected value: MotionValue
+    // Persistent reference to the options used to create this animation
+    protected options: ValueAnimationOptions<T>
 
-    protected options: ValueAnimationOptions
-
-    protected resolvedKeyframes: ResolvedKeyframes<T> | null = null
-
+    // Resolve the current finished promise
     protected resolveFinishedPromise: VoidFunction
 
+    // A promise that resolves when the animation is complete
     protected currentFinishedPromise: Promise<void>
 
-    protected hasStopped = false
+    // Track whether the animation has been stopped. Stopped animations won't restart.
+    protected isStopped = false
 
-    constructor(
-        value: MotionValue,
-        {
-            autoplay = true,
-            duration = 300,
-            delay = 0,
-            type = "keyframes",
-            repeat = 0,
-            repeatDelay = 0,
-            repeatType = "loop",
-            ...options
-        }: ValueAnimationOptions
-    ) {
-        this.value = value
+    // Internal reference to defered resolved keyframes and animation-specific data returned from initPlayback.
+    private _resolved: Resolved & { keyframes: ResolvedKeyframes<T> }
+
+    // Reference to the active keyframes resolver.
+    protected resolver: KeyframeResolver<T>
+
+    constructor({
+        autoplay = true,
+        duration = 300,
+        delay = 0,
+        type = "keyframes",
+        repeat = 0,
+        repeatDelay = 0,
+        repeatType = "loop",
+        ...options
+    }: ValueAnimationOptions<T>) {
         this.options = {
             autoplay,
             duration,
@@ -44,28 +50,45 @@ export abstract class GenericAnimation<T extends string | number>
             repeatType,
             ...options,
         }
+
         this.updateFinishedPromise()
+
+        this.resolver = this.initKeyframeResolver()
     }
 
     abstract initPlayback(
         keyframes: ResolvedKeyframes<T>,
         startTime: number
-    ): void
+    ): Resolved
     abstract play(): void
     abstract pause(): void
-    abstract complete(): void
     abstract stop(): void
     abstract cancel(): void
+    abstract initKeyframeResolver(): KeyframeResolver<T>
     abstract get speed(): number
     abstract set speed(newSpeed: number)
     abstract get time(): number
     abstract set time(newTime: number)
     abstract get duration(): number
-    abstract set duration(newDuration: number)
     abstract get state(): AnimationPlayState
 
-    onKeyframesResolved(keyframes: ResolvedKeyframes<T>) {
-        this.resolvedKeyframes = keyframes
+    /**
+     * A getter for resolved data. If keyframes are not yet resolved, accessing
+     * this.resolved will synchronously flush all pending keyframe resolvers.
+     * This is a deoptimisation, but at its worst still batches read/writes.
+     */
+    get resolved(): Resolved & { keyframes: ResolvedKeyframes<T> } {
+        if (!this._resolved) flushKeyframeResolvers()
+
+        return this._resolved
+    }
+
+    /**
+     * A method to be called when the keyframes resolver completes. This method
+     * will check if its possible to run the animation and, if not, skip it.
+     * Otherwise, it will call initPlayback on the implementing class.
+     */
+    protected onKeyframesResolved(keyframes: ResolvedKeyframes<T>) {
         const { name, type, velocity, delay } = this.options
 
         /**
@@ -84,9 +107,26 @@ export abstract class GenericAnimation<T extends string | number>
             }
         }
 
-        this.initPlayback(keyframes, time.now())
+        this._resolved = {
+            ...this.initPlayback(keyframes, time.now()),
+            keyframes,
+        }
     }
 
+    complete() {
+        const { onComplete, motionValue } = this.options
+        onComplete && onComplete()
+
+        if (motionValue) {
+            motionValue.set(getFinalKeyframe(keyframes, options))
+        }
+    }
+
+    /**
+     * Allows the returned animation to be awaited or promise-chained. Currently
+     * resolves when the animation finishes at all but in a future update could/should
+     * reject if its cancels.
+     */
     then(resolve: VoidFunction, reject?: VoidFunction) {
         return this.currentFinishedPromise.then(resolve, reject)
     }
