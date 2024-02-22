@@ -11,8 +11,8 @@ import { AnimationState, KeyframeGenerator } from "../generators/types"
 import { pipe } from "../../utils/pipe"
 import { mix } from "../../utils/mix"
 import { calcGeneratorDuration } from "../generators/utils/calc-duration"
-import { DriverControls } from "./js/types"
-import { frameloopDriver } from "./js/driver-frameloop"
+import { DriverControls } from "./drivers/types"
+import { frameloopDriver } from "./drivers/driver-frameloop"
 import {
     millisecondsToSeconds,
     secondsToMilliseconds,
@@ -419,4 +419,11 @@ export class MainThreadAnimation<
         this.startTime = 0
         return this.tick(time)
     }
+}
+
+// Legacy interface
+export function animateValue(
+    options: ValueAnimationOptions<any>
+): MainThreadAnimation<any> {
+    return new MainThreadAnimation(options)
 }

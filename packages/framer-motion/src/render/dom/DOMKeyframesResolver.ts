@@ -30,10 +30,16 @@ export class DOMKeyframesResolver<
         unresolvedKeyframes: UnresolvedKeyframes<string | number>,
         onComplete: OnKeyframesResolved<T>,
         name?: string,
-        motionValue?: MotionValue<T>,
-        element?: VisualElement<any>
+        motionValue?: MotionValue<T>
     ) {
-        super(unresolvedKeyframes, onComplete, name, motionValue, element, true)
+        super(
+            unresolvedKeyframes,
+            onComplete,
+            name,
+            motionValue,
+            motionValue?.owner as VisualElement,
+            true
+        )
     }
 
     readKeyframes() {

@@ -109,10 +109,6 @@ export class AcceleratedAnimation<
         motionValue: MotionValue<T>
     }
 
-    constructor(options: AcceleratedValueAnimationOptions<T>) {
-        super(options)
-    }
-
     protected initPlayback(
         keyframes: ResolvedKeyframes<T>
     ): ResolvedAcceleratedAnimation {
@@ -153,7 +149,14 @@ export class AcceleratedAnimation<
     }
 
     protected initKeyframeResolver() {
-        return new DOMKeyframesResolver<T>()
+        const { name, motionValue, keyframes } = this.options
+        return new DOMKeyframesResolver<T>(
+            keyframes,
+            (resolvedKeyframes: ResolvedKeyframes<T>) =>
+                this.onKeyframesResolved(resolvedKeyframes),
+            name,
+            motionValue
+        )
     }
 
     get duration() {
@@ -190,7 +193,7 @@ export class AcceleratedAnimation<
      * Replace the default DocumentTimeline with another AnimationTimeline.
      * Currently used for scroll animations.
      */
-    attachTimeline(timeline: AnimationTimeline) {
+    attachTimeline(timeline: any) {
         const { animation } = this.resolved
 
         animation.timeline = timeline
@@ -230,20 +233,18 @@ export class AcceleratedAnimation<
          * its current value, "previous" value, and therefore allow
          * Motion to calculate velocity for any subsequent animation.
          */
-        const { time } = this
-
-        // If the currentTime is 0 we can deduce the animation has no velocity
-        if (time) {
+        if (this.time) {
             const { motionValue, onUpdate, onComplete, ...options } =
                 this.options
+
             const sampleAnimation = new MainThreadAnimation({
                 ...options,
                 keyframes,
             })
 
             motionValue.setWithVelocity(
-                sampleAnimation.sample(time - sampleDelta).value,
-                sampleAnimation.sample(time).value,
+                sampleAnimation.sample(this.time - sampleDelta).value,
+                sampleAnimation.sample(this.time).value,
                 sampleDelta
             )
         }
@@ -252,25 +253,25 @@ export class AcceleratedAnimation<
     }
 
     complete() {
-        const { onComplete } = this.options
-        const { animation } = this.resolved
+        const { onComplete, motionValue } = this.options
+        const { animation, keyframes } = this.resolved
 
         if (animation) {
-            this.value.set(
-                getFinalKeyframe(this.resolvedKeyframes, this.options)
-            )
+            motionValue.set(getFinalKeyframe(keyframes, this.options))
             if (animation.playState !== "finished") {
                 animation.onfinish = null
                 animation.finish()
             }
         } else {
-            // cancel keyframe resolution
+            this.resolver.cancel()
         }
 
         onComplete && onComplete()
     }
 
-    cancel() {}
+    cancel() {
+        this.resolved.animation.cancel()
+    }
 
     static supports(
         options: ValueAnimationOptions

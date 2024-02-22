@@ -1,7 +1,7 @@
 import { TargetAndTransition, TargetResolver } from "../types"
 import type { VisualElement } from "../render/VisualElement"
 import { Easing } from "../easing/types"
-import { Driver } from "./animators/js/types"
+import { Driver } from "./animators/drivers/types"
 import { SVGPathProperties, VariantLabels } from "../motion/types"
 import { SVGAttributes } from "../render/svg/types-attributes"
 import { ProgressTimeline } from "../render/dom/scroll/observe"
