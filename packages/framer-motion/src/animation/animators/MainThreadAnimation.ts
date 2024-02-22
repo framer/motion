@@ -58,20 +58,22 @@ export class MainThreadAnimation<
 
     private playbackSpeed = 1
 
-    protected initKeyframeResolver() {
+    constructor(options: ValueAnimationOptions<T>) {
+        super(options)
+
         const { name, motionValue, keyframes } = this.options
         const onResolved = (resolvedKeyframes: ResolvedKeyframes<T>) =>
             this.onKeyframesResolved(resolvedKeyframes)
 
         if (name && motionValue && motionValue.owner) {
-            return (motionValue.owner as any).resolveKeyframes(
+            this.resolver = (motionValue.owner as any).resolveKeyframes(
                 keyframes,
                 onResolved,
                 name,
                 motionValue
             )
         } else {
-            return new KeyframeResolver(
+            this.resolver = new KeyframeResolver(
                 keyframes,
                 onResolved,
                 name,

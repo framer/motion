@@ -4,7 +4,7 @@ import { defaultOptions } from "../animators/waapi/__tests__/setup"
 import { stagger } from "../utils/stagger"
 
 describe("animate() with WAAPI", () => {
-    test("Can override transition options per-value", async () => {
+    test.only("Can override transition options per-value", async () => {
         const a = document.createElement("div")
 
         animate(

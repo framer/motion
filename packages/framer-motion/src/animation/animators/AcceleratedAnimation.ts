@@ -109,6 +109,19 @@ export class AcceleratedAnimation<
         motionValue: MotionValue<T>
     }
 
+    constructor(options: ValueAnimationOptions<T>) {
+        super(options)
+
+        const { name, motionValue, keyframes } = this.options
+        this.resolver = new DOMKeyframesResolver<T>(
+            keyframes,
+            (resolvedKeyframes: ResolvedKeyframes<T>) =>
+                this.onKeyframesResolved(resolvedKeyframes),
+            name,
+            motionValue
+        )
+    }
+
     protected initPlayback(
         keyframes: ResolvedKeyframes<T>
     ): ResolvedAcceleratedAnimation {
@@ -146,17 +159,6 @@ export class AcceleratedAnimation<
         animation.onfinish = () => this.complete()
 
         return { animation, duration: this.options.duration! }
-    }
-
-    protected initKeyframeResolver() {
-        const { name, motionValue, keyframes } = this.options
-        return new DOMKeyframesResolver<T>(
-            keyframes,
-            (resolvedKeyframes: ResolvedKeyframes<T>) =>
-                this.onKeyframesResolved(resolvedKeyframes),
-            name,
-            motionValue
-        )
     }
 
     get duration() {

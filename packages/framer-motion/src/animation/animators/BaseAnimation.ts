@@ -16,7 +16,6 @@ export interface ValueAnimationOptionsWithDefaults<T extends string | number>
     extends ValueAnimationOptions<T> {
     autoplay: boolean
     delay: number
-    duration: number
     repeat: number
     repeatDelay: number
     repeatType: RepeatType
@@ -45,7 +44,6 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
 
     constructor({
         autoplay = true,
-        duration = 300,
         delay = 0,
         type = "keyframes",
         repeat = 0,
@@ -55,7 +53,6 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
     }: ValueAnimationOptions<T>) {
         this.options = {
             autoplay,
-            duration,
             delay,
             type,
             repeat,
@@ -65,12 +62,9 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
         }
 
         this.updateFinishedPromise()
-
-        this.resolver = this.initKeyframeResolver()
     }
 
     protected abstract initPlayback(keyframes: ResolvedKeyframes<T>): Resolved
-    protected abstract initKeyframeResolver(): KeyframeResolver<T>
 
     abstract play(): void
     abstract pause(): void
@@ -89,6 +83,9 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
      * This is a deoptimisation, but at its worst still batches read/writes.
      */
     get resolved(): Resolved & { keyframes: ResolvedKeyframes<T> } {
+        // TODO Leave only for tests
+        if (this.isInitialising)
+            throw new Error("Cannot access `resolved` while initialising.")
         if (!this._resolved) flushKeyframeResolvers()
 
         return this._resolved
@@ -99,7 +96,9 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
      * will check if its possible to run the animation and, if not, skip it.
      * Otherwise, it will call initPlayback on the implementing class.
      */
+    private isInitialising = false
     protected onKeyframesResolved(keyframes: ResolvedKeyframes<T>) {
+        this.isInitialising = true
         const { name, type, velocity, delay } = this.options
 
         /**
@@ -122,6 +121,8 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
             ...this.initPlayback(keyframes),
             keyframes,
         }
+
+        this.isInitialising = false
     }
 
     complete() {

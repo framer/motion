@@ -1,8 +1,8 @@
-import { animateValue } from "../"
-import { reverseEasing } from "../../../../easing/modifiers/reverse"
-import { nextFrame } from "../../../../gestures/__tests__/utils"
-import { noop } from "../../../../utils/noop"
-import { ValueAnimationOptions } from "../../../types"
+import { MainThreadAnimation, animateValue } from "../MainThreadAnimation"
+import { reverseEasing } from "../../../easing/modifiers/reverse"
+import { nextFrame } from "../../../gestures/__tests__/utils"
+import { noop } from "../../../utils/noop"
+import { ValueAnimationOptions } from "../../types"
 import { syncDriver } from "./utils"
 
 const linear = noop
@@ -13,7 +13,7 @@ function testAnimate<V extends string | number>(
     resolve: () => void
 ) {
     const output: V[] = []
-    animateValue({
+    new MainThreadAnimation({
         driver: syncDriver(20),
         duration: 100,
         ease: linear,
@@ -27,7 +27,7 @@ function testAnimate<V extends string | number>(
     })
 }
 
-describe("animate", () => {
+describe("MainThreadAnimation", () => {
     test("Correctly performs an animation with default settings", async () => {
         return new Promise<void>((resolve) =>
             testAnimate(
