@@ -1,22 +1,25 @@
-import { time } from "../../frameloop/sync-time"
 import {
     KeyframeResolver,
     ResolvedKeyframes,
     flushKeyframeResolvers,
 } from "../../render/utils/KeyframesResolver"
 import { instantAnimationState } from "../../utils/use-instant-transition-state"
-import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
+import {
+    AnimationPlaybackControls,
+    RepeatType,
+    ValueAnimationOptions,
+} from "../types"
 import { canAnimate } from "./utils/can-animate"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
 
 export interface ValueAnimationOptionsWithDefaults<T extends string | number>
     extends ValueAnimationOptions<T> {
-    autoplay: ValueAnimationOptions["autoplay"]
-    delay: ValueAnimationOptions["delay"]
-    duration: ValueAnimationOptions["duration"]
-    repeat: ValueAnimationOptions["repeat"]
-    repeatDelay: ValueAnimationOptions["repeatDelay"]
-    repeatType: ValueAnimationOptions["repeatType"]
+    autoplay: boolean
+    delay: number
+    duration: number
+    repeat: number
+    repeatDelay: number
+    repeatType: RepeatType
 }
 
 export abstract class BaseAnimation<T extends string | number, Resolved>
@@ -66,10 +69,7 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
         this.resolver = this.initKeyframeResolver()
     }
 
-    protected abstract initPlayback(
-        keyframes: ResolvedKeyframes<T>,
-        startTime: number
-    ): Resolved
+    protected abstract initPlayback(keyframes: ResolvedKeyframes<T>): Resolved
     protected abstract initKeyframeResolver(): KeyframeResolver<T>
 
     abstract play(): void
@@ -119,7 +119,7 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
         }
 
         this._resolved = {
-            ...this.initPlayback(keyframes, time.now()),
+            ...this.initPlayback(keyframes),
             keyframes,
         }
     }
@@ -129,7 +129,9 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
         onComplete && onComplete()
 
         if (motionValue) {
-            motionValue.set(getFinalKeyframe(keyframes, options))
+            motionValue.set(
+                getFinalKeyframe(this.resolved.keyframes, this.options)
+            )
         }
     }
 
@@ -142,7 +144,7 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
         return this.currentFinishedPromise.then(resolve, reject)
     }
 
-    private updateFinishedPromise() {
+    protected updateFinishedPromise() {
         this.currentFinishedPromise = new Promise((resolve) => {
             this.resolveFinishedPromise = () => {
                 resolve()

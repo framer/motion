@@ -3,16 +3,15 @@ import { secondsToMilliseconds } from "../../utils/time-conversion"
 import type { MotionValue, StartAnimation } from "../../value"
 import { getDefaultTransition } from "../utils/default-transitions"
 import { getValueTransition, isTransitionDefined } from "../utils/transitions"
-import { animateValue } from "../animators/js"
 import { ValueAnimationOptions } from "../types"
 import type { UnresolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { MotionGlobalConfig } from "../../utils/GlobalConfig"
 import { instantAnimationState } from "../../utils/use-instant-transition-state"
-import { createAcceleratedAnimation } from "../animators/waapi/create-accelerated-animation"
 import type { VisualElement } from "../../render/VisualElement"
 import { getFinalKeyframe } from "../animators/waapi/utils/get-final-keyframe"
 import { frame } from "../../frameloop/frame"
 import { AcceleratedAnimation } from "../animators/AcceleratedAnimation"
+import { MainThreadAnimation } from "../animators/MainThreadAnimation"
 
 export const animateMotionValue =
     <V extends string | number>(
@@ -140,6 +139,6 @@ export const animateMotionValue =
         if (!isHandoff && AcceleratedAnimation.supports(options)) {
             return new AcceleratedAnimation(options)
         } else {
-            return animateValue(options)
+            return new MainThreadAnimation(options)
         }
     }

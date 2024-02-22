@@ -166,9 +166,11 @@ export interface VelocityOptions {
     restDelta?: number
 }
 
+export type RepeatType = "loop" | "reverse" | "mirror"
+
 export interface AnimationPlaybackOptions {
     repeat?: number
-    repeatType?: "loop" | "reverse" | "mirror"
+    repeatType?: RepeatType
     repeatDelay?: number
 }
 

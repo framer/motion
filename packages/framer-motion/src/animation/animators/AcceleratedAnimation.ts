@@ -1,3 +1,4 @@
+import { time } from "../../frameloop/sync-time"
 import { DOMKeyframesResolver } from "../../render/dom/DOMKeyframesResolver"
 import { ResolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { memo } from "../../utils/memo"
@@ -103,13 +104,6 @@ interface ResolvedAcceleratedAnimation {
 export class AcceleratedAnimation<
     T extends string | number
 > extends BaseAnimation<T, ResolvedAcceleratedAnimation> {
-    /**
-     * Cancelling an animation will write to the DOM. For safety we want to defer
-     * this until the next `update` frame lifecycle. This flag tracks whether we
-     * have a pending cancel, if so we shouldn't allow animations to finish.
-     */
-    private pendingCancel = false
-
     protected options: ValueAnimationOptionsWithDefaults<T> & {
         name: string
         motionValue: MotionValue<T>
@@ -120,8 +114,7 @@ export class AcceleratedAnimation<
     }
 
     protected initPlayback(
-        keyframes: ResolvedKeyframes<T>,
-        startTime: number
+        keyframes: ResolvedKeyframes<T>
     ): ResolvedAcceleratedAnimation {
         const { name, motionValue, duration, ...options } = this.options
 
@@ -144,7 +137,7 @@ export class AcceleratedAnimation<
 
         // Override the browser calculated startTime with one synchronised to other JS
         // and WAAPI animations starting this event loop.
-        animation.startTime = startTime
+        animation.startTime = time.now()
 
         /**
          * Prefer the `onfinish` prop as it's more widely supported than
