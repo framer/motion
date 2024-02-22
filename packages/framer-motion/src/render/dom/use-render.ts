@@ -28,11 +28,10 @@ export function createUseRender(forwardMotionProps = false) {
             typeof Component === "string",
             forwardMotionProps
         )
-        const elementProps = { ...filteredProps, ...visualProps }
-
-        if (Component !== Fragment) {
-            elementProps.ref = ref
-        }
+        const elementProps =
+            Component !== Fragment
+                ? { ...filteredProps, ...visualProps, ref }
+                : {}
 
         /**
          * If component has been handed a motion value as its child,
