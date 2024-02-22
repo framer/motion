@@ -1,4 +1,4 @@
-import { createElement, useMemo } from "react"
+import { Fragment, createElement, useMemo } from "react"
 import { useHTMLProps } from "../html/use-props"
 import { filterProps } from "./utils/filter-props"
 import { isSVGComponent } from "./utils/is-svg-component"
@@ -28,10 +28,10 @@ export function createUseRender(forwardMotionProps = false) {
             typeof Component === "string",
             forwardMotionProps
         )
-        const elementProps = {
-            ...filteredProps,
-            ...visualProps,
-            ref,
+        const elementProps = { ...filteredProps, ...visualProps }
+
+        if (Component !== Fragment) {
+            elementProps.ref = ref
         }
 
         /**
