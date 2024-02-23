@@ -70,6 +70,7 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
     abstract pause(): void
     abstract stop(): void
     abstract cancel(): void
+    abstract complete(): void
     abstract get speed(): number
     abstract set speed(newSpeed: number)
     abstract get time(): number
@@ -99,7 +100,8 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
     private isInitialising = false
     protected onKeyframesResolved(keyframes: ResolvedKeyframes<T>) {
         this.isInitialising = true
-        const { name, type, velocity, delay } = this.options
+        const { name, type, velocity, delay, onComplete, onUpdate } =
+            this.options
 
         /**
          * If we can't animate this value with the resolved keyframes
@@ -108,7 +110,12 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
         if (!canAnimate(keyframes, name, type, velocity)) {
             // Finish immediately
             if (instantAnimationState.current || !delay) {
-                this.complete()
+                const finalKeyframe = getFinalKeyframe(keyframes, this.options)
+                onUpdate?.(finalKeyframe)
+                onComplete?.()
+                this.resolveFinishedPromise()
+                this.updateFinishedPromise()
+
                 return
             }
             // Finish after a delay
@@ -118,22 +125,11 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
         }
 
         this._resolved = {
-            ...this.initPlayback(keyframes),
             keyframes,
+            ...this.initPlayback(keyframes),
         }
 
         this.isInitialising = false
-    }
-
-    complete() {
-        const { onComplete, motionValue } = this.options
-        onComplete && onComplete()
-
-        if (motionValue) {
-            motionValue.set(
-                getFinalKeyframe(this.resolved.keyframes, this.options)
-            )
-        }
     }
 
     /**

@@ -388,6 +388,7 @@ export class MainThreadAnimation<
 
     finish() {
         this.state = "finished"
+
         const { onComplete } = this.options
         onComplete && onComplete()
         this.resolveFinishedPromise()

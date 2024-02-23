@@ -46,12 +46,11 @@ const sampleDelta = 10 //ms
 const maxDuration = 20_000
 
 function requiresPregeneratedKeyframes<T extends string | number>(
-    name: string,
     options: ValueAnimationOptions<T>
 ) {
     return (
         options.type === "spring" ||
-        name === "backgroundColor" ||
+        options.name === "backgroundColor" ||
         !isWaapiSupportedEasing(options.ease)
     )
 }
@@ -99,6 +98,7 @@ export interface AcceleratedValueAnimationOptions<
 interface ResolvedAcceleratedAnimation {
     animation: Animation
     duration: number
+    keyframes: string[] | number[]
 }
 
 export class AcceleratedAnimation<
@@ -125,20 +125,26 @@ export class AcceleratedAnimation<
     protected initPlayback(
         keyframes: ResolvedKeyframes<T>
     ): ResolvedAcceleratedAnimation {
-        const { name, motionValue, duration, ...options } = this.options
-
         /**
          * If this animation needs pre-generated keyframes then generate.
          */
-        if (requiresPregeneratedKeyframes(name, this.options)) {
-            this.options = {
-                ...this.options,
-                ...pregenerateKeyframes(keyframes, { ...options, duration }),
-            }
+        if (requiresPregeneratedKeyframes(this.options)) {
+            const { onComplete, onUpdate, motionValue, ...options } =
+                this.options
+            const pregeneratedAnimation = pregenerateKeyframes(
+                keyframes,
+                options
+            )
+
+            keyframes = pregeneratedAnimation.keyframes
+            this.options.times = pregeneratedAnimation.times
+            this.options.duration = pregeneratedAnimation.duration
+            this.options.ease = pregeneratedAnimation.ease
         }
 
+        const { motionValue, name } = this.options
         const animation = animateStyle(
-            motionValue.owner as unknown as HTMLElement,
+            motionValue.owner!.current as unknown as HTMLElement,
             name,
             keyframes as string[],
             this.options
@@ -156,9 +162,21 @@ export class AcceleratedAnimation<
          * keyframe. If we didn't, when the WAAPI animation is finished it would
          * be removed from the element which would then revert to its old styles.
          */
-        animation.onfinish = () => this.complete()
+        animation.onfinish = () => {
+            const { onComplete } = this.options
+            motionValue.set(getFinalKeyframe(keyframes, this.options))
+            onComplete && onComplete()
+            this.cancel()
+            // frame.update(cancelAnimation)
+            this.resolveFinishedPromise()
+            this.updateFinishedPromise()
+        }
 
-        return { animation, duration: this.options.duration! }
+        return {
+            animation,
+            duration: this.options.duration!,
+            keyframes: keyframes as string[] | number[],
+        }
     }
 
     get duration() {
@@ -251,24 +269,12 @@ export class AcceleratedAnimation<
             )
         }
 
-        // TODO safe ancel animation here
+        this.cancel()
     }
 
     complete() {
-        const { onComplete, motionValue } = this.options
-        const { animation, keyframes } = this.resolved
-
-        if (animation) {
-            motionValue.set(getFinalKeyframe(keyframes, this.options))
-            if (animation.playState !== "finished") {
-                animation.onfinish = null
-                animation.finish()
-            }
-        } else {
-            this.resolver.cancel()
-        }
-
-        onComplete && onComplete()
+        const { animation } = this.resolved
+        animation.finish()
     }
 
     cancel() {

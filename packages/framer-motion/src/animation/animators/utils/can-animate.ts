@@ -22,16 +22,16 @@ export function canAnimate(
      * animatable and another that isn't.
      */
     const originKeyframe = keyframes[0]
+    if (originKeyframe === null) return false
+
     const targetKeyframe = keyframes[keyframes.length - 1]
     const isOriginAnimatable = isAnimatable(originKeyframe, name)
     const isTargetAnimatable = isAnimatable(targetKeyframe, name)
 
-    if (originKeyframe !== null) {
-        warning(
-            isOriginAnimatable === isTargetAnimatable,
-            `You are trying to animate ${name} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`
-        )
-    }
+    warning(
+        isOriginAnimatable === isTargetAnimatable,
+        `You are trying to animate ${name} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`
+    )
 
     // Always skip if any of these are true
     if (!isOriginAnimatable || !isTargetAnimatable) {
