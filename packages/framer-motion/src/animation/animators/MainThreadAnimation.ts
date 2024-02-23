@@ -12,13 +12,13 @@ import { pipe } from "../../utils/pipe"
 import { mix } from "../../utils/mix"
 import { calcGeneratorDuration } from "../generators/utils/calc-duration"
 import { DriverControls } from "./drivers/types"
-import { frameloopDriver } from "./drivers/driver-frameloop"
 import {
     millisecondsToSeconds,
     secondsToMilliseconds,
 } from "../../utils/time-conversion"
 import { clamp } from "../../utils/clamp"
 import { invariant } from "../../utils/errors"
+import { frameloopDriver } from "./drivers/driver-frameloop"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -58,6 +58,8 @@ export class MainThreadAnimation<
 
     private playbackSpeed = 1
 
+    private pendingPlayState: "paused" | "running" = "running"
+
     constructor(options: ValueAnimationOptions<T>) {
         super(options)
 
@@ -84,7 +86,6 @@ export class MainThreadAnimation<
 
     protected initPlayback(keyframes: ResolvedKeyframes<T>) {
         const {
-            autoplay = true,
             type = "keyframes",
             repeat = 0,
             repeatDelay = 0,
@@ -142,8 +143,6 @@ export class MainThreadAnimation<
         const resolvedDuration = calculatedDuration + repeatDelay
         const totalDuration = resolvedDuration * (repeat + 1) - repeatDelay
 
-        autoplay && this.play()
-
         return {
             generator,
             mirroredGenerator,
@@ -154,7 +153,17 @@ export class MainThreadAnimation<
         }
     }
 
-    tick(timestamp: number) {
+    onPostResolved() {
+        const { autoplay = true } = this.options
+
+        this.play()
+
+        if (this.pendingPlayState === "paused" || !autoplay) {
+            this.pause()
+        }
+    }
+
+    tick(timestamp: number, sample = false) {
         const {
             generator,
             mirroredGenerator,
@@ -186,7 +195,9 @@ export class MainThreadAnimation<
         }
 
         // Update currentTime
-        if (this.holdTime !== null) {
+        if (sample) {
+            this.currentTime = timestamp
+        } else if (this.holdTime !== null) {
             this.currentTime = this.holdTime
         } else {
             // Rounding the time because floating point arithmetic is not always accurate, e.g. 3000.367 - 1000.367 =
@@ -317,9 +328,9 @@ export class MainThreadAnimation<
         newTime = secondsToMilliseconds(newTime)
         this.currentTime = newTime
 
-        if (this.holdTime !== null || !this.driver || this.speed === 0) {
+        if (this.holdTime !== null || this.speed === 0) {
             this.holdTime = newTime
-        } else {
+        } else if (this.driver) {
             this.startTime = this.driver.now() - newTime / this.speed
         }
     }
@@ -337,6 +348,11 @@ export class MainThreadAnimation<
     }
 
     play() {
+        if (!this._resolved) {
+            this.pendingPlayState = "running"
+            return
+        }
+
         if (this.isStopped) return
 
         const { driver = frameloopDriver, onPlay } = this.options
@@ -361,14 +377,24 @@ export class MainThreadAnimation<
 
         this.cancelTime = this.startTime
         this.holdTime = null
+
+        /**
+         * Set playState to running only after we've used it in
+         * the previous logic.
+         */
         this.state = "running"
 
         this.driver.start()
     }
 
     pause() {
+        if (!this._resolved) {
+            this.pendingPlayState = "paused"
+            return
+        }
+
         this.state = "paused"
-        this.holdTime = this.currentTime
+        this.holdTime = this.currentTime ?? 0
     }
 
     stop() {
@@ -420,7 +446,7 @@ export class MainThreadAnimation<
 
     sample(time: number): AnimationState<T> {
         this.startTime = 0
-        return this.tick(time)
+        return this.tick(time, true)
     }
 }
 

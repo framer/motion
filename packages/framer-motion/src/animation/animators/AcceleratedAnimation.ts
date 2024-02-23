@@ -122,6 +122,8 @@ export class AcceleratedAnimation<
         )
     }
 
+    private pendingTimeline: any
+
     protected initPlayback(
         keyframes: ResolvedKeyframes<T>
     ): ResolvedAcceleratedAnimation {
@@ -154,22 +156,27 @@ export class AcceleratedAnimation<
         // and WAAPI animations starting this event loop.
         animation.startTime = time.now()
 
-        /**
-         * Prefer the `onfinish` prop as it's more widely supported than
-         * the `finished` promise.
-         *
-         * Here, we synchronously set the provided MotionValue to the end
-         * keyframe. If we didn't, when the WAAPI animation is finished it would
-         * be removed from the element which would then revert to its old styles.
-         */
-        animation.onfinish = () => {
-            const { onComplete } = this.options
-            motionValue.set(getFinalKeyframe(keyframes, this.options))
-            onComplete && onComplete()
-            this.cancel()
-            // frame.update(cancelAnimation)
-            this.resolveFinishedPromise()
-            this.updateFinishedPromise()
+        if (this.pendingTimeline) {
+            animation.timeline = this.pendingTimeline
+            this.pendingTimeline = undefined
+        } else {
+            /**
+             * Prefer the `onfinish` prop as it's more widely supported than
+             * the `finished` promise.
+             *
+             * Here, we synchronously set the provided MotionValue to the end
+             * keyframe. If we didn't, when the WAAPI animation is finished it would
+             * be removed from the element which would then revert to its old styles.
+             */
+            animation.onfinish = () => {
+                const { onComplete } = this.options
+                motionValue.set(getFinalKeyframe(keyframes, this.options))
+                onComplete && onComplete()
+                this.cancel()
+                // frame.update(cancelAnimation)
+                this.resolveFinishedPromise()
+                this.updateFinishedPromise()
+            }
         }
 
         return {
@@ -214,10 +221,14 @@ export class AcceleratedAnimation<
      * Currently used for scroll animations.
      */
     attachTimeline(timeline: any) {
-        const { animation } = this.resolved
+        if (!this._resolved) {
+            this.pendingTimeline = timeline
+        } else {
+            const { animation } = this.resolved
 
-        animation.timeline = timeline
-        animation.onfinish = null
+            animation.timeline = timeline
+            animation.onfinish = null
+        }
 
         return noop<void>
     }

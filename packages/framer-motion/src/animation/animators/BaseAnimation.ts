@@ -37,7 +37,7 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
     protected isStopped = false
 
     // Internal reference to defered resolved keyframes and animation-specific data returned from initPlayback.
-    private _resolved: Resolved & { keyframes: ResolvedKeyframes<T> }
+    protected _resolved: Resolved & { keyframes: ResolvedKeyframes<T> }
 
     // Reference to the active keyframes resolver.
     protected resolver: KeyframeResolver<T>
@@ -130,7 +130,11 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
         }
 
         this.isInitialising = false
+
+        this.onPostResolved()
     }
+
+    onPostResolved() {}
 
     /**
      * Allows the returned animation to be awaited or promise-chained. Currently
