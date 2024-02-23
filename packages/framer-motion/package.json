@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "11.0.5",
+    "version": "11.0.6-alpha.1",
     "description": "A simple and powerful JavaScript animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -85,7 +85,7 @@
     "bundlesize": [
         {
             "path": "./dist/size-rollup-motion.js",
-            "maxSize": "31.24 kB"
+            "maxSize": "31.26 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
@@ -116,5 +116,5 @@
             "maxSize": "32.1 kB"
         }
     ],
-    "gitHead": "789e502ed2ae98982e7f0ec10f42896fb82ee6e1"
+    "gitHead": "e2fbe34a0b3c031b5fc856e1b4c4124479c4b754"
 }

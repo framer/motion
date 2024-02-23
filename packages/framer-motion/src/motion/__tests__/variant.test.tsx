@@ -11,6 +11,8 @@ import { motionValue } from "../../value"
 import { useState } from "react"
 import { nextFrame } from "../../gestures/__tests__/utils"
 
+const MotionFragment = motion(React.Fragment)
+
 describe("animate prop as variant", () => {
     test("animates to set variant", async () => {
         const variants: Variants = {
@@ -421,6 +423,54 @@ describe("animate prop as variant", () => {
         })
 
         return expect(promise).resolves.toBe(0.1)
+    })
+
+    /**
+     * This test enshrines the behaviour that when a value is removed from an element as the result of a parent variant,
+     * it should fallback to the style prop. This is a bug in Framer Motion - the desired behaviour is that it falls
+     * back to the defined variant in initial. However, changing this behaviour would break generated code in Framer
+     * so we can't fix it until we find a migration path out of that.
+     */
+    test("FRAMER BUG: When a value is removed from an element as the result of a parent variant, fallback to style", async () => {
+        const Component = ({ animate }: { animate?: string }) => {
+            return (
+                <MotionFragment initial="a" animate={animate}>
+                    <motion.div
+                        data-testid="child"
+                        variants={{
+                            a: { opacity: 0.5 },
+                            b: { opacity: 1 },
+                            c: {},
+                        }}
+                        transition={{ type: false }}
+                        style={{ opacity: 0 }}
+                    />
+                </MotionFragment>
+            )
+        }
+
+        const { getByTestId, rerender } = render(<Component />)
+        const element = getByTestId("child")
+        expect(element).toHaveStyle("opacity: 0.5")
+
+        rerender(<Component animate="a" />)
+        rerender(<Component animate="a" />)
+
+        await nextFrame()
+
+        expect(element).toHaveStyle("opacity: 0.5")
+
+        rerender(<Component animate="b" />)
+        rerender(<Component animate="b" />)
+
+        await nextFrame()
+        expect(element).toHaveStyle("opacity: 1")
+
+        rerender(<Component animate="c" />)
+        rerender(<Component animate="c" />)
+
+        await nextFrame()
+        expect(element).toHaveStyle("opacity: 0") // Contained in variant a, which is set as initial
     })
 
     test("initial: false correctly propagates", async () => {

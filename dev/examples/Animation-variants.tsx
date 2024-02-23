@@ -1,15 +1,13 @@
 import React from "react"
 import { motion, useMotionValue } from "framer-motion"
 
+const MotionFragment = motion(React.Fragment)
+
 export function App() {
     const backgroundColor = useMotionValue("#f00")
     const [isActive, setIsActive] = React.useState(true)
     return (
-        <motion.div
-            initial="initial"
-            animate={isActive ? "to" : "initial"}
-            onClick={() => setIsActive(!isActive)}
-        >
+        <MotionFragment initial="initial" animate={isActive ? "to" : "initial"}>
             <motion.div>
                 <motion.div
                     variants={{
@@ -20,10 +18,11 @@ export function App() {
                             backgroundColor: "#00f",
                         },
                     }}
+                    onClick={() => setIsActive(!isActive)}
                     style={{ ...box, backgroundColor }}
                 />
             </motion.div>
-        </motion.div>
+        </MotionFragment>
     )
 }
 

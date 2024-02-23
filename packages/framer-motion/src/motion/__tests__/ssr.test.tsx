@@ -5,6 +5,8 @@ import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
 import { Reorder } from "../../components/Reorder"
 
+const MotionFragment = motion(React.Fragment)
+
 function runTests(render: (components: any) => string) {
     test("doesn't throw", () => {
         render(
@@ -21,6 +23,20 @@ function runTests(render: (components: any) => string) {
         expect(true).toBe(true)
     })
 
+    test("doesn't throw when rendering Fragment", () => {
+        render(
+            <MotionFragment
+                initial={{ x: 100 }}
+                whileTap={{ opacity: 0 }}
+                drag
+                layout
+                layoutId="a"
+                style={{ opacity: 1 }}
+            />
+        )
+
+        expect(true).toBe(true)
+    })
     test("correctly renders HTML", () => {
         const y = motionValue(200)
         const div = render(
