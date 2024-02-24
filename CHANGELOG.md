@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.6] 2024-02-23
+
+### Updated
+
+-   Added support for `motion(Fragment)` for controlling variants. For internal Framer use only.
+
 ## [11.0.5] 2024-02-13
 
 ### Updated
