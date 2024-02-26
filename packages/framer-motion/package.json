@@ -68,19 +68,20 @@
         "tslib": "^2.4.0"
     },
     "peerDependencies": {
+        "@emotion/is-prop-valid": "*",
         "react": "^18.0.0",
         "react-dom": "^18.0.0"
     },
     "peerDependenciesMeta": {
+        "@emotion/is-prop-valid": {
+            "optional": true
+        },
         "react": {
             "optional": true
         },
         "react-dom": {
             "optional": true
         }
-    },
-    "optionalDependencies": {
-        "@emotion/is-prop-valid": "^0.8.2"
     },
     "bundlesize": [
         {
