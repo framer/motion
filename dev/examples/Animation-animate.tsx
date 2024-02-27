@@ -34,6 +34,7 @@ const Child = ({ setState }: any) => {
         controls.then(() => {
             controls.play()
         })
+
         return () => controls.stop()
     }, [target])
 
