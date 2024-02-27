@@ -38,26 +38,67 @@ interface ResolvedData<T extends string | number> {
     generator: KeyframeGenerator<T>
     mirroredGenerator: KeyframeGenerator<T> | undefined
     mapPercentToKeyframes: ((v: number) => T) | undefined
+
+    /**
+     * Duration of the animation as calculated by the generator.
+     */
     calculatedDuration: number
+
+    /**
+     * Duration of the animation plus repeatDelay.
+     */
     resolvedDuration: number
+
+    /**
+     * Total duration of the animation including repeats.
+     */
     totalDuration: number
 }
 
+/**
+ * Animation that runs on the main thread. Designed to be WAAPI-spec in the subset of
+ * features we expose publically. Mostly the compatibility is to ensure visual identity
+ * between both WAAPI and main thread animations.
+ */
 export class MainThreadAnimation<
     T extends string | number
 > extends BaseAnimation<T, ResolvedData<T>> {
+    /**
+     * The driver that's controlling the animation loop. Normally this is a requestAnimationFrame loop
+     * but in tests we can pass in a synchronous loop.
+     */
     private driver?: DriverControls
 
+    /**
+     * The time at which the animation was paused.
+     */
     private holdTime: number | null = null
 
+    /**
+     * The time at which the animation was started.
+     */
     private startTime: number | null = null
 
+    /**
+     * The time at which the animation was cancelled.
+     */
     private cancelTime: number | null = null
 
+    /**
+     * The current time of the animation.
+     */
     private currentTime: number = 0
 
+    /**
+     * Playback speed as a factor. 0 would be stopped, -1 reverse and 2 double speed.
+     */
     private playbackSpeed = 1
 
+    /**
+     * The state of the animation to apply when the animation is resolved. This
+     * allows calls to the public API to control the animation before it is resolved,
+     * without us having to resolve it first.
+     */
     private pendingPlayState: AnimationPlayState = "running"
 
     constructor({
@@ -100,6 +141,12 @@ export class MainThreadAnimation<
 
         const generatorFactory = generators[type] || keyframesGeneratorFactory
 
+        /**
+         * If our generator doesn't support mixing numbers, we need to replace keyframes with
+         * [0, 100] and then make a function that maps that to the actual keyframes.
+         *
+         * 100 is chosen instead of 1 as it works nicer with spring animations.
+         */
         let mapPercentToKeyframes: ((v: number) => T) | undefined
         let mirroredGenerator: KeyframeGenerator<T> | undefined
 
@@ -124,6 +171,10 @@ export class MainThreadAnimation<
 
         const generator = generatorFactory({ ...this.options, keyframes })
 
+        /**
+         * If we have a mirror repeat type we need to create a second generator that outputs the
+         * mirrored (not reversed) animation and later ping pong between the two generators.
+         */
         if (repeatType === "mirror") {
             mirroredGenerator = generatorFactory({
                 ...this.options,
