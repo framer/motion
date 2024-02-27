@@ -103,25 +103,18 @@ export const animateMotionValue =
             options.delay = 0
         }
 
+        /**
+         * If we can or must skip creating the animation, and apply only
+         * the final keyframe, do so. We also check once keyframes are resolved but
+         * this early check prevents the need to create an animation at all.
+         */
         if (shouldSkip && !isHandoff && value.get() !== undefined) {
-            /**
-             * If we can or must skip creating the animation, and apply only
-             * the final keyframe, do so.
-             */
             const finalKeyframe = getFinalKeyframe<V>(
                 options.keyframes as V[],
                 valueTransition
             )
 
             if (finalKeyframe !== undefined) {
-                // value.stop()
-
-                // if (element) {
-                //     frame.read(() => {
-                //         element.readValue(name, finalKeyframe)
-                //     })
-                // }
-
                 frame.update(() => {
                     options.onUpdate!(finalKeyframe)
                     options.onComplete!()
