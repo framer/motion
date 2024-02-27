@@ -44,9 +44,7 @@ describe("motion for three", () => {
                         scale={[5, 5, 5]}
                         position={[1, 2, 3]}
                         rotation={[4, 5, 6]}
-                        onUpdate={(latest) => {
-                            output.push({ ...latest })
-                        }}
+                        onUpdate={(latest) => output.push({ ...latest })}
                         onAnimationComplete={() => resolve(output)}
                         transition={{
                             duration: 0.1,
