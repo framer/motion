@@ -20,12 +20,13 @@ import { MotionValue } from "../../value"
 export class DOMKeyframesResolver<
     T extends string | number
 > extends KeyframeResolver<T> {
-    name: string
-    element: VisualElement<HTMLElement | SVGElement>
-    async = true
+    protected name: string
+    protected element: VisualElement<HTMLElement | SVGElement>
+
     private removedTransforms?: [string, string | number][]
     private measuredOrigin?: string | number
-    restoreScrollY?: number
+    private suspendedScrollY?: number
+
     constructor(
         unresolvedKeyframes: UnresolvedKeyframes<string | number>,
         onComplete: OnKeyframesResolved<T>,
@@ -61,11 +62,6 @@ export class DOMKeyframesResolver<
 
                 if (resolved !== undefined) {
                     unresolvedKeyframes[i] = resolved as T
-                }
-
-                // If this variable is the final keyframe, set it as finalKeyframe
-                if (i === unresolvedKeyframes.length - 1) {
-                    // this.resolvedFinalKeyframe = keyframe
                 }
             }
 
@@ -130,10 +126,6 @@ export class DOMKeyframesResolver<
         const finalKeyframe =
             unresolvedKeyframes[unresolvedKeyframes.length - 1]
 
-        // if (this.resolvedFinalKeyframe === undefined) {
-        //     this.resolvedFinalKeyframe = finalKeyframe
-        // }
-
         element.getValue(name, finalKeyframe).jump(finalKeyframe, false)
     }
 
@@ -143,7 +135,7 @@ export class DOMKeyframesResolver<
         if (!element.current) return
 
         if (name === "height") {
-            this.restoreScrollY = window.pageYOffset
+            this.suspendedScrollY = window.pageYOffset
         }
 
         this.measuredOrigin = positionalValues[name](
@@ -172,6 +164,10 @@ export class DOMKeyframesResolver<
             element.measureViewportBox(),
             window.getComputedStyle(element.current)
         ) as any
+
+        if (name === "height" && this.suspendedScrollY !== undefined) {
+            window.scrollTo(0, this.suspendedScrollY)
+        }
 
         // If we removed transform values, reapply them before the next render
         if (this.removedTransforms?.length) {

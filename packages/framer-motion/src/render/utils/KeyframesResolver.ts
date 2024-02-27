@@ -8,30 +8,35 @@ export type ResolvedKeyframes<T extends string | number> = Array<T>
 
 const toResolve = new Set<KeyframeResolver>()
 let isScheduled = false
-let needsMeasurement = false
+let anyNeedsMeasurement = false
 
 function measureAllKeyframes() {
-    if (needsMeasurement) {
+    if (anyNeedsMeasurement) {
+        // Write
         toResolve.forEach((resolver) => {
             resolver.needsMeasurement && resolver.unsetTransforms()
         })
+
+        // Read
         toResolve.forEach((resolver) => {
             resolver.needsMeasurement && resolver.measureInitialState()
         })
+
+        // Write
         toResolve.forEach((resolver) => {
             resolver.needsMeasurement && resolver.renderEndStyles()
         })
+
+        // Read
         toResolve.forEach((resolver) => {
             resolver.needsMeasurement && resolver.measureEndState()
         })
     }
 
-    needsMeasurement = false
+    anyNeedsMeasurement = false
     isScheduled = false
 
-    toResolve.forEach((resolver) => {
-        resolver.complete()
-    })
+    toResolve.forEach((resolver) => resolver.complete())
 
     toResolve.clear()
 }
@@ -41,7 +46,7 @@ function readAllKeyframes() {
         resolver.readKeyframes()
 
         if (resolver.needsMeasurement) {
-            needsMeasurement = true
+            anyNeedsMeasurement = true
         }
     })
 
@@ -61,15 +66,37 @@ export type OnKeyframesResolved<T extends string | number> = (
 ) => void
 
 export class KeyframeResolver<T extends string | number = any> {
-    element?: VisualElement<any>
-    name?: string
-    resolvedKeyframes: ResolvedKeyframes<T> | undefined
-    unresolvedKeyframes: UnresolvedKeyframes<string | number>
-    motionValue?: MotionValue<T>
-    isScheduled = false
-    isComplete = false
-    isAsync: boolean
+    protected element?: VisualElement<any>
+    protected unresolvedKeyframes: UnresolvedKeyframes<string | number>
+
+    private name?: string
+    private motionValue?: MotionValue<T>
     private onComplete: OnKeyframesResolved<T>
+
+    /**
+     * Track whether this resolver has completed. Once complete, it never
+     * needs to attempt keyframe resolution again.
+     */
+    private isComplete = false
+
+    /**
+     * Track whether this resolver is async. If it is, it'll be added to the
+     * resolver queue and flushed in the next frame. Resolvers that aren't going
+     * to trigger read/write thrashing don't need to be async.
+     */
+    private isAsync = false
+
+    /**
+     * Track whether this resolver needs to perform a measurement
+     * to resolve its keyframes.
+     */
+    needsMeasurement = false
+
+    /**
+     * Track whether this resolver is currently scheduled to resolve
+     * to allow it to be cancelled and resumed externally.
+     */
+    isScheduled = false
 
     constructor(
         unresolvedKeyframes: UnresolvedKeyframes<string | number>,
@@ -101,8 +128,6 @@ export class KeyframeResolver<T extends string | number = any> {
             this.complete()
         }
     }
-
-    needsMeasurement = false
 
     readKeyframes() {
         const { unresolvedKeyframes, name, element, motionValue } = this
