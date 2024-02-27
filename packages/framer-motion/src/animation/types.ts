@@ -1,7 +1,7 @@
 import { TargetAndTransition, TargetResolver } from "../types"
 import type { VisualElement } from "../render/VisualElement"
 import { Easing } from "../easing/types"
-import { Driver } from "./animators/js/types"
+import { Driver } from "./animators/drivers/types"
 import { SVGPathProperties, VariantLabels } from "../motion/types"
 import { SVGAttributes } from "../render/svg/types-attributes"
 import { ProgressTimeline } from "../render/dom/scroll/observe"
@@ -46,9 +46,9 @@ export type ResolveKeyframes<V extends string | number> = (
 export interface ValueAnimationOptions<V extends string | number = number>
     extends ValueAnimationTransition {
     keyframes: V[]
+    KeyframeResolver?: typeof KeyframeResolver
     name?: string
     motionValue?: MotionValue<V>
-    element?: VisualElement<any>
     from?: V
 }
 
@@ -167,9 +167,11 @@ export interface VelocityOptions {
     restDelta?: number
 }
 
+export type RepeatType = "loop" | "reverse" | "mirror"
+
 export interface AnimationPlaybackOptions {
     repeat?: number
-    repeatType?: "loop" | "reverse" | "mirror"
+    repeatType?: RepeatType
     repeatDelay?: number
 }
 
