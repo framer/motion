@@ -35,8 +35,8 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
             if (supportsScrollTimeline() && animation.attachTimeline) {
                 animation.attachTimeline(timeline)
             } else {
-                animation.play()
                 animation.pause()
+
                 return observeTimeline((progress) => {
                     animation.time = animation.duration * progress
                 }, timeline)

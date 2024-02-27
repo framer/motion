@@ -3,15 +3,15 @@ import { secondsToMilliseconds } from "../../utils/time-conversion"
 import type { MotionValue, StartAnimation } from "../../value"
 import { getDefaultTransition } from "../utils/default-transitions"
 import { getValueTransition, isTransitionDefined } from "../utils/transitions"
-import { animateValue } from "../animators/js"
 import { ValueAnimationOptions } from "../types"
 import type { UnresolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { MotionGlobalConfig } from "../../utils/GlobalConfig"
 import { instantAnimationState } from "../../utils/use-instant-transition-state"
-import { createAcceleratedAnimation } from "../animators/waapi/create-accelerated-animation"
 import type { VisualElement } from "../../render/VisualElement"
 import { getFinalKeyframe } from "../animators/waapi/utils/get-final-keyframe"
 import { frame } from "../../frameloop/frame"
+import { AcceleratedAnimation } from "../animators/AcceleratedAnimation"
+import { MainThreadAnimation } from "../animators/MainThreadAnimation"
 
 export const animateMotionValue =
     <V extends string | number>(
@@ -132,31 +132,13 @@ export const animateMotionValue =
         }
 
         /**
-         * Animate via WAAPI if possible.
+         * Animate via WAAPI if possible. If this is a handoff animation, the optimised animation will be running via
+         * WAAPI. Therefore, this animation must be JS to ensure it runs "under" the
+         * optimised animation.
          */
-        if (
-            /**
-             * If this is a handoff animation, the optimised animation will be running via
-             * WAAPI. Therefore, this animation must be JS to ensure it runs "under" the
-             * optimised animation.
-             */
-            !isHandoff &&
-            value.owner &&
-            value.owner.current instanceof HTMLElement &&
-            /**
-             * If we're outputting values to onUpdate then we can't use WAAPI as there's
-             * no way to read the value from WAAPI every frame.
-             */
-            !value.owner.getProps().onUpdate
-        ) {
-            const acceleratedAnimation = createAcceleratedAnimation(
-                value,
-                name,
-                options
-            )
-
-            if (acceleratedAnimation) return acceleratedAnimation
+        if (!isHandoff && AcceleratedAnimation.supports(options)) {
+            return new AcceleratedAnimation(options)
+        } else {
+            return new MainThreadAnimation(options)
         }
-
-        return animateValue(options)
     }

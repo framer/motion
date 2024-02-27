@@ -30,10 +30,16 @@ export class DOMKeyframesResolver<
         unresolvedKeyframes: UnresolvedKeyframes<string | number>,
         onComplete: OnKeyframesResolved<T>,
         name?: string,
-        motionValue?: MotionValue<T>,
-        element?: VisualElement<any>
+        motionValue?: MotionValue<T>
     ) {
-        super(unresolvedKeyframes, onComplete, name, motionValue, element, true)
+        super(
+            unresolvedKeyframes,
+            onComplete,
+            name,
+            motionValue,
+            motionValue?.owner as VisualElement,
+            true
+        )
     }
 
     readKeyframes() {
@@ -50,7 +56,7 @@ export class DOMKeyframesResolver<
          */
         for (let i = 0; i < unresolvedKeyframes.length; i++) {
             const keyframe = unresolvedKeyframes[i]
-            if (isCSSVariableToken(keyframe)) {
+            if (typeof keyframe === "string" && isCSSVariableToken(keyframe)) {
                 const resolved = getVariableValue(keyframe, element.current)
 
                 if (resolved !== undefined) {
