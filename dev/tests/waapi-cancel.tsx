@@ -19,7 +19,11 @@ const Container = styled.section`
 
 export const App = () => {
     useEffect(() => {
-        const controls = animate("#box", { opacity: [0, 1] }, { duration: 1 })
+        const controls = animate(
+            "#box",
+            { x: [0, 100], opacity: [0, 1] },
+            { duration: 1 }
+        )
 
         controls.cancel()
         controls.complete()

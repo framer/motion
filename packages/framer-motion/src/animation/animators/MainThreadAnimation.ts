@@ -1,5 +1,5 @@
 import {
-    KeyframeResolver,
+    KeyframeResolver as DefaultKeyframeResolver,
     ResolvedKeyframes,
 } from "../../render/utils/KeyframesResolver"
 import { spring } from "../generators/spring/index"
@@ -58,9 +58,12 @@ export class MainThreadAnimation<
 
     private playbackSpeed = 1
 
-    private pendingPlayState: "paused" | "running" = "running"
+    private pendingPlayState: AnimationPlayState = "running"
 
-    constructor(options: ValueAnimationOptions<T>) {
+    constructor({
+        KeyframeResolver = DefaultKeyframeResolver,
+        ...options
+    }: ValueAnimationOptions<T>) {
         super(options)
 
         const { name, motionValue, keyframes } = this.options
@@ -82,6 +85,8 @@ export class MainThreadAnimation<
                 motionValue
             )
         }
+
+        this.resolver.scheduleResolve()
     }
 
     protected initPlayback(keyframes: ResolvedKeyframes<T>) {
@@ -160,6 +165,8 @@ export class MainThreadAnimation<
 
         if (this.pendingPlayState === "paused" || !autoplay) {
             this.pause()
+        } else {
+            this.state = this.pendingPlayState
         }
     }
 
@@ -348,6 +355,10 @@ export class MainThreadAnimation<
     }
 
     play() {
+        if (!this.resolver.isScheduled) {
+            this.resolver.resume()
+        }
+
         if (!this._resolved) {
             this.pendingPlayState = "running"
             return
@@ -408,18 +419,20 @@ export class MainThreadAnimation<
     }
 
     complete() {
-        this.state = "finished"
+        if (this.state !== "running") {
+            this.play()
+        }
+
+        this.pendingPlayState = this.state = "finished"
         this.holdTime = null
     }
 
     finish() {
+        this.teardown()
         this.state = "finished"
 
         const { onComplete } = this.options
         onComplete && onComplete()
-        this.resolveFinishedPromise()
-        this.updateFinishedPromise()
-        this.stopDriver()
     }
 
     cancel() {
@@ -435,7 +448,7 @@ export class MainThreadAnimation<
         this.resolveFinishedPromise()
         this.updateFinishedPromise()
         this.startTime = this.cancelTime = null
-        this.resolver.cancel() // TODO Add test with play after this
+        this.resolver.cancel()
     }
 
     private stopDriver() {

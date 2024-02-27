@@ -1,3 +1,4 @@
+import { EasingDefinition } from "../../easing/types"
 import { time } from "../../frameloop/sync-time"
 import { DOMKeyframesResolver } from "../../render/dom/DOMKeyframesResolver"
 import { ResolvedKeyframes } from "../../render/utils/KeyframesResolver"
@@ -58,7 +59,7 @@ function requiresPregeneratedKeyframes<T extends string | number>(
 function pregenerateKeyframes<T extends string | number>(
     keyframes: ResolvedKeyframes<T>,
     options: ValueAnimationOptions<T>
-): ValueAnimationOptions<T> {
+) {
     const sampleAnimation = new MainThreadAnimation({
         ...options,
         keyframes,
@@ -84,7 +85,7 @@ function pregenerateKeyframes<T extends string | number>(
         times: undefined,
         keyframes: pregeneratedKeyframes,
         duration: t - sampleDelta,
-        ease: "linear",
+        ease: "linear" as EasingDefinition,
     }
 }
 
@@ -120,6 +121,8 @@ export class AcceleratedAnimation<
             name,
             motionValue
         )
+
+        this.resolver.scheduleResolve()
     }
 
     private pendingTimeline: any
@@ -127,6 +130,8 @@ export class AcceleratedAnimation<
     protected initPlayback(
         keyframes: ResolvedKeyframes<T>
     ): ResolvedAcceleratedAnimation {
+        let duration = this.options.duration || 300
+
         /**
          * If this animation needs pre-generated keyframes then generate.
          */
@@ -139,8 +144,8 @@ export class AcceleratedAnimation<
             )
 
             keyframes = pregeneratedAnimation.keyframes
+            duration = pregeneratedAnimation.duration
             this.options.times = pregeneratedAnimation.times
-            this.options.duration = pregeneratedAnimation.duration
             this.options.ease = pregeneratedAnimation.ease
         }
 
@@ -181,7 +186,7 @@ export class AcceleratedAnimation<
 
         return {
             animation,
-            duration: this.options.duration!,
+            duration,
             keyframes: keyframes as string[] | number[],
         }
     }
@@ -284,8 +289,7 @@ export class AcceleratedAnimation<
     }
 
     complete() {
-        const { animation } = this.resolved
-        animation.finish()
+        this.resolved.animation.finish()
     }
 
     cancel() {

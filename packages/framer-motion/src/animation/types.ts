@@ -46,6 +46,7 @@ export type ResolveKeyframes<V extends string | number> = (
 export interface ValueAnimationOptions<V extends string | number = number>
     extends ValueAnimationTransition {
     keyframes: V[]
+    KeyframeResolver?: typeof KeyframeResolver
     name?: string
     motionValue?: MotionValue<V>
     from?: V

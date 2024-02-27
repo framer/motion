@@ -66,6 +66,9 @@ export class KeyframeResolver<T extends string | number = any> {
     resolvedKeyframes: ResolvedKeyframes<T> | undefined
     unresolvedKeyframes: UnresolvedKeyframes<string | number>
     motionValue?: MotionValue<T>
+    isScheduled = false
+    isComplete = false
+    isAsync: boolean
     private onComplete: OnKeyframesResolved<T>
 
     constructor(
@@ -81,8 +84,12 @@ export class KeyframeResolver<T extends string | number = any> {
         this.name = name
         this.motionValue = motionValue
         this.element = element
+        this.isAsync = isAsync
+    }
 
-        if (isAsync) {
+    scheduleResolve() {
+        this.isScheduled = true
+        if (this.isAsync) {
             toResolve.add(this)
 
             if (!isScheduled) {
@@ -148,11 +155,19 @@ export class KeyframeResolver<T extends string | number = any> {
     measureEndState() {}
 
     complete() {
+        this.isComplete = true
         this.onComplete(this.unresolvedKeyframes as ResolvedKeyframes<T>)
         toResolve.delete(this)
     }
 
     cancel() {
-        toResolve.delete(this)
+        if (!this.isComplete) {
+            this.isScheduled = false
+            toResolve.delete(this)
+        }
+    }
+
+    resume() {
+        if (!this.isComplete) this.scheduleResolve()
     }
 }
