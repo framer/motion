@@ -31,6 +31,9 @@ const acceleratedValues = new Set<string>([
     "clipPath",
     "filter",
     "transform",
+    // TODO: Can be accelerated but currently disabled until https://issues.chromium.org/issues/41491098 is resolved
+    // or until we implement support for linear() easing.
+    // "background-color"
 ])
 
 /**
@@ -46,6 +49,11 @@ const sampleDelta = 10 //ms
  */
 const maxDuration = 20_000
 
+/**
+ * Check if an animation can run natively via WAAPI or requires pregenerated keyframes.
+ * WAAPI doesn't support spring or function easings so we run these as JS animation before
+ * handing off.
+ */
 function requiresPregeneratedKeyframes<T extends string | number>(
     options: ValueAnimationOptions<T>
 ) {
@@ -60,6 +68,11 @@ function pregenerateKeyframes<T extends string | number>(
     keyframes: ResolvedKeyframes<T>,
     options: ValueAnimationOptions<T>
 ) {
+    /**
+     * Create a main-thread animation to pregenerate keyframes.
+     * We sample this at regular intervals to generate keyframes that we then
+     * linearly interpolate between.
+     */
     const sampleAnimation = new MainThreadAnimation({
         ...options,
         keyframes,
@@ -125,7 +138,10 @@ export class AcceleratedAnimation<
         this.resolver.scheduleResolve()
     }
 
-    private pendingTimeline: any
+    /**
+     * An AnimationTimline to attach to the WAAPI animation once it's created.
+     */
+    private pendingTimeline: AnimationTimeline | undefined
 
     protected initPlayback(
         keyframes: ResolvedKeyframes<T>
@@ -154,7 +170,7 @@ export class AcceleratedAnimation<
             motionValue.owner!.current as unknown as HTMLElement,
             name,
             keyframes as string[],
-            this.options
+            { ...this.options, duration }
         )
 
         // Override the browser calculated startTime with one synchronised to other JS
@@ -178,7 +194,6 @@ export class AcceleratedAnimation<
                 motionValue.set(getFinalKeyframe(keyframes, this.options))
                 onComplete && onComplete()
                 this.cancel()
-                // frame.update(cancelAnimation)
                 this.resolveFinishedPromise()
                 this.updateFinishedPromise()
             }
