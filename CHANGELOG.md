@@ -11,6 +11,7 @@ Undocumented APIs should be considered internal and may change without warning.
 -   Keyframes now resolved asynchronously.
 -   External event handlers now fired synchronously.
 -   CSS variables and unit conversion now supported with >2 keyframe animations.
+-   Removed WAAPI animation of `background-color`.
 
 ## [11.0.10] 2024-03-12
 
