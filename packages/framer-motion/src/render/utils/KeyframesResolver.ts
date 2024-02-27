@@ -68,8 +68,8 @@ export type OnKeyframesResolved<T extends string | number> = (
 export class KeyframeResolver<T extends string | number = any> {
     protected element?: VisualElement<any>
     protected unresolvedKeyframes: UnresolvedKeyframes<string | number>
+    name?: string
 
-    private name?: string
     private motionValue?: MotionValue<T>
     private onComplete: OnKeyframesResolved<T>
 

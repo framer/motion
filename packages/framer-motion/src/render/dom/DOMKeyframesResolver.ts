@@ -20,7 +20,7 @@ import { MotionValue } from "../../value"
 export class DOMKeyframesResolver<
     T extends string | number
 > extends KeyframeResolver<T> {
-    protected name: string
+    name: string
     protected element: VisualElement<HTMLElement | SVGElement>
 
     private removedTransforms?: [string, string | number][]
