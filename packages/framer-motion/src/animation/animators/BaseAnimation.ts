@@ -84,9 +84,6 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
      * This is a deoptimisation, but at its worst still batches read/writes.
      */
     get resolved(): Resolved & { keyframes: ResolvedKeyframes<T> } {
-        // TODO Leave only for tests
-        if (this.isInitialising)
-            throw new Error("Cannot access `resolved` while initialising.")
         if (!this._resolved) flushKeyframeResolvers()
 
         return this._resolved
@@ -97,9 +94,7 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
      * will check if its possible to run the animation and, if not, skip it.
      * Otherwise, it will call initPlayback on the implementing class.
      */
-    private isInitialising = false
     protected onKeyframesResolved(keyframes: ResolvedKeyframes<T>) {
-        this.isInitialising = true
         const { name, type, velocity, delay, onComplete, onUpdate } =
             this.options
 
@@ -128,8 +123,6 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
             keyframes,
             ...this.initPlayback(keyframes),
         }
-
-        this.isInitialising = false
 
         this.onPostResolved()
     }
