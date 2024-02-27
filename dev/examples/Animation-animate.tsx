@@ -24,19 +24,16 @@ const Child = ({ setState }: any) => {
 
     useEffect(() => {
         const controls = animate([
-            ["div", { x: 500 }, { type: "spring", duration: 1, bounce: 0 }],
+            [
+                "div",
+                { x: 500, opacity: 0 },
+                { type: "spring", duration: 1, bounce: 0 },
+            ],
         ])
 
-        controls.play()
-        controls.pause()
-        controls.time = 0.1
-
-        setTimeout(() => controls.play(), 1000)
-
-        // controls.then(() => {
-        //     controls.play()
-        // })
-
+        controls.then(() => {
+            controls.play()
+        })
         return () => controls.stop()
     }, [target])
 
