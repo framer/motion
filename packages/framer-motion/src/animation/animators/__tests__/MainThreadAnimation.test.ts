@@ -1250,7 +1250,6 @@ describe("MainThreadAnimation", () => {
             onUpdate: (v) => output.push(v),
         })
 
-        animation.cancel()
         animation.complete()
 
         await animation
