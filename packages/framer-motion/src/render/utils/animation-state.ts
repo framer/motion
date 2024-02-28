@@ -214,7 +214,6 @@ export function createAnimationState(
              * Build an object of all the resolved values. We'll use this in the subsequent
              * animateChanges calls to determine whether a value has changed.
              */
-            // TODO Resolve with options
             let resolvedValues = definitionList.reduce(
                 buildResolvedTypeValues(type),
                 {}

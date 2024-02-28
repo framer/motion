@@ -33,7 +33,6 @@ export class SVGVisualElement extends DOMVisualElement<
     }
 
     readValueFromInstance(instance: SVGElement, key: string) {
-        // console.log("reading", key, "from", instance)
         if (transformProps.has(key)) {
             const defaultType = getDefaultValueType(key)
             return defaultType ? defaultType.default || 0 : 0
