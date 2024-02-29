@@ -16,13 +16,13 @@ import { isCSSVariableToken, CSSVariableToken } from "./is-css-variable"
 
 const splitCSSVariableRegex =
     // eslint-disable-next-line redos-detector/no-unsafe-regex
-    /^var\((?:(--[\w-]+)|(--[\w-]+), ?([a-zA-Z\d ()%#.,-]+))\)/u
+    /^var\(--(?:([\w-]+)|([\w-]+), ?([a-zA-Z\d ()%#.,-]+))\)/u
 export function parseCSSVariable(current: string) {
     const match = splitCSSVariableRegex.exec(current)
     if (!match) return [,]
 
     const [, token1, token2, fallback] = match
-    return [token1 ?? token2, fallback]
+    return [`--${token1 ?? token2}`, fallback]
 }
 
 const maxDepth = 4
