@@ -36,12 +36,11 @@ export interface ComplexValueInfo {
 
 // this regex consists of the `singleCssVariableRegex|rgbHSLValueRegex|digitRegex`
 const complexRegex =
-    /(var\s*\(\s*--(?:[\w-]+\s*|[\w-]+\s*,(?:\s*[^)(\s]|\s*\((?:[^)(]|\([^)(]*\))*\))*\s*)\))|(rgb|hsl)a?\((-?[\d.]+%?[,\s]+){2}(-?[\d.]+%?)\s*(?:[,/]\s*)?(?:\b[\d.]|\.\d+)*%?\)|((-)?(\d*\.?\d)+)/giu
+    /var\s*\(\s*--(?:[\w-]+\s*|[\w-]+\s*,(?:\s*[^)(\s]|\s*\((?:[^)(]|\([^)(]*\))*\))+\s*)\)|#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b[\d.]|\.\d+)*%?\)|-?(?:\d*\.?\d)+/giu
 
 export function analyseComplexValue(value: string | number): ComplexValueInfo {
     const originalValue = value.toString()
 
-    const matchedValues = originalValue.match(complexRegex) || []
     const values: ComplexValues = []
     const indexes: ValueIndexes = {
         color: [],
@@ -50,9 +49,8 @@ export function analyseComplexValue(value: string | number): ComplexValueInfo {
     }
     const types: Array<keyof ValueIndexes> = []
 
-    for (let i = 0; i < matchedValues.length; i++) {
-        const parsedValue: string | number = matchedValues[i]
-
+    let i = 0
+    const tokenised = originalValue.replace(complexRegex, (parsedValue) => {
         if (color.test(parsedValue)) {
             indexes.color.push(i)
             types.push(COLOR_TOKEN)
@@ -66,9 +64,9 @@ export function analyseComplexValue(value: string | number): ComplexValueInfo {
             types.push(NUMBER_TOKEN)
             values.push(parseFloat(parsedValue))
         }
-    }
-
-    const tokenised = originalValue.replace(complexRegex, SPLIT_TOKEN)
+        ++i
+        return SPLIT_TOKEN
+    })
     const split = tokenised.split(SPLIT_TOKEN)
 
     return { values, split, indexes, types }
