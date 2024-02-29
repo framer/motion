@@ -12,7 +12,7 @@ export const floatRegex = /(-)?(\d*\.?\d)+/gu
 export const colorRegex =
     /(#[\da-f]{3,8}|(rgb|hsl)a?\((-?[\d.]+%?[,\s]+){2}(-?[\d.]+%?)\s*(?:[,/]\s*)?\b[\d.]*%?\))/giu
 export const singleColorRegex =
-    /^(#[\da-f]{3,8}|(rgb|hsl)a?\((-?[\d.]+%?[,\s]+){2}(-?[\d.]+%?)\s*(?:[,/]\s*)?\b[\d.]+%?\))$/iu
+    /^(#[\da-f]{3,8}|(rgb|hsl)a?\((-?[\d.]+%?[,\s]+){2}(-?[\d.]+%?)\s*(?:[,/]\s*)?\b[\d.]*%?\))$/iu
 
 export function isString(v: any): v is string {
     return typeof v === "string"
