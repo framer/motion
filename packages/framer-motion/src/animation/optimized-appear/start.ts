@@ -58,6 +58,16 @@ export function startOptimizedAppearAnimation(
             animation: readyAnimation,
             startTime: null,
         })
+
+        if (!window.HandoffCancelAllAnimations) {
+            window.HandoffCancelAllAnimations = () => {
+                appearAnimationStore.forEach(({ animation }) => {
+                    animation.cancel()
+                })
+                appearAnimationStore.clear()
+                window.HandoffCancelAllAnimations = undefined
+            }
+        }
     }
 
     const startAnimation = () => {
