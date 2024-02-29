@@ -21,7 +21,5 @@ export const isCSSVariableToken = (
     return singleCssVariableRegex.test(value.split("/*")[0])
 }
 
-export const cssVariableRegex =
-    /var\s*\(\s*--[\w-]+(\s*,\s*(?:(?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)+)?\s*\)/g
 const singleCssVariableRegex =
     /var\s*\(\s*--[\w-]+(\s*,\s*(?:(?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)+)?\s*\)$/i
