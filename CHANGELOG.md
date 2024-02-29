@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.7] 2024-02-29
+
+### Fixed
+
+-   Strip comments from strings before testing if they're CSS variables to prevent significant performance degradation.
+
 ## [11.0.6] 2024-02-23
 
 ### Updated
