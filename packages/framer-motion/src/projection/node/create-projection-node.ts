@@ -57,7 +57,6 @@ import { steps } from "../../frameloop/frame"
 import { noop } from "../../utils/noop"
 import { time } from "../../frameloop/sync-time"
 import { microtask } from "../../frameloop/microtask"
-import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/data-id"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
