@@ -45,12 +45,12 @@ const getTranslateFromMatrix =
     (_bbox, { transform }) => {
         if (transform === "none" || !transform) return 0
 
-        const matrix3d = transform.match(/^matrix3d\((.+)\)$/)
+        const matrix3d = transform.match(/^matrix3d\((.+)\)$/u)
 
         if (matrix3d) {
             return getPosFromMatrix(matrix3d[1], pos3)
         } else {
-            const matrix = transform.match(/^matrix\((.+)\)$/) as string[]
+            const matrix = transform.match(/^matrix\((.+)\)$/u) as string[]
             if (matrix) {
                 return getPosFromMatrix(matrix[1], pos2)
             } else {

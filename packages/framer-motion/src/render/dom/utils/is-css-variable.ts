@@ -22,4 +22,4 @@ export const isCSSVariableToken = (
 }
 
 const singleCssVariableRegex =
-    /var\s*\(\s*--[\w-]+(\s*,\s*(?:(?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)+)?\s*\)$/i
+    /var\s*\(\s*--[\w-]+(?:\s*,(?:[^)(]|\((?:[^)(]|\([^)(]*\))*\))*)?\s*\)$/i

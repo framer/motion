@@ -14,7 +14,7 @@ import { isCSSVariableToken, CSSVariableToken } from "./is-css-variable"
  * @param current
  */
 const splitCSSVariableRegex =
-    /var\((--[a-zA-Z0-9-_]+),? ?([a-zA-Z0-9 ()%#.,-]+)?\)/
+    /var\((--[\w-]+),? ?([a-zA-Z\d ()%#.,-]+)?\)/u
 export function parseCSSVariable(current: string) {
     const match = splitCSSVariableRegex.exec(current)
     if (!match) return [,]

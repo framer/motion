@@ -35,7 +35,7 @@ export interface ComplexValueInfo {
 }
 
 const complexRegex =
-    /(var\s*\(\s*--[\w-]+(\s*,\s*(?:(?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)+)?\s*\))|(#[0-9a-f]{3,8}|(rgb|hsl)a?\((-?[\d\.]+%?[,\s]+){2}(-?[\d\.]+%?)\s*[\,\/]?\s*[\d\.]*%?\))|((-)?([\d]*\.?[\d])+)/gi
+    /(var\s*\(\s*--[\w-]+(\s*,(?:[^)(]|\((?:[^)(]|\([^)(]*\))*\))*)?\s*\))|(#[\da-f]{3,8}|(rgb|hsl)a?\((-?[\d.]+%?[,\s]+){2}(-?[\d.]+%?)\s*(?:[,/]\s*)?[\d.]*%?\))|((-)?(\d*\.?\d)+)/gi
 
 export function analyseComplexValue(value: string | number): ComplexValueInfo {
     const originalValue = value.toString()

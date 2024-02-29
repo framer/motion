@@ -33,6 +33,7 @@
         "framer"
     ],
     "scripts": {
+        "eslint": "yarn run lint",
         "lint": "yarn eslint src/**/*.ts",
         "test": "yarn test-unit",
         "test-ci": "yarn test-unit",
