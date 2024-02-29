@@ -21,7 +21,7 @@ function applyDefaultFilter(v: string) {
     return name + "(" + defaultValue + unit + ")"
 }
 
-const functionRegex = /([a-z-]*)\(.*?\)/g
+const functionRegex = /\b([a-z-]*)\(.*?\)/gu
 
 export const filter = {
     ...complex,
