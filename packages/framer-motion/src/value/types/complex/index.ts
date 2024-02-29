@@ -34,8 +34,9 @@ export interface ComplexValueInfo {
     types: Array<keyof ValueIndexes>
 }
 
+// this regex consists of the `singleCssVariableRegex|rgbHSLValueRegex|digitRegex`
 const complexRegex =
-    /(var\s*\(\s*--[\w-]+(\s*,(?:[^)(]|\((?:[^)(]|\([^)(]*\))*\))*)?\s*\))|(#[\da-f]{3,8}|(rgb|hsl)a?\((-?[\d.]+%?[,\s]+){2}(-?[\d.]+%?)\s*(?:[,/]\s*)?[\d.]*%?\))|((-)?(\d*\.?\d)+)/gi
+    /(var\s*\(\s*--(?:[\w-]+\s*|[\w-]+\s*,(?:\s*[^)(\s]|\s*\((?:[^)(]|\([^)(]*\))*\))*\s*)\))|(rgb|hsl)a?\((-?[\d.]+%?[,\s]+){2}(-?[\d.]+%?)\s*(?:[,/]\s*)?(?:\b[\d.]|\.\d+)*%?\)|((-)?(\d*\.?\d)+)/giu
 
 export function analyseComplexValue(value: string | number): ComplexValueInfo {
     const originalValue = value.toString()
