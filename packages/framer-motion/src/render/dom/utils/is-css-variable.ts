@@ -18,7 +18,7 @@ export const isCSSVariableToken = (
     if (!startsWithToken) return false
 
     // Ensure any comments are stripped from the value as this can harm performance of the regex.
-    return singleCssVariableRegex.test(value.split("/*")[0])
+    return singleCssVariableRegex.test(value.split("/*")[0].trim())
 }
 
 const singleCssVariableRegex =
