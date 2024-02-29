@@ -230,7 +230,7 @@ export interface AnimationControls {
     start(
         definition: AnimationDefinition,
         transitionOverride?: Transition
-    ): Promise<any>
+    ): Promise<void | Array<void>>
 
     /**
      * Instantly set to a set of properties or a variant.
