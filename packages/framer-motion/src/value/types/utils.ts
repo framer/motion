@@ -7,12 +7,11 @@
 // to avoid exponents
 export const sanitize = (v: number) => Math.round(v * 100000) / 100000
 
-// eslint-disable-next-line redos-detector/no-unsafe-regex -- false positive as it can match a lot of numbers
-export const floatRegex = /(-)?(\d*\.?\d)+/gu
+export const floatRegex = /-?(?:\d+(?:\.\d+)?|\.\d+)/gu
 export const colorRegex =
-    /(#[\da-f]{3,8}|(rgb|hsl)a?\((-?[\d.]+%?[,\s]+){2}(-?[\d.]+%?)\s*(?:[,/]\s*)?(?:\b[\d.]|\.\d+)*%?\))/giu
+    /(?:#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\))/giu
 export const singleColorRegex =
-    /^(#[\da-f]{3,8}|(rgb|hsl)a?\((-?[\d.]+%?[,\s]+){2}(-?[\d.]+%?)\s*(?:[,/]\s*)?(?:\b[\d.]|\.\d+)*%?\))$/iu
+    /^(?:#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\))$/iu
 
 export function isString(v: any): v is string {
     return typeof v === "string"

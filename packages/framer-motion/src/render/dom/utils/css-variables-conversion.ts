@@ -15,7 +15,7 @@ import { isCSSVariableToken, CSSVariableToken } from "./is-css-variable"
  */
 
 const splitCSSVariableRegex =
-    // eslint-disable-next-line redos-detector/no-unsafe-regex
+    // eslint-disable-next-line redos-detector/no-unsafe-regex -- false positive, as it can match a lot of words
     /^var\(--(?:([\w-]+)|([\w-]+), ?([a-zA-Z\d ()%#.,-]+))\)/u
 export function parseCSSVariable(current: string) {
     const match = splitCSSVariableRegex.exec(current)
