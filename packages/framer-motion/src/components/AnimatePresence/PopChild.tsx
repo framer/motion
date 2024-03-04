@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useRef, useInsertionEffect, useId, useContext } from "react"
 
-import { MotionConfigContext } from "context/MotionConfigContext"
+import { MotionConfigContext } from "../../context/MotionConfigContext"
 
 interface Size {
     width: number
