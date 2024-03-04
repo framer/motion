@@ -1,5 +1,7 @@
 import * as React from "react"
-import { useRef, useInsertionEffect, useId } from "react"
+import { useRef, useInsertionEffect, useId, useContext } from "react"
+
+import { MotionConfigContext } from "context/MotionConfigContext"
 
 interface Size {
     width: number
@@ -55,6 +57,7 @@ export function PopChild({ children, isPresent }: Props) {
         top: 0,
         left: 0,
     })
+    const { nonce } = useContext(MotionConfigContext)
 
     /**
      * We create and inject a style block so we can apply this explicit
@@ -72,6 +75,7 @@ export function PopChild({ children, isPresent }: Props) {
         ref.current.dataset.motionPopId = id
 
         const style = document.createElement("style")
+        if (nonce) style.nonce = nonce
         document.head.appendChild(style)
         if (style.sheet) {
             style.sheet.insertRule(`
