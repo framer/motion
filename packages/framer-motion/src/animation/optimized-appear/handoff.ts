@@ -32,6 +32,7 @@ export function handoffOptimizedAppearAnimation(
 
     const cancelAnimation = () => {
         appearAnimationStore.delete(storeId)
+
         try {
             animation.cancel()
         } catch (error) {}

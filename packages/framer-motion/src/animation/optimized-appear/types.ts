@@ -22,5 +22,6 @@ declare global {
     interface Window {
         HandoffAppearAnimations?: HandoffFunction
         HandoffComplete?: boolean
+        HandoffCancelAllAnimations?: VoidFunction
     }
 }
