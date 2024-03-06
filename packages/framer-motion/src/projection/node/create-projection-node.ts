@@ -628,6 +628,9 @@ export function createProjectionNode<I>({
             /**
              * Write
              */
+            if (window.HandoffCancelAllAnimations) {
+                window.HandoffCancelAllAnimations()
+            }
             this.nodes!.forEach(resetTransformStyle)
 
             /**
@@ -1486,6 +1489,7 @@ export function createProjectionNode<I>({
                 cancelFrame(this.pendingAnimation)
                 this.pendingAnimation = undefined
             }
+
             /**
              * Start the animation in the next frame to have a frame with progress 0,
              * where the target is the same as when the animation started, so we can
