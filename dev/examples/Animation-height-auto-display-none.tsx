@@ -88,7 +88,6 @@ header {
 
 .word {
   height: 18px;
-  border-radius: 10px;
   display: inline-block;
   margin-bottom: 8px;
   margin-right: 8px;
