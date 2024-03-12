@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.12] 2024-03-12
+
+### Fixed
+
+-   Updated `@emotion/is-valid-prop` as peer dependency.
+
 ## [11.0.11] 2024-03-12
 
 ### Changed
