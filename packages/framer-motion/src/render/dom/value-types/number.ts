@@ -72,6 +72,8 @@ export const numberValueTypes: ValueTypeMap = {
 
     // Misc
     zIndex: int,
+    backgroundPositionX: px,
+    backgroundPositionY: px,
 
     // SVG
     fillOpacity: alpha,
