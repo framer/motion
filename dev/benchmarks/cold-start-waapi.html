@@ -44,20 +44,51 @@
                 html += `<div><div class="box"></div></div>`
             }
             document.querySelector(".container").innerHTML = html
+            const boxes = document.querySelectorAll(".box")
 
-            boxes.forEach((box) =>
-                box.animate(
-                    {
-                        rotate: "360deg",
-                        backgroundColor: "#f00",
-                        width: "100%",
-                    },
-                    {
-                        duration: 1000,
-                        fill: "forwards",
+            setTimeout(() => {
+                boxes.forEach((box) => {
+                    const animation = box.animate(
+                        {
+                            rotate: Math.random() * 360 + "deg",
+                            backgroundColor: "#f00",
+                            width: Math.random() * 100 + "%",
+                            translate: "5px 0",
+                        },
+                        {
+                            duration: 1000,
+                            fill: "both",
+                        }
+                    )
+                    animation.onfinish = () => {
+                        requestAnimationFrame(() => {
+                            animation.commitStyles()
+                            animation.cancel()
+                        })
                     }
-                )
-            )
+                })
+
+                setTimeout(() => {
+                    boxes.forEach((box) => {
+                        const animation = box.animate(
+                            {
+                                width: Math.random() * 100 + "px",
+                                translate: "50% 0",
+                            },
+                            {
+                                duration: 1000,
+                                fill: "both",
+                            }
+                        )
+                        animation.onfinish = () => {
+                            requestAnimationFrame(() => {
+                                animation.commitStyles()
+                                animation.cancel()
+                            })
+                        }
+                    })
+                }, 1500)
+            }, 1000)
         </script>
     </body>
 </html>

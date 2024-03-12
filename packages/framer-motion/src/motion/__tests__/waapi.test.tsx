@@ -10,9 +10,10 @@ import * as React from "react"
 import { createRef } from "react"
 import { nextFrame } from "../../gestures/__tests__/utils"
 import "../../animation/animators/waapi/__tests__/setup"
+import { act } from "react-dom/test-utils"
 
 describe("WAAPI animations", () => {
-    test("opacity animates with WAAPI at default settings", () => {
+    test("opacity animates with WAAPI at default settings", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -23,6 +24,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -38,7 +41,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("filter animates with WAAPI at default settings", () => {
+    test("filter animates with WAAPI at default settings", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -49,6 +52,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -67,7 +72,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("clipPath animates with WAAPI at default settings", () => {
+    test("clipPath animates with WAAPI at default settings", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -78,6 +83,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -96,7 +103,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("Complex string type animates with WAAPI spring", () => {
+    test("Complex string type animates with WAAPI spring", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -108,6 +115,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -126,7 +135,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("transform animates with WAAPI at default settings", () => {
+    test("transform animates with WAAPI at default settings", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -137,6 +146,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -155,7 +166,8 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test.skip("backgroundColor animates with WAAPI at default settings", () => {
+    // backgroundColor currently disabled for performance reasons
+    test.skip("backgroundColor animates with WAAPI at default settings", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -166,6 +178,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -216,7 +230,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("opacity animates with WAAPI when no value is originally provided via initial", () => {
+    test("opacity animates with WAAPI when no value is originally provided via initial", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -228,10 +242,12 @@ describe("WAAPI animations", () => {
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
+        await nextFrame()
+
         expect(ref.current!.animate).toBeCalled()
     })
 
-    test("opacity animates with WAAPI at default settings with no initial value set", () => {
+    test("opacity animates with WAAPI at default settings with no initial value set", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -243,10 +259,12 @@ describe("WAAPI animations", () => {
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
+        await nextFrame()
+
         expect(ref.current!.animate).toBeCalled()
     })
 
-    test("opacity animates with WAAPI at default settings when layout is enabled", () => {
+    test("opacity animates with WAAPI at default settings when layout is enabled", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -260,6 +278,8 @@ describe("WAAPI animations", () => {
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
+        await nextFrame()
+
         expect(ref.current!.animate).toBeCalled()
     })
 
@@ -272,13 +292,14 @@ describe("WAAPI animations", () => {
                 <motion.div
                     initial="none"
                     animate={isHovered ? "hover" : "none"}
-                    onHoverStart={() => setIsHovered(true)}
-                    onHoverEnd={() => setIsHovered(false)}
+                    onHoverStart={() => act(() => setIsHovered(true))}
+                    onHoverEnd={() => act(() => setIsHovered(false))}
                 >
                     <motion.div
                         ref={ref}
                         style={{ opacity: 0.5 }}
                         variants={{ hover: { opacity: 1 } }}
+                        transition={{ duration: 0.001 }}
                     />
                 </motion.div>
             )
@@ -287,9 +308,11 @@ describe("WAAPI animations", () => {
         pointerEnter(container.firstChild as Element)
 
         await nextFrame()
+        await nextFrame()
         pointerLeave(container.firstChild as Element)
         await nextFrame()
         rerender(<Component />)
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalledTimes(2)
     })
@@ -318,16 +341,19 @@ describe("WAAPI animations", () => {
         pointerDown(container.firstChild as Element)
 
         await nextFrame()
+        await nextFrame()
         pointerUp(container.firstChild as Element)
 
         await nextFrame()
 
         rerender(<Component />)
 
+        await nextFrame()
+
         expect(ref.current!.animate).toBeCalledTimes(2)
     })
 
-    test("WAAPI is called with expected arguments", () => {
+    test("WAAPI is called with expected arguments", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -347,6 +373,8 @@ describe("WAAPI animations", () => {
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
+        await nextFrame()
+
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
             { opacity: [0, 1], offset: [0.2, 0.9] },
@@ -361,7 +389,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("WAAPI is called with expected arguments with pre-generated keyframes", () => {
+    test("WAAPI is called with expected arguments with pre-generated keyframes", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -379,6 +407,8 @@ describe("WAAPI animations", () => {
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
+        await nextFrame()
+
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
             { opacity: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5], offset: undefined },
@@ -393,7 +423,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("Maps 'easeIn' to 'ease-in'", () => {
+    test("Maps 'easeIn' to 'ease-in'", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -407,6 +437,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -422,7 +454,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("Maps 'easeOut' to 'ease-out'", () => {
+    test("Maps 'easeOut' to 'ease-out'", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -436,6 +468,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -451,7 +485,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("Maps 'easeInOut' to 'ease-in-out'", () => {
+    test("Maps 'easeInOut' to 'ease-in-out'", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -465,6 +499,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -480,7 +516,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("Maps 'circIn' to 'cubic-bezier(0, 0.65, 0.55, 1)'", () => {
+    test("Maps 'circIn' to 'cubic-bezier(0, 0.65, 0.55, 1)'", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -494,6 +530,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -509,7 +547,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("Maps 'circOut' to 'cubic-bezier(0.55, 0, 1, 0.45)'", () => {
+    test("Maps 'circOut' to 'cubic-bezier(0.55, 0, 1, 0.45)'", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -523,6 +561,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -538,7 +578,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("Maps 'backIn' to 'cubic-bezier(0.31, 0.01, 0.66, -0.59)'", () => {
+    test("Maps 'backIn' to 'cubic-bezier(0.31, 0.01, 0.66, -0.59)'", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -553,6 +593,7 @@ describe("WAAPI animations", () => {
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
+        await nextFrame()
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
             { opacity: [0, 1], offset: undefined },
@@ -567,7 +608,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("Maps 'backOut' to 'cubic-bezier(0.33, 1.53, 0.69, 0.99)'", () => {
+    test("Maps 'backOut' to 'cubic-bezier(0.33, 1.53, 0.69, 0.99)'", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -581,6 +622,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -596,7 +639,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("WAAPI is called with pre-generated spring keyframes", () => {
+    test("WAAPI is called with pre-generated spring keyframes", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -612,6 +655,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -638,7 +683,7 @@ describe("WAAPI animations", () => {
     /**
      * TODO: We could not accelerate but scrub WAAPI animation if repeatDelay is defined
      */
-    test("Doesn't animate with WAAPI if repeatDelay is defined", () => {
+    test("Doesn't animate with WAAPI if repeatDelay is defined", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -651,10 +696,12 @@ describe("WAAPI animations", () => {
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
+        await nextFrame()
+
         expect(ref.current!.animate).not.toBeCalled()
     })
 
-    test("Pregenerates keyframes if ease is function", () => {
+    test("Pregenerates keyframes if ease is function", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -666,6 +713,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -684,7 +733,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("Pregenerates keyframes if ease is anticipate", () => {
+    test("Pregenerates keyframes if ease is anticipate", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -696,6 +745,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -717,7 +768,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("Pregenerates keyframes if ease is backInOut", () => {
+    test("Pregenerates keyframes if ease is backInOut", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -729,6 +780,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -750,7 +803,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("Pregenerates keyframes if ease is circInOut", () => {
+    test("Pregenerates keyframes if ease is circInOut", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -762,6 +815,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -783,7 +838,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("Doesn't animate with WAAPI if repeatType is defined as mirror", () => {
+    test("Doesn't animate with WAAPI if repeatType is defined as mirror", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -796,10 +851,11 @@ describe("WAAPI animations", () => {
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
+        await nextFrame()
         expect(ref.current!.animate).not.toBeCalled()
     })
 
-    test("Doesn't animate with WAAPI if onUpdate is defined", () => {
+    test("Doesn't animate with WAAPI if onUpdate is defined", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -812,10 +868,12 @@ describe("WAAPI animations", () => {
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
+        await nextFrame()
+
         expect(ref.current!.animate).not.toBeCalled()
     })
 
-    test("Doesn't animate with WAAPI if external motion value is defined", () => {
+    test("Doesn't animate with WAAPI if external motion value is defined", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -828,10 +886,12 @@ describe("WAAPI animations", () => {
         const { rerender } = render(<Component />)
         rerender(<Component />)
 
+        await nextFrame()
+
         expect(ref.current!.animate).not.toBeCalled()
     })
 
-    test("Animates with WAAPI if repeat is defined and we need to generate keyframes", () => {
+    test("Animates with WAAPI if repeat is defined and we need to generate keyframes", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -847,6 +907,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
@@ -868,7 +930,7 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("Animates with WAAPI if repeat is Infinity and we need to generate keyframes", () => {
+    test("Animates with WAAPI if repeat is Infinity and we need to generate keyframes", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -884,6 +946,8 @@ describe("WAAPI animations", () => {
         )
         const { rerender } = render(<Component />)
         rerender(<Component />)
+
+        await nextFrame()
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(

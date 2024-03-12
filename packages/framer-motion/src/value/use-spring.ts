@@ -5,11 +5,11 @@ import { useMotionValue } from "./use-motion-value"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { SpringOptions } from "../animation/types"
 import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
-import {
-    MainThreadAnimationControls,
-    animateValue,
-} from "../animation/animators/js"
 import { frameData } from "../frameloop"
+import {
+    MainThreadAnimation,
+    animateValue,
+} from "../animation/animators/MainThreadAnimation"
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
@@ -35,8 +35,9 @@ export function useSpring(
     config: SpringOptions = {}
 ) {
     const { isStatic } = useContext(MotionConfigContext)
-    const activeSpringAnimation =
-        useRef<MainThreadAnimationControls<number> | null>(null)
+    const activeSpringAnimation = useRef<MainThreadAnimation<number> | null>(
+        null
+    )
     const value = useMotionValue(isMotionValue(source) ? source.get() : source)
 
     const stopAnimation = () => {

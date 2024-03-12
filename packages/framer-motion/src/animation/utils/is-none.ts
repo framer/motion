@@ -5,5 +5,7 @@ export function isNone(value: string | number | null) {
         return value === 0
     } else if (value !== null) {
         return value === "none" || value === "0" || isZeroValueString(value)
+    } else {
+        return true
     }
 }

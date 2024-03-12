@@ -100,7 +100,7 @@ export function inertia({
              * If we have a spring and the provided t is beyond the moment the friction
              * animation crossed the min/max boundary, use the spring.
              */
-            if (timeReachedBoundary !== undefined && t > timeReachedBoundary) {
+            if (timeReachedBoundary !== undefined && t >= timeReachedBoundary) {
                 return spring!.next(t - timeReachedBoundary)
             } else {
                 !hasUpdatedFrame && applyFriction(t)

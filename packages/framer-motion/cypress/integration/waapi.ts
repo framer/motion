@@ -4,7 +4,8 @@ describe("waapi", () => {
             .wait(100)
             .get("#box")
             .should(([$element]: any) => {
-                expect(getComputedStyle($element).opacity).to.equal("0")
+                expect(getComputedStyle($element).opacity).to.equal("1")
+                expect($element.getBoundingClientRect().left).to.equal(200)
             })
     })
 })

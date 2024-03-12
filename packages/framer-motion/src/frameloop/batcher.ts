@@ -3,12 +3,12 @@ import { createRenderStep } from "./render-step"
 import { Batcher, Process, StepId, Steps, FrameData } from "./types"
 
 export const stepsOrder: StepId[] = [
-    "prepare",
-    "read",
-    "update",
-    "preRender",
-    "render",
-    "postRender",
+    "read", // Read
+    "resolveKeyframes", // Write/Read/Write/Read
+    "update", // Compute
+    "preRender", // Compute
+    "render", // Write
+    "postRender", // Compute
 ]
 
 const maxElapsed = 40
@@ -69,6 +69,7 @@ export function createRenderBatcher(
         const step = steps[key]
         acc[key] = (process: Process, keepAlive = false, immediate = false) => {
             if (!runNextFrame) wake()
+
             return step.schedule(process, keepAlive, immediate)
         }
         return acc

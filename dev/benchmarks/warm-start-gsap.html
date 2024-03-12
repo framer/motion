@@ -1,0 +1,84 @@
+<html>
+    <!--
+    Warm Start: GSAP
+
+    This benchmarks warm start - when an animation library already knows
+    the initial values to animate.
+
+    Run in private browsing mode to avoid browser plugins interfering with
+    benchmark.
+  -->
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            .container {
+                padding: 100px;
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .container > div {
+                width: 100px;
+                height: 100px;
+            }
+
+            .box {
+                width: 10px;
+                height: 100px;
+                background-color: #fff;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container"></div>
+        <script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+        <script>
+            // Create boxes
+            const numBoxes = 100
+            let html = ``
+            for (let i = 0; i < numBoxes; i++) {
+                html += `<div><div class="box"></div></div>`
+            }
+            document.querySelector(".container").innerHTML = html
+
+            const boxes = document.querySelectorAll(".box")
+
+            gsap.set(boxes, {
+                rotate: 0,
+                backgroundColor: "#fff",
+                width: "0%",
+                x: 0,
+            })
+
+            setTimeout(() => {
+                // Warm start
+                boxes.forEach((box) =>
+                    gsap.to(box, {
+                        rotate: Math.random() * 360,
+                        backgroundColor: "#f00",
+                        width: Math.random() * 100 + "%",
+                        x: 5,
+                        duration: 1,
+                    })
+                )
+
+                // setTimeout(() => {
+                //     // Unit conversion
+                //     boxes.forEach((box) =>
+                //         gsap.to(box, {
+                //             width: Math.random() * 100 + "px",
+                //             x: "50%",
+                //             duration: 1,
+                //             easing: "linear",
+                //         })
+                //     )
+                // }, 1500)
+            }, 1000)
+        </script>
+    </body>
+</html>

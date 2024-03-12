@@ -4,6 +4,27 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.11] 2024-03-12
+
+### Changed
+
+-   Keyframes now resolved asynchronously.
+-   External event handlers now fired synchronously.
+-   CSS variables and unit conversion now supported with >2 keyframe animations.
+-   Removed WAAPI animation of `background-color`.
+
+## [11.0.10] 2024-03-12
+
+### Fixed
+
+-   Improved speed and stability of regexes.
+
+## [11.0.9] 2024-03-12
+
+### Added
+
+-   Added support for Content Security Policy (CSP) nonces via `MotionConfig`.
+
 ## [11.0.8] 2024-02-29
 
 ### Fixed

@@ -508,7 +508,7 @@ describe("animate prop as variant", () => {
     })
 
     test("nested controlled variants switch correctly", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const parentOpacity = motionValue(0.2)
             const childOpacity = motionValue(0.1)
 
@@ -539,16 +539,17 @@ describe("animate prop as variant", () => {
             }
 
             const { rerender } = render(<Component isOpen={false} />)
-            setTimeout(() => {
-                expect(parentOpacity.get()).toBe(0.4)
-                expect(childOpacity.get()).toBe(0.6)
 
-                rerender(<Component isOpen />)
+            await nextFrame()
 
-                setTimeout(() => {
-                    resolve([parentOpacity.get(), childOpacity.get()])
-                }, 0)
-            }, 0)
+            expect(parentOpacity.get()).toBe(0.4)
+            expect(childOpacity.get()).toBe(0.6)
+
+            rerender(<Component isOpen />)
+
+            await nextFrame()
+
+            resolve([parentOpacity.get(), childOpacity.get()])
         })
 
         return expect(promise).resolves.toEqual([0.3, 0.5])
@@ -847,7 +848,7 @@ describe("animate prop as variant", () => {
         }).not.toThrowError()
     })
 
-    test("new child items animate from initial to animate", () => {
+    test("new child items animate from initial to animate", async () => {
         const x = motionValue(0)
         const Component = ({ length }: { length: number }) => {
             const variants: Variants = {
@@ -877,6 +878,8 @@ describe("animate prop as variant", () => {
         rerender(<Component length={1} />)
         rerender(<Component length={2} />)
         rerender(<Component length={2} />)
+
+        await nextFrame()
 
         expect(x.get()).toBe(100)
     })
@@ -1026,6 +1029,7 @@ describe("animate prop as variant", () => {
         rerender(<Parent isVisible={false} />)
 
         await nextFrame()
+
         expect(element).toHaveStyle("transform: none")
     })
 

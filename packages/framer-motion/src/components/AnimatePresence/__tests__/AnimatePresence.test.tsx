@@ -11,6 +11,7 @@ import {
 } from "../../.."
 import { motionValue } from "../../../value"
 import { ResolvedValues } from "../../../render/types"
+import { nextFrame } from "../../../gestures/__tests__/utils"
 
 describe("AnimatePresence", () => {
     test("Allows initial animation if no `initial` prop defined", async () => {
@@ -23,9 +24,13 @@ describe("AnimatePresence", () => {
                             animate={{ x: 100 }}
                             style={{ x }}
                             exit={{ x: 0 }}
-                            onAnimationStart={() =>
-                                frame.postRender(() => resolve(x.get()))
-                            }
+                            onAnimationStart={() => {
+                                frame.postRender(() => {
+                                    frame.postRender(() => {
+                                        resolve(x.get())
+                                    })
+                                })
+                            }}
                         />
                     </AnimatePresence>
                 )
@@ -112,7 +117,7 @@ describe("AnimatePresence", () => {
     })
 
     test("Allows nested exit animations", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const opacity = motionValue(0)
             const Component = ({ isOpen }: any) => {
                 return (
@@ -133,10 +138,16 @@ describe("AnimatePresence", () => {
 
             const { rerender } = render(<Component isOpen />)
             rerender(<Component isOpen />)
+
+            await nextFrame()
+
             expect(opacity.get()).toBe(0.9)
             rerender(<Component isOpen={false} />)
             rerender(<Component isOpen={false} />)
-            setTimeout(() => resolve(opacity.get()), 50)
+
+            await nextFrame()
+
+            resolve(opacity.get())
         })
 
         const opacity = await promise
@@ -494,6 +505,8 @@ describe("AnimatePresence", () => {
             rerender(<Component isVisible={false} />)
         })
 
+        await nextFrame()
+
         expect(x.get()).toBe(200)
     })
 
@@ -503,7 +516,7 @@ describe("AnimatePresence", () => {
             exit: { opacity: 0, transition: { type: false } },
         }
 
-        const promise = new Promise<number>((resolve) => {
+        const promise = new Promise<number>(async (resolve) => {
             const opacity = motionValue(1)
             const Component = ({ isVisible }: { isVisible: boolean }) => {
                 return (
@@ -530,6 +543,8 @@ describe("AnimatePresence", () => {
             const { rerender } = render(<Component isVisible />)
 
             rerender(<Component isVisible={false} />)
+
+            await nextFrame()
 
             resolve(opacity.get())
         })
@@ -776,6 +791,8 @@ describe("AnimatePresence with custom components", () => {
             rerender(<Component isVisible={false} />)
         })
 
+        await nextFrame()
+
         expect(x.get()).toBe(200)
     })
 
@@ -845,9 +862,13 @@ describe("AnimatePresence with custom components", () => {
             rerender(<Component isVisible />)
         })
 
+        await nextFrame()
+
         await act(async () => {
             rerender(<Component isVisible={false} />)
         })
+
+        await nextFrame()
 
         expect([xParent.get(), xChild.get()]).toEqual([200, 200])
     })
@@ -887,11 +908,14 @@ describe("AnimatePresence with custom components", () => {
             rerender(<Component isVisible={false} />)
         })
 
+        await nextFrame()
+
         expect(opacity.get()).toBe(0)
     })
 
     test("Sibling AnimatePresence wrapped in LayoutGroup remove exiting elements", async () => {
-        const opacity = motionValue(1)
+        const opacityA = motionValue(1)
+        const opacityB = motionValue(1)
 
         const Component = ({ isVisible }: { isVisible: boolean }) => {
             return (
@@ -902,7 +926,7 @@ describe("AnimatePresence with custom components", () => {
                                 data-testid="a"
                                 exit={{ opacity: 0 }}
                                 transition={{ type: false }}
-                                style={{ opacity }}
+                                style={{ opacity: opacityA }}
                             />
                         )}
                     </AnimatePresence>
@@ -912,7 +936,7 @@ describe("AnimatePresence with custom components", () => {
                                 data-testid="b"
                                 exit={{ opacity: 0 }}
                                 transition={{ type: false }}
-                                style={{ opacity }}
+                                style={{ opacity: opacityB }}
                             />
                         )}
                     </AnimatePresence>
@@ -934,8 +958,12 @@ describe("AnimatePresence with custom components", () => {
             rerender(<Component isVisible={false} />)
         })
 
+        await nextFrame()
+
         await new Promise<void>((resolve) => {
             setTimeout(() => {
+                expect(opacityA.get()).toBe(0)
+                expect(opacityB.get()).toBe(0)
                 expect(queryByTestId("a")).toBe(null)
                 expect(queryByTestId("b")).toBe(null)
                 resolve()

@@ -7,7 +7,7 @@ export function animateStyle(
     keyframes: string[] | number[],
     {
         delay = 0,
-        duration,
+        duration = 300,
         repeat = 0,
         repeatType = "loop",
         ease,

@@ -18,7 +18,12 @@ export const App = () => {
 
     return (
         <>
-            <div style={{ paddingTop: 400, paddingBottom: 400 }}>
+            <div
+                style={{
+                    paddingTop: 400,
+                    paddingBottom: 400,
+                }}
+            >
                 <svg ref={svg} viewBox="0 0 200 200" width="200" height="200">
                     <rect
                         ref={rect}
@@ -30,10 +35,13 @@ export const App = () => {
                     />
                 </svg>
             </div>
-            <motion.div style={{ ...fixed }} id="rect-progress">
+            <motion.div style={{ ...fixed, color: "white" }} id="rect-progress">
                 {rectValues.scrollYProgress}
             </motion.div>
-            <motion.div style={{ ...fixed, top: 50 }} id="svg-progress">
+            <motion.div
+                style={{ ...fixed, top: 50, color: "white" }}
+                id="svg-progress"
+            >
                 {svgValues.scrollYProgress}
             </motion.div>
         </>

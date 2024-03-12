@@ -77,7 +77,7 @@ export class MotionValue<V = any> {
     /**
      * The current state of the `MotionValue`.
      */
-    private current: V
+    private current: V | undefined
 
     /**
      * The previous state of the `MotionValue`.
@@ -112,9 +112,7 @@ export class MotionValue<V = any> {
     private stopPassiveEffect?: VoidFunction
 
     /**
-     * A reference to the currently-controlling Popmotion animation
-     *
-     *
+     * A reference to the currently-controlling animation.
      */
     animation?: AnimationPlaybackControls
 
@@ -287,11 +285,11 @@ export class MotionValue<V = any> {
      * Set the state of the `MotionValue`, stopping any active animations,
      * effects, and resets velocity to `0`.
      */
-    jump(v: V) {
+    jump(v: V, endAnimation = true) {
         this.updateAndNotify(v)
         this.prev = v
         this.prevUpdatedAt = this.prevFrameValue = undefined
-        this.stop()
+        endAnimation && this.stop()
         if (this.stopPassiveEffect) this.stopPassiveEffect()
     }
 
@@ -334,7 +332,7 @@ export class MotionValue<V = any> {
             collectMotionValues.current.push(this)
         }
 
-        return this.current
+        return this.current!
     }
 
     /**
