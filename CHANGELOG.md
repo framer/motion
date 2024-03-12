@@ -8,7 +8,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Added
 
--   Added support for Content Security Policy (CSP) nonces.
+-   Added support for Content Security Policy (CSP) nonces via `MotionConfig`.
 
 ## [11.0.8] 2024-02-29
 
