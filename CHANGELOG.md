@@ -4,7 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [11.0.9] 2024-03-05
+## [11.0.10] 2024-03-12
+
+### Fixed
+
+-   Improved speed and stability of regexes.
+
+## [11.0.9] 2024-03-12
 
 ### Added
 
