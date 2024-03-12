@@ -93,7 +93,6 @@ header {
   margin-right: 8px;
   background: #0055ff;
   border-radius: 10px;
-  display: inline-block;
 }
 
 .paragraph {
