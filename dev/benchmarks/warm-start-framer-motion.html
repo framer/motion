@@ -1,9 +1,9 @@
 <html>
     <!--
-    Cold Start: Framer Motion
+    Warm Start: Framer Motion
 
-    This benchmarks cold start - when an animation library has to
-    read values from the DOM.
+    This benchmarks warm start - when an animation library already
+    knows the initial animating values.
 
     Run in private browsing mode to avoid browser plugins interfering with
     benchmark.
@@ -28,7 +28,7 @@
             }
 
             .box {
-                width: 10px;
+                width: 10%;
                 height: 100px;
                 background-color: #fff;
             }
@@ -51,39 +51,22 @@
             const boxes = document.querySelectorAll(".box")
 
             setTimeout(() => {
-                // Cold start (read from DOM)
+                // Warm start
                 boxes.forEach((box) =>
                     animate(
                         box,
                         {
-                            rotate: Math.random() * 360,
-                            backgroundColor: "#f00",
-                            width: Math.random() * 100 + "%",
-                            x: 5,
+                            rotate: [0, Math.random() * 360],
+                            backgroundColor: ["#fff", "#f00"],
+                            width: ["0%", Math.random() * 100 + "%"],
+                            x: [0, 5],
                         },
                         {
-                            ease: "linear",
+                            easing: "linear",
                             duration: 1,
                         }
                     )
                 )
-
-                setTimeout(() => {
-                    // Value conversion
-                    boxes.forEach((box) =>
-                        animate(
-                            box,
-                            {
-                                width: Math.random() * 100 + "px",
-                                x: "10%",
-                            },
-                            {
-                                ease: "linear",
-                                duration: 1,
-                            }
-                        )
-                    )
-                }, 1500)
             }, 1000)
         </script>
     </body>

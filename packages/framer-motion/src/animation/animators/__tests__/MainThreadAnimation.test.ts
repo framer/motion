@@ -1,19 +1,26 @@
-import { animateValue } from "../"
-import { reverseEasing } from "../../../../easing/modifiers/reverse"
-import { nextFrame } from "../../../../gestures/__tests__/utils"
-import { noop } from "../../../../utils/noop"
-import { ValueAnimationOptions } from "../../../types"
+import { MainThreadAnimation, animateValue } from "../MainThreadAnimation"
+import { reverseEasing } from "../../../easing/modifiers/reverse"
+import { nextFrame } from "../../../gestures/__tests__/utils"
+import { noop } from "../../../utils/noop"
+import { ValueAnimationOptions } from "../../types"
 import { syncDriver } from "./utils"
+import { KeyframeResolver } from "../../../render/utils/KeyframesResolver"
 
 const linear = noop
 
-function testAnimate<V>(
+class AsyncKeyframesResolver extends KeyframeResolver<number> {
+    constructor(...args: [any, any, any, any, any]) {
+        super(...args, true)
+    }
+}
+
+function testAnimate<V extends string | number>(
     options: ValueAnimationOptions<V>,
     expected: V[],
     resolve: () => void
 ) {
     const output: V[] = []
-    animateValue({
+    new MainThreadAnimation({
         driver: syncDriver(20),
         duration: 100,
         ease: linear,
@@ -27,7 +34,7 @@ function testAnimate<V>(
     })
 }
 
-describe("animate", () => {
+describe("MainThreadAnimation", () => {
     test("Correctly performs an animation with default settings", async () => {
         return new Promise<void>((resolve) =>
             testAnimate(
@@ -1229,6 +1236,25 @@ describe("animate", () => {
         await animation
 
         expect(output).toEqual([0, 20, 40, 100])
+    })
+
+    test("Correctly completes an animation with async resolver", async () => {
+        const output: number[] = []
+
+        const animation = animateValue({
+            KeyframeResolver: AsyncKeyframesResolver as any,
+            keyframes: [0, 100],
+            driver: syncDriver(20),
+            duration: 100,
+            ease: linear,
+            onUpdate: (v) => output.push(v),
+        })
+
+        animation.complete()
+
+        await animation
+
+        expect(output).toEqual([100])
     })
 
     test("Updates speed to half speed", async () => {

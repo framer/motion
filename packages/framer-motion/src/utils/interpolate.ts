@@ -74,6 +74,7 @@ export function interpolate<T>(
      * that returns the output.
      */
     if (inputLength === 1) return () => output[0]
+    if (inputLength === 2 && input[0] === input[1]) return () => output[1]
 
     // If input runs highest -> lowest, reverse both arrays
     if (input[0] > input[inputLength - 1]) {

@@ -1,10 +1,15 @@
 import { TargetAndTransition, TargetResolver } from "../types"
 import type { VisualElement } from "../render/VisualElement"
 import { Easing } from "../easing/types"
-import { Driver } from "./animators/js/types"
+import { Driver } from "./animators/drivers/types"
 import { SVGPathProperties, VariantLabels } from "../motion/types"
 import { SVGAttributes } from "../render/svg/types-attributes"
 import { ProgressTimeline } from "../render/dom/scroll/observe"
+import { MotionValue } from "../value"
+import {
+    KeyframeResolver,
+    OnKeyframesResolved,
+} from "../render/utils/KeyframesResolver"
 
 export interface AnimationPlaybackLifecycles<V> {
     onUpdate?: (latest: V) => void
@@ -29,13 +34,22 @@ export interface Transition
 
 export interface ValueAnimationTransition<V = any>
     extends Transition,
-        AnimationPlaybackLifecycles<V> {
-    isHandoff?: boolean
-}
+        AnimationPlaybackLifecycles<V> {}
 
-export interface ValueAnimationOptions<V = any>
+export type ResolveKeyframes<V extends string | number> = (
+    keyframes: V[],
+    onComplete: OnKeyframesResolved<V>,
+    name?: string,
+    motionValue?: any
+) => KeyframeResolver<V>
+
+export interface ValueAnimationOptions<V extends string | number = number>
     extends ValueAnimationTransition {
     keyframes: V[]
+    KeyframeResolver?: typeof KeyframeResolver
+    name?: string
+    motionValue?: MotionValue<V>
+    from?: V
 }
 
 export interface AnimationScope<T = any> {
@@ -153,9 +167,11 @@ export interface VelocityOptions {
     restDelta?: number
 }
 
+export type RepeatType = "loop" | "reverse" | "mirror"
+
 export interface AnimationPlaybackOptions {
     repeat?: number
-    repeatType?: "loop" | "reverse" | "mirror"
+    repeatType?: RepeatType
     repeatDelay?: number
 }
 

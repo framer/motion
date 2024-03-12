@@ -86,7 +86,7 @@ export { useInstantLayoutTransition } from "./projection/use-instant-layout-tran
 export { useResetProjection } from "./projection/use-reset-projection"
 export { buildTransform } from "./render/html/utils/build-transform"
 export { visualElementStore } from "./render/store"
-export { animateValue } from "./animation/animators/js"
+export { animateValue } from "./animation/animators/MainThreadAnimation"
 export { color } from "./value/types/color"
 export { complex } from "./value/types/complex"
 export { px } from "./value/types/numbers/units"

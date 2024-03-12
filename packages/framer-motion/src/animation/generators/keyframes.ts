@@ -15,7 +15,7 @@ export function defaultEasing(
     return values.map(() => easing || easeInOut).splice(0, values.length - 1)
 }
 
-export function keyframes<T>({
+export function keyframes<T extends string | number>({
     duration = 300,
     keyframes: keyframeValues,
     times,

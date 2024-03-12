@@ -4,7 +4,6 @@ import { isDragActive } from "./drag/utils/lock"
 import { EventInfo } from "../events/types"
 import type { VisualElement } from "../render/VisualElement"
 import { Feature } from "../motion/features/Feature"
-import { frame } from "../frameloop"
 
 function addHoverEvent(node: VisualElement<Element>, isActive: boolean) {
     const eventName = "pointer" + (isActive ? "enter" : "leave")
@@ -20,7 +19,7 @@ function addHoverEvent(node: VisualElement<Element>, isActive: boolean) {
         }
 
         if (props[callbackName]) {
-            frame.update(() => props[callbackName](event, info))
+            props[callbackName](event, info)
         }
     }
 
