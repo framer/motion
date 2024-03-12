@@ -22,7 +22,7 @@ export function isSVGComponent(Component: string | ComponentType<React.PropsWith
         /**
          * If it contains a capital letter, it's an SVG component
          */
-        /[A-Z]/.test(Component)
+        /[A-Z]/u.test(Component)
     ) {
         return true
     }

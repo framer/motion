@@ -19,7 +19,7 @@ export function resolveOffsets(
     info: ScrollInfo,
     options: ScrollInfoOptions
 ) {
-    let { offset: offsetDefinition = ScrollOffset.All } = options
+    const { offset: offsetDefinition = ScrollOffset.All } = options
     const { target = container, axis = "y" } = options
     const lengthLabel = axis === "y" ? "height" : "width"
 
