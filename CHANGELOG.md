@@ -4,11 +4,15 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [11.0.13] 2024-03-12
+## [11.0.13] 2024-03-13
 
 ### Added
 
 -   Added default value types for `backgroundPositionX` and `backgroundPositionY`.
+
+### Fixed
+
+-   Fixed `height: auto` animations.
 
 ## [11.0.12] 2024-03-12
 
