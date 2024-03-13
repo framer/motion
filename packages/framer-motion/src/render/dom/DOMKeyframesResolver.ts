@@ -63,7 +63,6 @@ export class DOMKeyframesResolver<
                 }
             }
         }
-        console.log(1)
 
         /**
          * Check to see if unit type has changed. If so schedule jobs that will
