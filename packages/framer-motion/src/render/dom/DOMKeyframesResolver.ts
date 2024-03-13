@@ -33,6 +33,7 @@ export class DOMKeyframesResolver<
         name?: string,
         motionValue?: MotionValue<T>
     ) {
+        console.log(unresolvedKeyframes, motionValue?.get())
         super(
             unresolvedKeyframes,
             onComplete,
@@ -50,7 +51,9 @@ export class DOMKeyframesResolver<
 
         const noneKeyframeIndexes: number[] = []
 
+        console.log(unresolvedKeyframes)
         super.readKeyframes()
+        console.log(1, unresolvedKeyframes)
 
         /**
          * If any keyframe is a CSS variable, we need to find its value by sampling the element
@@ -70,6 +73,7 @@ export class DOMKeyframesResolver<
             }
         }
 
+        console.log(2, unresolvedKeyframes)
         if (noneKeyframeIndexes.length) {
             makeNoneKeyframesAnimatable(
                 unresolvedKeyframes,
@@ -77,7 +81,7 @@ export class DOMKeyframesResolver<
                 name
             )
         }
-
+        console.log(3, unresolvedKeyframes)
         /**
          * Check to see if unit type has changed. If so schedule jobs that will
          * temporarily set styles to the destination keyframes.
