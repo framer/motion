@@ -4,7 +4,8 @@ const isNotNull = (value: unknown) => value !== null
 
 export function getFinalKeyframe<T>(
     keyframes: T[],
-    { repeat, repeatType = "loop" }: Repeat
+    { repeat, repeatType = "loop" }: Repeat,
+    finalKeyframe?: T
 ): T {
     const resolvedKeyframes = keyframes.filter(isNotNull)
     const index =
@@ -12,5 +13,7 @@ export function getFinalKeyframe<T>(
             ? 0
             : resolvedKeyframes.length - 1
 
-    return resolvedKeyframes[index]
+    return !index || finalKeyframe === undefined
+        ? resolvedKeyframes[index]
+        : finalKeyframe
 }

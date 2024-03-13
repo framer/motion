@@ -62,13 +62,16 @@ export function flushKeyframeResolvers() {
 }
 
 export type OnKeyframesResolved<T extends string | number> = (
-    resolvedKeyframes: ResolvedKeyframes<T>
+    resolvedKeyframes: ResolvedKeyframes<T>,
+    finalKeyframe: T
 ) => void
 
 export class KeyframeResolver<T extends string | number = any> {
     protected element?: VisualElement<any>
     protected unresolvedKeyframes: UnresolvedKeyframes<string | number>
     name?: string
+
+    finalKeyframe?: T
 
     private motionValue?: MotionValue<T>
     private onComplete: OnKeyframesResolved<T>
@@ -181,7 +184,10 @@ export class KeyframeResolver<T extends string | number = any> {
 
     complete() {
         this.isComplete = true
-        this.onComplete(this.unresolvedKeyframes as ResolvedKeyframes<T>)
+        this.onComplete(
+            this.unresolvedKeyframes as ResolvedKeyframes<T>,
+            this.finalKeyframe as T
+        )
         toResolve.delete(this)
     }
 
