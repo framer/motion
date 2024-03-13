@@ -30,7 +30,9 @@ export function setTarget(
     target = { ...target, ...transitionEnd }
 
     for (const key in target) {
-        const value = resolveFinalValueInKeyframes(target[key])
+        const value = resolveFinalValueInKeyframes(
+            target[key as keyof typeof target] as any
+        )
         setMotionValue(visualElement, key, value as string | number)
     }
 }
