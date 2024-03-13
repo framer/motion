@@ -19,6 +19,7 @@ import {
 import { clamp } from "../../utils/clamp"
 import { invariant } from "../../utils/errors"
 import { frameloopDriver } from "./drivers/driver-frameloop"
+import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -108,8 +109,10 @@ export class MainThreadAnimation<
         super(options)
 
         const { name, motionValue, keyframes } = this.options
-        const onResolved = (resolvedKeyframes: ResolvedKeyframes<T>) =>
-            this.onKeyframesResolved(resolvedKeyframes)
+        const onResolved = (
+            resolvedKeyframes: ResolvedKeyframes<T>,
+            finalKeyframe: T
+        ) => this.onKeyframesResolved(resolvedKeyframes, finalKeyframe)
 
         if (name && motionValue && motionValue.owner) {
             this.resolver = (motionValue.owner as any).resolveKeyframes(
@@ -223,6 +226,7 @@ export class MainThreadAnimation<
 
     tick(timestamp: number, sample = false) {
         const {
+            finalKeyframe,
             generator,
             mirroredGenerator,
             mapPercentToKeyframes,
@@ -360,6 +364,14 @@ export class MainThreadAnimation<
         const isAnimationFinished =
             this.holdTime === null &&
             (this.state === "finished" || (this.state === "running" && done))
+
+        if (isAnimationFinished && finalKeyframe !== undefined) {
+            state.value = getFinalKeyframe(
+                keyframes,
+                this.options,
+                finalKeyframe
+            )
+        }
 
         if (onUpdate) {
             onUpdate(state.value)

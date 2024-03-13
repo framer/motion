@@ -33,7 +33,6 @@ export class DOMKeyframesResolver<
         name?: string,
         motionValue?: MotionValue<T>
     ) {
-        console.log(unresolvedKeyframes, motionValue?.get())
         super(
             unresolvedKeyframes,
             onComplete,
@@ -49,11 +48,7 @@ export class DOMKeyframesResolver<
 
         if (!element.current) return
 
-        const noneKeyframeIndexes: number[] = []
-
-        console.log(unresolvedKeyframes)
         super.readKeyframes()
-        console.log(1, unresolvedKeyframes)
 
         /**
          * If any keyframe is a CSS variable, we need to find its value by sampling the element
@@ -67,21 +62,9 @@ export class DOMKeyframesResolver<
                     unresolvedKeyframes[i] = resolved as T
                 }
             }
-
-            if (isNone(unresolvedKeyframes[i])) {
-                noneKeyframeIndexes.push(i)
-            }
         }
+        console.log(1)
 
-        console.log(2, unresolvedKeyframes)
-        if (noneKeyframeIndexes.length) {
-            makeNoneKeyframesAnimatable(
-                unresolvedKeyframes,
-                noneKeyframeIndexes,
-                name
-            )
-        }
-        console.log(3, unresolvedKeyframes)
         /**
          * Check to see if unit type has changed. If so schedule jobs that will
          * temporarily set styles to the destination keyframes.
@@ -89,7 +72,7 @@ export class DOMKeyframesResolver<
          * TODO: We can throw if there are multiple keyframes and the value type changes.
          */
         if (!positionalKeys.has(name) || unresolvedKeyframes.length !== 2) {
-            return
+            return this.resolveNoneKeyframes()
         }
 
         const [origin, target] = unresolvedKeyframes
@@ -99,7 +82,7 @@ export class DOMKeyframesResolver<
         /**
          * Either we don't recognise these value types or we can animate between them.
          */
-        if (!originType || !targetType || originType === targetType) return
+        if (originType === targetType) return
 
         /**
          * If both values are numbers or pixels, we can animate between them by
@@ -117,6 +100,25 @@ export class DOMKeyframesResolver<
              * Else, the only way to resolve this is by measuring the element.
              */
             this.needsMeasurement = true
+        }
+    }
+
+    resolveNoneKeyframes() {
+        const { unresolvedKeyframes, name } = this
+
+        const noneKeyframeIndexes: number[] = []
+        for (let i = 0; i < unresolvedKeyframes.length; i++) {
+            if (isNone(unresolvedKeyframes[i])) {
+                noneKeyframeIndexes.push(i)
+            }
+        }
+
+        if (noneKeyframeIndexes.length) {
+            makeNoneKeyframesAnimatable(
+                unresolvedKeyframes,
+                noneKeyframeIndexes,
+                name
+            )
         }
     }
 
@@ -162,12 +164,17 @@ export class DOMKeyframesResolver<
         const value = element.getValue(name)
         value && value.jump(this.measuredOrigin, false)
 
-        unresolvedKeyframes[unresolvedKeyframes.length - 1] = positionalValues[
-            name
-        ](
+        const finalKeyframeIndex = unresolvedKeyframes.length - 1
+        const finalKeyframe = unresolvedKeyframes[finalKeyframeIndex]
+
+        unresolvedKeyframes[finalKeyframeIndex] = positionalValues[name](
             element.measureViewportBox(),
             window.getComputedStyle(element.current)
         ) as any
+
+        if (finalKeyframe !== null) {
+            this.finalKeyframe = finalKeyframe as T
+        }
 
         if (name === "height" && this.suspendedScrollY !== undefined) {
             window.scrollTo(0, this.suspendedScrollY)
@@ -183,5 +190,7 @@ export class DOMKeyframesResolver<
                 }
             )
         }
+
+        this.resolveNoneKeyframes()
     }
 }

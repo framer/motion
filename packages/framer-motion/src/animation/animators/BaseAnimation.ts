@@ -64,7 +64,10 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
         this.updateFinishedPromise()
     }
 
-    protected abstract initPlayback(keyframes: ResolvedKeyframes<T>): Resolved
+    protected abstract initPlayback(
+        keyframes: ResolvedKeyframes<T>,
+        finalKeyframe?: T
+    ): Resolved
 
     abstract play(): void
     abstract pause(): void
@@ -83,7 +86,10 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
      * this.resolved will synchronously flush all pending keyframe resolvers.
      * This is a deoptimisation, but at its worst still batches read/writes.
      */
-    get resolved(): Resolved & { keyframes: ResolvedKeyframes<T> } {
+    get resolved(): Resolved & {
+        keyframes: ResolvedKeyframes<T>
+        finalKeyframe?: T
+    } {
         if (!this._resolved) flushKeyframeResolvers()
 
         return this._resolved
@@ -94,7 +100,10 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
      * will check if its possible to run the animation and, if not, skip it.
      * Otherwise, it will call initPlayback on the implementing class.
      */
-    protected onKeyframesResolved(keyframes: ResolvedKeyframes<T>) {
+    protected onKeyframesResolved(
+        keyframes: ResolvedKeyframes<T>,
+        finalKeyframe?: T
+    ) {
         const { name, type, velocity, delay, onComplete, onUpdate } =
             this.options
 
@@ -105,8 +114,9 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
         if (!canAnimate(keyframes, name, type, velocity)) {
             // Finish immediately
             if (instantAnimationState.current || !delay) {
-                const finalKeyframe = getFinalKeyframe(keyframes, this.options)
-                onUpdate?.(finalKeyframe)
+                onUpdate?.(
+                    getFinalKeyframe(keyframes, this.options, finalKeyframe)
+                )
                 onComplete?.()
                 this.resolveFinishedPromise()
                 this.updateFinishedPromise()
@@ -121,7 +131,8 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
 
         this._resolved = {
             keyframes,
-            ...this.initPlayback(keyframes),
+            finalKeyframe,
+            ...this.initPlayback(keyframes, finalKeyframe),
         }
 
         this.onPostResolved()

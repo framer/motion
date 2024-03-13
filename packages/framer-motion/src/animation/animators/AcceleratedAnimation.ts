@@ -129,8 +129,8 @@ export class AcceleratedAnimation<
         const { name, motionValue, keyframes } = this.options
         this.resolver = new DOMKeyframesResolver<T>(
             keyframes,
-            (resolvedKeyframes: ResolvedKeyframes<T>) =>
-                this.onKeyframesResolved(resolvedKeyframes),
+            (resolvedKeyframes: ResolvedKeyframes<T>, finalKeyframe: T) =>
+                this.onKeyframesResolved(resolvedKeyframes, finalKeyframe),
             name,
             motionValue
         )
@@ -144,7 +144,8 @@ export class AcceleratedAnimation<
     private pendingTimeline: AnimationTimeline | undefined
 
     protected initPlayback(
-        keyframes: ResolvedKeyframes<T>
+        keyframes: ResolvedKeyframes<T>,
+        finalKeyframe: T
     ): ResolvedAcceleratedAnimation {
         let duration = this.options.duration || 300
 
@@ -191,7 +192,9 @@ export class AcceleratedAnimation<
              */
             animation.onfinish = () => {
                 const { onComplete } = this.options
-                motionValue.set(getFinalKeyframe(keyframes, this.options))
+                motionValue.set(
+                    getFinalKeyframe(keyframes, this.options, finalKeyframe)
+                )
                 onComplete && onComplete()
                 this.cancel()
                 this.resolveFinishedPromise()
