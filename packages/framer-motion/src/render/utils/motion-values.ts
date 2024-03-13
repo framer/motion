@@ -13,8 +13,8 @@ export function updateMotionValuesFromProps(
     const { willChange } = next
 
     for (const key in next) {
-        const nextValue = next[key]
-        const prevValue = prev[key]
+        const nextValue = next[key as keyof MotionStyle]
+        const prevValue = prev[key as keyof MotionStyle]
 
         if (isMotionValue(nextValue)) {
             /**
@@ -76,7 +76,8 @@ export function updateMotionValuesFromProps(
 
     // Handle removed values
     for (const key in prev) {
-        if (next[key] === undefined) element.removeValue(key)
+        if (next[key as keyof MotionStyle] === undefined)
+            element.removeValue(key)
     }
 
     return next
