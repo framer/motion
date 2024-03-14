@@ -1,4 +1,4 @@
-import { cancelFrame, frame } from "../../frameloop"
+import { frame } from "../../frameloop"
 import { MotionValue } from "../../value"
 import type { VisualElement } from "../VisualElement"
 
@@ -35,7 +35,7 @@ function measureAllKeyframes() {
 
     anyNeedsMeasurement = false
     isScheduled = false
-
+    console.log("finishing flush")
     toResolve.forEach((resolver) => resolver.complete())
 
     toResolve.clear()
@@ -49,16 +49,12 @@ function readAllKeyframes() {
             anyNeedsMeasurement = true
         }
     })
-
-    frame.resolveKeyframes(measureAllKeyframes)
 }
 
 export function flushKeyframeResolvers() {
+    console.log("flushing  keyframe resolvers")
     readAllKeyframes()
     measureAllKeyframes()
-
-    cancelFrame(readAllKeyframes)
-    cancelFrame(measureAllKeyframes)
 }
 
 export type OnKeyframesResolved<T extends string | number> = (
@@ -125,6 +121,7 @@ export class KeyframeResolver<T extends string | number = any> {
             if (!isScheduled) {
                 isScheduled = true
                 frame.read(readAllKeyframes)
+                frame.resolveKeyframes(measureAllKeyframes)
             }
         } else {
             this.readKeyframes()
@@ -184,6 +181,9 @@ export class KeyframeResolver<T extends string | number = any> {
 
     complete() {
         this.isComplete = true
+
+        console.log("firing on complete with", this.unresolvedKeyframes)
+
         this.onComplete(
             this.unresolvedKeyframes as ResolvedKeyframes<T>,
             this.finalKeyframe as T

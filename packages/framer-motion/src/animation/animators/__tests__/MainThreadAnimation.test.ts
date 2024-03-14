@@ -1424,4 +1424,17 @@ describe("MainThreadAnimation", () => {
             }).duration
         ).toEqual(1.2)
     })
+
+    test("Doesn't throw when forcing animation resolution on an animation that would be skipped", async () => {
+        const animation = animateValue({
+            KeyframeResolver: AsyncKeyframesResolver as any,
+            keyframes: [1, 1],
+            duration: 0.1,
+            ease: "linear",
+        })
+
+        animation.sample(0.4)
+
+        expect(true).toBe(true)
+    })
 })
