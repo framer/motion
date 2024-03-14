@@ -37,7 +37,7 @@ function readAnimatableValue(value?: Color) {
 }
 
 export function readThreeValue(instance: Object3DNode<any, any>, name: string) {
-    return readers[name]
-        ? readers[name](instance)
+    return readers[name as keyof typeof readers]
+        ? readers[name as keyof typeof readers](instance)
         : readAnimatableValue(instance[name]) || 0
 }
