@@ -118,7 +118,10 @@ export interface AnimationPlaybackControls {
 export type DynamicOption<T> = (i: number, total: number) => T
 
 export interface CSSStyleDeclarationWithTransform
-    extends Omit<CSSStyleDeclaration, "direction" | "transition"> {
+    extends Omit<
+        CSSStyleDeclaration,
+        "direction" | "transition" | "x" | "y" | "z"
+    > {
     x: number | string
     y: number | string
     z: number | string

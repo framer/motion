@@ -30,7 +30,7 @@ export class SVGVisualElement extends DOMVisualElement<
         props: MotionProps,
         key: string
     ): string | number | MotionValue<any> | undefined {
-        return props[key]
+        return props[key as keyof MotionProps]
     }
 
     readValueFromInstance(instance: SVGElement, key: string) {

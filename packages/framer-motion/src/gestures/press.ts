@@ -89,7 +89,11 @@ export class PressGesture extends Feature<Element> {
             window,
             "pointerup",
             endPointerPress,
-            { passive: !(props.onTap || props["onPointerUp"]) }
+            {
+                passive: !(
+                    props.onTap || props["onPointerUp" as keyof typeof props]
+                ),
+            }
         )
 
         const removePointerCancelListener = addPointerEvent(
@@ -97,7 +101,12 @@ export class PressGesture extends Feature<Element> {
             "pointercancel",
             (cancelEvent, cancelInfo) =>
                 this.cancelPress(cancelEvent, cancelInfo),
-            { passive: !(props.onTapCancel || props["onPointerCancel"]) }
+            {
+                passive: !(
+                    props.onTapCancel ||
+                    props["onPointerCancel" as keyof typeof props]
+                ),
+            }
         )
 
         this.removeEndListeners = pipe(
@@ -173,7 +182,12 @@ export class PressGesture extends Feature<Element> {
             props.globalTapTarget ? window : this.node.current!,
             "pointerdown",
             this.startPointerPress,
-            { passive: !(props.onTapStart || props["onPointerStart"]) }
+            {
+                passive: !(
+                    props.onTapStart ||
+                    props["onPointerStart" as keyof typeof props]
+                ),
+            }
         )
 
         const removeFocusListener = addDomEvent(

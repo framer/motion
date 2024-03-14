@@ -22,7 +22,8 @@ export const scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps = (
 ) => {
     const motionValues = {}
 
-    for (const key in props) {
+    let key: keyof typeof props
+    for (key in props) {
         const prop = props[key]
 
         if (isMotionValue(prop) || isMotionValue(prevProps[key])) {

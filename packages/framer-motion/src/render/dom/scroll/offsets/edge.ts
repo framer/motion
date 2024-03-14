@@ -13,8 +13,8 @@ export function resolveEdge(edge: Edge, length: number, inset = 0) {
      * If we have this edge defined as a preset, replace the definition
      * with the numerical value.
      */
-    if (namedEdges[edge] !== undefined) {
-        edge = namedEdges[edge]
+    if (edge in namedEdges) {
+        edge = namedEdges[edge as NamedEdges]
     }
 
     /**

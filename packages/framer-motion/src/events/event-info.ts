@@ -12,8 +12,8 @@ export function extractEventInfo(
 ): EventInfo {
     return {
         point: {
-            x: event[pointType + "X"],
-            y: event[pointType + "Y"],
+            x: event[`${pointType}X`],
+            y: event[`${pointType}Y`],
         },
     }
 }

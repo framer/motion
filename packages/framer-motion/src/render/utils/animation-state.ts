@@ -11,6 +11,7 @@ import { variantPriorityOrder } from "./variant-props"
 import { VisualElementAnimationOptions } from "../../animation/interfaces/types"
 import { AnimationDefinition } from "../../animation/types"
 import { animateVisualElement } from "../../animation/interfaces/visual-element"
+import { ResolvedValues } from "../types"
 
 export interface AnimationState {
     animateChanges: (type?: AnimationType) => Promise<any>
@@ -131,7 +132,10 @@ export function createAnimationState(
         for (let i = 0; i < numAnimationTypes; i++) {
             const type = reversePriorityOrder[i]
             const typeState = state[type]
-            const prop = props[type] !== undefined ? props[type] : context[type]
+            const prop =
+                props[type] !== undefined
+                    ? props[type]
+                    : context[type as keyof typeof context]
             const propIsVariant = isVariantLabel(prop)
 
             /**
@@ -150,7 +154,9 @@ export function createAnimationState(
              * TODO: Can probably change this to a !isControllingVariants check
              */
             let isInherited =
-                prop === context[type] && prop !== props[type] && propIsVariant
+                prop === context[type as keyof typeof context] &&
+                prop !== props[type] &&
+                propIsVariant
 
             /**
              *
@@ -325,7 +331,7 @@ export function createAnimationState(
          * defined in the style prop, or the last read value.
          */
         if (removedKeys.size) {
-            const fallbackAnimation = {}
+            const fallbackAnimation: ResolvedValues = {}
             removedKeys.forEach((key) => {
                 const fallbackTarget = visualElement.getBaseTarget(key)
 
@@ -370,7 +376,7 @@ export function createAnimationState(
         const animations = animateChanges(type)
 
         for (const key in state) {
-            state[key].protectedKeys = {}
+            state[key as keyof typeof state].protectedKeys = {}
         }
 
         return animations
