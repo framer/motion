@@ -58,7 +58,7 @@ export function buildHTMLStyles(
             // If this is a transform origin, flag and enable further transform-origin processing
             hasTransformOrigin = true
 
-            transformOrigin[key] = valueAsType
+            transformOrigin[key as keyof typeof transformOrigin] = valueAsType
         } else {
             style[key] = valueAsType
         }

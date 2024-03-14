@@ -54,7 +54,10 @@ export function useVisualElement<Instance, RenderState>(
      * was present on initial render - it will be deleted after this.
      */
     const wantsHandoff = useRef(
-        Boolean(props[optimizedAppearDataAttribute] && !window.HandoffComplete)
+        Boolean(
+            props[optimizedAppearDataAttribute as keyof typeof props] &&
+                !window.HandoffComplete
+        )
     )
 
     useIsomorphicLayoutEffect(() => {

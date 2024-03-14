@@ -17,4 +17,4 @@ export const sync = frame
 export const cancelSync = stepsOrder.reduce((acc, key) => {
     acc[key] = (process: Process) => cancelFrame(process)
     return acc
-}, {})
+}, {} as Record<string, (process: Process) => void>)

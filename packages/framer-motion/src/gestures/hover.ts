@@ -6,8 +6,10 @@ import type { VisualElement } from "../render/VisualElement"
 import { Feature } from "../motion/features/Feature"
 
 function addHoverEvent(node: VisualElement<Element>, isActive: boolean) {
-    const eventName = "pointer" + (isActive ? "enter" : "leave")
-    const callbackName = "onHover" + (isActive ? "Start" : "End")
+    const eventName = `pointer${isActive ? "enter" : "leave"}`
+    const callbackName = `onHover${isActive ? "Start" : "End"}` as
+        | "onHoverStart"
+        | "onHoverEnd"
 
     const handleEvent = (event: PointerEvent, info: EventInfo) => {
         if (event.pointerType === "touch" || isDragActive()) return
@@ -18,9 +20,7 @@ function addHoverEvent(node: VisualElement<Element>, isActive: boolean) {
             node.animationState.setActive("whileHover", isActive)
         }
 
-        if (props[callbackName]) {
-            props[callbackName](event, info)
-        }
+        props[callbackName]?.(event, info)
     }
 
     return addPointerEvent(node.current!, eventName, handleEvent, {

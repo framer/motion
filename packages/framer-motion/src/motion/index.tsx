@@ -127,7 +127,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
     }
 
     const ForwardRefComponent = forwardRef(MotionComponent)
-    ForwardRefComponent[motionComponentSymbol] = Component
+    ;(ForwardRefComponent as any)[motionComponentSymbol] = Component
     return ForwardRefComponent
 }
 

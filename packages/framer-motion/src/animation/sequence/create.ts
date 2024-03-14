@@ -222,7 +222,9 @@ export function createAnimationsFromSequence(
 
                 for (const key in keyframes) {
                     resolveValueSequence(
-                        keyframes[key],
+                        keyframes[
+                            key as keyof typeof keyframes
+                        ] as UnresolvedValueKeyframe,
                         getValueTransition(transition, key),
                         getValueSequence(key, subjectSequence),
                         elementIndex,
@@ -330,8 +332,11 @@ export function getValueTransition(
     transition: DynamicAnimationOptions & At,
     key: string
 ): DynamicAnimationOptions {
-    return transition[key]
-        ? { ...transition, ...transition[key] }
+    return transition[key as keyof typeof transition]
+        ? {
+              ...transition,
+              ...(transition[key as keyof typeof transition] as Transition),
+          }
         : { ...transition }
 }
 
