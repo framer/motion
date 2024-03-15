@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.14] 2024-03-15
+
+### Fixed
+
+-   Fixed animation controls in instances where keyframes resolve to be unanimatable.
+
 ## [11.0.13] 2024-03-13
 
 ### Added
