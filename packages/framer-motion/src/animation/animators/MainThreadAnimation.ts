@@ -225,6 +225,14 @@ export class MainThreadAnimation<
     }
 
     tick(timestamp: number, sample = false) {
+        const { resolved } = this
+
+        // If the animations has failed to resolve, return the final keyframe.
+        if (!resolved) {
+            const { keyframes } = this.options
+            return { done: true, value: keyframes[keyframes.length - 1] }
+        }
+
         const {
             finalKeyframe,
             generator,
@@ -234,7 +242,7 @@ export class MainThreadAnimation<
             calculatedDuration,
             totalDuration,
             resolvedDuration,
-        } = this.resolved
+        } = resolved
 
         if (this.startTime === null) return generator.next(0)
 
@@ -387,7 +395,8 @@ export class MainThreadAnimation<
     state: AnimationPlayState = "idle"
 
     get duration() {
-        return millisecondsToSeconds(this.resolved.calculatedDuration)
+        const { resolved } = this
+        return resolved ? millisecondsToSeconds(resolved.calculatedDuration) : 0
     }
 
     get time() {

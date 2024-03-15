@@ -86,10 +86,12 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
      * this.resolved will synchronously flush all pending keyframe resolvers.
      * This is a deoptimisation, but at its worst still batches read/writes.
      */
-    get resolved(): Resolved & {
-        keyframes: ResolvedKeyframes<T>
-        finalKeyframe?: T
-    } {
+    get resolved():
+        | (Resolved & {
+              keyframes: ResolvedKeyframes<T>
+              finalKeyframe?: T
+          })
+        | undefined {
         if (!this._resolved) flushKeyframeResolvers()
 
         return this._resolved
