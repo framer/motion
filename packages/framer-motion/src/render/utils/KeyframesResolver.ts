@@ -52,7 +52,6 @@ function readAllKeyframes() {
 }
 
 export function flushKeyframeResolvers() {
-    console.log("flushing  keyframe resolvers")
     readAllKeyframes()
     measureAllKeyframes()
 }

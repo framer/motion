@@ -114,7 +114,6 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
          * then we should complete it immediately.
          */
         if (!canAnimate(keyframes, name, type, velocity)) {
-            this.options.duration = 0
             // Finish immediately
             if (instantAnimationState.current || !delay) {
                 onUpdate?.(
