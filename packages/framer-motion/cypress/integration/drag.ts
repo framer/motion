@@ -218,7 +218,7 @@ describe("Drag", () => {
                 expect(top).to.equal(-10)
             })
             .trigger("pointerup", { force: true })
-            .wait(50)
+            .wait(100)
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()

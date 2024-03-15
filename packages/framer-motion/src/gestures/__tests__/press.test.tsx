@@ -341,7 +341,7 @@ describe("press", () => {
     })
 
     test("press gesture variant applies and unapplies", () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
@@ -355,16 +355,18 @@ describe("press", () => {
             )
 
             const { container } = render(<Component />)
-
+            await nextFrame()
             logOpacity() // 0.5
 
             // Trigger mouse down
             pointerDown(container.firstChild as Element)
 
+            await nextFrame()
             logOpacity() // 1
 
             // Trigger mouse up
             pointerUp(container.firstChild as Element)
+            await nextFrame()
             logOpacity() // 0.5
 
             resolve(opacityHistory)
@@ -374,7 +376,7 @@ describe("press", () => {
     })
 
     test("press gesture variant applies and unapplies via keyboard", () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
@@ -389,14 +391,17 @@ describe("press", () => {
 
             const { container } = render(<Component />)
 
+            await nextFrame()
             logOpacity() // 0.5
 
             fireEvent.focus(container.firstChild as Element)
             fireEvent.keyDown(container.firstChild as Element, enterKey)
 
+            await nextFrame()
             logOpacity() // 1
 
             fireEvent.keyUp(container.firstChild as Element, enterKey)
+            await nextFrame()
             logOpacity() // 0.5
 
             resolve(opacityHistory)
@@ -406,7 +411,7 @@ describe("press", () => {
     })
 
     test("press gesture variant applies and unapplies via blur cancel", () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
@@ -421,14 +426,17 @@ describe("press", () => {
 
             const { container } = render(<Component />)
 
+            await nextFrame()
             logOpacity() // 0.5
 
             fireEvent.focus(container.firstChild as Element)
             fireEvent.keyDown(container.firstChild as Element, enterKey)
 
+            await nextFrame()
             logOpacity() // 1
 
             fireEvent.blur(container.firstChild as Element)
+            await nextFrame()
             logOpacity() // 0.5
 
             resolve(opacityHistory)
@@ -438,7 +446,7 @@ describe("press", () => {
     })
 
     test("press gesture variant unapplies children", () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
@@ -455,15 +463,17 @@ describe("press", () => {
 
             const { getByTestId } = render(<Component />)
 
+            await nextFrame()
             logOpacity() // 0.5
 
             // Trigger mouse down
             pointerDown(getByTestId("child") as Element)
-
+            await nextFrame()
             logOpacity() // 1
 
             // Trigger mouse up
             pointerUp(getByTestId("child") as Element)
+            await nextFrame()
             logOpacity() // 0.5
             resolve(opacityHistory)
         })
@@ -472,7 +482,7 @@ describe("press", () => {
     })
 
     test("press gesture on children returns to parent-defined variant", () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
@@ -494,15 +504,18 @@ describe("press", () => {
             const { rerender, getByTestId } = render(<Component />)
             rerender(<Component />)
 
+            await nextFrame()
             logOpacity() // 1
 
             // Trigger mouse down
             pointerDown(getByTestId("child") as Element)
 
+            await nextFrame()
             logOpacity() // 0.5
 
             // Trigger mouse up
             pointerUp(getByTestId("child") as Element)
+            await nextFrame()
             logOpacity() // 1
             resolve(opacityHistory)
         })
@@ -556,7 +569,7 @@ describe("press", () => {
     })
 
     test("press gesture variant applies and unapplies with whileHover", () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
@@ -573,38 +586,47 @@ describe("press", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 
+            await nextFrame()
             logOpacity() // 0.5
 
             // Trigger hover
             pointerEnter(container.firstChild as Element)
+            await nextFrame()
             logOpacity() // 0.75
 
             // Trigger mouse down
             pointerDown(container.firstChild as Element)
+            await nextFrame()
             logOpacity() // 1
 
             // Trigger mouse up
             pointerUp(container.firstChild as Element)
+            await nextFrame()
             logOpacity() // 0.75
 
             // Trigger hover end
             pointerLeave(container.firstChild as Element)
+            await nextFrame()
             logOpacity()
 
             // Trigger hover
             pointerEnter(container.firstChild as Element)
+            await nextFrame()
             logOpacity()
 
             // Trigger mouse down
             pointerDown(container.firstChild as Element)
+            await nextFrame()
             logOpacity()
 
             // Trigger hover end
             pointerLeave(container.firstChild as Element)
+            await nextFrame()
             logOpacity()
 
             // Trigger mouse up
             pointerUp(container.firstChild as Element)
+            await nextFrame()
             logOpacity()
 
             resolve(opacityHistory)
@@ -616,7 +638,7 @@ describe("press", () => {
     })
 
     test("press gesture variant applies and unapplies as state changes", () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
@@ -638,40 +660,58 @@ describe("press", () => {
             )
             rerender(<Component isActive={false} />)
 
+            await nextFrame()
+
             logOpacity() // 0.5
 
             // Trigger hover
             pointerEnter(container.firstChild as Element)
+
+            await nextFrame()
             logOpacity() // 0.75
 
             // Trigger mouse down
             pointerDown(container.firstChild as Element)
+
+            await nextFrame()
             logOpacity() // 1
             rerender(<Component isActive={true} />)
             rerender(<Component isActive={true} />)
 
             // Trigger mouse up
             pointerUp(container.firstChild as Element)
+
+            await nextFrame()
             logOpacity() // 1
 
             // Trigger hover end
             pointerLeave(container.firstChild as Element)
+
+            await nextFrame()
             logOpacity() // 1
 
             // Trigger hover
             pointerEnter(container.firstChild as Element)
+
+            await nextFrame()
             logOpacity() // 1
 
             // Trigger mouse down
             pointerDown(container.firstChild as Element)
+
+            await nextFrame()
             logOpacity() // 1
 
             // Trigger hover end
             pointerLeave(container.firstChild as Element)
+
+            await nextFrame()
             logOpacity() // 1
 
             // Trigger mouse up
             pointerUp(container.firstChild as Element)
+
+            await nextFrame()
             logOpacity() // 1
 
             resolve(opacityHistory)

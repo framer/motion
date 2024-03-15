@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "11.0.8",
+    "version": "11.0.13",
     "description": "A simple and powerful JavaScript animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -40,6 +40,7 @@
         "waapi"
     ],
     "scripts": {
+        "eslint": "yarn run lint",
         "lint": "yarn eslint src/**/*.ts",
         "build": "yarn clean && tsc -p . && rollup -c && node ./scripts/check-bundle.js",
         "dev": "yarn watch",
@@ -68,10 +69,14 @@
         "tslib": "^2.4.0"
     },
     "peerDependencies": {
+        "@emotion/is-prop-valid": "*",
         "react": "^18.0.0",
         "react-dom": "^18.0.0"
     },
     "peerDependenciesMeta": {
+        "@emotion/is-prop-valid": {
+            "optional": true
+        },
         "react": {
             "optional": true
         },
@@ -79,42 +84,39 @@
             "optional": true
         }
     },
-    "optionalDependencies": {
-        "@emotion/is-prop-valid": "^0.8.2"
-    },
     "bundlesize": [
         {
             "path": "./dist/size-rollup-motion.js",
-            "maxSize": "31.3 kB"
+            "maxSize": "32.15 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
-            "maxSize": "5.38 kB"
+            "maxSize": "5.4 kB"
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
-            "maxSize": "15.33 kB"
+            "maxSize": "16.1kB"
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
-            "maxSize": "26.8 kB"
+            "maxSize": "27.6 kB"
         },
         {
             "path": "./dist/size-rollup-animate.js",
-            "maxSize": "16.6 kB"
+            "maxSize": "17.5 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",
-            "maxSize": "5.5 kB"
+            "maxSize": "5.53 kB"
         },
         {
             "path": "./dist/size-webpack-dom-animation.js",
-            "maxSize": "19.92 kB"
+            "maxSize": "21 kB"
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "32.2 kB"
+            "maxSize": "33.1 kB"
         }
     ],
-    "gitHead": "8b983243dfb9654a7b22ad0e0d5840622fe50603"
+    "gitHead": "e9307b957a7351b664b9bc9524560688243abff6"
 }

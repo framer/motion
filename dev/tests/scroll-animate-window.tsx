@@ -5,7 +5,7 @@ import { useEffect } from "react"
 export const App = () => {
     useEffect(() => {
         /**
-         * Animate both background-color (WAAPI-driven) and color (sync)
+         * Animate both transform (WAAPI) and colors (JS)
          */
         return scroll(
             animate(

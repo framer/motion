@@ -141,7 +141,7 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
     /**
      * Implementation
      */
-    function scopedAnimate<V>(
+    function scopedAnimate<V extends string | number>(
         valueOrElementOrSequence:
             | AnimationSequence
             | ElementOrSelector
@@ -171,7 +171,7 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
             )
         } else {
             animation = animateSingleValue(
-                valueOrElementOrSequence,
+                valueOrElementOrSequence as MotionValue<V> | V,
                 keyframes as V | GenericKeyframesTarget<V>,
                 options as ValueAnimationTransition<V> | undefined
             )

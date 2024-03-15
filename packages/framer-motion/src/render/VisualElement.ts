@@ -10,7 +10,6 @@ import { MotionProps, MotionStyle } from "../motion/types"
 import { createBox } from "../projection/geometry/models"
 import { Box } from "../projection/geometry/types"
 import { IProjectionNode } from "../projection/node/types"
-import { TargetAndTransition } from "../types"
 import { isRefObject } from "../utils/is-ref-object"
 import { initPrefersReducedMotion } from "../utils/reduced-motion"
 import {
@@ -42,6 +41,16 @@ import { Feature } from "../motion/features/Feature"
 import type { PresenceContextProps } from "../context/PresenceContext"
 import { variantProps } from "./utils/variant-props"
 import { visualElementStore } from "./store"
+import {
+    KeyframeResolver,
+    ResolvedKeyframes,
+    UnresolvedKeyframes,
+} from "./utils/KeyframesResolver"
+import { isNumericalString } from "../utils/is-numerical-string"
+import { isZeroValueString } from "../utils/is-zero-value-string"
+import { findValueType } from "./dom/value-types/find"
+import { complex } from "../value/types/complex"
+import { getAnimatableNone } from "./dom/value-types/animatable-none"
 
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
@@ -79,15 +88,6 @@ export abstract class VisualElement<
      * compare their respective positions within the tree.
      */
     abstract sortInstanceNodePosition(a: Instance, b: Instance): number
-
-    /**
-     * Take a target and make it animatable. For instance if provided
-     * height: "auto" we need to measure height in pixels and animate that instead.
-     */
-    abstract makeTargetAnimatableFromInstance(
-        target: TargetAndTransition,
-        isLive: boolean
-    ): TargetAndTransition
 
     /**
      * Measure the viewport-relative bounding box of the Instance.
@@ -150,6 +150,24 @@ export abstract class VisualElement<
         styleProp?: MotionStyle,
         projection?: IProjectionNode
     ): void
+
+    resolveKeyframes = <T extends string | number>(
+        keyframes: UnresolvedKeyframes<T>,
+        // We use an onComplete callback here rather than a Promise as a Promise
+        // resolution is a microtask and we want to retain the ability to force
+        // the resolution of keyframes synchronously.
+        onComplete: (resolvedKeyframes: ResolvedKeyframes<T>) => void,
+        name: string,
+        value: MotionValue<T>
+    ): KeyframeResolver<T> => {
+        return new this.KeyframeResolver(
+            keyframes,
+            onComplete,
+            name,
+            value,
+            this
+        )
+    }
 
     /**
      * If the component child is provided as a motion value, handle subscriptions
@@ -260,6 +278,8 @@ export abstract class VisualElement<
      */
     animationState?: AnimationState
 
+    KeyframeResolver = KeyframeResolver
+
     /**
      * The options used to create this VisualElement. The Options type is defined
      * by the inheriting VisualElement and is passed straight through to the render functions.
@@ -339,6 +359,7 @@ export abstract class VisualElement<
             props,
             presenceContext,
             reducedMotionConfig,
+            blockInitialAnimation,
             visualState,
         }: VisualElementOptions<Instance, RenderState>,
         options: Options = {} as any
@@ -354,6 +375,7 @@ export abstract class VisualElement<
         this.depth = parent ? parent.depth + 1 : 0
         this.reducedMotionConfig = reducedMotionConfig
         this.options = options
+        this.blockInitialAnimation = Boolean(blockInitialAnimation)
 
         this.isControllingVariants = checkIsControllingVariants(props)
         this.isVariantNode = checkIsVariantNode(props)
@@ -450,8 +472,8 @@ export abstract class VisualElement<
             "change",
             (latestValue: string | number) => {
                 this.latestValues[key] = latestValue
-                this.props.onUpdate &&
-                    frame.update(this.notifyUpdate, false, true)
+
+                this.props.onUpdate && frame.preRender(this.notifyUpdate)
 
                 if (valueIsTransform && this.projection) {
                     this.projection.isTransformDirty = true
@@ -634,20 +656,6 @@ export abstract class VisualElement<
     }
 
     /**
-     * Make a target animatable by Popmotion. For instance, if we're
-     * trying to animate width from 100px to 100vw we need to measure 100vw
-     * in pixels to determine what we really need to animate to. This is also
-     * pluggable to support Framer's custom value types like Color,
-     * and CSS variables.
-     */
-    makeTargetAnimatable(
-        target: TargetAndTransition,
-        canMutate = true
-    ): TargetAndTransition {
-        return this.makeTargetAnimatableFromInstance(target, canMutate)
-    }
-
-    /**
      * Update the provided props. Ensure any newly-added motion values are
      * added to our map, old ones removed, and listeners updated.
      */
@@ -799,10 +807,10 @@ export abstract class VisualElement<
      * value, we'll create one if none exists.
      */
     getValue(key: string): MotionValue | undefined
-    getValue(key: string, defaultValue: string | number): MotionValue
+    getValue(key: string, defaultValue: string | number | null): MotionValue
     getValue(
         key: string,
-        defaultValue?: string | number
+        defaultValue?: string | number | null
     ): MotionValue | undefined {
         if (this.props.values && this.props.values[key]) {
             return this.props.values[key]
@@ -811,7 +819,10 @@ export abstract class VisualElement<
         let value = this.values.get(key)
 
         if (value === undefined && defaultValue !== undefined) {
-            value = motionValue(defaultValue, { owner: this })
+            value = motionValue(
+                defaultValue === null ? undefined : defaultValue,
+                { owner: this }
+            )
             this.addValue(key, value)
         }
 
@@ -823,11 +834,28 @@ export abstract class VisualElement<
      * we need to check for it in our state and as a last resort read it
      * directly from the instance (which might have performance implications).
      */
-    readValue(key: string) {
-        return this.latestValues[key] !== undefined || !this.current
-            ? this.latestValues[key]
-            : this.getBaseTargetFromProps(this.props, key) ??
+    readValue(key: string, target?: string | number | null) {
+        let value =
+            this.latestValues[key] !== undefined || !this.current
+                ? this.latestValues[key]
+                : this.getBaseTargetFromProps(this.props, key) ??
                   this.readValueFromInstance(this.current, key, this.options)
+
+        if (value !== undefined && value !== null) {
+            if (
+                typeof value === "string" &&
+                (isNumericalString(value) || isZeroValueString(value))
+            ) {
+                // If this is a number read as a string, ie "0" or "200", convert it to a number
+                value = parseFloat(value)
+            } else if (!findValueType(value) && complex.test(target)) {
+                value = getAnimatableNone(key, target as string)
+            }
+
+            this.setBaseTarget(key, isMotionValue(value) ? value.get() : value)
+        }
+
+        return isMotionValue(value) ? value.get() : value
     }
 
     /**
@@ -846,7 +874,11 @@ export abstract class VisualElement<
         const { initial } = this.props
         const valueFromInitial =
             typeof initial === "string" || typeof initial === "object"
-                ? resolveVariantFromProps(this.props, initial as any)?.[key]
+                ? resolveVariantFromProps(
+                      this.props,
+                      initial as any,
+                      this.presenceContext?.custom
+                  )?.[key]
                 : undefined
 
         /**
