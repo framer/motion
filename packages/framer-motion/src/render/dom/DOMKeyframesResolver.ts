@@ -63,7 +63,7 @@ export class DOMKeyframesResolver<
                 }
             }
         }
-
+        console.log(unresolvedKeyframes)
         /**
          * Check to see if unit type has changed. If so schedule jobs that will
          * temporarily set styles to the destination keyframes.
@@ -121,17 +121,32 @@ export class DOMKeyframesResolver<
         }
     }
 
+    measureKeyframe?: any
     unsetTransforms() {
-        const { element, name, unresolvedKeyframes } = this
+        const { element, unresolvedKeyframes } = this
 
         if (!element.current) return
 
+        // TODO: This is rendering the element, which includes
+        // setting other transforms to their final states, messing up measurements
+        // for other values
         this.removedTransforms = removeNonTranslationalTransform(element)
 
-        const finalKeyframe =
+        this.measureKeyframe =
             unresolvedKeyframes[unresolvedKeyframes.length - 1]
+    }
 
-        element.getValue(name, finalKeyframe).jump(finalKeyframe, false)
+    renderUnsetTransforms() {
+        if (this.removedTransforms?.length) {
+            this.element.render()
+        }
+    }
+
+    setFinalKeyframe() {
+        const { element, name, measureKeyframe } = this
+        if (!element.current || measureKeyframe === undefined) return
+
+        element.getValue(name, measureKeyframe).jump(measureKeyframe, false)
     }
 
     measureInitialState() {
@@ -148,6 +163,8 @@ export class DOMKeyframesResolver<
             window.getComputedStyle(element.current)
         )
 
+        console.log("mesuring initial state for", name, this.measuredOrigin)
+
         unresolvedKeyframes[0] = this.measuredOrigin
     }
 
@@ -160,6 +177,7 @@ export class DOMKeyframesResolver<
 
         if (!element.current) return
 
+        console.log("before measure", unresolvedKeyframes, name)
         const value = element.getValue(name)
         value && value.jump(this.measuredOrigin, false)
 
@@ -170,7 +188,7 @@ export class DOMKeyframesResolver<
             element.measureViewportBox(),
             window.getComputedStyle(element.current)
         ) as any
-
+        console.log("after measure", unresolvedKeyframes, name)
         if (finalKeyframe !== null) {
             this.finalKeyframe = finalKeyframe as T
         }

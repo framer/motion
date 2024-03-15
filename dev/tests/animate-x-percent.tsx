@@ -1,26 +1,33 @@
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import * as React from "react"
 
 export const App = () => {
+    const output = React.useRef<Array<string | number>>([])
     const ref = React.useRef<HTMLDivElement>(null)
+    const [state, setState] = React.useState(true)
 
     return (
-        <div style={{ height: 100, width: 100, display: "flex" }}>
-            <motion.div
-                id="test"
-                ref={ref}
-                initial={{ x: 0 }}
-                animate={{ x: "100%", y: "100%" }}
-                style={{ width: 100, background: "red" }}
-                transition={{ duration: 2 }}
-                onUpdate={({ x, y }) => {
-                    if (typeof x !== "string" || typeof y !== "string") {
-                        ref.current!.innerHTML = "Error"
-                    } else if (!x.endsWith("%") || !y.endsWith("%")) {
-                        ref.current!.innerHTML = "Error"
-                    }
-                }}
-            />
+        <div style={{ height: 100, width: 200, display: "flex" }}>
+            <AnimatePresence>
+                {state ? (
+                    <motion.div
+                        id="test"
+                        ref={ref}
+                        animate={{ x: "100%", y: "100%", rotate: "-30deg" }}
+                        style={{ width: 200, background: "red" }}
+                        onClick={() => setState(false)}
+                        transition={{ duration: 2 }}
+                        onUpdate={({ x }) => {
+                            output.current.push(x)
+                        }}
+                        onAnimationComplete={() => {
+                            if (output.current[0] === "100%") {
+                                ref.current!.innerHTML = "Error"
+                            }
+                        }}
+                    />
+                ) : null}
+            </AnimatePresence>
         </div>
     )
 }

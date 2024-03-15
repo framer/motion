@@ -16,6 +16,12 @@ function measureAllKeyframes() {
         toResolve.forEach((resolver) => {
             resolver.needsMeasurement && resolver.unsetTransforms()
         })
+        toResolve.forEach((resolver) => {
+            resolver.needsMeasurement && resolver.renderUnsetTransforms()
+        })
+        toResolve.forEach((resolver) => {
+            resolver.needsMeasurement && resolver.setFinalKeyframe()
+        })
 
         // Read
         toResolve.forEach((resolver) => {
@@ -174,6 +180,8 @@ export class KeyframeResolver<T extends string | number = any> {
     }
 
     unsetTransforms() {}
+    renderUnsetTransforms() {}
+    setFinalKeyframe() {}
     measureInitialState() {}
     renderEndStyles() {}
     measureEndState() {}
