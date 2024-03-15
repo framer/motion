@@ -210,21 +210,21 @@ export class AcceleratedAnimation<
     }
 
     get duration() {
-        const resolved = this.resolved
+        const { resolved } = this
         if (!resolved) return 0
         const { duration } = resolved
         return millisecondsToSeconds(duration)
     }
 
     get time() {
-        const resolved = this.resolved
+        const { resolved } = this
         if (!resolved) return 0
         const { animation } = resolved
         return millisecondsToSeconds((animation.currentTime as number) || 0)
     }
 
     set time(newTime: number) {
-        const resolved = this.resolved
+        const { resolved } = this
         if (!resolved) return
 
         const { animation } = resolved
@@ -232,7 +232,7 @@ export class AcceleratedAnimation<
     }
 
     get speed() {
-        const resolved = this.resolved
+        const { resolved } = this
         if (!resolved) return 1
 
         const { animation } = resolved
@@ -240,7 +240,7 @@ export class AcceleratedAnimation<
     }
 
     set speed(newSpeed: number) {
-        const resolved = this.resolved
+        const { resolved } = this
         if (!resolved) return
 
         const { animation } = resolved
@@ -248,7 +248,7 @@ export class AcceleratedAnimation<
     }
 
     get state() {
-        const resolved = this.resolved
+        const { resolved } = this
         if (!resolved) return "idle"
 
         const { animation } = resolved
@@ -263,7 +263,7 @@ export class AcceleratedAnimation<
         if (!this._resolved) {
             this.pendingTimeline = timeline
         } else {
-            const resolved = this.resolved
+            const { resolved } = this
             if (!resolved) return noop<void>
 
             const { animation } = resolved
@@ -277,7 +277,7 @@ export class AcceleratedAnimation<
 
     play() {
         if (this.isStopped) return
-        const resolved = this.resolved
+        const { resolved } = this
         if (!resolved) return
 
         const { animation } = resolved
@@ -285,7 +285,7 @@ export class AcceleratedAnimation<
     }
 
     pause() {
-        const resolved = this.resolved
+        const { resolved } = this
         if (!resolved) return
 
         const { animation } = resolved
@@ -294,7 +294,7 @@ export class AcceleratedAnimation<
 
     stop() {
         this.isStopped = true
-        const resolved = this.resolved
+        const { resolved } = this
         if (!resolved) return
 
         const { animation, keyframes } = resolved
@@ -334,13 +334,13 @@ export class AcceleratedAnimation<
     }
 
     complete() {
-        const resolved = this.resolved
+        const { resolved } = this
         if (!resolved) return
         resolved.animation.finish()
     }
 
     cancel() {
-        const resolved = this.resolved
+        const { resolved } = this
         if (!resolved) return
         resolved.animation.cancel()
     }

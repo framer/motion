@@ -225,7 +225,7 @@ export class MainThreadAnimation<
     }
 
     tick(timestamp: number, sample = false) {
-        const resolved = this.resolved
+        const { resolved } = this
 
         // If the animations has failed to resolve, return the final keyframe.
         if (!resolved) {
@@ -395,7 +395,7 @@ export class MainThreadAnimation<
     state: AnimationPlayState = "idle"
 
     get duration() {
-        const resolved = this.resolved
+        const { resolved } = this
         return resolved ? millisecondsToSeconds(resolved.calculatedDuration) : 0
     }
 
