@@ -86,10 +86,12 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
      * this.resolved will synchronously flush all pending keyframe resolvers.
      * This is a deoptimisation, but at its worst still batches read/writes.
      */
-    get resolved(): Resolved & {
-        keyframes: ResolvedKeyframes<T>
-        finalKeyframe?: T
-    } {
+    get resolved():
+        | (Resolved & {
+              keyframes: ResolvedKeyframes<T>
+              finalKeyframe?: T
+          })
+        | undefined {
         if (!this._resolved) flushKeyframeResolvers()
 
         return this._resolved
@@ -106,18 +108,13 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
     ) {
         const { name, type, velocity, delay, onComplete, onUpdate } =
             this.options
-        console.log(canAnimate(keyframes, name, type, velocity), {
-            keyframes,
-            name,
-            type,
-            velocity,
-        })
+
         /**
          * If we can't animate this value with the resolved keyframes
          * then we should complete it immediately.
          */
         if (!canAnimate(keyframes, name, type, velocity)) {
-            console.log("finishing immediately")
+            this.options.duration = 0
             // Finish immediately
             if (instantAnimationState.current || !delay) {
                 onUpdate?.(

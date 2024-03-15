@@ -210,32 +210,48 @@ export class AcceleratedAnimation<
     }
 
     get duration() {
-        const { duration } = this.resolved
+        const resolved = this.resolved
+        if (!resolved) return 0
+        const { duration } = resolved
         return millisecondsToSeconds(duration)
     }
 
     get time() {
-        const { animation } = this.resolved
+        const resolved = this.resolved
+        if (!resolved) return 0
+        const { animation } = resolved
         return millisecondsToSeconds((animation.currentTime as number) || 0)
     }
 
     set time(newTime: number) {
-        const { animation } = this.resolved
+        const resolved = this.resolved
+        if (!resolved) return
+
+        const { animation } = resolved
         animation.currentTime = secondsToMilliseconds(newTime)
     }
 
     get speed() {
-        const { animation } = this.resolved
+        const resolved = this.resolved
+        if (!resolved) return 1
+
+        const { animation } = resolved
         return animation.playbackRate
     }
 
     set speed(newSpeed: number) {
-        const { animation } = this.resolved
+        const resolved = this.resolved
+        if (!resolved) return
+
+        const { animation } = resolved
         animation.playbackRate = newSpeed
     }
 
     get state() {
-        const { animation } = this.resolved
+        const resolved = this.resolved
+        if (!resolved) return "idle"
+
+        const { animation } = resolved
         return animation.playState
     }
 
@@ -247,7 +263,10 @@ export class AcceleratedAnimation<
         if (!this._resolved) {
             this.pendingTimeline = timeline
         } else {
-            const { animation } = this.resolved
+            const resolved = this.resolved
+            if (!resolved) return noop<void>
+
+            const { animation } = resolved
 
             animation.timeline = timeline
             animation.onfinish = null
@@ -258,19 +277,27 @@ export class AcceleratedAnimation<
 
     play() {
         if (this.isStopped) return
+        const resolved = this.resolved
+        if (!resolved) return
 
-        const { animation } = this.resolved
+        const { animation } = resolved
         animation.play()
     }
 
     pause() {
-        const { animation } = this.resolved
+        const resolved = this.resolved
+        if (!resolved) return
+
+        const { animation } = resolved
         animation.pause()
     }
 
     stop() {
         this.isStopped = true
-        const { animation, keyframes } = this.resolved
+        const resolved = this.resolved
+        if (!resolved) return
+
+        const { animation, keyframes } = resolved
 
         if (
             animation.playState === "idle" ||
@@ -307,11 +334,15 @@ export class AcceleratedAnimation<
     }
 
     complete() {
-        this.resolved.animation.finish()
+        const resolved = this.resolved
+        if (!resolved) return
+        resolved.animation.finish()
     }
 
     cancel() {
-        this.resolved.animation.cancel()
+        const resolved = this.resolved
+        if (!resolved) return
+        resolved.animation.cancel()
     }
 
     static supports(

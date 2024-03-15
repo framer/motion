@@ -35,7 +35,7 @@ function measureAllKeyframes() {
 
     anyNeedsMeasurement = false
     isScheduled = false
-    console.log("finishing flush")
+
     toResolve.forEach((resolver) => resolver.complete())
 
     toResolve.clear()
@@ -181,8 +181,6 @@ export class KeyframeResolver<T extends string | number = any> {
 
     complete() {
         this.isComplete = true
-
-        console.log("firing on complete with", this.unresolvedKeyframes)
 
         this.onComplete(
             this.unresolvedKeyframes as ResolvedKeyframes<T>,
