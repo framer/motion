@@ -121,7 +121,6 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
                 )
                 onComplete?.()
                 this.resolveFinishedPromise()
-                this.updateFinishedPromise()
 
                 return
             }
@@ -153,10 +152,7 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
 
     protected updateFinishedPromise() {
         this.currentFinishedPromise = new Promise((resolve) => {
-            this.resolveFinishedPromise = () => {
-                resolve()
-                this.updateFinishedPromise()
-            }
+            this.resolveFinishedPromise = resolve
         })
     }
 }

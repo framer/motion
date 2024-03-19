@@ -109,6 +109,7 @@ export class MainThreadAnimation<
         super(options)
 
         const { name, motionValue, keyframes } = this.options
+
         const onResolved = (
             resolvedKeyframes: ResolvedKeyframes<T>,
             finalKeyframe: T
@@ -243,6 +244,8 @@ export class MainThreadAnimation<
             totalDuration,
             resolvedDuration,
         } = resolved
+
+        if (this.options.name === "display") console.log("animating")
 
         if (this.startTime === null) return generator.next(0)
 
@@ -518,7 +521,6 @@ export class MainThreadAnimation<
         this.state = "idle"
         this.stopDriver()
         this.resolveFinishedPromise()
-        this.updateFinishedPromise()
         this.startTime = this.cancelTime = null
         this.resolver.cancel()
     }
