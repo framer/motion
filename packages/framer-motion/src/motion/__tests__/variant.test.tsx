@@ -443,7 +443,7 @@ describe("animate prop as variant", () => {
                     onAnimationComplete={() => {
                         expect(parentOpacity.get()).toBe(1)
                         expect(childOpacity.get()).toBe(1)
-                        console.log(parentOpacity.get(), childOpacity.get())
+
                         rerender(
                             <Component
                                 animate="hidden"
@@ -451,10 +451,6 @@ describe("animate prop as variant", () => {
                                     expect(parentOpacity.get()).toBe(0)
                                     expect(childOpacity.get()).toBe(0)
 
-                                    console.log(
-                                        parentOpacity.get(),
-                                        childOpacity.get()
-                                    )
                                     resolve()
                                 }}
                             />

@@ -245,8 +245,6 @@ export class MainThreadAnimation<
             resolvedDuration,
         } = resolved
 
-        if (this.options.name === "display") console.log("animating")
-
         if (this.startTime === null) return generator.next(0)
 
         const { delay, repeat, repeatType, repeatDelay, onUpdate } =
