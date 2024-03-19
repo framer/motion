@@ -154,11 +154,7 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
 
     protected updateFinishedPromise() {
         this.currentFinishedPromise = new Promise((resolve) => {
-            this.resolveFinishedPromise = () => {
-                resolve()
-                // TODO: Don't update
-                this.updateFinishedPromise()
-            }
+            this.resolveFinishedPromise = resolve
         })
     }
 }

@@ -515,6 +515,7 @@ export class MainThreadAnimation<
             this.tick(this.cancelTime)
         }
         this.teardown()
+        this.updateFinishedPromise()
     }
 
     private teardown() {
