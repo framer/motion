@@ -67,9 +67,6 @@ export function removeNonTranslationalTransform(visualElement: VisualElement) {
         }
     })
 
-    // Apply changes to element before measurement
-    if (removedTransforms.length) visualElement.render()
-
     return removedTransforms
 }
 
