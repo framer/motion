@@ -388,10 +388,13 @@ export class MotionValue<V = any> {
      * @internal
      */
     start(startAnimation: StartAnimation) {
+        console.trace()
+        console.log("start animation")
         this.stop()
 
         return new Promise<void>((resolve) => {
             this.hasAnimated = true
+            console.log("assigning animation")
             this.animation = startAnimation(resolve)
 
             if (this.events.animationStart) {

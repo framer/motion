@@ -89,7 +89,7 @@ export function animateTarget(
                 }
             }
         }
-
+        console.log("animating", key, valueTarget)
         value.start(
             animateMotionValue(
                 key,

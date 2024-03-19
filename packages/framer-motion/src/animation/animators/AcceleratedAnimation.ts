@@ -198,7 +198,6 @@ export class AcceleratedAnimation<
                 onComplete && onComplete()
                 this.cancel()
                 this.resolveFinishedPromise()
-                this.updateFinishedPromise()
             }
         }
 
@@ -281,6 +280,11 @@ export class AcceleratedAnimation<
         if (!resolved) return
 
         const { animation } = resolved
+
+        if (animation.playState === "finished") {
+            this.updateFinishedPromise()
+        }
+
         animation.play()
     }
 

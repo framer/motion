@@ -208,7 +208,6 @@ export class KeyframeResolver<T extends string | number = any> {
 
     complete() {
         this.isComplete = true
-
         this.onComplete(
             this.unresolvedKeyframes as ResolvedKeyframes<T>,
             this.finalKeyframe as T

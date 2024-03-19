@@ -6,11 +6,14 @@ import { VisualElementAnimationOptions } from "./types"
 import { animateTarget } from "./visual-element-target"
 import { animateVariant } from "./visual-element-variant"
 
+let count = 0
 export function animateVisualElement(
     visualElement: VisualElement,
     definition: AnimationDefinition,
     options: VisualElementAnimationOptions = {}
 ) {
+    count++
+    const thisCount = count
     visualElement.notify("AnimationStart", definition)
     let animation: Promise<any>
 
@@ -31,8 +34,9 @@ export function animateVisualElement(
             animateTarget(visualElement, resolvedDefinition, options)
         )
     }
-
+    console.log({ thisCount, animation })
     return animation.then(() => {
+        console.log("animating finished", thisCount)
         frame.postRender(() => {
             visualElement.notify("AnimationComplete", definition)
         })

@@ -106,6 +106,8 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
         keyframes: ResolvedKeyframes<T>,
         finalKeyframe?: T
     ) {
+        console.log("keyframes resolved as ", keyframes)
+
         const { name, type, velocity, delay, onComplete, onUpdate } =
             this.options
 
@@ -152,7 +154,11 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
 
     protected updateFinishedPromise() {
         this.currentFinishedPromise = new Promise((resolve) => {
-            this.resolveFinishedPromise = resolve
+            this.resolveFinishedPromise = () => {
+                resolve()
+                // TODO: Don't update
+                this.updateFinishedPromise()
+            }
         })
     }
 }

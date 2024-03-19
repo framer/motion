@@ -142,7 +142,7 @@ export class MainThreadAnimation<
             repeatType,
             velocity = 0,
         } = this.options
-
+        console.log("init playback")
         const generatorFactory = generators[type] || keyframesGeneratorFactory
 
         /**
@@ -215,6 +215,8 @@ export class MainThreadAnimation<
 
     onPostResolved() {
         const { autoplay = true } = this.options
+
+        console.log("play")
 
         this.play()
 

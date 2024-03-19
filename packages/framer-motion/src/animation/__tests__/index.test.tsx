@@ -356,7 +356,7 @@ describe("useAnimation", () => {
         return await expect(promise).resolves.toEqual([1, 2])
     })
 
-    test(".start accepts state depending on custom attribute", async () => {
+    test.only(".start accepts state depending on custom attribute", async () => {
         const promise = new Promise((resolve) => {
             const Component = () => {
                 const xa = useMotionValue(0)

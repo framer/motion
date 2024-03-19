@@ -70,7 +70,7 @@ export function animationControls(): AnimationControls {
                     })
                 )
             })
-
+            console.log("num animations", animations.length)
             return Promise.all(animations)
         },
 
@@ -95,6 +95,7 @@ export function animationControls(): AnimationControls {
             hasMounted = true
 
             return () => {
+                console.log("unmounting")
                 hasMounted = false
                 controls.stop()
             }
