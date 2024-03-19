@@ -1,6 +1,7 @@
 import { frame } from "../../frameloop"
 import { MotionValue } from "../../value"
 import type { VisualElement } from "../VisualElement"
+import { removeNonTranslationalTransform } from "../dom/utils/unit-conversion"
 
 export type UnresolvedKeyframes<T extends string | number> = Array<T | null>
 
@@ -12,30 +13,50 @@ let anyNeedsMeasurement = false
 
 function measureAllKeyframes() {
     if (anyNeedsMeasurement) {
-        // Write
-        toResolve.forEach((resolver) => {
-            resolver.needsMeasurement && resolver.unsetTransforms()
-        })
-        toResolve.forEach((resolver) => {
-            resolver.needsMeasurement && resolver.renderUnsetTransforms()
-        })
-        toResolve.forEach((resolver) => {
-            resolver.needsMeasurement && resolver.setFinalKeyframe()
+        const resolversToMeasure = Array.from(toResolve).filter(
+            (resolver: KeyframeResolver) => resolver.needsMeasurement
+        )
+        const elementsToMeasure = new Set(
+            resolversToMeasure.map((resolver) => resolver.element)
+        )
+        const transformsToRestore = new Map<
+            VisualElement,
+            [string, string | number][]
+        >()
+
+        /**
+         * Write pass
+         * If we're measuring elements we want to remove bounding box-changing transforms.
+         */
+        elementsToMeasure.forEach((element: VisualElement<HTMLElement>) => {
+            const removedTransforms = removeNonTranslationalTransform(element)
+
+            if (!removedTransforms.length) return
+
+            transformsToRestore.set(
+                element,
+                removeNonTranslationalTransform(element)
+            )
+
+            element.render()
         })
 
         // Read
-        toResolve.forEach((resolver) => {
-            resolver.needsMeasurement && resolver.measureInitialState()
-        })
+        resolversToMeasure.forEach((resolver) => resolver.measureInitialState())
 
         // Write
-        toResolve.forEach((resolver) => {
-            resolver.needsMeasurement && resolver.renderEndStyles()
+        elementsToMeasure.forEach((element: VisualElement<HTMLElement>) => {
+            element.render()
         })
 
         // Read
-        toResolve.forEach((resolver) => {
-            resolver.needsMeasurement && resolver.measureEndState()
+        resolversToMeasure.forEach((resolver) => resolver.measureEndState())
+
+        // Write
+        resolversToMeasure.forEach((resolver) => {
+            if (resolver.suspendedScrollY !== undefined) {
+                window.scrollTo(0, resolver.suspendedScrollY)
+            }
         })
     }
 
@@ -68,11 +89,12 @@ export type OnKeyframesResolved<T extends string | number> = (
 ) => void
 
 export class KeyframeResolver<T extends string | number = any> {
-    protected element?: VisualElement<any>
-    protected unresolvedKeyframes: UnresolvedKeyframes<string | number>
     name?: string
-
+    element?: VisualElement<any>
     finalKeyframe?: T
+    suspendedScrollY?: number
+
+    protected unresolvedKeyframes: UnresolvedKeyframes<string | number>
 
     private motionValue?: MotionValue<T>
     private onComplete: OnKeyframesResolved<T>
@@ -179,8 +201,6 @@ export class KeyframeResolver<T extends string | number = any> {
         }
     }
 
-    unsetTransforms() {}
-    renderUnsetTransforms() {}
     setFinalKeyframe() {}
     measureInitialState() {}
     renderEndStyles() {}
