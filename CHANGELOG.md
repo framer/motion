@@ -4,6 +4,20 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.18] 2024-03-20
+
+### Fixed
+
+-   Default `duration` doesn't override `duration: 0` WAAPI animations.
+-   Fix error when trying to animate unmounted element.
+-   Avoid resolving WAAPI animation when stopping unresolved animation.
+
+## [11.0.17] 2024-03-20
+
+### Fixed
+
+-   Interruption of WAAPI animations now animates from correct value.
+
 ## [11.0.16] 2024-03-20
 
 ### Fixed

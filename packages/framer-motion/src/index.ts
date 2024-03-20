@@ -92,6 +92,7 @@ export { complex } from "./value/types/complex"
 export { px } from "./value/types/numbers/units"
 export { ValueType } from "./value/types/types"
 export { MotionGlobalConfig } from "./utils/GlobalConfig"
+export { AcceleratedAnimation } from "./animation/animators/AcceleratedAnimation"
 
 /**
  * Appear animations

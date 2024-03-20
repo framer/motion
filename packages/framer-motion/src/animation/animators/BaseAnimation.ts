@@ -67,7 +67,7 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
     protected abstract initPlayback(
         keyframes: ResolvedKeyframes<T>,
         finalKeyframe?: T
-    ): Resolved
+    ): Resolved | false
 
     abstract play(): void
     abstract pause(): void
@@ -130,10 +130,14 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
             }
         }
 
+        const resolvedAnimation = this.initPlayback(keyframes, finalKeyframe)
+
+        if (resolvedAnimation === false) return
+
         this._resolved = {
             keyframes,
             finalKeyframe,
-            ...this.initPlayback(keyframes, finalKeyframe),
+            ...resolvedAnimation,
         }
 
         this.onPostResolved()
