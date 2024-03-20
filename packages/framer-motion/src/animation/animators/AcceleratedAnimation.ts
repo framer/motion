@@ -147,6 +147,9 @@ export class AcceleratedAnimation<
         keyframes: ResolvedKeyframes<T>,
         finalKeyframe: T
     ): ResolvedAcceleratedAnimation {
+        // TODO
+        // Add test for setting duration to 0
+        // Add test for when component has been unmounted and element is null
         let duration = this.options.duration || 300
 
         /**
@@ -327,9 +330,11 @@ export class AcceleratedAnimation<
                 keyframes,
             })
 
+            const sampleTime = secondsToMilliseconds(this.time)
+
             motionValue.setWithVelocity(
-                sampleAnimation.sample(this.time - sampleDelta).value,
-                sampleAnimation.sample(this.time).value,
+                sampleAnimation.sample(sampleTime - sampleDelta).value,
+                sampleAnimation.sample(sampleTime).value,
                 sampleDelta
             )
         }
