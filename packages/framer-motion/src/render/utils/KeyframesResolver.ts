@@ -69,7 +69,6 @@ function measureAllKeyframes() {
 }
 
 function readAllKeyframes() {
-    console.log("reading all keyframes", toResolve.size)
     toResolve.forEach((resolver) => {
         resolver.readKeyframes()
 
