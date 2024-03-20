@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.16] 2024-03-20
+
+### Fixed
+
+-   Restored animation promise handling to match behaviour of <11.0.11.
+
 ## [11.0.15] 2024-03-19
 
 ### Fixed
