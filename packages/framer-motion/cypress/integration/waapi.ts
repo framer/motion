@@ -21,7 +21,9 @@ describe("waapi", () => {
             .wait(200)
             .should(([$element]: any) => {
                 expect(getComputedStyle($element).opacity).not.to.equal("1")
-                expect($element.getBoundingClientRect().width).not.to.equal(100)
+                expect(
+                    Math.floor($element.getBoundingClientRect().width)
+                ).not.to.equal(100)
             })
     })
 })
