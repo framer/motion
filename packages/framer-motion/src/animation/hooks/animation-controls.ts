@@ -70,7 +70,7 @@ export function animationControls(): AnimationControls {
                     })
                 )
             })
-            console.log("num animations", animations.length)
+
             return Promise.all(animations)
         },
 

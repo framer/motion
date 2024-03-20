@@ -1,32 +1,28 @@
 import React from "react"
-import { motion, useAnimation, useMotionValue } from "framer-motion"
+import { motion, useMotionValue } from "framer-motion"
 
 const MotionFragment = motion(React.Fragment)
 
 export function App() {
-    const xa = useMotionValue(0)
-    const xb = useMotionValue(0)
-    const controls = useAnimation()
-
-    React.useEffect(() => {
-        controls
-            .start((custom) => {
-                return { x: 1 * custom }
-            })
-            .then(() => {
-                console.log([xa.get(), xb.get()])
-            })
-    })
-
+    const backgroundColor = useMotionValue("#f00")
+    const [isActive, setIsActive] = React.useState(true)
     return (
-        <>
-            <motion.div animate={controls} custom={1} style={{ x: xa }} />
-            {/* <motion.div
-                            animate={controls}
-                            custom={2}
-                            style={{ x: xb }}
-                        /> */}
-        </>
+        <MotionFragment initial="initial" animate={isActive ? "to" : "initial"}>
+            <motion.div>
+                <motion.div
+                    variants={{
+                        initial: {
+                            backgroundColor: "#f00",
+                        },
+                        to: {
+                            backgroundColor: "#00f",
+                        },
+                    }}
+                    onClick={() => setIsActive(!isActive)}
+                    style={{ ...box, backgroundColor }}
+                />
+            </motion.div>
+        </MotionFragment>
     )
 }
 

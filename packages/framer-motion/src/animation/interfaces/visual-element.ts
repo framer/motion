@@ -34,9 +34,8 @@ export function animateVisualElement(
             animateTarget(visualElement, resolvedDefinition, options)
         )
     }
-    console.log({ thisCount, animation })
+
     return animation.then(() => {
-        console.log("animating finished", thisCount)
         frame.postRender(() => {
             visualElement.notify("AnimationComplete", definition)
         })
