@@ -487,11 +487,10 @@ export class MainThreadAnimation<
         this.resolver.cancel()
         this.isStopped = true
         if (this.state === "idle") return
-        console.log(this.state)
-        this.state = "idle"
+
+        this.teardown()
         const { onStop } = this.options
         onStop && onStop()
-        this.teardown()
     }
 
     complete() {
@@ -523,6 +522,7 @@ export class MainThreadAnimation<
         this.state = "idle"
         this.stopDriver()
         this.resolveFinishedPromise()
+        this.updateFinishedPromise()
         this.startTime = this.cancelTime = null
         this.resolver.cancel()
     }
