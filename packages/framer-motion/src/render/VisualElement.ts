@@ -456,6 +456,7 @@ export abstract class VisualElement<
         this.valueSubscriptions.forEach((remove) => remove())
         this.removeFromVariantTree && this.removeFromVariantTree()
         this.parent && this.parent.children.delete(this)
+
         for (const key in this.events) {
             this.events[key].clear()
         }
@@ -489,6 +490,7 @@ export abstract class VisualElement<
         this.valueSubscriptions.set(key, () => {
             removeOnChange()
             removeOnRenderRequest()
+            if (value.owner) value.stop()
         })
     }
 

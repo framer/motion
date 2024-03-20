@@ -127,6 +127,7 @@ export class AcceleratedAnimation<
         super(options)
 
         const { name, motionValue, keyframes } = this.options
+
         this.resolver = new DOMKeyframesResolver<T>(
             keyframes,
             (resolvedKeyframes: ResolvedKeyframes<T>, finalKeyframe: T) =>
@@ -143,14 +144,16 @@ export class AcceleratedAnimation<
      */
     private pendingTimeline: AnimationTimeline | undefined
 
-    protected initPlayback(
-        keyframes: ResolvedKeyframes<T>,
-        finalKeyframe: T
-    ): ResolvedAcceleratedAnimation {
-        // TODO
-        // Add test for setting duration to 0
-        // Add test for when component has been unmounted and element is null
-        let duration = this.options.duration || 300
+    protected initPlayback(keyframes: ResolvedKeyframes<T>, finalKeyframe: T) {
+        let { duration = 300, motionValue, name } = this.options
+
+        /**
+         * If element has since been unmounted, return false to indicate
+         * the animation failed to initialised.
+         */
+        if (!motionValue.owner?.current) {
+            return false
+        }
 
         /**
          * If this animation needs pre-generated keyframes then generate.
@@ -169,7 +172,6 @@ export class AcceleratedAnimation<
             this.options.ease = pregeneratedAnimation.ease
         }
 
-        const { motionValue, name } = this.options
         const animation = animateStyle(
             motionValue.owner!.current as unknown as HTMLElement,
             name,
@@ -300,7 +302,10 @@ export class AcceleratedAnimation<
     }
 
     stop() {
+        this.resolver.cancel()
         this.isStopped = true
+        if (this.state === "idle") return
+
         const { resolved } = this
         if (!resolved) return
 
