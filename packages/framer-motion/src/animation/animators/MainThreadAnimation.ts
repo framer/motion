@@ -484,9 +484,10 @@ export class MainThreadAnimation<
     }
 
     stop() {
+        this.resolver.cancel()
         this.isStopped = true
         if (this.state === "idle") return
-
+        console.log(this.state)
         this.state = "idle"
         const { onStop } = this.options
         onStop && onStop()
