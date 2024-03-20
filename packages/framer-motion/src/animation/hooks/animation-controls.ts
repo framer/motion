@@ -95,7 +95,6 @@ export function animationControls(): AnimationControls {
             hasMounted = true
 
             return () => {
-                console.log("unmounting")
                 hasMounted = false
                 controls.stop()
             }
