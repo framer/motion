@@ -8,4 +8,20 @@ describe("waapi", () => {
                 expect($element.getBoundingClientRect().left).to.equal(200)
             })
     })
+
+    it("Animations are correctly interrupted", () => {
+        cy.visit("?test=waapi-interrupt")
+            .wait(200)
+            .get("#box")
+            .should(([$element]: any) => {
+                expect(getComputedStyle($element).opacity).not.to.equal("1")
+                expect($element.getBoundingClientRect().width).not.to.equal(100)
+            })
+            .trigger("click", 250, 250, { force: true })
+            .wait(200)
+            .should(([$element]: any) => {
+                expect(getComputedStyle($element).opacity).not.to.equal("1")
+                expect($element.getBoundingClientRect().width).not.to.equal(100)
+            })
+    })
 })

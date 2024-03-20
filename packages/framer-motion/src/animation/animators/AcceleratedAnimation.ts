@@ -327,9 +327,11 @@ export class AcceleratedAnimation<
                 keyframes,
             })
 
+            const sampleTime = secondsToMilliseconds(this.time)
+
             motionValue.setWithVelocity(
-                sampleAnimation.sample(this.time - sampleDelta).value,
-                sampleAnimation.sample(this.time).value,
+                sampleAnimation.sample(sampleTime - sampleDelta).value,
+                sampleAnimation.sample(sampleTime).value,
                 sampleDelta
             )
         }
