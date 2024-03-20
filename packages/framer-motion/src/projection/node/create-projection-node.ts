@@ -57,6 +57,7 @@ import { steps } from "../../frameloop/frame"
 import { noop } from "../../utils/noop"
 import { time } from "../../frameloop/sync-time"
 import { microtask } from "../../frameloop/microtask"
+import { VisualElement } from "../../render/VisualElement"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -79,6 +80,20 @@ const projectionFrameData: ProjectionFrame = {
     totalNodes: 0,
     resolvedTargetDeltas: 0,
     recalculatedProjection: 0,
+}
+
+function resetDistortingTransform(
+    key: string,
+    visualElement: VisualElement,
+    values: ResolvedValues
+) {
+    const { latestValues } = visualElement
+
+    // Record the distorting transform and then temporarily set it to 0
+    if (latestValues[key]) {
+        values[key] = latestValues[key]
+        visualElement.setStaticValue(key, 0)
+    }
 }
 
 export function createProjectionNode<I>({
@@ -558,7 +573,7 @@ export function createProjectionNode<I>({
             if (this.isUpdateBlocked()) return
 
             this.isUpdating = true
-            this.nodes && this.nodes.forEach(resetRotation)
+            this.nodes && this.nodes.forEach(resetSkewAndRotation)
             this.animationId++
         }
 
@@ -1669,13 +1684,13 @@ export function createProjectionNode<I>({
             }
         }
 
-        resetRotation() {
+        resetSkewAndRotation() {
             const { visualElement } = this.options
 
             if (!visualElement) return
 
-            // If there's no detected rotation values, we can early return without a forced render.
-            let hasRotate = false
+            // If there's no detected skew or rotation values, we can early return without a forced render.
+            let hasDistortingTransform = false
 
             /**
              * An unrolled check for rotation values. Most elements don't have any rotation and
@@ -1686,25 +1701,30 @@ export function createProjectionNode<I>({
                 latestValues.rotate ||
                 latestValues.rotateX ||
                 latestValues.rotateY ||
-                latestValues.rotateZ
+                latestValues.rotateZ ||
+                latestValues.skewX ||
+                latestValues.skewY
             ) {
-                hasRotate = true
+                hasDistortingTransform = true
             }
 
             // If there's no rotation values, we don't need to do any more.
-            if (!hasRotate) return
+            if (!hasDistortingTransform) return
 
-            const resetValues = {}
+            const resetValues: ResolvedValues = {}
 
             // Check the rotate value of all axes and reset to 0
             for (let i = 0; i < transformAxes.length; i++) {
-                const key = "rotate" + transformAxes[i]
-
-                // Record the rotation and then temporarily set it to 0
-                if (latestValues[key]) {
-                    resetValues[key] = latestValues[key]
-                    visualElement.setStaticValue(key, 0)
-                }
+                resetDistortingTransform(
+                    `rotate${transformAxes[i]}`,
+                    visualElement,
+                    resetValues
+                )
+                resetDistortingTransform(
+                    `skew${transformAxes[i]}`,
+                    visualElement,
+                    resetValues
+                )
             }
 
             // Force a render of this element to apply the transform with all rotations
@@ -2075,8 +2095,8 @@ function calcProjection(node: IProjectionNode) {
     node.calcProjection()
 }
 
-function resetRotation(node: IProjectionNode) {
-    node.resetRotation()
+function resetSkewAndRotation(node: IProjectionNode) {
+    node.resetSkewAndRotation()
 }
 
 function removeLeadSnapshots(stack: NodeStack) {
