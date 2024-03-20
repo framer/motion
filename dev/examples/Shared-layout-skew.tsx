@@ -3,7 +3,7 @@ import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 
 /**
- * This demonstrates the rotation support as setup by Framer's Navigation component
+ * This demonstrates the skew support with layout animations
  */
 
 export const App = () => {

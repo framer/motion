@@ -1708,12 +1708,12 @@ export function createProjectionNode<I>({
                 hasDistortingTransform = true
             }
 
-            // If there's no rotation values, we don't need to do any more.
+            // If there's no distorting values, we don't need to do any more.
             if (!hasDistortingTransform) return
 
             const resetValues: ResolvedValues = {}
 
-            // Check the rotate value of all axes and reset to 0
+            // Check the skew and rotate value of all axes and reset to 0
             for (let i = 0; i < transformAxes.length; i++) {
                 resetDistortingTransform(
                     `rotate${transformAxes[i]}`,
@@ -1727,7 +1727,7 @@ export function createProjectionNode<I>({
                 )
             }
 
-            // Force a render of this element to apply the transform with all rotations
+            // Force a render of this element to apply the transform with all skews and rotations
             // set to 0.
             visualElement.render()
 
