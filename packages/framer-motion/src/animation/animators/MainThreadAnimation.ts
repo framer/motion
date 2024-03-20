@@ -109,6 +109,7 @@ export class MainThreadAnimation<
         super(options)
 
         const { name, motionValue, keyframes } = this.options
+
         const onResolved = (
             resolvedKeyframes: ResolvedKeyframes<T>,
             finalKeyframe: T
@@ -481,13 +482,13 @@ export class MainThreadAnimation<
     }
 
     stop() {
+        this.resolver.cancel()
         this.isStopped = true
         if (this.state === "idle") return
 
-        this.state = "idle"
+        this.teardown()
         const { onStop } = this.options
         onStop && onStop()
-        this.teardown()
     }
 
     complete() {
@@ -512,6 +513,7 @@ export class MainThreadAnimation<
             this.tick(this.cancelTime)
         }
         this.teardown()
+        this.updateFinishedPromise()
     }
 
     private teardown() {

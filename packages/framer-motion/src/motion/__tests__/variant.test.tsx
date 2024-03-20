@@ -394,35 +394,79 @@ describe("animate prop as variant", () => {
     })
 
     test("when: afterChildren works correctly", async () => {
-        const promise = new Promise((resolve) => {
-            const opacity = motionValue(0.1)
-            const variants: Variants = {
-                visible: {
-                    opacity: 1,
+        const parentOpacity = motionValue(0.1)
+        const childOpacity = motionValue(0.1)
+        const variants: Variants = {
+            hidden: {
+                opacity: 0,
+                display: "block",
+            },
+            visible: {
+                opacity: 1,
+                transitionEnd: {
+                    display: "none",
                 },
-            }
-
-            render(
+            },
+        }
+        const Component = ({
+            animate,
+            onAnimationComplete,
+        }: {
+            animate: string
+            onAnimationComplete?: VoidFunction
+        }) => {
+            return (
                 <motion.div
                     variants={variants}
-                    initial="hidden"
-                    animate="visible"
-                    transition={{ duration: 1, when: "afterChildren" }}
-                    style={{ opacity }}
+                    initial={false}
+                    transition={{ duration: 0.1, when: "afterChildren" }}
+                    animate={animate}
+                    style={{ opacity: parentOpacity }}
+                    onAnimationComplete={onAnimationComplete}
                 >
                     <motion.div>
                         <motion.div
                             variants={variants}
-                            transition={{ duration: 1 }}
+                            transition={{ duration: 0.1 }}
+                            style={{ opacity: childOpacity }}
                         />
                     </motion.div>
                 </motion.div>
             )
+        }
 
-            setTimeout(() => resolve(opacity.get()), 200)
+        return await new Promise<void>(async (resolve) => {
+            const { rerender } = render(<Component animate="hidden" />)
+            rerender(
+                <Component
+                    animate="visible"
+                    onAnimationComplete={() => {
+                        expect(parentOpacity.get()).toBe(1)
+                        expect(childOpacity.get()).toBe(1)
+
+                        rerender(
+                            <Component
+                                animate="hidden"
+                                onAnimationComplete={() => {
+                                    expect(parentOpacity.get()).toBe(0)
+                                    expect(childOpacity.get()).toBe(0)
+
+                                    resolve()
+                                }}
+                            />
+                        )
+                        setTimeout(() => {
+                            expect(parentOpacity.get()).toBe(1)
+                            expect(childOpacity.get()).not.toBe(1)
+                        }, 50)
+                    }}
+                />
+            )
+            setTimeout(() => {
+                expect(parentOpacity.get()).toBe(0)
+                expect(childOpacity.get()).not.toBe(0)
+            }, 50)
         })
-
-        return expect(promise).resolves.toBe(0.1)
     })
 
     /**

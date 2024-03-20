@@ -228,6 +228,23 @@ describe("animate prop as object", () => {
             "transform: translateX(30px) translateX(30px) translateZ(0)"
         )
     })
+    test("animating between none/block fires onAnimationComplete", async () => {
+        const promise = new Promise((resolve) => {
+            const Component = () => (
+                <motion.div
+                    initial={{ display: "none" }}
+                    animate={{ display: "block" }}
+                    transition={{ duration: 0.01 }}
+                    onAnimationComplete={() => {
+                        resolve(true)
+                    }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        expect(promise).resolves.toEqual(true)
+    })
     test("keyframes - accepts ease as an array", async () => {
         const promise = new Promise((resolve) => {
             const x = motionValue(0)
