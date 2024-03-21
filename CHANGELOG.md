@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.19] 2024-03-21
+
+### Fixed
+
+-   Fixed layout animations when combined with `skew` transforms.
+
 ## [11.0.18] 2024-03-20
 
 ### Fixed
