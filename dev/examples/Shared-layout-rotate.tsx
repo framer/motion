@@ -10,22 +10,8 @@ export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <AnimatePresence>
-            <motion.div
-                id="parent"
-                layoutId="parent"
-                transition={{ duration: 1 }}
-                style={smallParent}
-                onClick={() => setIsOn(!isOn)}
-                key="a"
-            >
-                <motion.div
-                    layoutId="child"
-                    transition={{ duration: 1 }}
-                    style={smallChild}
-                />
-            </motion.div>
-            {isOn && (
+        <>
+            {isOn ? (
                 <motion.div
                     id="parent-2"
                     layoutId="parent"
@@ -34,14 +20,29 @@ export const App = () => {
                     onClick={() => setIsOn(!isOn)}
                     key="b"
                 >
-                    <motion.div
+                    {/* <motion.div
                         layoutId="child"
                         transition={{ duration: 1 }}
                         style={bigChild}
-                    />
+                    /> */}
+                </motion.div>
+            ) : (
+                <motion.div
+                    id="parent"
+                    layoutId="parent"
+                    transition={{ duration: 1 }}
+                    style={smallParent}
+                    onClick={() => setIsOn(!isOn)}
+                    key="a"
+                >
+                    {/* <motion.div
+                        layoutId="child"
+                        transition={{ duration: 1 }}
+                        style={smallChild}
+                    /> */}
                 </motion.div>
             )}
-        </AnimatePresence>
+        </>
     )
 }
 

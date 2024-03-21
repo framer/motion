@@ -1123,3 +1123,24 @@ describe("Shared layout: Works with queueMicrotasks", () => {
             })
     })
 })
+
+describe("Shared layout: Measures rotated elements correctly when animation is interrupted", () => {
+    it("Measures correctly", () => {
+        let boundingBox: BoundingBox
+        cy.visit("?test=layout-shared-rotate")
+            .wait(50)
+            .get("#box")
+            .trigger("click")
+            .wait(20)
+            .get("#box")
+            .should(([$box]: any) => {
+                boundingBox = $box.getBoundingClientRect()
+            })
+            .trigger("click")
+            .wait(20)
+            .get("#box")
+            .should(([$box]: any) => {
+                expectBbox($box, boundingBox)
+            })
+    })
+})
