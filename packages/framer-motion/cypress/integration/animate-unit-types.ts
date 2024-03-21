@@ -7,4 +7,13 @@ describe("Unit conversion", () => {
                 expect($element.innerText).not.to.equal("Error")
             })
     })
+
+    it("animates translation from px to percent", () => {
+        cy.visit("?test=animate-x-percent")
+            .wait(200)
+            .get("#test")
+            .should(([$element]: any) => {
+                expect($element.innerText).not.to.equal("Error")
+            })
+    })
 })

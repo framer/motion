@@ -5,7 +5,6 @@ import {
     isNumOrPxType,
     positionalKeys,
     positionalValues,
-    removeNonTranslationalTransform,
 } from "./utils/unit-conversion"
 import { findDimensionValueType } from "./value-types/dimensions"
 import {
@@ -21,11 +20,10 @@ export class DOMKeyframesResolver<
     T extends string | number
 > extends KeyframeResolver<T> {
     name: string
-    protected element: VisualElement<HTMLElement | SVGElement>
+    element: VisualElement<HTMLElement | SVGElement>
 
     private removedTransforms?: [string, string | number][]
     private measuredOrigin?: string | number
-    private suspendedScrollY?: number
 
     constructor(
         unresolvedKeyframes: UnresolvedKeyframes<string | number>,
@@ -121,19 +119,6 @@ export class DOMKeyframesResolver<
         }
     }
 
-    unsetTransforms() {
-        const { element, name, unresolvedKeyframes } = this
-
-        if (!element.current) return
-
-        this.removedTransforms = removeNonTranslationalTransform(element)
-
-        const finalKeyframe =
-            unresolvedKeyframes[unresolvedKeyframes.length - 1]
-
-        element.getValue(name, finalKeyframe).jump(finalKeyframe, false)
-    }
-
     measureInitialState() {
         const { element, unresolvedKeyframes, name } = this
 
@@ -149,10 +134,14 @@ export class DOMKeyframesResolver<
         )
 
         unresolvedKeyframes[0] = this.measuredOrigin
-    }
 
-    renderEndStyles() {
-        this.element.render()
+        // Set final key frame to measure after next render
+        const measureKeyframe =
+            unresolvedKeyframes[unresolvedKeyframes.length - 1]
+
+        if (measureKeyframe !== undefined) {
+            element.getValue(name, measureKeyframe).jump(measureKeyframe, false)
+        }
     }
 
     measureEndState() {
@@ -173,10 +162,6 @@ export class DOMKeyframesResolver<
 
         if (finalKeyframe !== null) {
             this.finalKeyframe = finalKeyframe as T
-        }
-
-        if (name === "height" && this.suspendedScrollY !== undefined) {
-            window.scrollTo(0, this.suspendedScrollY)
         }
 
         // If we removed transform values, reapply them before the next render

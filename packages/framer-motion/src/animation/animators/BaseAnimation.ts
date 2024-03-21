@@ -67,7 +67,7 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
     protected abstract initPlayback(
         keyframes: ResolvedKeyframes<T>,
         finalKeyframe?: T
-    ): Resolved
+    ): Resolved | false
 
     abstract play(): void
     abstract pause(): void
@@ -86,10 +86,12 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
      * this.resolved will synchronously flush all pending keyframe resolvers.
      * This is a deoptimisation, but at its worst still batches read/writes.
      */
-    get resolved(): Resolved & {
-        keyframes: ResolvedKeyframes<T>
-        finalKeyframe?: T
-    } {
+    get resolved():
+        | (Resolved & {
+              keyframes: ResolvedKeyframes<T>
+              finalKeyframe?: T
+          })
+        | undefined {
         if (!this._resolved) flushKeyframeResolvers()
 
         return this._resolved
@@ -119,7 +121,6 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
                 )
                 onComplete?.()
                 this.resolveFinishedPromise()
-                this.updateFinishedPromise()
 
                 return
             }
@@ -129,10 +130,14 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
             }
         }
 
+        const resolvedAnimation = this.initPlayback(keyframes, finalKeyframe)
+
+        if (resolvedAnimation === false) return
+
         this._resolved = {
             keyframes,
             finalKeyframe,
-            ...this.initPlayback(keyframes, finalKeyframe),
+            ...resolvedAnimation,
         }
 
         this.onPostResolved()
@@ -151,10 +156,7 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
 
     protected updateFinishedPromise() {
         this.currentFinishedPromise = new Promise((resolve) => {
-            this.resolveFinishedPromise = () => {
-                resolve()
-                this.updateFinishedPromise()
-            }
+            this.resolveFinishedPromise = resolve
         })
     }
 }

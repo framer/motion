@@ -4,6 +4,50 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.20] 2024-03-21
+
+### Fixed
+
+-   Fixed interrupting shared element animations that contain `rotate` or `skew` transforms.
+
+## [11.0.19] 2024-03-21
+
+### Fixed
+
+-   Fixed layout animations when combined with `skew` transforms.
+
+## [11.0.18] 2024-03-20
+
+### Fixed
+
+-   Default `duration` doesn't override `duration: 0` WAAPI animations.
+-   Fix error when trying to animate unmounted element.
+-   Avoid resolving WAAPI animation when stopping unresolved animation.
+
+## [11.0.17] 2024-03-20
+
+### Fixed
+
+-   Interruption of WAAPI animations now animates from correct value.
+
+## [11.0.16] 2024-03-20
+
+### Fixed
+
+-   Restored animation promise handling to match behaviour of <11.0.11.
+
+## [11.0.15] 2024-03-19
+
+### Fixed
+
+-   Fixed measurements when more than one transform changes unit type.
+
+## [11.0.14] 2024-03-15
+
+### Fixed
+
+-   Fixed animation controls in instances where keyframes resolve to be unanimatable.
+
 ## [11.0.13] 2024-03-13
 
 ### Added
