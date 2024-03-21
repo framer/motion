@@ -85,7 +85,8 @@ const projectionFrameData: ProjectionFrame = {
 function resetDistortingTransform(
     key: string,
     visualElement: VisualElement,
-    values: ResolvedValues
+    values: ResolvedValues,
+    sharedAnimationValues?: ResolvedValues
 ) {
     const { latestValues } = visualElement
 
@@ -93,6 +94,9 @@ function resetDistortingTransform(
     if (latestValues[key]) {
         values[key] = latestValues[key]
         visualElement.setStaticValue(key, 0)
+        if (sharedAnimationValues) {
+            sharedAnimationValues[key] = 0
+        }
     }
 }
 
@@ -750,6 +754,12 @@ export function createProjectionNode<I>({
             if (this.snapshot || !this.instance) return
 
             this.snapshot = this.measure()
+
+            console.log(
+                "snapshot",
+                this.snapshot.measuredBox,
+                this.instance?.style?.transform
+            )
         }
 
         updateLayout() {
@@ -821,7 +831,7 @@ export function createProjectionNode<I>({
         resetTransform() {
             if (!resetTransform) return
             const isResetRequested =
-                this.isLayoutDirty || this.shouldResetTransform
+                this.isLayoutDirty || this.shouldResetTransform || this.isLead()
 
             const hasProjection =
                 this.projectionDelta && !isDeltaZero(this.projectionDelta)
@@ -1718,12 +1728,14 @@ export function createProjectionNode<I>({
                 resetDistortingTransform(
                     `rotate${transformAxes[i]}`,
                     visualElement,
-                    resetValues
+                    resetValues,
+                    this.animationValues
                 )
                 resetDistortingTransform(
                     `skew${transformAxes[i]}`,
                     visualElement,
-                    resetValues
+                    resetValues,
+                    this.animationValues
                 )
             }
 
@@ -1788,7 +1800,12 @@ export function createProjectionNode<I>({
             }
 
             const valuesToRender = lead.animationValues || lead.latestValues
-
+            console.log(
+                lead === this,
+                lead.animationValues?.rotate,
+                lead.latestValues.rotate,
+                this.latestValues.rotate
+            )
             this.applyTransformsToTarget()
 
             styles.transform = buildProjectionTransform(

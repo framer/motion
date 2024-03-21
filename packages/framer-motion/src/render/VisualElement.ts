@@ -616,6 +616,7 @@ export abstract class VisualElement<
     notifyUpdate = () => this.notify("Update", this.latestValues)
 
     triggerBuild() {
+        console.log("building values", this.latestValues)
         this.build(
             this.renderState,
             this.latestValues,
@@ -626,7 +627,6 @@ export abstract class VisualElement<
 
     render = () => {
         if (!this.current) return
-
         this.triggerBuild()
         this.renderInstance(
             this.current,
