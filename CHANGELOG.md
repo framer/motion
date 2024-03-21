@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.20] 2024-03-21
+
+### Fixed
+
+-   Fixed interrupting shared element animations that contain `rotate` or `skew` transforms.
+
 ## [11.0.19] 2024-03-21
 
 ### Fixed
