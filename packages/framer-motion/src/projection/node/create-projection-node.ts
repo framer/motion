@@ -825,7 +825,7 @@ export function createProjectionNode<I>({
         resetTransform() {
             if (!resetTransform) return
             const isResetRequested =
-                this.isLayoutDirty || this.shouldResetTransform || this.isLead()
+                this.isLayoutDirty || this.shouldResetTransform
 
             const hasProjection =
                 this.projectionDelta && !isDeltaZero(this.projectionDelta)
