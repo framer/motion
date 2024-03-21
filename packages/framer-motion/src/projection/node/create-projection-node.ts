@@ -754,12 +754,6 @@ export function createProjectionNode<I>({
             if (this.snapshot || !this.instance) return
 
             this.snapshot = this.measure()
-
-            console.log(
-                "snapshot",
-                this.snapshot.measuredBox,
-                this.instance?.style?.transform
-            )
         }
 
         updateLayout() {
@@ -1746,6 +1740,9 @@ export function createProjectionNode<I>({
             // Put back all the values we reset
             for (const key in resetValues) {
                 visualElement.setStaticValue(key, resetValues[key])
+                if (this.animationValues) {
+                    this.animationValues[key] = resetValues[key]
+                }
             }
 
             // Schedule a render for the next frame. This ensures we won't visually
@@ -1800,12 +1797,6 @@ export function createProjectionNode<I>({
             }
 
             const valuesToRender = lead.animationValues || lead.latestValues
-            console.log(
-                lead === this,
-                lead.animationValues?.rotate,
-                lead.latestValues.rotate,
-                this.latestValues.rotate
-            )
             this.applyTransformsToTarget()
 
             styles.transform = buildProjectionTransform(

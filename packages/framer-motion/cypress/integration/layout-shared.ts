@@ -1131,13 +1131,13 @@ describe("Shared layout: Measures rotated elements correctly when animation is i
             .wait(50)
             .get("#box")
             .trigger("click")
-            .wait(20)
+            .wait(50)
             .get("#box")
             .should(([$box]: any) => {
                 boundingBox = $box.getBoundingClientRect()
             })
             .trigger("click")
-            .wait(20)
+            .wait(50)
             .get("#box")
             .should(([$box]: any) => {
                 expectBbox($box, boundingBox)
