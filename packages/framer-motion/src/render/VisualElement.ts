@@ -626,7 +626,6 @@ export abstract class VisualElement<
 
     render = () => {
         if (!this.current) return
-
         this.triggerBuild()
         this.renderInstance(
             this.current,

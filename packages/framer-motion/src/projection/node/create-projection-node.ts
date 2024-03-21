@@ -85,7 +85,8 @@ const projectionFrameData: ProjectionFrame = {
 function resetDistortingTransform(
     key: string,
     visualElement: VisualElement,
-    values: ResolvedValues
+    values: ResolvedValues,
+    sharedAnimationValues?: ResolvedValues
 ) {
     const { latestValues } = visualElement
 
@@ -93,6 +94,9 @@ function resetDistortingTransform(
     if (latestValues[key]) {
         values[key] = latestValues[key]
         visualElement.setStaticValue(key, 0)
+        if (sharedAnimationValues) {
+            sharedAnimationValues[key] = 0
+        }
     }
 }
 
@@ -1718,12 +1722,14 @@ export function createProjectionNode<I>({
                 resetDistortingTransform(
                     `rotate${transformAxes[i]}`,
                     visualElement,
-                    resetValues
+                    resetValues,
+                    this.animationValues
                 )
                 resetDistortingTransform(
                     `skew${transformAxes[i]}`,
                     visualElement,
-                    resetValues
+                    resetValues,
+                    this.animationValues
                 )
             }
 
@@ -1734,6 +1740,9 @@ export function createProjectionNode<I>({
             // Put back all the values we reset
             for (const key in resetValues) {
                 visualElement.setStaticValue(key, resetValues[key])
+                if (this.animationValues) {
+                    this.animationValues[key] = resetValues[key]
+                }
             }
 
             // Schedule a render for the next frame. This ensures we won't visually
@@ -1788,7 +1797,6 @@ export function createProjectionNode<I>({
             }
 
             const valuesToRender = lead.animationValues || lead.latestValues
-
             this.applyTransformsToTarget()
 
             styles.transform = buildProjectionTransform(
