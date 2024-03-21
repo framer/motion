@@ -84,6 +84,14 @@ window.Assert = {
             )
         }
     },
+    matchSkewX: (element, expected) => {
+        if (!element.style.transform.includes(`skewX(${expected}deg)`)) {
+            showError(
+                element,
+                `skew in ${element.style.transform} doesn't match expected ${expected}deg`
+            )
+        }
+    },
     addPageScroll({ top, right, bottom, left }, x, y) {
         return {
             top: top - y,
