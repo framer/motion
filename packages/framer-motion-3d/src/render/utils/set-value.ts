@@ -65,13 +65,13 @@ export function setThreeValue(
     if (setters[key as keyof typeof setters]) {
         setters[key as keyof typeof setters](
             instance,
-            values.latestValues[key] as never
+            values[key as keyof typeof values] as never
         )
     } else {
         if (key === "opacity" && !instance.transparent) {
             instance.transparent = true
         }
 
-        instance[key] = values.latestValues[key]
+        instance[key] = values[key as keyof typeof values]
     }
 }
