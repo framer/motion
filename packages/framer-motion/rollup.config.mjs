@@ -2,7 +2,7 @@ import resolve from "@rollup/plugin-node-resolve"
 import { terser } from "rollup-plugin-terser"
 import replace from "@rollup/plugin-replace"
 import dts from "rollup-plugin-dts"
-import pkg from "./package.json"
+import pkg from "./package.json" with { type: "json"}
 
 const config = {
     input: "lib/index.js",

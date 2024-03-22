@@ -5,7 +5,7 @@ import { Driver } from "./animators/drivers/types"
 import { SVGPathProperties, VariantLabels } from "../motion/types"
 import { SVGAttributes } from "../render/svg/types-attributes"
 import { ProgressTimeline } from "../render/dom/scroll/observe"
-import { MotionValue } from "../value"
+import type { MotionValue } from "../value"
 import {
     KeyframeResolver,
     OnKeyframesResolved,
