@@ -172,7 +172,6 @@ describe("motion for three", () => {
                         position-x={x}
                         scale={scale}
                         rotation={[rotateX, 0, 0]}
-                        onAnimationComplete={() => resolve([x, scale, rotateX])}
                         transition={{ duration: 0.1 }}
                     />
                 )
