@@ -3,6 +3,7 @@ import { terser } from "rollup-plugin-terser"
 import replace from "@rollup/plugin-replace"
 import dts from "rollup-plugin-dts"
 import pkg from "./package.json" with { type: "json"}
+import tsconfig from "./tsconfig.json" with {type: "json"}
 
 const config = {
     input: "lib/index.js",
@@ -115,13 +116,15 @@ export const es = Object.assign({}, config, {
     external,
 })
 
+const typePlugins = [dts({compilerOptions: {...tsconfig, baseUrl:"types"}})]
+
 const types = {
     input: "types/index.d.ts",
     output: {
         format: "es",
         file: "dist/index.d.ts",
     },
-    plugins: [dts()],
+    plugins: typePlugins,
 }
 
 const animateTypes = {
@@ -130,7 +133,7 @@ const animateTypes = {
         format: "es",
         file: "dist/dom-entry.d.ts",
     },
-    plugins: [dts()],
+    plugins: typePlugins,
 }
 
 const threeTypes = {
@@ -139,7 +142,7 @@ const threeTypes = {
         format: "es",
         file: "dist/three-entry.d.ts",
     },
-    plugins: [dts()],
+    plugins: typePlugins,
 }
 
 // eslint-disable-next-line import/no-default-export

@@ -5722,6 +5722,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cliui@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "cliui@npm:8.0.1"
+  dependencies:
+    string-width: ^4.2.0
+    strip-ansi: ^6.0.1
+    wrap-ansi: ^7.0.0
+  checksum: 79648b3b0045f2e285b76fb2e24e207c6db44323581e421c3acbd0e86454cba1b37aea976ab50195a49e7384b871e6dfb2247ad7dec53c02454ac6497394cb56
+  languageName: node
+  linkType: hard
+
 "clone-deep@npm:^4.0.1":
   version: 4.0.1
   resolution: "clone-deep@npm:4.0.1"
@@ -6849,6 +6860,18 @@ __metadata:
   version: 1.5.3
   resolution: "draco3d@npm:1.5.3"
   checksum: d3650b09cb91e546e17270aba84924cb79f56bb56d704d65bc811832c906feece4b0da7d693bcc523b60117d336283015e91db78098a731838ad1d7c69336e07
+  languageName: node
+  linkType: hard
+
+"dts-bundle-generator@npm:^9.3.1":
+  version: 9.3.1
+  resolution: "dts-bundle-generator@npm:9.3.1"
+  dependencies:
+    typescript: ">=5.0.2"
+    yargs: ^17.6.0
+  bin:
+    dts-bundle-generator: dist/bin/dts-bundle-generator.js
+  checksum: 86559ec98e97d440036b31b9d58be37f0b1f391ddf7e1a6ae565a7a65d3fb8b09826b6b1f19b80e0204dbba1e74408ee13a219cff4b89c8ecf77e17cca6bd016
   languageName: node
   linkType: hard
 
@@ -8093,6 +8116,7 @@ __metadata:
     concurrently: ^7.3.0
     convert-tsconfig-paths-to-webpack-aliases: ^0.9.2
     cypress: ^3.4.0
+    dts-bundle-generator: ^9.3.1
     eslint: ^8.57.0
     eslint-config-prettier: ^8.5.0
     eslint-plugin-import: ^2.26.0
@@ -16637,7 +16661,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.4.3":
+"typescript@npm:5.4.3, typescript@npm:>=5.0.2":
   version: 5.4.3
   resolution: "typescript@npm:5.4.3"
   bin:
@@ -16647,7 +16671,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@5.4.3#~builtin<compat/typescript>":
+"typescript@patch:typescript@5.4.3#~builtin<compat/typescript>, typescript@patch:typescript@>=5.0.2#~builtin<compat/typescript>":
   version: 5.4.3
   resolution: "typescript@patch:typescript@npm%3A5.4.3#~builtin<compat/typescript>::version=5.4.3&hash=ddd1e8"
   bin:
@@ -17603,7 +17627,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs-parser@npm:^21.0.0, yargs-parser@npm:^21.0.1":
+"yargs-parser@npm:^21.0.0, yargs-parser@npm:^21.0.1, yargs-parser@npm:^21.1.1":
   version: 21.1.1
   resolution: "yargs-parser@npm:21.1.1"
   checksum: ed2d96a616a9e3e1cc7d204c62ecc61f7aaab633dcbfab2c6df50f7f87b393993fe6640d017759fe112d0cb1e0119f2b4150a87305cc873fd90831c6a58ccf1c
@@ -17655,6 +17679,21 @@ __metadata:
     y18n: ^5.0.5
     yargs-parser: ^21.0.0
   checksum: 00d58a2c052937fa044834313f07910fd0a115dec5ee35919e857eeee3736b21a4eafa8264535800ba8bac312991ce785ecb8a51f4d2cc8c4676d865af1cfbde
+  languageName: node
+  linkType: hard
+
+"yargs@npm:^17.6.0":
+  version: 17.7.2
+  resolution: "yargs@npm:17.7.2"
+  dependencies:
+    cliui: ^8.0.1
+    escalade: ^3.1.1
+    get-caller-file: ^2.0.5
+    require-directory: ^2.1.1
+    string-width: ^4.2.3
+    y18n: ^5.0.5
+    yargs-parser: ^21.1.1
+  checksum: 73b572e863aa4a8cbef323dd911d79d193b772defd5a51aab0aca2d446655216f5002c42c5306033968193bdbf892a7a4c110b0d77954a7fdf563e653967b56a
   languageName: node
   linkType: hard
 
