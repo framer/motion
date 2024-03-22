@@ -19,7 +19,9 @@ export function hasTransform(values: ResolvedValues) {
         values.z ||
         values.rotate ||
         values.rotateX ||
-        values.rotateY
+        values.rotateY ||
+        values.skewX ||
+        values.skewY
     )
 }
 

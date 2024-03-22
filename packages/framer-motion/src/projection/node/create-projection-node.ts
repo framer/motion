@@ -57,10 +57,25 @@ import { steps } from "../../frameloop/frame"
 import { noop } from "../../utils/noop"
 import { time } from "../../frameloop/sync-time"
 import { microtask } from "../../frameloop/microtask"
+import { VisualElement } from "../../render/VisualElement"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
 const hiddenVisibility: ResolvedValues = { visibility: "hidden" }
+
+function resetDistortingTransform(
+    key: string,
+    visualElement: VisualElement,
+    values: ResolvedValues
+) {
+    const { latestValues } = visualElement
+
+    // Record the distorting transform and then temporarily set it to 0
+    if (latestValues[key]) {
+        values[key] = latestValues[key]
+        visualElement.setStaticValue(key, 0)
+    }
+}
 
 /**
  * We use 1000 as the animation target as 0-1000 maps better to pixels than 0-1
@@ -1686,7 +1701,9 @@ export function createProjectionNode<I>({
                 latestValues.rotate ||
                 latestValues.rotateX ||
                 latestValues.rotateY ||
-                latestValues.rotateZ
+                latestValues.rotateZ ||
+                latestValues.skewX ||
+                latestValues.skewY
             ) {
                 hasRotate = true
             }
@@ -1698,13 +1715,16 @@ export function createProjectionNode<I>({
 
             // Check the rotate value of all axes and reset to 0
             for (let i = 0; i < transformAxes.length; i++) {
-                const key = "rotate" + transformAxes[i]
-
-                // Record the rotation and then temporarily set it to 0
-                if (latestValues[key]) {
-                    resetValues[key] = latestValues[key]
-                    visualElement.setStaticValue(key, 0)
-                }
+                resetDistortingTransform(
+                    `rotate${transformAxes[i]}`,
+                    visualElement,
+                    resetValues
+                )
+                resetDistortingTransform(
+                    `skew${transformAxes[i]}`,
+                    visualElement,
+                    resetValues
+                )
             }
 
             // Force a render of this element to apply the transform with all rotations
