@@ -12,9 +12,7 @@ import { readThreeValue } from "./utils/read-value"
 import { ThreeRenderState } from "../types"
 import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-value"
 
-export const createRenderState = (): ThreeRenderState => ({
-    latestValues: {},
-})
+export const createRenderState = () => ({})
 
 export class ThreeVisualElement extends VisualElement<
     Object3DNode<any, any>,
@@ -50,7 +48,7 @@ export class ThreeVisualElement extends VisualElement<
 
     build(state: ThreeRenderState, latestValues: ResolvedValues) {
         for (const key in latestValues) {
-            state.latestValues[key] = latestValues[key]
+            state[key as keyof typeof state] = latestValues[key] as any
         }
     }
 
