@@ -12,7 +12,9 @@ import { readThreeValue } from "./utils/read-value"
 import { ThreeRenderState } from "../types"
 import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-value"
 
-export const createRenderState = () => ({})
+export const createRenderState = (): ThreeRenderState => ({
+    latestValues: {},
+})
 
 export class ThreeVisualElement extends VisualElement<
     Object3DNode<any, any>,
