@@ -178,6 +178,14 @@ export class AcceleratedAnimation<
             )
 
             keyframes = pregeneratedAnimation.keyframes
+
+            // If this is a very short animation, ensure we have
+            // at least two keyframes to animate between as older browsers
+            // can't animate between a single keyframe.
+            if (keyframes.length === 1) {
+                keyframes[1] = keyframes[0]
+            }
+
             duration = pregeneratedAnimation.duration
             times = pregeneratedAnimation.times
             ease = pregeneratedAnimation.ease
