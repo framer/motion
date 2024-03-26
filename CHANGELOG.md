@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.22] 2024-03-26
+
+### Fixed
+
+-   Fixed pre-generation of no-op WAAPI animations.
+
 ## [11.0.21] 2024-03-26
 
 ### Fixed
