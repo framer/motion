@@ -112,6 +112,9 @@ export interface AcceleratedValueAnimationOptions<
 interface ResolvedAcceleratedAnimation {
     animation: Animation
     duration: number
+    times: ValueAnimationOptions["times"]
+    type: ValueAnimationOptions["type"]
+    ease: ValueAnimationOptions["ease"]
     keyframes: string[] | number[]
 }
 
@@ -145,7 +148,14 @@ export class AcceleratedAnimation<
     private pendingTimeline: AnimationTimeline | undefined
 
     protected initPlayback(keyframes: ResolvedKeyframes<T>, finalKeyframe: T) {
-        let { duration = 300, motionValue, name } = this.options
+        let {
+            duration = 300,
+            times,
+            ease,
+            type,
+            motionValue,
+            name,
+        } = this.options
 
         /**
          * If element has since been unmounted, return false to indicate
@@ -168,15 +178,16 @@ export class AcceleratedAnimation<
 
             keyframes = pregeneratedAnimation.keyframes
             duration = pregeneratedAnimation.duration
-            this.options.times = pregeneratedAnimation.times
-            this.options.ease = pregeneratedAnimation.ease
+            times = pregeneratedAnimation.times
+            ease = pregeneratedAnimation.ease
+            type = "keyframes"
         }
 
         const animation = animateStyle(
             motionValue.owner!.current as unknown as HTMLElement,
             name,
             keyframes as string[],
-            { ...this.options, duration }
+            { ...this.options, duration, times, ease }
         )
 
         // Override the browser calculated startTime with one synchronised to other JS
@@ -209,6 +220,9 @@ export class AcceleratedAnimation<
         return {
             animation,
             duration,
+            times,
+            type,
+            ease,
             keyframes: keyframes as string[] | number[],
         }
     }
@@ -309,7 +323,7 @@ export class AcceleratedAnimation<
         const { resolved } = this
         if (!resolved) return
 
-        const { animation, keyframes } = resolved
+        const { animation, keyframes, duration, type, ease, times } = resolved
 
         if (
             animation.playState === "idle" ||
@@ -333,6 +347,10 @@ export class AcceleratedAnimation<
             const sampleAnimation = new MainThreadAnimation({
                 ...options,
                 keyframes,
+                duration,
+                type,
+                ease,
+                times,
             })
 
             const sampleTime = secondsToMilliseconds(this.time)
