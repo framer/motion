@@ -66,4 +66,13 @@ describe("waapi", () => {
                 expect(result.length).to.equal(0)
             })
     })
+
+    it("Pregenerates no-op keyframes without error", () => {
+        cy.visit("?test=waapi-pregenerate-noop")
+            .wait(100)
+            .get("iframe")
+            .should((result: any) => {
+                expect(result.length).to.equal(0)
+            })
+    })
 })

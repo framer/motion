@@ -78,6 +78,7 @@ function pregenerateKeyframes<T extends string | number>(
         keyframes,
         repeat: 0,
         delay: 0,
+        isGenerator: true,
     })
 
     let state = { done: false, value: keyframes[0] }
@@ -177,6 +178,14 @@ export class AcceleratedAnimation<
             )
 
             keyframes = pregeneratedAnimation.keyframes
+
+            // If this is a very short animation, ensure we have
+            // at least two keyframes to animate between as older browsers
+            // can't animate between a single keyframe.
+            if (keyframes.length === 1) {
+                keyframes[1] = keyframes[0]
+            }
+
             duration = pregeneratedAnimation.duration
             times = pregeneratedAnimation.times
             ease = pregeneratedAnimation.ease
@@ -351,6 +360,7 @@ export class AcceleratedAnimation<
                 type,
                 ease,
                 times,
+                isGenerator: true,
             })
 
             const sampleTime = secondsToMilliseconds(this.time)
