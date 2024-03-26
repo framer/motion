@@ -78,6 +78,7 @@ function pregenerateKeyframes<T extends string | number>(
         keyframes,
         repeat: 0,
         delay: 0,
+        isGenerator: true,
     })
 
     let state = { done: false, value: keyframes[0] }
@@ -351,6 +352,7 @@ export class AcceleratedAnimation<
                 type,
                 ease,
                 times,
+                isGenerator: true,
             })
 
             const sampleTime = secondsToMilliseconds(this.time)

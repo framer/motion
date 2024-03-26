@@ -39,6 +39,8 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
     // Internal reference to defered resolved keyframes and animation-specific data returned from initPlayback.
     protected _resolved: Resolved & { keyframes: ResolvedKeyframes<T> }
 
+    protected hasAttemptedResolve = false
+
     // Reference to the active keyframes resolver.
     protected resolver: KeyframeResolver<T>
 
@@ -92,7 +94,9 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
               finalKeyframe?: T
           })
         | undefined {
-        if (!this._resolved) flushKeyframeResolvers()
+        if (!this._resolved && !this.hasAttemptedResolve) {
+            flushKeyframeResolvers()
+        }
 
         return this._resolved
     }
@@ -106,14 +110,22 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
         keyframes: ResolvedKeyframes<T>,
         finalKeyframe?: T
     ) {
-        const { name, type, velocity, delay, onComplete, onUpdate } =
-            this.options
+        this.hasAttemptedResolve = true
+        const {
+            name,
+            type,
+            velocity,
+            delay,
+            onComplete,
+            onUpdate,
+            isGenerator,
+        } = this.options
 
         /**
          * If we can't animate this value with the resolved keyframes
          * then we should complete it immediately.
          */
-        if (!canAnimate(keyframes, name, type, velocity)) {
+        if (!isGenerator && !canAnimate(keyframes, name, type, velocity)) {
             // Finish immediately
             if (instantAnimationState.current || !delay) {
                 onUpdate?.(

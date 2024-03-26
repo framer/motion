@@ -212,6 +212,7 @@ export class KeyframeResolver<T extends string | number = any> {
             this.unresolvedKeyframes as ResolvedKeyframes<T>,
             this.finalKeyframe as T
         )
+
         toResolve.delete(this)
     }
 
