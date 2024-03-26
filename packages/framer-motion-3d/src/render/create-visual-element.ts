@@ -48,7 +48,7 @@ export class ThreeVisualElement extends VisualElement<
 
     build(state: ThreeRenderState, latestValues: ResolvedValues) {
         for (const key in latestValues) {
-            state[key as keyof typeof state] = latestValues[key] as any
+            state[key] = latestValues[key]
         }
     }
 
