@@ -1,0 +1,126 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #parent {
+                position: relative;
+                width: 200px;
+                height: 200px;
+                background-color: #00cc88;
+                display: flex;
+                justify-content: space-around;
+            }
+
+            #parent.b {
+                align-items: flex-end;
+            }
+
+            .child-wrapper {
+                width: 50px;
+                height: 50px;
+                background-color: #fff;
+            }
+
+            .child {
+                width: 50px;
+                height: 50px;
+                background-color: #0077ff;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="parent">
+            <div class="child-wrapper" id="a-wrapper">
+                <div class="child" id="a"></div>
+            </div>
+            <div class="child-wrapper" id="b-wrapper">
+                <div class="child" id="b"></div>
+            </div>
+        </div>
+
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode, relativeEase } = window.Animate
+            const { matchViewportBox } = window.Assert
+
+            const parent = document.getElementById("parent")
+            const aWrapper = document.getElementById("a-wrapper")
+            const a = document.getElementById("a")
+            const bWrapper = document.getElementById("b-wrapper")
+            const b = document.getElementById("b")
+
+            const transition = { duration: 1 }
+
+            const parentProjection = createNode(
+                parent,
+                undefined,
+                {},
+                transition
+            )
+
+            const aWrapperProjection = createNode(
+                aWrapper,
+                parentProjection,
+                {},
+                { type: false }
+            )
+            const bWrapperProjection = createNode(
+                bWrapper,
+                parentProjection,
+                {},
+                { duration: 0 }
+            )
+
+            const aProjection = createNode(
+                a,
+                aWrapperProjection,
+                {},
+                transition
+            )
+            const bProjection = createNode(
+                b,
+                bWrapperProjection,
+                {},
+                transition
+            )
+
+            parentProjection.willUpdate()
+            aWrapperProjection.willUpdate()
+            bWrapperProjection.willUpdate()
+            aProjection.willUpdate()
+            bProjection.willUpdate()
+
+            parent.classList.add("b")
+
+            parentProjection.root.didUpdate()
+
+            frame.postRender(() => {
+                frame.postRender(() => {
+                    matchViewportBox(a, {
+                        bottom: 200,
+                        left: 25,
+                        right: 75,
+                        top: 150,
+                    })
+                    matchViewportBox(b, {
+                        bottom: 200,
+                        left: 125,
+                        right: 175,
+                        top: 150,
+                    })
+                })
+            })
+        </script>
+    </body>
+</html>
