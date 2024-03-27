@@ -889,10 +889,12 @@ export abstract class VisualElement<
      * Find the base target for a value thats been removed from all animation
      * props.
      */
-    getBaseTarget(key: string) {
+    getBaseTarget(
+        key: string
+    ): ResolvedValues[string] | undefined | null {
         const { initial } = this.props
 
-        let valueFromInitial: any = undefined
+        let valueFromInitial: ResolvedValues[string] | undefined | null
 
         if (typeof initial === "string" || typeof initial === "object") {
             const variant = resolveVariantFromProps(
@@ -901,7 +903,9 @@ export abstract class VisualElement<
                 this.presenceContext?.custom
             )
             if (variant) {
-                valueFromInitial = variant[key as keyof typeof variant]
+                valueFromInitial = variant[
+                    key as keyof typeof variant
+                ] as string
             }
         }
 

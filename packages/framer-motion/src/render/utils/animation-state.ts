@@ -338,8 +338,8 @@ export function createAnimationState(
                 const motionValue = visualElement.getValue(key)
                 if (motionValue) motionValue.liveStyle = true
 
-                fallbackAnimation[key] =
-                    fallbackTarget === undefined ? null : fallbackTarget
+                // @ts-expect-error - @mattgperry to figure if we should do something here
+                fallbackAnimation[key] = fallbackTarget ?? null
             })
 
             animations.push({ animation: fallbackAnimation })
