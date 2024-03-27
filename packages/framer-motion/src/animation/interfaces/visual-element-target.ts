@@ -79,7 +79,7 @@ export function animateTarget(
         if (window.HandoffAppearAnimations) {
             const props = visualElement.getProps()
             const appearId =
-                props[optimizedAppearDataAttribute as keyof typeof props]
+                props[optimizedAppearDataAttribute]
 
             if (appearId) {
                 const elapsed = window.HandoffAppearAnimations(appearId, key)
