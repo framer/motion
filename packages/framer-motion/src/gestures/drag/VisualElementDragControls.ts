@@ -468,9 +468,10 @@ export class VisualElementDragControls {
      * - Otherwise, we apply the delta to the x/y motion values.
      */
     private getAxisMotionValue(axis: DragDirection) {
-        const dragKey = `_drag${axis.toUpperCase()}`
+        const dragKey =
+            `_drag${axis.toUpperCase()}` as `_drag${Uppercase<DragDirection>}`
         const props = this.visualElement.getProps()
-        const externalMotionValue = props[dragKey as keyof typeof props]
+        const externalMotionValue = props[dragKey]
 
         return externalMotionValue
             ? externalMotionValue
