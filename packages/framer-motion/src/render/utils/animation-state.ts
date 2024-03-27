@@ -331,8 +331,8 @@ export function createAnimationState(
             const fallbackAnimation: ResolvedValues = {}
             removedKeys.forEach((key) => {
                 const fallbackTarget = visualElement.getBaseTarget(key)
-                fallbackAnimation[key] =
-                    fallbackTarget === undefined ? null : fallbackTarget
+                // @ts-expect-error - @mattgperry to figure if we should do something here
+                fallbackAnimation[key] = fallbackTarget ?? null
             })
 
             animations.push({ animation: fallbackAnimation })
