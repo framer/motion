@@ -82,7 +82,9 @@
             boxProjection.setValue("z", 20)
 
             requestAnimationFrame(() => {
+                const containerOrigin = container.getBoundingClientRect()
                 const boxOrigin = box.getBoundingClientRect()
+                const boxChildOrigin = boxChild.getBoundingClientRect()
                 boxProjection.willUpdate()
                 boxChildProjection.willUpdate()
                 containerProjection.willUpdate()
@@ -91,7 +93,9 @@
                 requestAnimationFrame(() => {
                     containerProjection.root.didUpdate()
                     frame.postRender(() => {
+                        matchViewportBox(container, containerOrigin)
                         matchViewportBox(box, boxOrigin)
+                        matchViewportBox(boxChild, boxChildOrigin)
                     })
                 })
             })
