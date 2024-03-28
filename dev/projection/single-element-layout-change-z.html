@@ -1,0 +1,104 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #container {
+                width: 100px;
+                height: 200px;
+                display: flex;
+                align-items: flex-end;
+                transform-style: preserve-3d;
+                background-color: blue;
+            }
+
+            #container.b {
+                align-items: flex-start;
+            }
+
+            #box {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+                padding: 10px;
+                display: flex;
+                align-items: flex-start;
+            }
+
+            .b #box {
+                align-items: flex-end;
+            }
+
+            #box-child {
+                width: 50px;
+                height: 50px;
+                background-color: #cc00cc;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="container">
+            <div id="box" data-layout-correct="true">
+                <div id="box-child"></div>
+            </div>
+        </div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-undo.js"></script>
+        <script>
+            const { createNode } = window.Undo
+            const { matchViewportBox, matchSkewX } = window.Assert
+            const container = document.getElementById("container")
+            const containerProjection = createNode(container, undefined, {
+                layout: false,
+            })
+            const box = document.getElementById("box")
+            const boxProjection = createNode(box, containerProjection)
+            const boxChild = document.getElementById("box-child")
+            const boxChildProjection = createNode(boxChild, boxProjection)
+
+            containerProjection.setValue("rotateX", 40)
+            containerProjection.setValue("transformPerspective", 500)
+            boxProjection.setValue("rotateX", 10)
+            boxProjection.setValue("z", 20)
+
+            requestAnimationFrame(() => {
+                const containerOrigin = container.getBoundingClientRect()
+                const boxOrigin = box.getBoundingClientRect()
+                const boxChildOrigin = boxChild.getBoundingClientRect()
+                boxProjection.willUpdate()
+                boxChildProjection.willUpdate()
+                containerProjection.willUpdate()
+                container.classList.add("b")
+
+                requestAnimationFrame(() => {
+                    containerProjection.root.didUpdate()
+                    frame.postRender(() => {
+                        matchViewportBox(container, containerOrigin)
+                        matchViewportBox(box, boxOrigin)
+                        matchViewportBox(boxChild, boxChildOrigin)
+                    })
+                })
+            })
+        </script>
+    </body>
+</html>

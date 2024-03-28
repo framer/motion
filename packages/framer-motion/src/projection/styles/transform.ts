@@ -16,8 +16,9 @@ export function buildProjectionTransform(
      */
     const xTranslate = delta.x.translate / treeScale.x
     const yTranslate = delta.y.translate / treeScale.y
-    if (xTranslate || yTranslate) {
-        transform = `translate3d(${xTranslate}px, ${yTranslate}px, 0) `
+    const zTranslate = latestTransform?.z || 0
+    if (xTranslate || yTranslate || zTranslate) {
+        transform = `translate3d(${xTranslate}px, ${yTranslate}px, ${zTranslate}px) `
     }
 
     /**

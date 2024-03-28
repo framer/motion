@@ -1698,6 +1698,7 @@ export function createProjectionNode<I>({
              */
             const { latestValues } = visualElement
             if (
+                latestValues.z ||
                 latestValues.rotate ||
                 latestValues.rotateX ||
                 latestValues.rotateY ||
@@ -1712,6 +1713,10 @@ export function createProjectionNode<I>({
             if (!hasRotate) return
 
             const resetValues = {}
+
+            if (latestValues.z) {
+                resetDistortingTransform("z", visualElement, resetValues)
+            }
 
             // Check the rotate value of all axes and reset to 0
             for (let i = 0; i < transformAxes.length; i++) {
