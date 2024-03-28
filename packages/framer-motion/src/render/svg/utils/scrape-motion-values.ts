@@ -10,13 +10,16 @@ export function scrapeMotionValuesFromProps(
     const newValues = scrapeHTMLMotionValuesFromProps(props, prevProps)
 
     for (const key in props) {
-        if (isMotionValue(props[key]) || isMotionValue(prevProps[key])) {
+        if (
+            isMotionValue(props[key as keyof typeof props]) ||
+            isMotionValue(prevProps[key as keyof typeof prevProps])
+        ) {
             const targetKey =
                 transformPropOrder.indexOf(key) !== -1
                     ? "attr" + key.charAt(0).toUpperCase() + key.substring(1)
                     : key
 
-            newValues[targetKey] = props[key]
+            newValues[targetKey] = props[key as keyof typeof props]
         }
     }
 

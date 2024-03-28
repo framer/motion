@@ -15,7 +15,7 @@ import {
 } from "./utils/constraints"
 import type { VisualElement } from "../../render/VisualElement"
 import { MotionProps } from "../../motion/types"
-import { Point } from "../../projection/geometry/types"
+import { Axis, Point } from "../../projection/geometry/types"
 import { createBox } from "../../projection/geometry/models"
 import { eachAxis } from "../../projection/utils/each-axis"
 import { measurePageBox } from "../../projection/utils/measure"
@@ -321,7 +321,10 @@ export class VisualElementDragControls {
             !this.hasMutatedConstraints
         ) {
             eachAxis((axis) => {
-                if (this.getAxisMotionValue(axis)) {
+                if (
+                    this.constraints !== false &&
+                    this.getAxisMotionValue(axis)
+                ) {
                     this.constraints[axis] = rebaseAxisConstraints(
                         layout.layoutBox[axis],
                         this.constraints[axis]
@@ -388,7 +391,7 @@ export class VisualElementDragControls {
             onDragTransitionEnd,
         } = this.getProps()
 
-        const constraints = this.constraints || {}
+        const constraints: Partial<ResolvedConstraints> = this.constraints || {}
 
         const momentumAnimations = eachAxis((axis) => {
             if (!shouldDrag(axis, drag, this.currentDirection)) {
@@ -465,7 +468,8 @@ export class VisualElementDragControls {
      * - Otherwise, we apply the delta to the x/y motion values.
      */
     private getAxisMotionValue(axis: DragDirection) {
-        const dragKey = "_drag" + axis.toUpperCase()
+        const dragKey =
+            `_drag${axis.toUpperCase()}` as `_drag${Uppercase<DragDirection>}`
         const props = this.visualElement.getProps()
         const externalMotionValue = props[dragKey]
 
@@ -473,7 +477,9 @@ export class VisualElementDragControls {
             ? externalMotionValue
             : this.visualElement.getValue(
                   axis,
-                  (props.initial ? props.initial[axis] : undefined) || 0
+                  (props.initial
+                      ? props.initial[axis as keyof typeof props.initial]
+                      : undefined) || 0
               )
     }
 
@@ -521,11 +527,11 @@ export class VisualElementDragControls {
         const boxProgress = { x: 0, y: 0 }
         eachAxis((axis) => {
             const axisValue = this.getAxisMotionValue(axis)
-            if (axisValue) {
+            if (axisValue && this.constraints !== false) {
                 const latest = axisValue.get()
                 boxProgress[axis] = calcOrigin(
                     { min: latest, max: latest },
-                    this.constraints[axis]
+                    this.constraints[axis] as Axis
                 )
             }
         })
@@ -552,7 +558,9 @@ export class VisualElementDragControls {
              * Calculate a new transform based on the previous box progress
              */
             const axisValue = this.getAxisMotionValue(axis)
-            const { min, max } = this.constraints[axis]
+            const { min, max } = (this.constraints as ResolvedConstraints)[
+                axis
+            ] as Axis
             axisValue.set(mixNumber(min, max, boxProgress[axis]))
         })
     }

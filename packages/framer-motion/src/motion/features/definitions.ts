@@ -25,8 +25,10 @@ const featureProps = {
 export const featureDefinitions: Partial<FeatureDefinitions> = {}
 
 for (const key in featureProps) {
-    featureDefinitions[key] = {
+    featureDefinitions[key as keyof typeof featureDefinitions] = {
         isEnabled: (props: MotionProps) =>
-            featureProps[key].some((name: string) => !!props[name]),
+            featureProps[key as keyof typeof featureProps].some(
+                (name: string) => !!props[name as keyof typeof props]
+            ),
     }
 }

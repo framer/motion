@@ -1,5 +1,5 @@
 import { ResolvedValues } from "../../types"
-import { MotionProps } from "../../../motion/types"
+import { MotionProps, MotionStyle } from "../../../motion/types"
 import { createBox } from "../../../projection/geometry/models"
 import { VisualElement } from "../../VisualElement"
 
@@ -22,7 +22,9 @@ export class StateVisualElement extends VisualElement<
     }
 
     getBaseTargetFromProps(props: MotionProps, key: string) {
-        return props.style ? props.style[key] : undefined
+        return props.style
+            ? (props.style[key as keyof MotionStyle] as any)
+            : undefined
     }
 
     readValueFromInstance(

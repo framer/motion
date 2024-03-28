@@ -55,7 +55,7 @@ export function animateTarget(
             key,
             visualElement.latestValues[key] ?? null
         )
-        const valueTarget = target[key]
+        const valueTarget = target[key as keyof typeof target]
 
         if (
             valueTarget === undefined ||
@@ -77,8 +77,9 @@ export function animateTarget(
          */
         let isHandoff = false
         if (window.HandoffAppearAnimations) {
+            const props = visualElement.getProps()
             const appearId =
-                visualElement.getProps()[optimizedAppearDataAttribute]
+                props[optimizedAppearDataAttribute]
 
             if (appearId) {
                 const elapsed = window.HandoffAppearAnimations(appearId, key)

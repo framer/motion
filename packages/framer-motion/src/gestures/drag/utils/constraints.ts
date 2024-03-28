@@ -180,7 +180,7 @@ export function calcPositionFromProgress(
 export function rebaseAxisConstraints(
     layout: Axis,
     constraints: Partial<Axis>
-) {
+): Partial<Axis> {
     const relativeConstraints: Partial<Axis> = {}
 
     if (constraints.min !== undefined) {
@@ -230,5 +230,5 @@ export function resolvePointElastic(
 ): number {
     return typeof dragElastic === "number"
         ? dragElastic
-        : dragElastic[label] || 0
+        : dragElastic[label as keyof typeof dragElastic] || 0
 }

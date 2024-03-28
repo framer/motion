@@ -1,5 +1,5 @@
 import { isMotionValue } from "framer-motion"
-import type { ScrapeMotionValuesFromProps } from "framer-motion"
+import type { ScrapeMotionValuesFromProps, MotionValue } from "framer-motion"
 import { ThreeMotionProps } from "../../types"
 
 const axes = ["x", "y", "z"]
@@ -20,23 +20,30 @@ export const scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps = (
     props: ThreeMotionProps,
     prevProps: ThreeMotionProps
 ) => {
-    const motionValues = {}
+    const motionValues: { [key: string]: MotionValue } = {}
 
-    for (const key in props) {
+    let key: keyof typeof props
+    for (key in props) {
         const prop = props[key]
 
         if (isMotionValue(prop) || isMotionValue(prevProps[key])) {
-            motionValues[valueMap[key] || key] = prop
+            const valueKey = valueMap[key as keyof typeof valueMap] || key
+            motionValues[valueKey] = prop as any
         } else if (Array.isArray(prop)) {
             for (let i = 0; i < prop.length; i++) {
                 const value = prop[i]
+                const prevValue = prevProps[key]
+                const prevArrayValue = Array.isArray(prevValue)
+                    ? prevValue[i]
+                    : undefined
                 if (
                     isMotionValue(value) ||
-                    (Array.isArray(prevProps[key]) &&
-                        isMotionValue(prevProps[key][i]))
+                    (prevArrayValue !== undefined &&
+                        isMotionValue(prevArrayValue))
                 ) {
-                    const name = valueMap[key + "-" + axes[i]]
-                    motionValues[name] = value
+                    const name =
+                        valueMap[`${key}-${axes[i]}` as keyof typeof valueMap]
+                    motionValues[name] = value as any
                 }
             }
         }

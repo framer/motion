@@ -1,4 +1,4 @@
-import { MotionProps } from "../../../motion/types"
+import { MotionProps, MotionStyle } from "../../../motion/types"
 import { isForcedMotionValue } from "../../../motion/utils/is-forced-motion-value"
 import { isMotionValue } from "../../../value/utils/is-motion-value"
 
@@ -7,15 +7,16 @@ export function scrapeMotionValuesFromProps(
     prevProps: MotionProps
 ) {
     const { style } = props
-    const newValues = {}
+    const newValues: { [key: string]: any } = {}
 
     for (const key in style) {
         if (
-            isMotionValue(style[key]) ||
-            (prevProps.style && isMotionValue(prevProps.style[key])) ||
+            isMotionValue(style[key as keyof MotionStyle]) ||
+            (prevProps.style &&
+                isMotionValue(prevProps.style[key as keyof MotionStyle])) ||
             isForcedMotionValue(key, props)
         ) {
-            newValues[key] = style[key]
+            newValues[key] = style[key as keyof MotionStyle]
         }
     }
 

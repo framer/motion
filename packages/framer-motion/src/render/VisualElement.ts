@@ -461,7 +461,7 @@ export abstract class VisualElement<
             this.events[key].clear()
         }
         for (const key in this.features) {
-            this.features[key].unmount()
+            this.features[key as keyof typeof this.features]?.unmount()
         }
         this.current = null
     }
@@ -538,13 +538,13 @@ export abstract class VisualElement<
         }
 
         for (let i = 0; i < numFeatures; i++) {
-            const name = featureNames[i]
+            const name = featureNames[i] as keyof typeof featureDefinitions
             const {
                 isEnabled,
                 Feature: FeatureConstructor,
                 ProjectionNode,
                 MeasureLayout: MeasureLayoutComponent,
-            } = featureDefinitions[name]
+            } = featureDefinitions[name]!
 
             if (ProjectionNode) ProjectionNodeConstructor = ProjectionNode
 
@@ -603,7 +603,9 @@ export abstract class VisualElement<
 
     updateFeatures() {
         for (const key in this.features) {
-            const feature = this.features[key] as Feature<any>
+            const feature = this.features[
+                key as keyof typeof this.features
+            ] as Feature<any>
             if (feature.isMounted) {
                 feature.update()
             } else {
@@ -681,7 +683,8 @@ export abstract class VisualElement<
                 delete this.propEventSubscriptions[key]
             }
 
-            const listener = props["on" + key]
+            const listenerName = ("on" + key) as keyof typeof props
+            const listener = props[listenerName]
             if (listener) {
                 this.propEventSubscriptions[key] = this.on(key as any, listener)
             }
@@ -745,7 +748,7 @@ export abstract class VisualElement<
 
         const context = {}
         for (let i = 0; i < numVariantProps; i++) {
-            const name = variantProps[i]
+            const name = variantProps[i] as keyof typeof context
             const prop = this.props[name]
 
             if (isVariantLabel(prop) || prop === false) {
@@ -871,16 +874,25 @@ export abstract class VisualElement<
      * Find the base target for a value thats been removed from all animation
      * props.
      */
-    getBaseTarget(key: string) {
+    getBaseTarget(
+        key: string
+    ): ResolvedValues[string] | undefined | null {
         const { initial } = this.props
-        const valueFromInitial =
-            typeof initial === "string" || typeof initial === "object"
-                ? resolveVariantFromProps(
-                      this.props,
-                      initial as any,
-                      this.presenceContext?.custom
-                  )?.[key]
-                : undefined
+
+        let valueFromInitial: ResolvedValues[string] | undefined | null
+
+        if (typeof initial === "string" || typeof initial === "object") {
+            const variant = resolveVariantFromProps(
+                this.props,
+                initial as any,
+                this.presenceContext?.custom
+            )
+            if (variant) {
+                valueFromInitial = variant[
+                    key as keyof typeof variant
+                ] as string
+            }
+        }
 
         /**
          * If this value still exists in the current initial variant, read that.

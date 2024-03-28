@@ -5,7 +5,7 @@ import { Driver } from "./animators/drivers/types"
 import { SVGPathProperties, VariantLabels } from "../motion/types"
 import { SVGAttributes } from "../render/svg/types-attributes"
 import { ProgressTimeline } from "../render/dom/scroll/observe"
-import { MotionValue } from "../value"
+import type { MotionValue } from "../value"
 import {
     KeyframeResolver,
     OnKeyframesResolved,
@@ -118,7 +118,10 @@ export interface AnimationPlaybackControls {
 export type DynamicOption<T> = (i: number, total: number) => T
 
 export interface CSSStyleDeclarationWithTransform
-    extends Omit<CSSStyleDeclaration, "direction" | "transition"> {
+    extends Omit<
+        CSSStyleDeclaration,
+        "direction" | "transition" | "x" | "y" | "z"
+    > {
     x: number | string
     y: number | string
     z: number | string

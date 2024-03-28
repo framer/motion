@@ -35,7 +35,7 @@ export function buildTransform(
      * are present to the transform string.
      */
     for (let i = 0; i < numTransforms; i++) {
-        const key = transformPropOrder[i]
+        const key = transformPropOrder[i] as keyof typeof translateAlias
         if (transform[key] !== undefined) {
             const transformName = translateAlias[key] || key
             transformString += `${transformName}(${transform[key]}) `

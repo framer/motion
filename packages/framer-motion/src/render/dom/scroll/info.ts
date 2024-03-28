@@ -33,7 +33,7 @@ const keys = {
         length: "Height",
         position: "Top",
     },
-}
+} as const
 
 function updateAxisInfo(
     element: HTMLElement,
@@ -47,8 +47,8 @@ function updateAxisInfo(
     const prev = axis.current
     const prevTime = info.time
 
-    axis.current = element["scroll" + position]
-    axis.scrollLength = element["scroll" + length] - element["client" + length]
+    axis.current = element[`scroll${position}`]
+    axis.scrollLength = element[`scroll${length}`] - element[`client${length}`]
     axis.offset.length = 0
     axis.offset[0] = 0
     axis.offset[1] = axis.scrollLength

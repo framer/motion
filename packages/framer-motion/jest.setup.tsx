@@ -15,7 +15,7 @@ class PointerEventFake extends Event {
         if (!props) return
         pointerEventProps.forEach((prop) => {
             if (props[prop] !== null) {
-                this[prop] = props[prop]
+                this[prop as keyof typeof this] = props[prop]
             }
         })
     }

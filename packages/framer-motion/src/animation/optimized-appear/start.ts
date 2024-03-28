@@ -5,6 +5,7 @@ import { optimizedAppearDataId } from "./data-id"
 import { handoffOptimizedAppearAnimation } from "./handoff"
 import { appearAnimationStore } from "./store"
 import { noop } from "../../utils/noop"
+import "./types"
 
 /**
  * A single time to use across all animations to manually set startTime

@@ -42,7 +42,7 @@ export function filterProps(
     isDom: boolean,
     forwardMotionProps: boolean
 ) {
-    const filteredProps = {}
+    const filteredProps: MotionProps = {}
 
     for (const key in props) {
         /**
@@ -59,9 +59,11 @@ export function filterProps(
             (forwardMotionProps === true && isValidMotionProp(key)) ||
             (!isDom && !isValidMotionProp(key)) ||
             // If trying to use native HTML drag events, forward drag listeners
-            (props["draggable"] && key.startsWith("onDrag"))
+            (props["draggable" as keyof MotionProps] &&
+                key.startsWith("onDrag"))
         ) {
-            filteredProps[key] = props[key]
+            filteredProps[key as keyof MotionProps] =
+                props[key as keyof MotionProps]
         }
     }
 
