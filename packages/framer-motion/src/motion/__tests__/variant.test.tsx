@@ -957,7 +957,7 @@ describe("animate prop as variant", () => {
         expect(element).toHaveStyle("opacity: 0")
     })
 
-    test.only("style is active once value has  been removed from animate", async () => {
+    test("style is active once value has  been removed from animate", async () => {
         const Component = ({
             animate,
             opacity = 0,
