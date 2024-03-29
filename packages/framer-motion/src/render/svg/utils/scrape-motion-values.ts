@@ -1,13 +1,19 @@
 import { MotionProps } from "../../../motion/types"
 import { isMotionValue } from "../../../value/utils/is-motion-value"
+import type { VisualElement } from "../../VisualElement"
 import { scrapeMotionValuesFromProps as scrapeHTMLMotionValuesFromProps } from "../../html/utils/scrape-motion-values"
 import { transformPropOrder } from "../../html/utils/transform"
 
 export function scrapeMotionValuesFromProps(
     props: MotionProps,
-    prevProps: MotionProps
+    prevProps: MotionProps,
+    visualElement?: VisualElement
 ) {
-    const newValues = scrapeHTMLMotionValuesFromProps(props, prevProps)
+    const newValues = scrapeHTMLMotionValuesFromProps(
+        props,
+        prevProps,
+        visualElement
+    )
 
     for (const key in props) {
         if (isMotionValue(props[key]) || isMotionValue(prevProps[key])) {

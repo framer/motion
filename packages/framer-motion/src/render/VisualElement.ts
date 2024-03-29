@@ -166,7 +166,8 @@ export abstract class VisualElement<
      */
     scrapeMotionValuesFromProps(
         _props: MotionProps,
-        _prevProps: MotionProps
+        _prevProps: MotionProps,
+        _visualElement: VisualElement
     ): {
         [key: string]: MotionValue | string | number
     } {
@@ -374,7 +375,7 @@ export abstract class VisualElement<
          * more a reflection of the test.
          */
         const { willChange, ...initialMotionValues } =
-            this.scrapeMotionValuesFromProps(props, {})
+            this.scrapeMotionValuesFromProps(props, {}, this)
 
         for (const key in initialMotionValues) {
             const value = initialMotionValues[key]
@@ -680,7 +681,7 @@ export abstract class VisualElement<
 
         this.prevMotionValues = updateMotionValuesFromProps(
             this,
-            this.scrapeMotionValuesFromProps(props, this.prevProps),
+            this.scrapeMotionValuesFromProps(props, this.prevProps, this),
             this.prevMotionValues
         )
 

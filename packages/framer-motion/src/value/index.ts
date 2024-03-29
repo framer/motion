@@ -127,6 +127,8 @@ export class MotionValue<V = any> {
      */
     private canTrackVelocity = false
 
+    liveStyle: boolean | undefined
+
     /**
      * @param init - The initiating value
      * @param config - Optional configuration options
