@@ -14,6 +14,7 @@ import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 import type { ResolvedValues } from "../types"
 import type { IProjectionNode } from "../../projection/node/types"
+import { VisualElement } from "../VisualElement"
 
 export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)
@@ -65,8 +66,12 @@ export class HTMLVisualElement extends DOMVisualElement<
         )
     }
 
-    scrapeMotionValuesFromProps(props: MotionProps, prevProps: MotionProps) {
-        return scrapeMotionValuesFromProps(props, prevProps)
+    scrapeMotionValuesFromProps(
+        props: MotionProps,
+        prevProps: MotionProps,
+        visualElement: VisualElement
+    ) {
+        return scrapeMotionValuesFromProps(props, prevProps, visualElement)
     }
 
     childSubscription?: VoidFunction

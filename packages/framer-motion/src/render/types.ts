@@ -28,7 +28,8 @@ export type VariantStateContext = {
 
 export type ScrapeMotionValuesFromProps = (
     props: MotionProps,
-    prevProps: MotionProps
+    prevProps: MotionProps,
+    visualElement?: VisualElement
 ) => {
     [key: string]: MotionValue | string | number
 }
