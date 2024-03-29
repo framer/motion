@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.24] 2024-03-29
+
+### Fixed
+
+-   Changes in `style` are visible once a value is no longer present in animation props.
+
 ## [11.0.23] 2024-03-28
 
 ### Fixed
