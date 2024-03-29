@@ -46,7 +46,7 @@ export class SVGVisualElement extends DOMVisualElement<
     }
 
     scrapeMotionValuesFromProps(props: MotionProps, prevProps: MotionProps) {
-        return scrapeMotionValuesFromProps(props, prevProps)
+        return scrapeMotionValuesFromProps(props, prevProps, this)
     }
 
     build(

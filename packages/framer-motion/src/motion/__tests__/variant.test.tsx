@@ -957,6 +957,67 @@ describe("animate prop as variant", () => {
         expect(element).toHaveStyle("opacity: 0")
     })
 
+    test("style is active once value has been removed from animate", async () => {
+        const Component = ({
+            animate,
+            opacity = 0,
+        }: {
+            animate?: string
+            opacity?: number
+        }) => {
+            return (
+                <motion.div
+                    animate={animate}
+                    variants={{ a: { opacity: 1, rotate: 1 } }}
+                    transition={{ type: false }}
+                    style={{ opacity, rotate: opacity }}
+                />
+            )
+        }
+
+        const { container, rerender } = render(<Component />)
+        const element = container.firstChild as Element
+        expect(element).toHaveStyle("opacity: 0")
+        expect(element).toHaveStyle("transform: none")
+
+        rerender(<Component animate="a" />)
+        rerender(<Component animate="a" />)
+
+        await nextFrame()
+        expect(element).toHaveStyle("opacity: 1")
+        expect(element).toHaveStyle("transform: rotate(1deg) translateZ(0)")
+
+        rerender(<Component />)
+        rerender(<Component />)
+
+        await nextFrame()
+        expect(element).toHaveStyle("opacity: 0")
+        expect(element).toHaveStyle("transform: none")
+
+        rerender(<Component opacity={0.5} />)
+        rerender(<Component opacity={0.5} />)
+
+        await nextFrame()
+        expect(element).toHaveStyle("opacity: 0.5")
+        expect(element).toHaveStyle("transform: rotate(0.5deg) translateZ(0)")
+
+        // Re-adding value to animated stack will animate value correctly
+        rerender(<Component animate="a" opacity={0.5} />)
+        rerender(<Component animate="a" opacity={0.5} />)
+
+        await nextFrame()
+        expect(element).toHaveStyle("opacity: 1")
+        expect(element).toHaveStyle("transform: rotate(1deg) translateZ(0)")
+
+        // While animate is active, changing style doesn't change value
+        rerender(<Component animate="a" opacity={0.75} />)
+        rerender(<Component animate="a" opacity={0.75} />)
+
+        await nextFrame()
+        expect(element).toHaveStyle("opacity: 1")
+        expect(element).toHaveStyle("transform: rotate(1deg) translateZ(0)")
+    })
+
     test("variants work the same whether defined inline or not", async () => {
         const variants = {
             foo: { opacity: [1, 0, 1] },

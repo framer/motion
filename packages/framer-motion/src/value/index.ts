@@ -126,6 +126,12 @@ export class MotionValue<V = any> {
     private canTrackVelocity = false
 
     /**
+     * Tracks whether this value should be removed
+     * @internal
+     */
+    liveStyle?: boolean
+
+    /**
      * @param init - The initiating value
      * @param config - Optional configuration options
      *

@@ -55,8 +55,12 @@ export function updateMotionValuesFromProps(
              */
             if (element.hasValue(key)) {
                 const existingValue = element.getValue(key)!
-                // TODO: Only update values that aren't being animated or even looked at
-                !existingValue.hasAnimated && existingValue.set(nextValue)
+
+                if (existingValue.liveStyle === true) {
+                    existingValue.jump(nextValue)
+                } else if (!existingValue.hasAnimated) {
+                    existingValue.set(nextValue)
+                }
             } else {
                 const latestValue = element.getStaticValue(key)
                 element.addValue(

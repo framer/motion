@@ -243,6 +243,9 @@ export function createAnimationState(
                     removedKeys.delete(key)
                 }
                 typeState.needsAnimating[key] = true
+
+                const motionValue = visualElement.getValue(key)
+                if (motionValue) motionValue.liveStyle = false
             }
 
             for (const key in allKeys) {
@@ -325,6 +328,10 @@ export function createAnimationState(
             const fallbackAnimation = {}
             removedKeys.forEach((key) => {
                 const fallbackTarget = visualElement.getBaseTarget(key)
+
+                const motionValue = visualElement.getValue(key)
+                if (motionValue) motionValue.liveStyle = true
+
                 fallbackAnimation[key] =
                     fallbackTarget === undefined ? null : fallbackTarget
             })
