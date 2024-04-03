@@ -1,4 +1,4 @@
-import { ComponentType } from "react"
+import { ComponentType, Fragment } from "react"
 import { HTMLVisualElement } from "../html/HTMLVisualElement"
 import { SVGVisualElement } from "../svg/SVGVisualElement"
 import { CreateVisualElement, VisualElementOptions } from "../types"
@@ -13,7 +13,7 @@ export const createDomVisualElement: CreateVisualElement<
     return isSVGComponent(Component)
         ? new SVGVisualElement(options, { enableHardwareAcceleration: false })
         : new HTMLVisualElement(options, {
-              allowProjection: Component !== React.Fragment,
+              allowProjection: Component !== Fragment,
               enableHardwareAcceleration: true,
           })
 }
