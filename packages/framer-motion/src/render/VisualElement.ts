@@ -46,6 +46,20 @@ import { visualElementStore } from "./store"
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
 
+function getClosestProjectingNode(
+    visualElement?: VisualElement<
+        unknown,
+        unknown,
+        { allowProjection?: boolean }
+    >
+): IProjectionNode | undefined {
+    if (!visualElement) return undefined
+
+    return visualElement.options.allowProjection
+        ? visualElement.projection
+        : getClosestProjectingNode(visualElement.parent)
+}
+
 const propEventHandlers = [
     "AnimationStart",
     "AnimationComplete",
@@ -265,7 +279,7 @@ export abstract class VisualElement<
      * The options used to create this VisualElement. The Options type is defined
      * by the inheriting VisualElement and is passed straight through to the render functions.
      */
-    private readonly options: Options
+    readonly options: Options
 
     /**
      * A reference to the latest props provided to the VisualElement's host React component.
@@ -542,7 +556,7 @@ export abstract class VisualElement<
         ) {
             this.projection = new ProjectionNodeConstructor(
                 this.latestValues,
-                this.parent && this.parent.projection
+                getClosestProjectingNode(this.parent)
             ) as IProjectionNode
 
             const {
