@@ -76,7 +76,7 @@ function getClosestProjectingNode(
 ): IProjectionNode | undefined {
     if (!visualElement) return undefined
 
-    return visualElement.options.allowProjection
+    return visualElement.options.allowProjection !== false
         ? visualElement.projection
         : getClosestProjectingNode(visualElement.parent)
 }
