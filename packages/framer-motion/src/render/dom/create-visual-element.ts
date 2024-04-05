@@ -3,6 +3,7 @@ import { HTMLVisualElement } from "../html/HTMLVisualElement"
 import { SVGVisualElement } from "../svg/SVGVisualElement"
 import { CreateVisualElement, VisualElementOptions } from "../types"
 import { isSVGComponent } from "./utils/is-svg-component"
+import React from "react"
 
 export const createDomVisualElement: CreateVisualElement<
     HTMLElement | SVGElement
@@ -12,5 +13,8 @@ export const createDomVisualElement: CreateVisualElement<
 ) => {
     return isSVGComponent(Component)
         ? new SVGVisualElement(options, { enableHardwareAcceleration: false })
-        : new HTMLVisualElement(options, { enableHardwareAcceleration: true })
+        : new HTMLVisualElement(options, {
+              enableHardwareAcceleration: true,
+              allowProjection: Component !== React.Fragment,
+          })
 }
