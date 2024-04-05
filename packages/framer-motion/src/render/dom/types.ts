@@ -23,6 +23,8 @@ export interface DOMVisualElementOptions {
     /**
      * If `true`, this element will be included in the projection tree.
      *
+     * Default: `true`
+     *
      * @public
      */
     allowProjection?: boolean
