@@ -9,6 +9,7 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Fixed
 
 -   Adding `perspective()` to projection transform.
+-   Changing scheduling of `useTransform` to ensure frames are up-to-date.
 
 ## [11.0.25] 2024-04-03
 
