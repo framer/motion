@@ -87,8 +87,12 @@ export const animateMotionValue =
 
         let shouldSkip = false
 
-        if ((options as any).type === false) {
+        if (
+            (options as any).type === false ||
+            (options.duration === 0 && !options.repeatDelay)
+        ) {
             options.duration = 0
+
             if (options.delay === 0) {
                 shouldSkip = true
             }
