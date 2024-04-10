@@ -1,6 +1,6 @@
 import { render } from "../../../jest.setup"
 import * as React from "react"
-import { frame, motion } from "../../"
+import { cancelFrame, frame, motion } from "../../"
 import { useMotionValue } from "../use-motion-value"
 import { useTransform } from "../use-transform"
 import { MotionValue, motionValue } from ".."
@@ -183,6 +183,45 @@ test("is correctly typed", async () => {
     }
 
     render(<Component />)
+})
+
+test("frame scheduling", async () => {
+    return new Promise<void>((resolve) => {
+        const Component = () => {
+            const x = useMotionValue(0)
+            const y = useMotionValue(0)
+            const z = useTransform(() => x.get() + y.get())
+
+            React.useEffect(() => {
+                const setX = () => {
+                    x.set(1)
+                    frame.update(setY)
+                }
+                const setY = () => y.set(2)
+
+                const checkFrame = () => {
+                    expect(container.firstChild as Element).toHaveStyle(
+                        "transform: translateX(1px) translateY(2px) translateZ(3px)"
+                    )
+
+                    resolve()
+                }
+
+                frame.read(setX)
+                frame.postRender(checkFrame)
+
+                return () => {
+                    cancelFrame(setY)
+                    cancelFrame(checkFrame)
+                }
+            }, [])
+
+            return <motion.div style={{ x, y, z }} />
+        }
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+    })
 })
 
 test("can be re-pointed to another `MotionValue`", async () => {
