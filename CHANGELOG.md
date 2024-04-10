@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.27] 2024-04-10
+
+### Fixed
+
+-   Skipping animations with `duration: 0`.
+
 ## [11.0.26] 2024-04-10
 
 ### Fixed
