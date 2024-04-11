@@ -15,6 +15,7 @@ import { Box } from "../../projection/geometry/types"
 import { createBox } from "../../projection/geometry/models"
 import { IProjectionNode } from "../../projection/node/types"
 import { isSVGTag } from "./utils/is-svg-tag"
+import { VisualElement } from "../VisualElement"
 
 export class SVGVisualElement extends DOMVisualElement<
     SVGElement,
@@ -45,8 +46,12 @@ export class SVGVisualElement extends DOMVisualElement<
         return createBox()
     }
 
-    scrapeMotionValuesFromProps(props: MotionProps, prevProps: MotionProps) {
-        return scrapeMotionValuesFromProps(props, prevProps, this)
+    scrapeMotionValuesFromProps(
+        props: MotionProps,
+        prevProps: MotionProps,
+        visualElement: VisualElement
+    ) {
+        return scrapeMotionValuesFromProps(props, prevProps, visualElement)
     }
 
     build(
