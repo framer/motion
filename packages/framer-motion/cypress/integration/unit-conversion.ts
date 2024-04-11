@@ -10,4 +10,16 @@ describe("Unit conversion", () => {
                 expect(left).to.equal(150)
             })
     })
+
+    it("Animate width and height to/from vh units", () => {
+        cy.viewport(400, 400)
+            .visit("?test=unit-conversion-vh")
+            .wait(100)
+            .get("#box")
+            .should(([$box]: any) => {
+                const { width, height } = $box.getBoundingClientRect()
+                expect(width).to.equal(150)
+                expect(height).to.equal(150)
+            })
+    })
 })
