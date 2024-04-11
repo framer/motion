@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.0.28] 2024-04-11
+
+### Fixed
+
+-   Ensure CSS var token is set as final animation keyframe.
+
 ## [11.0.27] 2024-04-10
 
 ### Fixed
