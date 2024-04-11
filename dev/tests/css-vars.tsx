@@ -17,22 +17,31 @@ export const App = () => {
     const content = useMotionValue("")
 
     return (
-        <div style={{ "--a": "#00F", "--b": "100px", "--c": 2 } as any}>
+        <div
+            style={
+                { "--a": "#00F", "--b": "100px", "--c": 2, "--d": 0.5 } as any
+            }
+        >
             <motion.div
                 animate={{
                     originX: 0,
                     originY: 0,
+                    opacity: "var(--d)",
                     backgroundColor: "var(--a)",
                     scale: "var(--c)",
                     x: "var(--b)",
                 }}
+                transition={{ duration: 0.1 }}
                 style={style}
-                onUpdate={({ scale, x }) => {
+                onUpdate={({ scale }) => {
                     if (isFirstFrame) {
-                        content.set(scale === "2" ? "Fail" : "Success")
+                        content.set(
+                            typeof scale === "string" ? "Fail" : "Success"
+                        )
                     }
                     isFirstFrame = false
                 }}
+                id="test"
             >
                 {content}
             </motion.div>

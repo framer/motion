@@ -59,6 +59,10 @@ export class DOMKeyframesResolver<
                 if (resolved !== undefined) {
                     unresolvedKeyframes[i] = resolved as T
                 }
+
+                if (i === unresolvedKeyframes.length - 1) {
+                    this.finalKeyframe = keyframe as T
+                }
             }
         }
 
@@ -160,7 +164,7 @@ export class DOMKeyframesResolver<
             window.getComputedStyle(element.current)
         ) as any
 
-        if (finalKeyframe !== null) {
+        if (finalKeyframe !== null && this.finalKeyframe === undefined) {
             this.finalKeyframe = finalKeyframe as T
         }
 
