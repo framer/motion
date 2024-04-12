@@ -3,6 +3,7 @@ import type { MotionValue } from "../../value"
 import { transformProps } from "../../render/html/utils/transform"
 import { appearAnimationStore } from "./store"
 import { appearStoreId } from "./store-id"
+import "./types"
 
 let handoffFrameTime: number
 

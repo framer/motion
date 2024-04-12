@@ -39,9 +39,9 @@ export class HTMLVisualElement extends DOMVisualElement<
             const value =
                 (isCSSVariableName(key)
                     ? computedStyle.getPropertyValue(key)
-                    : computedStyle[key]) || 0
+                    : computedStyle[key as keyof typeof computedStyle]) || 0
 
-            return typeof value === "string" ? value.trim() : value
+            return typeof value === "string" ? value.trim() : (value as number)
         }
     }
 

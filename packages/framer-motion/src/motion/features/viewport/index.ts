@@ -92,5 +92,6 @@ function hasViewportOptionChanged(
     { viewport = {} }: MotionProps,
     { viewport: prevViewport = {} }: MotionProps = {}
 ) {
-    return (name: string) => viewport[name] !== prevViewport[name]
+    return (name: keyof typeof viewport) =>
+        viewport[name] !== prevViewport[name]
 }

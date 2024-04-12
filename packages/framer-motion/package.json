@@ -62,7 +62,7 @@
         "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
         "prepack": "yarn build",
         "postpublish": "git push --tags",
-        "measure": "rollup -c ./rollup.size.config.js && webpack --config webpack.size.config.js && bundlesize",
+        "measure": "rollup -c ./rollup.size.config.mjs && webpack --config webpack.size.config.js && bundlesize",
         "start-dev-server": "webpack serve --config ../../dev/webpack/config.js --hot"
     },
     "dependencies": {
@@ -111,7 +111,7 @@
         },
         {
             "path": "./dist/size-webpack-dom-animation.js",
-            "maxSize": "21.2 kB"
+            "maxSize": "21.3 kB"
         },
         {
             "path": "./dist/size-webpack-dom-max.js",

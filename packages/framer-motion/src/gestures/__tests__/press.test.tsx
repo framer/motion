@@ -524,7 +524,7 @@ describe("press", () => {
     })
 
     test("press gesture works with animation state", async () => {
-        const [a, b] = await new Promise((resolve) => {
+        const [a, b] = await new Promise<[Element, Element]>((resolve) => {
             const childProps = {
                 variants: {
                     rest: { opacity: 0.5 },

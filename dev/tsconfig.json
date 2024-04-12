@@ -14,7 +14,6 @@
         "outDir": "lib",
         "noLib": false,
         "preserveConstEnums": true,
-        "suppressImplicitAnyIndexErrors": true,
         "rootDir": "./",
         "sourceMap": true,
         "baseUrl": "src",

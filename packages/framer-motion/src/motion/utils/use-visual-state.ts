@@ -120,7 +120,7 @@ function makeLatestValues(
             const { transitionEnd, transition, ...target } = resolved
 
             for (const key in target) {
-                let valueTarget = target[key]
+                let valueTarget = target[key as keyof typeof target]
 
                 if (Array.isArray(valueTarget)) {
                     /**
@@ -134,10 +134,13 @@ function makeLatestValues(
                 }
 
                 if (valueTarget !== null) {
-                    values[key] = valueTarget
+                    values[key] = valueTarget as string | number
                 }
             }
-            for (const key in transitionEnd) values[key] = transitionEnd[key]
+            for (const key in transitionEnd)
+                values[key] = transitionEnd[
+                    key as keyof typeof transitionEnd
+                ] as string | number
         })
     }
 

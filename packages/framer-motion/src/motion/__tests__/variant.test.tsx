@@ -703,106 +703,106 @@ describe("animate prop as variant", () => {
     })
 
     test("components without variants are transparent to stagger order", async () => {
-        const [recordedOrder, staggeredEqually] = await new Promise(
-            (resolve) => {
-                const order: number[] = []
-                const delayedBy: number[] = []
-                const staggerDuration = 0.1
+        const [recordedOrder, staggeredEqually] = await new Promise<
+            [number[], boolean]
+        >((resolve) => {
+            const order: number[] = []
+            const delayedBy: number[] = []
+            const staggerDuration = 0.1
 
-                const updateDelayedBy = (i: number) => {
-                    if (delayedBy[i]) return
-                    delayedBy[i] = performance.now()
-                }
-
-                // Checking a rough equidistance between stagger times allows us to see
-                // if any of the supposedly invisible interim `motion.div`s were considered part of the
-                // stagger order (which would mess up the timings)
-                const checkStaggerEquidistance = () => {
-                    let isEquidistant = true
-                    let prev = 0
-                    for (let i = 0; i < delayedBy.length; i++) {
-                        if (prev) {
-                            const timeSincePrev = prev - delayedBy[i]
-                            if (
-                                Math.round(timeSincePrev / 100) * 100 !==
-                                staggerDuration * 1000
-                            ) {
-                                isEquidistant = false
-                            }
-                        }
-                        prev = delayedBy[i]
-                    }
-
-                    return isEquidistant
-                }
-
-                const parentVariants: Variants = {
-                    visible: {
-                        transition: {
-                            staggerChildren: staggerDuration,
-                            staggerDirection: -1,
-                        },
-                    },
-                }
-
-                const variants: Variants = {
-                    hidden: { opacity: 0 },
-                    visible: {
-                        opacity: 1,
-                        transition: {
-                            duration: 0.000001,
-                        },
-                    },
-                }
-
-                render(
-                    <motion.div
-                        initial="hidden"
-                        animate="visible"
-                        variants={parentVariants}
-                        onAnimationComplete={() =>
-                            requestAnimationFrame(() =>
-                                resolve([order, checkStaggerEquidistance()])
-                            )
-                        }
-                    >
-                        <motion.div>
-                            <motion.div />
-                            <motion.div
-                                variants={variants}
-                                onUpdate={() => {
-                                    updateDelayedBy(0)
-                                    order.push(1)
-                                }}
-                            />
-                            <motion.div
-                                variants={variants}
-                                onUpdate={() => {
-                                    updateDelayedBy(1)
-                                    order.push(2)
-                                }}
-                            />
-                        </motion.div>
-                        <motion.div>
-                            <motion.div
-                                variants={variants}
-                                onUpdate={() => {
-                                    updateDelayedBy(2)
-                                    order.push(3)
-                                }}
-                            />
-                            <motion.div
-                                variants={variants}
-                                onUpdate={() => {
-                                    updateDelayedBy(3)
-                                    order.push(4)
-                                }}
-                            />
-                        </motion.div>
-                    </motion.div>
-                )
+            const updateDelayedBy = (i: number) => {
+                if (delayedBy[i]) return
+                delayedBy[i] = performance.now()
             }
-        )
+
+            // Checking a rough equidistance between stagger times allows us to see
+            // if any of the supposedly invisible interim `motion.div`s were considered part of the
+            // stagger order (which would mess up the timings)
+            const checkStaggerEquidistance = () => {
+                let isEquidistant = true
+                let prev = 0
+                for (let i = 0; i < delayedBy.length; i++) {
+                    if (prev) {
+                        const timeSincePrev = prev - delayedBy[i]
+                        if (
+                            Math.round(timeSincePrev / 100) * 100 !==
+                            staggerDuration * 1000
+                        ) {
+                            isEquidistant = false
+                        }
+                    }
+                    prev = delayedBy[i]
+                }
+
+                return isEquidistant
+            }
+
+            const parentVariants: Variants = {
+                visible: {
+                    transition: {
+                        staggerChildren: staggerDuration,
+                        staggerDirection: -1,
+                    },
+                },
+            }
+
+            const variants: Variants = {
+                hidden: { opacity: 0 },
+                visible: {
+                    opacity: 1,
+                    transition: {
+                        duration: 0.000001,
+                    },
+                },
+            }
+
+            render(
+                <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    variants={parentVariants}
+                    onAnimationComplete={() =>
+                        requestAnimationFrame(() =>
+                            resolve([order, checkStaggerEquidistance()])
+                        )
+                    }
+                >
+                    <motion.div>
+                        <motion.div />
+                        <motion.div
+                            variants={variants}
+                            onUpdate={() => {
+                                updateDelayedBy(0)
+                                order.push(1)
+                            }}
+                        />
+                        <motion.div
+                            variants={variants}
+                            onUpdate={() => {
+                                updateDelayedBy(1)
+                                order.push(2)
+                            }}
+                        />
+                    </motion.div>
+                    <motion.div>
+                        <motion.div
+                            variants={variants}
+                            onUpdate={() => {
+                                updateDelayedBy(2)
+                                order.push(3)
+                            }}
+                        />
+                        <motion.div
+                            variants={variants}
+                            onUpdate={() => {
+                                updateDelayedBy(3)
+                                order.push(4)
+                            }}
+                        />
+                    </motion.div>
+                </motion.div>
+            )
+        })
 
         expect(recordedOrder).toEqual([4, 3, 2, 1])
         expect(staggeredEqually).toEqual(true)

@@ -1,8 +1,5 @@
 const path = require("path")
-const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin")
 const chalk = require("chalk")
-const webpack = require("webpack")
-const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin")
 
 const tsLoader = {
     loader: "ts-loader",
@@ -31,17 +28,12 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.[jt]sx?$/,
+                test: /\.ts(x?)$/,
                 exclude: [/__tests__/, /node_modules/],
                 use: [
                     "cache-loader",
                     {
                         loader: require.resolve("babel-loader"),
-                        options: {
-                            plugins: [
-                                require.resolve("react-refresh/babel"),
-                            ].filter(Boolean),
-                        },
                     },
                     tsLoader,
                 ],
@@ -51,9 +43,6 @@ module.exports = {
     resolve: {
         modules: ["node_modules"],
         extensions: [".ts", ".tsx", ".js", ".json"],
-        fallback: {
-            path: require.resolve("path-browserify"),
-        },
     },
     externals: {
         react: {
@@ -76,11 +65,4 @@ module.exports = {
         stats: "errors-only",
         port: DEV_SERVER_PORT,
     },
-    plugins: [
-        new ReactRefreshWebpackPlugin(),
-        new ForkTsCheckerWebpackPlugin({
-            typescript: { configFile: "./tsconfig.json" },
-        }),
-        new webpack.HotModuleReplacementPlugin(),
-    ],
 }

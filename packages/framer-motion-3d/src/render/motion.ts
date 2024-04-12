@@ -18,7 +18,7 @@ const preloadedFeatures: Partial<FeatureBundle> = {
     ...animations,
 }
 
-function custom<Props>(Component: string) {
+function custom<Props extends {}>(Component: string) {
     return createMotionComponent<Props, any, ThreeRenderState>({
         Component,
         preloadedFeatures,

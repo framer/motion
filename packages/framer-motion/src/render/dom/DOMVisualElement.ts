@@ -1,6 +1,6 @@
 import { DOMVisualElementOptions } from "../dom/types"
 import { VisualElement } from "../VisualElement"
-import { MotionProps } from "../../motion/types"
+import { MotionProps, MotionStyle } from "../../motion/types"
 import { MotionValue } from "../../value"
 import { HTMLRenderState } from "../html/types"
 import { DOMKeyframesResolver } from "./DOMKeyframesResolver"
@@ -23,7 +23,9 @@ export abstract class DOMVisualElement<
         props: MotionProps,
         key: string
     ): string | number | MotionValue<any> | undefined {
-        return props.style ? props.style[key] : undefined
+        return props.style
+            ? (props.style[key as keyof MotionStyle] as string)
+            : undefined
     }
 
     removeValueFromRenderState(

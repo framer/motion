@@ -24,7 +24,7 @@
         "babel-loader": "^8.2.3",
         "cache-loader": "^1.2.5",
         "convert-tsconfig-paths-to-webpack-aliases": "^0.9.2",
-        "fork-ts-checker-webpack-plugin": "^6.2.0",
+        "typescript": "^5.4.5",
         "webpack": "^5.27.2",
         "webpack-cli": "^4.9.1",
         "webpack-dev-server": "^3.11.2"
