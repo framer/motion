@@ -1,4 +1,3 @@
-import * as React from "react"
 import { MotionConfig, motion } from "framer-motion"
 
 const style = {

@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useState } from "react";
 import { pointerDown, render } from "../../../../jest.setup"
 import { BoundingBox, motion, motionValue, MotionValue } from "../../../"
 import { MockDrag, drag, deferred, dragFrame, Point, sleep } from "./utils"
@@ -124,7 +124,7 @@ describe("dragging", () => {
         let count = 0
         const onDragEnd = deferred()
         const Component = () => {
-            const [increment, setIncrement] = React.useState(1)
+            const [increment, setIncrement] = useState(1)
 
             return (
                 <MockDrag>

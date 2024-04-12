@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useState } from "react";
 import { motion } from "framer-motion"
 
 const styleA = {
@@ -9,7 +9,7 @@ const styleA = {
     position: "absolute",
 }
 export const App = () => {
-    const [constraint, setContraint] = React.useState(0)
+    const [constraint, setContraint] = useState(0)
     function onDrag(event, { point }) {
         setContraint(point.x)
     }

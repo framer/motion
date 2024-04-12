@@ -1,5 +1,4 @@
 import { useAnimate } from "framer-motion"
-import * as React from "react"
 
 export const App = () => {
     const [scope, animate] = useAnimate()

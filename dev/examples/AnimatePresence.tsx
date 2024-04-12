@@ -1,6 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion"
-import * as React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react";
 
 /**
  * An example of a single-child AnimatePresence animation
@@ -16,7 +15,7 @@ const style = {
 export const App = () => {
     const [isVisible, setVisible] = useState(true)
 
-    React.useEffect(() => {
+    useEffect(() => {
         setTimeout(() => {
             setVisible(!isVisible)
         }, 1500)

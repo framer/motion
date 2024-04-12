@@ -1,5 +1,4 @@
-import * as React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion"
 import styled from "styled-components"
 
@@ -13,7 +12,7 @@ export const App = () => {
     const [dragEnabled, setIsDragEnabled] = useState(false)
     const [layoutEnabled, setIsLayoutEnabled] = useState(false)
 
-    React.useEffect(() => {
+    useEffect(() => {
         const timer = setTimeout(() => setIsOpen(!isOpen), 2000)
         return () => clearTimeout(timer)
     }, [isOpen])

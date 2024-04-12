@@ -1,12 +1,12 @@
 import { mix, motion, useAnimationFrame, useMotionValue } from "framer-motion"
-import * as React from "react"
+import { useState } from "react";
 
 const transition = {
     default: { duration: 5 },
 }
 
 export const App = () => {
-    const [state, setState] = React.useState(false)
+    const [state, setState] = useState(false)
     // Force animation frames to pull transform
     const opacity = useMotionValue(0)
     useAnimationFrame(() => opacity.set(mix(0.99, 1, Math.random())))

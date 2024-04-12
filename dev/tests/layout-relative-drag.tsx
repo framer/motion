@@ -1,10 +1,10 @@
 import { motion } from "framer-motion"
-import * as React from "react"
+import { useState, useEffect } from "react";
 
 export const App = () => {
-    const [state, setState] = React.useState(true)
+    const [state, setState] = useState(true)
 
-    React.useEffect(() => {
+    useEffect(() => {
         setState(!state)
     }, [])
 

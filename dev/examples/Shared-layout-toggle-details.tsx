@@ -1,4 +1,3 @@
-import * as React from "react"
 import { useState } from "react"
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion"
 import styled from "styled-components"

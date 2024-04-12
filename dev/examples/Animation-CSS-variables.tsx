@@ -1,5 +1,4 @@
-import * as React from "react"
-import { useEffect } from "react"
+import { useRef, useEffect } from "react";
 import { motion } from "framer-motion"
 
 /**
@@ -20,7 +19,7 @@ export const App = () => {
         duration: 1,
     }
 
-    const ref = React.useRef<HTMLDivElement>(null)
+    const ref = useRef<HTMLDivElement>(null)
     useEffect(() => {
         function changeToVar() {
             ref.current.style.setProperty("--to", "cyan")

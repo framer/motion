@@ -1,8 +1,8 @@
 import { motion, MotionConfig } from "framer-motion"
-import * as React from "react"
+import { useState } from "react";
 
 export const App = () => {
-    const [isOpen, setIsOpen] = React.useState(false)
+    const [isOpen, setIsOpen] = useState(false)
 
     return (
         <MotionConfig transition={{ duration: 0.1 }}>

@@ -1,4 +1,3 @@
-import * as React from "react"
 import { useEffect, useCallback } from "react"
 import { motion, useAnimation } from "framer-motion"
 

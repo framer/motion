@@ -1,4 +1,3 @@
-import * as React from "react"
 import { motion, useMotionValue, useSpring } from "framer-motion"
 
 function DragExample() {

@@ -4,13 +4,13 @@ import {
     transform,
     useMotionValue,
 } from "framer-motion"
-import * as React from "react"
+import { useState } from "react";
 
 const transition = { duration: 2 }
 export const App = () => {
     const params = new URLSearchParams(window.location.search)
     const type = params.get("type") || true
-    const [state, setState] = React.useState(true)
+    const [state, setState] = useState(true)
 
     const x = useMotionValue(transform(50, [0, 100], [0, 100]))
     return (

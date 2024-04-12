@@ -1,8 +1,8 @@
-import React from "react"
+import { useState } from "react";
 import { motion } from "framer-motion"
 
 export function App() {
-    const [scale, setScale] = React.useState(2)
+    const [scale, setScale] = useState(2)
     return (
         <motion.div
             whileHover={{

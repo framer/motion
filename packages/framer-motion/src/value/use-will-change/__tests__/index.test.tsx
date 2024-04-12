@@ -1,4 +1,3 @@
-import * as React from "react"
 import { render } from "../../../../jest.setup"
 import { useWillChange } from ".."
 import { motion, useMotionValue } from "../../.."

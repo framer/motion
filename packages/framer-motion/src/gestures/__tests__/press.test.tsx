@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useState } from "react";
 import { motion } from "../.."
 import { motionValue } from "../../value"
 import {
@@ -534,7 +534,7 @@ describe("press", () => {
             }
 
             const Component = () => {
-                const [isPressed, setPressedState] = React.useState(false)
+                const [isPressed, setPressedState] = useState(false)
                 return (
                     <motion.div
                         data-testid="parent"

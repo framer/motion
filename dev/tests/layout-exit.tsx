@@ -1,15 +1,15 @@
-import * as React from "react"
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion"
 
 export const App = () => {
-    const [visible, setVisible] = React.useState(true)
+    const [visible, setVisible] = useState(true)
 
     const animation = {
         x: 0,
         opacity: 0.5,
     }
 
-    React.useEffect(() => setVisible(!visible), [])
+    useEffect(() => setVisible(!visible), [])
 
     return (
         <>

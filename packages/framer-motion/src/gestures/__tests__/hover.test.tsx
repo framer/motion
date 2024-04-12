@@ -4,7 +4,6 @@ import {
     pointerLeave,
     render,
 } from "../../../jest.setup"
-import * as React from "react"
 import { motion } from "../../"
 import { motionValue } from "../../value"
 import { frame } from "../../frameloop"

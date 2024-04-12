@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import * as React from "react"
+import { useState } from "react";
 
 const transition = {
     default: { duration: 0.2, ease: () => 0.5 },
@@ -8,7 +8,7 @@ const transition = {
 export const App = () => {
     const params = new URLSearchParams(window.location.search)
     const type = params.get("type") || true
-    const [count, setCount] = React.useState(0)
+    const [count, setCount] = useState(0)
 
     return (
         <div

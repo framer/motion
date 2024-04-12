@@ -3,7 +3,7 @@ import "@testing-library/jest-dom"
 // because @testing-library/react one switches out pointerEnter and pointerLeave
 import { fireEvent, getByTestId } from "@testing-library/dom"
 import { render as testRender, act } from "@testing-library/react"
-import * as React from "react"
+import { StrictMode } from "react";
 
 // Stub ResizeObserver
 if (!(global as any).ResizeObserver) {
@@ -45,14 +45,14 @@ export const blur = (element: HTMLElement, testId: string) =>
 
 export const render = (children: any) => {
     const renderReturn = testRender(
-        <React.StrictMode>{children}</React.StrictMode>
+        <StrictMode>{children}</StrictMode>
     )
 
     return {
         ...renderReturn,
         rerender: (children: any) =>
             renderReturn.rerender(
-                <React.StrictMode>{children}</React.StrictMode>
+                <StrictMode>{children}</StrictMode>
             ),
-    }
+    };
 }

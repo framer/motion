@@ -1,6 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion"
-import * as React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react";
 
 /**
  * An example of three top-level AnimatePresence children controlling the exit of a single
@@ -17,7 +16,7 @@ const style = {
 export const App = () => {
     const [isVisible, setVisible] = useState(true)
 
-    React.useEffect(() => {
+    useEffect(() => {
         setTimeout(() => {
             setVisible(!isVisible)
         }, 3000)

@@ -1,8 +1,8 @@
 import { m, LazyMotion, domMax } from "framer-motion"
-import * as React from "react"
+import { useState } from "react";
 
 export const App = () => {
-    const [state, setState] = React.useState(true)
+    const [state, setState] = useState(true)
     let frameCount = 0
     return (
         <LazyMotion features={domMax}>

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import * as React from "react"
+import { useLayoutEffect } from "react";
 
 function getValueParam(params: any, name: string) {
     const param = params.get(name) as string | undefined
@@ -26,7 +26,7 @@ export const App = () => {
     const layout = params.get("layout") || undefined
 
     // We do this to test when scroll position isn't 0/0
-    React.useLayoutEffect(() => {
+    useLayoutEffect(() => {
         window.scrollTo(0, 100)
     }, [])
 

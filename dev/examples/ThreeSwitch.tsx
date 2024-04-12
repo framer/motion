@@ -1,4 +1,3 @@
-import * as React from "react"
 import { useState, Suspense, useCallback, useRef, useEffect } from "react"
 import "@react-three/fiber"
 import styled from "styled-components"

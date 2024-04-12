@@ -1,5 +1,5 @@
 import { focus, blur, render } from "../../../jest.setup"
-import * as React from "react"
+import { createRef } from "react";
 import { motion, motionValue } from "../../"
 import { nextFrame } from "./utils"
 
@@ -7,7 +7,7 @@ describe("focus", () => {
     test("whileFocus applied", async () => {
         const promise = new Promise(async (resolve) => {
             const opacity = motionValue(1)
-            const ref = React.createRef<HTMLAnchorElement>()
+            const ref = createRef<HTMLAnchorElement>()
             const Component = () => (
                 <motion.a
                     ref={ref}
@@ -37,7 +37,7 @@ describe("focus", () => {
     test("whileFocus not applied when :focus-visible is false", async () => {
         const promise = new Promise((resolve) => {
             const opacity = motionValue(1)
-            const ref = React.createRef<HTMLAnchorElement>()
+            const ref = createRef<HTMLAnchorElement>()
             const Component = () => (
                 <motion.a
                     ref={ref}
@@ -65,7 +65,7 @@ describe("focus", () => {
     test("whileFocus applied if focus-visible selector throws unsupported", async () => {
         const promise = new Promise(async (resolve) => {
             const opacity = motionValue(1)
-            const ref = React.createRef<HTMLAnchorElement>()
+            const ref = createRef<HTMLAnchorElement>()
             const Component = () => (
                 <motion.a
                     ref={ref}
@@ -104,7 +104,7 @@ describe("focus", () => {
             const variant = {
                 hidden: { opacity: target },
             }
-            const ref = React.createRef<HTMLAnchorElement>()
+            const ref = createRef<HTMLAnchorElement>()
             const opacity = motionValue(1)
             const Component = () => (
                 <motion.a
@@ -135,7 +135,7 @@ describe("focus", () => {
 
     test("whileFocus is unapplied when blur", () => {
         const promise = new Promise(async (resolve) => {
-            const ref = React.createRef<HTMLAnchorElement>()
+            const ref = createRef<HTMLAnchorElement>()
             const variant = {
                 hidden: { opacity: 0.5, transitionEnd: { opacity: 0.75 } },
             }

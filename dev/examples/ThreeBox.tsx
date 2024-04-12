@@ -1,4 +1,3 @@
-import * as React from "react"
 import { useState } from "react"
 import { MotionConfig, motion as motionDom, useTransform } from "framer-motion"
 import { motion, MotionCanvas, useTime } from "framer-motion-3d"

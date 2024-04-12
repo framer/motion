@@ -1,11 +1,11 @@
-import * as React from "react"
+import { Fragment, useState } from "react";
 import { renderToString, renderToStaticMarkup } from "react-dom/server"
 import { motion, useMotionValue } from "../../"
 import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
 import { Reorder } from "../../components/Reorder"
 
-const MotionFragment = motion(React.Fragment)
+const MotionFragment = motion(Fragment)
 
 function runTests(render: (components: any) => string) {
     test("doesn't throw", () => {
@@ -164,7 +164,7 @@ function runTests(render: (components: any) => string) {
 
     test("Reorder: Renders correct element", () => {
         function Component() {
-            const [state, setState] = React.useState([0])
+            const [state, setState] = useState([0])
             return (
                 <Reorder.Group onReorder={setState} values={state}>
                     <Reorder.Item value="a" />
@@ -180,7 +180,7 @@ function runTests(render: (components: any) => string) {
 
     test("Reorder: Doesn't render touch-scroll disabling styles if dragListener === false", () => {
         function Component() {
-            const [state, setState] = React.useState([0])
+            const [state, setState] = useState([0])
             return (
                 <Reorder.Group onReorder={setState} values={state}>
                     <Reorder.Item value="a" dragListener={false} />
@@ -196,7 +196,7 @@ function runTests(render: (components: any) => string) {
 
     test("Reorder: Renders provided element", () => {
         function Component() {
-            const [state, setState] = React.useState([0])
+            const [state, setState] = useState([0])
             return (
                 <Reorder.Group as="div" onReorder={setState} values={state}>
                     <Reorder.Item as="div" value="a" />

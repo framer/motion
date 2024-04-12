@@ -1,6 +1,5 @@
 import { render } from "../../../jest.setup"
 import { motion } from "../.."
-import * as React from "react"
 import { motionValue } from "../../value"
 
 describe("delay attr", () => {

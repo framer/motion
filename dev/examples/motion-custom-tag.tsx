@@ -1,5 +1,4 @@
 import { motion } from "framer-motion"
-import * as React from "react"
 
 /**
  * An example of creating a `motion` version of a custom element. This will render <global> into the HTML

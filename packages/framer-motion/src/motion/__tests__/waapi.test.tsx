@@ -6,8 +6,7 @@ import {
     render,
 } from "../../../jest.setup"
 import { motion, useMotionValue } from "../../"
-import * as React from "react"
-import { createRef } from "react"
+import { useState, createRef } from "react";
 import { nextFrame } from "../../gestures/__tests__/utils"
 import "../../animation/animators/waapi/__tests__/setup"
 import { act } from "react-dom/test-utils"
@@ -286,7 +285,7 @@ describe("WAAPI animations", () => {
     test("WAAPI only receives expected number of calls in Framer configuration with hover gestures enabled", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => {
-            const [isHovered, setIsHovered] = React.useState(false)
+            const [isHovered, setIsHovered] = useState(false)
 
             return (
                 <motion.div
@@ -320,7 +319,7 @@ describe("WAAPI animations", () => {
     test("WAAPI only receives expected number of calls in Framer configuration with tap gestures enabled", async () => {
         const ref = createRef<HTMLDivElement>()
         const Component = () => {
-            const [isPressed, setIsPressed] = React.useState(false)
+            const [isPressed, setIsPressed] = useState(false)
 
             return (
                 <motion.div

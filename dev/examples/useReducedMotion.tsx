@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useState, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion"
 
 const style = {
@@ -9,7 +9,7 @@ const style = {
 }
 
 export const App = () => {
-    const [isVisible, setIsVisible] = React.useState(false)
+    const [isVisible, setIsVisible] = useState(false)
     const shouldReduceMotion = useReducedMotion()
     const transition = shouldReduceMotion ? { type: false } : { duration: 1 }
     const variants = {
@@ -17,7 +17,7 @@ export const App = () => {
         hidden: { opacity: 0, transition },
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         setTimeout(() => setIsVisible(!isVisible), 1500)
     }, [isVisible])
 

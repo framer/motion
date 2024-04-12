@@ -1,10 +1,10 @@
 import { render } from "@testing-library/react"
-import * as React from "react"
+import { useContext } from "react";
 import { LayoutGroup } from "../index"
 import { LayoutGroupContext } from "../../../context/LayoutGroupContext"
 
 const Consumer = ({ id = "1" }: any) => {
-    const value = React.useContext(LayoutGroupContext)
+    const value = useContext(LayoutGroupContext)
     return <div data-testid={id}>{value.id}</div>
 }
 it("if it's the first LayoutGroup it sets the group id", () => {

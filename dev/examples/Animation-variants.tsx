@@ -1,11 +1,11 @@
-import React from "react"
+import { Fragment, useState } from "react";
 import { motion, useMotionValue } from "framer-motion"
 
-const MotionFragment = motion(React.Fragment)
+const MotionFragment = motion(Fragment)
 
 export function App() {
     const backgroundColor = useMotionValue("#f00")
-    const [isActive, setIsActive] = React.useState(true)
+    const [isActive, setIsActive] = useState(true)
     return (
         <MotionFragment initial="initial" animate={isActive ? "to" : "initial"}>
             <motion.div>

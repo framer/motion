@@ -1,6 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion"
-import * as React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react";
 
 /**
  * An example of AnimatePresence with exit defined as a variant through a tree.
@@ -42,7 +41,7 @@ const listVariants = {
 export const App = () => {
     const [isVisible, setVisible] = useState(true)
 
-    React.useEffect(() => {
+    useEffect(() => {
         setTimeout(() => {
             setVisible(!isVisible)
         }, 3000)

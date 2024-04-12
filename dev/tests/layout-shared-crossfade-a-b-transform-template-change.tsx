@@ -1,10 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion"
-import * as React from "react"
+import { useState } from "react";
 
 export const App = () => {
     const params = new URLSearchParams(window.location.search)
     const type = params.get("type") || true
-    const [state, setState] = React.useState(true)
+    const [state, setState] = useState(true)
     const transformTemplate = state ? undefined : (_) => "translateY(-50%)"
     return (
         <motion.div

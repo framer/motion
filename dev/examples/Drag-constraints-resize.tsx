@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion"
 
 const styleA = {
@@ -8,8 +8,8 @@ const styleA = {
 }
 
 export function App() {
-    const [backgroundColor, setBackgroundColor] = React.useState("darkgray")
-    React.useEffect(() => {
+    const [backgroundColor, setBackgroundColor] = useState("darkgray")
+    useEffect(() => {
         const listener = () => {
             // The re-render will have updateBlockedByResize as true and cause clearMeasurements() to be called.
             setBackgroundColor("pink")

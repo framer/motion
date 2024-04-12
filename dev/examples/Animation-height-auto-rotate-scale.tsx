@@ -1,4 +1,3 @@
-import * as React from "react"
 import { useState } from "react"
 import { motion, mix } from "framer-motion"
 

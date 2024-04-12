@@ -1,6 +1,5 @@
 import { usePresence, AnimatePresence } from "framer-motion"
-import * as React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react";
 
 const style = {
     width: 100,
@@ -12,7 +11,7 @@ const style = {
 const Component = () => {
     const [isPresent, safeToRemove] = usePresence()
 
-    React.useEffect(() => {
+    useEffect(() => {
         !isPresent && setTimeout(safeToRemove, 1000)
     }, [isPresent])
 
@@ -22,7 +21,7 @@ const Component = () => {
 export const App = () => {
     const [isVisible, setVisible] = useState(true)
 
-    React.useEffect(() => {
+    useEffect(() => {
         setTimeout(() => {
             setVisible(!isVisible)
         }, 2000)

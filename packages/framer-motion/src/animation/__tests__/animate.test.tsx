@@ -1,5 +1,4 @@
 import { render } from "../../../jest.setup"
-import * as React from "react"
 import { useEffect } from "react"
 import { motion, MotionGlobalConfig } from "../.."
 import { animate } from "../animate"

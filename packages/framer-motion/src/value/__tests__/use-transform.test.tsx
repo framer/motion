@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import * as React from "react"
+import { useEffect } from "react";
 import { cancelFrame, frame, motion } from "../../"
 import { useMotionValue } from "../use-motion-value"
 import { useTransform } from "../use-transform"
@@ -101,7 +101,7 @@ describe("as input/output range", () => {
             const x = useMotionValue(100)
             const opacity = useTransform(x, [0, 200], [0, 1])
 
-            React.useEffect(() => {
+            useEffect(() => {
                 x.set(20)
             }, [])
 
@@ -157,7 +157,7 @@ describe("as input/output range", () => {
                 [new Custom(100), new Custom(200)]
             )
 
-            React.useEffect(() => {
+            useEffect(() => {
                 x.set(20)
             }, [])
 
@@ -192,7 +192,7 @@ test("frame scheduling", async () => {
             const y = useMotionValue(0)
             const z = useTransform(() => x.get() + y.get())
 
-            React.useEffect(() => {
+            useEffect(() => {
                 const setX = () => {
                     x.set(1)
                     frame.update(setY)
@@ -221,7 +221,7 @@ test("frame scheduling", async () => {
 
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
-    })
+    });
 })
 
 test("can be re-pointed to another `MotionValue`", async () => {

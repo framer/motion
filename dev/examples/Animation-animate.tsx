@@ -1,4 +1,3 @@
-import * as React from "react"
 import { useEffect, useState } from "react"
 import { motion, motionValue, useAnimate } from "framer-motion"
 import { frame } from "framer-motion"

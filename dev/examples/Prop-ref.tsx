@@ -1,5 +1,4 @@
 import { motion } from "framer-motion"
-import * as React from "react"
 import { useRef, useLayoutEffect, useEffect } from "react"
 
 /**

@@ -1,5 +1,4 @@
 import { motion, useCycle } from "framer-motion"
-import * as React from "react"
 
 export const App = () => {
     const params = new URLSearchParams(window.location.search)

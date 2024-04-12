@@ -3,7 +3,7 @@ import {
     useInstantLayoutTransition,
     AnimatePresence,
 } from "framer-motion"
-import * as React from "react"
+import { useState } from "react";
 
 const transition = {
     default: { duration: 0.2, ease: () => 0.5 },
@@ -14,8 +14,8 @@ export const App = () => {
     const startTransition = useInstantLayoutTransition()
     const params = new URLSearchParams(window.location.search)
     const type = params.get("type") || true
-    const [bgColor, setBgColor] = React.useState("#f00")
-    const [state, setState] = React.useState(false)
+    const [bgColor, setBgColor] = useState("#f00")
+    const [state, setState] = useState(false)
 
     const instantTransit = () => {
         startTransition(() => {
