@@ -29,7 +29,7 @@
         "new-alpha": "turbo run build && lerna publish from-package --canary --preid alpha"
     },
     "devDependencies": {
-        "@cypress/webpack-preprocessor": "^4.1.0",
+        "@cypress/webpack-preprocessor": "^6.0.1",
         "@gsap/react": "^2.1.0",
         "@rollup/plugin-node-resolve": "^15.2.3",
         "@rollup/plugin-replace": "^5.0.5",
@@ -63,6 +63,7 @@
         "jest-watch-typeahead": "^2.2.2",
         "lerna": "^4.0.0",
         "lint-staged": "^8.0.4",
+        "path-browserify": "^1.0.1",
         "prettier": "^2.5.1",
         "react": "^18.2.0",
         "react-dev-utils": "^12.0.1",
@@ -74,7 +75,7 @@
         "rollup-plugin-visualizer": "^5.7.1",
         "start-server-and-test": "^1.14.0",
         "ts-jest": "^29.1.2",
-        "ts-loader": "^9.3.1",
+        "ts-loader": "^9.5.1",
         "turbo": "latest",
         "type-fest": "^1.0.1",
         "typescript": "5.4.3",

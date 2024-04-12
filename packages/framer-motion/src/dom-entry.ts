@@ -1,4 +1,5 @@
-export { motionValue, MotionValue, PassiveEffect, Subscriber } from "./value"
+export { motionValue, MotionValue } from "./value"
+export type { PassiveEffect, Subscriber } from "./value"
 export { animate, createScopedAnimate } from "./animation/animate"
 export { scroll } from "./render/dom/scroll"
 export { scrollInfo } from "./render/dom/scroll/track"

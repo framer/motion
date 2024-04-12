@@ -4,6 +4,9 @@ import { fileName } from "../inc/file-name"
 import { Container, Code } from "../styled"
 import { WrongModuleShape } from "./WrongModuleShape"
 
+window.$RefreshReg$ = () => {}
+window.$RefreshSig$ = () => () => {}
+
 const context = require["context"]("../examples", true, /\.(tsx?)$/)
 
 const style: React.CSSProperties = {

@@ -1,7 +1,7 @@
 import resolve from "@rollup/plugin-node-resolve"
 import { terser } from "rollup-plugin-terser"
 import { visualizer } from "rollup-plugin-visualizer"
-import { replaceSettings, es } from "./rollup.config"
+import { replaceSettings, es } from "./rollup.config.mjs"
 
 const sizePlugins = [
     resolve(),

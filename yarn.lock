@@ -73,7 +73,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.0.1, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.16.7":
+"@babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.16.7":
   version: 7.18.10
   resolution: "@babel/core@npm:7.18.10"
   dependencies:
@@ -1325,7 +1325,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-env@npm:^7.0.0, @babel/preset-env@npm:^7.16.8":
+"@babel/preset-env@npm:^7.16.8":
   version: 7.18.10
   resolution: "@babel/preset-env@npm:7.18.10"
   dependencies:
@@ -1568,25 +1568,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/webpack-preprocessor@npm:^4.1.0":
-  version: 4.1.5
-  resolution: "@cypress/webpack-preprocessor@npm:4.1.5"
+"@cypress/webpack-preprocessor@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "@cypress/webpack-preprocessor@npm:6.0.1"
   dependencies:
+    bluebird: 3.7.1
+    debug: ^4.3.4
+    lodash: ^4.17.20
+  peerDependencies:
     "@babel/core": ^7.0.1
     "@babel/preset-env": ^7.0.0
-    babel-loader: ^8.0.2
-    bluebird: 3.7.1
-    debug: 4.1.1
-  peerDependencies:
-    webpack: ^4.18.1
-  dependenciesMeta:
-    "@babel/core":
-      optional: true
-    "@babel/preset-env":
-      optional: true
-    babel-loader:
-      optional: true
-  checksum: 14daa87543fdb343fc3a8a4a7eac78c121a927997a1092da3fb172ae09d1258162246d6627851acf07a674d4d42dc577567e9eb9c62486de0653715a27dfb276
+    babel-loader: ^8.3 || ^9
+    webpack: ^4 || ^5
+  checksum: 7e7195603423c6147220642829b02a5953c624bfcb618942ac5def545d289c72fb183f2d7b7810e3db39ae9441927fe3bcadcb51bf693e2a4b48251c08a78666
   languageName: node
   linkType: hard
 
@@ -5008,7 +5002,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-loader@npm:^8.0.2, babel-loader@npm:^8.2.3":
+"babel-loader@npm:^8.2.3":
   version: 8.2.5
   resolution: "babel-loader@npm:8.2.5"
   dependencies:
@@ -6714,15 +6708,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4.1.1":
-  version: 4.1.1
-  resolution: "debug@npm:4.1.1"
-  dependencies:
-    ms: ^2.1.1
-  checksum: 1e681f5cce94ba10f8dde74b20b42e4d8cf0d2a6700f4c165bb3bb6885565ef5ca5885bf07e704974a835f2415ff095a63164f539988a1f07e8a69fe8b1d65ad
-  languageName: node
-  linkType: hard
-
 "debug@npm:4.3.2":
   version: 4.3.2
   resolution: "debug@npm:4.3.2"
@@ -8273,7 +8258,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fork-ts-checker-webpack-plugin@npm:^6.2.0, fork-ts-checker-webpack-plugin@npm:^6.5.0":
+"fork-ts-checker-webpack-plugin@npm:^6.5.0":
   version: 6.5.2
   resolution: "fork-ts-checker-webpack-plugin@npm:6.5.2"
   dependencies:
@@ -8354,7 +8339,6 @@ __metadata:
     babel-loader: ^8.2.3
     cache-loader: ^1.2.5
     convert-tsconfig-paths-to-webpack-aliases: ^0.9.2
-    fork-ts-checker-webpack-plugin: ^6.2.0
     framer-motion: ^11.0.28
     framer-motion-3d: ^11.0.28
     path-browserify: ^1.0.1
@@ -8363,6 +8347,7 @@ __metadata:
     react-refresh: ^0.9.0
     styled-components: ^4.1.1
     three: ^0.137.0
+    typescript: ^5.4.5
     webpack: ^5.27.2
     webpack-cli: ^4.9.1
     webpack-dev-server: ^3.11.2
@@ -8373,7 +8358,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "framer-motion--monorepo@workspace:."
   dependencies:
-    "@cypress/webpack-preprocessor": ^4.1.0
+    "@cypress/webpack-preprocessor": ^6.0.1
     "@gsap/react": ^2.1.0
     "@rollup/plugin-node-resolve": ^15.2.3
     "@rollup/plugin-replace": ^5.0.5
@@ -8407,6 +8392,7 @@ __metadata:
     jest-watch-typeahead: ^2.2.2
     lerna: ^4.0.0
     lint-staged: ^8.0.4
+    path-browserify: ^1.0.1
     prettier: ^2.5.1
     react: ^18.2.0
     react-dev-utils: ^12.0.1
@@ -8418,7 +8404,7 @@ __metadata:
     rollup-plugin-visualizer: ^5.7.1
     start-server-and-test: ^1.14.0
     ts-jest: ^29.1.2
-    ts-loader: ^9.3.1
+    ts-loader: ^9.5.1
     turbo: latest
     type-fest: ^1.0.1
     typescript: 5.4.3
@@ -11580,7 +11566,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:4.17.21, lodash@npm:^4.17.10, lodash@npm:^4.17.11, lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.21, lodash@npm:^4.7.0":
+"lodash@npm:4.17.21, lodash@npm:^4.17.10, lodash@npm:^4.17.11, lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.7.0":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
@@ -14263,7 +14249,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:^2.0.1, readable-stream@npm:^2.0.2, readable-stream@npm:^2.0.6, readable-stream@npm:^2.2.2, readable-stream@npm:~2.3.6":
+"readable-stream@npm:^2.0.1, readable-stream@npm:^2.0.2, readable-stream@npm:^2.0.6, readable-stream@npm:~2.3.6":
   version: 2.3.7
   resolution: "readable-stream@npm:2.3.7"
   dependencies:
@@ -14275,6 +14261,21 @@ __metadata:
     string_decoder: ~1.1.1
     util-deprecate: ~1.0.1
   checksum: e4920cf7549a60f8aaf694d483a0e61b2a878b969d224f89b3bc788b8d920075132c4b55a7494ee944c7b6a9a0eada28a7f6220d80b0312ece70bbf08eeca755
+  languageName: node
+  linkType: hard
+
+"readable-stream@npm:^2.2.2":
+  version: 2.3.8
+  resolution: "readable-stream@npm:2.3.8"
+  dependencies:
+    core-util-is: ~1.0.0
+    inherits: ~2.0.3
+    isarray: ~1.0.0
+    process-nextick-args: ~2.0.0
+    safe-buffer: ~5.1.1
+    string_decoder: ~1.1.1
+    util-deprecate: ~1.0.1
+  checksum: 65645467038704f0c8aaf026a72fbb588a9e2ef7a75cd57a01702ee9db1c4a1e4b03aaad36861a6a0926546a74d174149c8c207527963e0c2d3eee2f37678a42
   languageName: node
   linkType: hard
 
@@ -15548,7 +15549,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map@npm:^0.7.3":
+"source-map@npm:^0.7.3, source-map@npm:^0.7.4":
   version: 0.7.4
   resolution: "source-map@npm:0.7.4"
   checksum: 01cc5a74b1f0e1d626a58d36ad6898ea820567e87f18dfc9d24a9843a351aaa2ec09b87422589906d6ff1deed29693e176194dc88bcae7c9a852dc74b311dbf5
@@ -16681,18 +16682,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:^9.3.1":
-  version: 9.3.1
-  resolution: "ts-loader@npm:9.3.1"
+"ts-loader@npm:^9.5.1":
+  version: 9.5.1
+  resolution: "ts-loader@npm:9.5.1"
   dependencies:
     chalk: ^4.1.0
     enhanced-resolve: ^5.0.0
     micromatch: ^4.0.0
     semver: ^7.3.4
+    source-map: ^0.7.4
   peerDependencies:
     typescript: "*"
     webpack: ^5.0.0
-  checksum: 462a8ac315017cf4961dafd2be29d5abe7c3af63c4515e325269f79b9d0212b35c59184d7fd01fc378749c88454752e1599301d2190eb6844ea5fe332de5f695
+  checksum: 7cf396e656d905388ea2a9b5e82f16d3c955fda8d3df2fbf219f4bee16ff50a3c995c44ae3e584634e9443f056cec70bb3151add3917ffb4588ecd7394bac0ec
   languageName: node
   linkType: hard
 
@@ -16999,6 +17001,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:^5.4.5":
+  version: 5.4.5
+  resolution: "typescript@npm:5.4.5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 53c879c6fa1e3bcb194b274d4501ba1985894b2c2692fa079db03c5a5a7140587a1e04e1ba03184605d35f439b40192d9e138eb3279ca8eee313c081c8bcd9b0
+  languageName: node
+  linkType: hard
+
 "typescript@patch:typescript@5.4.3#~builtin<compat/typescript>":
   version: 5.4.3
   resolution: "typescript@patch:typescript@npm%3A5.4.3#~builtin<compat/typescript>::version=5.4.3&hash=ddd1e8"
@@ -17006,6 +17018,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 3a62fe90aa79d68c9ce38ea5edb2957e62801c733b99f0e5a2b8b50922761f68f7d9a40d28c544b449866e81185cddb93cba2496d0ff3fa52ef5b1f8bcace38c
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^5.4.5#~builtin<compat/typescript>":
+  version: 5.4.5
+  resolution: "typescript@patch:typescript@npm%3A5.4.5#~builtin<compat/typescript>::version=5.4.5&hash=ddd1e8"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 2373c693f3b328f3b2387c3efafe6d257b057a142f9a79291854b14ff4d5367d3d730810aee981726b677ae0fd8329b23309da3b6aaab8263dbdccf1da07a3ba
   languageName: node
   linkType: hard
 
