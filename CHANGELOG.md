@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.1.0] 2024-04-12
+
+### Changed
+
+-   TypeScript 5 upgrade.
+
 ## [11.0.28] 2024-04-11
 
 ### Fixed
