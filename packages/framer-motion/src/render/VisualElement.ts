@@ -889,9 +889,7 @@ export abstract class VisualElement<
      * Find the base target for a value thats been removed from all animation
      * props.
      */
-    getBaseTarget(
-        key: string
-    ): ResolvedValues[string] | undefined | null {
+    getBaseTarget(key: string): ResolvedValues[string] | undefined | null {
         const { initial } = this.props
 
         let valueFromInitial: ResolvedValues[string] | undefined | null
