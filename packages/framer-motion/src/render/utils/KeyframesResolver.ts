@@ -33,10 +33,7 @@ function measureAllKeyframes() {
 
             if (!removedTransforms.length) return
 
-            transformsToRestore.set(
-                element,
-                removeNonTranslationalTransform(element)
-            )
+            transformsToRestore.set(element, removedTransforms)
 
             element.render()
         })
@@ -46,6 +43,13 @@ function measureAllKeyframes() {
 
         // Write
         elementsToMeasure.forEach((element: VisualElement<HTMLElement>) => {
+            const restore = transformsToRestore.get(element)
+            if (restore) {
+                restore.forEach(([key, value]) => {
+                    element.getValue(key)?.set(value)
+                })
+            }
+
             element.render()
         })
 

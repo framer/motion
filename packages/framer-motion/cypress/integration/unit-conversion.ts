@@ -22,4 +22,14 @@ describe("Unit conversion", () => {
                 expect(height).to.equal(150)
             })
     })
+
+    it("Restores unapplied transforms", () => {
+        cy.visit("?test=unit-conversion-rotate")
+            .wait(300)
+            .get("#box")
+            .should(([$box]: any) => {
+                const { transform } = $box.style
+                expect(transform).to.equal("rotate(45deg) translateZ(0px)")
+            })
+    })
 })
