@@ -37,7 +37,7 @@ export class PanGesture extends Feature<Element> {
             onStart: asyncHandler(onPanStart),
             onMove: onPan,
             onEnd: (event: PointerEvent, info: PanInfo) => {
-                delete this.session
+                this.session = undefined
                 if (onPanEnd) onPanEnd(event, info)
             },
         }

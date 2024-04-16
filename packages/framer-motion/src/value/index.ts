@@ -436,7 +436,7 @@ export class MotionValue<V = any> {
     }
 
     private clearAnimation() {
-        delete this.animation
+        this.animation = undefined
     }
 
     /**

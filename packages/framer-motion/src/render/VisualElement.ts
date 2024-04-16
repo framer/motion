@@ -365,7 +365,7 @@ export abstract class VisualElement<
      * VisualElement.on(), but only one of those can be defined via the onUpdate prop.
      */
     private propEventSubscriptions: {
-        [key: string]: VoidFunction
+        [key: string]: VoidFunction | undefined
     } = {}
 
     constructor(
@@ -693,9 +693,10 @@ export abstract class VisualElement<
          */
         for (let i = 0; i < propEventHandlers.length; i++) {
             const key = propEventHandlers[i]
-            if (this.propEventSubscriptions[key]) {
-                this.propEventSubscriptions[key]()
-                delete this.propEventSubscriptions[key]
+            const subscription = this.propEventSubscriptions[key]
+            if (subscription) {
+                subscription()
+                this.propEventSubscriptions[key] = undefined
             }
 
             const listenerName = ("on" + key) as keyof typeof props
@@ -889,9 +890,7 @@ export abstract class VisualElement<
      * Find the base target for a value thats been removed from all animation
      * props.
      */
-    getBaseTarget(
-        key: string
-    ): ResolvedValues[string] | undefined | null {
+    getBaseTarget(key: string): ResolvedValues[string] | undefined | null {
         const { initial } = this.props
 
         let valueFromInitial: ResolvedValues[string] | undefined | null
