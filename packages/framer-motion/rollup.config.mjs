@@ -48,11 +48,6 @@ const shimReactJSXRuntimePlugin = alias({
         { find: 'react/jsx-runtime', replacement: path.resolve(__dirname, '../../dev/jsxRuntimeShim.js') }
     ]
 });
-const shimReactJSXRuntimeProfillingPlugin = alias({
-    entries: [
-        { find: 'react/jsx-runtime', replacement: path.resolve(__dirname, '../../dev/jsxRuntimeShimProfiling.js') }
-    ]
-});
 
 const umd = Object.assign({}, config, {
     output: {
@@ -63,7 +58,7 @@ const umd = Object.assign({}, config, {
         globals: { react: "React", "react/jsx-runtime": "jsxRuntime" },
     },
     external: ["react", "react-dom"],
-    plugins: [resolve(), replaceSettings("development"), shimReactJSXRuntimeProfillingPlugin],
+    plugins: [resolve(), replaceSettings("development"), shimReactJSXRuntimePlugin],
 })
 
 const projection = Object.assign({}, config, {
@@ -78,7 +73,7 @@ const projection = Object.assign({}, config, {
             "react-dom": "ReactDOM",
         },
     },
-    plugins: [resolve(), replaceSettings("development"), shimReactJSXRuntimeProfillingPlugin],
+    plugins: [resolve(), replaceSettings("development"), shimReactJSXRuntimePlugin],
     external: ["react", "react-dom"],
 })
 

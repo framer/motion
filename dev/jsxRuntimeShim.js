@@ -1,7 +1,7 @@
 // source: react/cjs/react-jsx-runtime.production.min.js
 /**
  * @license React
- * react-jsx-runtime.profiling.min.js
+ * react-jsx-runtime.production.min.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
