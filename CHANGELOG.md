@@ -4,7 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [11.1.0] 2024-04-12
+## [11.1.1] 2024-04-16
+
+### Changed
+
+-   Updating JSX transform.
+
+## [11.1.0] 2024-04-16
 
 ### Changed
 
