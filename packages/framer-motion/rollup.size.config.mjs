@@ -9,6 +9,8 @@ const sizePlugins = [
     terser({ output: { comments: false } }),
 ]
 
+const external = ["react", "react-dom", "react/jsx-runtime"]
+
 const motion = Object.assign({}, es, {
     input: "lib/render/dom/motion.js",
     output: Object.assign({}, es.output, {
@@ -17,7 +19,7 @@ const motion = Object.assign({}, es, {
         dir: undefined,
     }),
     plugins: [...sizePlugins],
-    external: ["react", "react-dom"],
+    external,
 })
 
 const m = Object.assign({}, es, {
@@ -28,7 +30,7 @@ const m = Object.assign({}, es, {
         dir: undefined,
     }),
     plugins: [...sizePlugins, visualizer()],
-    external: ["react", "react-dom"],
+    external,
 })
 
 const sizeAnimate = Object.assign({}, es, {
@@ -39,7 +41,7 @@ const sizeAnimate = Object.assign({}, es, {
         dir: undefined,
     }),
     plugins: [...sizePlugins],
-    external: ["react", "react-dom"],
+    external,
 })
 
 const domAnimation = Object.assign({}, es, {
@@ -56,7 +58,7 @@ const domAnimation = Object.assign({}, es, {
         dir: `dist`,
     },
     plugins: [...sizePlugins],
-    external: ["react", "react-dom"],
+    external,
 })
 
 const domMax = Object.assign({}, es, {
@@ -69,7 +71,7 @@ const domMax = Object.assign({}, es, {
         chunkFileNames: "size-rollup-dom-max-assets.js",
     },
     plugins: sizePlugins,
-    external: ["react", "react-dom"],
+    external,
 })
 
 // eslint-disable-next-line import/no-default-export
