@@ -40,7 +40,7 @@
         <script src="../../packages/framer-motion/dist/dom.js"></script>
         <script>
             // Create boxes
-            const numBoxes = 1
+            const numBoxes = 100
             let html = ``
             for (let i = 0; i < numBoxes; i++) {
                 html += `<div><div class="box"></div></div>`
@@ -59,7 +59,7 @@
                             rotate: Math.random() * 360,
                             backgroundColor: "#f00",
                             width: Math.random() * 100 + "%",
-                            // x: 5,
+                            x: 5,
                         },
                         {
                             ease: "linear",
@@ -75,7 +75,7 @@
                             box,
                             {
                                 width: Math.random() * 100 + "px",
-                                // x: "10%",
+                                x: "10%",
                             },
                             {
                                 ease: "linear",
