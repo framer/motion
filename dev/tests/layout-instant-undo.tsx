@@ -1,9 +1,8 @@
 import { motion } from "framer-motion"
-import * as React from "react"
-import { useLayoutEffect } from "react"
+import { useState, useLayoutEffect } from "react";
 
 export const App = () => {
-    const [state, setState] = React.useState(true)
+    const [state, setState] = useState(true)
 
     useLayoutEffect(() => {
         if (state === false) setState(true)

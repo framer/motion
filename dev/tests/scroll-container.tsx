@@ -1,5 +1,4 @@
 import { useScroll, motion, useMotionValueEvent } from "framer-motion"
-import * as React from "react"
 import { useRef } from "react"
 
 export const App = () => {

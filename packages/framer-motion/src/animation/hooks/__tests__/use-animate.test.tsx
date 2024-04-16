@@ -1,4 +1,3 @@
-import * as React from "react"
 import { useEffect } from "react"
 import { render } from "@testing-library/react"
 import { useAnimate } from "../use-animate"

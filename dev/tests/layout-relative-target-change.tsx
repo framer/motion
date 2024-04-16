@@ -1,8 +1,8 @@
 import { motion } from "framer-motion"
-import * as React from "react"
+import { useState } from "react";
 
 const Box = () => {
-    const [hover, setHover] = React.useState(false)
+    const [hover, setHover] = useState(false)
     return (
         <motion.div
             id="container"
@@ -45,7 +45,7 @@ const Box = () => {
     )
 }
 export const App = () => {
-    const [hover, setHover] = React.useState(false)
+    const [hover, setHover] = useState(false)
 
     return (
         <motion.div style={{ width: 400, height: 400, position: "relative" }}>

@@ -1,5 +1,5 @@
 import { frame } from "../../../frameloop"
-import React, { useContext } from "react"
+import { Component, useContext } from "react";
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import {
     LayoutGroupContext,
@@ -24,7 +24,7 @@ interface MeasureContextProps {
 type MeasureProps = MotionProps &
     MeasureContextProps & { visualElement: VisualElement }
 
-class MeasureLayoutWithContext extends React.Component<MeasureProps> {
+class MeasureLayoutWithContext extends Component<MeasureProps> {
     /**
      * This only mounts projection nodes for components that
      * need measuring, we might want to do it for all components

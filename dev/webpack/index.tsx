@@ -1,4 +1,4 @@
-import * as React from "react"
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client"
 import { Example, ExampleList } from "./examples"
 import { Test } from "./tests"
@@ -21,7 +21,7 @@ const App = () => {
 }
 
 createRoot(document.getElementById("root")!).render(
-    <React.StrictMode>
+    <StrictMode>
         <App />
-    </React.StrictMode>
+    </StrictMode>
 )

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import * as React from "react"
+import { useState } from "react";
 
 export const App = () => {
     const params = new URLSearchParams(window.location.search)
@@ -8,7 +8,7 @@ export const App = () => {
     const margin = params.get("margin") || undefined
     const deleteObserver = params.get("delete") || undefined
     const disableFallback = params.get("disableFallback") || false
-    const [inViewport, setInViewport] = React.useState(false)
+    const [inViewport, setInViewport] = useState(false)
 
     if (deleteObserver) {
         window.IntersectionObserver = undefined

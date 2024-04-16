@@ -1,8 +1,8 @@
 import { motion, useMotionValue } from "framer-motion"
-import * as React from "react"
+import { useState } from "react";
 
 export const App = () => {
-    const [state, setState] = React.useState(false)
+    const [state, setState] = useState(false)
     const size = state ? 100 : 200
     return (
         <motion.div

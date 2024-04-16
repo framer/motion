@@ -1,4 +1,3 @@
-import * as React from "react"
 import { render } from "../../../jest.setup"
 import { useMotionValue } from "../../value/use-motion-value"
 import { useMotionValueEvent } from "../use-motion-value-event"

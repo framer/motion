@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useContext } from "react";
 import { render } from "@testing-library/react"
 import { MotionConfig } from ".."
 import { MotionConfigContext } from "../../../context/MotionConfigContext"
@@ -6,7 +6,7 @@ import { MotionConfigContext } from "../../../context/MotionConfigContext"
 const consumerId = "consumer"
 
 const Consumer = () => {
-    const value = React.useContext(MotionConfigContext)
+    const value = useContext(MotionConfigContext)
     return <div data-testid={consumerId}>{value.transition!.type}</div>
 }
 

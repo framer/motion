@@ -1,8 +1,8 @@
-import * as React from "react"
+import { useEffect } from "react";
 import { animate } from "framer-motion"
 
 export const App = () => {
-    React.useEffect(() => {
+    useEffect(() => {
         let count = 0
         for (let i = 0; i < 2000; i++) {
             count++

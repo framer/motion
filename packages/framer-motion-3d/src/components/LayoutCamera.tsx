@@ -1,4 +1,4 @@
-import * as React from "react"
+import { forwardRef } from "react";
 import { PerspectiveCamera as PerspectiveCameraImpl } from "three"
 import { mergeRefs } from "react-merge-refs"
 import { LayoutCameraProps } from "./types"
@@ -16,7 +16,7 @@ type Props = JSX.IntrinsicElements["perspectiveCamera"] &
 /**
  * Adapted from https://github.com/pmndrs/drei/blob/master/src/core/PerspectiveCamera.tsx
  */
-export const LayoutCamera = React.forwardRef((props: Props, ref) => {
+export const LayoutCamera = forwardRef((props: Props, ref) => {
     const { cameraRef } = useLayoutCamera<PerspectiveCameraImpl>(
         props,
         (size) => {

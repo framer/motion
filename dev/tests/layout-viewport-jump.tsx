@@ -1,12 +1,12 @@
 import { motion } from "framer-motion"
-import * as React from "react"
+import { useState } from "react";
 
 /**
  * This test is designed to run at the Cypress default of 1000x660
  * It is scripted to scroll down 100px before triggering the layout change
  */
 export const App = () => {
-    const [state, setState] = React.useState(true)
+    const [state, setState] = useState(true)
     const params = new URLSearchParams(window.location.search)
     const nested = params.get("nested") || false
 

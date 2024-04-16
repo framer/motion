@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useState } from "react";
 import { motion, MotionConfig, AnimatePresence } from "framer-motion"
 
 /**
@@ -20,7 +20,7 @@ const styleB = {
 }
 
 export const App = () => {
-    const [toggle, setToggle] = React.useState(false)
+    const [toggle, setToggle] = useState(false)
 
     return (
         <MotionConfig nonce="abc123">

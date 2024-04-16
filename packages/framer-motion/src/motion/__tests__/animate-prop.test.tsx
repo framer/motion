@@ -6,8 +6,7 @@ import {
     useMotionValue,
     useMotionValueEvent,
 } from "../../"
-import * as React from "react"
-import { createRef } from "react"
+import { useRef, createRef } from "react";
 import { nextFrame } from "../../gestures/__tests__/utils"
 
 describe("animate prop as object", () => {
@@ -963,7 +962,7 @@ describe("animate prop as object", () => {
     test("Correctly animates from RGB to HSLA", async () => {
         const element = await new Promise<HTMLDivElement>((resolve) => {
             const Component = () => {
-                const ref = React.useRef<HTMLDivElement>(null)
+                const ref = useRef<HTMLDivElement>(null)
                 return (
                     <motion.div
                         ref={ref}
@@ -988,7 +987,7 @@ describe("animate prop as object", () => {
     test("Correctly animates from HEX to HSLA", async () => {
         const element = await new Promise<HTMLDivElement>((resolve) => {
             const Component = () => {
-                const ref = React.useRef<HTMLDivElement>(null)
+                const ref = useRef<HTMLDivElement>(null)
                 return (
                     <motion.div
                         ref={ref}
@@ -1013,7 +1012,7 @@ describe("animate prop as object", () => {
     test("Correctly animates from HSLA to Hex", async () => {
         const element = await new Promise<HTMLDivElement>((resolve) => {
             const Component = () => {
-                const ref = React.useRef<HTMLDivElement>(null)
+                const ref = useRef<HTMLDivElement>(null)
                 return (
                     <motion.div
                         ref={ref}
@@ -1038,7 +1037,7 @@ describe("animate prop as object", () => {
     test("Correctly animates from HSLA to RGB", async () => {
         const element = await new Promise<HTMLDivElement>((resolve) => {
             const Component = () => {
-                const ref = React.useRef<HTMLDivElement>(null)
+                const ref = useRef<HTMLDivElement>(null)
                 return (
                     <motion.div
                         ref={ref}

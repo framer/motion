@@ -28,6 +28,7 @@ const external = [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
     ...Object.keys(pkg.optionalDependencies || {}),
+    "react/jsx-runtime",
 ]
 
 const pureClass = {
@@ -46,7 +47,7 @@ const umd = Object.assign({}, config, {
         exports: "named",
         globals: { react: "React" },
     },
-    external: ["react", "react-dom"],
+    external: ["react", "react-dom", "react/jsx-runtime"],
     plugins: [resolve(), replaceSettings("development")],
 })
 
@@ -63,7 +64,7 @@ const projection = Object.assign({}, config, {
         },
     },
     plugins: [resolve(), replaceSettings("development")],
-    external: ["react", "react-dom"],
+    external: ["react", "react-dom", "react/jsx-runtime"],
 })
 
 const umdProd = Object.assign({}, umd, {

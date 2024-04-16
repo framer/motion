@@ -1,4 +1,3 @@
-import * as React from "react"
 import { renderToString, renderToStaticMarkup } from "react-dom/server"
 import { useState } from "react"
 import { Reorder } from ".."

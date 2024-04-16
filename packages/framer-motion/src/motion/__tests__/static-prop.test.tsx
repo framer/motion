@@ -1,6 +1,6 @@
 import { render } from "../../../jest.setup"
 import { motion, useMotionValue } from "../.."
-import * as React from "react"
+import { useEffect } from "react";
 import { motionValue } from "../../value"
 import { MotionConfig } from "../../components/MotionConfig"
 import { globalProjectionState } from "../../projection/node/state"
@@ -204,7 +204,7 @@ describe("isStatic prop", () => {
         function Component() {
             const x = useMotionValue(10)
 
-            React.useEffect(() => x.set(20), [x])
+            useEffect(() => x.set(20), [x])
 
             return <motion.div data-testid="child" style={{ x }} />
         }

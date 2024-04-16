@@ -5,8 +5,7 @@ import {
     MotionConfig,
     LayoutGroup,
 } from "framer-motion"
-import * as React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react";
 
 export function App() {
     const [tabs, setTabs] = useState(initialTabs)
@@ -29,7 +28,7 @@ export function App() {
     }
 
     // Automatically repopulate tabs when they all close
-    React.useEffect(() => {
+    useEffect(() => {
         if (!tabs.length) {
             const timer = setTimeout(() => {
                 setTabs(initialTabs)

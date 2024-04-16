@@ -1,8 +1,8 @@
 import { motion } from "framer-motion"
-import * as React from "react"
+import { useState, useEffect } from "react";
 
 export const App = () => {
-    const [count, setCount] = React.useState(0)
+    const [count, setCount] = useState(0)
     const params = new URLSearchParams(window.location.search)
     let parentDrag: boolean | string = params.get("parentDrag") || true
     let childDrag: boolean | string = params.get("childDrag") || true
@@ -18,7 +18,7 @@ export const App = () => {
     }
 
     // Trigger layout projection in the child
-    React.useEffect(() => {
+    useEffect(() => {
         setCount(count + 1)
     }, [])
 

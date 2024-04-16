@@ -1,8 +1,7 @@
-import * as React from "react"
-import { useState } from "react"
+import { forwardRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion"
 
-const Notification = React.forwardRef(function (
+const Notification = forwardRef(function (
     { id, notifications, setNotifications, style },
     ref
 ) {

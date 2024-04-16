@@ -3,7 +3,7 @@ import "@testing-library/jest-dom"
 // because @testing-library/react one switches out pointerEnter and pointerLeave
 import { fireEvent, getByTestId } from "@testing-library/dom"
 import { render as testRender, act } from "@testing-library/react"
-import * as React from "react"
+import { StrictMode, Fragment } from "react";
 
 /**
  * Stub PointerEvent - this is so we can pass through PointerEvent.isPrimary
@@ -93,7 +93,7 @@ export const blur = (element: HTMLElement, testId: string) =>
     })
 
 export const render = (children: any, isStrict = true) => {
-    const Wrapper = isStrict ? React.StrictMode : React.Fragment
+    const Wrapper = isStrict ? StrictMode : Fragment
 
     const renderReturn = testRender(<Wrapper>{children}</Wrapper>)
 

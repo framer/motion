@@ -1,4 +1,3 @@
-import * as React from "react"
 import { MotionConfig, motion as motionDom } from "framer-motion"
 import { motion, MotionCanvas } from "framer-motion-3d"
 import { Canvas, extend } from "@react-three/fiber"

@@ -1,5 +1,4 @@
 import { motion, AnimatePresence, wrap } from "framer-motion"
-import * as React from "react"
 import { useState } from "react"
 
 /**

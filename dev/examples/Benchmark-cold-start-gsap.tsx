@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useRef } from "react";
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 
@@ -26,7 +26,7 @@ const boxContainer = {
 const num = 100
 
 function Box() {
-    const ref = React.useRef(null)
+    const ref = useRef(null)
 
     useGSAP(
         () => {

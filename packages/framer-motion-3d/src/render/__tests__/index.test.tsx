@@ -1,5 +1,4 @@
 import { ResolvedValues, frame } from "framer-motion"
-import * as React from "react"
 import { useEffect, useRef } from "react"
 import { Euler, Vector3 } from "three"
 import { Canvas, Object3DNode } from "@react-three/fiber"

@@ -1,4 +1,3 @@
-import * as React from "react"
 import { motion, motionValue, MotionConfig } from "framer-motion"
 
 /**

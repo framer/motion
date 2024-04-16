@@ -1,8 +1,8 @@
 import { motion } from "framer-motion"
-import * as React from "react"
+import { useRef } from "react";
 
 export const App = () => {
-    const containerRef = React.useRef(null)
+    const containerRef = useRef(null)
 
     return (
         <div id="container" style={container} ref={containerRef}>

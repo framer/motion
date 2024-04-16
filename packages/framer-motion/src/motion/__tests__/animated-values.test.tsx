@@ -6,7 +6,7 @@ import {
     useMotionValue,
     useTransform,
 } from "../.."
-import * as React from "react"
+import { createRef, useRef } from "react";
 
 const degreesToRadians = (degrees: number) => (degrees * Math.PI) / 180
 
@@ -14,7 +14,7 @@ describe("values prop", () => {
     test("Performs animations only on motion values provided via values", async () => {
         const promise = new Promise<[number, HTMLElement]>((resolve) => {
             const x = motionValue(0)
-            const ref = React.createRef<HTMLDivElement>()
+            const ref = createRef<HTMLDivElement>()
             const Component = () => (
                 <motion.div
                     ref={ref}
@@ -39,7 +39,7 @@ describe("values prop", () => {
     test("Still correctly renders values provided via style", async () => {
         const promise = new Promise<[number, HTMLElement]>((resolve) => {
             const x = motionValue(0)
-            const ref = React.createRef<HTMLDivElement>()
+            const ref = createRef<HTMLDivElement>()
             const Component = () => {
                 const doubleX = useTransform(x, [0, 1], [0, 2], {
                     clamp: false,
@@ -72,7 +72,7 @@ describe("values prop", () => {
     test("Doesn't render custom values", async () => {
         const promise = new Promise<[number, HTMLElement]>((resolve) => {
             const Component = () => {
-                const ref = React.useRef<HTMLDivElement>(null)
+                const ref = useRef<HTMLDivElement>(null)
                 const distance = useMotionValue(100)
                 const angle = useMotionValue(45)
 
@@ -122,7 +122,7 @@ describe("values prop", () => {
                 const x = useMotionValue(100)
                 const scale = useMotionValue(2)
                 const transform = useMotionTemplate`scale(${scale}) translateX(${x}px)`
-                const ref = React.useRef<HTMLDivElement>(null)
+                const ref = useRef<HTMLDivElement>(null)
 
                 return (
                     <motion.div

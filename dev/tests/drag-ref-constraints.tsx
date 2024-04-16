@@ -1,16 +1,16 @@
 import { motion, useMotionValue } from "framer-motion"
-import * as React from "react"
+import { useRef, useState, useLayoutEffect } from "react";
 
 // It's important for this test to only trigger a single rerender while dragging (in response to onDragStart) of draggable component.
 
 export const App = () => {
-    const containerRef = React.useRef(null)
-    const [dragging, setDragging] = React.useState(false)
+    const containerRef = useRef(null)
+    const [dragging, setDragging] = useState(false)
     const params = new URLSearchParams(window.location.search)
     const layout = params.get("layout") || undefined
 
     // We do this to test when scroll position isn't 0/0
-    React.useLayoutEffect(() => {
+    useLayoutEffect(() => {
         window.scrollTo(0, 100)
     }, [])
     const x = useMotionValue("100%")

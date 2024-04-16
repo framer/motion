@@ -1,10 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion"
-import * as React from "react"
+import { useRef, useState } from "react";
 
 export const App = () => {
-    const output = React.useRef<Array<string | number>>([])
-    const ref = React.useRef<HTMLDivElement>(null)
-    const [state, setState] = React.useState(true)
+    const output = useRef<Array<string | number>>([])
+    const ref = useRef<HTMLDivElement>(null)
+    const [state, setState] = useState(true)
 
     return (
         <div style={{ height: 100, width: 100, display: "flex" }}>

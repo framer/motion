@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useState } from "react";
 import { motion } from "../../"
 import { render } from "../../../jest.setup"
 import {
@@ -13,7 +13,7 @@ describe("pan", () => {
         let count = 0
         const onPanEnd = deferred()
         const Component = () => {
-            const [increment, setIncrement] = React.useState(0)
+            const [increment, setIncrement] = useState(0)
             return (
                 <MockDrag>
                     <motion.div

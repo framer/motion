@@ -5,13 +5,12 @@ import {
     render,
 } from "../../../jest.setup"
 import { motion, MotionConfig, useMotionValue } from "../../"
-import * as React from "react"
+import { Fragment, useEffect, memo, useState } from "react";
 import { Variants } from "../../types"
 import { motionValue } from "../../value"
-import { useState } from "react"
 import { nextFrame } from "../../gestures/__tests__/utils"
 
-const MotionFragment = motion(React.Fragment)
+const MotionFragment = motion(Fragment)
 
 describe("animate prop as variant", () => {
     test("animates to set variant", async () => {
@@ -610,7 +609,7 @@ describe("animate prop as variant", () => {
                 const a = useMotionValue(0)
                 const b = useMotionValue(0)
 
-                React.useEffect(
+                useEffect(
                     () =>
                         a.on("change", (latest) => {
                             if (latest >= 1 && b.get() === 0) resolve(true)
@@ -663,7 +662,7 @@ describe("animate prop as variant", () => {
                 const a = useMotionValue(0)
                 const b = useMotionValue(0)
 
-                React.useEffect(
+                useEffect(
                     () =>
                         a.on("change", (latest) => {
                             if (latest >= 1 && b.get() === 0) resolve(true)
@@ -1100,7 +1099,7 @@ describe("animate prop as variant", () => {
     })
 
     test("Children correctly animate to removed values even when not rendering along with parents", async () => {
-        const Child = React.memo(() => (
+        const Child = memo(() => (
             <motion.div
                 variants={{
                     visible: { x: 100, opacity: 1 },

@@ -1,6 +1,5 @@
 import { render } from "../../../jest.setup"
 import { motion } from "../.."
-import * as React from "react"
 
 describe("box-shadow support", () => {
     test("box-shadow should animate correctly, even with no initial set", async () => {

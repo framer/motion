@@ -1,7 +1,6 @@
 import { render } from "../../../../jest.setup"
 import { motion } from "../../../render/dom/motion"
 import { MotionConfig } from "../"
-import * as React from "react"
 import { motionValue } from "../../../value"
 import { nextFrame } from "../../../gestures/__tests__/utils"
 

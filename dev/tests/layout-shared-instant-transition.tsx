@@ -1,12 +1,12 @@
 import { motion, useInstantLayoutTransition } from "framer-motion"
-import * as React from "react"
+import { useState } from "react";
 
 export const App = () => {
     const startTransition = useInstantLayoutTransition()
     const params = new URLSearchParams(window.location.search)
     const type = params.get("type") || true
-    const [bgColor, setBgColor] = React.useState("#f00")
-    const [state, setState] = React.useState(true)
+    const [bgColor, setBgColor] = useState("#f00")
+    const [state, setState] = useState(true)
 
     const handleClick = () => {
         startTransition(() => {

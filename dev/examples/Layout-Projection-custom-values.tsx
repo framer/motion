@@ -1,5 +1,4 @@
-import * as React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react";
 import { mix, motion, addScaleCorrector } from "framer-motion"
 import styled from "styled-components"
 
@@ -45,7 +44,7 @@ const border = {
 export const App = () => {
     const [isOn, setOn] = useState(false)
 
-    React.useEffect(() => {
+    useEffect(() => {
         addScaleCorrector(border)
     }, [])
 

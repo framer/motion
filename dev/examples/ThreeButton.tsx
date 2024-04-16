@@ -1,5 +1,4 @@
-import * as React from "react"
-import { useRef, useState } from "react"
+import { Suspense, useRef, useState } from "react";
 import { motion as motionThree, MotionCanvas } from "framer-motion-3d"
 import { motion, Variants } from "framer-motion"
 import styled from "styled-components"
@@ -87,9 +86,9 @@ export const App = () => {
                 id="button"
             >
                 <motion.div className="icon" variants={iconVariants}>
-                    <React.Suspense fallback={null}>
+                    <Suspense fallback={null}>
                         <StarIcon />
-                    </React.Suspense>
+                    </Suspense>
                     <motion.section
                         style={{
                             width: 100,
@@ -125,7 +124,7 @@ export const App = () => {
                 </div>
             </motion.button>
         </Container>
-    )
+    );
 }
 
 const Container = styled.div`

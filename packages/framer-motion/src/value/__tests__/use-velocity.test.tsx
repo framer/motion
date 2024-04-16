@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import * as React from "react"
+import { useEffect } from "react";
 import { useVelocity } from "../use-velocity"
 import { useMotionValue } from "../use-motion-value"
 import { animate } from "../../animation/animate"
@@ -65,7 +65,7 @@ describe("useVelocity", () => {
                     outputAcceleration.push(Math.round(v))
                 })
 
-                React.useEffect(() => {
+                useEffect(() => {
                     const animation = animate(x, 1000, {
                         duration: 0.1,
                         ease: mirrorEasing((v) => v * v),

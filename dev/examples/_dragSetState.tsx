@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useState } from "react";
 import { motion } from "framer-motion"
 
 const styleA = {
@@ -10,7 +10,7 @@ const styleA = {
 
 console.clear()
 export const App = () => {
-    const [state, setState] = React.useState(0)
+    const [state, setState] = useState(0)
 
     const onDrag = () => {
         setState(state + 10)

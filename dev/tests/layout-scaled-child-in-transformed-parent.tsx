@@ -5,10 +5,10 @@
  * The issue is fixed in Version 94.0.4606.61 (Official Build) (x86_64).
  */
 import { motion } from "framer-motion"
-import * as React from "react"
+import { useState } from "react";
 
 export const App = () => {
-    const [hover, setHover] = React.useState(false)
+    const [hover, setHover] = useState(false)
 
     return (
         <motion.div style={{ width: 400, height: 400, position: "relative" }}>

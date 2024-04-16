@@ -1,4 +1,3 @@
-import * as React from "react"
 import { CSSProperties, useState } from "react"
 import {
     motion,

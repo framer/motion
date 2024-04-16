@@ -1,4 +1,3 @@
-import * as React from "react"
 import { motion, useCycle } from "framer-motion"
 
 const transition = {

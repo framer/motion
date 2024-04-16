@@ -1,6 +1,5 @@
 import { render } from "../../../jest.setup"
 import { motion, MotionConfig, useMotionValue } from "../.."
-import * as React from "react"
 import { nextMicrotask } from "../../gestures/__tests__/utils"
 
 describe("style prop", () => {

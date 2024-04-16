@@ -1,4 +1,4 @@
-import * as React from "react"
+import { forwardRef } from "react";
 import { OrthographicCamera as OrthographicCameraImpl } from "three"
 import { mergeRefs } from "react-merge-refs"
 import { motion } from "../render/motion"
@@ -13,7 +13,7 @@ type Props = JSX.IntrinsicElements["orthographicCamera"] &
     LayoutCameraProps &
     ThreeMotionProps
 
-export const LayoutOrthographicCamera = React.forwardRef(
+export const LayoutOrthographicCamera = forwardRef(
     (props: Props, ref) => {
         const { size, cameraRef } = useLayoutCamera<OrthographicCameraImpl>(
             props,

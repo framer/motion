@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useEffect } from "react";
 import { useDeprecatedAnimatedState } from "framer-motion"
 
 /**
@@ -10,7 +10,7 @@ export const App = () => {
         foo: 0,
     })
     console.log(state.foo)
-    React.useEffect(() => {
+    useEffect(() => {
         animate({ foo: 100 }, { duration: 3 })
     }, [])
 

@@ -1,6 +1,6 @@
 import { render } from "../../../jest.setup"
 import { motion, motionValue, useMotionValue, useTransform } from "../../"
-import * as React from "react"
+import { useRef } from "react";
 import { nextFrame } from "../../gestures/__tests__/utils"
 
 describe("SVG", () => {
@@ -57,7 +57,7 @@ describe("SVG", () => {
 
     test("motion svg elements should be able to set correct type of ref", () => {
         const Component = () => {
-            const ref = React.useRef<SVGTextElement>(null)
+            const ref = useRef<SVGTextElement>(null)
             return (
                 <svg>
                     <motion.text ref={ref}>Framer Motion</motion.text>

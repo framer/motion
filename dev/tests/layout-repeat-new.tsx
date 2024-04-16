@@ -1,5 +1,4 @@
 import { motion } from "framer-motion"
-import * as React from "react"
 import { useState } from "react"
 
 function range(num: number) {

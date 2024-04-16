@@ -1,8 +1,8 @@
-import * as React from "react"
+import { useState } from "react";
 import { motion } from "framer-motion"
 
 export const App = () => {
-    const [open, setOpen] = React.useState(true)
+    const [open, setOpen] = useState(true)
     return (
         <div>
             {open && (

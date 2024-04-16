@@ -1,5 +1,4 @@
-import * as React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion"
 import styled from "styled-components"
 
@@ -12,7 +11,7 @@ export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     // Double render to ensure it doesn't matter if we trigger a animate transition mid-animation
-    React.useEffect(() => {
+    useEffect(() => {
         isOn && setTimeout(() => setIsOn(isOn), 500)
     }, [isOn])
 

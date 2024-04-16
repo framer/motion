@@ -1,5 +1,4 @@
 import { render } from "../../../../jest.setup"
-import * as React from "react"
 import { useRef, useLayoutEffect } from "react"
 import { Reorder } from ".."
 

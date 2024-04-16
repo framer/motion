@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useState, useEffect } from "react";
 import { useAnimation, distance2D, wrap } from "framer-motion"
 import { motion } from "framer-motion"
 
@@ -12,7 +12,7 @@ const stagger = 0.1
 let interval
 
 export const App = () => {
-    const [center, setCenter] = React.useState({ x: len / 2, y: len / 2 })
+    const [center, setCenter] = useState({ x: len / 2, y: len / 2 })
 
     const cells = Array.from(Array(count).keys()).map((i) => {
         return (
@@ -74,7 +74,7 @@ const Cell = ({ center, i, onClick }) => {
         })
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         animate()
     })
 

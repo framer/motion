@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useEffect } from "react";
 import { motion, useAnimation, useMotionValue } from "framer-motion"
 
 /**
@@ -20,7 +20,7 @@ export const App = () => {
         hidden: { opacity: 0 },
     }
     const x = useMotionValue(0)
-    React.useEffect(() => {
+    useEffect(() => {
         controls.start("visible")
 
         setTimeout(() => x.set(100), 2000)

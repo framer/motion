@@ -1,5 +1,5 @@
 import { render } from "../../../../jest.setup"
-import * as React from "react"
+import { createRef } from "react";
 import { act } from "react-dom/test-utils"
 import {
     AnimatePresence,
@@ -554,7 +554,7 @@ describe("AnimatePresence", () => {
 
     test("Handles external refs on a single child", async () => {
         const promise = new Promise((resolve) => {
-            const ref = React.createRef<HTMLDivElement>()
+            const ref = createRef<HTMLDivElement>()
             const Component = ({ id }: { id: number }) => {
                 return (
                     <AnimatePresence initial={false}>

@@ -13,6 +13,7 @@ const external = [
     ...Object.keys(pkg.peerDependencies || {}),
     ...Object.keys(motionPkg.dependencies || {}),
     ...Object.keys(motionPkg.peerDependencies || {}),
+    "react/jsx-runtime",
 ]
 
 const cjs = Object.assign({}, config, {

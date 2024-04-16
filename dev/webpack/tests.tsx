@@ -1,4 +1,3 @@
-import * as React from "react"
 import { fileName } from "../inc/file-name"
 import { WrongModuleShape } from "./WrongModuleShape"
 

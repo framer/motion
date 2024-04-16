@@ -1,5 +1,4 @@
 import { motion, animate } from "framer-motion"
-import * as React from "react"
 import { useEffect, useState } from "react"
 import styled from "styled-components"
 

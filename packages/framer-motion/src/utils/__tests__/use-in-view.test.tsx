@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import * as React from "react"
+import { useRef, useEffect } from "react";
 import { useInView } from "../use-in-view"
 import { getActiveObserver } from "./mock-intersection-observer"
 import { act } from "react-dom/test-utils"
@@ -15,10 +15,10 @@ describe("useInView", () => {
         const results: boolean[] = []
 
         const Component = () => {
-            const ref = React.useRef(null)
+            const ref = useRef(null)
             const isInView = useInView(ref)
 
-            React.useEffect(() => {
+            useEffect(() => {
                 if (results[results.length - 1] !== isInView)
                     results.push(isInView)
             }, [isInView])
@@ -39,10 +39,10 @@ describe("useInView", () => {
         const results: boolean[] = []
 
         const Component = () => {
-            const ref = React.useRef(null)
+            const ref = useRef(null)
             const isInView = useInView(ref)
 
-            React.useEffect(() => {
+            useEffect(() => {
                 if (results[results.length - 1] !== isInView)
                     results.push(isInView)
             }, [isInView])
@@ -64,10 +64,10 @@ describe("useInView", () => {
         const results: boolean[] = []
 
         const Component = () => {
-            const ref = React.useRef(null)
+            const ref = useRef(null)
             const isInView = useInView(ref)
 
-            React.useEffect(() => {
+            useEffect(() => {
                 if (results[results.length - 1] !== isInView)
                     results.push(isInView)
             }, [isInView])
@@ -90,10 +90,10 @@ describe("useInView", () => {
         const results: boolean[] = []
 
         const Component = () => {
-            const ref = React.useRef(null)
+            const ref = useRef(null)
             const isInView = useInView(ref, { once: true })
 
-            React.useEffect(() => {
+            useEffect(() => {
                 if (results[results.length - 1] !== isInView)
                     results.push(isInView)
             }, [isInView])
