@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.1.2] 2024-04-16
+
+### Fixed
+
+-   Ensuring transforms unset during unit conversion are restored.
+
 ## [11.1.1] 2024-04-16
 
 ### Changed
