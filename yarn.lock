@@ -3335,6 +3335,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rollup/plugin-alias@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@rollup/plugin-alias@npm:5.1.0"
+  dependencies:
+    slash: ^4.0.0
+  peerDependencies:
+    rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  checksum: e9f0a27b0f6f166c4c72757a2ecf23411dcc6da22ae2e020ddf30fa95526c8ab36ad372ed994dde806de4dcc47b2f1305138b953764a8f879c85fd725ac2a493
+  languageName: node
+  linkType: hard
+
 "@rollup/plugin-commonjs@npm:^22.0.1":
   version: 22.0.2
   resolution: "@rollup/plugin-commonjs@npm:22.0.2"
@@ -8372,6 +8386,7 @@ __metadata:
   dependencies:
     "@cypress/webpack-preprocessor": ^6.0.1
     "@gsap/react": ^2.1.0
+    "@rollup/plugin-alias": ^5.1.0
     "@rollup/plugin-node-resolve": ^15.2.3
     "@rollup/plugin-replace": ^5.0.5
     "@testing-library/dom": ^8.16.0
@@ -15224,6 +15239,13 @@ __metadata:
   version: 3.0.0
   resolution: "slash@npm:3.0.0"
   checksum: 94a93fff615f25a999ad4b83c9d5e257a7280c90a32a7cb8b4a87996e4babf322e469c42b7f649fd5796edd8687652f3fb452a86dc97a816f01113183393f11c
+  languageName: node
+  linkType: hard
+
+"slash@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "slash@npm:4.0.0"
+  checksum: da8e4af73712253acd21b7853b7e0dbba776b786e82b010a5bfc8b5051a1db38ed8aba8e1e8f400dd2c9f373be91eb1c42b66e91abb407ff42b10feece5e1d2d
   languageName: node
   linkType: hard
 

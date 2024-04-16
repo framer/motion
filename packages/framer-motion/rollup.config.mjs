@@ -2,6 +2,9 @@ import resolve from "@rollup/plugin-node-resolve"
 import { terser } from "rollup-plugin-terser"
 import replace from "@rollup/plugin-replace"
 import dts from "rollup-plugin-dts"
+import alias from "@rollup/plugin-alias"
+import path from "node:path"
+import { fileURLToPath } from 'url'
 import pkg from "./package.json" with { type: "json"}
 import tsconfig from "./tsconfig.json" with {type: "json"}
 
@@ -39,16 +42,28 @@ const pureClass = {
     },
 }
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const shimReactJSXRuntimePlugin = alias({
+    entries: [
+        { find: 'react/jsx-runtime', replacement: path.resolve(__dirname, '../../dev/jsxRuntimeShim.js') }
+    ]
+});
+const shimReactJSXRuntimeProfillingPlugin = alias({
+    entries: [
+        { find: 'react/jsx-runtime', replacement: path.resolve(__dirname, '../../dev/jsxRuntimeShimProfiling.js') }
+    ]
+});
+
 const umd = Object.assign({}, config, {
     output: {
         file: `dist/${pkg.name}.dev.js`,
         format: "umd",
         name: "Motion",
         exports: "named",
-        globals: { react: "React" },
+        globals: { react: "React", "react/jsx-runtime": "jsxRuntime" },
     },
-    external: ["react", "react-dom", "react/jsx-runtime"],
-    plugins: [resolve(), replaceSettings("development")],
+    external: ["react", "react-dom"],
+    plugins: [resolve(), replaceSettings("development"), shimReactJSXRuntimeProfillingPlugin],
 })
 
 const projection = Object.assign({}, config, {
@@ -63,8 +78,8 @@ const projection = Object.assign({}, config, {
             "react-dom": "ReactDOM",
         },
     },
-    plugins: [resolve(), replaceSettings("development")],
-    external: ["react", "react-dom", "react/jsx-runtime"],
+    plugins: [resolve(), replaceSettings("development"), shimReactJSXRuntimeProfillingPlugin],
+    external: ["react", "react-dom"],
 })
 
 const umdProd = Object.assign({}, umd, {
@@ -75,6 +90,7 @@ const umdProd = Object.assign({}, umd, {
         resolve(),
         replaceSettings("production"),
         pureClass,
+        shimReactJSXRuntimePlugin,
         terser({ output: { comments: false } }),
     ],
 })
@@ -88,6 +104,7 @@ const umdDomProd = Object.assign({}, umd, {
         resolve(),
         replaceSettings("production"),
         pureClass,
+        shimReactJSXRuntimePlugin,
         terser({ output: { comments: false } }),
     ],
 })
