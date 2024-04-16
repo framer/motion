@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react"
  */
 
 export const App = () => {
-    const ref = useRef(null)
+    const ref = useRef<HTMLDivElement>(null)
     useEffect(() => {
         animate(
             ref.current,
@@ -16,7 +16,15 @@ export const App = () => {
             animate(
                 ref.current,
                 { width: "50%" },
-                { duration: 0.1, ease: "linear" }
+                {
+                    duration: 0.2,
+                    ease: "linear",
+                    onUpdate: (width) => {
+                        if (width > 200) {
+                            ref.current!.textContent = "Fail"
+                        }
+                    },
+                }
             )
         })
     }, [])
@@ -30,6 +38,8 @@ export const App = () => {
                 background: "#ffaa00",
             }}
             id="box"
-        />
+        >
+            Success
+        </div>
     )
 }

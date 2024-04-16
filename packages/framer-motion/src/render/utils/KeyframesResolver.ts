@@ -43,14 +43,14 @@ function measureAllKeyframes() {
 
         // Write
         elementsToMeasure.forEach((element: VisualElement<HTMLElement>) => {
+            element.render()
+
             const restore = transformsToRestore.get(element)
             if (restore) {
                 restore.forEach(([key, value]) => {
                     element.getValue(key)?.set(value)
                 })
             }
-
-            element.render()
         })
 
         // Read

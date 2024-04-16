@@ -24,12 +24,14 @@ describe("Unit conversion", () => {
     })
 
     it("Restores unapplied transforms", () => {
-        cy.visit("?test=unit-conversion-rotate")
+        cy.viewport(400, 400)
+            .visit("?test=unit-conversion-rotate")
             .wait(300)
             .get("#box")
             .should(([$box]: any) => {
                 const { transform } = $box.style
                 expect(transform).to.equal("rotate(45deg) translateZ(0px)")
+                expect($box.textContent).to.equal("Success")
             })
     })
 })
