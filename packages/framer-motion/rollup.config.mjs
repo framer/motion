@@ -111,6 +111,7 @@ const cjs = Object.assign({}, config, {
         dir: "dist/cjs",
         format: "cjs",
         exports: "named",
+        esModule: true
     },
     plugins: [resolve(), replaceSettings()],
     external,
