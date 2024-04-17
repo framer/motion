@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.1.4] Unreleased
+
+### Changed
+
+-   Skip removal of existing motion value when `undefined`.
+
 ## [11.1.3] 2024-04-17
 
 ### Fixed
