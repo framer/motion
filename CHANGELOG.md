@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.1.3] 2024-04-17
+
+### Fixed
+
+-   ESM compat with CJS bundle.
+
 ## [11.1.2] 2024-04-16
 
 ### Fixed
