@@ -791,13 +791,14 @@ export abstract class VisualElement<
      */
     addValue(key: string, value: MotionValue) {
         // Remove existing value if it exists
-        if (value !== this.values.get(key)) {
-            this.removeValue(key)
-            this.bindToMotionValue(key, value)
-        }
+        const existingValue = this.values.get(key)
 
-        this.values.set(key, value)
-        this.latestValues[key] = value.get()
+        if (value !== existingValue) {
+            if (existingValue) this.removeValue(key)
+            this.bindToMotionValue(key, value)
+            this.values.set(key, value)
+            this.latestValues[key] = value.get()
+        }
     }
 
     /**
