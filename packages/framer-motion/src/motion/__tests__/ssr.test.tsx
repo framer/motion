@@ -10,7 +10,7 @@ const MotionFragment = motion(Fragment)
 function runTests(render: (components: any) => string) {
     test("doesn't throw", () => {
         function Component() {
-            const ref = useRef<HTMLElement>(null)
+            const ref = useRef<HTMLDivElement>(null)
             return (
                 <motion.div
                     ref={ref}

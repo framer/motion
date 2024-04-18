@@ -112,6 +112,7 @@ export { SwitchLayoutGroupContext } from "./context/SwitchLayoutGroupContext"
  * Types
  */
 export { HTMLMotionProps, ForwardRefComponent } from "./render/html/types"
+export { DOMMotionComponents } from "./render/dom/types"
 export { SVGMotionProps, SVGAttributesAsMotionValues } from "./render/svg/types"
 export { AnimationLifecycles } from "./render/types"
 export { CustomDomComponent } from "./render/dom/motion-proxy"
