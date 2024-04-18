@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useRef, useState } from "react"
 import { renderToString, renderToStaticMarkup } from "react-dom/server"
 import { motion, useMotionValue } from "../../"
 import { motionValue } from "../../value"
@@ -9,16 +9,21 @@ const MotionFragment = motion(Fragment)
 
 function runTests(render: (components: any) => string) {
     test("doesn't throw", () => {
-        render(
-            <motion.div
-                initial={{ x: 100 }}
-                whileTap={{ opacity: 0 }}
-                drag
-                layout
-                layoutId="a"
-                style={{ opacity: 1 }}
-            />
-        )
+        function Component() {
+            const ref = useRef<HTMLDivElement>(null)
+            return (
+                <motion.div
+                    ref={ref}
+                    initial={{ x: 100 }}
+                    whileTap={{ opacity: 0 }}
+                    drag
+                    layout
+                    layoutId="a"
+                    style={{ opacity: 1 }}
+                />
+            )
+        }
+        render(<Component />)
 
         expect(true).toBe(true)
     })
