@@ -1,7 +1,6 @@
 import { ResolvedValues } from "../types"
 import {
     DetailedHTMLFactory,
-    ForwardRefExoticComponent,
     HTMLAttributes,
     PropsWithoutRef,
     ReactHTML,
@@ -45,9 +44,9 @@ export interface HTMLRenderState {
 /**
  * @public
  */
-export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
-    PropsWithoutRef<P> & RefAttributes<T>
->
+export type ForwardRefComponent<T, P> = (
+    props: PropsWithoutRef<P> & RefAttributes<T>
+) => JSX.Element
 
 /**
  * Support for React component props
