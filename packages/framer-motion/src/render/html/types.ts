@@ -44,9 +44,9 @@ export interface HTMLRenderState {
 /**
  * @public
  */
-export type ForwardRefComponent<T, P> = (
+export type ForwardRefComponent<T, P> = { readonly $$typeof: symbol } & ((
     props: PropsWithoutRef<P> & RefAttributes<T>
-) => JSX.Element
+) => JSX.Element)
 
 /**
  * Support for React component props
