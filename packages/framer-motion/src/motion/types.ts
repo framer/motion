@@ -142,7 +142,7 @@ export interface AnimationProps {
      * <motion.div initial={false} animate={{ opacity: 0 }} />
      * ```
      */
-    initial?: boolean | Target | VariantLabels
+    initial?: boolean | TargetAndTransition | VariantLabels
 
     /**
      * Values to animate to, variant label(s), or `AnimationControls`.

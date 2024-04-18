@@ -35,6 +35,7 @@ export function animateTarget(
 ): AnimationPlaybackControls[] {
     let {
         transition = visualElement.getDefaultTransition(),
+        transitionFrom,
         transitionEnd,
         ...target
     } = targetAndTransition
@@ -78,8 +79,7 @@ export function animateTarget(
         let isHandoff = false
         if (window.HandoffAppearAnimations) {
             const props = visualElement.getProps()
-            const appearId =
-                props[optimizedAppearDataAttribute]
+            const appearId = props[optimizedAppearDataAttribute]
 
             if (appearId) {
                 const elapsed = window.HandoffAppearAnimations(appearId, key)
