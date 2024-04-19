@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.1.7] 2024-04-19
+
+### Changed
+
+-   Updating types for `motion.div`.
+
 ## [11.1.6] 2024-04-19
 
 ### Changed
