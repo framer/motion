@@ -481,7 +481,11 @@ export class MainThreadAnimation<
         this.holdTime = this.currentTime ?? 0
     }
 
-    stop() {
+    /**
+     * This method is bound to the instance to fix a pattern where
+     * animation.stop is returned as a reference from a useEffect.
+     */
+    stop = () => {
         this.resolver.cancel()
         this.isStopped = true
         if (this.state === "idle") return
