@@ -50,6 +50,9 @@ export function mixArray(a: MixableArray, b: MixableArray) {
     const blendValue = a.map((v, i) => getMixer(v)(v as any, b[i] as any))
 
     return (p: number) => {
+        if (p === 0) return a
+        if (p === 1) return b
+
         for (let i = 0; i < numValues; i++) {
             output[i] = blendValue[i](p) as any
         }
@@ -70,9 +73,12 @@ export function mixObject(a: MixableObject, b: MixableObject) {
         }
     }
 
-    return (v: number) => {
+    return (p: number) => {
+        if (p === 0) return a
+        if (p === 1) return b
+
         for (const key in blendValue) {
-            output[key] = blendValue[key](v)
+            output[key] = blendValue[key](p)
         }
         return output
     }

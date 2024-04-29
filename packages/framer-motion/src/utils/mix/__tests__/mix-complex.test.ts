@@ -1,16 +1,23 @@
 import { mixComplex } from "../complex"
 
 test("mixComplex", () => {
-    expect(mixComplex("20px", "10px")(0.5)).toBe("15px")
-    expect(
-        mixComplex(
-            "20px, rgba(0, 0, 0, 0)",
-            "10px, rgba(255, 255, 255, 1)"
-        )(0.5)
-    ).toBe("15px, rgba(180, 180, 180, 0.5)")
-    expect(mixComplex("20px, #0000", "10px, #ffff")(0.5)).toBe(
-        "15px, rgba(180, 180, 180, 0.5)"
+    const pxMixer = mixComplex("20px", "10px")
+    expect(pxMixer(0)).toBe("20px")
+    expect(pxMixer(0.5)).toBe("15px")
+    expect(pxMixer(1)).toBe("10px")
+
+    const mixedMixer = mixComplex(
+        "20px, rgba(0, 0, 0, 0)",
+        "10px, rgba(255, 255, 255, 1)"
     )
+    expect(mixedMixer(0)).toBe("20px, rgba(0, 0, 0, 0)")
+    expect(mixedMixer(0.5)).toBe("15px, rgba(180, 180, 180, 0.5)")
+    expect(mixedMixer(1)).toBe("10px, rgba(255, 255, 255, 1)")
+
+    const mixedLongHex = mixComplex("20px, #0000", "10px, #ffff")
+    expect(mixedLongHex(0)).toBe("20px, rgba(0, 0, 0, 0)")
+    expect(mixedLongHex(0.5)).toBe("15px, rgba(180, 180, 180, 0.5)")
+    expect(mixedLongHex(1)).toBe("10px, rgba(255, 255, 255, 1)")
 })
 
 test("mixComplex gracefully handles numbers", () => {
@@ -18,10 +25,10 @@ test("mixComplex gracefully handles numbers", () => {
 })
 
 test("mixComplex errors", () => {
-    expect(mixComplex("hsla(100%, 100, 100, 1)", "#fff")(0)).toBe(
-        "rgba(255, 255, 255, 1)"
+    expect(mixComplex("hsla(100, 100%, 100%, 1)", "#fff")(0)).toBe(
+        "hsla(100, 100%, 100%, 1)"
     )
-    expect(mixComplex("hsla(100%, 100, 100, 1)", "#fff")(0.1)).toBe(
+    expect(mixComplex("hsla(100, 100%, 100%, 1)", "#fff")(0.1)).toBe(
         "rgba(255, 255, 255, 1)"
     )
 })
@@ -61,4 +68,26 @@ test("mixComplex will only interpolate values outside of CSS variables", () => {
     expect(mixer(0)).toBe("rgba(255, 255, 255, 1) 0 var(--grey, 0px) 10px")
     expect(mixer(0.5)).toBe("rgba(180, 180, 180, 1) 0 var(--grey, 10px) 5px")
     expect(mixer(1)).toBe("rgba(0, 0, 0, 1) 0 var(--grey, 10px) 0px")
+})
+
+test("mixComplex can animate between long and shorthand numerical values", () => {
+    const shortToLong = mixComplex("2px", "4px 6px 8px")
+    expect(shortToLong(0)).toBe("2px")
+    expect(shortToLong(0.5)).toBe("3px 4px 5px")
+    expect(shortToLong(1)).toBe("4px 6px 8px")
+
+    const longToShort = mixComplex("4px 6px 8px", "2px")
+    expect(longToShort(0)).toBe("4px 6px 8px")
+    expect(longToShort(0.5)).toBe("3px 4px 5px")
+    expect(longToShort(1)).toBe("2px")
+
+    const shortToLongMulti = mixComplex("2px 4px", "4px 6px 8px 10px")
+    expect(shortToLongMulti(0)).toBe("2px 4px")
+    expect(shortToLongMulti(0.5)).toBe("3px 5px 5px 7px")
+    expect(shortToLongMulti(1)).toBe("4px 6px 8px 10px")
+
+    const longToShortMulti = mixComplex("4px 6px 8px 10px", "2px 4px")
+    expect(longToShortMulti(0)).toBe("4px 6px 8px 10px")
+    expect(longToShortMulti(0.5)).toBe("3px 5px 5px 7px")
+    expect(longToShortMulti(1)).toBe("2px 4px")
 })
