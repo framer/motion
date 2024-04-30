@@ -11,7 +11,6 @@ import { variantPriorityOrder } from "./variant-props"
 import { VisualElementAnimationOptions } from "../../animation/interfaces/types"
 import { AnimationDefinition } from "../../animation/types"
 import { animateVisualElement } from "../../animation/interfaces/visual-element"
-import { ResolvedValues } from "../types"
 
 export interface AnimationState {
     animateChanges: (type?: AnimationType) => Promise<any>
@@ -131,7 +130,7 @@ export function createAnimationState(
          * lower priority props and flag for animation.
          */
         for (let i = 0; i < numAnimationTypes; i++) {
-            const type = reversePriorityOrder[i]
+            const type: AnimationType | "initial" = reversePriorityOrder[i]
             const typeState = state[type]
             const prop =
                 props[type] !== undefined
@@ -332,7 +331,7 @@ export function createAnimationState(
          * defined in the style prop, or the last read value.
          */
         if (removedKeys.size) {
-            const fallbackAnimation: ResolvedValues = {}
+            const fallbackAnimation: TargetAndTransition = {}
             removedKeys.forEach((key) => {
                 const fallbackTarget = visualElement.getBaseTarget(key)
 
@@ -343,7 +342,21 @@ export function createAnimationState(
                 fallbackAnimation[key] = fallbackTarget ?? null
             })
 
-            animations.push({ animation: fallbackAnimation })
+            const { initial } = props
+            if (initial && typeof initial !== "boolean") {
+                const { transition, transitionFrom } =
+                    resolveVariant(
+                        visualElement,
+                        Array.isArray(initial) ? initial[0] : initial
+                    ) || {}
+                fallbackAnimation.transition = transition
+                fallbackAnimation.transitionFrom = transitionFrom
+            }
+
+            animations.push({
+                animation: fallbackAnimation,
+                options: { type: "initial" },
+            })
         }
 
         let shouldAnimate = Boolean(animations.length)

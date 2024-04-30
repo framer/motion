@@ -85,7 +85,7 @@ describe("transitionFrom", () => {
     })
 
     test("transitionFrom works with gestures", async () => {
-        const promise = new Promise<number[]>((resolve) => {
+        const promise = new Promise<number[]>(async (resolve) => {
             const output: number[] = []
             const opacity = motionValue(1)
             const Component = () => (
@@ -110,14 +110,19 @@ describe("transitionFrom", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 
+            await nextFrame()
             output.push(opacity.get())
 
             pointerEnter(container.firstChild as Element)
 
+            await nextFrame()
+
             output.push(opacity.get())
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 pointerLeave(container.firstChild as Element)
+
+                await nextFrame()
 
                 output.push(opacity.get())
                 resolve(output)
@@ -128,7 +133,7 @@ describe("transitionFrom", () => {
     })
 
     test("transitionFrom works with gestures and initial", async () => {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>(async (resolve) => {
             const Component = () => (
                 <motion.div
                     whileHover={{
@@ -197,6 +202,8 @@ describe("transitionFrom", () => {
 
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
+
+            await nextFrame()
 
             output.push(opacity.get())
 

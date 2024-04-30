@@ -5,5 +5,5 @@ export type VisualElementAnimationOptions = {
     delay?: number
     transitionOverride?: Transition
     custom?: any
-    type?: AnimationType
+    type?: AnimationType | "initial"
 }
