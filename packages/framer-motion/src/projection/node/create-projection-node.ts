@@ -245,11 +245,6 @@ export function createProjectionNode<I>({
         scroll?: ScrollMeasurements
 
         /**
-         * If this element is a scroll root, we ignore scrolls up the tree.
-         */
-        isScrollRoot?: boolean
-
-        /**
          * Flag to true if we think this layout has been changed. We can't always know this,
          * currently we set it to true every time a component renders, or if it has a layoutDependency
          * if that has changed between renders. Additionally, components can be grouped by LayoutGroup
@@ -811,13 +806,14 @@ export function createProjectionNode<I>({
             ) {
                 needsMeasurement = false
             }
-
             if (needsMeasurement) {
+                const isRoot = checkIsScrollRoot(this.instance);
                 this.scroll = {
                     animationId: this.root.animationId,
                     phase,
-                    isRoot: checkIsScrollRoot(this.instance),
+                    isRoot,
                     offset: measureScroll(this.instance),
+                    wasRoot: this.scroll ? this.scroll.isRoot : isRoot,
                 }
             }
         }
@@ -881,7 +877,9 @@ export function createProjectionNode<I>({
 
             const box = visualElement.measureViewportBox()
 
-            if (!this.scroll?.isRoot) {
+            const wasInScrollRoot = this.scroll?.wasRoot || this.path.some((node) => node !== node.root && node.scroll?.wasRoot);
+
+            if (!wasInScrollRoot) {
                 // Remove viewport scroll to give page-relative coordinates
                 const { scroll } = this.root
                 if (scroll) {
@@ -897,7 +895,7 @@ export function createProjectionNode<I>({
             const boxWithoutScroll = createBox()
             copyBoxInto(boxWithoutScroll, box)
 
-            if (this.scroll?.isRoot) {
+            if (this.scroll?.wasRoot) {
                 return boxWithoutScroll
             }
 
@@ -914,23 +912,8 @@ export function createProjectionNode<I>({
                      * If this is a new scroll root, we want to remove all previous scrolls
                      * from the viewport box.
                      */
-                    if (scroll.isRoot) {
+                    if (scroll.wasRoot) {
                         copyBoxInto(boxWithoutScroll, box)
-                        const { scroll: rootScroll } = this.root
-                        /**
-                         * Undo the application of page scroll that was originally added
-                         * to the measured bounding box.
-                         */
-                        if (rootScroll) {
-                            translateAxis(
-                                boxWithoutScroll.x,
-                                -rootScroll.offset.x
-                            )
-                            translateAxis(
-                                boxWithoutScroll.y,
-                                -rootScroll.offset.y
-                            )
-                        }
                     }
 
                     translateAxis(boxWithoutScroll.x, scroll.offset.x)
