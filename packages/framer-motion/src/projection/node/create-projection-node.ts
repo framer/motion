@@ -880,11 +880,14 @@ export function createProjectionNode<I>({
             if (!visualElement) return createBox()
 
             const box = visualElement.measureViewportBox()
-            // Remove viewport scroll to give page-relative coordinates
-            const { scroll } = this.root
-            if (scroll) {
-                translateAxis(box.x, scroll.offset.x)
-                translateAxis(box.y, scroll.offset.y)
+
+            if (!this.scroll?.isRoot) {
+                // Remove viewport scroll to give page-relative coordinates
+                const { scroll } = this.root
+                if (scroll) {
+                    translateAxis(box.x, scroll.offset.x)
+                    translateAxis(box.y, scroll.offset.y)
+                }
             }
 
             return box
