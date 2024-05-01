@@ -897,6 +897,10 @@ export function createProjectionNode<I>({
             const boxWithoutScroll = createBox()
             copyBoxInto(boxWithoutScroll, box)
 
+            if (this.scroll?.isRoot) {
+                return boxWithoutScroll
+            }
+
             /**
              * Performance TODO: Keep a cumulative scroll offset down the tree
              * rather than loop back up the path.
@@ -1284,7 +1288,6 @@ export function createProjectionNode<I>({
              */
             const prevTreeScaleX = this.treeScale.x
             const prevTreeScaleY = this.treeScale.y
-
             /**
              * Apply all the parent deltas to this box to produce the corrected box. This
              * is the layout box, as it will appear on screen as a result of the transforms of its parents.
