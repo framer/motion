@@ -72,8 +72,9 @@ export class DOMKeyframesResolver<
          * Skip if we have more than two keyframes or this isn't a positional value.
          * TODO: We can throw if there are multiple keyframes and the value type changes.
          */
+        this.resolveNoneKeyframes()
         if (!positionalKeys.has(name) || unresolvedKeyframes.length !== 2) {
-            return this.resolveNoneKeyframes()
+            return
         }
 
         const [origin, target] = unresolvedKeyframes
