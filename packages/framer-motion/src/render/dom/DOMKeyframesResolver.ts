@@ -67,12 +67,18 @@ export class DOMKeyframesResolver<
         }
 
         /**
+         * Resolve "none" values. We do this potentially twice - once before and once after measuring keyframes.
+         * This could be seen as inefficient but it's a trade-off to avoid measurements in more situations, which
+         * have a far bigger performance impact.
+         */
+        this.resolveNoneKeyframes()
+
+        /**
          * Check to see if unit type has changed. If so schedule jobs that will
          * temporarily set styles to the destination keyframes.
          * Skip if we have more than two keyframes or this isn't a positional value.
          * TODO: We can throw if there are multiple keyframes and the value type changes.
          */
-        this.resolveNoneKeyframes()
         if (!positionalKeys.has(name) || unresolvedKeyframes.length !== 2) {
             return
         }
