@@ -13,7 +13,11 @@ export * from "./dom-entry"
 export * from "./three-entry"
 
 /**
- * Features
+ * To create a custom FeatureBundle (ex. part of domAnimation), we expose renderer (createDomVisualElement)
+ */
+export { createDomVisualElement } from "./render/dom/create-visual-element"
+/**
+ * Features (groups of features exposed for convenience)
  */
 export { domAnimation } from "./render/dom/features-animation"
 export { domMax } from "./render/dom/features-max"
