@@ -1,0 +1,27 @@
+{
+    "name": "plugin-stagger",
+    "version": "0.0.0",
+    "private": true,
+    "author": "Framer",
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "dev": "vite --force",
+        "build": "vite build --base=${PREFIX_BASE_PATH:+/$npm_package_name}/",
+        "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+        "preview": "vite preview"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-react-swc": "^3.6.0",
+        "vite": "^5.2.11",
+        "vite-plugin-framer": "^0.0.10",
+        "vite-plugin-mkcert": "^1.17.5"
+    },
+    "dependencies": {
+        "@uidotdev/usehooks": "^2.4.1",
+        "framer-plugin": "^0",
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0",
+        "vite-plugin-mkcert": "^1"
+    }
+}
