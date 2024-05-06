@@ -22,7 +22,7 @@ describe("hover", () => {
         pointerLeave(container.firstChild as Element)
 
         return new Promise<void>((resolve) => {
-            frame.render(() => {
+            frame.postRender(() => {
                 expect(hoverIn).toBeCalledTimes(1)
                 expect(hoverOut).toBeCalledTimes(1)
                 resolve()
@@ -42,7 +42,7 @@ describe("hover", () => {
         pointerLeave(container.firstChild as Element, { pointerType: "touch" })
 
         return new Promise<void>((resolve) => {
-            frame.render(() => {
+            frame.postRender(() => {
                 expect(hoverIn).toBeCalledTimes(0)
                 expect(hoverOut).toBeCalledTimes(0)
                 resolve()
