@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.1.8] 2024-05-06
+
+### Fixed
+
+-   Animating between keyframe unit types when one keyframe is `0` and the other is an explicitly defined keyframe, e.g `y: ["100%", 0]`.
+
 ## [11.1.7] 2024-04-19
 
 ### Changed
