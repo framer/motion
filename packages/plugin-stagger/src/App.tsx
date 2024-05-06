@@ -121,10 +121,13 @@ export function App() {
 
 function EmptyState({ type }: { type: string }) {
     return (
-        <p>
-            No layers with{" "}
-            <span style={{ textTransform: "capitalize" }}>{type}</span> Effects
-            selected
-        </p>
+        <>
+            <p>
+                No layers with{" "}
+                <span style={{ textTransform: "capitalize" }}>{type}</span>{" "}
+                Effects selected.
+            </p>
+            <p>Stagger will be applied based on selection order.</p>
+        </>
     )
 }

@@ -19,7 +19,7 @@
     },
     "dependencies": {
         "@uidotdev/usehooks": "^2.4.1",
-        "framer-plugin": "^0",
+        "framer-plugin": "link:../../../FramerStudio/src/plugin-api",
         "react": "^18.0.0",
         "react-dom": "^18.0.0",
         "vite-plugin-mkcert": "^1"
