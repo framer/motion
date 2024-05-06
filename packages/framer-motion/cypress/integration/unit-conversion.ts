@@ -34,4 +34,15 @@ describe("Unit conversion", () => {
                 expect($box.textContent).to.equal("Success")
             })
     })
+
+    it("Coerces none keyframes before measuring", () => {
+        cy.viewport(400, 400)
+            .visit("?test=unit-conversion-to-zero")
+            .wait(100)
+            .get("#box")
+            .should(([$box]: any) => {
+                const { top } = $box.getBoundingClientRect()
+                expect(top).to.equal(100)
+            })
+    })
 })

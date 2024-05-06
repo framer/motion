@@ -7,6 +7,8 @@ import { UnresolvedKeyframes } from "../../utils/KeyframesResolver"
  * the "none" keyframes. In this case "#fff" or "200px 200px" - then these get turned into
  * zero equivalents, i.e. "#fff0" or "0px 0px".
  */
+const invalidTemplates = new Set(["auto", "none", "0"])
+
 export function makeNoneKeyframesAnimatable(
     unresolvedKeyframes: UnresolvedKeyframes<string | number>,
     noneKeyframeIndexes: number[],
@@ -15,11 +17,8 @@ export function makeNoneKeyframesAnimatable(
     let i = 0
     let animatableTemplate: string | undefined = undefined
     while (i < unresolvedKeyframes.length && !animatableTemplate) {
-        if (
-            typeof unresolvedKeyframes[i] === "string" &&
-            unresolvedKeyframes[i] !== "none" &&
-            unresolvedKeyframes[i] !== "0"
-        ) {
+        const keyframe = unresolvedKeyframes[i]
+        if (typeof keyframe === "string" && !invalidTemplates.has(keyframe)) {
             animatableTemplate = unresolvedKeyframes[i] as string
         }
         i++
