@@ -32,6 +32,7 @@ import { mixNumber } from "../../utils/mix/number"
 import { percent } from "../../value/types/numbers/units"
 import { animateMotionValue } from "../../animation/interfaces/motion-value"
 import { getContextWindow } from "../../utils/get-context-window"
+import { frame } from "../../frameloop"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -152,7 +153,9 @@ export class VisualElementDragControls {
             })
 
             // Fire onDragStart event
-            if (onDragStart) onDragStart(event, info)
+            if (onDragStart) {
+                frame.postRender(() => onDragStart(event, info))
+            }
 
             const { animationState } = this.visualElement
             animationState && animationState.setActive("whileDrag", true)
@@ -240,7 +243,9 @@ export class VisualElementDragControls {
         this.startAnimation(velocity)
 
         const { onDragEnd } = this.getProps()
-        if (onDragEnd) onDragEnd(event, info)
+        if (onDragEnd) {
+            frame.postRender(() => onDragEnd(event, info))
+        }
     }
 
     private cancel() {

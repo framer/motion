@@ -6,7 +6,7 @@ import {
     render,
 } from "../../../jest.setup"
 import { motion, useMotionValue } from "../../"
-import { useState, createRef } from "react";
+import { useState, createRef } from "react"
 import { nextFrame } from "../../gestures/__tests__/utils"
 import "../../animation/animators/waapi/__tests__/setup"
 import { act } from "react-dom/test-utils"
@@ -310,7 +310,9 @@ describe("WAAPI animations", () => {
         await nextFrame()
         pointerLeave(container.firstChild as Element)
         await nextFrame()
+        await nextFrame()
         rerender(<Component />)
+        await nextFrame()
         await nextFrame()
 
         expect(ref.current!.animate).toBeCalledTimes(2)
