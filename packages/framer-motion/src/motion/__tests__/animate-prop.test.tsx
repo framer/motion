@@ -6,7 +6,7 @@ import {
     useMotionValue,
     useMotionValueEvent,
 } from "../../"
-import { useRef, createRef } from "react";
+import { useRef, createRef } from "react"
 import { nextFrame } from "../../gestures/__tests__/utils"
 
 describe("animate prop as object", () => {
@@ -223,7 +223,7 @@ describe("animate prop as object", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
         })
-        expect(promise).resolves.toHaveStyle(
+        return expect(promise).resolves.toHaveStyle(
             "transform: translateX(30px) translateX(30px) translateZ(0)"
         )
     })
@@ -242,8 +242,128 @@ describe("animate prop as object", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
         })
-        expect(promise).resolves.toEqual(true)
+        return expect(promise).resolves.toEqual(true)
     })
+
+    test("animate display none => block immediately switches to block", async () => {
+        const promise = new Promise((resolve) => {
+            const Component = () => {
+                const display = useMotionValue("block")
+                let hasChecked = false
+
+                return (
+                    <motion.div
+                        initial={{ display: "none", opacity: 0 }}
+                        animate={{ display: "block", opacity: 1 }}
+                        style={{ display }}
+                        transition={{ duration: 0.1 }}
+                        onUpdate={(latest) => {
+                            if (!hasChecked) {
+                                expect(latest.display).toBe("block")
+                                hasChecked = true
+                            }
+                        }}
+                        onAnimationComplete={() => {
+                            resolve([hasChecked, display.get()])
+                        }}
+                    />
+                )
+            }
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toEqual([true, "block"])
+    })
+
+    test.only("animate display block => none switches to none on animation end", async () => {
+        const promise = new Promise((resolve) => {
+            let hasChecked = false
+            const Component = () => {
+                const display = useMotionValue("block")
+
+                return (
+                    <motion.div
+                        initial={{ display: "block", opacity: 1 }}
+                        animate={{ display: "none", opacity: 0 }}
+                        style={{ display }}
+                        transition={{ duration: 0.1 }}
+                        onUpdate={(latest) => {
+                            if (!hasChecked) {
+                                expect(latest.display).toBe("block")
+                                hasChecked = true
+                            }
+                        }}
+                        onAnimationComplete={() => {
+                            resolve([hasChecked, display.get()])
+                        }}
+                    />
+                )
+            }
+            render(<Component />)
+        })
+        return expect(promise).resolves.toEqual([true, "none"])
+    })
+
+    test("animate visibility hidden => visible immediately switches to visible", async () => {
+        const promise = new Promise((resolve) => {
+            const Component = () => {
+                const visibility = useMotionValue("visible")
+                let hasChecked = false
+
+                return (
+                    <motion.div
+                        initial={{ visibility: "hidden", opacity: 0 }}
+                        animate={{ visibility: "visible", opacity: 1 }}
+                        style={{ visibility }}
+                        transition={{ duration: 0.1 }}
+                        onUpdate={(latest) => {
+                            if (!hasChecked) {
+                                expect(latest.visibility).toBe("visible")
+                                hasChecked = true
+                            }
+                        }}
+                        onAnimationComplete={() => {
+                            resolve([hasChecked, visibility.get()])
+                        }}
+                    />
+                )
+            }
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toEqual([true, "visible"])
+    })
+
+    test("animate visibility visible => hidden switches to hidden on animation end", async () => {
+        const promise = new Promise((resolve) => {
+            const Component = () => {
+                const visibility = useMotionValue("hidden")
+                let hasChecked = false
+
+                return (
+                    <motion.div
+                        initial={{ visibility: "visible", opacity: 1 }}
+                        animate={{ visibility: "hidden", opacity: 0 }}
+                        style={{ visibility }}
+                        transition={{ duration: 0.1 }}
+                        onUpdate={(latest) => {
+                            if (!hasChecked) {
+                                expect(latest.visibility).toBe("visible")
+                                hasChecked = true
+                            }
+                        }}
+                        onAnimationComplete={() => {
+                            resolve([hasChecked, visibility.get()])
+                        }}
+                    />
+                )
+            }
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toEqual([true, "hidden"])
+    })
+
     test("keyframes - accepts ease as an array", async () => {
         const promise = new Promise((resolve) => {
             const x = motionValue(0)

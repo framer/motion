@@ -24,6 +24,9 @@ export function canAnimate(
     const originKeyframe = keyframes[0]
     if (originKeyframe === null) return false
 
+    console.log(keyframes, name)
+    if (name === "display" || name === "visibility") return true
+
     const targetKeyframe = keyframes[keyframes.length - 1]
     const isOriginAnimatable = isAnimatable(originKeyframe, name)
     const isTargetAnimatable = isAnimatable(targetKeyframe, name)
