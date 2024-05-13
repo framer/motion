@@ -24,7 +24,11 @@ export function canAnimate(
     const originKeyframe = keyframes[0]
     if (originKeyframe === null) return false
 
-    console.log(keyframes, name)
+    /**
+     * These aren't traditionally animatable but we do support them.
+     * In future we could look into making this more generic or replacing
+     * this function with mix() === mixImmediate
+     */
     if (name === "display" || name === "visibility") return true
 
     const targetKeyframe = keyframes[keyframes.length - 1]
