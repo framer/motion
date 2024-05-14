@@ -275,7 +275,7 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toEqual([true, "block"])
     })
 
-    test.only("animate display block => none switches to none on animation end", async () => {
+    test("animate display block => none switches to none on animation end", async () => {
         const promise = new Promise((resolve) => {
             let hasChecked = false
             const Component = () => {

@@ -23,7 +23,7 @@ export const App = () => {
                     visibility: state ? "visible" : "hidden",
                     opacity: state ? 1 : 0.2,
                 }}
-                onUpdate={console.log}
+                onUpdate={(latest: any) => console.log(latest)}
                 style={style}
             />
             <button onClick={() => setState(!state)}>Toggle</button>
