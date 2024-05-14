@@ -2,7 +2,6 @@
     <head>
         <style>
             body {
-                padding: 100px;
                 margin: 0;
             }
 
@@ -61,6 +60,22 @@
                     box.style.backgroundColor = "green"
 
                     setTimeout(() => {
+                        frame.postRender(() => {
+                            /**
+                             * The frame visible after the infinite loop
+                             * and before motion renders again
+                             */
+                            frame.preRender(() => {
+                                const left = box.getBoundingClientRect().left
+
+                                if (left < 200) {
+                                    showError(
+                                        document.getElementById("box"),
+                                        `Stutter detected`
+                                    )
+                                }
+                            })
+                        })
                         /**
                          * By blocking the main thread here, we ensure that
                          * the keyframes
@@ -69,23 +84,10 @@
                             console.log(
                                 "Blocking main thread before keyframe resolution"
                             )
+
                             const startTime = performance.now()
                             while (performance.now() - startTime < 1000) {}
                         })
-
-                        let prevLeft = 0
-                        frame.postRender(() => {
-                            const left = box.getBoundingClientRect().left
-
-                            if (left < prevLeft) {
-                                showError(
-                                    document.getElementById("box"),
-                                    `Stutter detected`
-                                )
-                            }
-
-                            prevLeft = left
-                        }, true)
 
                         /**
                          * This animation interrupts the optimised animation. Notably, we are animating
@@ -113,50 +115,6 @@
                                 },
                             }
                         )
-                        // animate(box, { opacity: 0.1 }, options).then(() => {
-                        //     return
-                        //     frame.postRender(() => {
-                        //         if (frameCounter < 5) {
-                        //             showError(
-                        //                 document.getElementById("box"),
-                        //                 `Fewer animation frames detected than expected`
-                        //             )
-                        //         }
-
-                        //         if (getComputedStyle(box).opacity !== "0.1") {
-                        //             showError(
-                        //                 document.getElementById("box"),
-                        //                 `opacity animation didn't interrupt optimised animation. Opacity was ${
-                        //                     getComputedStyle(box).opacity
-                        //                 } instead of 0.1.`
-                        //             )
-                        //         }
-                        //         if (getComputedStyle(box).opacity !== "0.1") {
-                        //             showError(
-                        //                 document.getElementById("box"),
-                        //                 `opacity animation didn't interrupt optimised animation. Opacity was ${
-                        //                     getComputedStyle(box).opacity
-                        //                 } instead of 0.1.`
-                        //             )
-                        //         }
-
-                        //         const { width, left } =
-                        //             box.getBoundingClientRect()
-                        //         if (Math.round(width) !== 200) {
-                        //             showError(
-                        //                 document.getElementById("box"),
-                        //                 `scale animation didn't interrupt optimised animation. Width was ${width}px instead of 200px.`
-                        //             )
-                        //         }
-
-                        //         if (left <= 100) {
-                        //             showError(
-                        //                 document.getElementById("box"),
-                        //                 `scale animation incorrectly interrupted optimised animation. Left was ${left}px instead of 100px.`
-                        //             )
-                        //         }
-                        //     })
-                        // })
                     }, 100)
                 },
                 [optimizedAppearDataAttribute]: "a",

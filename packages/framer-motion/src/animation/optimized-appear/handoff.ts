@@ -39,6 +39,10 @@ export function handoffOptimizedAppearAnimation(
              * If we've been provided the frameloop as an argument, use it to defer
              * cancellation until keyframes of the subsequent animation have been resolved.
              * Otherwise cancel immediately.
+             *
+             * This is an optional dependency to deal with the fact that this inline
+             * script and the library can be version sharded, and there have been
+             * times when this isn't provided as an argument.
              */
             frame.render(() =>
                 frame.render(() => {
