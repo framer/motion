@@ -16,8 +16,8 @@ export function handoffOptimizedAppearAnimation(
      *
      * Remove in early 2024.
      */
-    _value: MotionValue,
-    _frame: Batcher
+    _value?: MotionValue,
+    frame?: Batcher
 ): number | null {
     const optimisedValueName = transformProps.has(valueName)
         ? "transform"
@@ -34,9 +34,24 @@ export function handoffOptimizedAppearAnimation(
     const cancelAnimation = () => {
         appearAnimationStore.delete(storeId)
 
-        try {
-            animation.cancel()
-        } catch (error) {}
+        if (frame) {
+            /**
+             * If we've been provided the frameloop as an argument, use it to defer
+             * cancellation until keyframes of the subsequent animation have been resolved.
+             * Otherwise cancel immediately.
+             */
+            frame.render(() =>
+                frame.render(() => {
+                    try {
+                        animation.cancel()
+                    } catch (error) {}
+                })
+            )
+        } else {
+            try {
+                animation.cancel()
+            } catch (error) {}
+        }
     }
 
     /**

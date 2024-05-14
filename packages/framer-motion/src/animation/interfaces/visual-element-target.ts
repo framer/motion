@@ -78,11 +78,15 @@ export function animateTarget(
         let isHandoff = false
         if (window.HandoffAppearAnimations) {
             const props = visualElement.getProps()
-            const appearId =
-                props[optimizedAppearDataAttribute]
+            const appearId = props[optimizedAppearDataAttribute]
 
             if (appearId) {
-                const elapsed = window.HandoffAppearAnimations(appearId, key)
+                const elapsed = window.HandoffAppearAnimations(
+                    appearId,
+                    key,
+                    value,
+                    frame
+                )
 
                 if (elapsed !== null) {
                     valueTransition.elapsed = elapsed
