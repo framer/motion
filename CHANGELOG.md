@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.2.0] 2024-05-14
+
+### Added
+
+-   Binary visibility interpolation i.e `display: ["block", "none"]` now maintains the visible state throughout the animation.
+
 ## [11.1.9] 2024-05-07
 
 ### Changed
