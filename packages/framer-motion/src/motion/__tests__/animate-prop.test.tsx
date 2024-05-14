@@ -206,14 +206,14 @@ describe("animate prop as object", () => {
         const promise = new Promise((resolve) => {
             const resolveContainer = () => {
                 requestAnimationFrame(() => {
-                    resolve(container)
+                    resolve(container.firstChild as any)
                 })
             }
             const Component = () => (
                 <motion.div
                     initial={{ x: 10 }}
                     animate={{ x: 30 }}
-                    transition={{ duration: 10 }}
+                    transition={{ duration: 0.01 }}
                     transformTemplate={({ x }, generated) =>
                         `translateY(${x}) ${generated}`
                     }
@@ -224,7 +224,7 @@ describe("animate prop as object", () => {
             rerender(<Component />)
         })
         return expect(promise).resolves.toHaveStyle(
-            "transform: translateX(30px) translateX(30px) translateZ(0)"
+            "transform: translateY(30px) translateX(30px) translateZ(0)"
         )
     })
     test("animating between none/block fires onAnimationComplete", async () => {
