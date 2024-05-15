@@ -2,7 +2,6 @@
     <head>
         <style>
             body {
-                padding: 100px;
                 margin: 0;
             }
 
@@ -39,8 +38,9 @@
             const { matchViewportBox } = window.Assert
             const root = document.getElementById("root")
 
-            const duration = 2
+            const duration = 4
             const x = motionValue(0)
+            const xTarget = 500
 
             let isFirstFrame = true
 
@@ -48,7 +48,7 @@
             const Component = React.createElement(motion.div, {
                 id: "box",
                 initial: { x: 0, opacity: 0 },
-                animate: { x: 100, opacity: 1 },
+                animate: { x: xTarget, opacity: 1 },
                 transition: { duration, ease: "linear" },
                 style: { x },
                 /**
@@ -60,44 +60,62 @@
                     box.style.backgroundColor = "green"
 
                     setTimeout(() => {
+                        frame.postRender(() => {
+                            /**
+                             * The frame visible after the infinite loop
+                             * and before motion renders again
+                             */
+                            frame.preRender(() => {
+                                const left = box.getBoundingClientRect().left
+
+                                if (left < 200) {
+                                    showError(
+                                        document.getElementById("box"),
+                                        `Stutter detected`
+                                    )
+                                }
+                            })
+                        })
+                        /**
+                         * By blocking the main thread here, we ensure that
+                         * the keyframes are resolved a good duration after the
+                         * animation was initialised.
+                         */
+                        frame.postRender(() => {
+                            console.log(
+                                "Blocking main thread before keyframe resolution"
+                            )
+
+                            const startTime = performance.now()
+                            while (performance.now() - startTime < 1000) {}
+                        })
+
                         /**
                          * This animation interrupts the optimised animation. Notably, we are animating
                          * x in the optimised transform animation and only scale here. This ensures
                          * that any transform can force the cancellation of the optimised animation on transform,
                          * not just those involved in the original animation.
                          */
+                        const options = { duration: 0.5, ease: "linear" }
+                        let frameCounter = 0
+
+                        box.style.backgroundColor = "red"
+
                         animate(
                             box,
-                            { scale: 2, opacity: 0.1 },
-                            { duration: 0.3, ease: "linear" }
-                        ).then(() => {
-                            frame.postRender(() => {
-                                if (getComputedStyle(box).opacity !== "0.1") {
-                                    showError(
-                                        document.getElementById("box"),
-                                        `opacity animation didn't interrupt optimised animation. Opacity was ${
-                                            getComputedStyle(box).opacity
-                                        } instead of 0.1.`
+                            { scale: [1, 1] },
+                            {
+                                ...options,
+                                onUpdate: () => {
+                                    frameCounter++
+                                    console.log(
+                                        getComputedStyle(box).transform,
+                                        box.style.transform,
+                                        box.getBoundingClientRect().left
                                     )
-                                }
-
-                                const { width, left } =
-                                    box.getBoundingClientRect()
-                                if (Math.round(width) !== 200) {
-                                    showError(
-                                        document.getElementById("box"),
-                                        `scale animation didn't interrupt optimised animation. Width was ${width}px instead of 200px.`
-                                    )
-                                }
-
-                                if (left <= 100) {
-                                    showError(
-                                        document.getElementById("box"),
-                                        `scale animation incorrectly interrupted optimised animation. Left was ${left}px instead of 100px.`
-                                    )
-                                }
-                            })
-                        })
+                                },
+                            }
+                        )
                     }, 100)
                 },
                 [optimizedAppearDataAttribute]: "a",
@@ -122,7 +140,7 @@
             const animation = startOptimizedAppearAnimation(
                 document.getElementById("box"),
                 "transform",
-                ["translateX(0px)", "translateX(100px)"],
+                ["translateX(0px)", `translateX(${xTarget}px)`],
                 {
                     duration: duration * 1000,
                     ease: "linear",
@@ -130,7 +148,7 @@
                 (animation) => {
                     setTimeout(() => {
                         ReactDOM.hydrateRoot(root, Component)
-                    }, (duration * 1000) / 2)
+                    }, (duration * 1000) / 4)
                 }
             )
         </script>

@@ -4,8 +4,8 @@ import type { MotionValue } from "../../value"
 export type HandoffFunction = (
     storeId: string,
     valueName: string,
-    _value?: MotionValue,
-    _frame?: Batcher
+    value?: MotionValue,
+    frame?: Batcher
 ) => null | number
 
 /**
