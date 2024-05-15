@@ -1,36 +1,48 @@
 import type { MotionProps } from "../../motion/types"
 import type { TargetAndTransition, TargetResolver } from "../../types"
+import { VisualElement } from "../VisualElement"
 import type { ResolvedValues } from "../types"
+
+function getValueState(
+    visualElement?: VisualElement
+): [ResolvedValues, ResolvedValues] {
+    const state: [ResolvedValues, ResolvedValues] = [{}, {}]
+
+    visualElement?.values.forEach((value, key) => {
+        state[0][key] = value.get()
+        state[1][key] = value.getVelocity()
+    })
+
+    return state
+}
 
 export function resolveVariantFromProps(
     props: MotionProps,
     definition: TargetAndTransition | TargetResolver,
     custom?: any,
-    currentValues?: ResolvedValues,
-    currentVelocity?: ResolvedValues
+    visualElement?: VisualElement
 ): TargetAndTransition
 export function resolveVariantFromProps(
     props: MotionProps,
     definition?: string | TargetAndTransition | TargetResolver,
     custom?: any,
-    currentValues?: ResolvedValues,
-    currentVelocity?: ResolvedValues
+    visualElement?: VisualElement
 ): undefined | TargetAndTransition
 export function resolveVariantFromProps(
     props: MotionProps,
     definition?: string | TargetAndTransition | TargetResolver,
     custom?: any,
-    currentValues: ResolvedValues = {},
-    currentVelocity: ResolvedValues = {}
+    visualElement?: VisualElement
 ) {
     /**
      * If the variant definition is a function, resolve.
      */
     if (typeof definition === "function") {
+        const [current, velocity] = getValueState(visualElement)
         definition = definition(
             custom !== undefined ? custom : props.custom,
-            currentValues,
-            currentVelocity
+            current,
+            velocity
         )
     }
 
@@ -48,10 +60,11 @@ export function resolveVariantFromProps(
      * If so, resolve. This can only have returned a valid target object.
      */
     if (typeof definition === "function") {
+        const [current, velocity] = getValueState(visualElement)
         definition = definition(
             custom !== undefined ? custom : props.custom,
-            currentValues,
-            currentVelocity
+            current,
+            velocity
         )
     }
 

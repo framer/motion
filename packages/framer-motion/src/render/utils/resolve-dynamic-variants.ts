@@ -1,27 +1,7 @@
 import { TargetAndTransition, TargetResolver } from "../../types"
 import type { VisualElement } from "../VisualElement"
-import { ResolvedValues } from "../types"
 import { resolveVariantFromProps } from "./resolve-variants"
 
-/**
- * Creates an object containing the latest state of every MotionValue on a VisualElement
- */
-function getCurrent(visualElement: VisualElement) {
-    const current: ResolvedValues = {}
-    visualElement.values.forEach((value, key) => (current[key] = value.get()))
-    return current
-}
-
-/**
- * Creates an object containing the latest velocity of every MotionValue on a VisualElement
- */
-function getVelocity(visualElement: VisualElement) {
-    const velocity: ResolvedValues = {}
-    visualElement.values.forEach(
-        (value, key) => (velocity[key] = value.getVelocity())
-    )
-    return velocity
-}
 /**
  * Resovles a variant if it's a variant resolver
  */
@@ -45,7 +25,6 @@ export function resolveVariant(
         props,
         definition,
         custom !== undefined ? custom : props.custom,
-        getCurrent(visualElement),
-        getVelocity(visualElement)
+        visualElement
     )
 }
