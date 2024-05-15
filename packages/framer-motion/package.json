@@ -91,7 +91,7 @@
         },
         {
             "path": "./dist/size-rollup-m.js",
-            "maxSize": "5.45 kB"
+            "maxSize": "5.5 kB"
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
@@ -107,7 +107,7 @@
         },
         {
             "path": "./dist/size-webpack-m.js",
-            "maxSize": "5.92 kB"
+            "maxSize": "5.99 kB"
         },
         {
             "path": "./dist/size-webpack-dom-animation.js",
@@ -118,5 +118,5 @@
             "maxSize": "34.1 kB"
         }
     ],
-    "gitHead": "40df1bd0e9b9701696cf59cc15464d05db7f5c76"
+    "gitHead": "1807483e5fe28ef6195955e1b83896424f038463"
 }
