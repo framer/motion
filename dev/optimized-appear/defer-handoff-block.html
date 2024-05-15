@@ -78,7 +78,8 @@
                         })
                         /**
                          * By blocking the main thread here, we ensure that
-                         * the keyframes
+                         * the keyframes are resolved a good duration after the
+                         * animation was initialised.
                          */
                         frame.postRender(() => {
                             console.log(
