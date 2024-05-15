@@ -1,27 +1,14 @@
+import { frame } from "../../frameloop"
 import { TargetAndTransition, TargetResolver } from "../../types"
 import type { VisualElement } from "../VisualElement"
-import { ResolvedValues } from "../types"
 import { resolveVariantFromProps } from "./resolve-variants"
 
-/**
- * Creates an object containing the latest state of every MotionValue on a VisualElement
- */
-function getCurrent(visualElement: VisualElement) {
-    const current: ResolvedValues = {}
-    visualElement.values.forEach((value, key) => (current[key] = value.get()))
-    return current
+let totalTime = 0
+
+function log() {
+    console.log(totalTime)
 }
 
-/**
- * Creates an object containing the latest velocity of every MotionValue on a VisualElement
- */
-function getVelocity(visualElement: VisualElement) {
-    const velocity: ResolvedValues = {}
-    visualElement.values.forEach(
-        (value, key) => (velocity[key] = value.getVelocity())
-    )
-    return velocity
-}
 /**
  * Resovles a variant if it's a variant resolver
  */
@@ -40,12 +27,18 @@ export function resolveVariant(
     definition?: string | TargetAndTransition | TargetResolver,
     custom?: any
 ) {
+    const startTime = performance.now()
+
     const props = visualElement.getProps()
-    return resolveVariantFromProps(
+    const variant = resolveVariantFromProps(
         props,
         definition,
         custom !== undefined ? custom : props.custom,
-        getCurrent(visualElement),
-        getVelocity(visualElement)
+        visualElement
     )
+
+    totalTime += performance.now() - startTime
+
+    frame.postRender(log)
+    return variant
 }
