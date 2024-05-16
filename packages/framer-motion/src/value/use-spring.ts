@@ -48,20 +48,19 @@ export function useSpring(
 
     useInsertionEffect(() => {
         let latestValue: number
-        let set: (v: number) => void
+        let latestSet: (v: number) => void
 
         const startAnimation = () => {
             /**
              * If the previous animation hasn't had the chance to even render a frame, render it now.
              */
             const animation = activeSpringAnimation.current
+
             if (animation && animation.time === 0) {
                 animation.sample(frameData.delta)
             }
 
             stopAnimation()
-
-            console.log("useSpring", value.getVelocity(), frameData.currentStep)
 
             activeSpringAnimation.current = animateValue({
                 keyframes: [value.get(), latestValue],
@@ -70,11 +69,11 @@ export function useSpring(
                 restDelta: 0.001,
                 restSpeed: 0.01,
                 ...config,
-                onUpdate: set,
+                onUpdate: latestSet,
             })
         }
 
-        return value.attach((v, frameSet) => {
+        return value.attach((v, set) => {
             /**
              * A more hollistic approach to this might be to use isStatic to fix VisualElement animations
              * at that level, but this will work for now
@@ -82,9 +81,9 @@ export function useSpring(
             if (isStatic) return set(v)
 
             latestValue = v
-            set = frameSet
+            latestSet = set
 
-            frame.update(startAnimation, true)
+            frame.update(startAnimation)
 
             return value.get()
         }, stopAnimation)
