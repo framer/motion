@@ -123,7 +123,7 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    private canTrackVelocity = false
+    private canTrackVelocity: boolean | null = null
 
     /**
      * Tracks whether this value should be removed
@@ -141,13 +141,16 @@ export class MotionValue<V = any> {
      */
     constructor(init: V, options: MotionValueOptions = {}) {
         this.setCurrent(init)
-        this.canTrackVelocity = isFloat(this.current)
         this.owner = options.owner
     }
 
     setCurrent(current: V) {
         this.current = current
         this.updatedAt = time.now()
+
+        if (this.canTrackVelocity === null && current !== undefined) {
+            this.canTrackVelocity = isFloat(this.current)
+        }
     }
 
     setPrevFrameValue(prevFrameValue: V | undefined = this.current) {
