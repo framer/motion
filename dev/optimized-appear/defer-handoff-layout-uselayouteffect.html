@@ -46,10 +46,8 @@
 
             function Component() {
                 const [top, setTop] = React.useState(0)
-                React.useEffect(() => {
-                    setTimeout(() => {
-                        setTop(100)
-                    }, 250)
+                React.useLayoutEffect(() => {
+                    setTop(100)
                 }, [])
 
                 return React.createElement(motion.div, {
@@ -84,7 +82,7 @@
                     onAnimationComplete: () => {
                         const box = document.getElementById("box")
                         const { left } = box.getBoundingClientRect()
-
+                        console.log(left)
                         if (left !== 200) {
                             showError(
                                 box,
@@ -128,7 +126,7 @@
                             root,
                             React.createElement(Component)
                         )
-                    }, (duration * 1000) / 4)
+                    }, (duration * 1000) / 2)
                 }
             )
         </script>
