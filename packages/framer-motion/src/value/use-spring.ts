@@ -5,7 +5,7 @@ import { useMotionValue } from "./use-motion-value"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { SpringOptions } from "../animation/types"
 import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
-import { frameData } from "../frameloop"
+import { frame, frameData } from "../frameloop"
 import {
     MainThreadAnimation,
     animateValue,
@@ -39,6 +39,31 @@ export function useSpring(
         null
     )
     const value = useMotionValue(isMotionValue(source) ? source.get() : source)
+    const latestValue = useRef<number>(value.get())
+    const latestSetter = useRef<(v: number) => void>(() => {})
+
+    const startAnimation = () => {
+        /**
+         * If the previous animation hasn't had the chance to even render a frame, render it now.
+         */
+        const animation = activeSpringAnimation.current
+
+        if (animation && animation.time === 0) {
+            animation.sample(frameData.delta)
+        }
+
+        stopAnimation()
+
+        activeSpringAnimation.current = animateValue({
+            keyframes: [value.get(), latestValue.current],
+            velocity: value.getVelocity(),
+            type: "spring",
+            restDelta: 0.001,
+            restSpeed: 0.01,
+            ...config,
+            onUpdate: latestSetter.current,
+        })
+    }
 
     const stopAnimation = () => {
         if (activeSpringAnimation.current) {
@@ -54,25 +79,10 @@ export function useSpring(
              */
             if (isStatic) return set(v)
 
-            /**
-             * If the previous animation hasn't had the chance to even render a frame, render it now.
-             */
-            const animation = activeSpringAnimation.current
-            if (animation && animation.time === 0) {
-                animation.sample(frameData.delta)
-            }
+            latestValue.current = v
+            latestSetter.current = set
 
-            stopAnimation()
-
-            activeSpringAnimation.current = animateValue({
-                keyframes: [value.get(), v],
-                velocity: value.getVelocity(),
-                type: "spring",
-                restDelta: 0.001,
-                restSpeed: 0.01,
-                ...config,
-                onUpdate: set,
-            })
+            frame.update(startAnimation)
 
             return value.get()
         }, stopAnimation)
