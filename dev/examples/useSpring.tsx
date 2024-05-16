@@ -47,25 +47,7 @@ function RerenderExample() {
     const { x, y } = useMousePosition()
     const size = 40
     const ref = useRef<HTMLDivElement>(null)
-    const onMove = useRef<(event: MouseEvent) => void>(
-        ({ clientX, clientY }: MouseEvent) => {
-            const element = ref.current!
-
-            setPoint({
-                x: clientX - element.offsetLeft - element.offsetWidth / 2,
-                y: clientY - element.offsetTop - element.offsetHeight / 2,
-            })
-        }
-    )
-
-    function startPointer() {
-        window.addEventListener("pointermove", onMove.current)
-    }
-
-    function cancelPointer() {
-        window.removeEventListener("pointermove", onMove.current)
-    }
-
+    console.log(x)
     return (
         <motion.div
             ref={ref}
@@ -78,9 +60,6 @@ function RerenderExample() {
                 position: "absolute",
                 inset: 0,
             }}
-            onTapStart={startPointer}
-            onTapCancel={cancelPointer}
-            onTap={cancelPointer}
         >
             Rerender
         </motion.div>
