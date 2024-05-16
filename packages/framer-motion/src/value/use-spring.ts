@@ -39,6 +39,31 @@ export function useSpring(
         null
     )
     const value = useMotionValue(isMotionValue(source) ? source.get() : source)
+    const latestValue = useRef<number>(value.get())
+    const latestSetter = useRef<(v: number) => void>(() => {})
+
+    const startAnimation = () => {
+        /**
+         * If the previous animation hasn't had the chance to even render a frame, render it now.
+         */
+        const animation = activeSpringAnimation.current
+
+        if (animation && animation.time === 0) {
+            animation.sample(frameData.delta)
+        }
+
+        stopAnimation()
+
+        activeSpringAnimation.current = animateValue({
+            keyframes: [value.get(), latestValue.current],
+            velocity: value.getVelocity(),
+            type: "spring",
+            restDelta: 0.001,
+            restSpeed: 0.01,
+            ...config,
+            onUpdate: latestSetter.current,
+        })
+    }
 
     const stopAnimation = () => {
         if (activeSpringAnimation.current) {
@@ -47,32 +72,6 @@ export function useSpring(
     }
 
     useInsertionEffect(() => {
-        let latestValue: number
-        let latestSet: (v: number) => void
-
-        const startAnimation = () => {
-            /**
-             * If the previous animation hasn't had the chance to even render a frame, render it now.
-             */
-            const animation = activeSpringAnimation.current
-
-            if (animation && animation.time === 0) {
-                animation.sample(frameData.delta)
-            }
-
-            stopAnimation()
-
-            activeSpringAnimation.current = animateValue({
-                keyframes: [value.get(), latestValue],
-                velocity: value.getVelocity(),
-                type: "spring",
-                restDelta: 0.001,
-                restSpeed: 0.01,
-                ...config,
-                onUpdate: latestSet,
-            })
-        }
-
         return value.attach((v, set) => {
             /**
              * A more hollistic approach to this might be to use isStatic to fix VisualElement animations
@@ -80,8 +79,8 @@ export function useSpring(
              */
             if (isStatic) return set(v)
 
-            latestValue = v
-            latestSet = set
+            latestValue.current = v
+            latestSetter.current = set
 
             frame.update(startAnimation)
 
