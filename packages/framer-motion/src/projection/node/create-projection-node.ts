@@ -58,6 +58,7 @@ import { noop } from "../../utils/noop"
 import { time } from "../../frameloop/sync-time"
 import { microtask } from "../../frameloop/microtask"
 import { VisualElement } from "../../render/VisualElement"
+import { flushKeyframeResolvers } from "../../render/utils/KeyframesResolver"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -648,6 +649,7 @@ export function createProjectionNode<I>({
              * Write
              */
             if (window.HandoffCancelAllAnimations) {
+                flushKeyframeResolvers()
                 window.HandoffCancelAllAnimations()
             }
             this.nodes!.forEach(resetTransformStyle)
@@ -683,7 +685,7 @@ export function createProjectionNode<I>({
         didUpdate() {
             if (!this.updateScheduled) {
                 this.updateScheduled = true
-                microtask.read(() => this.update())
+                microtask.preRender(() => this.update())
             }
         }
 
@@ -789,7 +791,7 @@ export function createProjectionNode<I>({
             this.isLayoutDirty = false
             this.projectionDelta = undefined
             this.notifyListeners("measure", this.layout.layoutBox)
-
+            console.log("layout", this.layout.measuredBox.x)
             const { visualElement } = this.options
             visualElement &&
                 visualElement.notify(

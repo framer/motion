@@ -20,7 +20,8 @@ import { clamp } from "../../utils/clamp"
 import { invariant } from "../../utils/errors"
 import { frameloopDriver } from "./drivers/driver-frameloop"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
-
+import { frameData } from "../../frameloop"
+let firstOne = true
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
 ) => KeyframeGenerator<any>
@@ -382,6 +383,15 @@ export class MainThreadAnimation<
             )
         }
 
+        if (firstOne && this.options.name === "x") {
+            console.log(
+                state.value,
+                frameData.isProcessing,
+                frameData.timestamp
+            )
+            firstOne = false
+        }
+
         if (onUpdate) {
             onUpdate(state.value)
         }
@@ -452,8 +462,9 @@ export class MainThreadAnimation<
         if (this.holdTime !== null) {
             this.startTime = now - this.holdTime
         } else if (!this.startTime || this.state === "finished") {
-            this.startTime = now
+            this.startTime = now + 50
         }
+        this.options.name === "x" && console.log("start time", this.startTime)
 
         if (this.state === "finished") {
             this.updateFinishedPromise()
