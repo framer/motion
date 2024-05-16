@@ -10,16 +10,16 @@ const spring = {
 
 function DragExample() {
     const dragX = useMotionValue(0)
-    // const dragY = useMotionValue(0)
+    const dragY = useMotionValue(0)
     const x = useSpring(dragX, spring)
-    // const y = useSpring(dragY, spring)
+    const y = useSpring(dragY, spring)
     return (
         <motion.div
             drag="x"
             dragMomentum={false}
             _dragX={dragX}
-            // _dragY={dragY}
-            style={{ width: 100, height: 100, background: "red", x }}
+            _dragY={dragY}
+            style={{ width: 100, height: 100, background: "red", x, y }}
         >
             Drag
         </motion.div>
@@ -27,7 +27,7 @@ function DragExample() {
 }
 
 function RerenderExample() {
-    const [mousePosition, setMousePosition] = useState({ x: null, y: null })
+    const [{ x, y }, setMousePosition] = useState({ x: null, y: null })
 
     const updateMousePosition = useRef((e) => {
         setMousePosition({ x: e.clientX, y: e.clientY })
@@ -35,11 +35,11 @@ function RerenderExample() {
 
     const size = 40
     const ref = useRef<HTMLDivElement>(null)
-    // console.log(x)
+
     return (
         <motion.div
             ref={ref}
-            animate={{ x: mousePosition.x }}
+            animate={{ x, y }}
             transition={spring}
             style={{
                 width: 100,
