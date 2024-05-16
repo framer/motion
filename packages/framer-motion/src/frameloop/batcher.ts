@@ -24,6 +24,7 @@ export function createRenderBatcher(
         delta: 0,
         timestamp: 0,
         isProcessing: false,
+        currentStep: "",
     }
 
     const steps = stepsOrder.reduce((acc, key) => {
@@ -32,7 +33,9 @@ export function createRenderBatcher(
     }, {} as Steps)
 
     const processStep = (stepId: StepId) => {
+        state.currentStep = stepId
         steps[stepId].process(state)
+        state.currentStep = ""
     }
 
     const processBatch = () => {

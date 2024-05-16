@@ -34,4 +34,5 @@ export interface FrameData {
     delta: number
     timestamp: number
     isProcessing: boolean
+    currentStep: StepId | ""
 }

@@ -5,7 +5,7 @@ import { useMotionValue } from "./use-motion-value"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { SpringOptions } from "../animation/types"
 import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
-import { frameData } from "../frameloop"
+import { frame, frameData } from "../frameloop"
 import {
     MainThreadAnimation,
     animateValue,
@@ -47,13 +47,10 @@ export function useSpring(
     }
 
     useInsertionEffect(() => {
-        return value.attach((v, set) => {
-            /**
-             * A more hollistic approach to this might be to use isStatic to fix VisualElement animations
-             * at that level, but this will work for now
-             */
-            if (isStatic) return set(v)
+        let latestValue: number
+        let set: (v: number) => void
 
+        const startAnimation = () => {
             /**
              * If the previous animation hasn't had the chance to even render a frame, render it now.
              */
@@ -64,8 +61,10 @@ export function useSpring(
 
             stopAnimation()
 
+            console.log("useSpring", value.getVelocity(), frameData.currentStep)
+
             activeSpringAnimation.current = animateValue({
-                keyframes: [value.get(), v],
+                keyframes: [value.get(), latestValue],
                 velocity: value.getVelocity(),
                 type: "spring",
                 restDelta: 0.001,
@@ -73,6 +72,19 @@ export function useSpring(
                 ...config,
                 onUpdate: set,
             })
+        }
+
+        return value.attach((v, frameSet) => {
+            /**
+             * A more hollistic approach to this might be to use isStatic to fix VisualElement animations
+             * at that level, but this will work for now
+             */
+            if (isStatic) return set(v)
+
+            latestValue = v
+            set = frameSet
+
+            frame.update(startAnimation, true)
 
             return value.get()
         }, stopAnimation)
