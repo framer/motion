@@ -8080,7 +8080,7 @@ __metadata:
     framer-motion: ^11.2.10
     framer-motion-3d: ^11.2.10
     path-browserify: ^1.0.1
-    react: ^18.2.0
+    react: 18.3.1
     react-dom: ^18.2.0
     react-refresh: ^0.9.0
     styled-components: ^4.1.1
@@ -8133,7 +8133,7 @@ __metadata:
     lint-staged: ^8.0.4
     path-browserify: ^1.0.1
     prettier: ^2.5.1
-    react: ^18.2.0
+    react: 18.3.1
     react-dev-utils: ^12.0.1
     react-dom: ^18.2.0
     rollup: 4.14.0
@@ -13718,7 +13718,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:>=16, react@npm:^18.2.0":
+"react@npm:18.3.1":
+  version: 18.3.1
+  resolution: "react@npm:18.3.1"
+  dependencies:
+    loose-envify: ^1.1.0
+  checksum: a27bcfa8ff7c15a1e50244ad0d0c1cb2ad4375eeffefd266a64889beea6f6b64c4966c9b37d14ee32d6c9fcd5aa6ba183b6988167ab4d127d13e7cb5b386a376
+  languageName: node
+  linkType: hard
+
+"react@npm:>=16":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
   dependencies:
