@@ -82,10 +82,8 @@ function MouseEventExample() {
         ({ clientX, clientY }: MouseEvent) => {
             const element = ref.current!
 
-            // frame.update(() => {
             x.set(clientX - element.offsetLeft - element.offsetWidth / 2)
-            // y.set(clientY - element.offsetTop - element.offsetHeight / 2)
-            // })
+            y.set(clientY - element.offsetTop - element.offsetHeight / 2)
         }
     )
 
