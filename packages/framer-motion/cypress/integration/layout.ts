@@ -255,4 +255,48 @@ describe("Layout animation", () => {
                 expect(bbox.left).not.to.equal(170)
             })
     })
+
+    it("Elements within portal don't perform scale correction on parents", () => {
+        cy.visit("?test=layout-portal")
+            .wait(50)
+            .get("#parent")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .get("#child")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 100,
+                    left: 100,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .get("#parent")
+            .trigger("click")
+            .wait(50)
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 200,
+                    height: 200,
+                })
+            })
+            .trigger("click")
+            .wait(50)
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 200,
+                    left: 200,
+                    width: 100,
+                    height: 100,
+                })
+            })
+    })
 })
