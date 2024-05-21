@@ -578,6 +578,12 @@ export function createProjectionNode<I>({
             if (this.isUpdateBlocked()) return
 
             this.isUpdating = true
+
+            if (window.HandoffCancelAllAnimations) {
+                // flushKeyframeResolvers()
+                window.HandoffCancelAllAnimations()
+            }
+
             this.nodes && this.nodes.forEach(resetSkewAndRotation)
             this.animationId++
         }
@@ -648,10 +654,6 @@ export function createProjectionNode<I>({
             /**
              * Write
              */
-            if (window.HandoffCancelAllAnimations) {
-                flushKeyframeResolvers()
-                window.HandoffCancelAllAnimations()
-            }
             this.nodes!.forEach(resetTransformStyle)
 
             /**
@@ -791,7 +793,7 @@ export function createProjectionNode<I>({
             this.isLayoutDirty = false
             this.projectionDelta = undefined
             this.notifyListeners("measure", this.layout.layoutBox)
-            console.log("layout", this.layout.measuredBox.x)
+
             const { visualElement } = this.options
             visualElement &&
                 visualElement.notify(

@@ -36,7 +36,6 @@ export function createRenderBatcher(
     }
 
     const processBatch = () => {
-        allowKeepAlive ? console.log("frame") : console.log("microtask")
         const timestamp = MotionGlobalConfig.useManualTiming
             ? state.timestamp
             : performance.now()
