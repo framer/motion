@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.2.5] 2024-05-21
+
+### Fixed
+
+-   Fixing layout animations within portals. Tag `motion` root within portal with `data-framer-portal-id` attribute.
+
 ## [11.2.4] 2024-05-16
 
 ### Fixed
