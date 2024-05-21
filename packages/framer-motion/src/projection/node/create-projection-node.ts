@@ -58,7 +58,6 @@ import { noop } from "../../utils/noop"
 import { time } from "../../frameloop/sync-time"
 import { microtask } from "../../frameloop/microtask"
 import { VisualElement } from "../../render/VisualElement"
-import { flushKeyframeResolvers } from "../../render/utils/KeyframesResolver"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -580,7 +579,6 @@ export function createProjectionNode<I>({
             this.isUpdating = true
 
             if (window.HandoffCancelAllAnimations) {
-                // flushKeyframeResolvers()
                 window.HandoffCancelAllAnimations()
             }
 
