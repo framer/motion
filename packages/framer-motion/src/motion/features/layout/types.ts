@@ -87,4 +87,10 @@ export interface LayoutProps {
      * Currently used for `position: sticky` elements in Framer.
      */
     layoutRoot?: boolean
+
+    /**
+     * Attached to a portal root to ensure we attach the child to the document root and don't
+     * perform scale correction on it.
+     */
+    "data-framer-portal-id"?: string
 }

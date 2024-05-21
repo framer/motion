@@ -578,11 +578,6 @@ export abstract class VisualElement<
             !this.projection &&
             ProjectionNodeConstructor
         ) {
-            this.projection = new ProjectionNodeConstructor(
-                this.latestValues,
-                getClosestProjectingNode(this.parent)
-            ) as IProjectionNode
-
             const {
                 layoutId,
                 layout,
@@ -591,6 +586,14 @@ export abstract class VisualElement<
                 layoutScroll,
                 layoutRoot,
             } = renderedProps
+
+            this.projection = new ProjectionNodeConstructor(
+                this.latestValues,
+                renderedProps["data-framer-portal-id"]
+                    ? undefined
+                    : getClosestProjectingNode(this.parent)
+            ) as IProjectionNode
+
             this.projection.setOptions({
                 layoutId,
                 layout,
