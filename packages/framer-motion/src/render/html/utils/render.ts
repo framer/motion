@@ -14,8 +14,6 @@ export function renderHTML(
         projection && projection.getProjectionStyles(styleProp)
     )
 
-    console.log(style)
-
     // Loop over any CSS variables and assign those.
     for (const key in vars) {
         element.style.setProperty(key, vars[key] as string)
