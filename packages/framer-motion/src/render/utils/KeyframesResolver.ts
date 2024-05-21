@@ -1,5 +1,4 @@
 import { frame } from "../../frameloop"
-import { microtask } from "../../frameloop/microtask"
 import { MotionValue } from "../../value"
 import type { VisualElement } from "../VisualElement"
 import { removeNonTranslationalTransform } from "../dom/utils/unit-conversion"
@@ -152,8 +151,8 @@ export class KeyframeResolver<T extends string | number = any> {
 
             if (!isScheduled) {
                 isScheduled = true
-                microtask.read(readAllKeyframes)
-                microtask.resolveKeyframes(measureAllKeyframes)
+                frame.read(readAllKeyframes)
+                frame.resolveKeyframes(measureAllKeyframes)
             }
         } else {
             this.readKeyframes()
@@ -212,7 +211,6 @@ export class KeyframeResolver<T extends string | number = any> {
     measureEndState() {}
 
     complete() {
-        console.log("keyframes resolved", this.name)
         this.isComplete = true
 
         this.onComplete(
