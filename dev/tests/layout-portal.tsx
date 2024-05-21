@@ -25,6 +25,7 @@ export const App = () => {
                     layout
                     style={{ width: 100, height: 100, background: "blue" }}
                     transition={{ duration: 10, ease: () => 0.5 }}
+                    data-framer-portal-id="test"
                 />,
                 document.body
             )}
