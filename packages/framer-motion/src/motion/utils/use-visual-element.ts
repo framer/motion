@@ -63,7 +63,7 @@ export function useVisualElement<Instance, RenderState>(
     useIsomorphicLayoutEffect(() => {
         if (!visualElement) return
 
-        microtask.postRender(visualElement.render)
+        microtask.render(visualElement.render)
 
         /**
          * Ideally this function would always run in a useEffect.
