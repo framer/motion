@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.2.6] 2024-05-22
+
+### Fixed
+
+-   Fixed optimised appear animations interrupted by layout animations triggered by a state update within `useLayoutEffect`.
+
 ## [11.2.5] 2024-05-21
 
 ### Fixed
