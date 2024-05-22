@@ -691,7 +691,7 @@ export function createProjectionNode<I>({
         didUpdate() {
             if (!this.updateScheduled) {
                 this.updateScheduled = true
-                microtask.preRender(() => this.update())
+                microtask.read(() => this.update())
             }
         }
 
