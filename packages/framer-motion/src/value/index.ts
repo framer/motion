@@ -4,6 +4,7 @@ import { velocityPerSecond } from "../utils/velocity-per-second"
 import { warnOnce } from "../utils/warn-once"
 import { AnimationPlaybackControls } from "../animation/types"
 import { time } from "../frameloop/sync-time"
+import { AnimationType } from "../render/utils/types"
 
 export type Transformer<T> = (v: T) => T
 
@@ -115,6 +116,11 @@ export class MotionValue<V = any> {
      * A reference to the currently-controlling animation.
      */
     animation?: AnimationPlaybackControls
+
+    /**
+     * The current animation type of the `MotionValue`.
+     */
+    currentAnimationState?: AnimationType | "initial"
 
     /**
      * Tracks whether this value can output a velocity. Currently this is only true

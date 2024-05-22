@@ -25,7 +25,12 @@ export function setTarget(
     definition: string | TargetAndTransition | TargetResolver
 ) {
     const resolved = resolveVariant(visualElement, definition)
-    let { transitionEnd = {}, transition = {}, ...target } = resolved || {}
+    let {
+        transitionEnd = {},
+        transitionFrom,
+        transition = {},
+        ...target
+    } = resolved || {}
 
     target = { ...target, ...transitionEnd }
 

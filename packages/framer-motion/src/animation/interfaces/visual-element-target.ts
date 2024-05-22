@@ -1,7 +1,7 @@
 import { transformProps } from "../../render/html/utils/transform"
 import type { AnimationTypeState } from "../../render/utils/animation-state"
 import type { VisualElement } from "../../render/VisualElement"
-import type { TargetAndTransition } from "../../types"
+import type { TargetAndTransition, Transition } from "../../types"
 import { optimizedAppearDataAttribute } from "../optimized-appear/data-id"
 import type { VisualElementAnimationOptions } from "./types"
 import { animateMotionValue } from "./motion-value"
@@ -35,6 +35,7 @@ export function animateTarget(
 ): AnimationPlaybackControls[] {
     let {
         transition = visualElement.getDefaultTransition(),
+        transitionFrom,
         transitionEnd,
         ...target
     } = targetAndTransition
@@ -65,10 +66,26 @@ export function animateTarget(
             continue
         }
 
+        let transitionFromType: Transition | undefined
+
+        if (transitionFrom) {
+            if (value.currentAnimationState) {
+                transitionFromType = transitionFrom[value.currentAnimationState]
+            } else {
+                // This is the first time the value has been animated.
+                const initialType =
+                    visualElement.getProps().initial || type === "animate"
+                        ? "initial"
+                        : "animate"
+
+                transitionFromType = transitionFrom[initialType]
+            }
+        }
+
         const valueTransition = {
             delay,
             elapsed: 0,
-            ...getValueTransition(transition || {}, key),
+            ...getValueTransition(transitionFromType || transition || {}, key),
         }
 
         /**
@@ -107,6 +124,8 @@ export function animateTarget(
                 isHandoff
             )
         )
+
+        value.currentAnimationState = type || "animate"
 
         const animation = value.animation
 
