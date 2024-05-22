@@ -578,6 +578,12 @@ export function createProjectionNode<I>({
 
             this.isUpdating = true
 
+            /**
+             * If we're running optimised appear animations then these must be
+             * cancelled before measuring the DOM. This is so we can measure
+             * the true layout of the element rather than the WAAPI animation
+             * which will be unaffected by the resetSkewAndRotate step.
+             */
             if (window.HandoffCancelAllAnimations) {
                 window.HandoffCancelAllAnimations()
             }
