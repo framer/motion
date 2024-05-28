@@ -10,6 +10,7 @@ import { setTarget } from "../../render/utils/setters"
 import { AnimationPlaybackControls } from "../types"
 import { getValueTransition } from "../utils/transitions"
 import { frame } from "../../frameloop"
+import { getOptimisedAppearId } from "../optimized-appear/get-appear-id"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
@@ -77,8 +78,7 @@ export function animateTarget(
          */
         let isHandoff = false
         if (window.HandoffAppearAnimations) {
-            const props = visualElement.getProps()
-            const appearId = props[optimizedAppearDataAttribute]
+            const appearId = getOptimisedAppearId(visualElement)
 
             if (appearId) {
                 const elapsed = window.HandoffAppearAnimations(
