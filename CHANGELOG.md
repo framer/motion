@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.2.9] 2024-05-29
+
+### Fixed
+
+-   Fixing animation of CSS variables when leading space is present.
+
 ## [11.2.8] 2024-05-29
 
 ### Fixed
