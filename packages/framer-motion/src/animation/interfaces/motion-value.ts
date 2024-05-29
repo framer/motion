@@ -12,6 +12,7 @@ import { getFinalKeyframe } from "../animators/waapi/utils/get-final-keyframe"
 import { frame } from "../../frameloop/frame"
 import { AcceleratedAnimation } from "../animators/AcceleratedAnimation"
 import { MainThreadAnimation } from "../animators/MainThreadAnimation"
+import { GroupPlaybackControls } from "../GroupPlaybackControls"
 
 export const animateMotionValue =
     <V extends string | number>(
@@ -124,7 +125,9 @@ export const animateMotionValue =
                     options.onComplete!()
                 })
 
-                return
+                // We still want to return some animation controls here rather
+                // than returning undefined
+                return new GroupPlaybackControls([])
             }
         }
 
