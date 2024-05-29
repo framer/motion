@@ -3,7 +3,7 @@ import { secondsToMilliseconds } from "../../utils/time-conversion"
 import type { MotionValue, StartAnimation } from "../../value"
 import { getDefaultTransition } from "../utils/default-transitions"
 import { getValueTransition, isTransitionDefined } from "../utils/transitions"
-import { ValueAnimationOptions } from "../types"
+import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
 import type { UnresolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { MotionGlobalConfig } from "../../utils/GlobalConfig"
 import { instantAnimationState } from "../../utils/use-instant-transition-state"
@@ -23,7 +23,7 @@ export const animateMotionValue =
         element?: VisualElement<any>,
         isHandoff?: boolean
     ): StartAnimation =>
-    (onComplete) => {
+    (onComplete): AnimationPlaybackControls => {
         const valueTransition = getValueTransition(transition, name) || {}
 
         /**
