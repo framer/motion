@@ -146,20 +146,6 @@ describe("css variables", () => {
         ])
     })
 
-    test("css variable parsing with space at front", () => {
-        expect(parseCSSVariable(" var(--ID-123, #fff)")).toEqual([
-            "--ID-123",
-            "#fff",
-        ])
-    })
-
-    test("css variable parsing with space at end", () => {
-        expect(parseCSSVariable("var(--ID-123, #fff) ")).toEqual([
-            "--ID-123",
-            "#fff",
-        ])
-    })
-
     test("css variable parsing fallback", () => {
         expect(parseCSSVariable("var(--ID-123, red)")).toEqual([
             "--ID-123",

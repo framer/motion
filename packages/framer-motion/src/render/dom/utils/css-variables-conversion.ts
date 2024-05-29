@@ -16,7 +16,7 @@ const splitCSSVariableRegex =
     // eslint-disable-next-line redos-detector/no-unsafe-regex -- false positive, as it can match a lot of words
     /^var\(--(?:([\w-]+)|([\w-]+), ?([a-zA-Z\d ()%#.,-]+))\)/u
 export function parseCSSVariable(current: string) {
-    const match = splitCSSVariableRegex.exec(current.trim())
+    const match = splitCSSVariableRegex.exec(current)
     if (!match) return [,]
 
     const [, token1, token2, fallback] = match
