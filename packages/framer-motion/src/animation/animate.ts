@@ -177,7 +177,7 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
             )
         }
 
-        if (scope) {
+        if (scope && animation) {
             scope.animations.push(animation)
         }
 
