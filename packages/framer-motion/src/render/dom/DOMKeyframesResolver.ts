@@ -52,16 +52,21 @@ export class DOMKeyframesResolver<
          * If any keyframe is a CSS variable, we need to find its value by sampling the element
          */
         for (let i = 0; i < unresolvedKeyframes.length; i++) {
-            const keyframe = unresolvedKeyframes[i]
-            if (typeof keyframe === "string" && isCSSVariableToken(keyframe)) {
-                const resolved = getVariableValue(keyframe, element.current)
+            let keyframe = unresolvedKeyframes[i]
 
-                if (resolved !== undefined) {
-                    unresolvedKeyframes[i] = resolved as T
-                }
+            if (typeof keyframe === "string") {
+                keyframe = keyframe.trim()
 
-                if (i === unresolvedKeyframes.length - 1) {
-                    this.finalKeyframe = keyframe as T
+                if (isCSSVariableToken(keyframe)) {
+                    const resolved = getVariableValue(keyframe, element.current)
+
+                    if (resolved !== undefined) {
+                        unresolvedKeyframes[i] = resolved as T
+                    }
+
+                    if (i === unresolvedKeyframes.length - 1) {
+                        this.finalKeyframe = keyframe as T
+                    }
                 }
             }
         }

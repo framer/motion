@@ -26,7 +26,7 @@ export const App = () => {
                     originX: 0,
                     originY: 0,
                     opacity: "var(--d)",
-                    backgroundColor: "var(--a)",
+                    backgroundColor: " var(--a)", // Should work even with space at start
                     scale: "var(--c)",
                     x: "var(--b)",
                 }}
