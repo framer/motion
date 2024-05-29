@@ -102,6 +102,7 @@ function resetDistortingTransform(
 }
 
 function isOptimisedAppearTree(projectionNode: IProjectionNode) {
+    projectionNode.hasCheckedOptimisedAppear = true
     if (projectionNode.root === projectionNode) return false
 
     const { visualElement } = projectionNode.options
@@ -112,7 +113,7 @@ function isOptimisedAppearTree(projectionNode: IProjectionNode) {
         return true
     } else if (
         projectionNode.parent &&
-        !projectionNode.hasCheckedOptimisedAppear
+        !projectionNode.parent.hasCheckedOptimisedAppear
     ) {
         return isOptimisedAppearTree(projectionNode.parent)
     } else {
