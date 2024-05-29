@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.2.8] 2024-05-29
+
+### Fixed
+
+-   Ensuring instant animations return animation controls.
+
 ## [11.2.7] 2024-05-29
 
 ### Fixed
