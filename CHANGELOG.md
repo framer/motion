@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.2.7] 2024-05-29
+
+### Fixed
+
+-   Guarding for `undefined` animations with `useAnimate`.
+
 ## [11.2.6] 2024-05-22
 
 ### Fixed
