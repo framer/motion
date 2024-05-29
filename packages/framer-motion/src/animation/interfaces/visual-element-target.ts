@@ -90,6 +90,7 @@ export function animateTarget(
 
                 if (elapsed !== null) {
                     valueTransition.elapsed = elapsed
+                    valueTransition.startTime = performance.now()
                     isHandoff = true
                 }
             }

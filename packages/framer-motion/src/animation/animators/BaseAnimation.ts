@@ -19,6 +19,7 @@ export interface ValueAnimationOptionsWithDefaults<T extends string | number>
     repeat: number
     repeatDelay: number
     repeatType: RepeatType
+    startTime?: number
 }
 
 export abstract class BaseAnimation<T extends string | number, Resolved>
