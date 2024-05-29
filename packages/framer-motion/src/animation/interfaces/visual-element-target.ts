@@ -89,9 +89,17 @@ export function animateTarget(
                 )
 
                 if (elapsed !== null) {
-                    valueTransition.elapsed = elapsed
-                    valueTransition.startTime = performance.now()
                     isHandoff = true
+
+                    valueTransition.elapsed = elapsed
+
+                    /**
+                     * HandoffAppearAnimations returns the elapsed time of the optimised animation
+                     * as estimated by performance.now() measurements. By locking the startTime to
+                     * the moment of this measurement, also measured with performance.now(), the
+                     * hope is to more accurately align optimised and non-optimised animations.
+                     */
+                    valueTransition.startTime = performance.now()
                 }
             }
         }
