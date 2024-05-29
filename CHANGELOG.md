@@ -8,7 +8,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Guarding for `undefined` animations with `useAnimate`.
+-   Only allow layout animations to cancel optimised appear animations when on the same node or an ancestor.
 
 ## [11.2.6] 2024-05-22
 
