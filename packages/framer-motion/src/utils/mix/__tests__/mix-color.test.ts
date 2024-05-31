@@ -128,3 +128,9 @@ test("mixColor rgba with slash (without slash spaces) to rgba without", () => {
 test("doesn't return NaN", () => {
     expect(mixLinearColor(255, 0, 2)).not.toBeNaN()
 })
+
+test("mixColor mixes immediately with unknown color", () => {
+    expect(mixColor("red", "rgba(0, 0, 0, 0)")(0)).toBe("red")
+    expect(mixColor("red", "rgba(0, 0, 0, 0)")(0.5)).toBe("rgba(0, 0, 0, 0)")
+    expect(mixColor("red", "rgba(0, 0, 0, 0)")(1)).toBe("rgba(0, 0, 0, 0)")
+})
