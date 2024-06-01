@@ -1,0 +1,10 @@
+/* Your Plugin CSS */
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    padding: 0 15px 15px 15px;
+    height: 100%;
+    gap: 15px;
+}
