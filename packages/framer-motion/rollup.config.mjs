@@ -45,7 +45,7 @@ const pureClass = {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const shimReactJSXRuntimePlugin = alias({
     entries: [
-        { find: 'react/jsx-runtime', replacement: path.resolve(__dirname, '../../dev/jsxRuntimeShim.js') }
+        { find: 'react/jsx-runtime', replacement: path.resolve(__dirname, '../../dev/inc/jsxRuntimeShim.js') }
     ]
 });
 

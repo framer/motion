@@ -1,0 +1,100 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 100px;
+                margin: 0;
+            }
+
+            #box {
+                width: 100px;
+                height: 100px;
+                background-color: #0077ff;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 1 !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="module" src="/src/imports/optimized-appear.js"></script>
+        <script src="../projection/script-assert.js"></script>
+
+        <script>
+            const {
+                motion,
+                animateStyle,
+                startOptimizedAppearAnimation,
+                optimizedAppearDataAttribute,
+                motionValue,
+            } = window.Motion
+            const { matchOpacity } = window.Assert
+            const root = document.getElementById("root")
+
+            const duration = 0.5
+            const opacity = motionValue(0)
+            let opacityHasChanged = false
+
+            opacity.on("render", (v) => {
+                if (!opacityHasChanged) {
+                    if (v > 0.6) {
+                        showError(
+                            document.getElementById("box"),
+                            `opacity should not start animating beyond 0.6 (started at ${v})`
+                        )
+                    }
+                }
+                opacityHasChanged = true
+                if (v < 0.5) {
+                    showError(
+                        document.getElementById("box"),
+                        "opacity should never be less than 0.25"
+                    )
+                }
+            })
+
+            // This is the tree to be rendered "server" and client-side.
+            const Component = React.createElement(motion.div, {
+                id: "box",
+                initial: { opacity: 0 },
+                animate: { opacity: 1 },
+                transition: { duration, ease: "linear", delay: 0.25 },
+                style: { opacity },
+                [optimizedAppearDataAttribute]: "a",
+            })
+
+            // Emulate server rendering of element
+            root.innerHTML = ReactDOMServer.renderToString(Component)
+
+            const box = document.getElementById("box")
+
+            function checkOpacity() {}
+
+            startOptimizedAppearAnimation(
+                box,
+                "opacity",
+                [0, 1],
+                {
+                    duration: duration * 1000,
+                    ease: "linear",
+                    delay: 250,
+                },
+                (animation) => {
+                    // Hydrate root mid-way through animation
+                    setTimeout(() => {
+                        ReactDOM.hydrateRoot(root, Component)
+
+                        const { opacity: initialOpacity } =
+                            window.getComputedStyle(box)
+                        if (initialOpacity === "0") {
+                            showError(box, `opacity should have animated`)
+                        }
+                    }, 500)
+                }
+            )
+        </script>
+    </body>
+</html>

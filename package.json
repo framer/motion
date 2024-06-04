@@ -6,7 +6,7 @@
     "license": "MIT",
     "workspaces": [
         "packages/*",
-        "dev"
+        "dev/*"
     ],
     "resolutions": {
         "webpack": "^5.27.2"

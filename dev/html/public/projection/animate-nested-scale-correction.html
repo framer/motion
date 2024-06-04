@@ -1,0 +1,102 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            .box {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+            }
+
+            .box.open {
+                height: 200px;
+            }
+
+            #parent {
+                display: flex;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="parent">
+            <div class="box" id="a">A</div>
+            <div class="box" id="b">B</div>
+        </div>
+
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode, relativeEase } = window.Animate
+            const { matchViewportBox } = window.Assert
+
+            const parent = document.getElementById("parent")
+            const a = document.getElementById("a")
+            const b = document.getElementById("b")
+
+            const parentProjection = createNode(
+                parent,
+                undefined,
+                {},
+                { duration: 0.1 }
+            )
+
+            const aProjection = createNode(
+                a,
+                parentProjection,
+                {},
+                { duration: 0.1 }
+            )
+
+            const bProjection = createNode(
+                b,
+                parentProjection,
+                {},
+                { duration: 0.1 }
+            )
+
+            const aOrigin = a.getBoundingClientRect()
+
+            parentProjection.willUpdate()
+            aProjection.willUpdate()
+            bProjection.willUpdate()
+
+            a.classList.add("open")
+
+            parentProjection.root.didUpdate()
+
+            frame.postRender(() => {
+                frame.postRender(() => {
+                    parentProjection.willUpdate()
+                    aProjection.willUpdate()
+                    bProjection.willUpdate()
+                    a.classList.remove("open")
+                    parentProjection.root.didUpdate()
+
+                    setTimeout(() => {
+                        parentProjection.willUpdate()
+                        aProjection.willUpdate()
+                        bProjection.willUpdate()
+                        b.classList.add("open")
+                        parentProjection.root.didUpdate()
+
+                        frame.postRender(() => {
+                            frame.postRender(() => {
+                                matchViewportBox(a, aOrigin)
+                            })
+                        })
+                    }, 120)
+                })
+            })
+        </script>
+    </body>
+</html>
