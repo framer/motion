@@ -18,7 +18,7 @@
             "outputs": []
         },
         "test-e2e": {
-            "dependsOn": ["^build"],
+            "dependsOn": ["build"],
             "outputs": []
         },
         "test-ci": {
@@ -39,6 +39,7 @@
             "dependsOn": ["build"],
             "cache": false,
             "outputs": ["dist/**"]
-        }
+        },
+        "dev-server": {}
     }
 }
