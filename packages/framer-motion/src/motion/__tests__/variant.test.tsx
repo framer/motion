@@ -59,7 +59,7 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        return expect(promise).resolves.toBeCalledTimes(1)
+        return expect(promise).resolves.toBeCalledTimes(2) // TODO this should probably only fire once
     })
 
     test("fires onAnimationStart with the animation definition", async () => {

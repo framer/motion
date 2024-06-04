@@ -1,5 +1,5 @@
 import { ResolvedValues } from "../types"
-import { SVGAttributes } from "react"
+import { SVGAttributes, type JSX } from "react";
 import { MakeMotion, MotionProps } from "../../motion/types"
 import { SVGElements } from "./supported-elements"
 import { ForwardRefComponent, HTMLRenderState } from "../html/types"

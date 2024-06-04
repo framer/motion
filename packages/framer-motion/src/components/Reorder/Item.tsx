@@ -2,7 +2,12 @@
 
 import { invariant } from "../../utils/errors"
 import * as React from "react"
-import { ReactHTML, FunctionComponent, useContext, forwardRef } from "react"
+import {
+    HTMLElementType,
+    FunctionComponent,
+    useContext,
+    forwardRef,
+} from "react"
 import { ReorderContext } from "../../context/ReorderContext"
 import { motion } from "../../render/components/motion"
 import { HTMLMotionProps } from "../../render/html/types"
@@ -17,7 +22,7 @@ export interface Props<V> {
      *
      * @public
      */
-    as?: keyof ReactHTML
+    as?: HTMLElementType
 
     /**
      * The value in the list that this component represents.

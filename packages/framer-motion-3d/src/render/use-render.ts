@@ -6,16 +6,13 @@ import {
     RenderComponent,
     resolveMotionValue,
 } from "framer-motion"
-import { MeshProps, Object3DNode } from "@react-three/fiber"
+import { MathProps, MathType } from "@react-three/fiber"
 import { useHover } from "./gestures/use-hover"
 import { useTap } from "./gestures/use-tap"
 
-export const useRender: RenderComponent<
-    Object3DNode<any, any>,
-    ThreeRenderState
-> = (
+export const useRender: RenderComponent<MathType<any>, ThreeRenderState> = (
     Component,
-    props: ThreeMotionProps & MeshProps,
+    props: ThreeMotionProps & MathProps<any>,
     ref,
     _state,
     isStatic,
@@ -38,9 +35,9 @@ export const useRender: RenderComponent<
     } as any)
 }
 
-function useVisualProps(props: ThreeMotionProps & MeshProps) {
+function useVisualProps(props: ThreeMotionProps & MathProps<any>) {
     return useMemo(() => {
-        const visualProps: ThreeMotionProps & MeshProps = {}
+        const visualProps: ThreeMotionProps & MathProps<any> = {}
 
         for (const key in props) {
             const prop = props[key as keyof typeof props]

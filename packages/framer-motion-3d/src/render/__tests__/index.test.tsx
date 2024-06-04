@@ -1,7 +1,7 @@
 import { ResolvedValues, frame } from "framer-motion"
 import { useEffect, useRef } from "react"
 import { Euler, Vector3 } from "three"
-import { Canvas, Object3DNode } from "@react-three/fiber"
+import { Canvas } from "@react-three/fiber"
 import ReactThreeTestRenderer from "@react-three/test-renderer"
 import { render } from "../../../jest.setup"
 import { motion } from "../motion"
@@ -156,7 +156,7 @@ describe("motion for three", () => {
     })
 
     test("Accepts motion values", async () => {
-        const result = await new Promise<Object3DNode<any, any>>((resolve) => {
+        const result = await new Promise<any>((resolve) => {
             const x = motionValue(1)
             const scale = motionValue(2)
             const rotateX = motionValue(3)

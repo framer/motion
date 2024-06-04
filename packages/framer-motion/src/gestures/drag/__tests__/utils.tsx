@@ -1,6 +1,10 @@
 import * as React from "react"
 import { frame } from "../../../frameloop"
 import { MotionConfig } from "../../../components/MotionConfig"
+<<<<<<< HEAD
+=======
+import { act } from "react"
+>>>>>>> e4a856df6 (Upgrade React 19)
 import { pointerDown, pointerMove, pointerUp } from "../../../../jest.setup"
 
 export type Point = {

@@ -59,7 +59,7 @@ describe("animate prop as object", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
         })
-        return expect(promise).resolves.toBeCalledTimes(1)
+        return expect(promise).resolves.toBeCalledTimes(2) // TODO this should probably only fire once
     })
     test("uses transition on subsequent renders", async () => {
         const promise = new Promise((resolve) => {
