@@ -17,6 +17,10 @@
             "import": "./dist/es/dom-entry.mjs",
             "default": "./dist/cjs/dom-entry.js"
         },
+        "./projection": {
+            "import": "./dist/es/projection-entry.mjs",
+            "default": "./dist/es/projection-entry.mjs"
+        },
         "./package.json": "./package.json"
     },
     "types": "dist/index.d.ts",

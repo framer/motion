@@ -61,22 +61,6 @@ const umd = Object.assign({}, config, {
     plugins: [resolve(), replaceSettings("development"), shimReactJSXRuntimePlugin],
 })
 
-const projection = Object.assign({}, config, {
-    input: "lib/projection/index.js",
-    output: {
-        file: `dist/projection.dev.js`,
-        format: "umd",
-        name: "Projection",
-        exports: "named",
-        globals: {
-            react: "React",
-            "react-dom": "ReactDOM",
-        },
-    },
-    plugins: [resolve(), replaceSettings("development"), shimReactJSXRuntimePlugin],
-    external: ["react", "react-dom"],
-})
-
 const umdProd = Object.assign({}, umd, {
     output: Object.assign({}, umd.output, {
         file: `dist/${pkg.name}.js`,
@@ -118,7 +102,7 @@ const cjs = Object.assign({}, config, {
 })
 
 export const es = Object.assign({}, config, {
-    input: ["lib/index.js", "lib/dom-entry.js"],
+    input: ["lib/index.js", "lib/dom-entry.js", "lib/projection-entry.js"],
     output: {
         entryFileNames: "[name].mjs",
         format: "es",
@@ -161,7 +145,6 @@ const threeTypes = {
 
 // eslint-disable-next-line import/no-default-export
 export default [
-    projection,
     umd,
     umdProd,
     umdDomProd,

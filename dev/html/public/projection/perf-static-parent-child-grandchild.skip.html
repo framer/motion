@@ -31,7 +31,6 @@
             #grandChild {
                 width: 100px;
                 height: 100px;
-                background-color: ;
             }
 
             #trigger-overflow {
@@ -54,12 +53,13 @@
         </div>
         <div id="trigger-overflow"></div>
 
-        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
-        <script src="./script-assert.js"></script>
-        <script src="./script-animate.js"></script>
-        <script>
+        <script type="module" src="/src/imports/projection.js"></script>
+        <script type="module" src="/src/imports/script-assert.js"></script>
+        <script type="module" src="/src/imports/script-animate.js"></script>
+        <script type="module">
             const { createNode, relativeEase } = window.Animate
             const { matchViewportBox, checkFrame } = window.Assert
+            const { frame } = window.Projection
 
             const parent = document.getElementById("parent")
             const parentProjection = createNode(

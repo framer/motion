@@ -71,10 +71,10 @@
         </div>
         <div id="trigger-overflow"></div>
 
-        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
-        <script src="./script-assert.js"></script>
-        <script src="./script-animate.js"></script>
-        <script>
+        <script type="module" src="/src/imports/projection.js"></script>
+        <script type="module" src="/src/imports/script-assert.js"></script>
+        <script type="module" src="/src/imports/script-animate.js"></script>
+        <script type="module">
             const { createNode } = window.Animate
             const {
                 matchViewportBox,
@@ -82,6 +82,7 @@
                 matchOpacity,
                 matchBorderRadius,
             } = window.Assert
+            const { frame } = window.Projection
 
             const box = document.getElementById("box-a")
             const boxProjection = createNode(box, undefined, {

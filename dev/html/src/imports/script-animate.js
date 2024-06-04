@@ -1,4 +1,4 @@
-Undo = {}
+window.Animate = {}
 
 const {
     HTMLProjectionNode,
@@ -9,7 +9,7 @@ const {
     correctBoxShadow,
     correctBorderRadius,
     HTMLVisualElement,
-} = Projection
+} = window.Projection
 
 addScaleCorrector({
     borderRadius: {
@@ -28,7 +28,12 @@ addScaleCorrector({
     boxShadow: correctBoxShadow,
 })
 
-Undo.createNode = (element, parent, options = {}, overrideId) => {
+Animate.createNode = (
+    element,
+    parent,
+    options = {},
+    transition = { duration: 10, ease: () => 0.5 }
+) => {
     const latestValues = {}
     const visualElement = new HTMLVisualElement({
         visualState: {
@@ -51,31 +56,23 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
     const node = new HTMLProjectionNode(latestValues, parent)
 
     node.setOptions({
-        animate: false,
         scheduleRender: scheduleRender,
-        layout: true,
         visualElement,
+        layout: true,
         ...options,
     })
-    visualElement.projection = node
 
-    if (!overrideId) {
-        node.mount(element)
-        visualElement.projection = node
-    }
+    node.mount(element)
+    visualElement.projection = node
 
     node.addEventListener("didUpdate", ({ delta, hasLayoutChanged }) => {
         if (node.resumeFrom) {
             node.resumingFrom = node.resumeFrom
             node.resumingFrom.resumingFrom = undefined
         }
-        // hasLayoutChanged && // or existing delta is not nothing - this needs to be reinstated to fix breaking tests
-        if (
-            (node.resumeFrom && node.resumeFrom.instance) ||
-            hasLayoutChanged ||
-            node.options.layoutRoot
-        ) {
+        if (hasLayoutChanged) {
             node.setAnimationOrigin(delta)
+            node.startAnimation(transition)
         }
     })
 
@@ -89,4 +86,16 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
     return node
 }
 
-window.Undo = Undo
+Animate.relativeEase = () => {
+    let frameCount = 0
+    return (t) => {
+        frameCount++
+        // one frame for the first synchronous call of mixTargetDelta at the very start,
+        // don't lock it to 0.5 otherwise the relative boxes can't be measure correctly.
+        // Then the first animation frame when we resolve relative delta,
+        // and then finally the first relative frame.
+        return frameCount >= 2 ? (t === 1 || t === 0 ? t : 0.5) : 0
+    }
+}
+
+window.Animate = Animate

@@ -44,12 +44,13 @@
         <div id="box" data-layout-correct="true"></div>
         <div id="trigger-overflow"></div>
 
-        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
-        <script src="./script-assert.js"></script>
-        <script src="./script-undo.js"></script>
-        <script>
+        <script type="module" src="/src/imports/projection.js"></script>
+        <script type="module" src="/src/imports/script-assert.js"></script>
+        <script type="module" src="/src/imports/script-undo.js"></script>
+        <script type="module">
             const { createNode } = window.Undo
             const { matchViewportBox } = window.Assert
+            const { frame } = window.Projection
             const box = document.getElementById("box")
             const boxProjection = createNode(box)
 

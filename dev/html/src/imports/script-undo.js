@@ -1,4 +1,4 @@
-Animate = {}
+window.Undo = {}
 
 const {
     HTMLProjectionNode,
@@ -28,12 +28,7 @@ addScaleCorrector({
     boxShadow: correctBoxShadow,
 })
 
-Animate.createNode = (
-    element,
-    parent,
-    options = {},
-    transition = { duration: 10, ease: () => 0.5 }
-) => {
+Undo.createNode = (element, parent, options = {}, overrideId) => {
     const latestValues = {}
     const visualElement = new HTMLVisualElement({
         visualState: {
@@ -56,23 +51,31 @@ Animate.createNode = (
     const node = new HTMLProjectionNode(latestValues, parent)
 
     node.setOptions({
+        animate: false,
         scheduleRender: scheduleRender,
-        visualElement,
         layout: true,
+        visualElement,
         ...options,
     })
-
-    node.mount(element)
     visualElement.projection = node
+
+    if (!overrideId) {
+        node.mount(element)
+        visualElement.projection = node
+    }
 
     node.addEventListener("didUpdate", ({ delta, hasLayoutChanged }) => {
         if (node.resumeFrom) {
             node.resumingFrom = node.resumeFrom
             node.resumingFrom.resumingFrom = undefined
         }
-        if (hasLayoutChanged) {
+        // hasLayoutChanged && // or existing delta is not nothing - this needs to be reinstated to fix breaking tests
+        if (
+            (node.resumeFrom && node.resumeFrom.instance) ||
+            hasLayoutChanged ||
+            node.options.layoutRoot
+        ) {
             node.setAnimationOrigin(delta)
-            node.startAnimation(transition)
         }
     })
 
@@ -86,16 +89,4 @@ Animate.createNode = (
     return node
 }
 
-Animate.relativeEase = () => {
-    let frameCount = 0
-    return (t) => {
-        frameCount++
-        // one frame for the first synchronous call of mixTargetDelta at the very start,
-        // don't lock it to 0.5 otherwise the relative boxes can't be measure correctly.
-        // Then the first animation frame when we resolve relative delta,
-        // and then finally the first relative frame.
-        return frameCount >= 2 ? (t === 1 || t === 0 ? t : 0.5) : 0
-    }
-}
-
-window.Animate = Animate
+window.Undo = Undo

@@ -48,10 +48,10 @@
             <div class="trigger-overflow"></div>
         </div>
 
-        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
-        <script src="./script-assert.js"></script>
-        <script src="./script-undo.js"></script>
-        <script>
+        <script type="module" src="/src/imports/projection.js"></script>
+        <script type="module" src="/src/imports/script-assert.js"></script>
+        <script type="module" src="/src/imports/script-undo.js"></script>
+        <script type="module">
             const { createNode } = window.Undo
             const {
                 matchViewportBox,
@@ -59,6 +59,7 @@
                 matchBorderRadius,
                 addPageScroll,
             } = window.Assert
+            const { frame } = window.Projection
 
             const scroll = document.getElementById("scroll")
             const container = document.getElementById("container")
