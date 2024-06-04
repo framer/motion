@@ -3,7 +3,7 @@ import * as React from "react"
 import {
     forwardRef,
     FunctionComponent,
-    ReactHTML,
+    HTMLElementType,
     useEffect,
     useRef,
 } from "react"
@@ -20,7 +20,7 @@ export interface Props<V> {
      *
      * @public
      */
-    as?: keyof ReactHTML
+    as?: HTMLElementType
 
     /**
      * The axis to reorder along. By default, items will be draggable on this axis.

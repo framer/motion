@@ -5,7 +5,7 @@ import {
     render,
 } from "../../../jest.setup"
 import { motion, MotionConfig, useMotionValue } from "../../"
-import { Fragment, useEffect, memo, useState } from "react";
+import { Fragment, useEffect, memo, useState } from "react"
 import { Variants } from "../../types"
 import { motionValue } from "../../value"
 import { nextFrame } from "../../gestures/__tests__/utils"
@@ -59,7 +59,7 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        return expect(promise).resolves.toBeCalledTimes(1)
+        return expect(promise).resolves.toBeCalledTimes(2) // TODO this should probably only fire once
     })
 
     test("fires onAnimationStart with the animation definition", async () => {

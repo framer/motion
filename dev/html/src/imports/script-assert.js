@@ -13,6 +13,8 @@ function showError(element, msg) {
     }
 }
 
+window.showError = showError
+
 window.ProjectionFrames = []
 window.MotionDebug = {
     record: (action) => {

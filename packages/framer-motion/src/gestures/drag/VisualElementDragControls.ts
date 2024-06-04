@@ -589,7 +589,7 @@ export class VisualElementDragControls {
 
         const measureDragConstraints = () => {
             const { dragConstraints } = this.getProps()
-            if (isRefObject(dragConstraints)) {
+            if (isRefObject(dragConstraints) && dragConstraints.current) {
                 this.constraints = this.resolveRefConstraints()
             }
         }
@@ -606,7 +606,7 @@ export class VisualElementDragControls {
             projection.updateLayout()
         }
 
-        measureDragConstraints()
+        frame.read(measureDragConstraints)
 
         /**
          * Attach a window resize listener to scale the draggable target within its defined

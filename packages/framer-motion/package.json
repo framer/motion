@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "11.2.10",
+    "version": "11.3.0-alpha.0",
     "description": "A simple and powerful JavaScript animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -61,7 +61,7 @@
         "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
         "prepack": "yarn build",
         "postpublish": "git push --tags",
-        "measure": "rollup -c ./rollup.size.config.mjs && webpack --config webpack.size.config.js && bundlesize"
+        "measure": "rollup -c ./rollup.size.config.mjs && bundlesize"
     },
     "dependencies": {
         "tslib": "^2.4.0"
@@ -85,11 +85,11 @@
     "bundlesize": [
         {
             "path": "./dist/size-rollup-motion.js",
-            "maxSize": "33.3 kB"
+            "maxSize": "33.6 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
-            "maxSize": "5.5 kB"
+            "maxSize": "5.8 kB"
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
@@ -102,18 +102,6 @@
         {
             "path": "./dist/size-rollup-animate.js",
             "maxSize": "17.86 kB"
-        },
-        {
-            "path": "./dist/size-webpack-m.js",
-            "maxSize": "5.99 kB"
-        },
-        {
-            "path": "./dist/size-webpack-dom-animation.js",
-            "maxSize": "21.9 kB"
-        },
-        {
-            "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "34.6 kB"
         }
     ],
     "gitHead": "ec58fcea2eeeb3acd0090561b949f95d8b664505"

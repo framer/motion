@@ -1,7 +1,7 @@
 {
-    "name": "react",
+    "name": "react-env",
     "private": true,
-    "version": "0.0.0",
+    "version": "11.3.0-alpha.0",
     "type": "module",
     "scripts": {
         "dev": "vite",
@@ -11,9 +11,9 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "framer-motion": "^11.2.2",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0"
+        "framer-motion": "^11.3.0-alpha.0",
+        "react": "rc",
+        "react-dom": "rc"
     },
     "devDependencies": {
         "@types/react": "^18.2.66",
