@@ -1,10 +1,10 @@
-import type { Object3DNode } from "@react-three/fiber"
+import type { MathType } from "@react-three/fiber"
 import { Color } from "three"
 
 const readVector =
     (name: string, defaultValue: number) =>
     (axis: "x" | "y" | "z") =>
-    (instance: Object3DNode<any, any>) => {
+    (instance: MathType<any>) => {
         const value = instance[name]
         return value ? value[axis] : defaultValue
     }
@@ -14,9 +14,7 @@ const readScale = readVector("scale", 1)
 const readRotation = readVector("rotation", 0)
 
 interface ThreeReaders {
-    [key: string]: (
-        instance: Object3DNode<any, any>
-    ) => number | string | undefined
+    [key: string]: (instance: MathType<any>) => number | string | undefined
 }
 
 const readers: ThreeReaders = {
@@ -42,7 +40,7 @@ function readAnimatableValue(value?: Color) {
     }
 }
 
-export function readThreeValue(instance: Object3DNode<any, any>, name: string) {
+export function readThreeValue(instance: MathType<any>, name: string) {
     return name in readers
         ? readers[name](instance)
         : readAnimatableValue(instance[name]) || 0

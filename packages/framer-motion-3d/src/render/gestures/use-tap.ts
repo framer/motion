@@ -1,4 +1,4 @@
-import { MeshProps } from "@react-three/fiber"
+import { EventHandlers } from "@react-three/fiber"
 import { useRef } from "react"
 import {
     addPointerEvent,
@@ -17,7 +17,7 @@ export function useTap(
         onTap,
         onTapCancel,
         onPointerDown,
-    }: ThreeMotionProps & MeshProps,
+    }: ThreeMotionProps & EventHandlers,
     visualElement?: VisualElement
 ) {
     const isTapEnabled = onTap || onTapStart || onTapCancel || whileTap

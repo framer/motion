@@ -1,6 +1,6 @@
 {
     "name": "framer-motion-3d",
-    "version": "11.11.18",
+    "version": "12.0.0-alpha.1",
     "description": "A simple and powerful React animation library for @react-three/fiber",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -45,20 +45,18 @@
         "postpublish": "git push --tags"
     },
     "dependencies": {
-        "framer-motion": "^11.11.18",
+        "framer-motion": "^12.0.0-alpha.1",
         "react-merge-refs": "^2.0.1"
     },
     "peerDependencies": {
-        "@react-three/fiber": "8.2.2",
-        "react": ">=18.0",
-        "react-dom": ">=18.0",
-        "three": ">=0.133"
+        "@react-three/fiber": "9.0.0-beta.0",
+        "react": ">=19.0",
+        "react-dom": ">=19.0",
+        "three": ">=0.141"
     },
     "devDependencies": {
-        "@react-three/fiber": "8.2.2",
+        "@react-three/fiber": "9.0.0-beta.0",
         "@react-three/test-renderer": "^9.0.0",
-        "@rollup/plugin-commonjs": "^22.0.1",
-        "three": "^0.137.0"
-    },
-    "gitHead": "eeb1cc452e2b468d838ec76fd501b131b383c5c9"
+        "three": "^0.141.0"
+    }
 }

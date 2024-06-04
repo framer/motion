@@ -86,6 +86,7 @@ function needsElementTracking(options?: ScrollOptions) {
 
 function scrollFunction(onScroll: OnScroll, options: ScrollOptions) {
     if (isOnScrollWithInfo(onScroll) || needsElementTracking(options)) {
+        console.log(isOnScrollWithInfo(onScroll), needsElementTracking(options))
         return scrollInfo((info) => {
             onScroll(info[options.axis!].progress, info)
         }, options)

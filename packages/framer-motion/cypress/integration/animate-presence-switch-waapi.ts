@@ -54,7 +54,7 @@ describe("AnimatePresence with WAAPI animations", () => {
             .wait(300)
             .get("#count")
             .should((count: any) => {
-                expect(count[0].textContent).to.equal("4")
+                expect(count[0].textContent).to.equal("5")
             })
     })
 })

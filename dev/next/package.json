@@ -1,17 +1,17 @@
 {
-    "name": "next-env",
-    "private": true,
-    "version": "11.11.18",
-    "type": "module",
-    "scripts": {
-        "dev": "next dev",
-        "dev-server": "next dev",
-        "start": "next start"
-    },
-    "dependencies": {
-        "framer-motion": "^11.11.18",
-        "next": "14.x",
-        "react": "^18.3.1",
-        "react-dom": "^18.3.1"
-    }
+  "name": "next-env",
+  "private": true,
+  "version": "12.0.0-alpha.1",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "dev-server": "next dev",
+    "start": "next start"
+  },
+  "dependencies": {
+    "framer-motion": "^12.0.0-alpha.1",
+    "next": "15.0.3",
+    "react": "19.0.0-rc-66855b96-20241106",
+    "react-dom": "19.0.0-rc-66855b96-20241106"
+  }
 }

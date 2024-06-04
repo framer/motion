@@ -1,4 +1,10 @@
-import type { Color, Euler, MeshProps, Vector3 } from "@react-three/fiber"
+import type {
+    Color,
+    Euler,
+    MathProps,
+    Vector3,
+    ThreeElements,
+} from "@react-three/fiber"
 import type {
     ForwardRefExoticComponent,
     PropsWithoutRef,
@@ -18,7 +24,7 @@ export interface ThreeMotionProps
         AnimationProps,
         TapHandlers,
         HoverHandlers {
-    onInstanceUpdate?: MeshProps["onUpdate"]
+    onInstanceUpdate?: MathProps<any>["onUpdate"]
 }
 
 export interface ThreeRenderState extends ResolvedValues {}
@@ -31,7 +37,7 @@ export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
 >
 
 type MotionValueOrNumber = number | MotionValue<number>
-type MotionValueVector3 = [
+type MotionValueVector3 = readonly [
     MotionValueOrNumber,
     MotionValueOrNumber,
     MotionValueOrNumber
@@ -43,7 +49,7 @@ export type AcceptMotionValues<T> = Omit<
 > & {
     position?: Vector3 | MotionValueVector3 | MotionValueOrNumber
     scale?: Vector3 | MotionValueVector3 | MotionValueOrNumber
-    rotation?: Euler | MotionValueVector3 | MotionValueOrNumber
+    rotation?: Readonly<Euler | MotionValueVector3 | MotionValueOrNumber>
     color?: Color | MotionValue<string>
 }
 
@@ -53,11 +59,11 @@ export type AcceptMotionValues<T> = Omit<
  * @public
  */
 export type ThreeMotionComponents = {
-    [K in keyof JSX.IntrinsicElements]: ForwardRefComponent<
-        JSX.IntrinsicElements[K],
+    [Tag in keyof ThreeElements]: ForwardRefComponent<
+        ThreeElements[Tag],
         ThreeMotionProps &
             Omit<
-                AcceptMotionValues<JSX.IntrinsicElements[K]>,
+                AcceptMotionValues<ThreeElements[Tag]>,
                 "onUpdate" | "transition"
             >
     >

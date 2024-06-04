@@ -33,7 +33,7 @@ const child: React.CSSProperties = {
 }
 
 export const App = () => {
-    const ref = useRef()
+    const ref = useRef(undefined)
     const x = useMotionValue(0)
     const y = useMotionValue(0)
     const transform = useMotionTemplate`translate3d(${x}px, ${y}px, 0)`

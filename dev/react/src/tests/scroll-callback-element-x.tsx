@@ -6,11 +6,11 @@ const width = 400
 
 export const App = () => {
     const [progress, setProgress] = useState(0)
-    const ref = useRef<Element>(null)
+    const ref = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         if (!ref.current) return
-        return scroll(setProgress, { source: ref.current, axis: "x" })
+        return scroll(setProgress, { container: ref.current, axis: "x" })
     }, [])
 
     return (
