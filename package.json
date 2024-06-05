@@ -9,7 +9,9 @@
         "dev/*"
     ],
     "resolutions": {
-        "webpack": "^5.27.2"
+        "webpack": "^5.27.2",
+        "@types/react": "npm:types-react@rc",
+        "@types/react-dom": "npm:types-react-dom@rc"
     },
     "scripts": {
         "build": "turbo run build",
@@ -37,8 +39,8 @@
         "@testing-library/react-hooks": "^8.0.1",
         "@types/jest": "^29.5.12",
         "@types/node": "^18.6.3",
-        "@types/react": "latest",
-        "@types/react-dom": "latest",
+        "@types/react": "npm:types-react@rc",
+        "@types/react-dom": "npm:types-react-dom@rc",
         "@types/styled-components": "^5.1.25",
         "@types/three": "^0.143.0",
         "@typescript-eslint/eslint-plugin": "^7.4.0",
@@ -63,9 +65,9 @@
         "lint-staged": "^8.0.4",
         "path-browserify": "^1.0.1",
         "prettier": "^2.5.1",
-        "react": "^18.2.0",
+        "react": "rc",
         "react-dev-utils": "^12.0.1",
-        "react-dom": "^18.2.0",
+        "react-dom": "rc",
         "rollup": "4.14.0",
         "rollup-plugin-analyzer": "^4.0.0",
         "rollup-plugin-dts": "6.1.0",
