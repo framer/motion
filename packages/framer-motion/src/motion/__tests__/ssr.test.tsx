@@ -4,7 +4,6 @@ import { motion, useMotionValue } from "../../"
 import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
 import { Reorder } from "../../components/Reorder"
-import * as React from "react"
 
 const MotionFragment = motion(Fragment)
 
