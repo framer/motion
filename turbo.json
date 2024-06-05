@@ -1,7 +1,5 @@
 {
-    "npmClient": "yarn",
-    "baseBranch": "origin/main",
-    "pipeline": {
+    "tasks": {
         "build": {
             "dependsOn": ["^build"],
             "outputs": ["dist/**", "types/**"]

@@ -7229,7 +7229,7 @@ __metadata:
     styled-components: ^4.1.1
     ts-jest: ^29.1.2
     ts-loader: ^9.5.1
-    turbo: 1
+    turbo: ^2
     type-fest: ^1.0.1
     typescript: 5.4.3
     webpack: ^5.27.2
@@ -8004,20 +8004,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"html-env@workspace:dev/html":
+  version: 0.0.0-use.local
+  resolution: "html-env@workspace:dev/html"
+  dependencies:
+    vite: ^5.2.0
+  languageName: unknown
+  linkType: soft
+
 "html-escaper@npm:^2.0.0":
   version: 2.0.2
   resolution: "html-escaper@npm:2.0.2"
   checksum: d2df2da3ad40ca9ee3a39c5cc6475ef67c8f83c234475f24d8e9ce0dc80a2c82df8e1d6fa78ddd1e9022a586ea1bd247a615e80a5cd9273d90111ddda7d9e974
   languageName: node
   linkType: hard
-
-"html@workspace:dev/html":
-  version: 0.0.0-use.local
-  resolution: "html@workspace:dev/html"
-  dependencies:
-    vite: ^5.2.0
-  languageName: unknown
-  linkType: soft
 
 "http-cache-semantics@npm:^4.1.0, http-cache-semantics@npm:^4.1.1":
   version: 4.1.1
@@ -12354,6 +12354,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-env@workspace:dev/react":
+  version: 0.0.0-use.local
+  resolution: "react-env@workspace:dev/react"
+  dependencies:
+    "@types/react": ^18.2.66
+    "@types/react-dom": ^18.2.22
+    "@typescript-eslint/eslint-plugin": ^7.2.0
+    "@typescript-eslint/parser": ^7.2.0
+    "@vitejs/plugin-react-swc": ^3.5.0
+    eslint-plugin-react-refresh: ^0.4.6
+    framer-motion: ^11.2.2
+    react: rc
+    react-dom: rc
+    styled-components: ^6.1.11
+    vite: ^5.2.0
+  languageName: unknown
+  linkType: soft
+
 "react-error-boundary@npm:^3.1.0":
   version: 3.1.4
   resolution: "react-error-boundary@npm:3.1.4"
@@ -12439,24 +12457,6 @@ __metadata:
   checksum: 9e287ac535737d75d8618a7d944d6a1200e7e551bcc223172eda92c2d0b140633c00c14c43710ae3341f4cb54a3a3f324547fd7c093ef4aeb8033aad5e258601
   languageName: node
   linkType: hard
-
-"react@workspace:dev/react":
-  version: 0.0.0-use.local
-  resolution: "react@workspace:dev/react"
-  dependencies:
-    "@types/react": ^18.2.66
-    "@types/react-dom": ^18.2.22
-    "@typescript-eslint/eslint-plugin": ^7.2.0
-    "@typescript-eslint/parser": ^7.2.0
-    "@vitejs/plugin-react-swc": ^3.5.0
-    eslint-plugin-react-refresh: ^0.4.6
-    framer-motion: ^11.2.2
-    react: rc
-    react-dom: rc
-    styled-components: ^6.1.11
-    vite: ^5.2.0
-  languageName: unknown
-  linkType: soft
 
 "read-cmd-shim@npm:^2.0.0":
   version: 2.0.0
@@ -14764,58 +14764,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"turbo-darwin-64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "turbo-darwin-64@npm:1.13.4"
+"turbo-darwin-64@npm:2.0.1":
+  version: 2.0.1
+  resolution: "turbo-darwin-64@npm:2.0.1"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-darwin-arm64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "turbo-darwin-arm64@npm:1.13.4"
+"turbo-darwin-arm64@npm:2.0.1":
+  version: 2.0.1
+  resolution: "turbo-darwin-arm64@npm:2.0.1"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo-linux-64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "turbo-linux-64@npm:1.13.4"
+"turbo-linux-64@npm:2.0.1":
+  version: 2.0.1
+  resolution: "turbo-linux-64@npm:2.0.1"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-linux-arm64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "turbo-linux-arm64@npm:1.13.4"
+"turbo-linux-arm64@npm:2.0.1":
+  version: 2.0.1
+  resolution: "turbo-linux-arm64@npm:2.0.1"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo-windows-64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "turbo-windows-64@npm:1.13.4"
+"turbo-windows-64@npm:2.0.1":
+  version: 2.0.1
+  resolution: "turbo-windows-64@npm:2.0.1"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-windows-arm64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "turbo-windows-arm64@npm:1.13.4"
+"turbo-windows-arm64@npm:2.0.1":
+  version: 2.0.1
+  resolution: "turbo-windows-arm64@npm:2.0.1"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo@npm:1":
-  version: 1.13.4
-  resolution: "turbo@npm:1.13.4"
+"turbo@npm:^2":
+  version: 2.0.1
+  resolution: "turbo@npm:2.0.1"
   dependencies:
-    turbo-darwin-64: 1.13.4
-    turbo-darwin-arm64: 1.13.4
-    turbo-linux-64: 1.13.4
-    turbo-linux-arm64: 1.13.4
-    turbo-windows-64: 1.13.4
-    turbo-windows-arm64: 1.13.4
+    turbo-darwin-64: 2.0.1
+    turbo-darwin-arm64: 2.0.1
+    turbo-linux-64: 2.0.1
+    turbo-linux-arm64: 2.0.1
+    turbo-windows-64: 2.0.1
+    turbo-windows-arm64: 2.0.1
   dependenciesMeta:
     turbo-darwin-64:
       optional: true
@@ -14831,7 +14831,7 @@ __metadata:
       optional: true
   bin:
     turbo: bin/turbo
-  checksum: 94533f700dbbb7b556a7152ef04500a44b571232daf1eb9bd82bcfebac473d0cf45a78c851325c6867246656cb0b3be7c62a412381b6e85c77c1eddf51302778
+  checksum: 449b0be4caf097e1dc2876c3afccee0ecbd1148d632fdecaef44bd5c20f7384eedc6f77ae187e04866a12dde28966c6b506983ceb80d86a7ed4cc8b756f15a87
   languageName: node
   linkType: hard
 
