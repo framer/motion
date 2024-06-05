@@ -96,7 +96,7 @@ export function PopChild({ children, isPresent }: Props) {
 
     return (
         <PopChildMeasure isPresent={isPresent} childRef={ref} sizeRef={size}>
-            {React.cloneElement(children, { ref })}
+            {React.cloneElement(children, { ref } as any)}
         </PopChildMeasure>
     )
 }

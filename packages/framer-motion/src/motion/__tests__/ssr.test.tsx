@@ -4,6 +4,7 @@ import { motion, useMotionValue } from "../../"
 import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
 import { Reorder } from "../../components/Reorder"
+import * as React from "react"
 
 const MotionFragment = motion(Fragment)
 
@@ -12,15 +13,18 @@ function runTests(render: (components: any) => string) {
         function Component() {
             const ref = useRef<HTMLDivElement>(null)
             return (
-                <motion.div
-                    ref={ref}
-                    initial={{ x: 100 }}
-                    whileTap={{ opacity: 0 }}
-                    drag
-                    layout
-                    layoutId="a"
-                    style={{ opacity: 1 }}
-                />
+                <>
+                    <motion.div
+                        ref={ref}
+                        initial={{ x: 100 }}
+                        whileTap={{ opacity: 0 }}
+                        drag
+                        layout
+                        layoutId="a"
+                        style={{ opacity: 1 }}
+                    />
+                    <motion.button disabled />
+                </>
             )
         }
         render(<Component />)
