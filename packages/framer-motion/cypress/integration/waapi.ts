@@ -11,14 +11,14 @@ describe("waapi", () => {
 
     it("Animations are correctly interrupted", () => {
         cy.visit("?test=waapi-interrupt")
-            .wait(200)
+            .wait(500)
             .get("#box")
             .should(([$element]: any) => {
                 expect(getComputedStyle($element).opacity).not.to.equal("1")
                 expect($element.getBoundingClientRect().width).not.to.equal(100)
             })
             .trigger("click", 250, 250, { force: true })
-            .wait(200)
+            .wait(100)
             .should(([$element]: any) => {
                 expect(getComputedStyle($element).opacity).not.to.equal("1")
                 expect(
