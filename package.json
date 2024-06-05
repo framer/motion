@@ -20,7 +20,6 @@
         "test": "turbo run test",
         "test-e2e": "turbo run test-e2e",
         "test-ci": "turbo run test-ci --no-cache",
-        "start-dev-server": "yarn dev",
         "measure": "turbo run measure",
         "prepare": "turbo run build measure test test-e2e",
         "new": "lerna publish from-package",

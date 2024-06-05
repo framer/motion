@@ -5,7 +5,7 @@ import {
     MotionConfig,
     LayoutGroup,
 } from "framer-motion"
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
 
 export function App() {
     const [tabs, setTabs] = useState(initialTabs)
@@ -323,7 +323,6 @@ li {
 li span {
   flex-shrink: 1;
   flex-grow: 1;
-  line-height: 18px;
   white-space: nowrap;
   display: block;
   min-width: 0;
