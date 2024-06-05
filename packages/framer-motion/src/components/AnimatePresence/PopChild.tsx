@@ -16,8 +16,8 @@ interface Props {
 }
 
 interface MeasureProps extends Props {
-    childRef: React.RefObject<HTMLElement>
-    sizeRef: React.RefObject<Size>
+    childRef: React.RefObject<HTMLElement | null>
+    sizeRef: React.RefObject<Size | null>
 }
 
 /**

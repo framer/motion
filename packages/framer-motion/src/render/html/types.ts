@@ -5,7 +5,8 @@ import {
     PropsWithoutRef,
     ReactHTML,
     RefAttributes,
-} from "react"
+    type JSX,
+} from "react";
 import { MotionProps } from "../../motion/types"
 import { HTMLElements } from "./supported-elements"
 

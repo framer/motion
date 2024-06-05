@@ -31,7 +31,7 @@ export function useLayoutCamera<CameraType>(
     const size = useThree((three) => three.size)
     const gl = useThree((three) => three.gl)
     const { visualElement: parentVisualElement } = useContext(MotionContext)
-    const measuredLayoutSize = useRef<Size>()
+    const measuredLayoutSize = useRef<Size>(undefined)
 
     useLayoutEffect(() => {
         measuredLayoutSize.current = size
@@ -118,5 +118,5 @@ export function useLayoutCamera<CameraType>(
         }
     }, [camera, layoutCamera, makeDefault, set])
 
-    return { size, camera, cameraRef: layoutCamera as RefObject<CameraType> }
+    return { size, camera, cameraRef: layoutCamera as RefObject<CameraType | null> };
 }

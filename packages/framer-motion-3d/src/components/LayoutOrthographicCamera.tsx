@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, type JSX } from "react";
 import { OrthographicCamera as OrthographicCameraImpl } from "three"
 import { mergeRefs } from "react-merge-refs"
 import { motion } from "../render/motion"

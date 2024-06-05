@@ -1,9 +1,5 @@
 import type { Color, Euler, MeshProps, Vector3 } from "@react-three/fiber"
-import type {
-    ForwardRefExoticComponent,
-    PropsWithoutRef,
-    RefAttributes,
-} from "react"
+import type { ForwardRefExoticComponent, PropsWithoutRef, RefAttributes, JSX } from "react";
 import type {
     HoverHandlers,
     MotionValue,

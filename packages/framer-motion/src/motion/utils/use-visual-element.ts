@@ -23,7 +23,7 @@ export function useVisualElement<Instance, RenderState>(
     const presenceContext = useContext(PresenceContext)
     const reducedMotionConfig = useContext(MotionConfigContext).reducedMotion
 
-    const visualElementRef = useRef<VisualElement<Instance>>()
+    const visualElementRef = useRef<VisualElement<Instance>>(undefined)
 
     /**
      * If we haven't preloaded a renderer, check to see if we have one lazy-loaded

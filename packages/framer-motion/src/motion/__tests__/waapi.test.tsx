@@ -6,10 +6,9 @@ import {
     render,
 } from "../../../jest.setup"
 import { motion, useMotionValue } from "../../"
-import { useState, createRef } from "react"
+import { useState, createRef, act } from "react"
 import { nextFrame } from "../../gestures/__tests__/utils"
 import "../../animation/animators/waapi/__tests__/setup"
-import { act } from "react-dom/test-utils"
 
 describe("WAAPI animations", () => {
     test("opacity animates with WAAPI at default settings", async () => {
