@@ -16,7 +16,8 @@ export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
     visualState: VisualState<Instance, RenderState>,
     props: MotionProps & Partial<MotionConfigContext>,
-    createVisualElement?: CreateVisualElement<Instance>
+    createVisualElement?: CreateVisualElement<Instance>,
+    ProjectionNodeConstructor?: any
 ): VisualElement<Instance> | undefined {
     const { visualElement: parent } = useContext(MotionContext)
     const lazyContext = useContext(LazyContext)
@@ -45,6 +46,19 @@ export function useVisualElement<Instance, RenderState>(
 
     const visualElement = visualElementRef.current
 
+    if (
+        visualElement &&
+        !visualElement.projection &&
+        ProjectionNodeConstructor &&
+        (visualElement.type === "html" || visualElement.type === "svg")
+    ) {
+        createProjectionNode(
+            visualElementRef.current!,
+            props,
+            ProjectionNodeConstructor
+        )
+    }
+
     useInsertionEffect(() => {
         visualElement && visualElement.update(props, presenceContext)
     })
@@ -62,6 +76,8 @@ export function useVisualElement<Instance, RenderState>(
 
     useIsomorphicLayoutEffect(() => {
         if (!visualElement) return
+
+        visualElement.updateFeatures()
 
         microtask.render(visualElement.render)
 
@@ -83,8 +99,6 @@ export function useVisualElement<Instance, RenderState>(
     useEffect(() => {
         if (!visualElement) return
 
-        visualElement.updateFeatures()
-
         if (!wantsHandoff.current && visualElement.animationState) {
             visualElement.animationState.animateChanges()
         }
@@ -97,4 +111,25 @@ export function useVisualElement<Instance, RenderState>(
     })
 
     return visualElement
+}
+
+function createProjectionNode(
+    visualElement: VisualElement<any>,
+    props: MotionProps,
+    ProjectionNodeConstructor: any
+) {
+    const {
+        layoutId,
+        layout,
+        drag,
+        dragConstraints,
+        layoutScroll,
+        layoutRoot,
+    } = props
+    visualElement.projection = new ProjectionNodeConstructor(
+        visualElement.latestValues,
+        renderedProps["data-framer-portal-id"]
+            ? undefined
+            : getClosestProjectingNode(visualElement.parent)
+    ) as IProjectionNode
 }
