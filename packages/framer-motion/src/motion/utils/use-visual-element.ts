@@ -11,6 +11,8 @@ import { MotionConfigContext } from "../../context/MotionConfigContext"
 import type { VisualElement } from "../../render/VisualElement"
 import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/data-id"
 import { microtask } from "../../frameloop/microtask"
+import { IProjectionNode } from "../../projection/node/types"
+import { isRefObject } from "../../utils/is-ref-object"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -126,10 +128,45 @@ function createProjectionNode(
         layoutScroll,
         layoutRoot,
     } = props
+
     visualElement.projection = new ProjectionNodeConstructor(
         visualElement.latestValues,
-        renderedProps["data-framer-portal-id"]
+        props["data-framer-portal-id"]
             ? undefined
             : getClosestProjectingNode(visualElement.parent)
     ) as IProjectionNode
+
+    visualElement.projection.setOptions({
+        layoutId,
+        layout,
+        alwaysMeasureLayout:
+            Boolean(drag) || (dragConstraints && isRefObject(dragConstraints)),
+        visualElement,
+        scheduleRender: () => visualElement.scheduleRender(),
+        /**
+         * TODO: Update options in an effect. This could be tricky as it'll be too late
+         * to update by the time layout animations run.
+         * We also need to fix this safeToRemove by linking it up to the one returned by usePresence,
+         * ensuring it gets called if there's no potential layout animations.
+         *
+         */
+        animationType: typeof layout === "string" ? layout : "both",
+        initialPromotionConfig: initialLayoutGroupConfig,
+        layoutScroll,
+        layoutRoot,
+    })
+}
+
+function getClosestProjectingNode(
+    visualElement?: VisualElement<
+        unknown,
+        unknown,
+        { allowProjection?: boolean }
+    >
+): IProjectionNode | undefined {
+    if (!visualElement) return undefined
+
+    return visualElement.options.allowProjection !== false
+        ? visualElement.projection
+        : getClosestProjectingNode(visualElement.parent)
 }

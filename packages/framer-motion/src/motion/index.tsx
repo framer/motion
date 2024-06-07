@@ -73,6 +73,10 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
         const visualState = useVisualState(props, isStatic)
 
         if (!isStatic && isBrowser) {
+            useStrictMode(configAndProps, preloadedFeatures)
+
+            MeasureLayout = getMeasureLayoutComponent(configAndProps)
+
             /**
              * Create a VisualElement for this component. A VisualElement provides a common
              * interface to renderer-specific APIs (ie DOM/Three.js etc) as well as
@@ -85,10 +89,6 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                 configAndProps,
                 createVisualElement
             )
-
-            useStrictMode(configAndProps, preloadedFeatures)
-
-            MeasureLayout = getMeasureLayoutComponent(configAndProps)
 
             // /**
             //  * Load Motion gesture and animation features. These are rendered as renderless
