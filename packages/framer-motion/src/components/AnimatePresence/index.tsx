@@ -269,6 +269,10 @@ export const AnimatePresence: React.FunctionComponent<
         )
     }
 
+    childrenToRender = childrenToRender.filter(
+        (child) => child.props.isPresent !== undefined
+    )
+
     return (
         <>
             {exitingChildren.size
