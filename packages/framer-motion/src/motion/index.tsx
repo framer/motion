@@ -1,12 +1,7 @@
 import * as React from "react"
-import { forwardRef, useContext, useMemo } from "react"
+import { forwardRef, useContext } from "react"
 import { MotionProps } from "./types"
-import {
-    RenderComponent,
-    FeatureBundle,
-    FeatureDefinitions,
-    FeatureDefinition,
-} from "./features/types"
+import { RenderComponent, FeatureBundle } from "./features/types"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { MotionContext } from "../context/MotionContext"
 import { useVisualElement } from "./utils/use-visual-element"
@@ -17,11 +12,9 @@ import { loadFeatures } from "./features/load-features"
 import { isBrowser } from "../utils/is-browser"
 import { LayoutGroupContext } from "../context/LayoutGroupContext"
 import { LazyContext } from "../context/LazyContext"
-import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
 import { motionComponentSymbol } from "./utils/symbol"
 import { CreateVisualElement } from "../render/types"
 import { invariant, warning } from "../utils/errors"
-import { useConstant } from "../utils/use-constant"
 import { featureDefinitions } from "./features/definitions"
 
 export interface MotionComponentConfig<Instance, RenderState> {
@@ -75,7 +68,8 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
         if (!isStatic && isBrowser) {
             useStrictMode(configAndProps, preloadedFeatures)
 
-            MeasureLayout = getMeasureLayoutComponent(configAndProps)
+            const layoutProjection = getProjectionFunctionality(configAndProps)
+            MeasureLayout = layoutProjection.MeasureLayout
 
             /**
              * Create a VisualElement for this component. A VisualElement provides a common
@@ -87,27 +81,9 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                 Component,
                 visualState,
                 configAndProps,
-                createVisualElement
+                createVisualElement,
+                layoutProjection.ProjectionNode
             )
-
-            // /**
-            //  * Load Motion gesture and animation features. These are rendered as renderless
-            //  * components so each feature can optionally make use of React lifecycle methods.
-            //  */
-            // const initialLayoutGroupConfig = useContext(
-            //     SwitchLayoutGroupContext
-            // )
-
-            // if (context.visualElement) {
-
-            //     MeasureLayout = context.visualElement.getMeasureLayoutComponent(
-            //         // Note: Pass the full new combined props to correctly re-render dynamic feature components.
-            //         configAndProps,
-            //         isStrict,
-            //         preloadedFeatures,
-            //         initialLayoutGroupConfig
-            //     )
-            // }
         }
 
         /**
@@ -173,19 +149,18 @@ function useStrictMode(
     }
 }
 
-function getMeasureLayoutComponentFromFeature(
-    props: MotionProps,
-    feature?: FeatureDefinition
-) {
-    return feature && feature.isEnabled(props)
-        ? feature.MeasureLayout
-        : undefined
-}
-
-function getMeasureLayoutComponent(props: MotionProps) {
+function getProjectionFunctionality(props: MotionProps) {
     const { drag, layout } = featureDefinitions
-    return (
-        getMeasureLayoutComponentFromFeature(props, drag) ||
-        getMeasureLayoutComponentFromFeature(props, layout)
-    )
+
+    if (!drag && !layout) return {}
+
+    const combined = { ...drag, ...layout }
+
+    return {
+        MeasureLayout:
+            drag?.isEnabled(props) || layout?.isEnabled(props)
+                ? combined.MeasureLayout
+                : undefined,
+        ProjectionNode: combined.ProjectionNode,
+    }
 }

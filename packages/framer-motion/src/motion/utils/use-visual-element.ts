@@ -13,6 +13,10 @@ import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/d
 import { microtask } from "../../frameloop/microtask"
 import { IProjectionNode } from "../../projection/node/types"
 import { isRefObject } from "../../utils/is-ref-object"
+import {
+    InitialPromotionConfig,
+    SwitchLayoutGroupContext,
+} from "../../context/SwitchLayoutGroupContext"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -48,6 +52,12 @@ export function useVisualElement<Instance, RenderState>(
 
     const visualElement = visualElementRef.current
 
+    /**
+     * Load Motion gesture and animation features. These are rendered as renderless
+     * components so each feature can optionally make use of React lifecycle methods.
+     */
+    const initialLayoutGroupConfig = useContext(SwitchLayoutGroupContext)
+
     if (
         visualElement &&
         !visualElement.projection &&
@@ -57,7 +67,8 @@ export function useVisualElement<Instance, RenderState>(
         createProjectionNode(
             visualElementRef.current!,
             props,
-            ProjectionNodeConstructor
+            ProjectionNodeConstructor,
+            initialLayoutGroupConfig
         )
     }
 
@@ -118,7 +129,8 @@ export function useVisualElement<Instance, RenderState>(
 function createProjectionNode(
     visualElement: VisualElement<any>,
     props: MotionProps,
-    ProjectionNodeConstructor: any
+    ProjectionNodeConstructor: any,
+    initialPromotionConfig?: InitialPromotionConfig
 ) {
     const {
         layoutId,
@@ -151,7 +163,7 @@ function createProjectionNode(
          *
          */
         animationType: typeof layout === "string" ? layout : "both",
-        initialPromotionConfig: initialLayoutGroupConfig,
+        initialPromotionConfig,
         layoutScroll,
         layoutRoot,
     })

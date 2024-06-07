@@ -1,16 +1,13 @@
 import { frame, cancelFrame } from "../frameloop"
-import { invariant, warning } from "../utils/errors"
 import {
     MotionConfigContext,
     ReducedMotionConfig,
 } from "../context/MotionConfigContext"
-import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
-import { FeatureBundle, FeatureDefinitions } from "../motion/features/types"
+import { FeatureDefinitions } from "../motion/features/types"
 import { MotionProps, MotionStyle } from "../motion/types"
 import { createBox } from "../projection/geometry/models"
 import { Box } from "../projection/geometry/types"
 import { IProjectionNode } from "../projection/node/types"
-import { isRefObject } from "../utils/is-ref-object"
 import { initPrefersReducedMotion } from "../utils/reduced-motion"
 import {
     hasReducedMotionListener,
@@ -52,9 +49,6 @@ import { findValueType } from "./dom/value-types/find"
 import { complex } from "../value/types/complex"
 import { getAnimatableNone } from "./dom/value-types/animatable-none"
 
-const featureNames = Object.keys(featureDefinitions)
-const numFeatures = featureNames.length
-
 const propEventHandlers = [
     "AnimationStart",
     "AnimationComplete",
@@ -66,20 +60,6 @@ const propEventHandlers = [
 ] as const
 
 const numVariantProps = variantProps.length
-
-function getClosestProjectingNode(
-    visualElement?: VisualElement<
-        unknown,
-        unknown,
-        { allowProjection?: boolean }
-    >
-): IProjectionNode | undefined {
-    if (!visualElement) return undefined
-
-    return visualElement.options.allowProjection !== false
-        ? visualElement.projection
-        : getClosestProjectingNode(visualElement.parent)
-}
 
 /**
  * A VisualElement is an imperative abstraction around UI elements such as
@@ -527,108 +507,38 @@ export abstract class VisualElement<
         )
     }
 
-    loadFeatures(
-        { children, ...renderedProps }: MotionProps,
-        isStrict: boolean,
-        preloadedFeatures?: FeatureBundle,
-        initialLayoutGroupConfig?: SwitchLayoutGroupContext
-    ) {
-        let ProjectionNodeConstructor: any
-        let MeasureLayout: undefined | React.ComponentType<MotionProps>
-
-        /**
-         * If we're in development mode, check to make sure we're not rendering a motion component
-         * as a child of LazyMotion, as this will break the file-size benefits of using it.
-         */
-        if (
-            process.env.NODE_ENV !== "production" &&
-            preloadedFeatures &&
-            isStrict
-        ) {
-            const strictMessage =
-                "You have rendered a `motion` component within a `LazyMotion` component. This will break tree shaking. Import and render a `m` component instead."
-            renderedProps.ignoreStrict
-                ? warning(false, strictMessage)
-                : invariant(false, strictMessage)
-        }
-
-        for (let i = 0; i < numFeatures; i++) {
-            const name = featureNames[i] as keyof typeof featureDefinitions
-            const {
-                isEnabled,
-                Feature: FeatureConstructor,
-                ProjectionNode,
-                MeasureLayout: MeasureLayoutComponent,
-            } = featureDefinitions[name]!
-
-            if (ProjectionNode) ProjectionNodeConstructor = ProjectionNode
-
-            if (isEnabled(renderedProps)) {
-                if (!this.features[name] && FeatureConstructor) {
-                    this.features[name] = new (FeatureConstructor as any)(this)
-                }
-                if (MeasureLayoutComponent) {
-                    MeasureLayout = MeasureLayoutComponent
-                }
-            }
-        }
-
-        if (
-            (this.type === "html" || this.type === "svg") &&
-            !this.projection &&
-            ProjectionNodeConstructor
-        ) {
-            const {
-                layoutId,
-                layout,
-                drag,
-                dragConstraints,
-                layoutScroll,
-                layoutRoot,
-            } = renderedProps
-
-            this.projection = new ProjectionNodeConstructor(
-                this.latestValues,
-                renderedProps["data-framer-portal-id"]
-                    ? undefined
-                    : getClosestProjectingNode(this.parent)
-            ) as IProjectionNode
-
-            this.projection.setOptions({
-                layoutId,
-                layout,
-                alwaysMeasureLayout:
-                    Boolean(drag) ||
-                    (dragConstraints && isRefObject(dragConstraints)),
-                visualElement: this,
-                scheduleRender: () => this.scheduleRender(),
-                /**
-                 * TODO: Update options in an effect. This could be tricky as it'll be too late
-                 * to update by the time layout animations run.
-                 * We also need to fix this safeToRemove by linking it up to the one returned by usePresence,
-                 * ensuring it gets called if there's no potential layout animations.
-                 *
-                 */
-                animationType: typeof layout === "string" ? layout : "both",
-                initialPromotionConfig: initialLayoutGroupConfig,
-                layoutScroll,
-                layoutRoot,
-            })
-        }
-
-        return MeasureLayout
-    }
-
     updateFeatures() {
-        for (const key in this.features) {
-            const feature = this.features[
-                key as keyof typeof this.features
-            ] as Feature<any>
-            if (feature.isMounted) {
-                feature.update()
-            } else {
-                feature.mount()
-                feature.isMounted = true
+        let key: keyof typeof featureDefinitions = "animation"
+
+        for (key in featureDefinitions) {
+            const featureDefinition = featureDefinitions[key]
+
+            if (!featureDefinition) continue
+
+            const { isEnabled, Feature: FeatureConstructor } = featureDefinition
+
+            /**
+             * If this feature is enabled but not active, make a new instance.
+             */
+            if (
+                !this.features[key] &&
+                FeatureConstructor &&
+                isEnabled(this.props)
+            ) {
+                this.features[key] = new FeatureConstructor(this)
+            }
+
+            /**
+             * If we have a feature, mount or update it.
+             */
+            if (this.features[key]) {
+                const feature = this.features[key]!
+                if (feature.isMounted) {
+                    feature.update()
+                } else {
+                    feature.mount()
+                    feature.isMounted = true
+                }
             }
         }
     }

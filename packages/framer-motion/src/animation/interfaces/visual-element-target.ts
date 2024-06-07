@@ -87,6 +87,8 @@ export function animateTarget(
                     frame
                 )
 
+                console.log({ elapsed })
+
                 if (elapsed !== null) {
                     valueTransition.elapsed = elapsed
                     isHandoff = true

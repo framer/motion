@@ -121,7 +121,7 @@
                 },
                 (animation) => {
                     setTimeout(() => {
-                        ReactDOM.hydrateRoot(
+                        ReactDOMClient.hydrateRoot(
                             root,
                             React.createElement(Component)
                         )

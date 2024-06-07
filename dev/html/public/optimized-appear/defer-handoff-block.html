@@ -23,7 +23,7 @@
 
         <script type="module" src="/src/imports/script-assert.js"></script>
 
-        <script type="module">
+        <script type="module" defer>
             const {
                 motion,
                 animateStyle,
@@ -145,7 +145,7 @@
                 },
                 (animation) => {
                     setTimeout(() => {
-                        ReactDOM.hydrateRoot(root, Component)
+                        ReactDOMClient.hydrateRoot(root, Component)
                     }, (duration * 1000) / 4)
                 }
             )

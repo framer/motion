@@ -86,7 +86,7 @@
             // Emulate server rendering of element
             root.innerHTML = ReactDOMServer.renderToString(Component)
 
-            ReactDOM.hydrateRoot(root, Component)
+            ReactDOMClient.hydrateRoot(root, Component)
         </script>
     </body>
 </html>
