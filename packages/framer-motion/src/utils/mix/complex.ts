@@ -12,14 +12,11 @@ import {
 } from "../../value/types/complex"
 import { isCSSVariableToken } from "../../render/dom/utils/is-css-variable"
 import { invisibleValues, mixVisibility } from "./visibility"
+import { mixImmediate } from "./immediate"
 
 type MixableArray = Array<number | RGBA | HSLA | string>
 type MixableObject = {
     [key: string]: string | number | RGBA | HSLA
-}
-
-function mixImmediate<T>(a: T, b: T) {
-    return (p: number) => (p > 0 ? b : a)
 }
 
 function mixNumber(a: number, b: number) {

@@ -115,6 +115,7 @@ export interface IProjectionNode<I = unknown> {
     setAnimationOrigin(delta: Delta): void
     startAnimation(transition: Transition): void
     finishAnimation(): void
+    hasCheckedOptimisedAppear: boolean
 
     // Shared element
     isLead(): boolean

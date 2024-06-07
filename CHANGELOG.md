@@ -4,6 +4,30 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.2.10] 2024-05-31
+
+### Fixed
+
+-   Changing invalid number interpolation from error to warning and immediate mix.
+
+## [11.2.9] 2024-05-29
+
+### Fixed
+
+-   Fixing animation of CSS variables when leading space is present.
+
+## [11.2.8] 2024-05-29
+
+### Fixed
+
+-   Ensuring instant animations return animation controls.
+
+## [11.2.7] 2024-05-29
+
+### Fixed
+
+-   Only allow layout animations to cancel optimised appear animations when on the same node or an ancestor.
+
 ## [11.2.6] 2024-05-22
 
 ### Fixed

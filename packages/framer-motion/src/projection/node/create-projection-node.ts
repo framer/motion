@@ -58,6 +58,7 @@ import { noop } from "../../utils/noop"
 import { time } from "../../frameloop/sync-time"
 import { microtask } from "../../frameloop/microtask"
 import { VisualElement } from "../../render/VisualElement"
+import { getOptimisedAppearId } from "../../animation/optimized-appear/get-appear-id"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -97,6 +98,26 @@ function resetDistortingTransform(
         if (sharedAnimationValues) {
             sharedAnimationValues[key] = 0
         }
+    }
+}
+
+function isOptimisedAppearTree(projectionNode: IProjectionNode) {
+    projectionNode.hasCheckedOptimisedAppear = true
+    if (projectionNode.root === projectionNode) return false
+
+    const { visualElement } = projectionNode.options
+
+    if (!visualElement) {
+        return false
+    } else if (getOptimisedAppearId(visualElement)) {
+        return true
+    } else if (
+        projectionNode.parent &&
+        !projectionNode.parent.hasCheckedOptimisedAppear
+    ) {
+        return isOptimisedAppearTree(projectionNode.parent)
+    } else {
+        return false
     }
 }
 
@@ -303,6 +324,14 @@ export function createProjectionNode<I>({
          * Flags whether this node should have its transform reset prior to measuring.
          */
         shouldResetTransform = false
+
+        /**
+         * Store whether this node has been checked for optimised appear animations. As
+         * effects fire bottom-up, and we want to look up the tree for appear animations,
+         * this makes sure we only check each path once, stopping at nodes that
+         * have already been checked.
+         */
+        hasCheckedOptimisedAppear = false
 
         /**
          * An object representing the calculated contextual/accumulated/tree scale.
@@ -578,16 +607,6 @@ export function createProjectionNode<I>({
 
             this.isUpdating = true
 
-            /**
-             * If we're running optimised appear animations then these must be
-             * cancelled before measuring the DOM. This is so we can measure
-             * the true layout of the element rather than the WAAPI animation
-             * which will be unaffected by the resetSkewAndRotate step.
-             */
-            if (window.HandoffCancelAllAnimations) {
-                window.HandoffCancelAllAnimations()
-            }
-
             this.nodes && this.nodes.forEach(resetSkewAndRotation)
             this.animationId++
         }
@@ -602,6 +621,25 @@ export function createProjectionNode<I>({
             if (this.root.isUpdateBlocked()) {
                 this.options.onExitComplete && this.options.onExitComplete()
                 return
+            }
+
+            /**
+             * If we're running optimised appear animations then these must be
+             * cancelled before measuring the DOM. This is so we can measure
+             * the true layout of the element rather than the WAAPI animation
+             * which will be unaffected by the resetSkewAndRotate step.
+             *
+             * Note: This is a DOM write. Worst case scenario is this is sandwiched
+             * between other snapshot reads which will cause unnecessary style recalculations.
+             * This has to happen here though, as we don't yet know which nodes will need
+             * snapshots in startUpdate(), but we only want to cancel optimised animations
+             * if a layout animation measurement is actually going to be affected by them.
+             */
+            if (
+                window.HandoffCancelAllAnimations &&
+                isOptimisedAppearTree(this)
+            ) {
+                window.HandoffCancelAllAnimations()
             }
 
             !this.root.isUpdating && this.root.startUpdate()
