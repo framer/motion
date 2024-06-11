@@ -62,6 +62,7 @@ export function startOptimizedAppearAnimation(
 
         if (!window.HandoffCancelAllAnimations) {
             window.HandoffCancelAllAnimations = () => {
+                console.log("cancel all")
                 appearAnimationStore.forEach(({ animation }) => {
                     animation.cancel()
                 })

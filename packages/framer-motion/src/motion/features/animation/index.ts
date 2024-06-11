@@ -35,6 +35,7 @@ export class AnimationFeature extends Feature<unknown> {
         if (animate !== prevAnimate) {
             this.updateAnimationControlsSubscription()
         }
+
         this.node.animationState!.reset()
     }
 

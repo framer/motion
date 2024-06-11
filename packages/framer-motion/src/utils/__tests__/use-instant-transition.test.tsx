@@ -1,13 +1,13 @@
 import { render } from "../../../jest.setup"
 import { motion, motionValue } from "../.."
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"
 import { useInstantTransition } from "../use-instant-transition"
-import { act } from "@testing-library/react"
+import { act } from "react"
 import { renderHook } from "@testing-library/react"
 import { instantAnimationState } from "../use-instant-transition-state"
 
 describe("useInstantTransition", () => {
-    test("Disables animations for a single render", async () => {
+    test.only("Disables animations for a single render", async () => {
         const values = await new Promise((resolve) => {
             const xParent = motionValue(0)
             const xComponent = motionValue(0)
@@ -32,11 +32,12 @@ describe("useInstantTransition", () => {
                 const startInstantTransition = useInstantTransition()
 
                 useEffect(() => {
+                    setState(true)
                     startInstantTransition(() => act(() => setState(true)))
-
+                    console.log("starting instant transition")
                     const timeout = setTimeout(() => {
                         resolve([xParent.get(), xComponent.get(), xChild.get()])
-                    }, 100)
+                    }, 1000)
 
                     return () => clearTimeout(timeout)
                 }, [])

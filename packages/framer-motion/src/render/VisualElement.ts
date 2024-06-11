@@ -443,7 +443,7 @@ export abstract class VisualElement<
         this.update(this.props, this.presenceContext)
     }
 
-    unmount() {
+    unmount = () => {
         visualElementStore.delete(this.current)
         this.projection && this.projection.unmount()
         cancelFrame(this.notifyUpdate)

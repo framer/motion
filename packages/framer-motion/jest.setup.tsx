@@ -2,8 +2,8 @@ import "@testing-library/jest-dom"
 // Get fireEvent from the native testing library
 // because @testing-library/react one switches out pointerEnter and pointerLeave
 import { fireEvent, getByTestId } from "@testing-library/dom"
-import { render as testRender, act } from "@testing-library/react"
-import { StrictMode, Fragment } from "react";
+import { render as testRender } from "@testing-library/react"
+import { StrictMode, Fragment, act } from "react"
 
 /**
  * Stub PointerEvent - this is so we can pass through PointerEvent.isPrimary

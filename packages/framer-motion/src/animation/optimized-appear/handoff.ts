@@ -24,7 +24,7 @@ export function handoffOptimizedAppearAnimation(
         : valueName
     const storeId = appearStoreId(elementId, optimisedValueName)
     const optimisedAnimation = appearAnimationStore.get(storeId)
-
+    console.log({ optimisedAnimation }, elementId, optimisedValueName)
     if (!optimisedAnimation) {
         return null
     }
@@ -32,6 +32,7 @@ export function handoffOptimizedAppearAnimation(
     const { animation, startTime } = optimisedAnimation
 
     const cancelAnimation = () => {
+        console.log("de;ete that shiz")
         appearAnimationStore.delete(storeId)
 
         if (frame) {

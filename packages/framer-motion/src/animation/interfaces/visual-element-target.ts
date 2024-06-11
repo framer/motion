@@ -50,6 +50,8 @@ export function animateTarget(
         visualElement.animationState &&
         visualElement.animationState.getState()[type]
 
+    console.log("animating to", target)
+
     for (const key in target) {
         const value = visualElement.getValue(
             key,
@@ -87,7 +89,7 @@ export function animateTarget(
                     frame
                 )
 
-                console.log({ elapsed })
+                console.log({ elapsed, isAnimating: value.isAnimating() })
 
                 if (elapsed !== null) {
                     valueTransition.elapsed = elapsed

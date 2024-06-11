@@ -18,6 +18,8 @@ import {
     SwitchLayoutGroupContext,
 } from "../../context/SwitchLayoutGroupContext"
 
+let scheduleHandoffComplete = false
+
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
     visualState: VisualState<Instance, RenderState>,
@@ -112,6 +114,7 @@ export function useVisualElement<Instance, RenderState>(
     useEffect(() => {
         if (!visualElement) return
 
+        console.log("animate changes", Boolean(visualElement.animationState))
         if (!wantsHandoff.current && visualElement.animationState) {
             visualElement.animationState.animateChanges()
         }
@@ -119,11 +122,18 @@ export function useVisualElement<Instance, RenderState>(
         if (wantsHandoff.current) {
             wantsHandoff.current = false
             // This ensures all future calls to animateChanges() will run in useEffect
-            window.HandoffComplete = true
+            if (!scheduleHandoffComplete) {
+                scheduleHandoffComplete = true
+                queueMicrotask(completeHandoff)
+            }
         }
     })
 
     return visualElement
+}
+
+function completeHandoff() {
+    window.HandoffComplete = true
 }
 
 function createProjectionNode(
