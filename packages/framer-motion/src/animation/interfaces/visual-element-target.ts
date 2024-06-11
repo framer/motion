@@ -50,8 +50,6 @@ export function animateTarget(
         visualElement.animationState &&
         visualElement.animationState.getState()[type]
 
-    console.log("animating to", target)
-
     for (const key in target) {
         const value = visualElement.getValue(
             key,

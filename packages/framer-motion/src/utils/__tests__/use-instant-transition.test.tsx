@@ -7,7 +7,7 @@ import { renderHook } from "@testing-library/react"
 import { instantAnimationState } from "../use-instant-transition-state"
 
 describe("useInstantTransition", () => {
-    test.only("Disables animations for a single render", async () => {
+    test("Disables animations for a single render", async () => {
         const values = await new Promise((resolve) => {
             const xParent = motionValue(0)
             const xComponent = motionValue(0)

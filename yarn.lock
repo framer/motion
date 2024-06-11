@@ -2739,7 +2739,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^16":
+"@testing-library/react@npm:^16.0.0":
   version: 16.0.0
   resolution: "@testing-library/react@npm:16.0.0"
   dependencies:
@@ -7055,7 +7055,7 @@ __metadata:
     "@rollup/plugin-replace": ^5.0.5
     "@testing-library/dom": ^8.16.0
     "@testing-library/jest-dom": ^6.4.2
-    "@testing-library/react": ^16
+    "@testing-library/react": ^16.0.0
     "@testing-library/react-hooks": ^8.0.1
     "@types/jest": ^29.5.12
     "@types/node": ^18.6.3

@@ -123,7 +123,7 @@ export function createAnimationState(
          * variant animations, we want to ensure lower-priority variants are forced to animate.
          */
         let removedVariantIndex = Infinity
-        console.log({ isInitialRender })
+
         /**
          * Iterate through all animation types in reverse priority order. For each, we want to
          * detect which values it's handling and whether or not they've changed (and therefore
@@ -345,7 +345,7 @@ export function createAnimationState(
 
             animations.push({ animation: fallbackAnimation })
         }
-        console.log(animations)
+
         let shouldAnimate = Boolean(animations.length)
 
         if (
@@ -353,11 +353,6 @@ export function createAnimationState(
             (props.initial === false || props.initial === props.animate) &&
             !visualElement.manuallyAnimateOnMount
         ) {
-            console.log(
-                "setting should animate to false",
-                props.initial === false || props.initial === props.animate,
-                visualElement.manuallyAnimateOnMount
-            )
             shouldAnimate = false
         }
 
