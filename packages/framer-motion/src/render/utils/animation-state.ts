@@ -353,6 +353,11 @@ export function createAnimationState(
             (props.initial === false || props.initial === props.animate) &&
             !visualElement.manuallyAnimateOnMount
         ) {
+            console.log(
+                "setting should animate to false",
+                props.initial === false || props.initial === props.animate,
+                visualElement.manuallyAnimateOnMount
+            )
             shouldAnimate = false
         }
 
