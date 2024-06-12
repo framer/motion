@@ -571,6 +571,7 @@ export class VisualElementDragControls {
     }
 
     addListeners() {
+        console.log("add listeners", this.visualElement.current)
         if (!this.visualElement.current) return
         elementDragControls.set(this.visualElement, this)
         const element = this.visualElement.current
@@ -584,6 +585,8 @@ export class VisualElementDragControls {
             (event) => {
                 const { drag, dragListener = true } = this.getProps()
                 drag && dragListener && this.start(event)
+
+                console.log("pointer start")
             }
         )
 

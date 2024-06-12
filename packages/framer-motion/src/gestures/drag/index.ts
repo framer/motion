@@ -15,6 +15,7 @@ export class DragGesture extends Feature<HTMLElement> {
     }
 
     mount() {
+        console.log("mounting drag gesture", this.isMounted)
         // If we've been provided a DragControls for manual control over the drag gesture,
         // subscribe this component to it on mount.
         const { dragControls } = this.node.getProps()
@@ -27,6 +28,8 @@ export class DragGesture extends Feature<HTMLElement> {
     }
 
     unmount() {
+        console.log("unmounting drag gesture")
+
         this.removeGroupControls()
         this.removeListeners()
     }

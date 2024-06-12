@@ -456,7 +456,11 @@ export abstract class VisualElement<
             this.events[key].clear()
         }
         for (const key in this.features) {
-            this.features[key as keyof typeof this.features]?.unmount()
+            const feature = this.features[key as keyof typeof this.features]
+            if (feature) {
+                feature.unmount()
+                feature.isMounted = false
+            }
         }
         this.current = null
     }
