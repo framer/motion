@@ -6,7 +6,7 @@
     "license": "MIT",
     "workspaces": [
         "packages/*",
-        "dev"
+        "dev/*"
     ],
     "resolutions": {
         "webpack": "^5.27.2"
@@ -14,15 +14,12 @@
     "scripts": {
         "build": "turbo run build",
         "watch": "turbo run watch",
-        "dev-projection": "python -m SimpleHTTPServer",
         "dev": "turbo run dev",
+        "dev-server": "turbo run dev-server",
         "lint": "turbo run lint",
         "test": "turbo run test",
         "test-e2e": "turbo run test-e2e",
         "test-ci": "turbo run test-ci --no-cache",
-        "collect-appear-tests": "node ./dev/optimized-appear/collect-appear-tests.js",
-        "collect-projection-tests": "node ./dev/projection/collect-projection-tests.js",
-        "start-dev-server": "webpack serve --config dev/webpack/config.js --hot",
         "measure": "turbo run measure",
         "prepare": "turbo run build measure test test-e2e",
         "new": "lerna publish from-package",
@@ -75,6 +72,7 @@
         "rollup-plugin-terser": "^5.3.0",
         "rollup-plugin-visualizer": "^5.7.1",
         "start-server-and-test": "^1.14.0",
+        "styled-components": "^4.1.1",
         "ts-jest": "^29.1.2",
         "ts-loader": "^9.5.1",
         "turbo": "latest",

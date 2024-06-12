@@ -17,6 +17,10 @@
             "import": "./dist/es/dom-entry.mjs",
             "default": "./dist/cjs/dom-entry.js"
         },
+        "./projection": {
+            "import": "./dist/es/projection-entry.mjs",
+            "default": "./dist/es/projection-entry.mjs"
+        },
         "./package.json": "./package.json"
     },
     "types": "dist/index.d.ts",
@@ -50,20 +54,14 @@
         "test-client": "jest --config jest.config.json --max-workers=2",
         "test-server": "jest --config jest.config.ssr.json",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov --config jest.config.json",
-        "test-appear": "yarn run collect-appear-tests && start-server-and-test 'pushd ../../; python -m SimpleHTTPServer; popd' http://0.0.0.0:8000 'cypress run -s cypress/integration/appear.chrome.ts --config baseUrl=http://localhost:8000/'",
-        "test-projection": "yarn run collect-projection-tests && start-server-and-test 'pushd ../../; python -m SimpleHTTPServer; popd' http://0.0.0.0:8000 'cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
-        "test-e2e-chrome": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --browser chrome  --spec \"cypress/integration/layout-relative.chrome.ts\"'",
-        "test-e2e-electron": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
-        "test-e2e": "yarn test-appear && yarn test-projection && yarn test-e2e-electron",
-        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/while-in-view.ts\"'",
-        "collect-appear-tests": "node ../../dev/optimized-appear/collect-appear-tests.js",
-        "collect-projection-tests": "node ../../dev/projection/collect-projection-tests.js",
+        "test-e2e": "yarn test-e2e-html && yarn test-e2e-react",
+        "test-e2e-html": "node ../../dev/inc/collect-html-tests.js && start-server-and-test 'pushd ../../; yarn dev-server; popd' http://localhost:8000 'cypress run -s cypress/integration/appear.chrome.ts --config baseUrl=http://localhost:8000/ && cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
+        "test-e2e-react": "start-server-and-test 'pushd ../../; yarn dev-server; popd' http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
         "prettier": "prettier ./src/* --write",
         "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
         "prepack": "yarn build",
         "postpublish": "git push --tags",
-        "measure": "rollup -c ./rollup.size.config.mjs && webpack --config webpack.size.config.js && bundlesize",
-        "start-dev-server": "webpack serve --config ../../dev/webpack/config.js --hot"
+        "measure": "rollup -c ./rollup.size.config.mjs && webpack --config webpack.size.config.js && bundlesize"
     },
     "dependencies": {
         "tslib": "^2.4.0"

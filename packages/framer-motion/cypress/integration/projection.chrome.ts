@@ -1,5 +1,5 @@
 Cypress.config({
-    baseUrl: "http://localhost:8000/dev/projection/",
+    baseUrl: "http://localhost:8000/projection/",
 })
 
 describe("Project the element to its original box", () => {

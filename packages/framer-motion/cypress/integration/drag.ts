@@ -51,7 +51,7 @@ describe("Drag", () => {
     })
 
     it("Drags the element by the defined distance with percentage initial offset", () => {
-        cy.visit("?test=drag&x=200%&y=200%")
+        cy.visit("?test=drag&x=200&y=200&percentage=true")
             .get("[data-testid='draggable']")
             .wait(200)
             .trigger("pointerdown", 5, 5)
