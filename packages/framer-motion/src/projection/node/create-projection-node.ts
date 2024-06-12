@@ -747,12 +747,14 @@ export function createProjectionNode<I>({
         }
 
         scheduleCheckAfterUnmount() {
+            console.log("scheduleCheckAfterUnmount")
             /**
              * If the unmounting node is in a layoutGroup and did trigger a willUpdate,
              * we manually call didUpdate to give a chance to the siblings to animate.
              * Otherwise, cleanup all snapshots to prevents future nodes from reusing them.
              */
             frame.postRender(() => {
+                console.log(this.isLayoutDirty)
                 if (this.isLayoutDirty) {
                     this.root.didUpdate()
                 } else {

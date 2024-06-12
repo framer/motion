@@ -114,7 +114,6 @@ export function useVisualElement<Instance, RenderState>(
     useEffect(() => {
         if (!visualElement) return
 
-        console.log("animate changes", Boolean(visualElement.animationState))
         if (!wantsHandoff.current && visualElement.animationState) {
             visualElement.animationState.animateChanges()
         }
