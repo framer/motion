@@ -72,6 +72,11 @@ export class NodeStack {
                 node.snapshot.latestValues =
                     prevLead.animationValues || prevLead.latestValues
             }
+            console.log(
+                "adding new element",
+                node.root && node.root.isUpdating,
+                prevLead.snapshot
+            )
 
             if (node.root && node.root.isUpdating) {
                 node.isLayoutDirty = true

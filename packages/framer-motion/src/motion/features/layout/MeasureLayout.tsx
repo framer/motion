@@ -1,5 +1,5 @@
 import { frame } from "../../../frameloop"
-import { Component, useContext } from "react";
+import { Component, useContext } from "react"
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import {
     LayoutGroupContext,
@@ -123,7 +123,7 @@ class MeasureLayoutWithContext extends Component<MeasureProps> {
             switchLayoutGroup: promoteContext,
         } = this.props
         const { projection } = visualElement
-
+        console.log("has projection", Boolean(projection))
         if (projection) {
             projection.scheduleCheckAfterUnmount()
             if (layoutGroup && layoutGroup.group)

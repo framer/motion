@@ -603,6 +603,7 @@ export function createProjectionNode<I>({
 
         // Note: currently only running on root node
         startUpdate() {
+            console.log("startUpdate")
             if (this.isUpdateBlocked()) return
 
             this.isUpdating = true
@@ -622,6 +623,8 @@ export function createProjectionNode<I>({
                 this.options.onExitComplete && this.options.onExitComplete()
                 return
             }
+
+            console.log("willUpdate", this.root.isUpdating)
 
             /**
              * If we're running optimised appear animations then these must be
@@ -687,6 +690,8 @@ export function createProjectionNode<I>({
                 return
             }
 
+            console.log("update", this.isUpdating)
+
             if (!this.isUpdating) {
                 this.nodes!.forEach(clearIsLayoutDirty)
             }
@@ -726,10 +731,12 @@ export function createProjectionNode<I>({
             frameData.isProcessing = false
         }
 
+        scheduleUpdate = () => this.update()
+
         didUpdate() {
             if (!this.updateScheduled) {
                 this.updateScheduled = true
-                microtask.read(() => this.update())
+                microtask.read(this.scheduleUpdate)
             }
         }
 
@@ -758,7 +765,7 @@ export function createProjectionNode<I>({
                 if (this.isLayoutDirty) {
                     this.root.didUpdate()
                 } else {
-                    this.root.checkUpdateFailed()
+                    // microtask.update(this.root.checkUpdateFailed)
                 }
             })
         }
@@ -799,13 +806,19 @@ export function createProjectionNode<I>({
          * Update measurements
          */
         updateSnapshot() {
+            console.log("updating snapshto")
+            console.trace()
             if (this.snapshot || !this.instance) return
 
             this.snapshot = this.measure()
+
+            console.log(this.snapshot.layoutBox.x.min)
         }
 
         updateLayout() {
             if (!this.instance) return
+
+            console.log("updating layout", this.isLayoutDirty)
 
             // TODO: Incorporate into a forwarded scroll offset
             this.updateScroll()
