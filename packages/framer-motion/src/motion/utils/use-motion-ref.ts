@@ -3,7 +3,6 @@ import { useCallback } from "react"
 import type { VisualElement } from "../../render/VisualElement"
 import { isRefObject } from "../../utils/is-ref-object"
 import { VisualState } from "./use-visual-state"
-import { cancelMicrotask, microtask } from "../../frameloop/microtask"
 
 /**
  * Creates a ref function that, when called, hydrates the provided
@@ -21,14 +20,8 @@ export function useMotionRef<Instance, RenderState>(
             if (visualElement) {
                 if (instance) {
                     visualElement.mount(instance)
-                    cancelMicrotask(visualElement.unmount)
                 } else {
-                    /**
-                     * Unmount via a microtask. This ensures we can cancel
-                     * the unmount if the component remounts within the same
-                     * event loop.
-                     */
-                    microtask.postRender(visualElement.unmount)
+                    visualElement.unmount()
                 }
             }
 
