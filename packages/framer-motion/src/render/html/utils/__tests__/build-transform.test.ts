@@ -18,49 +18,9 @@ describe("buildTransform", () => {
         expect(
             buildTransform(
                 { transform: { x: 0 }, transformKeys: ["x"] } as any,
-                {},
                 true
             )
         ).toBe("none")
-    })
-
-    it("Outputs the provided transform when transformIsDefault is false", () => {
-        expect(
-            buildTransform(
-                { transform: { x: 0 }, transformKeys: ["x"] } as any,
-                { enableHardwareAcceleration: true, allowTransformNone: false },
-                true
-            )
-        ).toBe("translateX(0) translateZ(0)")
-    })
-
-    it("Only outputs translateZ(0) if enableHardwareAcceleration is enabled", () => {
-        expect(
-            buildTransform(
-                { transform: { x: 0 }, transformKeys: ["x"] } as any,
-                {
-                    enableHardwareAcceleration: false,
-                    allowTransformNone: false,
-                },
-                false
-            )
-        ).toBe("translateX(0)")
-    })
-
-    it("Still outputs translateZ if z is explicitly assigned", () => {
-        expect(
-            buildTransform(
-                {
-                    transform: { x: 0, z: "5px" },
-                    transformKeys: ["x", "z"],
-                } as any,
-                {
-                    enableHardwareAcceleration: false,
-                    allowTransformNone: false,
-                },
-                false
-            )
-        ).toBe("translateX(0) translateZ(5px)")
     })
 
     it("Correctly handles transformPerspective", () => {
@@ -70,7 +30,6 @@ describe("buildTransform", () => {
                     transform: { x: "100px", transformPerspective: "200px" },
                     transformKeys: ["x", "transformPerspective"],
                 } as any,
-                {},
                 false
             )
         ).toBe("perspective(200px) translateX(100px) translateZ(0)")
@@ -80,7 +39,6 @@ describe("buildTransform", () => {
         expect(
             buildTransform(
                 { transform: { x: "5px" }, transformKeys: ["x"] } as any,
-                { enableHardwareAcceleration: true, allowTransformNone: false },
                 true,
                 ({ x }: { x: string }) => `translateX(${parseFloat(x) * 2}px)`
             )
@@ -100,8 +58,6 @@ describe("buildTransform", () => {
                     },
                     transformKeys: ["rotateZ", "scale", "rotate", "y", "x"],
                 } as any,
-
-                { enableHardwareAcceleration: true, allowTransformNone: false },
                 true
             )
         ).toBe(

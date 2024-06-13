@@ -9,7 +9,6 @@ import { isSVGTag } from "./utils/is-svg-tag"
 export function useSVGProps(
     props: MotionProps,
     visualState: ResolvedValues,
-    _isStatic: boolean,
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>
 ) {
     const visualProps = useMemo(() => {
@@ -18,7 +17,6 @@ export function useSVGProps(
         buildSVGAttrs(
             state,
             visualState,
-            { enableHardwareAcceleration: false },
             isSVGTag(Component),
             props.transformTemplate
         )

@@ -1,5 +1,4 @@
 import { transformPropOrder } from "./transform"
-import { DOMVisualElementOptions } from "../../dom/types"
 import { MotionProps } from "../../../motion/types"
 import { HTMLRenderState } from "../types"
 
@@ -27,10 +26,6 @@ export function buildTransform(
         transform,
         transformKeys,
     }: Pick<HTMLRenderState, "transform" | "transformKeys">,
-    {
-        enableHardwareAcceleration = true,
-        allowTransformNone = true,
-    }: DOMVisualElementOptions,
     transformIsDefault: boolean,
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
@@ -45,10 +40,6 @@ export function buildTransform(
         transformString += `${translateAlias[key] || key}(${transform[key]}) `
     }
 
-    if (enableHardwareAcceleration && !transform.z) {
-        transformString += "translateZ(0)"
-    }
-
     transformString = transformString.trim()
 
     // If we have a custom `transform` template, pass our transform values and
@@ -58,7 +49,7 @@ export function buildTransform(
             transform,
             transformIsDefault ? "" : transformString
         )
-    } else if (allowTransformNone && transformIsDefault) {
+    } else if (transformIsDefault) {
         transformString = "none"
     }
 

@@ -1,5 +1,4 @@
 import { checkTargetForNewValues, getOrigin } from "../utils/setters"
-import { DOMVisualElementOptions } from "../dom/types"
 import { parseDomVariant } from "../dom/utils/parse-dom-variant"
 import { VisualElement } from "../VisualElement"
 import { MotionProps } from "../../motion/types"
@@ -9,9 +8,8 @@ import { HTMLRenderState } from "../html/types"
 
 export abstract class DOMVisualElement<
     Instance extends HTMLElement | SVGElement = HTMLElement,
-    State extends HTMLRenderState = HTMLRenderState,
-    Options extends DOMVisualElementOptions = DOMVisualElementOptions
-> extends VisualElement<Instance, State, Options> {
+    State extends HTMLRenderState = HTMLRenderState
+> extends VisualElement<Instance, State> {
     sortInstanceNodePosition(a: Instance, b: Instance): number {
         /**
          * compareDocumentPosition returns a bitmask, by using the bitwise &

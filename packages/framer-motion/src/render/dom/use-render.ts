@@ -12,17 +12,12 @@ export function createUseRender(forwardMotionProps = false) {
     const useRender: RenderComponent<
         HTMLElement | SVGElement,
         HTMLRenderState | SVGRenderState
-    > = (Component, props, projectionId, ref, { latestValues }, isStatic) => {
+    > = (Component, props, projectionId, ref, { latestValues }) => {
         const useVisualProps = isSVGComponent(Component)
             ? useSVGProps
             : useHTMLProps
 
-        const visualProps = useVisualProps(
-            props,
-            latestValues,
-            isStatic,
-            Component
-        )
+        const visualProps = useVisualProps(props, latestValues, Component)
         const filteredProps = filterProps(
             props,
             typeof Component === "string",

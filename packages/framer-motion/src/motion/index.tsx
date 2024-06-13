@@ -137,7 +137,6 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                             externalRef
                         ),
                         visualState,
-                        isStatic,
                         context.visualElement
                     )}
                 </MotionContext.Provider>

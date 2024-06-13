@@ -21,18 +21,12 @@ export function copyRawValuesOnly(
 
 function useInitialMotionValues(
     { transformTemplate }: MotionProps,
-    visualState: ResolvedValues,
-    isStatic: boolean
+    visualState: ResolvedValues
 ) {
     return useMemo(() => {
         const state = createHtmlRenderState()
 
-        buildHTMLStyles(
-            state,
-            visualState,
-            { enableHardwareAcceleration: !isStatic },
-            transformTemplate
-        )
+        buildHTMLStyles(state, visualState, transformTemplate)
 
         return Object.assign({}, state.vars, state.style)
     }, [visualState])
@@ -40,8 +34,7 @@ function useInitialMotionValues(
 
 function useStyle(
     props: MotionProps,
-    visualState: ResolvedValues,
-    isStatic: boolean
+    visualState: ResolvedValues
 ): ResolvedValues {
     const styleProp = props.style || {}
     const style = {}
@@ -51,19 +44,15 @@ function useStyle(
      */
     copyRawValuesOnly(style, styleProp as any, props)
 
-    Object.assign(style, useInitialMotionValues(props, visualState, isStatic))
+    Object.assign(style, useInitialMotionValues(props, visualState))
 
     return props.transformValues ? props.transformValues(style) : style
 }
 
-export function useHTMLProps(
-    props: MotionProps,
-    visualState: ResolvedValues,
-    isStatic: boolean
-) {
+export function useHTMLProps(props: MotionProps, visualState: ResolvedValues) {
     // The `any` isn't ideal but it is the type of createElement props argument
     const htmlProps: any = {}
-    const style = useStyle(props, visualState, isStatic)
+    const style = useStyle(props, visualState)
 
     if (props.drag && props.dragListener !== false) {
         // Disable the ghost element when a user drags

@@ -1,5 +1,4 @@
 import { HTMLRenderState } from "./types"
-import { DOMVisualElementOptions } from "../dom/types"
 import { buildHTMLStyles } from "./utils/build-styles"
 import { isCSSVariable } from "../dom/utils/is-css-variable"
 import { transformProps } from "./utils/transform"
@@ -21,8 +20,7 @@ export function getComputedStyle(element: HTMLElement) {
 
 export class HTMLVisualElement extends DOMVisualElement<
     HTMLElement,
-    HTMLRenderState,
-    DOMVisualElementOptions
+    HTMLRenderState
 > {
     type: "html"
 
@@ -54,15 +52,9 @@ export class HTMLVisualElement extends DOMVisualElement<
     build(
         renderState: HTMLRenderState,
         latestValues: ResolvedValues,
-        options: DOMVisualElementOptions,
         props: MotionProps
     ) {
-        buildHTMLStyles(
-            renderState,
-            latestValues,
-            options,
-            props.transformTemplate
-        )
+        buildHTMLStyles(renderState, latestValues, props.transformTemplate)
     }
 
     scrapeMotionValuesFromProps(props: MotionProps, prevProps: MotionProps) {

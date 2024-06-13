@@ -1,7 +1,6 @@
 import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-values"
 import { SVGRenderState } from "./types"
 import { DOMVisualElement } from "../dom/DOMVisualElement"
-import { DOMVisualElementOptions } from "../dom/types"
 import { buildSVGAttrs } from "./utils/build-attrs"
 import { camelToDash } from "../dom/utils/camel-to-dash"
 import { camelCaseAttributes } from "./utils/camel-case-attrs"
@@ -18,8 +17,7 @@ import { isSVGTag } from "./utils/is-svg-tag"
 
 export class SVGVisualElement extends DOMVisualElement<
     SVGElement,
-    SVGRenderState,
-    DOMVisualElementOptions
+    SVGRenderState
 > {
     type: "svg"
 
@@ -51,13 +49,11 @@ export class SVGVisualElement extends DOMVisualElement<
     build(
         renderState: SVGRenderState,
         latestValues: ResolvedValues,
-        options: DOMVisualElementOptions,
         props: MotionProps
     ) {
         buildSVGAttrs(
             renderState,
             latestValues,
-            options,
             this.isSVGTag,
             props.transformTemplate
         )
