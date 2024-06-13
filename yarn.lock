@@ -6521,7 +6521,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion@^11.3.0-alpha.0, framer-motion@workspace:packages/framer-motion":
+"framer-motion@^12.0.0-alpha.0, framer-motion@workspace:packages/framer-motion":
   version: 0.0.0-use.local
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
@@ -11118,7 +11118,7 @@ __metadata:
     "@typescript-eslint/parser": ^7.2.0
     "@vitejs/plugin-react-swc": ^3.5.0
     eslint-plugin-react-refresh: ^0.4.6
-    framer-motion: ^11.3.0-alpha.0
+    framer-motion: ^12.0.0-alpha.0
     react: rc
     react-dom: rc
     styled-components: ^6.1.11
