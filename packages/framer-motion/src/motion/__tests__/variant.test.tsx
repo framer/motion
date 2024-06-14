@@ -829,7 +829,11 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        return expect(promise).resolves.toEqual({ x: 100, y: 100 })
+        return expect(promise).resolves.toEqual({
+            willChange: "auto",
+            x: 100,
+            y: 100,
+        })
     })
 
     test("onUpdate doesnt fire if no values have changed", async () => {
