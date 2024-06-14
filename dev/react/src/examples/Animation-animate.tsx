@@ -60,7 +60,5 @@ const Child = ({ setState }: any) => {
 }
 
 export const App = () => {
-    const [state, setState] = useState(true)
-
-    return state && <Child setState={setState} />
+    return <motion.div animate={{ x: 100 }}>{/* <Child /> */}</motion.div>
 }
