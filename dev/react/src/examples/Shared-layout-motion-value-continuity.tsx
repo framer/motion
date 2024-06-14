@@ -94,7 +94,7 @@ const Container = styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
-        transform: translateZ(0);
+        transform: ;
     }
 
     .title {

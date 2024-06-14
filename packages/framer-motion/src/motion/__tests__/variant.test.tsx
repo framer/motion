@@ -5,7 +5,7 @@ import {
     render,
 } from "../../../jest.setup"
 import { motion, MotionConfig, useMotionValue } from "../../"
-import { Fragment, useEffect, memo, useState } from "react";
+import { Fragment, useEffect, memo, useState } from "react"
 import { Variants } from "../../types"
 import { motionValue } from "../../value"
 import { nextFrame } from "../../gestures/__tests__/utils"
@@ -984,7 +984,7 @@ describe("animate prop as variant", () => {
 
         await nextFrame()
         expect(element).toHaveStyle("opacity: 1")
-        expect(element).toHaveStyle("transform: rotate(1deg) translateZ(0)")
+        expect(element).toHaveStyle("transform: rotate(1deg)")
 
         rerender(<Component />)
         rerender(<Component />)
@@ -998,7 +998,7 @@ describe("animate prop as variant", () => {
 
         await nextFrame()
         expect(element).toHaveStyle("opacity: 0.5")
-        expect(element).toHaveStyle("transform: rotate(0.5deg) translateZ(0)")
+        expect(element).toHaveStyle("transform: rotate(0.5deg)")
 
         // Re-adding value to animated stack will animate value correctly
         rerender(<Component animate="a" opacity={0.5} />)
@@ -1006,7 +1006,7 @@ describe("animate prop as variant", () => {
 
         await nextFrame()
         expect(element).toHaveStyle("opacity: 1")
-        expect(element).toHaveStyle("transform: rotate(1deg) translateZ(0)")
+        expect(element).toHaveStyle("transform: rotate(1deg)")
 
         // While animate is active, changing style doesn't change value
         rerender(<Component animate="a" opacity={0.75} />)
@@ -1014,7 +1014,7 @@ describe("animate prop as variant", () => {
 
         await nextFrame()
         expect(element).toHaveStyle("opacity: 1")
-        expect(element).toHaveStyle("transform: rotate(1deg) translateZ(0)")
+        expect(element).toHaveStyle("transform: rotate(1deg)")
     })
 
     test("variants work the same whether defined inline or not", async () => {
@@ -1127,9 +1127,7 @@ describe("animate prop as variant", () => {
 
         await nextFrame()
 
-        expect(element).toHaveStyle(
-            "transform: translateX(100px) translateZ(0)"
-        )
+        expect(element).toHaveStyle("transform: translateX(100px)")
         rerender(<Parent isVisible={false} />)
 
         await nextFrame()

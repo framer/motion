@@ -142,7 +142,7 @@ describe("motion component rendering and styles", () => {
         )
 
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(10px) translateZ(0); background: #fff"
+            "transform: translateX(10px); background: #fff"
         )
         expect(container.firstChild).toHaveStyle("background: #fff")
     })
@@ -152,7 +152,7 @@ describe("motion component rendering and styles", () => {
             <motion.div initial={{ x: 10, background: "#fff" }} />
         )
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(10px) translateZ(0); background: rgb(255, 255, 255)"
+            "transform: translateX(10px); background: rgb(255, 255, 255)"
         )
     })
 
@@ -162,7 +162,7 @@ describe("motion component rendering and styles", () => {
             <motion.div initial="foo" variants={variants} />
         )
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(10px) translateZ(0); background: rgb(255, 255, 255)"
+            "transform: translateX(10px); background: rgb(255, 255, 255)"
         )
     })
 
@@ -171,7 +171,7 @@ describe("motion component rendering and styles", () => {
             <motion.div initial={false} animate={{ x: 100 }} />
         )
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(100px) translateZ(0);"
+            "transform: translateX(100px);"
         )
     })
 
@@ -195,9 +195,7 @@ describe("motion component rendering and styles", () => {
             </motion.div>
         )
         expect(getByTestId("a")).toHaveStyle("transform: none")
-        expect(getByTestId("b")).toHaveStyle(
-            "transform: translateX(10px) translateZ(0)"
-        )
+        expect(getByTestId("b")).toHaveStyle("transform: translateX(10px)")
     })
 
     it("generates style attribute for children if passed initial as variant label", () => {
@@ -242,7 +240,7 @@ describe("motion component rendering and styles", () => {
         )
 
         expect(getByTestId("child")).not.toHaveStyle(
-            "opacity: 0; transform: translateY(50px) translateZ(0)"
+            "opacity: 0; transform: translateY(50px)"
         )
     })
 

@@ -14,13 +14,12 @@ describe("HTML useProps", () => {
                 },
                 {
                     x: 3,
-                },
-                false
+                }
             )
         )
 
         expect(result.current).toEqual({
-            style: { transform: "translateX(3px) translateZ(0)" },
+            style: { transform: "translateX(3px)" },
         })
     })
 
@@ -35,8 +34,7 @@ describe("HTML useProps", () => {
                 },
                 {
                     x: 3,
-                },
-                true
+                }
             )
         )
 
@@ -49,7 +47,7 @@ describe("HTML useProps", () => {
         const initialState = { x: 100 } as any
 
         const { result, rerender } = renderHook(
-            ({ state }: any) => useHTMLProps({}, state, true),
+            ({ state }: any) => useHTMLProps({}, state),
             { initialProps: { state: initialState } }
         )
 
@@ -67,7 +65,7 @@ describe("HTML useProps", () => {
 
     test("should generate the correct props when drag is enabled", () => {
         const { result } = renderHook(() =>
-            useHTMLProps({ drag: true }, { x: 3 }, true)
+            useHTMLProps({ drag: true }, { x: 3 })
         )
 
         expect(result.current).toEqual({
@@ -82,7 +80,7 @@ describe("HTML useProps", () => {
         })
 
         const { result: resultX } = renderHook(() =>
-            useHTMLProps({ drag: "x" }, { x: 3 }, true)
+            useHTMLProps({ drag: "x" }, { x: 3 })
         )
 
         expect(resultX.current).toEqual({
@@ -97,7 +95,7 @@ describe("HTML useProps", () => {
         })
 
         const { result: resultY } = renderHook(() =>
-            useHTMLProps({ drag: "y" }, { x: 3 }, true)
+            useHTMLProps({ drag: "y" }, { x: 3 })
         )
 
         expect(resultY.current).toEqual({
