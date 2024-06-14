@@ -55,15 +55,9 @@ export class HTMLVisualElement extends DOMVisualElement<
     build(
         renderState: HTMLRenderState,
         latestValues: ResolvedValues,
-        options: DOMVisualElementOptions,
         props: MotionProps
     ) {
-        buildHTMLStyles(
-            renderState,
-            latestValues,
-            options,
-            props.transformTemplate
-        )
+        buildHTMLStyles(renderState, latestValues, props.transformTemplate)
     }
 
     scrapeMotionValuesFromProps(

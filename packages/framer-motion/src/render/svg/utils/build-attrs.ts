@@ -1,4 +1,3 @@
-import { DOMVisualElementOptions } from "../../dom/types"
 import { buildHTMLStyles } from "../../html/utils/build-styles"
 import { ResolvedValues } from "../../types"
 import { calcSVGTransformOrigin } from "./transform-origin"
@@ -23,11 +22,10 @@ export function buildSVGAttrs(
         // This is object creation, which we try to avoid per-frame.
         ...latest
     }: ResolvedValues,
-    options: DOMVisualElementOptions,
     isSVGTag: boolean,
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
-    buildHTMLStyles(state, latest, options, transformTemplate)
+    buildHTMLStyles(state, latest, transformTemplate)
 
     /**
      * For svg tags we just want to make sure viewBox is animatable and treat all the styles

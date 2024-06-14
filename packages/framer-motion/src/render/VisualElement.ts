@@ -129,7 +129,6 @@ export abstract class VisualElement<
     abstract build(
         renderState: RenderState,
         latestValues: ResolvedValues,
-        options: Options,
         props: MotionProps
     ): void
 
@@ -550,12 +549,7 @@ export abstract class VisualElement<
     notifyUpdate = () => this.notify("Update", this.latestValues)
 
     triggerBuild() {
-        this.build(
-            this.renderState,
-            this.latestValues,
-            this.options,
-            this.props
-        )
+        this.build(this.renderState, this.latestValues, this.props)
     }
 
     render = () => {

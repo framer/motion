@@ -1,7 +1,6 @@
 import { MotionProps } from "../../../motion/types"
 import { HTMLRenderState } from "../types"
 import { ResolvedValues } from "../../types"
-import { DOMVisualElementOptions } from "../../dom/types"
 import { buildTransform } from "./build-transform"
 import { isCSSVariableName } from "../../dom/utils/is-css-variable"
 import { transformProps } from "./transform"
@@ -11,7 +10,6 @@ import { numberValueTypes } from "../../dom/value-types/number"
 export function buildHTMLStyles(
     state: HTMLRenderState,
     latestValues: ResolvedValues,
-    options: DOMVisualElementOptions,
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
     const { style, vars, transform, transformOrigin } = state
@@ -68,7 +66,6 @@ export function buildHTMLStyles(
         if (hasTransform || transformTemplate) {
             style.transform = buildTransform(
                 state.transform,
-                options,
                 transformIsNone,
                 transformTemplate
             )

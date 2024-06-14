@@ -57,13 +57,11 @@ export class SVGVisualElement extends DOMVisualElement<
     build(
         renderState: SVGRenderState,
         latestValues: ResolvedValues,
-        options: DOMVisualElementOptions,
         props: MotionProps
     ) {
         buildSVGAttrs(
             renderState,
             latestValues,
-            options,
             this.isSVGTag,
             props.transformTemplate
         )

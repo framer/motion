@@ -18,7 +18,6 @@ export function useSVGProps(
         buildSVGAttrs(
             state,
             visualState,
-            { enableHardwareAcceleration: false },
             isSVGTag(Component),
             props.transformTemplate
         )
