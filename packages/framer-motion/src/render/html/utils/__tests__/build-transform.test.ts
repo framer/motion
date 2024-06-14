@@ -15,52 +15,24 @@ describe("transformProps.has", () => {
 
 describe("buildTransform", () => {
     it("Outputs 'none' when transformIsDefault is true", () => {
-        expect(buildTransform({ x: 0 }, {}, true)).toBe("none")
+        expect(buildTransform({ x: 0 }, true)).toBe("none")
     })
 
     it("Outputs the provided transform when transformIsDefault is false", () => {
-        expect(
-            buildTransform(
-                { x: 0 },
-                { enableHardwareAcceleration: true, allowTransformNone: false },
-                true
-            )
-        ).toBe("translateX(0) translateZ(0)")
-    })
-
-    it("Only outputs translateZ(0) if enableHardwareAcceleration is enabled", () => {
-        expect(
-            buildTransform(
-                { x: 0 },
-                {
-                    enableHardwareAcceleration: false,
-                    allowTransformNone: false,
-                },
-                false
-            )
-        ).toBe("translateX(0)")
+        expect(buildTransform({ x: 0 }, true)).toBe(
+            "translateX(0) translateZ(0)"
+        )
     })
 
     it("Still outputs translateZ if z is explicitly assigned", () => {
-        expect(
-            buildTransform(
-                { x: 0, z: "5px" },
-                {
-                    enableHardwareAcceleration: false,
-                    allowTransformNone: false,
-                },
-                false
-            )
-        ).toBe("translateX(0) translateZ(5px)")
+        expect(buildTransform({ x: 0, z: "5px" }, false)).toBe(
+            "translateX(0) translateZ(5px)"
+        )
     })
 
     it("Correctly handles transformPerspective", () => {
         expect(
-            buildTransform(
-                { x: "100px", transformPerspective: "200px" },
-                {},
-                false
-            )
+            buildTransform({ x: "100px", transformPerspective: "200px" }, false)
         ).toBe("perspective(200px) translateX(100px) translateZ(0)")
     })
 
@@ -68,7 +40,6 @@ describe("buildTransform", () => {
         expect(
             buildTransform(
                 { x: "5px" },
-                { enableHardwareAcceleration: true, allowTransformNone: false },
                 true,
                 ({ x }: { x: string }) => `translateX(${parseFloat(x) * 2}px)`
             )
@@ -85,8 +56,6 @@ describe("buildTransform", () => {
                     y: "10px",
                     rotateZ: "190deg",
                 },
-
-                { enableHardwareAcceleration: true, allowTransformNone: false },
                 true
             )
         ).toBe(
