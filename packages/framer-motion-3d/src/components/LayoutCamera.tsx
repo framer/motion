@@ -29,8 +29,6 @@ export const LayoutCamera = forwardRef((props: Props, ref) => {
         }
     )
 
-    return <perspectiveCamera position={[0, 0, 0]} />
-
     return (
         <motion.perspectiveCamera
             ref={mergeRefs([cameraRef, ref]) as any}
