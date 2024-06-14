@@ -1,6 +1,6 @@
 import { render } from "../../../jest.setup"
 import { motion, useMotionValue } from "../.."
-import { useEffect } from "react";
+import { useEffect } from "react"
 import { motionValue } from "../../value"
 import { MotionConfig } from "../../components/MotionConfig"
 import { globalProjectionState } from "../../projection/node/state"
@@ -78,7 +78,7 @@ describe("isStatic prop", () => {
         rerender(<Component x={200} />)
 
         expect(getByTestId("child") as Element).toHaveStyle(
-            "transform: translateX(100px) translateZ(0)"
+            "transform: translateX(100px)"
         )
     })
 

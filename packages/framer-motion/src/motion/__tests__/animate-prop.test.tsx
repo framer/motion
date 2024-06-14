@@ -161,7 +161,7 @@ describe("animate prop as object", () => {
             )
         })
         return expect(promise).resolves.toHaveStyle(
-            "transform: translateX(20px) scale(0) translateZ(0)"
+            "transform: translateX(20px) scale(0)"
         )
     })
     test("style doesnt overwrite in subsequent renders", async () => {
@@ -224,7 +224,7 @@ describe("animate prop as object", () => {
             rerender(<Component />)
         })
         return expect(promise).resolves.toHaveStyle(
-            "transform: translateY(30px) translateX(30px) translateZ(0)"
+            "transform: translateY(30px) translateX(30px)"
         )
     })
     test("animating between none/block fires onAnimationComplete", async () => {
@@ -920,7 +920,7 @@ describe("animate prop as object", () => {
         await nextFrame()
 
         return expect(container.firstChild as Element).toHaveStyle(
-            "transform: translateX(0px) translateY(100px) translateZ(0)"
+            "transform: translateX(0px) translateY(100px)"
         )
     })
 
@@ -940,7 +940,7 @@ describe("animate prop as object", () => {
         await nextFrame()
 
         return expect(container.firstChild as Element).toHaveStyle(
-            "transform: translateX(0px) translateY(100px) translateZ(0)"
+            "transform: translateX(0px) translateY(100px)"
         )
     })
 

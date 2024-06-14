@@ -31,9 +31,7 @@ describe("animate", () => {
 
         const [value, element] = await promise
         expect(value.get()).toBe(200)
-        expect(element).toHaveStyle(
-            "transform: translateX(200px) translateZ(0)"
-        )
+        expect(element).toHaveStyle("transform: translateX(200px)")
     })
 
     test("correctly animates normal values", async () => {

@@ -1,6 +1,6 @@
 import { render } from "../../../jest.setup"
 import { motion, motionValue, useMotionValue, useTransform } from "../../"
-import { useRef } from "react";
+import { useRef } from "react"
 import { nextFrame } from "../../gestures/__tests__/utils"
 
 describe("SVG", () => {
@@ -12,12 +12,8 @@ describe("SVG", () => {
             </svg>
         )
 
-        expect(getByTestId("g")).not.toHaveStyle(
-            "transform: translateX(100px) translateZ(0)"
-        )
-        expect(getByTestId("h")).not.toHaveStyle(
-            "transform: translateX(100px) translateZ(0)"
-        )
+        expect(getByTestId("g")).not.toHaveStyle("transform: translateX(100px)")
+        expect(getByTestId("h")).not.toHaveStyle("transform: translateX(100px)")
     })
 
     test("accepts attrX/attrY/attrScale in types", () => {

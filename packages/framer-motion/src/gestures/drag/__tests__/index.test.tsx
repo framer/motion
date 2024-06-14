@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from "react"
 import { pointerDown, render } from "../../../../jest.setup"
 import { BoundingBox, motion, motionValue, MotionValue } from "../../../"
 import { MockDrag, drag, deferred, dragFrame, Point, sleep } from "./utils"
@@ -865,7 +865,7 @@ describe("dragging", () => {
         pointer.end()
 
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(105px) translateY(0px) translateZ(0)"
+            "transform: translateX(105px) translateY(0px)"
         )
     })
 })

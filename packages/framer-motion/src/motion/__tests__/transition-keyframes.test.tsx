@@ -25,9 +25,7 @@ describe("keyframes transition", () => {
             rerender(<Component />)
         })
 
-        expect(promise).resolves.toHaveStyle(
-            "transform: translateX(200px) translateZ(0)"
-        )
+        expect(promise).resolves.toHaveStyle("transform: translateX(200px)")
     })
 
     test("hasUpdated detects only changed keyframe arrays", async () => {

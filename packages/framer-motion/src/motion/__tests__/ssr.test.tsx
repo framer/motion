@@ -60,7 +60,7 @@ function runTests(render: (components: any) => string) {
         )
 
         expect(div).toBe(
-            '<div style="transform:translateX(100px) translateY(200px) translateZ(0)"></div>'
+            '<div style="transform:translateX(100px) translateY(200px)"></div>'
         )
     })
 
@@ -79,7 +79,7 @@ function runTests(render: (components: any) => string) {
         )
 
         expect(customElement).toBe(
-            '<element-test style="transform:translateX(100px) translateY(200px) translateZ(0)"></element-test>'
+            '<element-test style="transform:translateX(100px) translateY(200px)"></element-test>'
         )
     })
 
@@ -127,9 +127,7 @@ function runTests(render: (components: any) => string) {
             <motion.div initial={{ x: 100 }} style={{ x: 200 }} />
         )
 
-        expect(div).toBe(
-            `<div style="transform:translateX(100px) translateZ(0)"></div>`
-        )
+        expect(div).toBe(`<div style="transform:translateX(100px)"></div>`)
     })
 
     test("sets tabindex='0' if onTap is set", () => {
@@ -165,9 +163,7 @@ function runTests(render: (components: any) => string) {
             />
         )
 
-        expect(div).toBe(
-            `<div style="transform:translateX(100px) translateZ(0)"></div>`
-        )
+        expect(div).toBe(`<div style="transform:translateX(100px)"></div>`)
     })
 
     test("Reorder: Renders correct element", () => {

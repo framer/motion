@@ -37,7 +37,7 @@ describe("style prop", () => {
         await nextMicrotask()
 
         expect(container.firstChild as Element).toHaveStyle(
-            "transform: translateX(1px) translateZ(0)"
+            "transform: translateX(1px)"
         )
 
         rerender(<Component x={0} />)
@@ -61,13 +61,13 @@ describe("style prop", () => {
         const { container, rerender } = render(<Component />)
 
         expect(container.firstChild as Element).toHaveStyle(
-            "transform: translateX(1px) translateZ(0)"
+            "transform: translateX(1px)"
         )
 
         rerender(<Component x={2} />)
 
         expect(container.firstChild as Element).not.toHaveStyle(
-            "transform: translateX(2px) translateZ(0)"
+            "transform: translateX(2px)"
         )
     })
 

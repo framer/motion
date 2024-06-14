@@ -6,7 +6,7 @@ import {
     useMotionValue,
     useTransform,
 } from "../.."
-import { createRef, useRef } from "react";
+import { createRef, useRef } from "react"
 
 const degreesToRadians = (degrees: number) => (degrees * Math.PI) / 180
 
@@ -30,9 +30,7 @@ describe("values prop", () => {
 
         await promise.then(([x, element]) => {
             expect(x).toBe(20)
-            expect(element).not.toHaveStyle(
-                "transform: translateX(20px) translateZ(0)"
-            )
+            expect(element).not.toHaveStyle("transform: translateX(20px)")
         })
     })
 
@@ -63,9 +61,7 @@ describe("values prop", () => {
 
         await promise.then(([x, element]) => {
             expect(x).toBe(20)
-            expect(element).toHaveStyle(
-                "transform: translateX(40px) translateZ(0)"
-            )
+            expect(element).toHaveStyle("transform: translateX(40px)")
         })
     })
 
@@ -110,7 +106,7 @@ describe("values prop", () => {
         await promise.then(([x, element]) => {
             expect(x).toBe(35)
             expect(element).toHaveStyle(
-                "transform: translateX(35px) translateY(35px) translateZ(0)"
+                "transform: translateX(35px) translateY(35px)"
             )
             expect(element).not.toHaveStyle("distance: 50")
         })

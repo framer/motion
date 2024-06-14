@@ -1,5 +1,5 @@
 import { render } from "../../../../jest.setup"
-import { createRef } from "react";
+import { createRef } from "react"
 import { act } from "react-dom/test-utils"
 import {
     AnimatePresence,
@@ -68,9 +68,7 @@ describe("AnimatePresence", () => {
         })
 
         const element = await promise
-        expect(element).toHaveStyle(
-            "transform: translateX(100px) translateZ(0)"
-        )
+        expect(element).toHaveStyle("transform: translateX(100px)")
     })
 
     test("Animates out a component when its removed", async () => {
@@ -646,9 +644,7 @@ describe("AnimatePresence with custom components", () => {
         })
 
         const element = await promise
-        expect(element).toHaveStyle(
-            "transform: translateX(100px) translateZ(0)"
-        )
+        expect(element).toHaveStyle("transform: translateX(100px)")
     })
 
     test("Animation controls children of initial={false} don't throw`", async () => {
