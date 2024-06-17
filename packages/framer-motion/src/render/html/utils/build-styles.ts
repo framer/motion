@@ -27,7 +27,7 @@ export function buildHTMLStyles(
      * Loop over all our latest animated values and decide whether to handle them
      * as a style or CSS variable.
      *
-     * Transforms and transform origins are kept seperately for further processing.
+     * Transforms and transform origins are kept separately for further processing.
      */
     for (const key in latestValues) {
         const value = latestValues[key]
