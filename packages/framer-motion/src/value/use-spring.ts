@@ -31,7 +31,7 @@ import {
  * @public
  */
 export function useSpring(
-    source: MotionValue | number,
+    source: MotionValue<number> | number,
     config: SpringOptions = {}
 ) {
     const { isStatic } = useContext(MotionConfigContext)
@@ -90,7 +90,7 @@ export function useSpring(
 
     useIsomorphicLayoutEffect(() => {
         if (isMotionValue(source)) {
-            return source.on("change", (v) => value.set(parseFloat(v)))
+            return source.on("change", (v) => value.set(v))
         }
     }, [value])
 
