@@ -1,5 +1,5 @@
 import { Color, HSLA, RGBA } from "../types"
-import { floatRegex, isString, singleColorRegex } from "../utils"
+import { floatRegex, isNullish, isString, singleColorRegex } from "../utils"
 
 /**
  * Returns true if the provided string is a color, ie rgba(0,0,0,0) or #000,
@@ -8,7 +8,9 @@ import { floatRegex, isString, singleColorRegex } from "../utils"
 export const isColorString = (type: string, testProp?: string) => (v: any) => {
     return Boolean(
         (isString(v) && singleColorRegex.test(v) && v.startsWith(type)) ||
-            (testProp && !isNullish(v) && Object.prototype.hasOwnProperty.call(v, testProp))
+            (testProp &&
+                !isNullish(v) &&
+                Object.prototype.hasOwnProperty.call(v, testProp))
     )
 }
 
