@@ -15,7 +15,6 @@ import {
 } from "../utils/reduced-motion/state"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { motionValue, MotionValue } from "../value"
-import { isWillChangeMotionValue } from "../value/use-will-change/is"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import { transformProps } from "./html/utils/transform"
 import {
@@ -398,9 +397,9 @@ export abstract class VisualElement<
             if (latestValues[key] !== undefined && isMotionValue(value)) {
                 value.set(latestValues[key], false)
 
-                if (isWillChangeMotionValue(willChange)) {
-                    willChange.add(key)
-                }
+                // if (isWillChangeMotionValue(willChange)) {
+                //     willChange.add(key)
+                // }
             }
         }
     }

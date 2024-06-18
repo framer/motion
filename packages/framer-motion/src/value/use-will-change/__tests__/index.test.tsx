@@ -2,16 +2,8 @@ import { render } from "../../../../jest.setup"
 import { frame, motion, useMotionValue } from "../../.."
 import { useEffect, useState } from "react"
 
-/**
- * - When drag starts and stops
- * - opacity/transform for optimised appear animations/initial animation
- * - when animation starts and stops
- * - Externally provided motion value or style
- * - When an animation is interrupted
- */
-
 describe("WillChangeMotionValue", () => {
-    test.only("If no animations are defined then don't apply will-change", async () => {
+    test.only("Don't apply will-change if nothing has been defined", async () => {
         const Component = () => <motion.div />
         const { container } = render(<Component />)
         expect(container.firstChild).not.toHaveStyle("will-change: auto;")
@@ -28,35 +20,6 @@ describe("WillChangeMotionValue", () => {
     test("Renders values defined in animate on initial render", async () => {
         const Component = () => {
             return <motion.div animate={{ x: 100, backgroundColor: "#000" }} />
-        }
-
-        const { container } = render(<Component />)
-
-        expect(container.firstChild).toHaveStyle(
-            "will-change: transform, background-color;"
-        )
-    })
-
-    test("Renders values defined in initial on initial render", async () => {
-        const Component = () => {
-            return <motion.div initial={{ x: 100, backgroundColor: "#000" }} />
-        }
-
-        const { container } = render(<Component />)
-
-        expect(container.firstChild).toHaveStyle(
-            "will-change: transform, background-color;"
-        )
-    })
-
-    test("Renders values defined in both animate and initial on initial render", async () => {
-        const Component = () => {
-            return (
-                <motion.div
-                    animate={{ x: 100 }}
-                    initial={{ backgroundColor: "#000" }}
-                />
-            )
         }
 
         const { container } = render(<Component />)
@@ -136,6 +99,36 @@ describe("WillChangeMotionValue", () => {
                         }}
                         initial={{ x: 0, y: 0 }}
                         animate={{ x: 100, y: 100 }}
+                    />
+                )
+            }
+
+            const { container } = render(<Component />)
+
+            expect(container.firstChild).toHaveStyle("will-change: transform;")
+        })
+    })
+
+    test("Doesn't remove transform if any transform is external motion value", async () => {
+        return new Promise<void>((resolve) => {
+            const Component = () => {
+                useEffect(() => {
+                    setTimeout(() => {
+                        expect(container.firstChild).toHaveStyle(
+                            "will-change: transform;"
+                        )
+                        resolve()
+                    }, 200)
+                }, [])
+                const y = useMotionValue(100)
+                return (
+                    <motion.div
+                        transition={{
+                            x: { duration: 0.1 },
+                        }}
+                        initial={{ x: 0 }}
+                        animate={{ x: 100 }}
+                        style={{ y }}
                     />
                 )
             }
