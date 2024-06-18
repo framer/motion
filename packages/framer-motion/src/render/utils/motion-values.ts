@@ -10,7 +10,7 @@ export function updateMotionValuesFromProps(
     next: MotionStyle,
     prev: MotionStyle
 ) {
-    const { willChange } = next
+    const willChange = next.willChange || element.getValue("willChange")
 
     for (const key in next) {
         const nextValue = next[key as keyof MotionStyle]
@@ -24,6 +24,7 @@ export function updateMotionValuesFromProps(
             element.addValue(key, nextValue)
 
             if (isWillChangeMotionValue(willChange)) {
+                console.log("adding", key)
                 willChange.add(key)
             }
 

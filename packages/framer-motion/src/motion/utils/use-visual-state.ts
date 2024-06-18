@@ -14,6 +14,8 @@ import {
     isControllingVariants as checkIsControllingVariants,
     isVariantNode as checkIsVariantNode,
 } from "../../render/utils/is-controlling-variants"
+import { getWillChangeName } from "../../value/use-will-change/get-will-change-name"
+import { addUniqueItem } from "../../utils/array"
 
 export interface VisualState<Instance, RenderState> {
     renderState: RenderState
@@ -73,6 +75,14 @@ export const makeUseVisualState =
         return isStatic ? make() : useConstant(make)
     }
 
+function addWillChange(willChange: string[], name: string) {
+    const memberName = getWillChangeName(name)
+
+    if (memberName) {
+        addUniqueItem(willChange, memberName)
+    }
+}
+
 function makeLatestValues(
     props: MotionProps,
     context: MotionContextProps,
@@ -80,10 +90,12 @@ function makeLatestValues(
     scrapeMotionValues: ScrapeMotionValuesFromProps
 ) {
     const values: ResolvedValues = {}
+    const willChange: string[] = []
 
     const motionValues = scrapeMotionValues(props, {})
     for (const key in motionValues) {
         values[key] = resolveMotionValue(motionValues[key])
+        addWillChange(willChange, key)
     }
 
     let { initial, animate } = props
@@ -143,6 +155,22 @@ function makeLatestValues(
                 ] as string | number
         })
     }
+
+    // Add animating values to will-change
+    // TODO Clean this up/de-dupe
+    if (animate && initial !== false && !isAnimationControls(animate)) {
+        const list = Array.isArray(animate) ? animate : [animate]
+        list.forEach((definition) => {
+            const resolved = resolveVariantFromProps(props, definition as any)
+            if (!resolved) return
+
+            const { transitionEnd, transition, ...target } = resolved
+            const animatingValues = Object.keys(target)
+            animatingValues.forEach((key) => addWillChange(willChange, key))
+        })
+    }
+
+    values.willChange = willChange.join(",")
 
     return values
 }
