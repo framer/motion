@@ -1,17 +1,58 @@
 import { render } from "../../../../jest.setup"
-import { motion, useMotionValue } from "../../.."
+import { frame, motion, useMotionValue } from "../../.."
+import { useEffect, useState } from "react"
 
-describe("useWillChange", () => {
-    test("Applies 'will-change: auto' by default", async () => {
+/**
+ * - When drag starts and stops
+ * - opacity/transform for optimised appear animations/initial animation
+ * - when animation starts and stops
+ * - Externally provided motion value or style
+ * - When an animation is interrupted
+ */
+
+describe("WillChangeMotionValue", () => {
+    test.only("If no animations are defined then don't apply will-change", async () => {
+        const Component = () => <motion.div />
+        const { container } = render(<Component />)
+        expect(container.firstChild).not.toHaveStyle("will-change: auto;")
+    })
+
+    test("If will-change is set via style, render that value", async () => {
         const Component = () => {
-            return <motion.div />
+            return <motion.div style={{ willChange: "transform" }} />
+        }
+        const { container } = render(<Component />)
+        expect(container.firstChild).toHaveStyle("will-change: transform;")
+    })
+
+    test("Renders values defined in animate on initial render", async () => {
+        const Component = () => {
+            return <motion.div animate={{ x: 100, backgroundColor: "#000" }} />
         }
 
         const { container } = render(<Component />)
+
+        expect(container.firstChild).toHaveStyle(
+            "will-change: transform, background-color;"
+        )
+    })
+
+    test("Don't render values defined in animate on initial render if initial is false", async () => {
+        const Component = () => {
+            return (
+                <motion.div
+                    initial={false}
+                    animate={{ x: 100, backgroundColor: "#000" }}
+                />
+            )
+        }
+
+        const { container } = render(<Component />)
+
         expect(container.firstChild).toHaveStyle("will-change: auto;")
     })
 
-    test("Adds externally-provided motion values", async () => {
+    test("Add externally-provided motion values", async () => {
         const Component = () => {
             const height = useMotionValue("height")
             return <motion.div style={{ height }} />
@@ -19,70 +60,18 @@ describe("useWillChange", () => {
 
         const { container } = render(<Component />)
 
-        return new Promise<void>((resolve) => {
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    expect(container.firstChild).toHaveStyle(
-                        "will-change: height;"
-                    )
-                    resolve()
-                })
-            })
-        })
+        expect(container.firstChild).toHaveStyle("will-change: height;")
     })
 
-    test("Adds 'transform' when transform is animating", async () => {
-        const Component = () => {
-            return <motion.div animate={{ x: 100, backgroundColor: "#000" }} />
-        }
-
-        const { container } = render(<Component />)
-
-        return new Promise<void>((resolve) => {
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    expect(container.firstChild).toHaveStyle(
-                        "will-change: transform, background-color;"
-                    )
-                    resolve()
-                })
-            })
-        })
-    })
-
-    test("Removes `transform` when all transforms finish animating", async () => {
+    test("Removes values when they finish animating", async () => {
         return new Promise<void>((resolve) => {
             const Component = () => {
                 return (
                     <motion.div
-                        animate={{ x: 100 }}
-                        transition={{ duration: 0.05 }}
-                        onAnimationComplete={() => {
-                            requestAnimationFrame(() => {
-                                expect(container.firstChild).toHaveStyle(
-                                    "will-change: auto;"
-                                )
-                                resolve()
-                            })
-                        }}
-                    />
-                )
-            }
-
-            const { container } = render(<Component />)
-        })
-    })
-
-    test("Reverts to `auto` when all values finish animating", async () => {
-        return new Promise<void>((resolve) => {
-            const Component = () => {
-                return (
-                    <motion.div
-                        initial={{ x: 0, backgroundColor: "#fff" }}
+                        transition={{ duration: 0.1 }}
                         animate={{ x: 100, backgroundColor: "#000" }}
-                        transition={{ duration: 0.05 }}
                         onAnimationComplete={() => {
-                            requestAnimationFrame(() => {
+                            frame.postRender(() => {
                                 expect(container.firstChild).toHaveStyle(
                                     "will-change: auto;"
                                 )
@@ -94,6 +83,39 @@ describe("useWillChange", () => {
             }
 
             const { container } = render(<Component />)
+
+            expect(container.firstChild).toHaveStyle("will-change: transform;")
+        })
+    })
+
+    test("Add values when they start animating", async () => {
+        return new Promise<void>((resolve) => {
+            const Component = () => {
+                const [state, setState] = useState(false)
+
+                useEffect(() => {
+                    if (!state) setState(true)
+                }, [state])
+
+                return (
+                    <motion.div
+                        initial={false}
+                        animate={state ? { x: 100 } : undefined}
+                        onAnimationStart={() => {
+                            frame.postRender(() => {
+                                expect(container.firstChild).toHaveStyle(
+                                    "will-change: transform;"
+                                )
+                                resolve()
+                            })
+                        }}
+                    />
+                )
+            }
+
+            const { container } = render(<Component />)
+
+            expect(container.firstChild).toHaveStyle("will-change: auto;")
         })
     })
 })
