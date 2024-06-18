@@ -21,8 +21,8 @@
         "test-e2e": "turbo run test-e2e",
         "test-ci": "turbo run test-ci --no-cache",
         "measure": "turbo run measure",
-        "prepare": "turbo run build measure test test-e2e",
         "version": "yarn install && git stage yarn.lock",
+        "prepare": "turbo run build measure",
         "new": "lerna publish from-package",
         "new-alpha": "turbo run build && lerna publish from-package --canary --preid alpha"
     },
@@ -57,6 +57,7 @@
         "gsap": "^3.12.5",
         "jest": "^29.7.0",
         "jest-environment-jsdom": "^29.7.0",
+        "jest-junit": "^16.0.0",
         "jest-watch-typeahead": "^2.2.2",
         "lerna": "^4.0.0",
         "lint-staged": "^8.0.4",
