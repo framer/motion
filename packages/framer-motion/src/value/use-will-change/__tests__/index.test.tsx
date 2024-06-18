@@ -37,6 +37,35 @@ describe("WillChangeMotionValue", () => {
         )
     })
 
+    test("Renders values defined in initial on initial render", async () => {
+        const Component = () => {
+            return <motion.div initial={{ x: 100, backgroundColor: "#000" }} />
+        }
+
+        const { container } = render(<Component />)
+
+        expect(container.firstChild).toHaveStyle(
+            "will-change: transform, background-color;"
+        )
+    })
+
+    test("Renders values defined in both animate and initial on initial render", async () => {
+        const Component = () => {
+            return (
+                <motion.div
+                    animate={{ x: 100 }}
+                    initial={{ backgroundColor: "#000" }}
+                />
+            )
+        }
+
+        const { container } = render(<Component />)
+
+        expect(container.firstChild).toHaveStyle(
+            "will-change: transform, background-color;"
+        )
+    })
+
     test("Don't render values defined in animate on initial render if initial is false", async () => {
         const Component = () => {
             return (
@@ -78,6 +107,35 @@ describe("WillChangeMotionValue", () => {
                                 resolve()
                             })
                         }}
+                    />
+                )
+            }
+
+            const { container } = render(<Component />)
+
+            expect(container.firstChild).toHaveStyle("will-change: transform;")
+        })
+    })
+
+    test("Doesn't remove transform when some transforms are still animating", async () => {
+        return new Promise<void>((resolve) => {
+            const Component = () => {
+                useEffect(() => {
+                    setTimeout(() => {
+                        expect(container.firstChild).toHaveStyle(
+                            "will-change: transform;"
+                        )
+                        resolve()
+                    }, 200)
+                }, [])
+                return (
+                    <motion.div
+                        transition={{
+                            x: { duration: 0.1 },
+                            y: { duration: 1 },
+                        }}
+                        initial={{ x: 0, y: 0 }}
+                        animate={{ x: 100, y: 100 }}
                     />
                 )
             }
