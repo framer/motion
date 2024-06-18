@@ -7288,6 +7288,7 @@ __metadata:
     gsap: ^3.12.5
     jest: ^29.7.0
     jest-environment-jsdom: ^29.7.0
+    jest-junit: ^16.0.0
     jest-watch-typeahead: ^2.2.2
     lerna: ^4.0.0
     lint-staged: ^8.0.4
@@ -9355,6 +9356,18 @@ __metadata:
     fsevents:
       optional: true
   checksum: c2c8f2d3e792a963940fbdfa563ce14ef9e14d4d86da645b96d3cd346b8d35c5ce0b992ee08593939b5f718cf0a1f5a90011a056548a1dbf58397d4356786f01
+  languageName: node
+  linkType: hard
+
+"jest-junit@npm:^16.0.0":
+  version: 16.0.0
+  resolution: "jest-junit@npm:16.0.0"
+  dependencies:
+    mkdirp: ^1.0.4
+    strip-ansi: ^6.0.1
+    uuid: ^8.3.2
+    xml: ^1.0.1
+  checksum: 412aa4bfeec4254a9b34f417fda79107c7cbd295e56ffeb299ac9c977545910fbabe57c91c6cd1f12b700d4a1f60f79872b0075003f02da87d463e30fc2d9d78
   languageName: node
   linkType: hard
 
@@ -15933,6 +15946,13 @@ __metadata:
   version: 4.0.0
   resolution: "xml-name-validator@npm:4.0.0"
   checksum: af100b79c29804f05fa35aa3683e29a321db9b9685d5e5febda3fa1e40f13f85abc40f45a6b2bf7bee33f68a1dc5e8eaef4cec100a304a9db565e6061d4cb5ad
+  languageName: node
+  linkType: hard
+
+"xml@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "xml@npm:1.0.1"
+  checksum: 11b5545ef3f8fec3fa29ce251f50ad7b6c97c103ed4d851306ec23366f5fa4699dd6a942262df52313a0cd1840ab26256da253c023bad3309d8ce46fe6020ca0
   languageName: node
   linkType: hard
 

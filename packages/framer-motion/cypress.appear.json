@@ -1,11 +1,11 @@
 {
-    "baseUrl": "http://localhost:9990",
+    "baseUrl": "http://localhost:8000",
     "video": true,
     "screenshots": false,
     "retries": 2,
     "reporter": "junit",
     "reporterOptions": {
-        "mochaFile": "../../test_reports/framer-motion-[hash].xml",
+        "mochaFile": "../../test_reports/framer-motion-appear.xml",
         "toConsole": true
     }
 }

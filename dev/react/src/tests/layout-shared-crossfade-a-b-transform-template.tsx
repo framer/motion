@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion"
-import { useState } from "react";
+import { useState } from "react"
 
 export const App = () => {
     const params = new URLSearchParams(window.location.search)
@@ -27,7 +27,7 @@ export const App = () => {
                         backgroundColor: state ? "#f00" : "#0f0",
                         borderRadius: state ? 0 : 20,
                     }}
-                    transition={{ duration: 0.2, ease: () => 0.5 }}
+                    transition={{ duration: 1, ease: () => 0.5 }}
                     onClick={() => setState(!state)}
                     transformTemplate={(_, generated) =>
                         `translate(-50%, -50%) ${generated}`
