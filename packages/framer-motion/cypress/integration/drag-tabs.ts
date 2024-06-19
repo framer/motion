@@ -88,7 +88,7 @@ describe("Tabs demo", () => {
         cy.visit("?test=drag-tabs")
             .get("#Tomato-remove")
             .click()
-            .wait(150)
+            .wait(400)
             .get("#Lettuce-tab")
             .trigger("pointerdown", 40, 10)
             .wait(30)

@@ -321,6 +321,7 @@ li {
 }
 
 li span {
+  color: black;
   flex-shrink: 1;
   flex-grow: 1;
   white-space: nowrap;
