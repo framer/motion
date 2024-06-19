@@ -11,12 +11,12 @@ import { MotionConfigContext } from "../../context/MotionConfigContext"
 import type { VisualElement } from "../../render/VisualElement"
 import { optimizedAppearDataAttribute } from "../../animation/optimized-appear/data-id"
 import { microtask } from "../../frameloop/microtask"
+import { IProjectionNode } from "../../projection/node/types"
+import { isRefObject } from "../../utils/is-ref-object"
 import {
     InitialPromotionConfig,
     SwitchLayoutGroupContext,
 } from "../../context/SwitchLayoutGroupContext"
-import { IProjectionNode } from "../../projection/node/types"
-import { isRefObject } from "../../utils/is-ref-object"
 
 let scheduleHandoffComplete = false
 
