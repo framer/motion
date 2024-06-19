@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.2.11] 2024-06-19
+
+### Fixed
+
+-   Fix animations in resuspended components.
+
 ## [11.2.10] 2024-05-31
 
 ### Fixed
