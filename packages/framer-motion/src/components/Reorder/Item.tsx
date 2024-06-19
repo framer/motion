@@ -1,7 +1,7 @@
 import { invariant } from "../../utils/errors"
 import * as React from "react"
 import {
-    ReactHTML,
+    HTMLElementType,
     FunctionComponent,
     useContext,
     forwardRef,
@@ -20,7 +20,7 @@ export interface Props<V> {
      *
      * @public
      */
-    as?: keyof ReactHTML
+    as?: HTMLElementType
 
     /**
      * The value in the list that this component represents.

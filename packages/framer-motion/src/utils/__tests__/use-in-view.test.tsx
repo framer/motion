@@ -1,8 +1,7 @@
 import { render } from "../../../jest.setup"
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, act } from "react"
 import { useInView } from "../use-in-view"
 import { getActiveObserver } from "./mock-intersection-observer"
-import { act } from "react-dom/test-utils"
 
 const target = document.createElement("div")
 

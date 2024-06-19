@@ -20,7 +20,7 @@ const child = {
 }
 
 export const App = () => {
-    const ref = useRef()
+    const ref = useRef(undefined)
     const [count, setCount] = useState(0)
     return (
         <div ref={ref} style={container} id="constraints">

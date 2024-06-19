@@ -16,8 +16,8 @@ interface Props {
 }
 
 interface MeasureProps extends Props {
-    childRef: React.RefObject<HTMLElement>
-    sizeRef: React.RefObject<Size>
+    childRef: React.RefObject<HTMLElement | null>
+    sizeRef: React.RefObject<Size | null>
 }
 
 /**
@@ -96,7 +96,7 @@ export function PopChild({ children, isPresent }: Props) {
 
     return (
         <PopChildMeasure isPresent={isPresent} childRef={ref} sizeRef={size}>
-            {React.cloneElement(children, { ref })}
+            {React.cloneElement(children, { ref } as any)}
         </PopChildMeasure>
     )
 }

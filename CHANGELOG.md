@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [12.0.0] Unreleased
+
+### Changed
+
+-   React 19 now the minimum supported version.
+
 ## [11.2.10] 2024-05-31
 
 ### Fixed

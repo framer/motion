@@ -11,7 +11,7 @@ interface Props {
 describe("motion()", () => {
     test("accepts custom types", () => {
         const BaseComponent = React.forwardRef(
-            (_props: Props, ref: RefObject<HTMLDivElement>) => {
+            (_props: Props, ref: RefObject<HTMLDivElement | null>) => {
                 return <div ref={ref} />
             }
         )
@@ -27,7 +27,7 @@ describe("motion()", () => {
         let animate: any
         let foo: boolean = false
         const BaseComponent = React.forwardRef(
-            (props: Props, ref: RefObject<HTMLDivElement>) => {
+            (props: Props, ref: RefObject<HTMLDivElement | null>) => {
                 animate = (props as any).animate
                 foo = props.foo
                 return <div ref={ref} />
@@ -50,7 +50,7 @@ describe("motion()", () => {
         const BaseComponent = React.forwardRef(
             (
                 props: React.PropsWithChildren<Props & MotionProps>,
-                ref: RefObject<HTMLDivElement>
+                ref: RefObject<HTMLDivElement | null>
             ) => {
                 animate = props.animate
                 foo = props.foo
@@ -75,7 +75,7 @@ describe("motion()", () => {
         const BaseComponent = React.forwardRef(
             (
                 props: React.PropsWithChildren<Props & MotionProps>,
-                ref: RefObject<HTMLDivElement>
+                ref: RefObject<HTMLDivElement | null>
             ) => {
                 children = props.children as any
                 return <div ref={ref} />

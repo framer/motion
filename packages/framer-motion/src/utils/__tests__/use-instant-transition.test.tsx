@@ -1,8 +1,8 @@
 import { render } from "../../../jest.setup"
 import { motion, motionValue } from "../.."
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"
 import { useInstantTransition } from "../use-instant-transition"
-import { act } from "@testing-library/react"
+import { act } from "react"
 import { renderHook } from "@testing-library/react"
 import { instantAnimationState } from "../use-instant-transition-state"
 

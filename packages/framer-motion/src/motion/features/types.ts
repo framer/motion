@@ -37,7 +37,7 @@ export type FeatureDefinition = {
 }
 
 export type FeatureDefinitions = {
-    [K in keyof HydratedFeatureDefinition]: FeatureDefinition
+    [K in keyof HydratedFeatureDefinitions]: FeatureDefinition
 }
 
 export type FeaturePackage = {

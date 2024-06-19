@@ -1,6 +1,5 @@
 import { render } from "../../../../jest.setup"
-import { useEffect } from "react"
-import { act } from "react-dom/test-utils"
+import { useEffect, act } from "react"
 import { AnimatePresence } from ".."
 import { usePresence } from "../use-presence"
 

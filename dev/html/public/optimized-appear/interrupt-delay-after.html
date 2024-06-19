@@ -85,7 +85,7 @@
                 (animation) => {
                     // Hydrate root mid-way through animation
                     setTimeout(() => {
-                        ReactDOM.hydrateRoot(root, Component)
+                        ReactDOMClient.hydrateRoot(root, Component)
 
                         const { opacity: initialOpacity } =
                             window.getComputedStyle(box)

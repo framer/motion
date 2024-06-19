@@ -22,6 +22,7 @@ export interface AnimationState {
     ) => Promise<any>
     setAnimateFunction: (fn: any) => void
     getState: () => { [key: string]: AnimationTypeState }
+    reset: () => void
 }
 
 interface DefinitionAndOptions {
@@ -47,7 +48,7 @@ export function createAnimationState(
     visualElement: VisualElement
 ): AnimationState {
     let animate = animateList(visualElement)
-    const state = createState()
+    let state = createState()
     let isInitialRender = true
 
     /**
@@ -387,6 +388,10 @@ export function createAnimationState(
         setActive,
         setAnimateFunction,
         getState: () => state,
+        reset: () => {
+            state = createState()
+            isInitialRender = true
+        },
     }
 }
 

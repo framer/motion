@@ -9,12 +9,12 @@ import { ScrollInfoOptions } from "../render/dom/scroll/types"
 
 interface UseScrollOptions
     extends Omit<ScrollInfoOptions, "container" | "target"> {
-    container?: RefObject<HTMLElement>
-    target?: RefObject<HTMLElement>
+    container?: RefObject<HTMLElement | null>
+    target?: RefObject<HTMLElement | null>
     layoutEffect?: boolean
 }
 
-function refWarning(name: string, ref?: RefObject<HTMLElement>) {
+function refWarning(name: string, ref?: RefObject<HTMLElement | null>) {
     warning(
         Boolean(!ref || ref.current),
         `You have defined a ${name} options but the provided ref is not yet hydrated, probably because it's defined higher up the tree. Try calling useScroll() in the same component as the ref, or setting its \`layoutEffect: false\` option.`

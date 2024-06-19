@@ -4,6 +4,8 @@ import { VisualElement } from "../../../render/VisualElement"
 import { Feature } from "../Feature"
 
 export class AnimationFeature extends Feature<unknown> {
+    unmountControls?: () => void
+
     /**
      * We dynamically generate the AnimationState manager as it contains a reference
      * to the underlying animation library. We only want to load that if we load this,
@@ -16,9 +18,8 @@ export class AnimationFeature extends Feature<unknown> {
 
     updateAnimationControlsSubscription() {
         const { animate } = this.node.getProps()
-        this.unmount()
         if (isAnimationControls(animate)) {
-            this.unmount = animate.subscribe(this.node)
+            this.unmountControls = animate.subscribe(this.node)
         }
     }
 
@@ -37,5 +38,8 @@ export class AnimationFeature extends Feature<unknown> {
         }
     }
 
-    unmount() {}
+    unmount() {
+        this.node.animationState!.reset()
+        this.unmountControls?.()
+    }
 }

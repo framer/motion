@@ -1,6 +1,5 @@
 import { render } from "../../../../jest.setup"
-import { createRef } from "react";
-import { act } from "react-dom/test-utils"
+import { createRef, act } from "react"
 import {
     AnimatePresence,
     motion,

@@ -1,6 +1,6 @@
 import type { VisualElement } from "framer-motion"
 import type { ThreeMotionProps } from "../../types"
-import { MeshProps, ThreeEvent } from "@react-three/fiber"
+import { EventHandlers, ThreeEvent } from "@react-three/fiber"
 
 export function useHover(
     isStatic: boolean,
@@ -10,7 +10,7 @@ export function useHover(
         onHoverEnd,
         onPointerOver,
         onPointerOut,
-    }: ThreeMotionProps & MeshProps,
+    }: ThreeMotionProps & EventHandlers,
     visualElement?: VisualElement
 ) {
     const isHoverEnabled = whileHover || onHoverStart || onHoverEnd
@@ -18,11 +18,11 @@ export function useHover(
     if (isStatic || !visualElement || !isHoverEnabled) return {}
 
     return {
-        onPointerOver: (event: ThreeEvent<any>) => {
+        onPointerOver: (event: ThreeEvent<PointerEvent>) => {
             visualElement.animationState?.setActive("whileHover", true)
             onPointerOver && onPointerOver(event)
         },
-        onPointerOut: (event: ThreeEvent<any>) => {
+        onPointerOut: (event: ThreeEvent<PointerEvent>) => {
             visualElement.animationState?.setActive("whileHover", false)
             onPointerOut && onPointerOut(event)
         },
