@@ -59,7 +59,6 @@ import { time } from "../../frameloop/sync-time"
 import { microtask } from "../../frameloop/microtask"
 import { VisualElement } from "../../render/VisualElement"
 import { getOptimisedAppearId } from "../../animation/optimized-appear/get-appear-id"
-import { isDragActive } from "../../gestures/drag/utils/lock"
 
 const transformAxes = ["", "X", "Y", "Z"]
 

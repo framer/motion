@@ -18,6 +18,11 @@ const child = {
     borderRadius: 20,
 }
 
+/**
+ * This sibling layout animation is designed to fuzz/stress the drag constraints
+ * measurements. Remeasuring the constraints during drag would previously mess
+ * up the position of the draggable element.
+ */
 const SiblingLayoutAnimation = () => {
     const [state, setState] = useState(false)
 
@@ -48,7 +53,6 @@ export const App = () => {
             <div ref={ref} style={container}>
                 <motion.div
                     drag
-                    //dragElastic
                     dragConstraints={ref}
                     whileTap={{ scale: 0.95 }}
                     whileHover={{ scale: 1.1 }}
