@@ -59,6 +59,7 @@ import { time } from "../../frameloop/sync-time"
 import { microtask } from "../../frameloop/microtask"
 import { VisualElement } from "../../render/VisualElement"
 import { getOptimisedAppearId } from "../../animation/optimized-appear/get-appear-id"
+import { isDragActive } from "../../gestures/drag/utils/lock"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -872,8 +873,11 @@ export function createProjectionNode<I>({
 
         resetTransform() {
             if (!resetTransform) return
+
             const isResetRequested =
-                this.isLayoutDirty || this.shouldResetTransform
+                this.isLayoutDirty ||
+                this.shouldResetTransform ||
+                this.options.visualElement?.getProps().drag
 
             const hasProjection =
                 this.projectionDelta && !isDeltaZero(this.projectionDelta)
