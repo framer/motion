@@ -18,7 +18,6 @@ export class AnimationFeature extends Feature<unknown> {
 
     updateAnimationControlsSubscription() {
         const { animate } = this.node.getProps()
-        this.unmount()
         if (isAnimationControls(animate)) {
             this.unmountControls = animate.subscribe(this.node)
         }
