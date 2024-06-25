@@ -8,6 +8,7 @@ export const htmlMotionConfig: Partial<
     MotionComponentConfig<HTMLElement, HTMLRenderState>
 > = {
     useVisualState: makeUseVisualState({
+        applyWillChange: true,
         scrapeMotionValuesFromProps,
         createRenderState: createHtmlRenderState,
     }),

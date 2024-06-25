@@ -4,7 +4,7 @@ import {
     pointerUp,
     render,
 } from "../../../jest.setup"
-import { motion, MotionConfig, useMotionValue } from "../../"
+import { frame, motion, MotionConfig, useMotionValue } from "../../"
 import { Fragment, useEffect, memo, useState } from "react"
 import { Variants } from "../../types"
 import { motionValue } from "../../value"
@@ -821,7 +821,15 @@ describe("animate prop as variant", () => {
                     initial={{ x: 0, y: 0 }}
                     animate={{ x: 100, y: 100 }}
                     transition={{ duration: 0.1 }}
-                    onAnimationComplete={() => resolve(latest)}
+                    onAnimationComplete={() => {
+                        expect(latest).toEqual({
+                            willChange: "transform",
+                            x: 100,
+                            y: 100,
+                        })
+
+                        frame.postRender(() => resolve(latest))
+                    }}
                 />
             )
 

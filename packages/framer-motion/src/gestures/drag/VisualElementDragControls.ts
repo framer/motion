@@ -33,6 +33,7 @@ import { percent } from "../../value/types/numbers/units"
 import { animateMotionValue } from "../../animation/interfaces/motion-value"
 import { getContextWindow } from "../../utils/get-context-window"
 import { frame } from "../../frameloop"
+import { WillChangeMotionValue } from "../../value/use-will-change"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -157,6 +158,12 @@ export class VisualElementDragControls {
                 frame.postRender(() => onDragStart(event, info))
             }
 
+            ;(
+                this.visualElement.getValue(
+                    "willChange"
+                ) as WillChangeMotionValue
+            )?.add("transform")
+
             const { animationState } = this.visualElement
             animationState && animationState.setActive("whileDrag", true)
         }
@@ -238,6 +245,9 @@ export class VisualElementDragControls {
         const isDragging = this.isDragging
         this.cancel()
         if (!isDragging) return
+        ;(
+            this.visualElement.getValue("willChange") as WillChangeMotionValue
+        )?.remove("transform")
 
         const { velocity } = info
         this.startAnimation(velocity)

@@ -12,6 +12,7 @@ export const svgMotionConfig: Partial<
     MotionComponentConfig<SVGElement, SVGRenderState>
 > = {
     useVisualState: makeUseVisualState({
+        applyWillChange: false,
         scrapeMotionValuesFromProps: scrapeSVGProps,
         createRenderState: createSvgRenderState,
         onMount: (props, instance, { renderState, latestValues }) => {
