@@ -24,7 +24,6 @@ export function updateMotionValuesFromProps(
             element.addValue(key, nextValue)
 
             if (isWillChangeMotionValue(willChange)) {
-                console.log("adding", key)
                 willChange.add(key)
             }
 

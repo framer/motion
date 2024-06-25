@@ -10,6 +10,7 @@ import { createVisualElement, createRenderState } from "./create-visual-element"
 import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-value"
 
 const useVisualState = makeUseVisualState({
+    applyWillChange: false,
     scrapeMotionValuesFromProps,
     createRenderState,
 })

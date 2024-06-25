@@ -29,6 +29,7 @@ export type UseVisualState<Instance, RenderState> = (
 ) => VisualState<Instance, RenderState>
 
 export interface UseVisualStateConfig<Instance, RenderState> {
+    applyWillChange: boolean
     scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps
     createRenderState: () => RenderState
     onMount?: (
@@ -40,6 +41,7 @@ export interface UseVisualStateConfig<Instance, RenderState> {
 
 function makeState<I, RS>(
     {
+        applyWillChange,
         scrapeMotionValuesFromProps,
         createRenderState,
         onMount,
@@ -53,6 +55,7 @@ function makeState<I, RS>(
             props,
             context,
             presenceContext,
+            applyWillChange,
             scrapeMotionValuesFromProps
         ),
         renderState: createRenderState(),
@@ -87,6 +90,7 @@ function makeLatestValues(
     props: MotionProps,
     context: MotionContextProps,
     presenceContext: PresenceContextProps | null,
+    applyWillChange: boolean,
     scrapeMotionValues: ScrapeMotionValuesFromProps
 ) {
     const values: ResolvedValues = {}
@@ -170,7 +174,9 @@ function makeLatestValues(
         })
     }
 
-    values.willChange = willChange.join(",")
+    if (applyWillChange) {
+        values.willChange = willChange.join(",")
+    }
 
     return values
 }

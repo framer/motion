@@ -48,6 +48,7 @@ class StateVisualElement extends VisualElement<
 }
 
 const useVisualState = makeUseVisualState({
+    applyWillChange: false,
     scrapeMotionValuesFromProps: createObject,
     createRenderState: createObject,
 })

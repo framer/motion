@@ -108,15 +108,12 @@ export function animateTarget(
         )
 
         const animation = value.animation
-        console.log(key, animation)
+
         if (animation) {
             if (isWillChangeMotionValue(willChange)) {
                 willChange.add(key)
-                console.log("adding", key)
-                animation.then(() => {
-                    willChange.remove(key)
-                    console.log("removed", key)
-                })
+
+                animation.then(() => willChange.remove(key))
             }
 
             animations.push(animation)
