@@ -4,11 +4,11 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [11.2.11] 2024-06-19
+## [11.2.12] 2024-06-25
 
 ### Fixed
 
--   Fix animations in resuspended components.
+-   Fixing `dragConstraints={ref}` mixed with layout animations.
 
 ## [11.2.10] 2024-05-31
 
