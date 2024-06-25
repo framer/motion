@@ -1,0 +1,106 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #container {
+                width: 100px;
+                height: 100px;
+                overflow: scroll;
+            }
+
+            #content {
+                width: 400px;
+                height: 100px;
+            }
+
+            #fixed {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 500px;
+                height: 100px;
+                background: #00cc88;
+                display: flex;
+                align-items: flex-start;
+            }
+
+            #child {
+                width: 100px;
+                height: 100px;
+                background: #0077ff;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <div id="fixed">
+                <div id="child"></div>
+            </div>
+            <div id="content"></div>
+        </div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-undo.js"></script>
+        <script>
+            const { createNode } = window.Undo
+            const {
+                matchViewportBox,
+                matchVisibility,
+                matchOpacity,
+                addPageScroll,
+            } = window.Assert
+
+            const container = document.getElementById("container")
+            const containerProjection = createNode(container, undefined, {
+                layoutScroll: true,
+                layout: false,
+            })
+
+            const fixed = document.getElementById("fixed")
+            const fixedProjection = createNode(fixed, containerProjection, {
+                layoutScroll: true,
+                layout: true,
+            })
+            const fixedOrigin = fixed.getBoundingClientRect()
+
+            const child = document.getElementById("child")
+            const childProjection = createNode(child, fixedProjection)
+            const childOrigin = child.getBoundingClientRect()
+
+            childProjection.willUpdate()
+            fixedProjection.willUpdate()
+            container.scrollLeft = 200
+
+            fixedProjection.root.didUpdate()
+
+            setTimeout(() => {
+                matchViewportBox(fixed, fixedOrigin)
+                matchViewportBox(child, {
+                    top: 0,
+                    left: 0,
+                    right: 100,
+                    bottom: 100,
+                })
+            }, 50)
+        </script>
+    </body>
+</html>
