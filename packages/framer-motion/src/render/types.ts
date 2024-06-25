@@ -44,6 +44,7 @@ export type VisualElementOptions<Instance, RenderState = any> = {
     props: MotionProps
     blockInitialAnimation?: boolean
     reducedMotionConfig?: ReducedMotionConfig
+    skipAnimations?: boolean
 }
 
 /**
