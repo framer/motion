@@ -4,7 +4,7 @@ import styled from "styled-components"
 
 /**
  * This demo is called "Framer border" because it demonstrates border animations as Framer
- * implements borders, by positioning the inner div seperately to the sized outer Frame using `inset`
+ * implements borders, by positioning the inner div separately to the sized outer Frame using `inset`
  * and defining additional values with handlers passed to `autoValues`.
  */
 

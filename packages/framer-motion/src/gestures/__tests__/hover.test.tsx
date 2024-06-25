@@ -168,7 +168,7 @@ describe("hover", () => {
         return expect(promise).resolves.toBe(1)
     })
 
-    test("whileHover only animates values that arent being controlled by a higher-priority gesture ", () => {
+    test("whileHover only animates values that aren't being controlled by a higher-priority gesture ", () => {
         const promise = new Promise(async (resolve) => {
             const variant = {
                 hovering: { opacity: 0.5, scale: 0.5 },
