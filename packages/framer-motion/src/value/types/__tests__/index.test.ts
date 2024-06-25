@@ -186,6 +186,8 @@ describe("hex()", () => {
         expect(hex.test("#F000AA00")).toEqual(true)
         expect(hex.test("#f00 0px")).toEqual(false)
         expect(hex.test(red)).toEqual(false)
+        expect(hex.test(null)).toEqual(false)
+        expect(hex.test(undefined)).toEqual(false)
     })
 
     it("should split a hex value into the correct params", () => {
@@ -210,6 +212,8 @@ describe("rgba()", () => {
         expect(rgba.test("rgba(255, 0, 0, 0.5) 0px")).toEqual(false)
         expect(rgba.test({ red: 255 })).toEqual(true)
         expect(rgba.test({ hue: 255 })).toEqual(false)
+        expect(rgba.test(null)).toEqual(false)
+        expect(rgba.test(undefined)).toEqual(false)
     })
 
     it("should split an rgba value into the correct params", () => {
@@ -248,6 +252,8 @@ describe("hsla()", () => {
         expect(hsla.test("hsla(170 50% 45%/1)")).toEqual(true)
         expect(hsla.test("hsla(177 37.4978% 76.66804% / 1)")).toEqual(true)
         expect(hsla.test("hsla(170, 50%, 45%, 1) 0px")).toEqual(false)
+        expect(hsla.test(null)).toEqual(false)
+        expect(hsla.test(undefined)).toEqual(false)
     })
 
     it("should split an hsl value into the correct params", () => {
