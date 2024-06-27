@@ -124,6 +124,8 @@ describe("keyframes transition", () => {
                         output.push(Math.round(latest.x as number))
                     }
                     onAnimationComplete={() => resolve(output)}
+                    // Manually setting willChange to auto to prevent changes to willChange triggering onUpdate
+                    style={{ willChange: "auto" }}
                 />
             )
 
