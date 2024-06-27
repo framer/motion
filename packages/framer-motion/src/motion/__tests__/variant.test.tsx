@@ -847,6 +847,7 @@ describe("animate prop as variant", () => {
 
         await new Promise<void>((resolve) => {
             const x = motionValue(0)
+
             const Component = ({ xTarget = 0 }) => (
                 <motion.div
                     animate={{ x: xTarget }}
@@ -855,7 +856,7 @@ describe("animate prop as variant", () => {
                         console.log(latest)
                         onUpdate(latest)
                     }}
-                    style={{ x }}
+                    style={{ x, willChange: "transform" }}
                 />
             )
 

@@ -145,6 +145,20 @@ function runTests(render: (components: any) => string) {
         )
     })
 
+    test("will-change manually set", () => {
+        const div = render(
+            <motion.div
+                initial={{ x: 100, "--color": "#000" } as any}
+                animate={{ x: 200 }}
+                style={{ willChange: "opacity" }}
+            />
+        )
+
+        expect(div).toBe(
+            `<div style="will-change:opacity;--color:#000;transform:translateX(100px)"></div>`
+        )
+    })
+
     test("will-change correctly not applied when isStatic", () => {
         const div = render(
             <MotionConfig isStatic>
