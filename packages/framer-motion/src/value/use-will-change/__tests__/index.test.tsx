@@ -25,7 +25,7 @@ describe("WillChangeMotionValue", () => {
         const { container } = render(<Component />)
 
         expect(container.firstChild).toHaveStyle(
-            "will-change: transform, background-color;"
+            "will-change: transform,background-color;"
         )
     })
 
@@ -61,7 +61,7 @@ describe("WillChangeMotionValue", () => {
                 return (
                     <motion.div
                         transition={{ duration: 0.1 }}
-                        animate={{ x: 100, backgroundColor: "#000" }}
+                        animate={{ x: 100 }}
                         onAnimationComplete={() => {
                             frame.postRender(() => {
                                 expect(container.firstChild).toHaveStyle(
@@ -110,13 +110,13 @@ describe("WillChangeMotionValue", () => {
     })
 
     test("Doesn't remove transform if any transform is external motion value", async () => {
+        let checkExternalMotionValue = () => {}
+
         return new Promise<void>((resolve) => {
             const Component = () => {
                 useEffect(() => {
                     setTimeout(() => {
-                        expect(container.firstChild).toHaveStyle(
-                            "will-change: transform;"
-                        )
+                        checkExternalMotionValue()
                         resolve()
                     }, 200)
                 }, [])
@@ -134,6 +134,12 @@ describe("WillChangeMotionValue", () => {
             }
 
             const { container } = render(<Component />)
+
+            checkExternalMotionValue = () => {
+                expect(container.firstChild).toHaveStyle(
+                    "will-change: transform;"
+                )
+            }
 
             expect(container.firstChild).toHaveStyle("will-change: transform;")
         })
