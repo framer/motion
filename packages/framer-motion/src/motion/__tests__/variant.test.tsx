@@ -842,7 +842,7 @@ describe("animate prop as variant", () => {
         })
     })
 
-    test("onUpdate doesnt fire if no values have changed", async () => {
+    test.only("onUpdate doesnt fire if no values have changed", async () => {
         const onUpdate = jest.fn()
 
         await new Promise<void>((resolve) => {
@@ -851,7 +851,10 @@ describe("animate prop as variant", () => {
                 <motion.div
                     animate={{ x: xTarget }}
                     transition={{ type: false }}
-                    onUpdate={onUpdate}
+                    onUpdate={(latest) => {
+                        console.log(latest)
+                        onUpdate(latest)
+                    }}
                     style={{ x }}
                 />
             )

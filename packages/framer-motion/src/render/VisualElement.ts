@@ -396,10 +396,6 @@ export abstract class VisualElement<
 
             if (latestValues[key] !== undefined && isMotionValue(value)) {
                 value.set(latestValues[key], false)
-
-                // if (isWillChangeMotionValue(willChange)) {
-                //     willChange.add(key)
-                // }
             }
         }
     }
@@ -470,6 +466,8 @@ export abstract class VisualElement<
             "change",
             (latestValue: string | number) => {
                 this.latestValues[key] = latestValue
+
+                console.log(key, latestValue)
 
                 this.props.onUpdate && frame.preRender(this.notifyUpdate)
 
