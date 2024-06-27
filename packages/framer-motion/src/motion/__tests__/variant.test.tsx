@@ -774,6 +774,7 @@ describe("animate prop as variant", () => {
                                 updateDelayedBy(0)
                                 order.push(1)
                             }}
+                            style={{ willChange: "auto" }}
                         />
                         <motion.div
                             variants={variants}
@@ -781,6 +782,7 @@ describe("animate prop as variant", () => {
                                 updateDelayedBy(1)
                                 order.push(2)
                             }}
+                            style={{ willChange: "auto" }}
                         />
                     </motion.div>
                     <motion.div>
@@ -790,6 +792,7 @@ describe("animate prop as variant", () => {
                                 updateDelayedBy(2)
                                 order.push(3)
                             }}
+                            style={{ willChange: "auto" }}
                         />
                         <motion.div
                             variants={variants}
@@ -797,6 +800,7 @@ describe("animate prop as variant", () => {
                                 updateDelayedBy(3)
                                 order.push(4)
                             }}
+                            style={{ willChange: "auto" }}
                         />
                     </motion.div>
                 </motion.div>
@@ -842,7 +846,7 @@ describe("animate prop as variant", () => {
         })
     })
 
-    test.only("onUpdate doesnt fire if no values have changed", async () => {
+    test("onUpdate doesnt fire if no values have changed", async () => {
         const onUpdate = jest.fn()
 
         await new Promise<void>((resolve) => {

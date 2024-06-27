@@ -29,15 +29,20 @@ export class HTMLVisualElement extends DOMVisualElement<
     type = "html"
 
     constructor(
-        genericOptions: VisualElementOptions<HTMLElement, HTMLRenderState>,
+        options: VisualElementOptions<HTMLElement, HTMLRenderState>,
         domOptions?: DOMVisualElementOptions
     ) {
-        super(genericOptions, domOptions)
+        super(options, domOptions)
 
-        this.addValue(
-            "willChange",
-            new WillChangeMotionValue(this.latestValues.willChange || "auto")
-        )
+        // If willChange hasn't been manually set, create a new one
+        if (!options.props?.style?.willChange) {
+            this.addValue(
+                "willChange",
+                new WillChangeMotionValue(
+                    this.latestValues.willChange || "auto"
+                )
+            )
+        }
     }
 
     readValueFromInstance(
