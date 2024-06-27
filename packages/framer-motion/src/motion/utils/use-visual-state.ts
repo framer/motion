@@ -48,14 +48,15 @@ function makeState<I, RS>(
     }: UseVisualStateConfig<I, RS>,
     props: MotionProps,
     context: MotionContextProps,
-    presenceContext: PresenceContextProps | null
+    presenceContext: PresenceContextProps | null,
+    isStatic: boolean
 ) {
     const state: VisualState<I, RS> = {
         latestValues: makeLatestValues(
             props,
             context,
             presenceContext,
-            applyWillChange,
+            isStatic ? false : applyWillChange,
             scrapeMotionValuesFromProps
         ),
         renderState: createRenderState(),
@@ -73,7 +74,8 @@ export const makeUseVisualState =
     (props: MotionProps, isStatic: boolean): VisualState<I, RS> => {
         const context = useContext(MotionContext)
         const presenceContext = useContext(PresenceContext)
-        const make = () => makeState(config, props, context, presenceContext)
+        const make = () =>
+            makeState(config, props, context, presenceContext, isStatic)
 
         return isStatic ? make() : useConstant(make)
     }

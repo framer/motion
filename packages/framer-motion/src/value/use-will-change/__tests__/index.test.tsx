@@ -3,7 +3,7 @@ import { frame, motion, useMotionValue } from "../../.."
 import { useEffect, useState } from "react"
 
 describe("WillChangeMotionValue", () => {
-    test.only("Don't apply will-change if nothing has been defined", async () => {
+    test("Don't apply will-change if nothing has been defined", async () => {
         const Component = () => <motion.div />
         const { container } = render(<Component />)
         expect(container.firstChild).not.toHaveStyle("will-change: auto;")

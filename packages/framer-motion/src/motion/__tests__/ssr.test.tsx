@@ -1,6 +1,6 @@
 import { Fragment, useRef, useState } from "react"
 import { renderToString, renderToStaticMarkup } from "react-dom/server"
-import { motion, useMotionValue } from "../../"
+import { MotionConfig, motion, useMotionValue } from "../../"
 import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
 import { Reorder } from "../../components/Reorder"
@@ -142,6 +142,21 @@ function runTests(render: (components: any) => string) {
 
         expect(div).toBe(
             `<div style="--color:#000;will-change:transform;transform:translateX(100px)"></div>`
+        )
+    })
+
+    test("will-change correctly not applied when isStatic", () => {
+        const div = render(
+            <MotionConfig isStatic>
+                <motion.div
+                    initial={{ x: 100, "--color": "#000" } as any}
+                    animate={{ x: 200 }}
+                />
+            </MotionConfig>
+        )
+
+        expect(div).toBe(
+            `<div style="--color:#000;transform:translateX(100px)"></div>`
         )
     })
 
