@@ -491,7 +491,6 @@ export class MainThreadAnimation<
         if (this.state === "idle") return
         this.teardown()
         const { onStop } = this.options
-        console.log(onStop)
         onStop && onStop()
     }
 

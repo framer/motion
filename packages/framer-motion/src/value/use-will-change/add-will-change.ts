@@ -18,6 +18,6 @@ export function addValueToWillChange(
         willChange = new WillChangeMotionValue("auto")
         visualElement.addValue("willChange", willChange)
     }
-    console.log("adding will change")
+
     return willChange.add(key)
 }
