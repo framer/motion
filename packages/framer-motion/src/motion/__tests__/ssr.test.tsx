@@ -1,6 +1,6 @@
 import { Fragment, useRef, useState } from "react"
 import { renderToString, renderToStaticMarkup } from "react-dom/server"
-import { MotionConfig, motion, useMotionValue } from "../../"
+import { motion, useMotionValue } from "../../"
 import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
 import { Reorder } from "../../components/Reorder"
@@ -132,63 +132,6 @@ function runTests(render: (components: any) => string) {
         )
     })
 
-    test("will-change correctly applied", () => {
-        const div = render(
-            <motion.div
-                initial={{ x: 100, "--color": "#000" } as any}
-                animate={{ x: 200 }}
-            />
-        )
-
-        expect(div).toBe(
-            `<div style="--color:#000;will-change:transform;transform:translateX(100px)"></div>`
-        )
-    })
-
-    test("will-change manually set", () => {
-        const div = render(
-            <motion.div
-                initial={{ x: 100, "--color": "#000" } as any}
-                animate={{ x: 200 }}
-                style={{ willChange: "opacity" }}
-            />
-        )
-
-        expect(div).toBe(
-            `<div style="will-change:opacity;--color:#000;transform:translateX(100px)"></div>`
-        )
-    })
-
-    test("will-change manually set by MotionValue", () => {
-        const willChange = motionValue("opacity")
-        const div = render(
-            <motion.div
-                initial={{ x: 100, "--color": "#000" } as any}
-                animate={{ x: 200 }}
-                style={{ willChange }}
-            />
-        )
-
-        expect(div).toBe(
-            `<div style="--color:#000;will-change:opacity;transform:translateX(100px)"></div>`
-        )
-    })
-
-    test("will-change correctly not applied when isStatic", () => {
-        const div = render(
-            <MotionConfig isStatic>
-                <motion.div
-                    initial={{ x: 100, "--color": "#000" } as any}
-                    animate={{ x: 200 }}
-                />
-            </MotionConfig>
-        )
-
-        expect(div).toBe(
-            `<div style="--color:#000;transform:translateX(100px)"></div>`
-        )
-    })
-
     test("sets tabindex='0' if onTap is set", () => {
         const div = render(<motion.div onTap={() => {}} />)
 
@@ -239,7 +182,7 @@ function runTests(render: (components: any) => string) {
         const div = render(<Component />)
 
         expect(div).toBe(
-            `<ul><li style="z-index:unset;will-change:transform,z-index;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></li></ul>`
+            `<ul><li style="z-index:unset;will-change:transform;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></li></ul>`
         )
     })
 
@@ -255,7 +198,7 @@ function runTests(render: (components: any) => string) {
         const div = render(<Component />)
 
         expect(div).toBe(
-            `<ul><li style="z-index:unset;will-change:transform,z-index;transform:none"></li></ul>`
+            `<ul><li style="z-index:unset;will-change:transform;transform:none"></li></ul>`
         )
     })
 
@@ -271,7 +214,7 @@ function runTests(render: (components: any) => string) {
         const div = render(<Component />)
 
         expect(div).toBe(
-            `<div><div style="z-index:unset;will-change:transform,z-index;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></div></div>`
+            `<div><div style="z-index:unset;will-change:transform;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></div></div>`
         )
     })
 

@@ -6,7 +6,7 @@ describe("WillChangeMotionValue", () => {
     test("Don't apply will-change if nothing has been defined", async () => {
         const Component = () => <motion.div />
         const { container } = render(<Component />)
-        expect(container.firstChild).toHaveStyle("will-change: auto;")
+        expect(container.firstChild).not.toHaveStyle("will-change: auto;")
     })
 
     test("If will-change is set via style, render that value", async () => {
@@ -29,6 +29,36 @@ describe("WillChangeMotionValue", () => {
         )
     })
 
+    test("Renders values defined in animate on initial render", async () => {
+        const Component = () => {
+            return <motion.div animate={{ x: 100 }} />
+        }
+
+        const { container } = render(<Component />)
+
+        expect(container.firstChild).toHaveStyle("will-change: transform;")
+    })
+
+    test("Doesn't render CSS variables or non-hardware accelerated values", async () => {
+        const Component = () => {
+            return (
+                <motion.div
+                    animate={
+                        {
+                            filter: "blur(10px)",
+                            background: "#000",
+                            "--test": "#000",
+                        } as any
+                    }
+                />
+            )
+        }
+
+        const { container } = render(<Component />)
+
+        expect(container.firstChild).toHaveStyle("will-change: filter;")
+    })
+
     test("Don't render values defined in animate on initial render if initial is false", async () => {
         const Component = () => {
             return (
@@ -41,18 +71,20 @@ describe("WillChangeMotionValue", () => {
 
         const { container } = render(<Component />)
 
-        expect(container.firstChild).toHaveStyle("will-change: auto;")
+        expect(container.firstChild).not.toHaveStyle("will-change: auto;")
+        expect(container.firstChild).not.toHaveStyle("will-change: transform;")
     })
 
     test("Add externally-provided motion values", async () => {
         const Component = () => {
-            const height = useMotionValue("height")
-            return <motion.div style={{ height }} />
+            const opacity = useMotionValue(0)
+            const height = useMotionValue(100)
+            return <motion.div style={{ opacity, height }} />
         }
 
         const { container } = render(<Component />)
 
-        expect(container.firstChild).toHaveStyle("will-change: height;")
+        expect(container.firstChild).toHaveStyle("will-change: opacity;")
     })
 
     test("Removes values when they finish animating", async () => {
@@ -172,7 +204,42 @@ describe("WillChangeMotionValue", () => {
 
             const { container } = render(<Component />)
 
-            expect(container.firstChild).toHaveStyle("will-change: auto;")
+            expect(container.firstChild).not.toHaveStyle(
+                "will-change: transform;"
+            )
+        })
+    })
+
+    test("Doesn't remove values when animation interrupted", async () => {
+        return new Promise<void>((resolve) => {
+            const Component = () => {
+                const [state, setState] = useState(false)
+
+                useEffect(() => {
+                    if (!state) setState(true)
+                }, [state])
+
+                return (
+                    <motion.div
+                        initial={false}
+                        animate={state ? { x: 100 } : undefined}
+                        onAnimationStart={() => {
+                            frame.postRender(() => {
+                                expect(container.firstChild).toHaveStyle(
+                                    "will-change: transform;"
+                                )
+                                resolve()
+                            })
+                        }}
+                    />
+                )
+            }
+
+            const { container } = render(<Component />)
+
+            expect(container.firstChild).not.toHaveStyle(
+                "will-change: transform;"
+            )
         })
     })
 })

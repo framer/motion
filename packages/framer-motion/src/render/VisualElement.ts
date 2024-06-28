@@ -143,6 +143,12 @@ export abstract class VisualElement<
         projection?: IProjectionNode
     ): void
 
+    /**
+     * If true, will-change will be applied to the element. Only HTMLVisualElements
+     * currently support this.
+     */
+    applyWillChange = false
+
     resolveKeyframes = <T extends string | number>(
         keyframes: UnresolvedKeyframes<T>,
         // We use an onComplete callback here rather than a Promise as a Promise

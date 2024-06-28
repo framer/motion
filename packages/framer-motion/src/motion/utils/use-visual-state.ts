@@ -176,7 +176,11 @@ function makeLatestValues(
         })
     }
 
-    if (props.style?.willChange === undefined && applyWillChange) {
+    if (
+        props.style?.willChange === undefined &&
+        applyWillChange &&
+        willChange.length
+    ) {
         values.willChange = willChange.join(",")
     }
 

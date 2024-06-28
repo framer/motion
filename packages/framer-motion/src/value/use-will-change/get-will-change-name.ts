@@ -1,19 +1,17 @@
+import { acceleratedValues } from "../../animation/animators/utils/accelerated-values"
 import { camelToDash } from "../../render/dom/utils/camel-to-dash"
-import { isCSSVariableName } from "../../render/dom/utils/is-css-variable"
 import { transformProps } from "../../render/html/utils/transform"
 
-export function getWillChangeName(name: string) {
-    let memberName: string | undefined
-
+export function getWillChangeName(name: string): string | undefined {
     if (transformProps.has(name)) {
-        memberName = "transform"
+        return "transform"
     } else if (
-        !name.startsWith("origin") &&
-        !isCSSVariableName(name) &&
-        name !== "willChange"
+        acceleratedValues.has(name) ||
+        // Manually check for backgroundColor as accelerated animations
+        // are currently disabled for this value (see `acceleratedValues`)
+        // but can still be put on the compositor.
+        name === "backgroundColor"
     ) {
-        memberName = camelToDash(name)
+        return camelToDash(name)
     }
-
-    return memberName
 }

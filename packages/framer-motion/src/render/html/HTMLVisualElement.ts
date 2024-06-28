@@ -12,10 +12,9 @@ import { Box } from "../../projection/geometry/types"
 import { DOMVisualElement } from "../dom/DOMVisualElement"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { isMotionValue } from "../../value/utils/is-motion-value"
-import type { ResolvedValues, VisualElementOptions } from "../types"
+import type { ResolvedValues } from "../types"
 import type { IProjectionNode } from "../../projection/node/types"
 import { VisualElement } from "../VisualElement"
-import { WillChangeMotionValue } from "../../value/use-will-change"
 
 export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)
@@ -28,22 +27,7 @@ export class HTMLVisualElement extends DOMVisualElement<
 > {
     type = "html"
 
-    constructor(
-        options: VisualElementOptions<HTMLElement, HTMLRenderState>,
-        domOptions?: DOMVisualElementOptions
-    ) {
-        super(options, domOptions)
-
-        // If willChange hasn't been manually set, create a new one
-        if (!options.props?.style?.willChange) {
-            this.addValue(
-                "willChange",
-                new WillChangeMotionValue(
-                    this.latestValues.willChange || "auto"
-                )
-            )
-        }
-    }
+    applyWillChange = true
 
     readValueFromInstance(
         instance: HTMLElement,

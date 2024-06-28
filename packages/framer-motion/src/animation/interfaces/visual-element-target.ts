@@ -4,12 +4,12 @@ import type { VisualElement } from "../../render/VisualElement"
 import type { TargetAndTransition } from "../../types"
 import type { VisualElementAnimationOptions } from "./types"
 import { animateMotionValue } from "./motion-value"
-import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { setTarget } from "../../render/utils/setters"
 import { AnimationPlaybackControls } from "../types"
 import { getValueTransition } from "../utils/transitions"
 import { frame } from "../../frameloop"
 import { getOptimisedAppearId } from "../optimized-appear/get-appear-id"
+import { addValueToWillChange } from "../../value/use-will-change/add-will-change"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
@@ -39,8 +39,6 @@ export function animateTarget(
         ...target
     } = targetAndTransition
 
-    const willChange = visualElement.getValue("willChange")
-
     if (transitionOverride) transition = transitionOverride
 
     const animations: AnimationPlaybackControls[] = []
@@ -65,10 +63,14 @@ export function animateTarget(
             continue
         }
 
+        const removeFromWillChange = addValueToWillChange(visualElement, key)
+
         const valueTransition = {
             delay,
             elapsed: 0,
             ...getValueTransition(transition || {}, key),
+            onComplete: removeFromWillChange,
+            onStop: removeFromWillChange,
         }
 
         /**
@@ -110,12 +112,6 @@ export function animateTarget(
         const animation = value.animation
 
         if (animation) {
-            if (isWillChangeMotionValue(willChange)) {
-                willChange.add(key)
-
-                animation.then(() => willChange.remove(key))
-            }
-
             animations.push(animation)
         }
     }
