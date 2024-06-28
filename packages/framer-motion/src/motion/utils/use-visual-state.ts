@@ -29,7 +29,7 @@ export type UseVisualState<Instance, RenderState> = (
 ) => VisualState<Instance, RenderState>
 
 export interface UseVisualStateConfig<Instance, RenderState> {
-    applyWillChange: boolean
+    applyWillChange?: boolean
     scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps
     createRenderState: () => RenderState
     onMount?: (
