@@ -65,11 +65,18 @@ export function animateTarget(
 
         const removeFromWillChange = addValueToWillChange(visualElement, key)
 
+        const valueTransitionDefinition = getValueTransition(
+            transition || {},
+            key
+        )
         const valueTransition = {
             delay,
             elapsed: 0,
-            ...getValueTransition(transition || {}, key),
-            onComplete: removeFromWillChange,
+            ...valueTransitionDefinition,
+            onComplete: () => {
+                valueTransitionDefinition.onComplete?.()
+                removeFromWillChange?.()
+            },
             onStop: removeFromWillChange,
         }
 

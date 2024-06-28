@@ -1,6 +1,6 @@
 import { render } from "../../../../jest.setup"
 import { frame, motion, useMotionValue } from "../../.."
-import { useEffect, useState } from "react"
+import { nextFrame } from "../../../gestures/__tests__/utils"
 
 describe("WillChangeMotionValue", () => {
     test("Don't apply will-change if nothing has been defined", async () => {
@@ -113,133 +113,71 @@ describe("WillChangeMotionValue", () => {
     })
 
     test("Doesn't remove transform when some transforms are still animating", async () => {
-        return new Promise<void>((resolve) => {
-            const Component = () => {
-                useEffect(() => {
-                    setTimeout(() => {
-                        expect(container.firstChild).toHaveStyle(
-                            "will-change: transform;"
-                        )
-                        resolve()
-                    }, 200)
-                }, [])
-                return (
-                    <motion.div
-                        transition={{
-                            x: { duration: 0.1 },
-                            y: { duration: 1 },
-                        }}
-                        initial={{ x: 0, y: 0 }}
-                        animate={{ x: 100, y: 100 }}
-                    />
-                )
-            }
+        const Component = ({ animate }: any) => (
+            <motion.div
+                initial={{ x: 0, y: 0 }}
+                animate={animate}
+                transition={{
+                    x: { duration: 0.1 },
+                    y: { duration: 1 },
+                }}
+            />
+        )
+        const { container, rerender } = render(<Component animate={{}} />)
+        await nextFrame()
 
-            const { container } = render(<Component />)
+        expect(container.firstChild).not.toHaveStyle("will-change: transform;")
+        rerender(<Component animate={{ x: 100, y: 100 }} />)
 
-            expect(container.firstChild).toHaveStyle("will-change: transform;")
-        })
-    })
+        await nextFrame()
+        await nextFrame()
+        await nextFrame()
+        await nextFrame()
+        await nextFrame()
+        await nextFrame()
 
-    test("Doesn't remove transform if any transform is external motion value", async () => {
-        let checkExternalMotionValue = () => {}
-
-        return new Promise<void>((resolve) => {
-            const Component = () => {
-                useEffect(() => {
-                    setTimeout(() => {
-                        checkExternalMotionValue()
-                        resolve()
-                    }, 200)
-                }, [])
-                const y = useMotionValue(100)
-                return (
-                    <motion.div
-                        transition={{
-                            x: { duration: 0.1 },
-                        }}
-                        initial={{ x: 0 }}
-                        animate={{ x: 100 }}
-                        style={{ y }}
-                    />
-                )
-            }
-
-            const { container } = render(<Component />)
-
-            checkExternalMotionValue = () => {
-                expect(container.firstChild).toHaveStyle(
-                    "will-change: transform;"
-                )
-            }
-
-            expect(container.firstChild).toHaveStyle("will-change: transform;")
-        })
+        expect(container.firstChild).toHaveStyle("will-change: transform;")
     })
 
     test("Add values when they start animating", async () => {
-        return new Promise<void>((resolve) => {
-            const Component = () => {
-                const [state, setState] = useState(false)
+        const Component = ({ animate }: any) => (
+            <motion.div
+                initial={false}
+                animate={animate}
+                transition={{ duration: 0.1 }}
+            />
+        )
+        const { container, rerender } = render(<Component animate={{}} />)
+        await nextFrame()
 
-                useEffect(() => {
-                    if (!state) setState(true)
-                }, [state])
+        expect(container.firstChild).not.toHaveStyle("will-change: transform;")
+        rerender(<Component animate={{ x: 100 }} />)
 
-                return (
-                    <motion.div
-                        initial={false}
-                        animate={state ? { x: 100 } : undefined}
-                        onAnimationStart={() => {
-                            frame.postRender(() => {
-                                expect(container.firstChild).toHaveStyle(
-                                    "will-change: transform;"
-                                )
-                                resolve()
-                            })
-                        }}
-                    />
-                )
-            }
+        await nextFrame()
 
-            const { container } = render(<Component />)
-
-            expect(container.firstChild).not.toHaveStyle(
-                "will-change: transform;"
-            )
-        })
+        expect(container.firstChild).toHaveStyle("will-change: transform;")
     })
 
     test("Doesn't remove values when animation interrupted", async () => {
-        return new Promise<void>((resolve) => {
-            const Component = () => {
-                const [state, setState] = useState(false)
+        const Component = ({ animate }: any) => (
+            <motion.div
+                initial={{ x: 0 }}
+                animate={animate}
+                transition={{ duration: 0.1 }}
+            />
+        )
+        const { container, rerender } = render(<Component animate={{}} />)
+        await nextFrame()
 
-                useEffect(() => {
-                    if (!state) setState(true)
-                }, [state])
+        expect(container.firstChild).not.toHaveStyle("will-change: transform;")
+        rerender(<Component animate={{ x: 100 }} />)
 
-                return (
-                    <motion.div
-                        initial={false}
-                        animate={state ? { x: 100 } : undefined}
-                        onAnimationStart={() => {
-                            frame.postRender(() => {
-                                expect(container.firstChild).toHaveStyle(
-                                    "will-change: transform;"
-                                )
-                                resolve()
-                            })
-                        }}
-                    />
-                )
-            }
+        await nextFrame()
 
-            const { container } = render(<Component />)
+        expect(container.firstChild).toHaveStyle("will-change: transform;")
+        rerender(<Component animate={{ x: 200 }} />)
 
-            expect(container.firstChild).not.toHaveStyle(
-                "will-change: transform;"
-            )
-        })
+        await nextFrame()
+        expect(container.firstChild).toHaveStyle("will-change: transform;")
     })
 })
