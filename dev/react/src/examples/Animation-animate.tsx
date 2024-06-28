@@ -1,4 +1,5 @@
 import { motion } from "framer-motion"
+import { useEffect, useState } from "react"
 
 /**
  * An example of the tween transition type
@@ -10,5 +11,17 @@ const style = {
     background: "white",
 }
 export const App = () => {
-    return <motion.div animate={{ x: 100 }} style={style} />
+    const [state, setState] = useState(false)
+    useEffect(() => {
+        setTimeout(() => {
+            setState(true)
+        }, 300)
+    })
+    return (
+        <motion.div
+            animate={{ x: state ? 0 : 100 }}
+            transition={{ duration: 1 }}
+            style={style}
+        />
+    )
 }

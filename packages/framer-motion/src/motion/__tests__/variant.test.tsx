@@ -857,9 +857,9 @@ describe("animate prop as variant", () => {
                     animate={{ x: xTarget }}
                     transition={{ type: false }}
                     onUpdate={(latest) => {
-                        console.log(latest)
                         onUpdate(latest)
                     }}
+                    // Manually setting willChange to avoid triggering onUpdate
                     style={{ x, willChange: "transform" }}
                 />
             )

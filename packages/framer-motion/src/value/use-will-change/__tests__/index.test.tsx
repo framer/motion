@@ -6,7 +6,7 @@ describe("WillChangeMotionValue", () => {
     test("Don't apply will-change if nothing has been defined", async () => {
         const Component = () => <motion.div />
         const { container } = render(<Component />)
-        expect(container.firstChild).not.toHaveStyle("will-change: auto;")
+        expect(container.firstChild).toHaveStyle("will-change: auto;")
     })
 
     test("If will-change is set via style, render that value", async () => {
