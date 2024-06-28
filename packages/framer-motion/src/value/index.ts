@@ -320,7 +320,6 @@ export class MotionValue<V = any> {
 
         // Update update subscribers
         if (this.current !== this.prev && this.events.change) {
-            console.log("changing to", this.current, "from", this.prev)
             this.events.change.notify(this.current)
         }
 

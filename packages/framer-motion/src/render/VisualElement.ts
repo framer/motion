@@ -467,8 +467,6 @@ export abstract class VisualElement<
             (latestValue: string | number) => {
                 this.latestValues[key] = latestValue
 
-                console.log(key, latestValue)
-
                 this.props.onUpdate && frame.preRender(this.notifyUpdate)
 
                 if (valueIsTransform && this.projection) {

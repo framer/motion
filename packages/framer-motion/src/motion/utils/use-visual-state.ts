@@ -41,7 +41,7 @@ export interface UseVisualStateConfig<Instance, RenderState> {
 
 function makeState<I, RS>(
     {
-        applyWillChange,
+        applyWillChange = false,
         scrapeMotionValuesFromProps,
         createRenderState,
         onMount,
