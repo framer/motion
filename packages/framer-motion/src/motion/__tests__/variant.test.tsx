@@ -857,6 +857,7 @@ describe("animate prop as variant", () => {
                     animate={{ x: xTarget }}
                     transition={{ type: false }}
                     onUpdate={(latest) => {
+                        expect(latest.willChange).not.toBe("auto")
                         onUpdate(latest)
                     }}
                     // Manually setting willChange to avoid triggering onUpdate

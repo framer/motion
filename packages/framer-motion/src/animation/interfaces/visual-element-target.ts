@@ -63,21 +63,10 @@ export function animateTarget(
             continue
         }
 
-        const removeFromWillChange = addValueToWillChange(visualElement, key)
-
-        const valueTransitionDefinition = getValueTransition(
-            transition || {},
-            key
-        )
         const valueTransition = {
             delay,
             elapsed: 0,
-            ...valueTransitionDefinition,
-            onComplete: () => {
-                valueTransitionDefinition.onComplete?.()
-                removeFromWillChange?.()
-            },
-            onStop: removeFromWillChange,
+            ...getValueTransition(transition || {}, key),
         }
 
         /**
@@ -112,7 +101,8 @@ export function animateTarget(
                     ? { type: false }
                     : valueTransition,
                 visualElement,
-                isHandoff
+                isHandoff,
+                addValueToWillChange(visualElement, key)
             )
         )
 

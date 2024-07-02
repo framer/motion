@@ -23,9 +23,8 @@ export class WillChangeMotionValue extends MotionValue implements WillChange {
 
         if (prevCount === 0) {
             this.output.push(styleName)
+            this.update()
         }
-
-        this.update()
 
         /**
          * Prevents the remove function from being called multiple times.
@@ -42,9 +41,8 @@ export class WillChangeMotionValue extends MotionValue implements WillChange {
 
             if (newCount === 0) {
                 removeItem(this.output, styleName)
+                this.update()
             }
-
-            this.update()
         }
     }
 
