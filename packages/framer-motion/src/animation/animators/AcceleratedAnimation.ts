@@ -179,7 +179,6 @@ export class AcceleratedAnimation<
             ease = pregeneratedAnimation.ease
             type = "keyframes"
         }
-        console.log("accanimation easing", this.options.ease)
 
         const animation = animateStyle(
             motionValue.owner!.current as unknown as HTMLElement,

@@ -243,7 +243,6 @@ export class VisualElementDragControls {
     }
 
     private stop(event: PointerEvent, info: PanInfo) {
-        console.log("removing will change", this.removeWillChange)
         this.removeWillChange?.()
 
         const isDragging = this.isDragging
@@ -455,8 +454,6 @@ export class VisualElementDragControls {
     ) {
         const axisValue = this.getAxisMotionValue(axis)
 
-        const remove = addValueToWillChange(this.visualElement, axis)
-
         return axisValue.start(
             animateMotionValue(
                 axis,
@@ -465,10 +462,7 @@ export class VisualElementDragControls {
                 transition,
                 this.visualElement,
                 false,
-                () => {
-                    console.log("removing will change", remove, axis)
-                    remove?.()
-                }
+                addValueToWillChange(this.visualElement, axis)
             )
         )
     }
