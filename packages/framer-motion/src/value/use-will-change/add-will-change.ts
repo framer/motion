@@ -5,16 +5,15 @@ export function addValueToWillChange(
     visualElement: VisualElement,
     key: string
 ) {
-    if (!visualElement.applyWillChange) return
+    if (!visualElement.applyWillChange) {
+        return
+    }
 
     let willChange = visualElement.getValue(
         "willChange"
     ) as WillChangeMotionValue
 
-    /**
-     * TODO: Ensure tests cover manually-added willChange static and motion values
-     */
-    if (!willChange) {
+    if (!willChange && !visualElement.props.style?.willChange) {
         willChange = new WillChangeMotionValue("auto")
         visualElement.addValue("willChange", willChange)
     }

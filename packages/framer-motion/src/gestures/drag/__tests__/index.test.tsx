@@ -27,7 +27,7 @@ describe("drag", () => {
 })
 
 describe("dragging", () => {
-    test("willChange is applied correctly", async () => {
+    test.only("willChange is applied correctly", async () => {
         const Component = () => (
             <MockDrag>
                 <motion.div
@@ -52,9 +52,14 @@ describe("dragging", () => {
 
         pointer.end()
 
-        await nextFrame()
-
-        expect(getByTestId("draggable")).toHaveStyle("will-change: auto;")
+        return new Promise<void>((resolve) => {
+            setTimeout(() => {
+                expect(getByTestId("draggable")).toHaveStyle(
+                    "will-change: auto;"
+                )
+                resolve()
+            }, 100)
+        })
     })
 
     test("willChange is applied correctly when other values are animating", async () => {

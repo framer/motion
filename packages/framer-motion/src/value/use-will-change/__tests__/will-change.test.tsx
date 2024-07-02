@@ -1,8 +1,26 @@
 import { render } from "../../../../jest.setup"
 import { frame, motion, useMotionValue } from "../../.."
 import { nextFrame } from "../../../gestures/__tests__/utils"
+import { WillChangeMotionValue } from ".."
 
 describe("WillChangeMotionValue", () => {
+    test("Can manage transform alongside independent transforms", async () => {
+        const willChange = new WillChangeMotionValue("auto")
+        const removeTransform = willChange.add("transform")
+        expect(willChange.get()).toBe("transform")
+        removeTransform!()
+        expect(willChange.get()).toBe("auto")
+        const removeX = willChange.add("x")
+        const removeY = willChange.add("y")
+        expect(willChange.get()).toBe("transform")
+        removeX!()
+        expect(willChange.get()).toBe("transform")
+        removeY!()
+        expect(willChange.get()).toBe("auto")
+    })
+})
+
+describe("willChange", () => {
     test("Don't apply will-change if nothing has been defined", async () => {
         const Component = () => <motion.div />
         const { container } = render(<Component />)
