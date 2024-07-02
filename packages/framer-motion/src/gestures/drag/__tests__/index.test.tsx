@@ -58,7 +58,7 @@ describe("dragging", () => {
                     "will-change: auto;"
                 )
                 resolve()
-            }, 100)
+            }, 200)
         })
     })
 
