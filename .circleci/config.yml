@@ -1,19 +1,9 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2.1
 jobs:
     build:
         docker:
-            # This python image includes node 14.17.1 according to
-            # https://circleci.com/developer/images/image/cimg/python#image-tags
-            # It's a bit weird to use a python image when we care about node
-            # first, but it's needed to get node-gyp to work to build iltorb
-            - image: cimg/python:3.12.2-node
-
-            # Specify service dependencies here if necessary
-            # CircleCI maintains a library of pre-built images
-            # documented at https://circleci.com/docs/2.0/circleci-images/
-            # - image: circleci/mongo:3.4.4
+            - image: cimg/node:lts-browsers
 
         working_directory: ~/repo
 
@@ -27,11 +17,21 @@ jobs:
                       # fallback to using the latest cache if no exact match is found
                       - v1-dependencies-
 
-            # run tests!
-            - run: |
-                  make test-ci
+            - run:
+                  name: E2E tests
+                  command: make test-ci-e2e
+
+            - run:
+                  name: Test Jest
+                  command: make test-ci-jest
+
+            # - run: |
+            #       make test-ci-jest
 
             - save_cache:
                   paths:
                       - node_modules
                   key: v1-dependencies-{{ checksum "package.json" }}
+
+        # "test-e2e": "yarn test-e2e-html && yarn test-e2e-react",
+        # "test-e2e-html": "node ../../dev/inc/collect-html-tests.js && start-server-and-test 'cd ../../; yarn dev-server; cd packages/framer-motion' http://localhost:8000 'cypress run -s cypress/tests/appear.ts --config baseUrl=http://localhost:8000/ && cypress run -s cypress/tests/projection.ts --config baseUrl=http://localhost:8000/'",

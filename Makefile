@@ -68,9 +68,17 @@ publish: clean bootstrap
 test: bootstrap
 	yarn test
 
-test-ci: bootstrap
+test-ci-mkdir:
 	mkdir -p $(TEST_REPORT_PATH)
-	JEST_JUNIT_OUTPUT=$(TEST_REPORT_PATH)/framer-motion.xml yarn test-ci
+
+test-ci-jest: bootstrap test-ci-mkdir
+	JEST_JUNIT_OUTPUT=$(TEST_REPORT_PATH)/framer-motion.xml yarn test
+
+test-ci-e2e: build test-ci-mkdir
+	yarn start-server-and-test "yarn dev-server" http://localhost:9990 "cd packages/framer-motion && cypress run --headless --spec cypress/integration/animate-layout-timing.ts,cypress/integration/animate-reverse.ts"
+
+##	yarn start-server-and-test "yarn dev-server" http://localhost:9990 "cd packages/framer-motion && cypress run --headless $(if $(CI),$(shell circleci tests glob "packages/framer-motion/cypress/integration/*.ts" | circleci tests split))"
+##	JEST_JUNIT_OUTPUT=$(TEST_REPORT_PATH)/framer-motion-e2e.xml yarn test-e2e --no-cache
 
 lint: bootstrap
 	yarn lint
