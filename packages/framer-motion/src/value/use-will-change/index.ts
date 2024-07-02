@@ -1,50 +1,53 @@
-import { isCSSVariableName } from "../../render/dom/utils/is-css-variable"
-import { transformProps } from "../../render/html/utils/transform"
-import { addUniqueItem, removeItem } from "../../utils/array"
 import { useConstant } from "../../utils/use-constant"
 import { MotionValue } from ".."
 import { WillChange } from "./types"
-import { camelToDash } from "../../render/dom/utils/camel-to-dash"
+import { getWillChangeName } from "./get-will-change-name"
+import { removeItem } from "../../utils/array"
 
 export class WillChangeMotionValue extends MotionValue implements WillChange {
-    private members: string[] = []
-    private transforms = new Set<string>()
+    private output: string[] = []
+    private counts = new Map<string, number>()
 
-    add(name: string): void {
-        let memberName: string | undefined
+    add(name: string) {
+        const styleName = getWillChangeName(name)
 
-        if (transformProps.has(name)) {
-            this.transforms.add(name)
-            memberName = "transform"
-        } else if (
-            !name.startsWith("origin") &&
-            !isCSSVariableName(name) &&
-            name !== "willChange"
-        ) {
-            memberName = camelToDash(name)
-        }
+        if (!styleName) return
 
-        if (memberName) {
-            addUniqueItem(this.members, memberName)
+        /**
+         * Update counter. Each value has an indepdent counter
+         * as multiple sources could be requesting the same value
+         * gets added to will-change.
+         */
+        const prevCount = this.counts.get(styleName) || 0
+        this.counts.set(styleName, prevCount + 1)
+
+        if (prevCount === 0) {
+            this.output.push(styleName)
             this.update()
         }
-    }
 
-    remove(name: string): void {
-        if (transformProps.has(name)) {
-            this.transforms.delete(name)
-            if (!this.transforms.size) {
-                removeItem(this.members, "transform")
+        /**
+         * Prevents the remove function from being called multiple times.
+         */
+        let hasRemoved = false
+
+        return () => {
+            if (hasRemoved) return
+
+            hasRemoved = true
+
+            const newCount = this.counts.get(styleName)! - 1
+            this.counts.set(styleName, newCount)
+
+            if (newCount === 0) {
+                removeItem(this.output, styleName)
+                this.update()
             }
-        } else {
-            removeItem(this.members, camelToDash(name))
         }
-
-        this.update()
     }
 
     private update() {
-        this.set(this.members.length ? this.members.join(", ") : "auto")
+        this.set(this.output.length ? this.output.join(", ") : "auto")
     }
 }
 

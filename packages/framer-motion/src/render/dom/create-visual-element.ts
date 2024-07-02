@@ -11,9 +11,8 @@ export const createDomVisualElement: CreateVisualElement<
     options: VisualElementOptions<HTMLElement | SVGElement>
 ) => {
     return isSVGComponent(Component)
-        ? new SVGVisualElement(options, { enableHardwareAcceleration: false })
+        ? new SVGVisualElement(options)
         : new HTMLVisualElement(options, {
               allowProjection: Component !== Fragment,
-              enableHardwareAcceleration: true,
           })
 }

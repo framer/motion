@@ -4,8 +4,8 @@ import {
     pointerUp,
     render,
 } from "../../../jest.setup"
-import { motion, MotionConfig, useMotionValue } from "../../"
-import { Fragment, useEffect, memo, useState } from "react";
+import { frame, motion, MotionConfig, useMotionValue } from "../../"
+import { Fragment, useEffect, memo, useState } from "react"
 import { Variants } from "../../types"
 import { motionValue } from "../../value"
 import { nextFrame } from "../../gestures/__tests__/utils"
@@ -774,6 +774,7 @@ describe("animate prop as variant", () => {
                                 updateDelayedBy(0)
                                 order.push(1)
                             }}
+                            style={{ willChange: "auto" }}
                         />
                         <motion.div
                             variants={variants}
@@ -781,6 +782,7 @@ describe("animate prop as variant", () => {
                                 updateDelayedBy(1)
                                 order.push(2)
                             }}
+                            style={{ willChange: "auto" }}
                         />
                     </motion.div>
                     <motion.div>
@@ -790,6 +792,7 @@ describe("animate prop as variant", () => {
                                 updateDelayedBy(2)
                                 order.push(3)
                             }}
+                            style={{ willChange: "auto" }}
                         />
                         <motion.div
                             variants={variants}
@@ -797,6 +800,7 @@ describe("animate prop as variant", () => {
                                 updateDelayedBy(3)
                                 order.push(4)
                             }}
+                            style={{ willChange: "auto" }}
                         />
                     </motion.div>
                 </motion.div>
@@ -811,7 +815,11 @@ describe("animate prop as variant", () => {
         const promise = new Promise((resolve) => {
             let latest = {}
 
+            let frameCount = 0
+
             const onUpdate = (l: { [key: string]: number | string }) => {
+                frameCount++
+                if (frameCount === 2) expect(l.willChange).toBe("transform")
                 latest = l
             }
 
@@ -821,7 +829,9 @@ describe("animate prop as variant", () => {
                     initial={{ x: 0, y: 0 }}
                     animate={{ x: 100, y: 100 }}
                     transition={{ duration: 0.1 }}
-                    onAnimationComplete={() => resolve(latest)}
+                    onAnimationComplete={() => {
+                        frame.postRender(() => resolve(latest))
+                    }}
                 />
             )
 
@@ -829,7 +839,11 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        return expect(promise).resolves.toEqual({ x: 100, y: 100 })
+        return expect(promise).resolves.toEqual({
+            willChange: "auto",
+            x: 100,
+            y: 100,
+        })
     })
 
     test("onUpdate doesnt fire if no values have changed", async () => {
@@ -837,12 +851,17 @@ describe("animate prop as variant", () => {
 
         await new Promise<void>((resolve) => {
             const x = motionValue(0)
+
             const Component = ({ xTarget = 0 }) => (
                 <motion.div
                     animate={{ x: xTarget }}
                     transition={{ type: false }}
-                    onUpdate={onUpdate}
-                    style={{ x }}
+                    onUpdate={(latest) => {
+                        expect(latest.willChange).not.toBe("auto")
+                        onUpdate(latest)
+                    }}
+                    // Manually setting willChange to avoid triggering onUpdate
+                    style={{ x, willChange: "transform" }}
                 />
             )
 
@@ -984,7 +1003,7 @@ describe("animate prop as variant", () => {
 
         await nextFrame()
         expect(element).toHaveStyle("opacity: 1")
-        expect(element).toHaveStyle("transform: rotate(1deg) translateZ(0)")
+        expect(element).toHaveStyle("transform: rotate(1deg)")
 
         rerender(<Component />)
         rerender(<Component />)
@@ -998,7 +1017,7 @@ describe("animate prop as variant", () => {
 
         await nextFrame()
         expect(element).toHaveStyle("opacity: 0.5")
-        expect(element).toHaveStyle("transform: rotate(0.5deg) translateZ(0)")
+        expect(element).toHaveStyle("transform: rotate(0.5deg)")
 
         // Re-adding value to animated stack will animate value correctly
         rerender(<Component animate="a" opacity={0.5} />)
@@ -1006,7 +1025,7 @@ describe("animate prop as variant", () => {
 
         await nextFrame()
         expect(element).toHaveStyle("opacity: 1")
-        expect(element).toHaveStyle("transform: rotate(1deg) translateZ(0)")
+        expect(element).toHaveStyle("transform: rotate(1deg)")
 
         // While animate is active, changing style doesn't change value
         rerender(<Component animate="a" opacity={0.75} />)
@@ -1014,7 +1033,7 @@ describe("animate prop as variant", () => {
 
         await nextFrame()
         expect(element).toHaveStyle("opacity: 1")
-        expect(element).toHaveStyle("transform: rotate(1deg) translateZ(0)")
+        expect(element).toHaveStyle("transform: rotate(1deg)")
     })
 
     test("variants work the same whether defined inline or not", async () => {
@@ -1127,9 +1146,7 @@ describe("animate prop as variant", () => {
 
         await nextFrame()
 
-        expect(element).toHaveStyle(
-            "transform: translateX(100px) translateZ(0)"
-        )
+        expect(element).toHaveStyle("transform: translateX(100px)")
         rerender(<Parent isVisible={false} />)
 
         await nextFrame()

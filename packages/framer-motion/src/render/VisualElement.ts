@@ -15,7 +15,6 @@ import {
 } from "../utils/reduced-motion/state"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { motionValue, MotionValue } from "../value"
-import { isWillChangeMotionValue } from "../value/use-will-change/is"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import { transformProps } from "./html/utils/transform"
 import {
@@ -129,7 +128,6 @@ export abstract class VisualElement<
     abstract build(
         renderState: RenderState,
         latestValues: ResolvedValues,
-        options: Options,
         props: MotionProps
     ): void
 
@@ -144,6 +142,12 @@ export abstract class VisualElement<
         styleProp?: MotionStyle,
         projection?: IProjectionNode
     ): void
+
+    /**
+     * If true, will-change will be applied to the element. Only HTMLVisualElements
+     * currently support this.
+     */
+    applyWillChange = false
 
     resolveKeyframes = <T extends string | number>(
         keyframes: UnresolvedKeyframes<T>,
@@ -398,10 +402,6 @@ export abstract class VisualElement<
 
             if (latestValues[key] !== undefined && isMotionValue(value)) {
                 value.set(latestValues[key], false)
-
-                if (isWillChangeMotionValue(willChange)) {
-                    willChange.add(key)
-                }
             }
         }
     }
@@ -550,12 +550,7 @@ export abstract class VisualElement<
     notifyUpdate = () => this.notify("Update", this.latestValues)
 
     triggerBuild() {
-        this.build(
-            this.renderState,
-            this.latestValues,
-            this.options,
-            this.props
-        )
+        this.build(this.renderState, this.latestValues, this.props)
     }
 
     render = () => {

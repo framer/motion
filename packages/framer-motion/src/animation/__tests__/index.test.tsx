@@ -233,7 +233,7 @@ describe("useAnimation", () => {
         }
         const { container } = render(<Component />)
         expect(container.firstChild as HTMLElement).toHaveStyle(
-            "transform: translateX(10px) translateZ(0); background: rgb(255, 255, 255)"
+            "transform: translateX(10px); background: rgb(255, 255, 255)"
         )
     })
 

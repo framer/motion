@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import { useEffect } from "react";
+import { useEffect } from "react"
 import { cancelFrame, frame, motion } from "../../"
 import { useMotionValue } from "../use-motion-value"
 import { useTransform } from "../use-transform"
@@ -32,7 +32,7 @@ describe("as function", () => {
 
         const { container } = render(<Component />)
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(100px) translateY(-100px) translateZ(0)"
+            "transform: translateX(100px) translateY(-100px)"
         )
     })
 })
@@ -169,7 +169,7 @@ describe("as input/output range", () => {
         await nextFrame()
 
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(20px) translateY(120px) translateZ(0)"
+            "transform: translateX(20px) translateY(120px)"
         )
     })
 })
@@ -221,7 +221,7 @@ test("frame scheduling", async () => {
 
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
-    });
+    })
 })
 
 test("can be re-pointed to another `MotionValue`", async () => {
@@ -239,12 +239,12 @@ test("can be re-pointed to another `MotionValue`", async () => {
 
     await nextMicrotask()
     expect(container.firstChild as Element).toHaveStyle(
-        "transform: translateX(4px) translateZ(0)"
+        "transform: translateX(4px)"
     )
 
     rerender(<Component target={a} />)
     await nextMicrotask()
     expect(container.firstChild as Element).toHaveStyle(
-        "transform: translateX(2px) translateZ(0)"
+        "transform: translateX(2px)"
     )
 })

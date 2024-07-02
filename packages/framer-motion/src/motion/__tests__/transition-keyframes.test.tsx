@@ -25,9 +25,7 @@ describe("keyframes transition", () => {
             rerender(<Component />)
         })
 
-        expect(promise).resolves.toHaveStyle(
-            "transform: translateX(200px) translateZ(0)"
-        )
+        expect(promise).resolves.toHaveStyle("transform: translateX(200px)")
     })
 
     test("hasUpdated detects only changed keyframe arrays", async () => {
@@ -126,6 +124,8 @@ describe("keyframes transition", () => {
                         output.push(Math.round(latest.x as number))
                     }
                     onAnimationComplete={() => resolve(output)}
+                    // Manually setting willChange to auto to prevent changes to willChange triggering onUpdate
+                    style={{ willChange: "auto" }}
                 />
             )
 
