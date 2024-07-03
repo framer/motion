@@ -1,5 +1,5 @@
 import type { MotionValue } from ".."
 
 export interface WillChange extends MotionValue {
-    add(name: string): void
+    add(name: string): void | VoidFunction
 }
