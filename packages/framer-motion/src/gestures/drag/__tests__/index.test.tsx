@@ -28,7 +28,7 @@ describe("drag", () => {
 })
 
 describe("dragging", () => {
-    test.only("willChange is applied correctly", async () => {
+    test("willChange is applied correctly", async () => {
         const willChange = new WillChangeMotionValue("auto")
         const Component = () => (
             <MockDrag>
