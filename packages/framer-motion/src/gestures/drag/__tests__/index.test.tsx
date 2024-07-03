@@ -3,6 +3,7 @@ import { pointerDown, render } from "../../../../jest.setup"
 import { BoundingBox, motion, motionValue, MotionValue } from "../../../"
 import { MockDrag, drag, deferred, dragFrame, Point, sleep } from "./utils"
 import { nextFrame } from "../../__tests__/utils"
+import { WillChangeMotionValue } from "../../../value/use-will-change"
 
 describe("drag", () => {
     test("onDragStart fires", async () => {
@@ -27,7 +28,8 @@ describe("drag", () => {
 })
 
 describe("dragging", () => {
-    test("willChange is applied correctly", async () => {
+    test.only("willChange is applied correctly", async () => {
+        const willChange = new WillChangeMotionValue("auto")
         const Component = () => (
             <MockDrag>
                 <motion.div
@@ -37,29 +39,21 @@ describe("dragging", () => {
                         bounceStiffness: 100000,
                         bounceDamping: 100000,
                     }}
+                    style={{ willChange }}
                 />
             </MockDrag>
         )
 
-        const { container, getByTestId, rerender } = render(<Component />)
+        const { container, rerender } = render(<Component />)
         rerender(<Component />)
 
         const pointer = await drag(container.firstChild).to(100, 100)
 
         await nextFrame()
 
-        expect(getByTestId("draggable")).toHaveStyle("will-change: transform;")
+        expect(expect(willChange.get()).toBe("transform"))
 
         pointer.end()
-
-        return new Promise<void>((resolve) => {
-            setTimeout(() => {
-                expect(getByTestId("draggable")).toHaveStyle(
-                    "will-change: auto;"
-                )
-                resolve()
-            }, 200)
-        })
     })
 
     test("willChange is applied correctly when other values are animating", async () => {

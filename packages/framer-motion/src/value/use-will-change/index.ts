@@ -47,6 +47,10 @@ export class WillChangeMotionValue extends MotionValue implements WillChange {
     }
 
     private update() {
+        console.log(
+            "SETTING WILL CHANE TO ",
+            this.output.length ? this.output.join(", ") : "auto"
+        )
         this.set(this.output.length ? this.output.join(", ") : "auto")
     }
 }

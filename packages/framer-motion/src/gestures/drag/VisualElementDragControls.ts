@@ -160,6 +160,7 @@ export class VisualElementDragControls {
                 frame.postRender(() => onDragStart(event, info))
             }
 
+            this.removeWillChange?.()
             this.removeWillChange = addValueToWillChange(
                 this.visualElement,
                 "transform"
