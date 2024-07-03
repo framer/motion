@@ -488,34 +488,9 @@ export abstract class VisualElement<
             this.scheduleRender
         )
 
-        /**
-         * If this value is elligable for will-change, add a listener that
-         * adds and remves it from the will-change list.
-         */
-        let removeOnAnimationCreate: VoidFunction | undefined
-        if (getWillChangeName(key)) {
-            removeOnAnimationCreate = value.on("animationCreate", () => {
-                const removeValueFromWillChange = addValueToWillChange(
-                    this,
-                    key
-                )
-
-                if (removeValueFromWillChange) {
-                    const removeOnAnimationEnd = value.on(
-                        "animationEnd",
-                        () => {
-                            removeValueFromWillChange()
-                            removeOnAnimationEnd()
-                        }
-                    )
-                }
-            })
-        }
-
         this.valueSubscriptions.set(key, () => {
             removeOnChange()
             removeOnRenderRequest()
-            removeOnAnimationCreate?.()
             if (value.owner) value.stop()
         })
     }
