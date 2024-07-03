@@ -22,6 +22,12 @@ export const animateMotionValue =
         transition: Transition & { elapsed?: number } = {},
         element?: VisualElement<any>,
         isHandoff?: boolean,
+        /**
+         * Currently used to remove values from will-change when an animation ends.
+         * Preferably this would be handled by event listeners on the MotionValue
+         * but these aren't consistent enough yet when considering the different ways
+         * an animation can be cancelled.
+         */
         onEnd?: VoidFunction
     ): StartAnimation =>
     (onComplete): AnimationPlaybackControls => {
