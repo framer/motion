@@ -47,6 +47,8 @@ import { isZeroValueString } from "../utils/is-zero-value-string"
 import { findValueType } from "./dom/value-types/find"
 import { complex } from "../value/types/complex"
 import { getAnimatableNone } from "./dom/value-types/animatable-none"
+import { addValueToWillChange } from "../value/use-will-change/add-will-change"
+import { getWillChangeName } from "../value/use-will-change/get-will-change-name"
 
 const propEventHandlers = [
     "AnimationStart",
@@ -486,9 +488,34 @@ export abstract class VisualElement<
             this.scheduleRender
         )
 
+        /**
+         * If this value is elligable for will-change, add a listener that
+         * adds and remves it from the will-change list.
+         */
+        let removeOnAnimationCreate: VoidFunction | undefined
+        if (getWillChangeName(key)) {
+            removeOnAnimationCreate = value.on("animationCreate", () => {
+                const removeValueFromWillChange = addValueToWillChange(
+                    this,
+                    key
+                )
+
+                if (removeValueFromWillChange) {
+                    const removeOnAnimationEnd = value.on(
+                        "animationEnd",
+                        () => {
+                            removeValueFromWillChange()
+                            removeOnAnimationEnd()
+                        }
+                    )
+                }
+            })
+        }
+
         this.valueSubscriptions.set(key, () => {
             removeOnChange()
             removeOnRenderRequest()
+            removeOnAnimationCreate?.()
             if (value.owner) value.stop()
         })
     }
