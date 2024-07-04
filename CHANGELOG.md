@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.2.13] 2024-07-04
+
+### Fixed
+
+-   Checking for `null` before interpolating color values.
+
 ## [11.2.12] 2024-06-25
 
 ### Fixed
