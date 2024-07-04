@@ -16,3 +16,7 @@ export const singleColorRegex =
 export function isString(v: any): v is string {
     return typeof v === "string"
 }
+
+export function isNullish(v: any): v is null | undefined {
+    return v == null
+}
