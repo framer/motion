@@ -1,6 +1,14 @@
 import { MotionGlobalConfig } from "../utils/GlobalConfig"
 import { createRenderStep } from "./render-step"
-import { Batcher, Process, StepId, Steps, FrameData } from "./types"
+import {
+    Batcher,
+    Process,
+    StepId,
+    Steps,
+    FrameData,
+    Step,
+    Schedule,
+} from "./types"
 
 export const stepsOrder: StepId[] = [
     "read", // Read
@@ -10,6 +18,7 @@ export const stepsOrder: StepId[] = [
     "render", // Write
     "postRender", // Compute
 ]
+const stepsOrderLength = stepsOrder.length
 
 const maxElapsed = 40
 
@@ -26,13 +35,22 @@ export function createRenderBatcher(
         isProcessing: false,
     }
 
-    const steps = stepsOrder.reduce((acc, key) => {
-        acc[key] = createRenderStep(() => (runNextFrame = true))
-        return acc
-    }, {} as Steps)
+    const steps: Record<keyof Steps, Step | null> = {
+        read: null,
+        resolveKeyframes: null,
+        update: null,
+        preRender: null,
+        render: null,
+        postRender: null,
+    }
+    const runNextFrameFn = () => (runNextFrame = true)
+    for (let i = 0; i < stepsOrderLength; ++i) {
+        const key = stepsOrder[i]
+        steps[key] = createRenderStep(runNextFrameFn)
+    }
 
     const processStep = (stepId: StepId) => {
-        steps[stepId].process(state)
+        ;(steps as Steps)[stepId].process(state)
     }
 
     const processBatch = () => {
@@ -47,7 +65,7 @@ export function createRenderBatcher(
 
         state.timestamp = timestamp
         state.isProcessing = true
-        stepsOrder.forEach(processStep)
+        for (let i = 0; i < stepsOrderLength; ++i) processStep(stepsOrder[i])
         state.isProcessing = false
 
         if (runNextFrame && allowKeepAlive) {
@@ -65,18 +83,32 @@ export function createRenderBatcher(
         }
     }
 
-    const schedule = stepsOrder.reduce((acc, key) => {
-        const step = steps[key]
-        acc[key] = (process: Process, keepAlive = false, immediate = false) => {
+    const schedule: Record<keyof Batcher, Schedule | null> = {
+        read: null,
+        resolveKeyframes: null,
+        update: null,
+        preRender: null,
+        render: null,
+        postRender: null,
+    }
+    for (let i = 0; i < stepsOrderLength; ++i) {
+        const key = stepsOrder[i]
+        const step = (steps as Steps)[key]
+        schedule[key] = (
+            process: Process,
+            keepAlive = false,
+            immediate = false
+        ) => {
             if (!runNextFrame) wake()
 
             return step.schedule(process, keepAlive, immediate)
         }
-        return acc
-    }, {} as Batcher)
+    }
 
-    const cancel = (process: Process) =>
-        stepsOrder.forEach((key) => steps[key].cancel(process))
+    const cancel = (process: Process) => {
+        for (let i = 0; i < stepsOrderLength; ++i)
+            (steps as Steps)[stepsOrder[i]].cancel(process)
+    }
 
     return { schedule, cancel, state, steps }
 }
