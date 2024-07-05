@@ -1,23 +1,15 @@
 import { MotionGlobalConfig } from "../utils/GlobalConfig"
 import { createRenderStep } from "./render-step"
-import {
-    Batcher,
-    Process,
-    StepId,
-    Steps,
-    FrameData,
-    Step,
-    Schedule,
-} from "./types"
+import { Batcher, Process, StepId, Steps, FrameData, Step } from "./types"
 
-export const stepsOrder: StepId[] = [
+export const stepsOrder: Readonly<StepId[]> = [
     "read", // Read
     "resolveKeyframes", // Write/Read/Write/Read
     "update", // Compute
     "preRender", // Compute
     "render", // Write
     "postRender", // Compute
-]
+] as const
 const stepsOrderLength = stepsOrder.length
 
 const maxElapsed = 40
@@ -35,22 +27,18 @@ export function createRenderBatcher(
         isProcessing: false,
     }
 
-    const steps: Record<keyof Steps, Step | null> = {
-        read: null,
-        resolveKeyframes: null,
-        update: null,
-        preRender: null,
-        render: null,
-        postRender: null,
-    }
-    const runNextFrameFn = () => (runNextFrame = true)
-    for (let i = 0; i < stepsOrderLength; ++i) {
-        const key = stepsOrder[i]
-        steps[key] = createRenderStep(runNextFrameFn)
+    const nextFrameFn = () => (runNextFrame = true)
+    const steps: Steps = {
+        read: createRenderStep(nextFrameFn),
+        resolveKeyframes: createRenderStep(nextFrameFn),
+        update: createRenderStep(nextFrameFn),
+        preRender: createRenderStep(nextFrameFn),
+        render: createRenderStep(nextFrameFn),
+        postRender: createRenderStep(nextFrameFn),
     }
 
     const processStep = (stepId: StepId) => {
-        ;(steps as Steps)[stepId].process(state)
+        steps[stepId].process(state)
     }
 
     const processBatch = () => {
@@ -83,31 +71,28 @@ export function createRenderBatcher(
         }
     }
 
-    const schedule: Record<keyof Batcher, Schedule | null> = {
-        read: null,
-        resolveKeyframes: null,
-        update: null,
-        preRender: null,
-        render: null,
-        postRender: null,
-    }
-    for (let i = 0; i < stepsOrderLength; ++i) {
-        const key = stepsOrder[i]
-        const step = (steps as Steps)[key]
-        schedule[key] = (
-            process: Process,
-            keepAlive = false,
-            immediate = false
-        ) => {
-            if (!runNextFrame) wake()
+    const batchFn = (
+        step: Step,
+        process: Process,
+        keepAlive = false,
+        immediate = false
+    ) => {
+        if (!runNextFrame) wake()
 
-            return step.schedule(process, keepAlive, immediate)
-        }
+        return step.schedule(process, keepAlive, immediate)
+    }
+    const schedule: Batcher = {
+        read: batchFn.bind(undefined, steps.read),
+        resolveKeyframes: batchFn.bind(undefined, steps.resolveKeyframes),
+        update: batchFn.bind(undefined, steps.update),
+        preRender: batchFn.bind(undefined, steps.preRender),
+        render: batchFn.bind(undefined, steps.render),
+        postRender: batchFn.bind(undefined, steps.postRender),
     }
 
     const cancel = (process: Process) => {
         for (let i = 0; i < stepsOrderLength; ++i)
-            (steps as Steps)[stepsOrder[i]].cancel(process)
+            steps[stepsOrder[i]].cancel(process)
     }
 
     return { schedule, cancel, state, steps }
