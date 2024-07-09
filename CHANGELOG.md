@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.2.14] 2024-07-09
+
+### Updated
+
+-   Improved performance of core render loop.
+
 ## [11.2.13] 2024-07-04
 
 ### Fixed
