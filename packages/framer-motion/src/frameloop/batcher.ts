@@ -33,9 +33,8 @@ export function createRenderBatcher(
         return acc
     }, {} as Steps)
 
-    const processStep = (stepId: StepId) => {
-        steps[stepId].process(state)
-    }
+    const { read, resolveKeyframes, update, preRender, render, postRender } =
+        steps
 
     const processBatch = () => {
         const timestamp = MotionGlobalConfig.useManualTiming
@@ -51,12 +50,12 @@ export function createRenderBatcher(
         state.isProcessing = true
 
         // Unrolled render loop for better per-frame performance
-        processStep(stepsOrder[0])
-        processStep(stepsOrder[1])
-        processStep(stepsOrder[2])
-        processStep(stepsOrder[3])
-        processStep(stepsOrder[4])
-        processStep(stepsOrder[5])
+        read.process(state)
+        resolveKeyframes.process(state)
+        update.process(state)
+        preRender.process(state)
+        render.process(state)
+        postRender.process(state)
 
         state.isProcessing = false
 
@@ -85,8 +84,11 @@ export function createRenderBatcher(
         return acc
     }, {} as Batcher)
 
-    const cancel = (process: Process) =>
-        stepsOrder.forEach((key) => steps[key].cancel(process))
+    const cancel = (process: Process) => {
+        for (let i = 0; i < stepsOrder.length; i++) {
+            steps[stepsOrder[i]].cancel(process)
+        }
+    }
 
     return { schedule, cancel, state, steps }
 }
