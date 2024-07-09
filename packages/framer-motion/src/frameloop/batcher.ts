@@ -26,8 +26,10 @@ export function createRenderBatcher(
         isProcessing: false,
     }
 
+    const flagRunNextFrame = () => (runNextFrame = true)
+
     const steps = stepsOrder.reduce((acc, key) => {
-        acc[key] = createRenderStep(() => (runNextFrame = true))
+        acc[key] = createRenderStep(flagRunNextFrame)
         return acc
     }, {} as Steps)
 
@@ -47,7 +49,15 @@ export function createRenderBatcher(
 
         state.timestamp = timestamp
         state.isProcessing = true
-        stepsOrder.forEach(processStep)
+
+        // Unrolled render loop for better per-frame performance
+        processStep(stepsOrder[0])
+        processStep(stepsOrder[1])
+        processStep(stepsOrder[2])
+        processStep(stepsOrder[3])
+        processStep(stepsOrder[4])
+        processStep(stepsOrder[5])
+
         state.isProcessing = false
 
         if (runNextFrame && allowKeepAlive) {
