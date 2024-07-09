@@ -17,6 +17,7 @@ export interface AnimationPlaybackLifecycles<V> {
     onComplete?: () => void
     onRepeat?: () => void
     onStop?: () => void
+    onEnd?: () => void
 }
 
 export interface Transition

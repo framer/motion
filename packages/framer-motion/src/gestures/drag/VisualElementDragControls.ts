@@ -33,7 +33,7 @@ import { percent } from "../../value/types/numbers/units"
 import { animateMotionValue } from "../../animation/interfaces/motion-value"
 import { getContextWindow } from "../../utils/get-context-window"
 import { frame } from "../../frameloop"
-import { WillChangeMotionValue } from "../../value/use-will-change"
+import { addValueToWillChange } from "../../value/use-will-change/add-will-change"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -78,6 +78,8 @@ export class VisualElementDragControls {
      * The per-axis resolved elastic values.
      */
     private elastic = createBox()
+
+    private removeWillChange: VoidFunction | undefined
 
     constructor(visualElement: VisualElement<HTMLElement>) {
         this.visualElement = visualElement
@@ -158,11 +160,10 @@ export class VisualElementDragControls {
                 frame.postRender(() => onDragStart(event, info))
             }
 
-            ;(
-                this.visualElement.getValue(
-                    "willChange"
-                ) as WillChangeMotionValue
-            )?.add("transform")
+            this.removeWillChange = addValueToWillChange(
+                this.visualElement,
+                "transform"
+            )
 
             const { animationState } = this.visualElement
             animationState && animationState.setActive("whileDrag", true)
@@ -245,9 +246,8 @@ export class VisualElementDragControls {
         const isDragging = this.isDragging
         this.cancel()
         if (!isDragging) return
-        ;(
-            this.visualElement.getValue("willChange") as WillChangeMotionValue
-        )?.remove("transform")
+
+        this.removeWillChange?.()
 
         const { velocity } = info
         this.startAnimation(velocity)
