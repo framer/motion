@@ -47,8 +47,6 @@ import { isZeroValueString } from "../utils/is-zero-value-string"
 import { findValueType } from "./dom/value-types/find"
 import { complex } from "../value/types/complex"
 import { getAnimatableNone } from "./dom/value-types/animatable-none"
-import { addValueToWillChange } from "../value/use-will-change/add-will-change"
-import { getWillChangeName } from "../value/use-will-change/get-will-change-name"
 
 const propEventHandlers = [
     "AnimationStart",
