@@ -27,6 +27,8 @@ export class HTMLVisualElement extends DOMVisualElement<
 > {
     type = "html"
 
+    applyWillChange = true
+
     readValueFromInstance(
         instance: HTMLElement,
         key: string
@@ -55,15 +57,9 @@ export class HTMLVisualElement extends DOMVisualElement<
     build(
         renderState: HTMLRenderState,
         latestValues: ResolvedValues,
-        options: DOMVisualElementOptions,
         props: MotionProps
     ) {
-        buildHTMLStyles(
-            renderState,
-            latestValues,
-            options,
-            props.transformTemplate
-        )
+        buildHTMLStyles(renderState, latestValues, props.transformTemplate)
     }
 
     scrapeMotionValuesFromProps(

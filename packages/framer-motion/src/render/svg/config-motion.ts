@@ -37,7 +37,6 @@ export const svgMotionConfig: Partial<
                 buildSVGAttrs(
                     renderState,
                     latestValues,
-                    { enableHardwareAcceleration: false },
                     isSVGTag(instance.tagName),
                     props.transformTemplate
                 )

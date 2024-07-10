@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"
 import { useAnimation, distance2D, wrap } from "framer-motion"
 import { motion } from "framer-motion"
 

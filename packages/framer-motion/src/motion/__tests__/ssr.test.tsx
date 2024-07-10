@@ -60,7 +60,7 @@ function runTests(render: (components: any) => string) {
         )
 
         expect(div).toBe(
-            '<div style="transform:translateX(100px) translateY(200px) translateZ(0)"></div>'
+            '<div style="will-change:transform;transform:translateX(100px) translateY(200px)"></div>'
         )
     })
 
@@ -79,7 +79,7 @@ function runTests(render: (components: any) => string) {
         )
 
         expect(customElement).toBe(
-            '<element-test style="transform:translateX(100px) translateY(200px) translateZ(0)"></element-test>'
+            '<element-test style="will-change:transform;transform:translateX(100px) translateY(200px)"></element-test>'
         )
     })
 
@@ -128,7 +128,7 @@ function runTests(render: (components: any) => string) {
         )
 
         expect(div).toBe(
-            `<div style="transform:translateX(100px) translateZ(0)"></div>`
+            `<div style="will-change:transform;transform:translateX(100px)"></div>`
         )
     })
 
@@ -166,7 +166,7 @@ function runTests(render: (components: any) => string) {
         )
 
         expect(div).toBe(
-            `<div style="transform:translateX(100px) translateZ(0)"></div>`
+            `<div style="will-change:transform;transform:translateX(100px)"></div>`
         )
     })
 
@@ -182,7 +182,7 @@ function runTests(render: (components: any) => string) {
         const div = render(<Component />)
 
         expect(div).toBe(
-            `<ul><li style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></li></ul>`
+            `<ul><li style="z-index:unset;will-change:transform;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></li></ul>`
         )
     })
 
@@ -198,7 +198,7 @@ function runTests(render: (components: any) => string) {
         const div = render(<Component />)
 
         expect(div).toBe(
-            `<ul><li style="z-index:unset;transform:none"></li></ul>`
+            `<ul><li style="z-index:unset;will-change:transform;transform:none"></li></ul>`
         )
     })
 
@@ -214,7 +214,7 @@ function runTests(render: (components: any) => string) {
         const div = render(<Component />)
 
         expect(div).toBe(
-            `<div><div style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></div></div>`
+            `<div><div style="z-index:unset;will-change:transform;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></div></div>`
         )
     })
 

@@ -19,12 +19,8 @@ export function createVisualElement(element: HTMLElement | SVGElement) {
         },
     }
     const node = isSVGElement(element)
-        ? new SVGVisualElement(options, {
-              enableHardwareAcceleration: false,
-          })
-        : new HTMLVisualElement(options, {
-              enableHardwareAcceleration: true,
-          })
+        ? new SVGVisualElement(options)
+        : new HTMLVisualElement(options)
 
     node.mount(element as any)
 
