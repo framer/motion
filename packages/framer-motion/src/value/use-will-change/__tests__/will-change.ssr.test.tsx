@@ -28,6 +28,21 @@ function runTests(render: (components: any) => string) {
         )
     })
 
+    test("will-change not set in static mode", () => {
+        const div = render(
+            <MotionConfig isStatic>
+                <motion.div
+                    initial={{ x: 100, clipPath: "inset(10px)" } as any}
+                    animate={{ x: 200, clipPath: "inset(20px)" } as any}
+                />
+            </MotionConfig>
+        )
+
+        expect(div).toBe(
+            `<div style="clip-path:inset(10px);transform:translateX(100px)"></div>`
+        )
+    })
+
     test("will-change manually set", () => {
         const div = render(
             <motion.div

@@ -1,5 +1,5 @@
 import { render } from "../../../../jest.setup"
-import { frame, motion, useMotionValue } from "../../.."
+import { MotionConfig, frame, motion, useMotionValue } from "../../.."
 import { nextFrame } from "../../../gestures/__tests__/utils"
 import { WillChangeMotionValue } from ".."
 
@@ -43,6 +43,22 @@ describe("willChange", () => {
         const { container } = render(<Component />)
 
         expect(container.firstChild).toHaveStyle(
+            "will-change: transform,background-color;"
+        )
+    })
+
+    test("Static mode: Doesn't render values defined in animate on initial render", async () => {
+        const Component = () => {
+            return (
+                <MotionConfig isStatic>
+                    <motion.div animate={{ x: 100, backgroundColor: "#000" }} />
+                </MotionConfig>
+            )
+        }
+
+        const { container } = render(<Component />)
+
+        expect(container.firstChild).not.toHaveStyle(
             "will-change: transform,background-color;"
         )
     })
@@ -103,6 +119,22 @@ describe("willChange", () => {
         const { container } = render(<Component />)
 
         expect(container.firstChild).toHaveStyle("will-change: opacity;")
+    })
+
+    test("Static mode: Doesn't add externally-provided motion values", async () => {
+        const Component = () => {
+            const opacity = useMotionValue(0)
+            const height = useMotionValue(100)
+            return (
+                <MotionConfig isStatic>
+                    <motion.div style={{ opacity, height }} />
+                </MotionConfig>
+            )
+        }
+
+        const { container } = render(<Component />)
+
+        expect(container.firstChild).not.toHaveStyle("will-change: opacity;")
     })
 
     test("Removes values when they finish animating", async () => {
