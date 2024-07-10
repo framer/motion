@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.0] 2024-07-10
+
+### Updated
+
+-   Animations automatically optimised via `will-change`.
+
 ## [11.2.14] 2024-07-09
 
 ### Updated
