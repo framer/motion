@@ -16,6 +16,7 @@ import {
 } from "../../render/utils/is-controlling-variants"
 import { getWillChangeName } from "../../value/use-will-change/get-will-change-name"
 import { addUniqueItem } from "../../utils/array"
+import { TargetAndTransition } from "../../types"
 
 export interface VisualState<Instance, RenderState> {
     renderState: RenderState
@@ -88,20 +89,44 @@ function addWillChange(willChange: string[], name: string) {
     }
 }
 
+function forEachDefinition(
+    props: MotionProps,
+    definition: MotionProps["animate"] | MotionProps["initial"],
+    callback: (
+        target: TargetAndTransition,
+        transitionEnd: ResolvedValues
+    ) => void
+) {
+    const list = Array.isArray(definition) ? definition : [definition]
+    for (let i = 0; i < list.length; i++) {
+        const resolved = resolveVariantFromProps(props, list[i] as any)
+        if (resolved) {
+            const { transitionEnd, transition, ...target } = resolved
+            callback(target, transitionEnd as ResolvedValues)
+        }
+    }
+}
+
 function makeLatestValues(
     props: MotionProps,
     context: MotionContextProps,
     presenceContext: PresenceContextProps | null,
-    applyWillChange: boolean,
+    shouldApplyWillChange: boolean,
     scrapeMotionValues: ScrapeMotionValuesFromProps
 ) {
     const values: ResolvedValues = {}
     const willChange: string[] = []
+    const applyWillChange =
+        shouldApplyWillChange && props.style?.willChange === undefined
 
     const motionValues = scrapeMotionValues(props, {})
     for (const key in motionValues) {
         values[key] = resolveMotionValue(motionValues[key])
-        addWillChange(willChange, key)
+
+        // If a value is an externally-provided motion value, add it to will-change
+        if (applyWillChange) {
+            addWillChange(willChange, key)
+        }
     }
 
     let { initial, animate } = props
@@ -130,13 +155,7 @@ function makeLatestValues(
         typeof variantToSet !== "boolean" &&
         !isAnimationControls(variantToSet)
     ) {
-        const list = Array.isArray(variantToSet) ? variantToSet : [variantToSet]
-        list.forEach((definition) => {
-            const resolved = resolveVariantFromProps(props, definition)
-            if (!resolved) return
-
-            const { transitionEnd, transition, ...target } = resolved
-
+        forEachDefinition(props, variantToSet, (target, transitionEnd) => {
             for (const key in target) {
                 let valueTarget = target[key as keyof typeof target]
 
@@ -155,33 +174,27 @@ function makeLatestValues(
                     values[key] = valueTarget as string | number
                 }
             }
-            for (const key in transitionEnd)
+            for (const key in transitionEnd) {
                 values[key] = transitionEnd[
                     key as keyof typeof transitionEnd
                 ] as string | number
+            }
         })
     }
 
     // Add animating values to will-change
-    // TODO Clean this up/de-dupe
-    if (animate && initial !== false && !isAnimationControls(animate)) {
-        const list = Array.isArray(animate) ? animate : [animate]
-        list.forEach((definition) => {
-            const resolved = resolveVariantFromProps(props, definition as any)
-            if (!resolved) return
+    if (applyWillChange) {
+        if (animate && initial !== false && !isAnimationControls(animate)) {
+            forEachDefinition(props, animate, (target) => {
+                for (const key in target) {
+                    addWillChange(willChange, key)
+                }
+            })
+        }
 
-            const { transitionEnd, transition, ...target } = resolved
-            const animatingValues = Object.keys(target)
-            animatingValues.forEach((key) => addWillChange(willChange, key))
-        })
-    }
-
-    if (
-        props.style?.willChange === undefined &&
-        applyWillChange &&
-        willChange.length
-    ) {
-        values.willChange = willChange.join(",")
+        if (willChange.length) {
+            values.willChange = willChange.join(",")
+        }
     }
 
     return values
