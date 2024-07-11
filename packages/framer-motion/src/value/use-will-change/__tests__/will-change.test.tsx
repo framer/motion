@@ -37,7 +37,13 @@ describe("willChange", () => {
 
     test("Renders values defined in animate on initial render", async () => {
         const Component = () => {
-            return <motion.div animate={{ x: 100, backgroundColor: "#000" }} />
+            const opacity = useMotionValue(0)
+            return (
+                <motion.div
+                    animate={{ x: 100, backgroundColor: "#000" }}
+                    style={{ opacity }}
+                />
+            )
         }
 
         const { container } = render(<Component />)
