@@ -37,7 +37,13 @@ describe("willChange", () => {
 
     test("Renders values defined in animate on initial render", async () => {
         const Component = () => {
-            return <motion.div animate={{ x: 100, backgroundColor: "#000" }} />
+            const opacity = useMotionValue(0)
+            return (
+                <motion.div
+                    animate={{ x: 100, backgroundColor: "#000" }}
+                    style={{ opacity }}
+                />
+            )
         }
 
         const { container } = render(<Component />)
@@ -109,7 +115,7 @@ describe("willChange", () => {
         expect(container.firstChild).not.toHaveStyle("will-change: transform;")
     })
 
-    test("Add externally-provided motion values", async () => {
+    test("Externally-provided motion values are not added to will-change", async () => {
         const Component = () => {
             const opacity = useMotionValue(0)
             const height = useMotionValue(100)
@@ -118,7 +124,7 @@ describe("willChange", () => {
 
         const { container } = render(<Component />)
 
-        expect(container.firstChild).toHaveStyle("will-change: opacity;")
+        expect(container.firstChild).not.toHaveStyle("will-change: opacity;")
     })
 
     test("Static mode: Doesn't add externally-provided motion values", async () => {

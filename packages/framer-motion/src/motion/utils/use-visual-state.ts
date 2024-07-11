@@ -122,11 +122,6 @@ function makeLatestValues(
     const motionValues = scrapeMotionValues(props, {})
     for (const key in motionValues) {
         values[key] = resolveMotionValue(motionValues[key])
-
-        // If a value is an externally-provided motion value, add it to will-change
-        if (applyWillChange) {
-            addWillChange(willChange, key)
-        }
     }
 
     let { initial, animate } = props
