@@ -45,11 +45,7 @@ const maxDuration = 20_000
 function requiresPregeneratedKeyframes<T extends string | number>(
     options: ValueAnimationOptions<T>
 ) {
-    return (
-        options.type === "spring" ||
-        options.name === "backgroundColor" ||
-        !isWaapiSupportedEasing(options.ease)
-    )
+    return options.type === "spring" || !isWaapiSupportedEasing(options.ease)
 }
 
 function pregenerateKeyframes<T extends string | number>(

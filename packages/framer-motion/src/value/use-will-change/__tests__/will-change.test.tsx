@@ -48,9 +48,7 @@ describe("willChange", () => {
 
         const { container } = render(<Component />)
 
-        expect(container.firstChild).toHaveStyle(
-            "will-change: transform,background-color;"
-        )
+        expect(container.firstChild).toHaveStyle("will-change: transform;")
     })
 
     test("Static mode: Doesn't render values defined in animate on initial render", async () => {
@@ -64,9 +62,7 @@ describe("willChange", () => {
 
         const { container } = render(<Component />)
 
-        expect(container.firstChild).not.toHaveStyle(
-            "will-change: transform,background-color;"
-        )
+        expect(container.firstChild).not.toHaveStyle("will-change: transform;")
     })
 
     test("Renders values defined in animate on initial render", async () => {
