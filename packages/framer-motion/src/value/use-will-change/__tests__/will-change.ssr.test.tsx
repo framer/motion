@@ -69,6 +69,13 @@ function runTests(render: (components: any) => string) {
         expect(div).toBe(`<div></div>`)
     })
 
+    test("Externally defined MotionValues not automatically added to will-change", () => {
+        const opacity = motionValue(0.5)
+        const div = render(<motion.div style={{ opacity }} />)
+
+        expect(div).toBe(`<div style="opacity:0.5"></div>`)
+    })
+
     test("will-change manually set by MotionValue", () => {
         const willChange = motionValue("opacity")
         const div = render(
