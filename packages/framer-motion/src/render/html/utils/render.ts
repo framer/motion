@@ -8,10 +8,15 @@ export function renderHTML(
     styleProp?: MotionStyle,
     projection?: IProjectionNode
 ) {
-    Object.assign(element.style, style)
+    for (const key in style) {
+        element.style[key] = style[key]
+    }
 
     if (projection) {
-        Object.assign(element.style, projection.getProjectionStyles(styleProp))
+        const projectionStyles = projection.getProjectionStyles(styleProp)
+        for (const key in projectionStyles) {
+            element.style.setProperty(key, projectionStyles[key] as string)
+        }
     }
 
     // Loop over any CSS variables and assign those.
