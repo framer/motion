@@ -14,8 +14,8 @@ export const HTMLProjectionNode = createProjectionNode<HTMLElement>({
     defaultParent: () => {
         if (!rootProjectionNode.current) {
             const documentNode = new DocumentProjectionNode({})
-            if(typeof window != 'undefined'){
-                documentNode.mount(window);
+            if (typeof window !== 'undefined') {
+                documentNode.mount(window)
             }
             documentNode.setOptions({ layoutScroll: true })
             rootProjectionNode.current = documentNode
