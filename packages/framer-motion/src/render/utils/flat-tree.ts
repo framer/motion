@@ -17,8 +17,10 @@ export class FlatTree {
     }
 
     forEach(callback: (child: WithDepth) => void) {
-        this.isDirty && this.children.sort(compareByDepth)
-        this.isDirty = false
+        if (this.isDirty) {
+            this.children.sort(compareByDepth)
+            this.isDirty = false
+        }
         this.children.forEach(callback)
     }
 }

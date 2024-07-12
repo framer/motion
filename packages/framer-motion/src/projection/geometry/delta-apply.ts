@@ -160,7 +160,8 @@ export function transformAxis(
     const axisOrigin =
         transforms[originKey] !== undefined ? transforms[originKey] : 0.5
 
-    const originPoint = mixNumber(axis.min, axis.max, axisOrigin as number)
+    const originPoint =
+        axis.min + (axis.max - axis.min) * (axisOrigin as number)
 
     // Apply the axis delta to the final axis
     applyAxisDelta(

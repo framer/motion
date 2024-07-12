@@ -8,7 +8,7 @@ const Container = styled.div`
     flex-wrap: wrap;
     --width: 200px;
     --height: 200px;
-    --offset: 0px;
+    --offset: 10px;
     width: 1000px;
     height: 4000px;
     overflow: hidden;
@@ -119,7 +119,7 @@ export const App = () => {
     const [expanded, setExpanded] = useState(false)
 
     return (
-        <MotionConfig transition={{ duration: 10 }}>
+        <MotionConfig transition={{ duration: 10, ease: "linear" }}>
             <Container
                 data-layout
                 className={expanded ? "expanded" : ""}

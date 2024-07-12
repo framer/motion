@@ -3,7 +3,7 @@ import { AnimationPlaybackControls } from "../../animation/types"
 import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { mixValues } from "../animation/mix-values"
-import { copyBoxInto } from "../geometry/copy"
+import { copyAxisDeltaInto, copyBoxInto } from "../geometry/copy"
 import { applyBoxDelta, applyTreeDeltas } from "../geometry/delta-apply"
 import {
     calcBoxDelta,
@@ -46,8 +46,6 @@ import { globalProjectionState } from "./state"
 import { delay } from "../../utils/delay"
 import { mixNumber } from "../../utils/mix/number"
 import { Process } from "../../frameloop/types"
-import { ProjectionFrame } from "../../debug/types"
-import { record } from "../../debug/record"
 import { ValueAnimationOptions } from "../../animation/types"
 import { frameData } from "../../dom-entry"
 import { isSVGElement } from "../../render/dom/utils/is-svg-element"
@@ -59,6 +57,7 @@ import { time } from "../../frameloop/sync-time"
 import { microtask } from "../../frameloop/microtask"
 import { VisualElement } from "../../render/VisualElement"
 import { getOptimisedAppearId } from "../../animation/optimized-appear/get-appear-id"
+import { hasAxisDeltaChanged } from "../geometry/compare"
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -234,6 +233,12 @@ export function createProjectionNode<I>({
          * into the target. This will be used by children to calculate their own layoutCorrect boxes.
          */
         projectionDelta?: Delta
+
+        /**
+         * The projection delta from the previous frame. We use this to detect
+         * if the projection delta has changed and so we need a rerender.
+         */
+        prevProjectionDelta?: Delta
 
         /**
          * A calculated transform that will project an element from its layoutCorrected
@@ -871,7 +876,6 @@ export function createProjectionNode<I>({
 
         measure(removeTransform = true) {
             const pageBox = this.measurePageBox()
-
             let layoutBox = this.removeElementScroll(pageBox)
 
             /**
@@ -1336,12 +1340,20 @@ export function createProjectionNode<I>({
                 return
             }
 
-            if (!this.projectionDelta) {
+            if (!this.projectionDelta || !this.prevProjectionDelta) {
                 this.projectionDelta = createDelta()
+                this.prevProjectionDelta = createDelta()
                 this.projectionDeltaWithTransform = createDelta()
+            } else {
+                copyAxisDeltaInto(
+                    this.prevProjectionDelta.x,
+                    this.projectionDelta.x
+                )
+                copyAxisDeltaInto(
+                    this.prevProjectionDelta.y,
+                    this.projectionDelta.y
+                )
             }
-
-            const prevProjectionTransform = this.projectionTransform
 
             /**
              * Update the delta between the corrected box and the target box before user-set transforms were applied.
@@ -1359,16 +1371,17 @@ export function createProjectionNode<I>({
                 this.latestValues
             )
 
-            this.projectionTransform = buildProjectionTransform(
-                this.projectionDelta!,
-                this.treeScale,
-                undefined
-            )
-
             if (
-                this.projectionTransform !== prevProjectionTransform ||
                 this.treeScale.x !== prevTreeScaleX ||
-                this.treeScale.y !== prevTreeScaleY
+                this.treeScale.y !== prevTreeScaleY ||
+                hasAxisDeltaChanged(
+                    this.prevProjectionDelta.x,
+                    this.projectionDelta.x
+                ) ||
+                hasAxisDeltaChanged(
+                    this.prevProjectionDelta.y,
+                    this.projectionDelta.y
+                )
             ) {
                 this.hasProjected = true
                 this.scheduleRender()
@@ -1446,9 +1459,9 @@ export function createProjectionNode<I>({
 
             this.mixTargetDelta = (latest: number) => {
                 const progress = latest / 1000
-
                 mixAxisDelta(targetDelta.x, delta.x, progress)
                 mixAxisDelta(targetDelta.y, delta.y, progress)
+
                 this.setTargetDelta(targetDelta)
 
                 if (
@@ -2127,15 +2140,15 @@ function removeLeadSnapshots(stack: NodeStack) {
 }
 
 export function mixAxisDelta(output: AxisDelta, delta: AxisDelta, p: number) {
-    output.translate = mixNumber(delta.translate, 0, p)
-    output.scale = mixNumber(delta.scale, 1, p)
+    output.translate = delta.translate - delta.translate * p
+    output.scale = delta.scale + (1 - delta.scale) * p
     output.origin = delta.origin
     output.originPoint = delta.originPoint
 }
 
 export function mixAxis(output: Axis, from: Axis, to: Axis, p: number) {
-    output.min = mixNumber(from.min, to.min, p)
-    output.max = mixNumber(from.max, to.max, p)
+    output.min = from.min + (to.min - from.min) * p
+    output.max = from.max + (to.max - from.max) * p
 }
 
 export function mixBox(output: Box, from: Box, to: Box, p: number) {
