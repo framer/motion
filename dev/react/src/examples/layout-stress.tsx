@@ -119,7 +119,7 @@ export const App = () => {
     const [expanded, setExpanded] = useState(false)
 
     return (
-        <MotionConfig transition={{ duration: 2 }}>
+        <MotionConfig transition={{ duration: 10 }}>
             <Container
                 data-layout
                 className={expanded ? "expanded" : ""}

@@ -72,17 +72,6 @@ const animationTarget = 1000
 
 let id = 0
 
-/**
- * Use a mutable data object for debug data so as to not create a new
- * object every frame.
- */
-const projectionFrameData: ProjectionFrame = {
-    type: "projectionFrame",
-    totalNodes: 0,
-    resolvedTargetDeltas: 0,
-    recalculatedProjection: 0,
-}
-
 function resetDistortingTransform(
     key: string,
     visualElement: VisualElement,
@@ -159,14 +148,6 @@ export function createProjectionNode<I>({
          * back up the tree.
          */
         path: IProjectionNode[]
-
-        /**
-         * A Set containing all this component's children. This is used to iterate
-         * through the children.
-         *
-         * TODO: This could be faster to iterate as a flat array stored on the root node.
-         */
-        children = new Set<IProjectionNode>()
 
         /**
          * Options for the node. We use this to configure what kind of layout animations
@@ -435,7 +416,6 @@ export function createProjectionNode<I>({
             }
 
             this.root.nodes!.add(this)
-            this.parent && this.parent.children.add(this)
 
             if (isLayoutDirty && (layout || layoutId)) {
                 this.isLayoutDirty = true
@@ -574,7 +554,6 @@ export function createProjectionNode<I>({
             this.root.nodes!.remove(this)
             const stack = this.getStack()
             stack && stack.remove(this)
-            this.parent && this.parent.children.delete(this)
             ;(this.instance as any) = undefined
 
             cancelFrame(this.updateProjection)
@@ -778,21 +757,10 @@ export function createProjectionNode<I>({
         updateProjection = () => {
             this.projectionUpdateScheduled = false
 
-            /**
-             * Reset debug counts. Manually resetting rather than creating a new
-             * object each frame.
-             */
-            projectionFrameData.totalNodes =
-                projectionFrameData.resolvedTargetDeltas =
-                projectionFrameData.recalculatedProjection =
-                    0
-
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
             this.nodes!.forEach(cleanDirtyNodes)
-
-            record(projectionFrameData)
         }
 
         /**
@@ -1235,11 +1203,6 @@ export function createProjectionNode<I>({
                     this.relativeParent = this.relativeTarget = undefined
                 }
             }
-
-            /**
-             * Increase debug counter for resolved target deltas
-             */
-            projectionFrameData.resolvedTargetDeltas++
         }
 
         getClosestProjectingParent() {
@@ -1398,7 +1361,8 @@ export function createProjectionNode<I>({
 
             this.projectionTransform = buildProjectionTransform(
                 this.projectionDelta!,
-                this.treeScale
+                this.treeScale,
+                undefined
             )
 
             if (
@@ -1411,11 +1375,6 @@ export function createProjectionNode<I>({
 
                 this.notifyListeners("projectionUpdate", target)
             }
-
-            /**
-             * Increase debug counter for recalculated projections
-             */
-            projectionFrameData.recalculatedProjection++
         }
 
         isVisible = true
@@ -2091,11 +2050,6 @@ function notifyLayoutUpdate(node: IProjectionNode) {
 }
 
 export function propagateDirtyNodes(node: IProjectionNode) {
-    /**
-     * Increase debug counter for nodes encountered this frame
-     */
-    projectionFrameData.totalNodes++
-
     if (!node.parent) return
 
     /**

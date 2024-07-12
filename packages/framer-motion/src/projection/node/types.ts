@@ -40,7 +40,6 @@ export interface IProjectionNode<I = unknown> {
     parent?: IProjectionNode
     relativeParent?: IProjectionNode
     root?: IProjectionNode
-    children: Set<IProjectionNode>
     path: IProjectionNode[]
     nodes?: FlatTree
     depth: number
