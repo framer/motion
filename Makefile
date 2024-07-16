@@ -68,16 +68,16 @@ publish: clean bootstrap
 test: bootstrap
 	yarn test
 
-test-ci-mkdir:
+test-mkdir:
 	mkdir -p $(TEST_REPORT_PATH)
 
-test-ci-jest: bootstrap test-ci-mkdir
+test-jest: bootstrap test-mkdir
 	yarn test
 
-test-ci-e2e: build test-ci-mkdir
+test-e2e: build test-mkdir
 	yarn start-server-and-test "yarn dev-server" http://localhost:9990 "cd packages/framer-motion && cypress run --headless --spec $(if $(CI),$(shell cd packages/framer-motion && circleci tests glob "cypress/integration/*.ts" | circleci tests split))"
 
-test-ci-html: build test-ci-mkdir
+test-html: build test-mkdir
 	node dev/inc/collect-html-tests.js
 	yarn start-server-and-test "yarn dev-server" http://localhost:8000 "cd packages/framer-motion && cypress run -s cypress/integration/html-tests/appear.ts --config baseUrl=http://localhost:8000/ && cypress run -s cypress/integration/html-tests/projection.ts --config baseUrl=http://localhost:8000/"
 

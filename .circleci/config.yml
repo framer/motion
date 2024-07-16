@@ -19,7 +19,7 @@ jobs:
 
             - run:
                   name: Test Jest
-                  command: make test-ci-jest
+                  command: make test-jest
                   environment:
                       JEST_JUNIT_OUTPUT: test_reports/framer-motion.xml
 
@@ -49,7 +49,7 @@ jobs:
 
             - run:
                   name: E2E tests
-                  command: make test-ci-e2e
+                  command: make test-e2e
                   environment:
                       JEST_JUNIT_OUTPUT: test_reports/framer-motion-e2e.xml
 
@@ -78,7 +78,7 @@ jobs:
 
             - run:
                   name: HTML tests
-                  command: make test-ci-html
+                  command: make test-html
                   environment:
                       JEST_JUNIT_OUTPUT: test_reports/framer-motion-html.xml
 
