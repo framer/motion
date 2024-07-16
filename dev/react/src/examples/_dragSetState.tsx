@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from "react"
 import { motion } from "framer-motion"
 
 const styleA = {
@@ -8,7 +8,6 @@ const styleA = {
     borderRadius: "10px",
 }
 
-console.clear()
 export const App = () => {
     const [state, setState] = useState(0)
 
