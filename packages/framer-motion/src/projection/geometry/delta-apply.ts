@@ -94,11 +94,11 @@ export function applyTreeDeltas(
          * TODO: Prefer to remove this, but currently we have motion components with
          * display: contents in Framer.
          */
-        const instance = node.instance as any
+        const { visualElement } = node.options
         if (
-            instance &&
-            instance.style &&
-            instance.style.display === "contents"
+            visualElement &&
+            visualElement.props.style &&
+            visualElement.props.style.display === "contents"
         ) {
             continue
         }
