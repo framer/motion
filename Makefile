@@ -79,7 +79,7 @@ test-ci-e2e: build test-ci-mkdir
 
 test-ci-html: build test-ci-mkdir
 	node dev/inc/collect-html-tests.js
-	yarn start-server-and-test "yarn dev-server" http://localhost:8000 "cypress run -s cypress/tests/appear.ts --config baseUrl=http://localhost:8000/' && cypress run -s cypress/tests/projection.ts --config baseUrl=http://localhost:8000/'"
+	yarn start-server-and-test "yarn dev-server" http://localhost:8000 "cd packages/framer-motion && cypress run -s cypress/integration/html-tests/appear.ts --config baseUrl=http://localhost:8000/ && cypress run -s cypress/integration/html-tests/projection.ts --config baseUrl=http://localhost:8000/"
 
 lint: bootstrap
 	yarn lint
