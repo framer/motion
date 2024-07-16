@@ -89,7 +89,7 @@ const umdDomProd = Object.assign({}, umd, {
 })
 
 const cjs = Object.assign({}, config, {
-    input: ["lib/index.js", "lib/dom-entry.js"],
+    input: "lib/index.js",
     output: {
         entryFileNames: `[name].js`,
         dir: "dist/cjs",
@@ -100,6 +100,9 @@ const cjs = Object.assign({}, config, {
     plugins: [resolve(), replaceSettings()],
     external,
 })
+
+
+const cjsDom = Object.assign({}, cjs, { input : "lib/dom-entry.js" })
 
 export const es = Object.assign({}, config, {
     input: ["lib/index.js", "lib/dom-entry.js", "lib/projection-entry.js"],
@@ -149,6 +152,7 @@ export default [
     umdProd,
     umdDomProd,
     cjs,
+    cjsDom,
     es,
     types,
     animateTypes,
