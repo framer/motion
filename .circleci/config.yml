@@ -20,8 +20,6 @@ jobs:
             - run:
                   name: Test Jest
                   command: make test-jest
-                  environment:
-                      JEST_JUNIT_OUTPUT: test_reports/framer-motion.xml
 
             - store_test_results:
                   path: test_reports

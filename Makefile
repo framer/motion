@@ -71,7 +71,9 @@ test: bootstrap
 test-mkdir:
 	mkdir -p $(TEST_REPORT_PATH)
 
+test-jest: export JEST_JUNIT_OUTPUT ?= test_reports/framer-motion.xml
 test-jest: bootstrap test-mkdir
+	echo $(JEST_JUNIT_OUTPUT)
 	yarn test
 
 test-e2e: build test-mkdir
