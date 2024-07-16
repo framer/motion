@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.4] 2024-07-16
+
+### Changed
+
+-   Check for `display: contents` elements now against component props instead of `Element.style`.
+
 ## [11.3.3] 2024-07-16
 
 ### Changed
