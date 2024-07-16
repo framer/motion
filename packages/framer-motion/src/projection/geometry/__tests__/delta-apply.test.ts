@@ -1,4 +1,5 @@
 import { scalePoint, applyPointDelta, applyAxisDelta } from "../delta-apply"
+import { Axis, AxisDelta } from "../types"
 
 describe("scalePoint", () => {
     test("correctly scales a point based on a factor and an originPoint", () => {
@@ -35,37 +36,137 @@ describe("applyAxisDelta", () => {
     })
 })
 
-// describe("applyTreeDeltas", () => {
-//   test("correctly applies tree deltas to a box", () => {
-//       const box = {
-//           x: { min: 100, max: 200 },
-//           y: { min: 300, max: 400 },
-//       }
+describe.only("Culmultive tree deltas", () => {
+    test("treeScale", () => {
+        // Emulate a tree of scales
+        const scales = [0.5, 1, 1.5, 6, 0.1]
 
-//       const delta = {
-//           x: { translate: 100, scale: 4, origin: 0.5, originPoint: 150 },
-//           y: { translate: -100, scale: 0.5, origin: 0.5, originPoint: 350 },
-//       }
+        // Emulate current approach of ancestor loop
+        const integratedScales: number[] = []
+        for (let i = 0; i < scales.length; i++) {
+            let treeScale = 1
+            for (let j = 0; j < i; j++) {
+                treeScale *= scales[j]
+            }
+            integratedScales.push(treeScale)
+        }
 
-//       const element = htmlVisualElement(
-//           {
-//               props: {},
-//               visualState: {
-//                   latestValues: {},
-//                   renderState: createHtmlRenderState(),
-//               },
-//           },
-//           {}
-//       )
-//       element.getLayoutState().delta = delta
+        // Proof of concept of cumulative approach
+        const rootScale = 1
+        const cumulativeScales: number[] = [rootScale]
+        for (let i = 0; i < scales.length - 1; i++) {
+            cumulativeScales.push(cumulativeScales[i] * scales[i])
+        }
 
-//       const treeScale = { x: 1, y: 1 }
-//       applyTreeDeltas(box, treeScale, [element, element])
+        expect(integratedScales).toEqual(cumulativeScales)
+    })
 
-//       expect(box).toEqual({
-//           x: { min: -150, max: 1450 },
-//           y: { min: 187.5, max: 212.5 },
-//       })
-//       expect(treeScale).toEqual({ x: 16, y: 0.25 })
-//   })
-// })
+    interface TestDelta {
+        delta: AxisDelta
+        axis: Axis
+    }
+
+    // This proves we can't do a cumulative transform
+    test.skip("boxDelta", () => {
+        const nodes: TestDelta[] = [
+            {
+                axis: { min: 0, max: 100 },
+                delta: {
+                    translate: 100,
+                    scale: 0.5,
+                    origin: 1,
+                    originPoint: 100,
+                },
+            },
+            {
+                axis: { min: 0, max: 100 },
+                delta: {
+                    translate: -100,
+                    scale: 3,
+                    origin: 0.5,
+                    originPoint: 50,
+                },
+            },
+            {
+                axis: { min: 0, max: 100 },
+                delta: {
+                    translate: -500,
+                    scale: 1,
+                    origin: 0.5,
+                    originPoint: 50,
+                },
+            },
+            {
+                axis: { min: 500, max: 600 },
+                delta: {
+                    translate: 400,
+                    scale: 2,
+                    origin: 0,
+                    originPoint: 500,
+                },
+            },
+            {
+                axis: { min: -100, max: 100 },
+                delta: {
+                    translate: 100,
+                    scale: 0.5,
+                    origin: 0.5,
+                    originPoint: 0,
+                },
+            },
+        ]
+
+        // Emulate current approach of ancestor loop
+        const integratedAxes: Axis[] = []
+        for (let i = 0; i < nodes.length; i++) {
+            const axis = { ...nodes[i].axis }
+            let delta: undefined | AxisDelta = undefined
+            for (let j = 0; j < i; j++) {
+                delta = nodes[j].delta
+                console.log("applying", delta, "to", axis)
+                applyAxisDelta(
+                    axis,
+                    delta.translate,
+                    delta.scale,
+                    delta.originPoint
+                )
+            }
+            console.log("integrated last origin", delta?.originPoint)
+            integratedAxes.push(axis)
+        }
+
+        // Proof of concept of cumulative approach
+        const cumulativeDeltas: AxisDelta[] = [
+            { translate: 0, scale: 1, originPoint: 0, origin: 0 },
+        ]
+        const cumulativeAxes: Axis[] = []
+        for (let i = 0; i < nodes.length; i++) {
+            const parentDelta = cumulativeDeltas[i]
+
+            const axis = { ...nodes[i].axis }
+            console.log("applying", parentDelta, "to", axis)
+            applyAxisDelta(
+                axis,
+                parentDelta.translate,
+                parentDelta.scale,
+                parentDelta.originPoint
+            )
+
+            cumulativeAxes.push(axis)
+
+            const delta = { ...nodes[i].delta }
+
+            // Apply parent delta to current delta
+            // Currently works for translate but not scale
+            delta.translate += parentDelta.translate
+            delta.scale *= parentDelta.scale
+            delta.originPoint += delta.translate
+
+            cumulativeDeltas.push(delta)
+        }
+
+        console.log(integratedAxes, cumulativeAxes)
+
+        expect(integratedAxes).toEqual(cumulativeAxes)
+    })
+})

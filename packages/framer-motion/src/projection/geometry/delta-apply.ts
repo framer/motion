@@ -1,5 +1,4 @@
 import { ResolvedValues } from "../../render/types"
-import { mixNumber } from "../../utils/mix/number"
 import { IProjectionNode } from "../node/types"
 import { hasTransform } from "../utils/has-transform"
 import { Axis, Box, Delta, Point } from "./types"
