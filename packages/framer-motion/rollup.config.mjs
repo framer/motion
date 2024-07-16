@@ -101,7 +101,9 @@ const cjs = Object.assign({}, config, {
     external,
 })
 
-
+/**
+ * Bundle seperately so bundles don't share common modules
+ */
 const cjsDom = Object.assign({}, cjs, { input : "lib/dom-entry.js" })
 
 export const es = Object.assign({}, config, {
