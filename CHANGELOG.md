@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.3] 2024-07-16
+
+### Changed
+
+-   Frameloop now uses a single `Set` vs `Set` and `Array`, leading to smaller bundlesize and better performance under heavy load.
+
 ## [11.3.2] 2024-07-11
 
 ### Fixed
