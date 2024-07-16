@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.5] 2024-07-16
+
+### Fixed
+
+-   Ensuring DOM bundle doesn't include `react` and `react-dom` as dependencies.
+
 ## [11.3.4] 2024-07-16
 
 ### Changed
