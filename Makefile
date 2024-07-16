@@ -77,6 +77,10 @@ test-ci-jest: bootstrap test-ci-mkdir
 test-ci-e2e: build test-ci-mkdir
 	yarn start-server-and-test "yarn dev-server" http://localhost:9990 "cd packages/framer-motion && cypress run --headless --spec $(if $(CI),$(shell cd packages/framer-motion && circleci tests glob "cypress/integration/*.ts" | circleci tests split))"
 
+test-ci-html: build test-ci-mkdir
+	node dev/inc/collect-html-tests.js
+	yarn start-server-and-test "yarn dev-server" http://localhost:8000 "cypress run -s cypress/tests/appear.ts --config baseUrl=http://localhost:8000/' && cypress run -s cypress/tests/projection.ts --config baseUrl=http://localhost:8000/'"
+
 lint: bootstrap
 	yarn lint
 
