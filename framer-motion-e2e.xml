@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="77.71699999999997" tests="100" failures="0">
+  <testsuite name="Root Suite" timestamp="2024-07-16T14:00:55" tests="0" file="cypress/integration/html-tests/projection.ts" failures="0" time="0">
+  </testsuite>
+  <testsuite name="Project the element to its original box" timestamp="2024-07-16T14:00:55" tests="100" failures="0" time="77.71699999999997">
+    <testcase name="Project the element to its original box animate-nested-scale-correction.html" time="1.125" classname="animate-nested-scale-correction.html">
+    </testcase>
+    <testcase name="Project the element to its original box animate-relative-instant.html" time="0.778" classname="animate-relative-instant.html">
+    </testcase>
+    <testcase name="Project the element to its original box animate-relative-interrupt.html" time="0.835" classname="animate-relative-interrupt.html">
+    </testcase>
+    <testcase name="Project the element to its original box animate-relative-mixed-transition.html" time="0.744" classname="animate-relative-mixed-transition.html">
+    </testcase>
+    <testcase name="Project the element to its original box animate-relative-nested-deep.html" time="0.782" classname="animate-relative-nested-deep.html">
+    </testcase>
+    <testcase name="Project the element to its original box animate-relative-nested.html" time="0.843" classname="animate-relative-nested.html">
+    </testcase>
+    <testcase name="Project the element to its original box animate-relative-parent-delayed.html" time="0.655" classname="animate-relative-parent-delayed.html">
+    </testcase>
+    <testcase name="Project the element to its original box animate-relative-skip-parent.html" time="0.876" classname="animate-relative-skip-parent.html">
+    </testcase>
+    <testcase name="Project the element to its original box animate-relative.html" time="0.843" classname="animate-relative.html">
+    </testcase>
+    <testcase name="Project the element to its original box animate-single-element-layout-change-with-child.html" time="0.847" classname="animate-single-element-layout-change-with-child.html">
+    </testcase>
+    <testcase name="Project the element to its original box animate-single-element.html" time="0.946" classname="animate-single-element.html">
+    </testcase>
+    <testcase name="Project the element to its original box animate-undo-layout-change.html" time="0.97" classname="animate-undo-layout-change.html">
+    </testcase>
+    <testcase name="Project the element to its original box element-page-scroll-non-zero.html" time="0.864" classname="element-page-scroll-non-zero.html">
+    </testcase>
+    <testcase name="Project the element to its original box element-scroll-layout-change.html" time="1.27" classname="element-scroll-layout-change.html">
+    </testcase>
+    <testcase name="Project the element to its original box element-scroll-non-zero.html" time="1.014" classname="element-scroll-non-zero.html">
+    </testcase>
+    <testcase name="Project the element to its original box element-scroll-remove.html" time="0.959" classname="element-scroll-remove.html">
+    </testcase>
+    <testcase name="Project the element to its original box element-scroll-to-layout.html" time="0.841" classname="element-scroll-to-layout.html">
+    </testcase>
+    <testcase name="Project the element to its original box element-scroll.html" time="0.845" classname="element-scroll.html">
+    </testcase>
+    <testcase name="Project the element to its original box fixed-child-layout-change.html" time="0.78" classname="fixed-child-layout-change.html">
+    </testcase>
+    <testcase name="Project the element to its original box flexbox-siblings-layout-group.html" time="0.892" classname="flexbox-siblings-layout-group.html">
+    </testcase>
+    <testcase name="Project the element to its original box flexbox-siblings-to-grid-page-scroll-interrupt.html" time="0.808" classname="flexbox-siblings-to-grid-page-scroll-interrupt.html">
+    </testcase>
+    <testcase name="Project the element to its original box flexbox-siblings-to-grid-page-scroll.html" time="0.688" classname="flexbox-siblings-to-grid-page-scroll.html">
+    </testcase>
+    <testcase name="Project the element to its original box flexbox-siblings-to-grid.html" time="0.713" classname="flexbox-siblings-to-grid.html">
+    </testcase>
+    <testcase name="Project the element to its original box flexbox-siblings.html" time="0.656" classname="flexbox-siblings.html">
+    </testcase>
+    <testcase name="Project the element to its original box nested-layout-change-mid-projection.html" time="0.692" classname="nested-layout-change-mid-projection.html">
+    </testcase>
+    <testcase name="Project the element to its original box nested-layout-change-scale-correction.html" time="0.691" classname="nested-layout-change-scale-correction.html">
+    </testcase>
+    <testcase name="Project the element to its original box new-element-concurrent.html" time="0.773" classname="new-element-concurrent.html">
+    </testcase>
+    <testcase name="Project the element to its original box perf-neighbours.html" time="0.703" classname="perf-neighbours.html">
+    </testcase>
+    <testcase name="Project the element to its original box perf-parent-child-static-grandchild.html" time="0.696" classname="perf-parent-child-static-grandchild.html">
+    </testcase>
+    <testcase name="Project the element to its original box perf-parent-child.html" time="0.759" classname="perf-parent-child.html">
+    </testcase>
+    <testcase name="Project the element to its original box perf-shared-deep.html" time="0.715" classname="perf-shared-deep.html">
+    </testcase>
+    <testcase name="Project the element to its original box perf-shared-single.html" time="0.682" classname="perf-shared-single.html">
+    </testcase>
+    <testcase name="Project the element to its original box perf-single.html" time="0.8" classname="perf-single.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-block-update-promote-new.html" time="0.642" classname="shared-block-update-promote-new.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-mix-finish.html" time="0.664" classname="shared-mix-finish.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-nested-promote-new-mix-interrupt.html" time="0.655" classname="shared-nested-promote-new-mix-interrupt.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-promote-needs-reset.html" time="0.716" classname="shared-promote-needs-reset.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-promote-new-mix-interrupt.html" time="0.723" classname="shared-promote-new-mix-interrupt.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-promote-new-mix-remove.html" time="0.766" classname="shared-promote-new-mix-remove.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-promote-new-mix-rotate-layout.html" time="0.714" classname="shared-promote-new-mix-rotate-layout.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-promote-new-mix-rotate-remove.html" time="0.654" classname="shared-promote-new-mix-rotate-remove.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-promote-new-mix-rotate-scale-correction.html" time="0.599" classname="shared-promote-new-mix-rotate-scale-correction.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-promote-new-mix-rotate.html" time="0.69" classname="shared-promote-new-mix-rotate.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-promote-new-mix-skew.html" time="0.677" classname="shared-promote-new-mix-skew.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-promote-new-mix.html" time="0.669" classname="shared-promote-new-mix.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-promote-new-rotate.html" time="0.673" classname="shared-promote-new-rotate.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-promote-new.html" time="0.679" classname="shared-promote-new.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-promote-target.html" time="0.687" classname="shared-promote-target.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-relative-new-child.html" time="0.626" classname="shared-relative-new-child.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-scroll-a-b-animate.html" time="0.64" classname="shared-scroll-a-b-animate.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-scroll-a-b.html" time="0.655" classname="shared-scroll-a-b.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-scroll-b-a-animate.html" time="0.739" classname="shared-scroll-b-a-animate.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-scroll-b-a.html" time="0.744" classname="shared-scroll-b-a.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-transform-parents-animate-2.html" time="0.756" classname="shared-transform-parents-animate-2.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-transform-parents-animate.html" time="0.646" classname="shared-transform-parents-animate.html">
+    </testcase>
+    <testcase name="Project the element to its original box shared-transform-parents.html" time="0.637" classname="shared-transform-parents.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-block-update.html" time="0.648" classname="single-element-block-update.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-element-scroll-scale.html" time="0.875" classname="single-element-element-scroll-scale.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-layout-change-page-scroll.html" time="0.983" classname="single-element-layout-change-page-scroll.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-layout-change-perspective-container.html" time="0.652" classname="single-element-layout-change-perspective-container.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-layout-change-rotate-change.html" time="0.717" classname="single-element-layout-change-rotate-change.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-layout-change-rotate-container.html" time="0.81" classname="single-element-layout-change-rotate-container.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-layout-change-rotate.html" time="0.696" classname="single-element-layout-change-rotate.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-layout-change-skew-change.html" time="0.733" classname="single-element-layout-change-skew-change.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-layout-change-skew-container.html" time="0.783" classname="single-element-layout-change-skew-container.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-layout-change-skew.html" time="0.573" classname="single-element-layout-change-skew.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-layout-change-with-child-page-scroll.html" time="0.662" classname="single-element-layout-change-with-child-page-scroll.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-layout-change-with-child-rotate-animate.html" time="0.725" classname="single-element-layout-change-with-child-rotate-animate.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-layout-change-with-child-rotate.html" time="0.731" classname="single-element-layout-change-with-child-rotate.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-layout-change-with-child.html" time="0.683" classname="single-element-layout-change-with-child.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-layout-change.html" time="0.682" classname="single-element-layout-change.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-page-scroll-overlay.html" time="0.693" classname="single-element-page-scroll-overlay.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-page-scroll-scale.html" time="0.78" classname="single-element-page-scroll-scale.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-page-scroll.html" time="0.863" classname="single-element-page-scroll.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-with-child-block-update.html" time="0.723" classname="single-element-with-child-block-update.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-with-child-layout-change-interrupt.html" time="0.619" classname="single-element-with-child-layout-change-interrupt.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-with-child-layout-change-page-scroll.html" time="0.645" classname="single-element-with-child-layout-change-page-scroll.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element-with-child-layout-change.html" time="0.92" classname="single-element-with-child-layout-change.html">
+    </testcase>
+    <testcase name="Project the element to its original box single-element.html" time="0.619" classname="single-element.html">
+    </testcase>
+    <testcase name="Project the element to its original box sticky-child-scroll-change-offset.html" time="0.699" classname="sticky-child-scroll-change-offset.html">
+    </testcase>
+    <testcase name="Project the element to its original box sticky-child-scroll-change.html" time="0.696" classname="sticky-child-scroll-change.html">
+    </testcase>
+    <testcase name="Project the element to its original box sticky-child.html" time="0.601" classname="sticky-child.html">
+    </testcase>
+    <testcase name="Project the element to its original box sticky-element-scroll-child.html" time="0.77" classname="sticky-element-scroll-child.html">
+    </testcase>
+    <testcase name="Project the element to its original box sticky-element-scroll-shared-child.html" time="0.837" classname="sticky-element-scroll-shared-child.html">
+    </testcase>
+    <testcase name="Project the element to its original box sticky-element-scroll.html" time="2.466" classname="sticky-element-scroll.html">
+    </testcase>
+    <testcase name="Project the element to its original box sticky-scroll-change-no-stick.html" time="1.241" classname="sticky-scroll-change-no-stick.html">
+    </testcase>
+    <testcase name="Project the element to its original box sticky-scroll-change-with-stick.html" time="0.903" classname="sticky-scroll-change-with-stick.html">
+    </testcase>
+    <testcase name="Project the element to its original box sticky-scroll-no-layout-change-stick.html" time="0.714" classname="sticky-scroll-no-layout-change-stick.html">
+    </testcase>
+    <testcase name="Project the element to its original box sticky-scroll-no-layout-change.html" time="0.868" classname="sticky-scroll-no-layout-change.html">
+    </testcase>
+    <testcase name="Project the element to its original box sticky-shared-to-fixed-page-scroll-no-stick.html" time="0.887" classname="sticky-shared-to-fixed-page-scroll-no-stick.html">
+    </testcase>
+    <testcase name="Project the element to its original box sticky-shared-to-fixed-page-scroll-stick.html" time="0.707" classname="sticky-shared-to-fixed-page-scroll-stick.html">
+    </testcase>
+    <testcase name="Project the element to its original box sticky-to-fixed.html" time="0.69" classname="sticky-to-fixed.html">
+    </testcase>
+    <testcase name="Project the element to its original box transform-nested-parent-layout-change-scale-child-layout-change-transform.html" time="0.732" classname="transform-nested-parent-layout-change-scale-child-layout-change-transform.html">
+    </testcase>
+    <testcase name="Project the element to its original box transform-nested-parent-layout-change-scale-child-layout-change.html" time="0.779" classname="transform-nested-parent-layout-change-scale-child-layout-change.html">
+    </testcase>
+    <testcase name="Project the element to its original box transform-nested-parent-scale-child-layout-change.html" time="0.69" classname="transform-nested-parent-scale-child-layout-change.html">
+    </testcase>
+    <testcase name="Project the element to its original box transform-single-layout-change-with-scale-change.html" time="0.9" classname="transform-single-layout-change-with-scale-change.html">
+    </testcase>
+    <testcase name="Project the element to its original box transform-single-layout-change-with-scale.html" time="0.734" classname="transform-single-layout-change-with-scale.html">
+    </testcase>
+    <testcase name="Project the element to its original box transform-single-layout-change-with-translate.html" time="0.619" classname="transform-single-layout-change-with-translate.html">
+    </testcase>
+    <testcase name="Project the element to its original box transform-single-with-scale-change.html" time="0.863" classname="transform-single-with-scale-change.html">
+    </testcase>
+    <testcase name="Project the element to its original box transform-single-with-scale.html" time="0.77" classname="transform-single-with-scale.html">
+    </testcase>
+  </testsuite>
+</testsuites>

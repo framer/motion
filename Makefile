@@ -81,7 +81,7 @@ test-e2e: build test-mkdir
 
 test-html: build test-mkdir
 	node dev/inc/collect-html-tests.js
-	yarn start-server-and-test "yarn dev-server" http://localhost:8000 "cd packages/framer-motion && cypress run -s cypress/integration/html-tests/appear.ts --config baseUrl=http://localhost:8000/ && cypress run -s cypress/integration/html-tests/projection.ts --config baseUrl=http://localhost:8000/"
+	yarn start-server-and-test "yarn dev-server" http://localhost:8000 "cd packages/framer-motion && cypress run -s cypress/integration/html-tests/appear.ts --config-file cypress.appear.json --config $(if $(CI),$(shell --config video=false)) && cypress run -s cypress/integration/html-tests/projection.ts --config-file cypress.projection.json $(if $(CI),$(shell --config video=false))"
 
 lint: bootstrap
 	yarn lint
