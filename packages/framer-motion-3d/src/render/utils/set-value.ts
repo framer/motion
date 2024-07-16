@@ -1,4 +1,4 @@
-import { Object3DNode } from "@react-three/fiber"
+import { invalidate, Object3DNode } from "@react-three/fiber"
 import { Euler, Vector3, Color } from "three"
 import { ThreeRenderState } from "../../types"
 
@@ -69,6 +69,7 @@ export function setThreeValue(
     key: string,
     values: ThreeRenderState
 ): void {
+    invalidate()
     if (key in setters) {
         setters[key](instance, values[key])
     } else {
