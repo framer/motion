@@ -16,8 +16,10 @@ export function copyAxisInto(axis: Axis, originAxis: Axis) {
  * This is a mutative operation.
  */
 export function copyBoxInto(box: Box, originBox: Box) {
-    copyAxisInto(box.x, originBox.x)
-    copyAxisInto(box.y, originBox.y)
+    box.x.min = originBox.x.min
+    box.x.max = originBox.x.max
+    box.y.min = originBox.y.min
+    box.y.max = originBox.y.max
 }
 
 export function copyAxisDeltaInto(delta: AxisDelta, originDelta: AxisDelta) {

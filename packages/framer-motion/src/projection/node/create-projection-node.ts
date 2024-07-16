@@ -1878,29 +1878,31 @@ export function createProjectionNode<I>({
             /**
              * Apply scale correction
              */
-            for (const key in scaleCorrectors) {
-                if (valuesToRender[key] === undefined) continue
+            if (styles.transform !== "none") {
+                for (const key in scaleCorrectors) {
+                    if (valuesToRender[key] === undefined) continue
 
-                const { correct, applyTo } = scaleCorrectors[key]
+                    const { correct, applyTo } = scaleCorrectors[key]
 
-                /**
-                 * Only apply scale correction to the value if we have an
-                 * active projection transform. Otherwise these values become
-                 * vulnerable to distortion if the element changes size without
-                 * a corresponding layout animation.
-                 */
-                const corrected =
-                    styles.transform === "none"
-                        ? valuesToRender[key]
-                        : correct(valuesToRender[key], lead)
+                    /**
+                     * Only apply scale correction to the value if we have an
+                     * active projection transform. Otherwise these values become
+                     * vulnerable to distortion if the element changes size without
+                     * a corresponding layout animation.
+                     */
+                    const corrected =
+                        styles.transform === "none"
+                            ? valuesToRender[key]
+                            : correct(valuesToRender[key], lead)
 
-                if (applyTo) {
-                    const num = applyTo.length
-                    for (let i = 0; i < num; i++) {
-                        styles[applyTo[i]] = corrected
+                    if (applyTo) {
+                        const num = applyTo.length
+                        for (let i = 0; i < num; i++) {
+                            styles[applyTo[i]] = corrected
+                        }
+                    } else {
+                        styles[key] = corrected
                     }
-                } else {
-                    styles[key] = corrected
                 }
             }
 

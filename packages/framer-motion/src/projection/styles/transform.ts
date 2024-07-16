@@ -53,3 +53,103 @@ export function buildProjectionTransform(
 
     return transform || "none"
 }
+
+// export function buildProjectionTransform(
+//     delta: Delta,
+//     treeScale: Point,
+//     latestTransform?: ResolvedValues
+// ) {
+//     const xTranslate = delta.x.translate / treeScale.x
+//     const yTranslate = delta.y.translate / treeScale.y
+//     const zTranslate = latestTransform?.z || 0
+//     const treeScaleX = 1 / treeScale.x
+//     const treeScaleY = 1 / treeScale.y
+//     const elementScaleX = delta.x.scale * treeScale.x
+//     const elementScaleY = delta.y.scale * treeScale.y
+
+//     let perspective = 0
+//     let rotate = 0
+//     let rotateX = 0
+//     let rotateY = 0
+//     let rotateZ = 0
+//     let skewX = 0
+//     let skewY = 0
+
+//     if (latestTransform) {
+//         perspective = latestTransform.transformPerspective || 0
+//         rotate = latestTransform.rotate || 0
+//         rotateX = latestTransform.rotateX || 0
+//         rotateY = latestTransform.rotateY || 0
+//         rotateZ = latestTransform.rotateZ || 0
+//         skewX = latestTransform.skewX || 0
+//         skewY = latestTransform.skewY || 0
+//     }
+
+//     return `translate3d(${xTranslate}px, ${yTranslate}px, ${zTranslate}px) scale(${treeScaleX}, ${treeScaleY}) rotate(${rotate}deg) scale(${elementScaleX}, ${elementScaleY})`
+// }
+
+// export function buildProjectionTransform(
+//     delta: Delta,
+//     treeScale: Point,
+//     latestTransform?: ResolvedValues
+// ) {
+//     const xTranslate = delta.x.translate / treeScale.x
+//     const yTranslate = delta.y.translate / treeScale.y
+//     const zTranslate = latestTransform?.z || 0
+//     const treeScaleX = 1 / treeScale.x
+//     const treeScaleY = 1 / treeScale.y
+//     const elementScaleX = delta.x.scale * treeScale.x
+//     const elementScaleY = delta.y.scale * treeScale.y
+
+//     let perspective = 0
+//     let rotate = 0
+//     let rotateX = 0
+//     let rotateY = 0
+//     let rotateZ = 0
+//     let skewX = 0
+//     let skewY = 0
+
+//     if (latestTransform) {
+//         perspective = latestTransform.transformPerspective || 0
+//         rotate = latestTransform.rotate || 0
+//         rotateX = latestTransform.rotateX || 0
+//         rotateY = latestTransform.rotateY || 0
+//         rotateZ = latestTransform.rotateZ || 0
+//         skewX = latestTransform.skewX || 0
+//         skewY = latestTransform.skewY || 0
+//     }
+
+//     return (
+//         (perspective ? "perspective(${perspective}px) " : "") +
+//         (xTranslate || yTranslate || zTranslate
+//             ? "translate3d(" +
+//               xTranslate +
+//               "px, " +
+//               yTranslate +
+//               "px, " +
+//               zTranslate +
+//               "px) "
+//             : "") +
+//         (treeScaleX !== 1 || treeScaleY !== 1
+//             ? "scale(" + treeScaleX + ", " + treeScaleY + ") "
+//             : "") +
+//         (rotate || rotateX || rotateY || rotateZ || skewX || skewY
+//             ? "rotate(" +
+//               rotate +
+//               "deg) rotateX(" +
+//               rotateX +
+//               "deg) rotateY(" +
+//               rotateY +
+//               "deg) rotateZ(" +
+//               rotateZ +
+//               "deg) skew(" +
+//               skewX +
+//               "deg, " +
+//               skewY +
+//               "deg) "
+//             : "") +
+//         (elementScaleX !== 1 || elementScaleY !== 1
+//             ? "scale(" + elementScaleX + ", " + elementScaleY + ") "
+//             : "")
+//     )
+// }
