@@ -1095,7 +1095,8 @@ export function createProjectionNode<I>({
                 (isShared && this.isSharedProjectionDirty) ||
                 this.isProjectionDirty ||
                 this.parent?.isProjectionDirty ||
-                this.attemptToResolveRelativeTarget
+                this.attemptToResolveRelativeTarget ||
+                this.root.updateBlockedByResize
             )
 
             if (canSkip) return
