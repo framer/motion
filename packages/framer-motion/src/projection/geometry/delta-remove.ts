@@ -2,7 +2,7 @@ import { ResolvedValues } from "../../render/types"
 import { mixNumber } from "../../utils/mix/number"
 import { percent } from "../../value/types/numbers/units"
 import { scalePoint } from "./delta-apply"
-import { Axis, Box } from "./types"
+import type { Axis, Box } from "./models"
 
 /**
  * Remove a delta from a point. This is essentially the steps of applyPointDelta in reverse

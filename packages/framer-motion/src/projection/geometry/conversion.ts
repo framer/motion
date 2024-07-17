@@ -1,4 +1,5 @@
-import { BoundingBox, Box, TransformPoint } from "./types"
+import type { Box } from "./models"
+import { BoundingBox, TransformPoint } from "./types"
 
 /**
  * Bounding boxes tend to be defined as top, left, right, bottom. For various operations

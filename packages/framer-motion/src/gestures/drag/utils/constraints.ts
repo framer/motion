@@ -1,14 +1,10 @@
 import { progress as calcProgress } from "../../../utils/progress"
 import { calcLength } from "../../../projection/geometry/delta-calc"
-import {
-    Axis,
-    BoundingBox,
-    Box,
-    Point,
-} from "../../../projection/geometry/types"
+import { BoundingBox, Point } from "../../../projection/geometry/types"
 import { clamp } from "../../../utils/clamp"
 import { mixNumber } from "../../../utils/mix/number"
 import { DragElastic, ResolvedConstraints } from "../types"
+import type { Axis, Box } from "../../../projection/geometry/models"
 
 /**
  * Apply constraints to a point. These constraints are both physical along an

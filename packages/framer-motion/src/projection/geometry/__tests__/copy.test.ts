@@ -1,9 +1,9 @@
 import { copyBoxInto } from "../copy"
-import { createBox } from "../models"
+import { Box } from "../models"
 
 describe("copyBoxInto", () => {
     it("copies one box into an existing box", () => {
-        const a = createBox()
+        const a = new Box()
         const b = {
             x: { min: 1, max: 2 },
             y: { min: 3, max: 4 },

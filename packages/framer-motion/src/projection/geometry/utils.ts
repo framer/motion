@@ -1,5 +1,5 @@
 import { calcLength } from "./delta-calc"
-import { AxisDelta, Box, Delta } from "./types"
+import type { AxisDelta, Box, Delta } from "./models"
 
 function isAxisDeltaZero(delta: AxisDelta) {
     return delta.translate === 0 && delta.scale === 1
@@ -29,4 +29,12 @@ export function boxEqualsRounded(a: Box, b: Box) {
 
 export function aspectRatio(box: Box): number {
     return calcLength(box.x) / calcLength(box.y)
+}
+
+export function axisDeltaEquals(a: AxisDelta, b: AxisDelta) {
+    return (
+        a.translate === b.translate &&
+        a.scale === b.scale &&
+        a.originPoint === b.originPoint
+    )
 }

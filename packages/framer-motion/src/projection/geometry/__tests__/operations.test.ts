@@ -1,9 +1,9 @@
-import { createAxis } from "../models"
+import { Axis } from "../models"
 import { translateAxis } from "../delta-apply"
 
 describe("translateAxis", () => {
     it("applies a translation to an Axis", () => {
-        const axis = createAxis()
+        const axis = new Axis()
         axis.max = 100
 
         translateAxis(axis, 100)

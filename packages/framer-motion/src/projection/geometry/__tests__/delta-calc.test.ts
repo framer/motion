@@ -5,7 +5,7 @@ import {
     calcRelativePosition,
 } from "../delta-calc"
 import { applyAxisDelta } from "../delta-apply"
-import { createBox, createDelta } from "../models"
+import { Box, Delta } from "../models"
 
 describe("isNear", () => {
     test("Correctly indicate when the provided value is within maxDistance of the provided target", () => {
@@ -18,7 +18,7 @@ describe("isNear", () => {
 
 describe("calcAxisDelta", () => {
     test("Correctly calculate the a delta that, when applied to source, will make it the same as target", () => {
-        const delta = createDelta()
+        const delta = new Delta()
 
         const source = { min: 100, max: 200 }
         const target = { min: 300, max: 500 }
@@ -40,7 +40,7 @@ describe("calcAxisDelta", () => {
     })
 
     test("Accepts a custom origin", () => {
-        const delta = createDelta()
+        const delta = new Delta()
 
         const source = { min: 100, max: 200 }
         const target = { min: 300, max: 500 }
@@ -63,7 +63,7 @@ describe("calcAxisDelta", () => {
 })
 
 describe("calcRelativeBox", () => {
-    const target = createBox()
+    const target = new Box()
 
     calcRelativeBox(
         target,
@@ -78,7 +78,7 @@ describe("calcRelativeBox", () => {
 })
 
 describe("calcRelativePosition", () => {
-    const target = createBox()
+    const target = new Box()
 
     calcRelativePosition(
         target,

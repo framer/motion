@@ -22,8 +22,8 @@ export function createRenderStep(runNextFrame: () => void): Step {
     const toKeepAlive = new WeakSet<Process>()
 
     let latestFrameData: FrameData = {
-        delta: 0,
-        timestamp: 0,
+        delta: 0.0,
+        timestamp: 0.0,
         isProcessing: false,
     }
 

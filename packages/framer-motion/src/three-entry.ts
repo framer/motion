@@ -6,7 +6,7 @@ export type {
 export { AnimationType } from "./render/utils/types"
 export { animations } from "./motion/features/animations"
 export { MotionContext } from "./context/MotionContext"
-export { createBox } from "./projection/geometry/models"
+export { Box } from "./projection/geometry/models"
 export { calcLength } from "./projection/geometry/delta-calc"
 export { filterProps } from "./render/dom/utils/filter-props"
 export {

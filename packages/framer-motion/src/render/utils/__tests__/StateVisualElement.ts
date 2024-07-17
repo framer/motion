@@ -1,6 +1,6 @@
 import { ResolvedValues } from "../../types"
 import { MotionProps, MotionStyle } from "../../../motion/types"
-import { createBox } from "../../../projection/geometry/models"
+import { Box } from "../../../projection/geometry/models"
 import { VisualElement } from "../../VisualElement"
 
 export class StateVisualElement extends VisualElement<
@@ -10,7 +10,7 @@ export class StateVisualElement extends VisualElement<
 > {
     type: "state"
     build() {}
-    measureInstanceViewportBox = createBox
+    measureInstanceViewportBox = () => new Box()
     removeValueFromRenderState() {}
     renderInstance() {}
     scrapeMotionValuesFromProps() {

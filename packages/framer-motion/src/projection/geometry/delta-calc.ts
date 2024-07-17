@@ -1,6 +1,6 @@
 import { ResolvedValues } from "../../render/types"
 import { mixNumber } from "../../utils/mix/number"
-import { Axis, AxisDelta, Box, Delta } from "./types"
+import type { Axis, AxisDelta, Box, Delta } from "./models"
 
 const SCALE_PRECISION = 0.0001
 const SCALE_MIN = 1 - SCALE_PRECISION
@@ -37,7 +37,7 @@ export function calcAxisDelta(
         (delta.scale >= SCALE_MIN && delta.scale <= SCALE_MAX) ||
         isNaN(delta.scale)
     ) {
-        delta.scale = 1
+        delta.scale = 1.0
     }
 
     if (
@@ -45,7 +45,7 @@ export function calcAxisDelta(
             delta.translate <= TRANSLATE_MAX) ||
         isNaN(delta.translate)
     ) {
-        delta.translate = 0
+        delta.translate = 0.0
     }
 }
 

@@ -5,8 +5,7 @@ import {
 } from "../context/MotionConfigContext"
 import { FeatureDefinitions } from "../motion/features/types"
 import { MotionProps, MotionStyle } from "../motion/types"
-import { createBox } from "../projection/geometry/models"
-import { Box } from "../projection/geometry/types"
+import { Box } from "../projection/geometry/models"
 import { IProjectionNode } from "../projection/node/types"
 import { initPrefersReducedMotion } from "../utils/reduced-motion"
 import {
@@ -581,7 +580,7 @@ export abstract class VisualElement<
     measureViewportBox() {
         return this.current
             ? this.measureInstanceViewportBox(this.current, this.props)
-            : createBox()
+            : new Box()
     }
 
     getStaticValue(key: string) {
