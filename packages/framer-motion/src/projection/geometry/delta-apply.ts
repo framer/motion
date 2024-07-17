@@ -154,34 +154,33 @@ export function translateAxis(axis: Axis, distance: number) {
  */
 export function transformAxis(
     axis: Axis,
-    transforms: ResolvedValues,
-    [key, scaleKey, originKey]: string[]
+    axisTranslate: number,
+    axisScale: number,
+    boxScale?: number,
+    axisOrigin: number = 0.5
 ): void {
-    const axisOrigin =
-        transforms[originKey] !== undefined ? transforms[originKey] : 0.5
-
-    const originPoint = mixNumber(axis.min, axis.max, axisOrigin as number)
+    const originPoint = mixNumber(axis.min, axis.max, axisOrigin)
 
     // Apply the axis delta to the final axis
-    applyAxisDelta(
-        axis,
-        transforms[key] as number,
-        transforms[scaleKey] as number,
-        originPoint,
-        transforms.scale as number
-    )
+    applyAxisDelta(axis, axisTranslate, axisScale, originPoint, boxScale)
 }
-
-/**
- * The names of the motion values we want to apply as translation, scale and origin.
- */
-const xKeys = ["x", "scaleX", "originX"]
-const yKeys = ["y", "scaleY", "originY"]
 
 /**
  * Apply a transform to a box from the latest resolved motion values.
  */
 export function transformBox(box: Box, transform: ResolvedValues) {
-    transformAxis(box.x, transform, xKeys)
-    transformAxis(box.y, transform, yKeys)
+    transformAxis(
+        box.x,
+        transform.x as number,
+        transform.scaleX as number,
+        transform.scale as number,
+        transform.originX as number
+    )
+    transformAxis(
+        box.y,
+        transform.y as number,
+        transform.scaleY as number,
+        transform.scale as number,
+        transform.originY as number
+    )
 }
