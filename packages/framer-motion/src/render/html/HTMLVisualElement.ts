@@ -85,12 +85,5 @@ export class HTMLVisualElement extends DOMVisualElement<
         }
     }
 
-    renderInstance(
-        instance: HTMLElement,
-        renderState: HTMLRenderState,
-        styleProp?: MotionStyle | undefined,
-        projection?: IProjectionNode<unknown> | undefined
-    ): void {
-        renderHTML(instance, renderState, styleProp, projection)
-    }
+    renderInstance = renderHTML
 }
