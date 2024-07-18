@@ -1,21 +1,20 @@
-export class AxisDelta {
-    translate = 0
-    scale = 1
-    origin = 0
-    originPoint = 0
-}
+import { Axis, AxisDelta, Box, Delta } from "./types"
 
-export class Delta {
-    x = new AxisDelta()
-    y = new AxisDelta()
-}
+export const createAxisDelta = (): AxisDelta => ({
+    translate: 0,
+    scale: 1,
+    origin: 0,
+    originPoint: 0,
+})
 
-export class Axis {
-    min = 0
-    max = 0
-}
+export const createDelta = (): Delta => ({
+    x: createAxisDelta(),
+    y: createAxisDelta(),
+})
 
-export class Box {
-    x = new Axis()
-    y = new Axis()
-}
+export const createAxis = (): Axis => ({ min: 0, max: 0 })
+
+export const createBox = (): Box => ({
+    x: createAxis(),
+    y: createAxis(),
+})

@@ -1,9 +1,9 @@
 import { buildProjectionTransform } from "../transform"
-import { Delta } from "../../geometry/models"
+import { createDelta } from "../../geometry/models"
 
 describe("buildProjectionTransform", () => {
     it("Returns 'none' when no transform required", () => {
-        expect(buildProjectionTransform(new Delta(), { x: 1, y: 1 })).toEqual(
+        expect(buildProjectionTransform(createDelta(), { x: 1, y: 1 })).toEqual(
             "none"
         )
     })

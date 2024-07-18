@@ -4,7 +4,7 @@ import type {
     MotionProps,
 } from "framer-motion"
 
-import { Box, VisualElement } from "framer-motion"
+import { createBox, VisualElement } from "framer-motion"
 import { Object3DNode } from "@react-three/fiber"
 
 import { setThreeValue } from "./utils/set-value"
@@ -38,9 +38,7 @@ export class ThreeVisualElement extends VisualElement<
 
     removeValueFromRenderState() {}
 
-    measureInstanceViewportBox() {
-        return new Box()
-    }
+    measureInstanceViewportBox = createBox
 
     scrapeMotionValuesFromProps(props: MotionProps, prevProps: MotionProps) {
         return scrapeMotionValuesFromProps(props, prevProps)

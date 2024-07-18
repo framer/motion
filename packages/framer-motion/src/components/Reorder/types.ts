@@ -1,4 +1,4 @@
-import { Axis, Box } from "../../projection/geometry/models"
+import { Axis, Box } from "../../projection/geometry/types"
 
 export interface ReorderContextProps<T> {
     axis: "x" | "y"

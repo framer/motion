@@ -11,7 +11,7 @@ import { getDefaultValueType } from "../dom/value-types/defaults"
 import { MotionProps, MotionStyle } from "../../motion/types"
 import { MotionValue } from "../../value"
 import { ResolvedValues } from "../types"
-import { Box } from "../../projection/geometry/models"
+import { createBox } from "../../projection/geometry/models"
 import { IProjectionNode } from "../../projection/node/types"
 import { isSVGTag } from "./utils/is-svg-tag"
 import { VisualElement } from "../VisualElement"
@@ -41,9 +41,7 @@ export class SVGVisualElement extends DOMVisualElement<
         return instance.getAttribute(key)
     }
 
-    measureInstanceViewportBox(): Box {
-        return new Box()
-    }
+    measureInstanceViewportBox = createBox
 
     scrapeMotionValuesFromProps(
         props: MotionProps,

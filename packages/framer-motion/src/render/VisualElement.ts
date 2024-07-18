@@ -5,7 +5,7 @@ import {
 } from "../context/MotionConfigContext"
 import { FeatureDefinitions } from "../motion/features/types"
 import { MotionProps, MotionStyle } from "../motion/types"
-import { Box } from "../projection/geometry/models"
+import type { Box } from "../projection/geometry/types"
 import { IProjectionNode } from "../projection/node/types"
 import { initPrefersReducedMotion } from "../utils/reduced-motion"
 import {
@@ -46,6 +46,7 @@ import { isZeroValueString } from "../utils/is-zero-value-string"
 import { findValueType } from "./dom/value-types/find"
 import { complex } from "../value/types/complex"
 import { getAnimatableNone } from "./dom/value-types/animatable-none"
+import { createBox } from "../projection/geometry/models"
 
 const propEventHandlers = [
     "AnimationStart",
@@ -580,7 +581,7 @@ export abstract class VisualElement<
     measureViewportBox() {
         return this.current
             ? this.measureInstanceViewportBox(this.current, this.props)
-            : new Box()
+            : createBox()
     }
 
     getStaticValue(key: string) {

@@ -1,6 +1,6 @@
 import { MotionValue } from "../../../value"
 import { transformPropOrder } from "../../html/utils/transform"
-import type { Box } from "../../../projection/geometry/models"
+import type { Box } from "../../../projection/geometry/types"
 import type { VisualElement } from "../../VisualElement"
 import { ValueType } from "../../../value/types/types"
 import { number } from "../../../value/types/numbers"

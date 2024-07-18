@@ -3,7 +3,7 @@ import { useConstant } from "../../utils/use-constant"
 import { TargetAndTransition } from "../../types"
 import { ResolvedValues } from "../../render/types"
 import { makeUseVisualState } from "../../motion/utils/use-visual-state"
-import { Box } from "../../projection/geometry/models"
+import { createBox } from "../../projection/geometry/models"
 import { VisualElement } from "../../render/VisualElement"
 import { animateVisualElement } from "../interfaces/visual-element"
 
@@ -20,9 +20,7 @@ class StateVisualElement extends VisualElement<
 > {
     type: "state"
     build() {}
-    measureInstanceViewportBox() {
-        return new Box()
-    }
+    measureInstanceViewportBox = createBox
     resetTransform() {}
     restoreTransform() {}
     removeValueFromRenderState() {}

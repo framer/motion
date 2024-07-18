@@ -1,5 +1,5 @@
 import { calcLength } from "./delta-calc"
-import type { AxisDelta, Box, Delta } from "./models"
+import { AxisDelta, Box, Delta } from "./types"
 
 function isAxisDeltaZero(delta: AxisDelta) {
     return delta.translate === 0 && delta.scale === 1

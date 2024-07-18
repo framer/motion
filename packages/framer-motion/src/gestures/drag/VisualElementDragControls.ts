@@ -15,8 +15,8 @@ import {
 } from "./utils/constraints"
 import type { VisualElement } from "../../render/VisualElement"
 import { MotionProps } from "../../motion/types"
-import { Point } from "../../projection/geometry/types"
-import { Axis, Box } from "../../projection/geometry/models"
+import { Axis, Point } from "../../projection/geometry/types"
+import { createBox } from "../../projection/geometry/models"
 import { eachAxis } from "../../projection/utils/each-axis"
 import { measurePageBox } from "../../projection/utils/measure"
 import { extractEventInfo } from "../../events/event-info"
@@ -77,7 +77,7 @@ export class VisualElementDragControls {
     /**
      * The per-axis resolved elastic values.
      */
-    private elastic = new Box()
+    private elastic = createBox()
 
     private removeWillChange: VoidFunction | undefined
 

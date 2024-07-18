@@ -13,7 +13,7 @@ import {
     isNear,
 } from "../geometry/delta-calc"
 import { removeBoxTransforms } from "../geometry/delta-remove"
-import { Axis, AxisDelta, Box, Delta } from "../geometry/models"
+import { Axis, AxisDelta, Box, Delta } from "../geometry/types"
 import { transformBox, translateAxis } from "../geometry/delta-apply"
 import { Point } from "../geometry/types"
 import { getValueTransition } from "../../animation/utils/transitions"
@@ -58,6 +58,7 @@ import { time } from "../../frameloop/sync-time"
 import { microtask } from "../../frameloop/microtask"
 import { VisualElement } from "../../render/VisualElement"
 import { getOptimisedAppearId } from "../../animation/optimized-appear/get-appear-id"
+import { createBox, createDelta } from "../geometry/models"
 
 const metrics = {
     type: "projectionFrame",
@@ -840,7 +841,7 @@ export function createProjectionNode<I>({
 
             const prevLayout = this.layout
             this.layout = this.measure(false)
-            this.layoutCorrected = new Box()
+            this.layoutCorrected = createBox()
             this.isLayoutDirty = false
             this.projectionDelta = undefined
             this.notifyListeners("measure", this.layout.layoutBox)
@@ -935,7 +936,7 @@ export function createProjectionNode<I>({
 
         measurePageBox() {
             const { visualElement } = this.options
-            if (!visualElement) return new Box()
+            if (!visualElement) return createBox()
 
             const box = visualElement.measureViewportBox()
             // Remove viewport scroll to give page-relative coordinates
@@ -949,7 +950,7 @@ export function createProjectionNode<I>({
         }
 
         removeElementScroll(box: Box): Box {
-            const boxWithoutScroll = new Box()
+            const boxWithoutScroll = createBox()
             copyBoxInto(boxWithoutScroll, box)
 
             /**
@@ -993,7 +994,7 @@ export function createProjectionNode<I>({
         }
 
         applyTransform(box: Box, transformOnly = false): Box {
-            const withTransforms = new Box()
+            const withTransforms = createBox()
             copyBoxInto(withTransforms, box)
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
@@ -1022,7 +1023,7 @@ export function createProjectionNode<I>({
         }
 
         removeTransform(box: Box): Box {
-            const boxWithoutTransform = new Box()
+            const boxWithoutTransform = createBox()
             copyBoxInto(boxWithoutTransform, box)
 
             for (let i = 0; i < this.path.length; i++) {
@@ -1032,7 +1033,7 @@ export function createProjectionNode<I>({
 
                 hasScale(node.latestValues) && node.updateSnapshot()
 
-                const sourceBox = new Box()
+                const sourceBox = createBox()
                 const nodeBox = node.measurePageBox()
                 copyBoxInto(sourceBox, nodeBox)
 
@@ -1148,8 +1149,8 @@ export function createProjectionNode<I>({
                 ) {
                     this.relativeParent = relativeParent
                     this.forceRelativeParentToResolveTarget()
-                    this.relativeTarget = new Box()
-                    this.relativeTargetOrigin = new Box()
+                    this.relativeTarget = createBox()
+                    this.relativeTargetOrigin = createBox()
                     calcRelativePosition(
                         this.relativeTargetOrigin,
                         this.layout.layoutBox,
@@ -1172,8 +1173,8 @@ export function createProjectionNode<I>({
              * Lazy-init target data structure
              */
             if (!this.target) {
-                this.target = new Box()
-                this.targetWithTransforms = new Box()
+                this.target = createBox()
+                this.targetWithTransforms = createBox()
             }
 
             /**
@@ -1229,8 +1230,8 @@ export function createProjectionNode<I>({
                 ) {
                     this.relativeParent = relativeParent
                     this.forceRelativeParentToResolveTarget()
-                    this.relativeTarget = new Box()
-                    this.relativeTargetOrigin = new Box()
+                    this.relativeTarget = createBox()
+                    this.relativeTargetOrigin = createBox()
 
                     calcRelativePosition(
                         this.relativeTargetOrigin,
@@ -1364,7 +1365,7 @@ export function createProjectionNode<I>({
                 (this.treeScale.x !== 1 || this.treeScale.y !== 1)
             ) {
                 lead.target = lead.layout.layoutBox
-                lead.targetWithTransforms = new Box()
+                lead.targetWithTransforms = createBox()
             }
 
             const { target } = lead
@@ -1459,9 +1460,9 @@ export function createProjectionNode<I>({
         }
 
         createProjectionDeltas() {
-            this.prevProjectionDelta = new Delta()
-            this.projectionDelta = new Delta()
-            this.projectionDeltaWithTransform = new Delta()
+            this.prevProjectionDelta = createDelta()
+            this.projectionDelta = createDelta()
+            this.projectionDeltaWithTransform = createDelta()
         }
 
         /**
@@ -1483,7 +1484,7 @@ export function createProjectionNode<I>({
                 : undefined || {}
             const mixedValues = { ...this.latestValues }
 
-            const targetDelta = new Delta()
+            const targetDelta = createDelta()
             if (
                 !this.relativeParent ||
                 !this.relativeParent.options.layoutRoot
@@ -1492,7 +1493,7 @@ export function createProjectionNode<I>({
             }
             this.attemptToResolveRelativeTarget = !hasOnlyRelativeTargetChanged
 
-            const relativeLayout = new Box()
+            const relativeLayout = createBox()
 
             const snapshotSource = snapshot ? snapshot.source : undefined
             const layoutSource = this.layout ? this.layout.source : undefined
@@ -1547,7 +1548,7 @@ export function createProjectionNode<I>({
                         this.isProjectionDirty = false
                     }
 
-                    if (!prevRelativeTarget) prevRelativeTarget = new Box()
+                    if (!prevRelativeTarget) prevRelativeTarget = createBox()
                     copyBoxInto(prevRelativeTarget, this.relativeTarget)
                 }
 
@@ -1659,7 +1660,7 @@ export function createProjectionNode<I>({
                     layout.layoutBox
                 )
             ) {
-                target = this.target || new Box()
+                target = this.target || createBox()
 
                 const xLength = calcLength(this.layout!.layoutBox.x)
                 target!.x.min = lead.target!.x.min
@@ -2038,10 +2039,10 @@ function notifyLayoutUpdate(node: IProjectionNode) {
             })
         }
 
-        const layoutDelta = new Delta()
+        const layoutDelta = createDelta()
 
         calcBoxDelta(layoutDelta, layout, snapshot.layoutBox)
-        const visualDelta = new Delta()
+        const visualDelta = createDelta()
         if (isShared) {
             calcBoxDelta(
                 visualDelta,
@@ -2067,14 +2068,14 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                     relativeParent
 
                 if (parentSnapshot && parentLayout) {
-                    const relativeSnapshot = new Box()
+                    const relativeSnapshot = createBox()
                     calcRelativePosition(
                         relativeSnapshot,
                         snapshot.layoutBox,
                         parentSnapshot.layoutBox
                     )
 
-                    const relativeLayout = new Box()
+                    const relativeLayout = createBox()
                     calcRelativePosition(
                         relativeLayout,
                         layout,

@@ -4,8 +4,7 @@ import { Inertia, TargetAndTransition } from "../../types"
 import { DragControls } from "./use-drag-controls"
 import { MotionValue } from "../../value"
 import { VariantLabels } from "../../motion/types"
-import { BoundingBox } from "../../projection/geometry/types"
-import { Axis } from "../../projection/geometry/models"
+import { Axis, BoundingBox } from "../../projection/geometry/types"
 
 export type DragHandler = (
     event: MouseEvent | TouchEvent | PointerEvent,

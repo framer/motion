@@ -1,4 +1,4 @@
-import type { Axis, AxisDelta, Box } from "./models"
+import { Axis, AxisDelta, Box } from "./types"
 
 /**
  * Reset an axis to the provided origin box.

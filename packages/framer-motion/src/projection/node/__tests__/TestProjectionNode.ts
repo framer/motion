@@ -1,4 +1,4 @@
-import { Box } from "../../geometry/models"
+import { Box } from "../../geometry/types"
 import { createProjectionNode } from "../create-projection-node"
 import { IProjectionNode, ProjectionNodeOptions } from "../types"
 
