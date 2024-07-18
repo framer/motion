@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.7] 2024-07-18
+
+### Changed
+
+-   Active render scheduling check to prevent unnecessary `Set` lookups.
+
 ## [11.3.6] 2024-07-17
 
 ### Changed
