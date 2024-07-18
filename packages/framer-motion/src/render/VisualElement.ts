@@ -554,6 +554,7 @@ export abstract class VisualElement<
     }
 
     render = () => {
+        this.isRenderScheduled = false
         if (!this.current) return
         this.triggerBuild()
         this.renderInstance(
@@ -564,7 +565,13 @@ export abstract class VisualElement<
         )
     }
 
-    scheduleRender = () => frame.render(this.render, false, true)
+    private isRenderScheduled = false
+    scheduleRender = () => {
+        if (!this.isRenderScheduled) {
+            this.isRenderScheduled = true
+            frame.render(this.render, false, true)
+        }
+    }
 
     /**
      * Measure the current viewport box with or without transforms.
