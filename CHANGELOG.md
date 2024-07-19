@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.8] 2024-07-19
+
+### Changed
+
+-   Improve performance of layout animation calculated projection comparisons.
+
 ## [11.3.7] 2024-07-18
 
 ### Changed
