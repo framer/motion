@@ -11,6 +11,13 @@ import {
     animateValue,
 } from "../animation/animators/MainThreadAnimation"
 
+// typescript wants only strings passed to parseFloat
+function safeParseFloat(v: unknown) {
+    if (typeof v === "number") return v
+    if (v === null || v === undefined) return NaN
+    return parseFloat(v.toString())
+}
+
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
  *
@@ -31,14 +38,14 @@ import {
  * @public
  */
 export function useSpring(
-    source: MotionValue<number> | number,
+    source: MotionValue<unknown> | number,
     config: SpringOptions = {}
 ) {
     const { isStatic } = useContext(MotionConfigContext)
     const activeSpringAnimation = useRef<MainThreadAnimation<number> | null>(
         null
     )
-    const value = useMotionValue(isMotionValue(source) ? source.get() : source)
+    const value = useMotionValue(isMotionValue(source) ? safeParseFloat(source.get()) : source)
     const latestValue = useRef<number>(value.get())
     const latestSetter = useRef<(v: number) => void>(() => {})
 
@@ -90,7 +97,7 @@ export function useSpring(
 
     useIsomorphicLayoutEffect(() => {
         if (isMotionValue(source)) {
-            return source.on("change", (v) => value.set(v))
+            return source.on("change", (v) => value.set(safeParseFloat(v)))
         }
     }, [value])
 
