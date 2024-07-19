@@ -21,8 +21,8 @@ export function createRenderBatcher(
     let useDefaultElapsed = true
 
     const state: FrameData = {
-        delta: 0,
-        timestamp: 0,
+        delta: 0.0,
+        timestamp: 0.0,
         isProcessing: false,
     }
 

@@ -5,8 +5,7 @@ import {
 } from "../context/MotionConfigContext"
 import { FeatureDefinitions } from "../motion/features/types"
 import { MotionProps, MotionStyle } from "../motion/types"
-import { createBox } from "../projection/geometry/models"
-import { Box } from "../projection/geometry/types"
+import type { Box } from "../projection/geometry/types"
 import { IProjectionNode } from "../projection/node/types"
 import { initPrefersReducedMotion } from "../utils/reduced-motion"
 import {
@@ -47,6 +46,7 @@ import { isZeroValueString } from "../utils/is-zero-value-string"
 import { findValueType } from "./dom/value-types/find"
 import { complex } from "../value/types/complex"
 import { getAnimatableNone } from "./dom/value-types/animatable-none"
+import { createBox } from "../projection/geometry/models"
 
 const propEventHandlers = [
     "AnimationStart",

@@ -37,7 +37,7 @@ export function calcAxisDelta(
         (delta.scale >= SCALE_MIN && delta.scale <= SCALE_MAX) ||
         isNaN(delta.scale)
     ) {
-        delta.scale = 1
+        delta.scale = 1.0
     }
 
     if (
@@ -45,7 +45,7 @@ export function calcAxisDelta(
             delta.translate <= TRANSLATE_MAX) ||
         isNaN(delta.translate)
     ) {
-        delta.translate = 0
+        delta.translate = 0.0
     }
 }
 

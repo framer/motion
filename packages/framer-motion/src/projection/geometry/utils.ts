@@ -30,3 +30,11 @@ export function boxEqualsRounded(a: Box, b: Box) {
 export function aspectRatio(box: Box): number {
     return calcLength(box.x) / calcLength(box.y)
 }
+
+export function axisDeltaEquals(a: AxisDelta, b: AxisDelta) {
+    return (
+        a.translate === b.translate &&
+        a.scale === b.scale &&
+        a.originPoint === b.originPoint
+    )
+}

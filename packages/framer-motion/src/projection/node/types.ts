@@ -1,6 +1,6 @@
 import { Transition } from "../../types"
 import { ResolvedValues } from "../../render/types"
-import { Box, Delta, Point } from "../geometry/types"
+import { Point, Box, Delta } from "../geometry/types"
 import { NodeStack } from "../shared/stack"
 import { AnimationPlaybackControls } from "../../animation/types"
 import { FlatTree } from "../../render/utils/flat-tree"

@@ -65,6 +65,9 @@ export function applyBoxDelta(box: Box, { x, y }: Delta): void {
     applyAxisDelta(box.y, y.translate, y.scale, y.originPoint)
 }
 
+const TREE_SCALE_SNAP_MIN = 0.999999999999
+const TREE_SCALE_SNAP_MAX = 1.0000000000001
+
 /**
  * Apply a tree of deltas to a box. We do this to calculate the effect of all the transforms
  * in a tree upon our box before then calculating how to project it into our desired viewport-relative box
@@ -133,13 +136,18 @@ export function applyTreeDeltas(
      * Snap tree scale back to 1 if it's within a non-perceivable threshold.
      * This will help reduce useless scales getting rendered.
      */
-    treeScale.x = snapToDefault(treeScale.x)
-    treeScale.y = snapToDefault(treeScale.y)
-}
-
-function snapToDefault(scale: number): number {
-    if (Number.isInteger(scale)) return scale
-    return scale > 1.0000000000001 || scale < 0.999999999999 ? scale : 1
+    if (
+        treeScale.x < TREE_SCALE_SNAP_MAX &&
+        treeScale.x > TREE_SCALE_SNAP_MIN
+    ) {
+        treeScale.x = 1.0
+    }
+    if (
+        treeScale.y < TREE_SCALE_SNAP_MAX &&
+        treeScale.y > TREE_SCALE_SNAP_MIN
+    ) {
+        treeScale.y = 1.0
+    }
 }
 
 export function translateAxis(axis: Axis, distance: number) {
@@ -154,8 +162,8 @@ export function translateAxis(axis: Axis, distance: number) {
  */
 export function transformAxis(
     axis: Axis,
-    axisTranslate: number,
-    axisScale: number,
+    axisTranslate?: number,
+    axisScale?: number,
     boxScale?: number,
     axisOrigin: number = 0.5
 ): void {

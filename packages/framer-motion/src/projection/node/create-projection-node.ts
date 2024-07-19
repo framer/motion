@@ -3,7 +3,7 @@ import { AnimationPlaybackControls } from "../../animation/types"
 import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { mixValues } from "../animation/mix-values"
-import { copyBoxInto } from "../geometry/copy"
+import { copyAxisDeltaInto, copyBoxInto } from "../geometry/copy"
 import { applyBoxDelta, applyTreeDeltas } from "../geometry/delta-apply"
 import {
     calcBoxDelta,
@@ -13,12 +13,13 @@ import {
     isNear,
 } from "../geometry/delta-calc"
 import { removeBoxTransforms } from "../geometry/delta-remove"
-import { createBox, createDelta } from "../geometry/models"
+import { Axis, AxisDelta, Box, Delta } from "../geometry/types"
 import { transformBox, translateAxis } from "../geometry/delta-apply"
-import { Axis, AxisDelta, Box, Delta, Point } from "../geometry/types"
+import { Point } from "../geometry/types"
 import { getValueTransition } from "../../animation/utils/transitions"
 import {
     aspectRatio,
+    axisDeltaEquals,
     boxEquals,
     boxEqualsRounded,
     isDeltaZero,
@@ -46,8 +47,6 @@ import { globalProjectionState } from "./state"
 import { delay } from "../../utils/delay"
 import { mixNumber } from "../../utils/mix/number"
 import { Process } from "../../frameloop/types"
-import { ProjectionFrame } from "../../debug/types"
-import { record } from "../../debug/record"
 import { ValueAnimationOptions } from "../../animation/types"
 import { frameData } from "../../dom-entry"
 import { isSVGElement } from "../../render/dom/utils/is-svg-element"
@@ -59,6 +58,22 @@ import { time } from "../../frameloop/sync-time"
 import { microtask } from "../../frameloop/microtask"
 import { VisualElement } from "../../render/VisualElement"
 import { getOptimisedAppearId } from "../../animation/optimized-appear/get-appear-id"
+import { createBox, createDelta } from "../geometry/models"
+
+const metrics = {
+    type: "projectionFrame",
+    totalNodes: 0,
+    resolvedTargetDeltas: 0,
+    recalculatedProjection: 0,
+}
+
+declare global {
+    interface Window {
+        MotionDebug?: {
+            record: (data: typeof metrics) => void
+        }
+    }
+}
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -71,17 +86,6 @@ const hiddenVisibility: ResolvedValues = { visibility: "hidden" }
 const animationTarget = 1000
 
 let id = 0
-
-/**
- * Use a mutable data object for debug data so as to not create a new
- * object every frame.
- */
-const projectionFrameData: ProjectionFrame = {
-    type: "projectionFrame",
-    totalNodes: 0,
-    resolvedTargetDeltas: 0,
-    recalculatedProjection: 0,
-}
 
 function resetDistortingTransform(
     key: string,
@@ -249,6 +253,12 @@ export function createProjectionNode<I>({
         targetWithTransforms?: Box
 
         /**
+         * The previous projection delta, which we can compare with the newly calculated
+         * projection delta to see if we need to render.
+         */
+        prevProjectionDelta?: Delta
+
+        /**
          * A calculated transform that will project an element from its layoutCorrected
          * into the target. This will be used by children to calculate their own layoutCorrect boxes.
          */
@@ -367,12 +377,6 @@ export function createProjectionNode<I>({
         nodes?: FlatTree
 
         depth: number
-
-        /**
-         * When we update the projection transform, we also build it into a string.
-         * If the string changes between frames, we trigger a render.
-         */
-        projectionTransform: string
 
         /**
          * If transformTemplate generates a different value before/after the
@@ -782,17 +786,21 @@ export function createProjectionNode<I>({
              * Reset debug counts. Manually resetting rather than creating a new
              * object each frame.
              */
-            projectionFrameData.totalNodes =
-                projectionFrameData.resolvedTargetDeltas =
-                projectionFrameData.recalculatedProjection =
-                    0
+            if (window.MotionDebug) {
+                metrics.totalNodes =
+                    metrics.resolvedTargetDeltas =
+                    metrics.recalculatedProjection =
+                        0
+            }
 
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
             this.nodes!.forEach(cleanDirtyNodes)
 
-            record(projectionFrameData)
+            if (window.MotionDebug) {
+                window.MotionDebug.record(metrics)
+            }
         }
 
         /**
@@ -1089,7 +1097,7 @@ export function createProjectionNode<I>({
         /**
          * Frame calculations
          */
-        resolvedRelativeTargetAt: number
+        resolvedRelativeTargetAt: number = 0.0
         resolveTargetDelta(forceRecalculation = false) {
             /**
              * Once the dirty status of nodes has been spread through the tree, we also
@@ -1112,7 +1120,8 @@ export function createProjectionNode<I>({
                 (isShared && this.isSharedProjectionDirty) ||
                 this.isProjectionDirty ||
                 this.parent?.isProjectionDirty ||
-                this.attemptToResolveRelativeTarget
+                this.attemptToResolveRelativeTarget ||
+                this.root.updateBlockedByResize
             )
 
             if (canSkip) return
@@ -1239,7 +1248,9 @@ export function createProjectionNode<I>({
             /**
              * Increase debug counter for resolved target deltas
              */
-            projectionFrameData.resolvedTargetDeltas++
+            if (window.MotionDebug) {
+                metrics.resolvedTargetDeltas++
+            }
         }
 
         getClosestProjectingParent() {
@@ -1365,20 +1376,26 @@ export function createProjectionNode<I>({
                  * projecting, we want to remove the stored transform and schedule
                  * a render to ensure the elements reflect the removed transform.
                  */
-                if (this.projectionTransform) {
-                    this.projectionDelta = createDelta()
-                    this.projectionTransform = "none"
+                if (this.prevProjectionDelta) {
+                    this.createProjectionDeltas()
                     this.scheduleRender()
                 }
+
                 return
             }
 
-            if (!this.projectionDelta) {
-                this.projectionDelta = createDelta()
-                this.projectionDeltaWithTransform = createDelta()
+            if (!this.projectionDelta || !this.prevProjectionDelta) {
+                this.createProjectionDeltas()
+            } else {
+                copyAxisDeltaInto(
+                    this.prevProjectionDelta.x,
+                    this.projectionDelta.x
+                )
+                copyAxisDeltaInto(
+                    this.prevProjectionDelta.y,
+                    this.projectionDelta.y
+                )
             }
-
-            const prevProjectionTransform = this.projectionTransform
 
             /**
              * Update the delta between the corrected box and the target box before user-set transforms were applied.
@@ -1390,32 +1407,35 @@ export function createProjectionNode<I>({
              * layout reprojection or the final bounding box.
              */
             calcBoxDelta(
-                this.projectionDelta,
+                this.projectionDelta!,
                 this.layoutCorrected,
                 target,
                 this.latestValues
             )
 
-            this.projectionTransform = buildProjectionTransform(
-                this.projectionDelta!,
-                this.treeScale
-            )
-
             if (
-                this.projectionTransform !== prevProjectionTransform ||
                 this.treeScale.x !== prevTreeScaleX ||
-                this.treeScale.y !== prevTreeScaleY
+                this.treeScale.y !== prevTreeScaleY ||
+                !axisDeltaEquals(
+                    this.projectionDelta!.x,
+                    this.prevProjectionDelta!.x
+                ) ||
+                !axisDeltaEquals(
+                    this.projectionDelta!.y,
+                    this.prevProjectionDelta!.y
+                )
             ) {
                 this.hasProjected = true
                 this.scheduleRender()
-
                 this.notifyListeners("projectionUpdate", target)
             }
 
             /**
              * Increase debug counter for recalculated projections
              */
-            projectionFrameData.recalculatedProjection++
+            if (window.MotionDebug) {
+                metrics.recalculatedProjection++
+            }
         }
 
         isVisible = true
@@ -1437,6 +1457,12 @@ export function createProjectionNode<I>({
             if (this.resumingFrom && !this.resumingFrom.instance) {
                 this.resumingFrom = undefined
             }
+        }
+
+        createProjectionDeltas() {
+            this.prevProjectionDelta = createDelta()
+            this.projectionDelta = createDelta()
+            this.projectionDeltaWithTransform = createDelta()
         }
 
         /**
@@ -2094,7 +2120,9 @@ export function propagateDirtyNodes(node: IProjectionNode) {
     /**
      * Increase debug counter for nodes encountered this frame
      */
-    projectionFrameData.totalNodes++
+    if (window.MotionDebug) {
+        metrics.totalNodes++
+    }
 
     if (!node.parent) return
 
