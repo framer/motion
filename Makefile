@@ -68,9 +68,20 @@ publish: clean bootstrap
 test: bootstrap
 	yarn test
 
-test-ci: bootstrap
+test-mkdir:
 	mkdir -p $(TEST_REPORT_PATH)
-	JEST_JUNIT_OUTPUT=$(TEST_REPORT_PATH)/framer-motion.xml yarn test-ci
+
+test-jest: export JEST_JUNIT_OUTPUT ?= test_reports/framer-motion.xml
+test-jest: bootstrap test-mkdir
+	echo $(JEST_JUNIT_OUTPUT)
+	yarn test
+
+test-e2e: build test-mkdir
+	yarn start-server-and-test "yarn dev-server" http://localhost:9990 "cd packages/framer-motion && cypress run --headless --spec $(if $(CI),$(shell cd packages/framer-motion && circleci tests glob "cypress/integration/*.ts" | circleci tests split))"
+
+test-html: build test-mkdir
+	node dev/inc/collect-html-tests.js
+	yarn start-server-and-test "yarn dev-server" http://localhost:8000 "cd packages/framer-motion && cypress run -s cypress/integration/html-tests/appear.ts --config-file cypress.appear.json --config $(if $(CI),$(shell --config video=false)) && cypress run -s cypress/integration/html-tests/projection.ts --config-file cypress.projection.json $(if $(CI),$(shell --config video=false))"
 
 lint: bootstrap
 	yarn lint
