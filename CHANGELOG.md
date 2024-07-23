@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.12] 2024-07-23
+
+### Fixed
+
+-   Improving `useSpring` types so it accepts `MotionValue<string>` or `MotionValue<number>` but always returns `MotionValue<number>`.
+
 ## [11.3.11] 2024-07-23
 
 ### Fixed
