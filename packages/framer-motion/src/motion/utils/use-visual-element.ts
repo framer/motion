@@ -163,7 +163,6 @@ function createProjectionNode(
         alwaysMeasureLayout:
             Boolean(drag) || (dragConstraints && isRefObject(dragConstraints)),
         visualElement,
-        scheduleRender: () => visualElement.scheduleRender(),
         /**
          * TODO: Update options in an effect. This could be tricky as it'll be too late
          * to update by the time layout animations run.

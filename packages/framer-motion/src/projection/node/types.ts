@@ -163,7 +163,6 @@ export interface ProjectionNodeOptions {
     layoutScroll?: boolean
     layoutRoot?: boolean
     alwaysMeasureLayout?: boolean
-    scheduleRender?: VoidFunction
     onExitComplete?: VoidFunction
     animationType?: "size" | "position" | "both" | "preserve-aspect"
     layoutId?: string

@@ -75,6 +75,8 @@ declare global {
     }
 }
 
+const isDebug = window.MotionDebug !== undefined
+
 const transformAxes = ["", "X", "Y", "Z"]
 
 const hiddenVisibility: ResolvedValues = { visibility: "hidden" }
@@ -786,7 +788,7 @@ export function createProjectionNode<I>({
              * Reset debug counts. Manually resetting rather than creating a new
              * object each frame.
              */
-            if (window.MotionDebug) {
+            if (isDebug) {
                 metrics.totalNodes =
                     metrics.resolvedTargetDeltas =
                     metrics.recalculatedProjection =
@@ -798,8 +800,8 @@ export function createProjectionNode<I>({
             this.nodes!.forEach(calcProjection)
             this.nodes!.forEach(cleanDirtyNodes)
 
-            if (window.MotionDebug) {
-                window.MotionDebug.record(metrics)
+            if (isDebug) {
+                window.MotionDebug!.record(metrics)
             }
         }
 
@@ -1248,7 +1250,7 @@ export function createProjectionNode<I>({
             /**
              * Increase debug counter for resolved target deltas
              */
-            if (window.MotionDebug) {
+            if (isDebug) {
                 metrics.resolvedTargetDeltas++
             }
         }
@@ -1433,7 +1435,7 @@ export function createProjectionNode<I>({
             /**
              * Increase debug counter for recalculated projections
              */
-            if (window.MotionDebug) {
+            if (isDebug) {
                 metrics.recalculatedProjection++
             }
         }
@@ -1449,7 +1451,7 @@ export function createProjectionNode<I>({
         }
 
         scheduleRender(notifyAll = true) {
-            this.options.scheduleRender && this.options.scheduleRender()
+            this.options.visualElement?.scheduleRender()
             if (notifyAll) {
                 const stack = this.getStack()
                 stack && stack.scheduleRender()
@@ -2120,7 +2122,7 @@ export function propagateDirtyNodes(node: IProjectionNode) {
     /**
      * Increase debug counter for nodes encountered this frame
      */
-    if (window.MotionDebug) {
+    if (isDebug) {
         metrics.totalNodes++
     }
 

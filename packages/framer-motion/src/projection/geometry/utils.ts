@@ -1,5 +1,5 @@
 import { calcLength } from "./delta-calc"
-import { AxisDelta, Box, Delta } from "./types"
+import { Axis, AxisDelta, Box, Delta } from "./types"
 
 function isAxisDeltaZero(delta: AxisDelta) {
     return delta.translate === 0 && delta.scale === 1
@@ -9,22 +9,23 @@ export function isDeltaZero(delta: Delta) {
     return isAxisDeltaZero(delta.x) && isAxisDeltaZero(delta.y)
 }
 
+export function axisEquals(a: Axis, b: Axis) {
+    return a.min === b.min && a.max === b.max
+}
+
 export function boxEquals(a: Box, b: Box) {
+    return axisEquals(a.x, b.x) && axisEquals(a.y, b.y)
+}
+
+export function axisEqualsRounded(a: Axis, b: Axis) {
     return (
-        a.x.min === b.x.min &&
-        a.x.max === b.x.max &&
-        a.y.min === b.y.min &&
-        a.y.max === b.y.max
+        Math.round(a.min) === Math.round(b.min) &&
+        Math.round(a.max) === Math.round(b.max)
     )
 }
 
 export function boxEqualsRounded(a: Box, b: Box) {
-    return (
-        Math.round(a.x.min) === Math.round(b.x.min) &&
-        Math.round(a.x.max) === Math.round(b.x.max) &&
-        Math.round(a.y.min) === Math.round(b.y.min) &&
-        Math.round(a.y.max) === Math.round(b.y.max)
-    )
+    return axisEqualsRounded(a.x, b.x) && axisEqualsRounded(a.y, b.y)
 }
 
 export function aspectRatio(box: Box): number {
