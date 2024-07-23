@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.9] 2024-07-23
+
+### Changed
+
+-   Improve performance of `window.MotionDebug` check.
+
 ## [11.3.8] 2024-07-19
 
 ### Changed
