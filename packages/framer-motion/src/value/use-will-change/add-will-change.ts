@@ -1,4 +1,4 @@
-import { WillChangeMotionValue } from "."
+import { WillChangeMotionValue } from "./WillChangeMotionValue"
 import type { VisualElement } from "../../render/VisualElement"
 import { isWillChangeMotionValue } from "./is"
 
