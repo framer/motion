@@ -4,9 +4,15 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.11] 2024-07-23
+
+### Fixed
+
+-   Removing `"react"` import from DOM-only bundle.
+
 ## [11.3.10] 2024-07-23
 
-### Changed
+### Fixed
 
 -   Changing `isBrowser` check from `document` to `window`.
 
