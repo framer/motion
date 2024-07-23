@@ -1,5 +1,5 @@
 import { isWillChangeMotionValue } from "../is"
-import { WillChangeMotionValue } from "../index"
+import { WillChangeMotionValue } from "../WillChangeMotionValue"
 import { MotionValue } from "../.."
 
 describe("isWillChangeMotionValue", () => {

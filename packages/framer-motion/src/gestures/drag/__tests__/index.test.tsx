@@ -3,7 +3,7 @@ import { pointerDown, render } from "../../../../jest.setup"
 import { BoundingBox, motion, motionValue, MotionValue } from "../../../"
 import { MockDrag, drag, deferred, dragFrame, Point, sleep } from "./utils"
 import { nextFrame } from "../../__tests__/utils"
-import { WillChangeMotionValue } from "../../../value/use-will-change"
+import { WillChangeMotionValue } from "../../../value/use-will-change/WillChangeMotionValue"
 
 describe("drag", () => {
     test("onDragStart fires", async () => {

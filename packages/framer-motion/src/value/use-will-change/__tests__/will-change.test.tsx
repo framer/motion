@@ -1,7 +1,7 @@
 import { render } from "../../../../jest.setup"
 import { MotionConfig, frame, motion, useMotionValue } from "../../.."
 import { nextFrame } from "../../../gestures/__tests__/utils"
-import { WillChangeMotionValue } from ".."
+import { WillChangeMotionValue } from "../WillChangeMotionValue"
 
 describe("WillChangeMotionValue", () => {
     test("Can manage transform alongside independent transforms", async () => {
