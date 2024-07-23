@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.10] 2024-07-23
+
+### Changed
+
+-   Changing `isBrowser` check from `document` to `window`.
+
 ## [11.3.9] 2024-07-23
 
 ### Changed
