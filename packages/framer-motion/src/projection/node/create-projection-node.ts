@@ -75,7 +75,9 @@ declare global {
     }
 }
 
-const isDebug = window.MotionDebug !== undefined
+const isDebug =
+    typeof window !== "undefined" && window.MotionDebug !== undefined
+
 const transformAxes = ["", "X", "Y", "Z"]
 
 const hiddenVisibility: ResolvedValues = { visibility: "hidden" }
