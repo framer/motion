@@ -35,26 +35,5 @@ describe("AnimatePresence with WAAPI animations", () => {
             .should((items: any) => {
                 expect(items.length).to.equal(1)
             })
-        // .wait(50)
-        // .get("#b")
-        // .should(([$a]: any) => {
-        //     expectBbox($a, {
-        //         top: 200,
-        //         left: 100,
-        //         width: 100,
-        //         height: 100,
-        //     })
-        // })
-        // .get("#c")
-        // .should(([$a]: any) => {
-        //     expectBbox($a, {
-        //         top: 300,
-        //         left: 100,
-        //         width: 100,
-        //         height: 100,
-        //     })
-        // })
-        // .trigger("click", 60, 60, { force: true })
-        // .wait(100)
     })
 })
