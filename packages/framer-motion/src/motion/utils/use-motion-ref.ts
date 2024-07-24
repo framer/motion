@@ -18,9 +18,11 @@ export function useMotionRef<Instance, RenderState>(
             instance && visualState.mount && visualState.mount(instance)
 
             if (visualElement) {
-                instance
-                    ? visualElement.mount(instance)
-                    : visualElement.unmount()
+                if (instance) {
+                    visualElement.mount(instance)
+                } else {
+                    visualElement.unmount()
+                }
             }
 
             if (externalRef) {

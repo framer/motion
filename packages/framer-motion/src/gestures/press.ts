@@ -10,6 +10,7 @@ import { pipe } from "../utils/pipe"
 import { isDragActive } from "./drag/utils/lock"
 import { isNodeOrChild } from "./utils/is-node-or-child"
 import { noop } from "../utils/noop"
+import { frame } from "../frameloop"
 
 function fireSyntheticPointerEvent(
     name: string,
@@ -40,7 +41,7 @@ export class PressGesture extends Feature<Element> {
         }
 
         if (onTapStart) {
-            onTapStart(event, info)
+            frame.postRender(() => onTapStart(event, info))
         }
     }
 
@@ -79,10 +80,15 @@ export class PressGesture extends Feature<Element> {
              * We only count this as a tap gesture if the event.target is the same
              * as, or a child of, this component's element
              */
-            !globalTapTarget &&
-            !isNodeOrChild(this.node.current, endEvent.target as Element)
-                ? onTapCancel && onTapCancel(endEvent, endInfo)
-                : onTap && onTap(endEvent, endInfo)
+            const handler =
+                !globalTapTarget &&
+                !isNodeOrChild(this.node.current, endEvent.target as Element)
+                    ? onTapCancel
+                    : onTap
+
+            if (handler) {
+                frame.update(() => handler(endEvent, endInfo))
+            }
         }
 
         const removePointerUpListener = addPointerEvent(
@@ -121,7 +127,9 @@ export class PressGesture extends Feature<Element> {
         if (!this.checkPressEnd()) return
 
         const { onTapCancel } = this.node.getProps()
-        if (onTapCancel) onTapCancel(event, info)
+        if (onTapCancel) {
+            frame.postRender(() => onTapCancel(event, info))
+        }
     }
 
     private startAccessiblePress = () => {
@@ -133,7 +141,9 @@ export class PressGesture extends Feature<Element> {
 
                 fireSyntheticPointerEvent("up", (event, info) => {
                     const { onTap } = this.node.getProps()
-                    if (onTap) onTap(event, info)
+                    if (onTap) {
+                        frame.postRender(() => onTap(event, info))
+                    }
                 })
             }
 

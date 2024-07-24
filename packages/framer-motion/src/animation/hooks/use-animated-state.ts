@@ -20,9 +20,7 @@ class StateVisualElement extends VisualElement<
 > {
     type: "state"
     build() {}
-    measureInstanceViewportBox() {
-        return createBox()
-    }
+    measureInstanceViewportBox = createBox
     resetTransform() {}
     restoreTransform() {}
     removeValueFromRenderState() {}

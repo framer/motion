@@ -30,8 +30,19 @@ describe("Unit conversion", () => {
             .get("#box")
             .should(([$box]: any) => {
                 const { transform } = $box.style
-                expect(transform).to.equal("rotate(45deg) translateZ(0px)")
+                expect(transform).to.equal("rotate(45deg)")
                 expect($box.textContent).to.equal("Success")
+            })
+    })
+
+    it("Coerces none keyframes before measuring", () => {
+        cy.viewport(400, 400)
+            .visit("?test=unit-conversion-to-zero")
+            .wait(100)
+            .get("#box")
+            .should(([$box]: any) => {
+                const { top } = $box.getBoundingClientRect()
+                expect(top).to.equal(100)
             })
     })
 })

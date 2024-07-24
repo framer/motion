@@ -15,6 +15,7 @@ import {
     ValueAnimationOptionsWithDefaults,
 } from "./BaseAnimation"
 import { MainThreadAnimation } from "./MainThreadAnimation"
+import { acceleratedValues } from "./utils/accelerated-values"
 import { animateStyle } from "./waapi"
 import { isWaapiSupportedEasing } from "./waapi/easing"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
@@ -22,19 +23,6 @@ import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
 const supportsWaapi = memo(() =>
     Object.hasOwnProperty.call(Element.prototype, "animate")
 )
-
-/**
- * A list of values that can be hardware-accelerated.
- */
-const acceleratedValues = new Set<string>([
-    "opacity",
-    "clipPath",
-    "filter",
-    "transform",
-    // TODO: Can be accelerated but currently disabled until https://issues.chromium.org/issues/41491098 is resolved
-    // or until we implement support for linear() easing.
-    // "background-color"
-])
 
 /**
  * 10ms is chosen here as it strikes a balance between smooth
@@ -57,11 +45,7 @@ const maxDuration = 20_000
 function requiresPregeneratedKeyframes<T extends string | number>(
     options: ValueAnimationOptions<T>
 ) {
-    return (
-        options.type === "spring" ||
-        options.name === "backgroundColor" ||
-        !isWaapiSupportedEasing(options.ease)
-    )
+    return options.type === "spring" || !isWaapiSupportedEasing(options.ease)
 }
 
 function pregenerateKeyframes<T extends string | number>(
@@ -371,6 +355,9 @@ export class AcceleratedAnimation<
                 sampleDelta
             )
         }
+
+        const { onStop } = this.options
+        onStop && onStop()
 
         this.cancel()
     }

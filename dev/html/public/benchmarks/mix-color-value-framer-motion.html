@@ -1,0 +1,56 @@
+<html>
+    <!--
+      Mix unit value: Framer Motion
+
+      This benchmark mixes simple unit values.
+    -->
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            .container {
+                padding: 100px;
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .container > div {
+                width: 100px;
+                height: 100px;
+            }
+
+            .box {
+                width: 10px;
+                height: 100px;
+                background-color: #fff;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container"></div>
+        <script type="module" src="/src/imports/framer-motion-dom.js"></script>
+        <script type="module">
+            const { interpolate, mixColor } = window.Motion
+
+            /**
+             * Create an interpolate function that mixes unit values.
+             */
+            const mixer = interpolate(
+                [0, 1],
+                ["rgba(255, 255, 255, 0)", "rgba(0, 0, 0, 0)"]
+            )
+            const numRuns = 10
+            let startTime = performance.now()
+            for (let i = 0; i < numRuns; i++) {
+                console.log(mixer(i / numRuns))
+            }
+
+            const finish = performance.now() - startTime
+            console.log(`Total time: ${finish}ms`)
+        </script>
+    </body>
+</html>

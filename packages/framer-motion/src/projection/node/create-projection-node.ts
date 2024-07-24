@@ -3,7 +3,7 @@ import { AnimationPlaybackControls } from "../../animation/types"
 import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { mixValues } from "../animation/mix-values"
-import { copyBoxInto } from "../geometry/copy"
+import { copyAxisDeltaInto, copyBoxInto } from "../geometry/copy"
 import { applyBoxDelta, applyTreeDeltas } from "../geometry/delta-apply"
 import {
     calcBoxDelta,
@@ -13,12 +13,13 @@ import {
     isNear,
 } from "../geometry/delta-calc"
 import { removeBoxTransforms } from "../geometry/delta-remove"
-import { createBox, createDelta } from "../geometry/models"
+import { Axis, AxisDelta, Box, Delta } from "../geometry/types"
 import { transformBox, translateAxis } from "../geometry/delta-apply"
-import { Axis, AxisDelta, Box, Delta, Point } from "../geometry/types"
+import { Point } from "../geometry/types"
 import { getValueTransition } from "../../animation/utils/transitions"
 import {
     aspectRatio,
+    axisDeltaEquals,
     boxEquals,
     boxEqualsRounded,
     isDeltaZero,
@@ -46,8 +47,6 @@ import { globalProjectionState } from "./state"
 import { delay } from "../../utils/delay"
 import { mixNumber } from "../../utils/mix/number"
 import { Process } from "../../frameloop/types"
-import { ProjectionFrame } from "../../debug/types"
-import { record } from "../../debug/record"
 import { ValueAnimationOptions } from "../../animation/types"
 import { frameData } from "../../dom-entry"
 import { isSVGElement } from "../../render/dom/utils/is-svg-element"
@@ -58,6 +57,26 @@ import { noop } from "../../utils/noop"
 import { time } from "../../frameloop/sync-time"
 import { microtask } from "../../frameloop/microtask"
 import { VisualElement } from "../../render/VisualElement"
+import { getOptimisedAppearId } from "../../animation/optimized-appear/get-appear-id"
+import { createBox, createDelta } from "../geometry/models"
+
+const metrics = {
+    type: "projectionFrame",
+    totalNodes: 0,
+    resolvedTargetDeltas: 0,
+    recalculatedProjection: 0,
+}
+
+declare global {
+    interface Window {
+        MotionDebug?: {
+            record: (data: typeof metrics) => void
+        }
+    }
+}
+
+const isDebug =
+    typeof window !== "undefined" && window.MotionDebug !== undefined
 
 const transformAxes = ["", "X", "Y", "Z"]
 
@@ -70,17 +89,6 @@ const hiddenVisibility: ResolvedValues = { visibility: "hidden" }
 const animationTarget = 1000
 
 let id = 0
-
-/**
- * Use a mutable data object for debug data so as to not create a new
- * object every frame.
- */
-const projectionFrameData: ProjectionFrame = {
-    type: "projectionFrame",
-    totalNodes: 0,
-    resolvedTargetDeltas: 0,
-    recalculatedProjection: 0,
-}
 
 function resetDistortingTransform(
     key: string,
@@ -97,6 +105,26 @@ function resetDistortingTransform(
         if (sharedAnimationValues) {
             sharedAnimationValues[key] = 0
         }
+    }
+}
+
+function isOptimisedAppearTree(projectionNode: IProjectionNode) {
+    projectionNode.hasCheckedOptimisedAppear = true
+    if (projectionNode.root === projectionNode) return false
+
+    const { visualElement } = projectionNode.options
+
+    if (!visualElement) {
+        return false
+    } else if (getOptimisedAppearId(visualElement)) {
+        return true
+    } else if (
+        projectionNode.parent &&
+        !projectionNode.parent.hasCheckedOptimisedAppear
+    ) {
+        return isOptimisedAppearTree(projectionNode.parent)
+    } else {
+        return false
     }
 }
 
@@ -228,6 +256,12 @@ export function createProjectionNode<I>({
         targetWithTransforms?: Box
 
         /**
+         * The previous projection delta, which we can compare with the newly calculated
+         * projection delta to see if we need to render.
+         */
+        prevProjectionDelta?: Delta
+
+        /**
          * A calculated transform that will project an element from its layoutCorrected
          * into the target. This will be used by children to calculate their own layoutCorrect boxes.
          */
@@ -300,6 +334,14 @@ export function createProjectionNode<I>({
         shouldResetTransform = false
 
         /**
+         * Store whether this node has been checked for optimised appear animations. As
+         * effects fire bottom-up, and we want to look up the tree for appear animations,
+         * this makes sure we only check each path once, stopping at nodes that
+         * have already been checked.
+         */
+        hasCheckedOptimisedAppear = false
+
+        /**
          * An object representing the calculated contextual/accumulated/tree scale.
          * This will be used to scale calculcated projection transforms, as these are
          * calculated in screen-space but need to be scaled for elements to layoutly
@@ -333,12 +375,6 @@ export function createProjectionNode<I>({
         nodes?: FlatTree
 
         depth: number
-
-        /**
-         * When we update the projection transform, we also build it into a string.
-         * If the string changes between frames, we trigger a render.
-         */
-        projectionTransform: string
 
         /**
          * If transformTemplate generates a different value before/after the
@@ -572,6 +608,7 @@ export function createProjectionNode<I>({
             if (this.isUpdateBlocked()) return
 
             this.isUpdating = true
+
             this.nodes && this.nodes.forEach(resetSkewAndRotation)
             this.animationId++
         }
@@ -586,6 +623,25 @@ export function createProjectionNode<I>({
             if (this.root.isUpdateBlocked()) {
                 this.options.onExitComplete && this.options.onExitComplete()
                 return
+            }
+
+            /**
+             * If we're running optimised appear animations then these must be
+             * cancelled before measuring the DOM. This is so we can measure
+             * the true layout of the element rather than the WAAPI animation
+             * which will be unaffected by the resetSkewAndRotate step.
+             *
+             * Note: This is a DOM write. Worst case scenario is this is sandwiched
+             * between other snapshot reads which will cause unnecessary style recalculations.
+             * This has to happen here though, as we don't yet know which nodes will need
+             * snapshots in startUpdate(), but we only want to cancel optimised animations
+             * if a layout animation measurement is actually going to be affected by them.
+             */
+            if (
+                window.HandoffCancelAllAnimations &&
+                isOptimisedAppearTree(this)
+            ) {
+                window.HandoffCancelAllAnimations()
             }
 
             !this.root.isUpdating && this.root.startUpdate()
@@ -642,9 +698,6 @@ export function createProjectionNode<I>({
             /**
              * Write
              */
-            if (window.HandoffCancelAllAnimations) {
-                window.HandoffCancelAllAnimations()
-            }
             this.nodes!.forEach(resetTransformStyle)
 
             /**
@@ -675,10 +728,12 @@ export function createProjectionNode<I>({
             frameData.isProcessing = false
         }
 
+        scheduleUpdate = () => this.update()
+
         didUpdate() {
             if (!this.updateScheduled) {
                 this.updateScheduled = true
-                microtask.read(() => this.update())
+                microtask.read(this.scheduleUpdate)
             }
         }
 
@@ -729,17 +784,21 @@ export function createProjectionNode<I>({
              * Reset debug counts. Manually resetting rather than creating a new
              * object each frame.
              */
-            projectionFrameData.totalNodes =
-                projectionFrameData.resolvedTargetDeltas =
-                projectionFrameData.recalculatedProjection =
-                    0
+            if (isDebug) {
+                metrics.totalNodes =
+                    metrics.resolvedTargetDeltas =
+                    metrics.recalculatedProjection =
+                        0
+            }
 
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
             this.nodes!.forEach(cleanDirtyNodes)
 
-            record(projectionFrameData)
+            if (isDebug) {
+                window.MotionDebug!.record(metrics)
+            }
         }
 
         /**
@@ -820,8 +879,11 @@ export function createProjectionNode<I>({
 
         resetTransform() {
             if (!resetTransform) return
+
             const isResetRequested =
-                this.isLayoutDirty || this.shouldResetTransform
+                this.isLayoutDirty ||
+                this.shouldResetTransform ||
+                this.options.alwaysMeasureLayout
 
             const hasProjection =
                 this.projectionDelta && !isDeltaZero(this.projectionDelta)
@@ -1028,7 +1090,7 @@ export function createProjectionNode<I>({
         /**
          * Frame calculations
          */
-        resolvedRelativeTargetAt: number
+        resolvedRelativeTargetAt: number = 0.0
         resolveTargetDelta(forceRecalculation = false) {
             /**
              * Once the dirty status of nodes has been spread through the tree, we also
@@ -1051,7 +1113,8 @@ export function createProjectionNode<I>({
                 (isShared && this.isSharedProjectionDirty) ||
                 this.isProjectionDirty ||
                 this.parent?.isProjectionDirty ||
-                this.attemptToResolveRelativeTarget
+                this.attemptToResolveRelativeTarget ||
+                this.root.updateBlockedByResize
             )
 
             if (canSkip) return
@@ -1178,7 +1241,9 @@ export function createProjectionNode<I>({
             /**
              * Increase debug counter for resolved target deltas
              */
-            projectionFrameData.resolvedTargetDeltas++
+            if (isDebug) {
+                metrics.resolvedTargetDeltas++
+            }
         }
 
         getClosestProjectingParent() {
@@ -1303,20 +1368,26 @@ export function createProjectionNode<I>({
                  * projecting, we want to remove the stored transform and schedule
                  * a render to ensure the elements reflect the removed transform.
                  */
-                if (this.projectionTransform) {
-                    this.projectionDelta = createDelta()
-                    this.projectionTransform = "none"
+                if (this.prevProjectionDelta) {
+                    this.createProjectionDeltas()
                     this.scheduleRender()
                 }
+
                 return
             }
 
-            if (!this.projectionDelta) {
-                this.projectionDelta = createDelta()
-                this.projectionDeltaWithTransform = createDelta()
+            if (!this.projectionDelta || !this.prevProjectionDelta) {
+                this.createProjectionDeltas()
+            } else {
+                copyAxisDeltaInto(
+                    this.prevProjectionDelta.x,
+                    this.projectionDelta.x
+                )
+                copyAxisDeltaInto(
+                    this.prevProjectionDelta.y,
+                    this.projectionDelta.y
+                )
             }
-
-            const prevProjectionTransform = this.projectionTransform
 
             /**
              * Update the delta between the corrected box and the target box before user-set transforms were applied.
@@ -1328,32 +1399,35 @@ export function createProjectionNode<I>({
              * layout reprojection or the final bounding box.
              */
             calcBoxDelta(
-                this.projectionDelta,
+                this.projectionDelta!,
                 this.layoutCorrected,
                 target,
                 this.latestValues
             )
 
-            this.projectionTransform = buildProjectionTransform(
-                this.projectionDelta!,
-                this.treeScale
-            )
-
             if (
-                this.projectionTransform !== prevProjectionTransform ||
                 this.treeScale.x !== prevTreeScaleX ||
-                this.treeScale.y !== prevTreeScaleY
+                this.treeScale.y !== prevTreeScaleY ||
+                !axisDeltaEquals(
+                    this.projectionDelta!.x,
+                    this.prevProjectionDelta!.x
+                ) ||
+                !axisDeltaEquals(
+                    this.projectionDelta!.y,
+                    this.prevProjectionDelta!.y
+                )
             ) {
                 this.hasProjected = true
                 this.scheduleRender()
-
                 this.notifyListeners("projectionUpdate", target)
             }
 
             /**
              * Increase debug counter for recalculated projections
              */
-            projectionFrameData.recalculatedProjection++
+            if (isDebug) {
+                metrics.recalculatedProjection++
+            }
         }
 
         isVisible = true
@@ -1367,7 +1441,7 @@ export function createProjectionNode<I>({
         }
 
         scheduleRender(notifyAll = true) {
-            this.options.scheduleRender && this.options.scheduleRender()
+            this.options.visualElement?.scheduleRender()
             if (notifyAll) {
                 const stack = this.getStack()
                 stack && stack.scheduleRender()
@@ -1375,6 +1449,12 @@ export function createProjectionNode<I>({
             if (this.resumingFrom && !this.resumingFrom.instance) {
                 this.resumingFrom = undefined
             }
+        }
+
+        createProjectionDeltas() {
+            this.prevProjectionDelta = createDelta()
+            this.projectionDelta = createDelta()
+            this.projectionDeltaWithTransform = createDelta()
         }
 
         /**
@@ -2032,7 +2112,9 @@ export function propagateDirtyNodes(node: IProjectionNode) {
     /**
      * Increase debug counter for nodes encountered this frame
      */
-    projectionFrameData.totalNodes++
+    if (isDebug) {
+        metrics.totalNodes++
+    }
 
     if (!node.parent) return
 

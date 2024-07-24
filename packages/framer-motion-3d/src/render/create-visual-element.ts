@@ -38,9 +38,7 @@ export class ThreeVisualElement extends VisualElement<
 
     removeValueFromRenderState() {}
 
-    measureInstanceViewportBox() {
-        return createBox()
-    }
+    measureInstanceViewportBox = createBox
 
     scrapeMotionValuesFromProps(props: MotionProps, prevProps: MotionProps) {
         return scrapeMotionValuesFromProps(props, prevProps)

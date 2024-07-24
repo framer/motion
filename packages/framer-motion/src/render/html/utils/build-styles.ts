@@ -1,7 +1,6 @@
 import { MotionProps } from "../../../motion/types"
 import { HTMLRenderState } from "../types"
 import { ResolvedValues } from "../../types"
-import { DOMVisualElementOptions } from "../../dom/types"
 import { buildTransform } from "./build-transform"
 import { isCSSVariableName } from "../../dom/utils/is-css-variable"
 import { transformProps } from "./transform"
@@ -11,7 +10,6 @@ import { numberValueTypes } from "../../dom/value-types/number"
 export function buildHTMLStyles(
     state: HTMLRenderState,
     latestValues: ResolvedValues,
-    options: DOMVisualElementOptions,
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
     const { style, vars, transform, transformOrigin } = state
@@ -27,7 +25,7 @@ export function buildHTMLStyles(
      * Loop over all our latest animated values and decide whether to handle them
      * as a style or CSS variable.
      *
-     * Transforms and transform origins are kept seperately for further processing.
+     * Transforms and transform origins are kept separately for further processing.
      */
     for (const key in latestValues) {
         const value = latestValues[key]
@@ -57,7 +55,6 @@ export function buildHTMLStyles(
         } else if (key.startsWith("origin")) {
             // If this is a transform origin, flag and enable further transform-origin processing
             hasTransformOrigin = true
-
             transformOrigin[key as keyof typeof transformOrigin] = valueAsType
         } else {
             style[key] = valueAsType
@@ -68,7 +65,6 @@ export function buildHTMLStyles(
         if (hasTransform || transformTemplate) {
             style.transform = buildTransform(
                 state.transform,
-                options,
                 transformIsNone,
                 transformTemplate
             )

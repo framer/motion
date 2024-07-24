@@ -14,6 +14,9 @@ import {
     isControllingVariants as checkIsControllingVariants,
     isVariantNode as checkIsVariantNode,
 } from "../../render/utils/is-controlling-variants"
+import { getWillChangeName } from "../../value/use-will-change/get-will-change-name"
+import { addUniqueItem } from "../../utils/array"
+import { TargetAndTransition } from "../../types"
 
 export interface VisualState<Instance, RenderState> {
     renderState: RenderState
@@ -27,6 +30,7 @@ export type UseVisualState<Instance, RenderState> = (
 ) => VisualState<Instance, RenderState>
 
 export interface UseVisualStateConfig<Instance, RenderState> {
+    applyWillChange?: boolean
     scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps
     createRenderState: () => RenderState
     onMount?: (
@@ -38,19 +42,22 @@ export interface UseVisualStateConfig<Instance, RenderState> {
 
 function makeState<I, RS>(
     {
+        applyWillChange = false,
         scrapeMotionValuesFromProps,
         createRenderState,
         onMount,
     }: UseVisualStateConfig<I, RS>,
     props: MotionProps,
     context: MotionContextProps,
-    presenceContext: PresenceContextProps | null
+    presenceContext: PresenceContextProps | null,
+    isStatic: boolean
 ) {
     const state: VisualState<I, RS> = {
         latestValues: makeLatestValues(
             props,
             context,
             presenceContext,
+            isStatic ? false : applyWillChange,
             scrapeMotionValuesFromProps
         ),
         renderState: createRenderState(),
@@ -68,18 +75,49 @@ export const makeUseVisualState =
     (props: MotionProps, isStatic: boolean): VisualState<I, RS> => {
         const context = useContext(MotionContext)
         const presenceContext = useContext(PresenceContext)
-        const make = () => makeState(config, props, context, presenceContext)
+        const make = () =>
+            makeState(config, props, context, presenceContext, isStatic)
 
         return isStatic ? make() : useConstant(make)
     }
+
+function addWillChange(willChange: string[], name: string) {
+    const memberName = getWillChangeName(name)
+
+    if (memberName) {
+        addUniqueItem(willChange, memberName)
+    }
+}
+
+function forEachDefinition(
+    props: MotionProps,
+    definition: MotionProps["animate"] | MotionProps["initial"],
+    callback: (
+        target: TargetAndTransition,
+        transitionEnd: ResolvedValues
+    ) => void
+) {
+    const list = Array.isArray(definition) ? definition : [definition]
+    for (let i = 0; i < list.length; i++) {
+        const resolved = resolveVariantFromProps(props, list[i] as any)
+        if (resolved) {
+            const { transitionEnd, transition, ...target } = resolved
+            callback(target, transitionEnd as ResolvedValues)
+        }
+    }
+}
 
 function makeLatestValues(
     props: MotionProps,
     context: MotionContextProps,
     presenceContext: PresenceContextProps | null,
+    shouldApplyWillChange: boolean,
     scrapeMotionValues: ScrapeMotionValuesFromProps
 ) {
     const values: ResolvedValues = {}
+    const willChange: string[] = []
+    const applyWillChange =
+        shouldApplyWillChange && props.style?.willChange === undefined
 
     const motionValues = scrapeMotionValues(props, {})
     for (const key in motionValues) {
@@ -112,13 +150,7 @@ function makeLatestValues(
         typeof variantToSet !== "boolean" &&
         !isAnimationControls(variantToSet)
     ) {
-        const list = Array.isArray(variantToSet) ? variantToSet : [variantToSet]
-        list.forEach((definition) => {
-            const resolved = resolveVariantFromProps(props, definition)
-            if (!resolved) return
-
-            const { transitionEnd, transition, ...target } = resolved
-
+        forEachDefinition(props, variantToSet, (target, transitionEnd) => {
             for (const key in target) {
                 let valueTarget = target[key as keyof typeof target]
 
@@ -137,11 +169,27 @@ function makeLatestValues(
                     values[key] = valueTarget as string | number
                 }
             }
-            for (const key in transitionEnd)
+            for (const key in transitionEnd) {
                 values[key] = transitionEnd[
                     key as keyof typeof transitionEnd
                 ] as string | number
+            }
         })
+    }
+
+    // Add animating values to will-change
+    if (applyWillChange) {
+        if (animate && initial !== false && !isAnimationControls(animate)) {
+            forEachDefinition(props, animate, (target) => {
+                for (const key in target) {
+                    addWillChange(willChange, key)
+                }
+            })
+        }
+
+        if (willChange.length) {
+            values.willChange = willChange.join(",")
+        }
     }
 
     return values

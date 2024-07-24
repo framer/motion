@@ -1,10 +1,11 @@
 import { mixNumber } from "./number"
-import { invariant } from "../errors"
+import { warning } from "../errors"
 import { hslaToRgba } from "../hsla-to-rgba"
 import { hex } from "../../value/types/color/hex"
 import { rgba } from "../../value/types/color/rgba"
 import { hsla } from "../../value/types/color/hsla"
 import { Color, HSLA, RGBA } from "../../value/types/types"
+import { mixImmediate } from "./immediate"
 
 // Linear color space blending
 // Explained https://www.youtube.com/watch?v=LKnqECcg6Gw
@@ -22,10 +23,12 @@ const getColorType = (v: Color | string) =>
 function asRGBA(color: Color | string) {
     const type = getColorType(color)
 
-    invariant(
+    warning(
         Boolean(type),
         `'${color}' is not an animatable color. Use the equivalent color code instead.`
     )
+
+    if (!Boolean(type)) return false
 
     let model = type!.parse(color)
 
@@ -40,6 +43,10 @@ function asRGBA(color: Color | string) {
 export const mixColor = (from: Color | string, to: Color | string) => {
     const fromRGBA = asRGBA(from)
     const toRGBA = asRGBA(to)
+
+    if (!fromRGBA || !toRGBA) {
+        return mixImmediate(from, to)
+    }
 
     const blended = { ...fromRGBA }
 

@@ -5,11 +5,16 @@ import { useMotionValue } from "./use-motion-value"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { SpringOptions } from "../animation/types"
 import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
-import { frameData } from "../frameloop"
+import { frame, frameData } from "../frameloop"
 import {
     MainThreadAnimation,
     animateValue,
 } from "../animation/animators/MainThreadAnimation"
+
+function toNumber(v: string | number) {
+    if (typeof v === "number") return v
+    return parseFloat(v)
+}
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
@@ -31,14 +36,41 @@ import {
  * @public
  */
 export function useSpring(
-    source: MotionValue | number,
+    source: MotionValue<string> | MotionValue<number> | number,
     config: SpringOptions = {}
 ) {
     const { isStatic } = useContext(MotionConfigContext)
     const activeSpringAnimation = useRef<MainThreadAnimation<number> | null>(
         null
     )
-    const value = useMotionValue(isMotionValue(source) ? source.get() : source)
+    const value = useMotionValue(
+        isMotionValue(source) ? toNumber(source.get()) : source
+    )
+    const latestValue = useRef<number>(value.get())
+    const latestSetter = useRef<(v: number) => void>(() => {})
+
+    const startAnimation = () => {
+        /**
+         * If the previous animation hasn't had the chance to even render a frame, render it now.
+         */
+        const animation = activeSpringAnimation.current
+
+        if (animation && animation.time === 0) {
+            animation.sample(frameData.delta)
+        }
+
+        stopAnimation()
+
+        activeSpringAnimation.current = animateValue({
+            keyframes: [value.get(), latestValue.current],
+            velocity: value.getVelocity(),
+            type: "spring",
+            restDelta: 0.001,
+            restSpeed: 0.01,
+            ...config,
+            onUpdate: latestSetter.current,
+        })
+    }
 
     const stopAnimation = () => {
         if (activeSpringAnimation.current) {
@@ -54,25 +86,10 @@ export function useSpring(
              */
             if (isStatic) return set(v)
 
-            /**
-             * If the previous animation hasn't had the chance to even render a frame, render it now.
-             */
-            const animation = activeSpringAnimation.current
-            if (animation && animation.time === 0) {
-                animation.sample(frameData.delta)
-            }
+            latestValue.current = v
+            latestSetter.current = set
 
-            stopAnimation()
-
-            activeSpringAnimation.current = animateValue({
-                keyframes: [value.get(), v],
-                velocity: value.getVelocity(),
-                type: "spring",
-                restDelta: 0.001,
-                restSpeed: 0.01,
-                ...config,
-                onUpdate: set,
-            })
+            frame.update(startAnimation)
 
             return value.get()
         }, stopAnimation)
@@ -80,7 +97,7 @@ export function useSpring(
 
     useIsomorphicLayoutEffect(() => {
         if (isMotionValue(source)) {
-            return source.on("change", (v) => value.set(parseFloat(v)))
+            return source.on("change", (v) => value.set(toNumber(v)))
         }
     }, [value])
 

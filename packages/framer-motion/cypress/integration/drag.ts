@@ -51,7 +51,7 @@ describe("Drag", () => {
     })
 
     it("Drags the element by the defined distance with percentage initial offset", () => {
-        cy.visit("?test=drag&x=200%&y=200%")
+        cy.visit("?test=drag&x=200&y=200&percentage=true")
             .get("[data-testid='draggable']")
             .wait(200)
             .trigger("pointerdown", 5, 5)
@@ -234,9 +234,9 @@ describe("Drag", () => {
             .get("[data-testid='draggable']")
             .trigger("pointerdown", 10, 10)
             .trigger("pointermove", 15, 15)
-            .wait(50)
+            .wait(200)
             .trigger("pointermove", 300, 300, { force: true })
-            .wait(50)
+            .wait(200)
             .trigger("pointerup", { force: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement

@@ -1,5 +1,5 @@
 import { ResolvedValues } from "../../render/types"
-import { Delta, Point } from "../geometry/types"
+import type { Delta, Point } from "../geometry/types"
 
 export function buildProjectionTransform(
     delta: Delta,

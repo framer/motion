@@ -3,7 +3,7 @@ import { secondsToMilliseconds } from "../../utils/time-conversion"
 import type { MotionValue, StartAnimation } from "../../value"
 import { getDefaultTransition } from "../utils/default-transitions"
 import { getValueTransition, isTransitionDefined } from "../utils/transitions"
-import { ValueAnimationOptions } from "../types"
+import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
 import type { UnresolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { MotionGlobalConfig } from "../../utils/GlobalConfig"
 import { instantAnimationState } from "../../utils/use-instant-transition-state"
@@ -12,6 +12,7 @@ import { getFinalKeyframe } from "../animators/waapi/utils/get-final-keyframe"
 import { frame } from "../../frameloop/frame"
 import { AcceleratedAnimation } from "../animators/AcceleratedAnimation"
 import { MainThreadAnimation } from "../animators/MainThreadAnimation"
+import { GroupPlaybackControls } from "../GroupPlaybackControls"
 
 export const animateMotionValue =
     <V extends string | number>(
@@ -20,9 +21,16 @@ export const animateMotionValue =
         target: V | UnresolvedKeyframes<V>,
         transition: Transition & { elapsed?: number } = {},
         element?: VisualElement<any>,
-        isHandoff?: boolean
+        isHandoff?: boolean,
+        /**
+         * Currently used to remove values from will-change when an animation ends.
+         * Preferably this would be handled by event listeners on the MotionValue
+         * but these aren't consistent enough yet when considering the different ways
+         * an animation can be cancelled.
+         */
+        onEnd?: VoidFunction
     ): StartAnimation =>
-    (onComplete) => {
+    (onComplete): AnimationPlaybackControls => {
         const valueTransition = getValueTransition(transition, name) || {}
 
         /**
@@ -52,7 +60,9 @@ export const animateMotionValue =
             onComplete: () => {
                 onComplete()
                 valueTransition.onComplete && valueTransition.onComplete()
+                onEnd && onEnd()
             },
+            onStop: onEnd,
             name,
             motionValue: value,
             element: isHandoff ? undefined : element,
@@ -124,7 +134,9 @@ export const animateMotionValue =
                     options.onComplete!()
                 })
 
-                return
+                // We still want to return some animation controls here rather
+                // than returning undefined
+                return new GroupPlaybackControls([])
             }
         }
 

@@ -489,7 +489,6 @@ export class MainThreadAnimation<
         this.resolver.cancel()
         this.isStopped = true
         if (this.state === "idle") return
-
         this.teardown()
         const { onStop } = this.options
         onStop && onStop()

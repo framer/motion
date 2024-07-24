@@ -4,6 +4,180 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.12] 2024-07-23
+
+### Fixed
+
+-   Improving `useSpring` types so it accepts `MotionValue<string>` or `MotionValue<number>` but always returns `MotionValue<number>`.
+
+## [11.3.11] 2024-07-23
+
+### Fixed
+
+-   Removing `"react"` import from DOM-only bundle.
+
+## [11.3.10] 2024-07-23
+
+### Fixed
+
+-   Changing `isBrowser` check from `document` to `window`.
+
+## [11.3.9] 2024-07-23
+
+### Changed
+
+-   Improve performance of `window.MotionDebug` check.
+
+## [11.3.8] 2024-07-19
+
+### Changed
+
+-   Improve performance of layout animation calculated projection comparisons.
+
+## [11.3.7] 2024-07-18
+
+### Changed
+
+-   Active render scheduling check to prevent unnecessary `Set` lookups.
+
+## [11.3.6] 2024-07-17
+
+### Changed
+
+-   Minor performance improvements for layout animations.
+
+## [11.3.5] 2024-07-16
+
+### Fixed
+
+-   Ensuring DOM bundle doesn't include `react` and `react-dom` as dependencies.
+
+## [11.3.4] 2024-07-16
+
+### Changed
+
+-   Check for `display: contents` elements now against component props instead of `Element.style`.
+
+## [11.3.3] 2024-07-16
+
+### Changed
+
+-   Frameloop now uses a single `Set` vs `Set` and `Array`, leading to smaller bundlesize and better performance under heavy load.
+
+## [11.3.2] 2024-07-11
+
+### Fixed
+
+-   No longer adding `background-color` to `will-change`.
+
+## [11.3.1] 2024-07-11
+
+### Updated
+
+-   Externally-provided `MotionValue`s are no longer permanently added to `will-change`.
+
+## [11.3.0] 2024-07-10
+
+### Updated
+
+-   Animations automatically optimised via `will-change`.
+
+## [11.2.14] 2024-07-09
+
+### Updated
+
+-   Improved performance of core render loop.
+
+## [11.2.13] 2024-07-04
+
+### Fixed
+
+-   Checking for `null` before interpolating color values.
+
+## [11.2.12] 2024-06-25
+
+### Fixed
+
+-   Fixing `dragConstraints={ref}` mixed with layout animations.
+
+## [11.2.10] 2024-05-31
+
+### Fixed
+
+-   Changing invalid number interpolation from error to warning and immediate mix.
+
+## [11.2.9] 2024-05-29
+
+### Fixed
+
+-   Fixing animation of CSS variables when leading space is present.
+
+## [11.2.8] 2024-05-29
+
+### Fixed
+
+-   Ensuring instant animations return animation controls.
+
+## [11.2.7] 2024-05-29
+
+### Fixed
+
+-   Only allow layout animations to cancel optimised appear animations when on the same node or an ancestor.
+
+## [11.2.6] 2024-05-22
+
+### Fixed
+
+-   Fixed optimised appear animations interrupted by layout animations triggered by a state update within `useLayoutEffect`.
+
+## [11.2.5] 2024-05-21
+
+### Fixed
+
+-   Fixing layout animations within portals. Tag `motion` root within portal with `data-framer-portal-id` attribute.
+
+## [11.2.4] 2024-05-16
+
+### Fixed
+
+-   Batching triggering animations with `useSpring`.
+
+## [11.2.3] 2024-05-16
+
+### Fixed
+
+-   `MotionValue`s created with `undefined` can track velocity correctly.
+
+## [11.2.2] 2024-05-15
+
+### Fixed
+
+-   Fixed visual jump when interrupting an optimised appear animation.
+
+## [11.2.1] 2024-05-15
+
+### Changed
+
+-   Improved performance of resolving variants by lazy resolving current `MotionValue` state.
+
+## [11.2.0] 2024-05-14
+
+### Added
+
+-   Binary visibility interpolation i.e `display: ["block", "none"]` now maintains the visible state throughout the animation.
+
+## [11.1.9] 2024-05-07
+
+### Changed
+
+-   Reinstating async event handlers to fix issues with user code and Suspence within Framer.
+
+## [11.1.8] 2024-05-06
+
+### Fixed
+
+-   Animating between keyframe unit types when one keyframe is `0` and the other is an explicitly defined keyframe, e.g `y: ["100%", 0]`.
+
 ## [11.1.7] 2024-04-19
 
 ### Changed

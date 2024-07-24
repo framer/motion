@@ -1,5 +1,5 @@
 /**
- * We keep these listed seperately as we use the lowercase tag names as part
+ * We keep these listed separately as we use the lowercase tag names as part
  * of the runtime bundle to detect SVG components
  */
 export const lowercaseSVGElements = [

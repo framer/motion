@@ -45,7 +45,7 @@ const pureClass = {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const shimReactJSXRuntimePlugin = alias({
     entries: [
-        { find: 'react/jsx-runtime', replacement: path.resolve(__dirname, '../../dev/jsxRuntimeShim.js') }
+        { find: 'react/jsx-runtime', replacement: path.resolve(__dirname, '../../dev/inc/jsxRuntimeShim.js') }
     ]
 });
 
@@ -59,22 +59,6 @@ const umd = Object.assign({}, config, {
     },
     external: ["react", "react-dom"],
     plugins: [resolve(), replaceSettings("development"), shimReactJSXRuntimePlugin],
-})
-
-const projection = Object.assign({}, config, {
-    input: "lib/projection/index.js",
-    output: {
-        file: `dist/projection.dev.js`,
-        format: "umd",
-        name: "Projection",
-        exports: "named",
-        globals: {
-            react: "React",
-            "react-dom": "ReactDOM",
-        },
-    },
-    plugins: [resolve(), replaceSettings("development"), shimReactJSXRuntimePlugin],
-    external: ["react", "react-dom"],
 })
 
 const umdProd = Object.assign({}, umd, {
@@ -105,7 +89,7 @@ const umdDomProd = Object.assign({}, umd, {
 })
 
 const cjs = Object.assign({}, config, {
-    input: ["lib/index.js", "lib/dom-entry.js"],
+    input: "lib/index.js",
     output: {
         entryFileNames: `[name].js`,
         dir: "dist/cjs",
@@ -117,8 +101,13 @@ const cjs = Object.assign({}, config, {
     external,
 })
 
+/**
+ * Bundle seperately so bundles don't share common modules
+ */
+const cjsDom = Object.assign({}, cjs, { input : "lib/dom-entry.js" })
+
 export const es = Object.assign({}, config, {
-    input: ["lib/index.js", "lib/dom-entry.js"],
+    input: ["lib/index.js", "lib/dom-entry.js", "lib/projection-entry.js"],
     output: {
         entryFileNames: "[name].mjs",
         format: "es",
@@ -161,11 +150,11 @@ const threeTypes = {
 
 // eslint-disable-next-line import/no-default-export
 export default [
-    projection,
     umd,
     umdProd,
     umdDomProd,
     cjs,
+    cjsDom,
     es,
     types,
     animateTypes,

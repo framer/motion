@@ -52,19 +52,31 @@ export class DOMKeyframesResolver<
          * If any keyframe is a CSS variable, we need to find its value by sampling the element
          */
         for (let i = 0; i < unresolvedKeyframes.length; i++) {
-            const keyframe = unresolvedKeyframes[i]
-            if (typeof keyframe === "string" && isCSSVariableToken(keyframe)) {
-                const resolved = getVariableValue(keyframe, element.current)
+            let keyframe = unresolvedKeyframes[i]
 
-                if (resolved !== undefined) {
-                    unresolvedKeyframes[i] = resolved as T
-                }
+            if (typeof keyframe === "string") {
+                keyframe = keyframe.trim()
 
-                if (i === unresolvedKeyframes.length - 1) {
-                    this.finalKeyframe = keyframe as T
+                if (isCSSVariableToken(keyframe)) {
+                    const resolved = getVariableValue(keyframe, element.current)
+
+                    if (resolved !== undefined) {
+                        unresolvedKeyframes[i] = resolved as T
+                    }
+
+                    if (i === unresolvedKeyframes.length - 1) {
+                        this.finalKeyframe = keyframe as T
+                    }
                 }
             }
         }
+
+        /**
+         * Resolve "none" values. We do this potentially twice - once before and once after measuring keyframes.
+         * This could be seen as inefficient but it's a trade-off to avoid measurements in more situations, which
+         * have a far bigger performance impact.
+         */
+        this.resolveNoneKeyframes()
 
         /**
          * Check to see if unit type has changed. If so schedule jobs that will
@@ -73,7 +85,7 @@ export class DOMKeyframesResolver<
          * TODO: We can throw if there are multiple keyframes and the value type changes.
          */
         if (!positionalKeys.has(name) || unresolvedKeyframes.length !== 2) {
-            return this.resolveNoneKeyframes()
+            return
         }
 
         const [origin, target] = unresolvedKeyframes

@@ -2,14 +2,14 @@ import { transformProps } from "../../render/html/utils/transform"
 import type { AnimationTypeState } from "../../render/utils/animation-state"
 import type { VisualElement } from "../../render/VisualElement"
 import type { TargetAndTransition } from "../../types"
-import { optimizedAppearDataAttribute } from "../optimized-appear/data-id"
 import type { VisualElementAnimationOptions } from "./types"
 import { animateMotionValue } from "./motion-value"
-import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { setTarget } from "../../render/utils/setters"
 import { AnimationPlaybackControls } from "../types"
 import { getValueTransition } from "../utils/transitions"
 import { frame } from "../../frameloop"
+import { getOptimisedAppearId } from "../optimized-appear/get-appear-id"
+import { addValueToWillChange } from "../../value/use-will-change/add-will-change"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
@@ -38,8 +38,6 @@ export function animateTarget(
         transitionEnd,
         ...target
     } = targetAndTransition
-
-    const willChange = visualElement.getValue("willChange")
 
     if (transitionOverride) transition = transitionOverride
 
@@ -77,12 +75,15 @@ export function animateTarget(
          */
         let isHandoff = false
         if (window.HandoffAppearAnimations) {
-            const props = visualElement.getProps()
-            const appearId =
-                props[optimizedAppearDataAttribute]
+            const appearId = getOptimisedAppearId(visualElement)
 
             if (appearId) {
-                const elapsed = window.HandoffAppearAnimations(appearId, key)
+                const elapsed = window.HandoffAppearAnimations(
+                    appearId,
+                    key,
+                    value,
+                    frame
+                )
 
                 if (elapsed !== null) {
                     valueTransition.elapsed = elapsed
@@ -100,18 +101,14 @@ export function animateTarget(
                     ? { type: false }
                     : valueTransition,
                 visualElement,
-                isHandoff
+                isHandoff,
+                addValueToWillChange(visualElement, key)
             )
         )
 
         const animation = value.animation
 
         if (animation) {
-            if (isWillChangeMotionValue(willChange)) {
-                willChange.add(key)
-                animation.then(() => willChange.remove(key))
-            }
-
             animations.push(animation)
         }
     }

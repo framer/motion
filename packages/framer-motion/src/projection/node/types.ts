@@ -1,6 +1,6 @@
 import { Transition } from "../../types"
 import { ResolvedValues } from "../../render/types"
-import { Box, Delta, Point } from "../geometry/types"
+import { Point, Box, Delta } from "../geometry/types"
 import { NodeStack } from "../shared/stack"
 import { AnimationPlaybackControls } from "../../animation/types"
 import { FlatTree } from "../../render/utils/flat-tree"
@@ -116,6 +116,7 @@ export interface IProjectionNode<I = unknown> {
     setAnimationOrigin(delta: Delta): void
     startAnimation(transition: Transition): void
     finishAnimation(): void
+    hasCheckedOptimisedAppear: boolean
 
     // Shared element
     isLead(): boolean
@@ -163,7 +164,6 @@ export interface ProjectionNodeOptions {
     layoutScroll?: boolean
     layoutRoot?: boolean
     alwaysMeasureLayout?: boolean
-    scheduleRender?: VoidFunction
     onExitComplete?: VoidFunction
     animationType?: "size" | "position" | "both" | "preserve-aspect"
     layoutId?: string

@@ -1,0 +1,15 @@
+{
+    "name": "html",
+    "private": true,
+    "version": "11.3.9",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "dev-server": "yarn dev",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "devDependencies": {
+        "vite": "^5.2.0"
+    }
+}
