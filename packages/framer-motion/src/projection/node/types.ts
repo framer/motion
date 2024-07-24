@@ -21,8 +21,9 @@ export type Phase = "snapshot" | "measure"
 export interface ScrollMeasurements {
     animationId: number
     phase: Phase
-    isRoot: boolean
     offset: Point
+    isRoot: boolean
+    wasRoot: boolean
 }
 
 export type LayoutEvents =
