@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.13] 2024-07-24
+
+### Fixed
+
+-   Fixing `position: fixed` layout animations while scrolling.
+
 ## [11.3.12] 2024-07-23
 
 ### Fixed
