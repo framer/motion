@@ -4,6 +4,11 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.16] 2024-07-24
+
+### Changed
+
+-   Exporting `UseScrollOptions` type.
 
 ## [11.3.15] 2024-07-24
 
