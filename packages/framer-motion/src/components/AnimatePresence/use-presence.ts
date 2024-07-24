@@ -1,4 +1,4 @@
-import { useContext, useEffect, useId } from "react"
+import { useCallback, useContext, useEffect, useId } from "react"
 import {
     PresenceContext,
     PresenceContextProps,
@@ -48,7 +48,7 @@ export function usePresence(): AlwaysPresent | Present | NotPresent {
     const id = useId()
     useEffect(() => register(id), [])
 
-    const safeToRemove = () => onExitComplete && onExitComplete(id)
+    const safeToRemove = useCallback(() => onExitComplete && onExitComplete(id), [id, onExitComplete])
 
     return !isPresent && onExitComplete ? [false, safeToRemove] : [true]
 }
