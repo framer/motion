@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.14] 2024-07-24
+
+### Fixed
+
+-   Wrapping `usePresence`'s `safeToRemove` callback in `useCallback` leading to fewer re-renders.
+
 ## [11.3.13] 2024-07-24
 
 ### Fixed
