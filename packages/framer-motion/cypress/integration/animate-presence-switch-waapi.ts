@@ -37,4 +37,24 @@ describe("AnimatePresence with WAAPI animations", () => {
                 expect(items[0].textContent).to.equal("0")
             })
     })
+
+    it("Interrupting exiting animation fire more animations than expected", () => {
+        cy.visit("?test=animate-presence-switch-waapi")
+            .wait(50)
+            .get(".item")
+            .should((items: any) => {
+                expect(items.length).to.equal(1)
+                expect(items[0].textContent).to.equal("0")
+            })
+            .get("#switch")
+            .trigger("click", 10, 10, { force: true })
+            .wait(20)
+            .get("#switch")
+            .trigger("click", 10, 10, { force: true })
+            .wait(300)
+            .get("#count")
+            .should((count: any) => {
+                expect(count[0].textContent).to.equal("4")
+            })
+    })
 })

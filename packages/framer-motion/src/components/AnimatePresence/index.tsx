@@ -1,7 +1,6 @@
 import {
     useRef,
     isValidElement,
-    cloneElement,
     Children,
     ReactElement,
     ReactNode,
@@ -173,70 +172,68 @@ export const AnimatePresence: React.FunctionComponent<
 
     // Loop through all currently exiting components and clone them to overwrite `animate`
     // with any `exit` prop they might have defined.
-    exitingChildren.forEach((component, key) => {
+    exitingChildren.forEach((_, key) => {
         // If this component is actually entering again, early return
         if (targetKeys.indexOf(key) !== -1) return
 
         const child = allChildren.get(key)
+
         if (!child) return
 
         const insertionIndex = presentKeys.indexOf(key)
 
-        let exitingComponent = component
-        if (!exitingComponent) {
-            const onExit = () => {
-                // clean up the exiting children map
-                exitingChildren.delete(key)
+        const onExit = () => {
+            // clean up the exiting children map
+            exitingChildren.delete(key)
 
-                // compute the keys of children that were rendered once but are no longer present
-                // this could happen in case of too many fast consequent renderings
-                // @link https://github.com/framer/motion/issues/2023
-                const leftOverKeys = Array.from(allChildren.keys()).filter(
-                    (childKey) => !targetKeys.includes(childKey)
-                )
-
-                // clean up the all children map
-                leftOverKeys.forEach((leftOverKey) =>
-                    allChildren.delete(leftOverKey)
-                )
-
-                // make sure to render only the children that are actually visible
-                presentChildren.current = filteredChildren.filter(
-                    (presentChild) => {
-                        const presentChildKey = getChildKey(presentChild)
-
-                        return (
-                            // filter out the node exiting
-                            presentChildKey === key ||
-                            // filter out the leftover children
-                            leftOverKeys.includes(presentChildKey)
-                        )
-                    }
-                )
-
-                // Defer re-rendering until all exiting children have indeed left
-                if (!exitingChildren.size) {
-                    if (isMounted.current === false) return
-
-                    forceRender()
-                    onExitComplete && onExitComplete()
-                }
-            }
-
-            exitingComponent = (
-                <PresenceChild
-                    key={getChildKey(child)}
-                    isPresent={false}
-                    onExitComplete={onExit}
-                    custom={custom}
-                    presenceAffectsLayout={presenceAffectsLayout}
-                    mode={mode}
-                >
-                    {child}
-                </PresenceChild>
+            // compute the keys of children that were rendered once but are no longer present
+            // this could happen in case of too many fast consequent renderings
+            // @link https://github.com/framer/motion/issues/2023
+            const leftOverKeys = Array.from(allChildren.keys()).filter(
+                (childKey) => !targetKeys.includes(childKey)
             )
-            exitingChildren.set(key, exitingComponent)
+
+            // clean up the all children map
+            leftOverKeys.forEach((leftOverKey) =>
+                allChildren.delete(leftOverKey)
+            )
+
+            // make sure to render only the children that are actually visible
+            presentChildren.current = filteredChildren.filter(
+                (presentChild) => {
+                    const presentChildKey = getChildKey(presentChild)
+
+                    return (
+                        // filter out the node exiting
+                        presentChildKey === key ||
+                        // filter out the leftover children
+                        leftOverKeys.includes(presentChildKey)
+                    )
+                }
+            )
+
+            // Defer re-rendering until all exiting children have indeed left
+            if (!exitingChildren.size) {
+                if (isMounted.current === false) return
+
+                forceRender()
+                onExitComplete && onExitComplete()
+            }
         }
+
+        const exitingComponent = (
+            <PresenceChild
+                key={getChildKey(child)}
+                isPresent={false}
+                onExitComplete={onExit}
+                custom={custom}
+                presenceAffectsLayout={presenceAffectsLayout}
+                mode={mode}
+            >
+                {child}
+            </PresenceChild>
+        )
+        exitingChildren.set(key, exitingComponent)
 
         childrenToRender.splice(insertionIndex, 0, exitingComponent)
     })
@@ -245,8 +242,9 @@ export const AnimatePresence: React.FunctionComponent<
     // the same tree between renders
     childrenToRender = childrenToRender.map((child) => {
         const key = child.key as string | number
-        return exitingChildren.has(key) ? (
-            child
+
+        return exitingChildren.get(key) ? (
+            exitingChildren.get(key)!
         ) : (
             <PresenceChild
                 key={getChildKey(child)}
@@ -269,11 +267,5 @@ export const AnimatePresence: React.FunctionComponent<
         )
     }
 
-    return (
-        <>
-            {exitingChildren.size
-                ? childrenToRender
-                : childrenToRender.map((child) => cloneElement(child))}
-        </>
-    )
+    return childrenToRender
 }

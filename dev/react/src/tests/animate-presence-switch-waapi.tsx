@@ -16,11 +16,11 @@ export const App = () => {
                 Switch
             </button>
             <div>
-                Animation count:{" "}
-                <motion.span id="animation-counter">{count}</motion.span>
+                Animation count: <motion.span id="count">{count}</motion.span>
             </div>
             <AnimatePresence initial={false}>
                 <motion.div
+                    id={state.toString()}
                     className="item"
                     key={state}
                     initial={{ opacity: 0 }}
