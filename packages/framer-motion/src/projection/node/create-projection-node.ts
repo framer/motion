@@ -279,11 +279,6 @@ export function createProjectionNode<I>({
         scroll?: ScrollMeasurements
 
         /**
-         * If this element is a scroll root, we ignore scrolls up the tree.
-         */
-        isScrollRoot?: boolean
-
-        /**
          * Flag to true if we think this layout has been changed. We can't always know this,
          * currently we set it to true every time a component renders, or if it has a layoutDependency
          * if that has changed between renders. Additionally, components can be grouped by LayoutGroup
@@ -870,13 +865,14 @@ export function createProjectionNode<I>({
             ) {
                 needsMeasurement = false
             }
-
             if (needsMeasurement) {
+                const isRoot = checkIsScrollRoot(this.instance);
                 this.scroll = {
                     animationId: this.root.animationId,
                     phase,
-                    isRoot: checkIsScrollRoot(this.instance),
+                    isRoot,
                     offset: measureScroll(this.instance),
+                    wasRoot: this.scroll ? this.scroll.isRoot : isRoot,
                 }
             }
         }
@@ -942,11 +938,16 @@ export function createProjectionNode<I>({
             if (!visualElement) return createBox()
 
             const box = visualElement.measureViewportBox()
-            // Remove viewport scroll to give page-relative coordinates
-            const { scroll } = this.root
-            if (scroll) {
-                translateAxis(box.x, scroll.offset.x)
-                translateAxis(box.y, scroll.offset.y)
+
+            const wasInScrollRoot = this.scroll?.wasRoot || this.path.some((node) => node !== node.root && node.scroll?.wasRoot);
+
+            if (!wasInScrollRoot) {
+                // Remove viewport scroll to give page-relative coordinates
+                const { scroll } = this.root
+                if (scroll) {
+                    translateAxis(box.x, scroll.offset.x)
+                    translateAxis(box.y, scroll.offset.y)
+                }
             }
 
             return box
@@ -955,6 +956,10 @@ export function createProjectionNode<I>({
         removeElementScroll(box: Box): Box {
             const boxWithoutScroll = createBox()
             copyBoxInto(boxWithoutScroll, box)
+
+            if (this.scroll?.wasRoot) {
+                return boxWithoutScroll
+            }
 
             /**
              * Performance TODO: Keep a cumulative scroll offset down the tree
@@ -969,23 +974,8 @@ export function createProjectionNode<I>({
                      * If this is a new scroll root, we want to remove all previous scrolls
                      * from the viewport box.
                      */
-                    if (scroll.isRoot) {
+                    if (scroll.wasRoot) {
                         copyBoxInto(boxWithoutScroll, box)
-                        const { scroll: rootScroll } = this.root
-                        /**
-                         * Undo the application of page scroll that was originally added
-                         * to the measured bounding box.
-                         */
-                        if (rootScroll) {
-                            translateAxis(
-                                boxWithoutScroll.x,
-                                -rootScroll.offset.x
-                            )
-                            translateAxis(
-                                boxWithoutScroll.y,
-                                -rootScroll.offset.y
-                            )
-                        }
                     }
 
                     translateAxis(boxWithoutScroll.x, scroll.offset.x)
@@ -1346,7 +1336,6 @@ export function createProjectionNode<I>({
              */
             const prevTreeScaleX = this.treeScale.x
             const prevTreeScaleY = this.treeScale.y
-
             /**
              * Apply all the parent deltas to this box to produce the corrected box. This
              * is the layout box, as it will appear on screen as a result of the transforms of its parents.

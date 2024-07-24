@@ -23,6 +23,7 @@ export interface ScrollMeasurements {
     phase: Phase
     isRoot: boolean
     offset: Point
+    wasRoot: boolean
 }
 
 export type LayoutEvents =
