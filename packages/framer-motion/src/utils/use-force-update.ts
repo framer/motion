@@ -7,8 +7,8 @@ export function useForceUpdate(): [VoidFunction, number] {
     const [forcedRenderCount, setForcedRenderCount] = useState(0)
 
     const forceRender = useCallback(() => {
-        isMounted.current && setForcedRenderCount((count) => count + 1)
-    }, [isMounted])
+        isMounted.current && setForcedRenderCount(forcedRenderCount + 1)
+    }, [forcedRenderCount])
 
     /**
      * Defer this to the end of the next animation frame in case there are multiple
