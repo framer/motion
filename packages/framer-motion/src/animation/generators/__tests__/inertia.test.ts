@@ -10,6 +10,32 @@ describe("inertia", () => {
         expect(pregenerateKeyframes(generator).keyframes).toEqual([0, 0])
     })
 
+    test("Inertia works with t === 0", () => {
+        const generator = inertia({
+            keyframes: [100],
+            velocity: -200,
+            power: 1,
+            timeConstant: 500,
+            restDelta: 0.5,
+            min: 0,
+            max: 0,
+        })
+
+        expect(generator.next(0).value).toBe(100)
+    })
+
+    test("Continues animation when time is 0", () => {
+        const generator = inertia({
+            keyframes: [100],
+            min: 0,
+            max: 0,
+        })
+
+        const state = generator.next(0)
+        expect(state.done).toEqual(false)
+        expect(state.value).toEqual(100)
+    })
+
     test("Runs animation", () => {
         const generator = inertia({
             keyframes: [100],
