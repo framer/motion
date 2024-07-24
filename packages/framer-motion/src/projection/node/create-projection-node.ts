@@ -865,8 +865,9 @@ export function createProjectionNode<I>({
             ) {
                 needsMeasurement = false
             }
+
             if (needsMeasurement) {
-                const isRoot = checkIsScrollRoot(this.instance);
+                const isRoot = checkIsScrollRoot(this.instance)
                 this.scroll = {
                     animationId: this.root.animationId,
                     phase,
@@ -939,7 +940,11 @@ export function createProjectionNode<I>({
 
             const box = visualElement.measureViewportBox()
 
-            const wasInScrollRoot = this.scroll?.wasRoot || this.path.some((node) => node !== node.root && node.scroll?.wasRoot);
+            const wasInScrollRoot =
+                this.scroll?.wasRoot ||
+                this.path.some(
+                    (node) => node !== node.root && node.scroll?.wasRoot
+                )
 
             if (!wasInScrollRoot) {
                 // Remove viewport scroll to give page-relative coordinates
