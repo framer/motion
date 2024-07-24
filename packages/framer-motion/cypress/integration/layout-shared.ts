@@ -872,7 +872,6 @@ describe("Shared layout: nested crossfade transition", () => {
             .get("#a")
             .trigger("click")
             .wait(50)
-            .get("#a")
             .should(([$box]: any) => {
                 expectBbox($box, {
                     top: 200,
@@ -1120,6 +1119,27 @@ describe("Shared layout: Works with queueMicrotasks", () => {
             .get("#error")
             .should(([$error]: any) => {
                 expect($error.innerText).to.equal("")
+            })
+    })
+})
+
+describe("Shared layout: Measures rotated elements correctly when animation is interrupted", () => {
+    it("Measures correctly", () => {
+        let boundingBox: BoundingBox
+        cy.visit("?test=layout-shared-rotate")
+            .wait(50)
+            .get("#box")
+            .trigger("click")
+            .wait(50)
+            .get("#box")
+            .should(([$box]: any) => {
+                boundingBox = $box.getBoundingClientRect()
+            })
+            .trigger("click")
+            .wait(50)
+            .get("#box")
+            .should(([$box]: any) => {
+                expectBbox($box, boundingBox)
             })
     })
 })

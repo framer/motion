@@ -1,5 +1,5 @@
 import { ResolvedValues } from "../../render/types"
-import { Delta, Point } from "../geometry/types"
+import type { Delta, Point } from "../geometry/types"
 
 export function buildProjectionTransform(
     delta: Delta,
@@ -16,8 +16,9 @@ export function buildProjectionTransform(
      */
     const xTranslate = delta.x.translate / treeScale.x
     const yTranslate = delta.y.translate / treeScale.y
-    if (xTranslate || yTranslate) {
-        transform = `translate3d(${xTranslate}px, ${yTranslate}px, 0) `
+    const zTranslate = latestTransform?.z || 0
+    if (xTranslate || yTranslate || zTranslate) {
+        transform = `translate3d(${xTranslate}px, ${yTranslate}px, ${zTranslate}px) `
     }
 
     /**
@@ -29,10 +30,15 @@ export function buildProjectionTransform(
     }
 
     if (latestTransform) {
-        const { rotate, rotateX, rotateY } = latestTransform
+        const { transformPerspective, rotate, rotateX, rotateY, skewX, skewY } =
+            latestTransform
+        if (transformPerspective)
+            transform = `perspective(${transformPerspective}px) ${transform}`
         if (rotate) transform += `rotate(${rotate}deg) `
         if (rotateX) transform += `rotateX(${rotateX}deg) `
         if (rotateY) transform += `rotateY(${rotateY}deg) `
+        if (skewX) transform += `skewX(${skewX}deg) `
+        if (skewY) transform += `skewY(${skewY}deg) `
     }
 
     /**

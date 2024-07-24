@@ -28,7 +28,7 @@ describe("buildHTMLStyles", () => {
 
         expect(style).toEqual({
             transform:
-                "perspective(200px) translateX(1px) translateY(2px) rotateX(90deg) translateZ(0)",
+                "perspective(200px) translateX(1px) translateY(2px) rotateX(90deg)",
         })
     })
 
@@ -49,18 +49,7 @@ describe("buildHTMLStyles", () => {
         build(latest, { style })
 
         expect(style).toEqual({
-            transform:
-                "translateX(1vw) translateY(2%) rotateX(90turn) translateZ(0)",
-        })
-    })
-
-    test("Builds transform without translateZ if enableHardwareAcceleration is false", () => {
-        const latest = { x: 1, y: 2, rotateX: 90 }
-        const style = {}
-        build(latest, { style, config: { enableHardwareAcceleration: false } })
-
-        expect(style).toEqual({
-            transform: "translateX(1px) translateY(2px) rotateX(90deg)",
+            transform: "translateX(1vw) translateY(2%) rotateX(90turn)",
         })
     })
 
@@ -71,16 +60,6 @@ describe("buildHTMLStyles", () => {
 
         expect(style).toEqual({
             transform: "none",
-        })
-    })
-
-    test("Doesn't build transform none if all transforms are default if allowTransformNone is false", () => {
-        const latest = { x: 0, y: 0, scale: 1 }
-        const style = {}
-        build(latest, { style, config: { allowTransformNone: false } })
-
-        expect(style).toEqual({
-            transform: "translateX(0px) translateY(0px) scale(1) translateZ(0)",
         })
     })
 
@@ -106,7 +85,7 @@ describe("buildHTMLStyles", () => {
         })
 
         expect(style).toEqual({
-            transform: "translateY(2) translateX(1px) translateZ(0)",
+            transform: "translateY(2) translateX(1px)",
         })
     })
 
@@ -122,7 +101,7 @@ describe("buildHTMLStyles", () => {
         })
 
         expect(style).toEqual({
-            transform: "translateY(2) translateX(1px) translateZ(0)",
+            transform: "translateY(2) translateX(1px)",
         })
     })
 })
@@ -142,10 +121,7 @@ function build(
         vars = {},
         transform = {},
         transformOrigin = {},
-        config = {
-            enableHardwareAcceleration: true,
-            allowTransformNone: true,
-        },
+        config = {},
     }: Partial<BuildProps> = {}
 ) {
     buildHTMLStyles(
@@ -156,7 +132,6 @@ function build(
             transformOrigin,
         },
         latest,
-        config,
         config.transformTemplate
     )
 }

@@ -1,5 +1,4 @@
 import { transformPropOrder } from "./transform"
-import { DOMVisualElementOptions } from "../../dom/types"
 import { MotionProps } from "../../../motion/types"
 import { HTMLRenderState } from "../types"
 
@@ -20,10 +19,6 @@ const numTransforms = transformPropOrder.length
  */
 export function buildTransform(
     transform: HTMLRenderState["transform"],
-    {
-        enableHardwareAcceleration = true,
-        allowTransformNone = true,
-    }: DOMVisualElementOptions,
     transformIsDefault: boolean,
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
@@ -35,15 +30,11 @@ export function buildTransform(
      * are present to the transform string.
      */
     for (let i = 0; i < numTransforms; i++) {
-        const key = transformPropOrder[i]
+        const key = transformPropOrder[i] as keyof typeof translateAlias
         if (transform[key] !== undefined) {
             const transformName = translateAlias[key] || key
             transformString += `${transformName}(${transform[key]}) `
         }
-    }
-
-    if (enableHardwareAcceleration && !transform.z) {
-        transformString += "translateZ(0)"
     }
 
     transformString = transformString.trim()
@@ -55,7 +46,7 @@ export function buildTransform(
             transform,
             transformIsDefault ? "" : transformString
         )
-    } else if (allowTransformNone && transformIsDefault) {
+    } else if (transformIsDefault) {
         transformString = "none"
     }
 

@@ -1,11 +1,10 @@
 import { render } from "../../../jest.setup"
-import * as React from "react"
 import { useEffect } from "react"
 import { motion, MotionGlobalConfig } from "../.."
 import { animate } from "../animate"
 import { useMotionValue } from "../../value/use-motion-value"
 import { motionValue, MotionValue } from "../../value"
-import { syncDriver } from "../animators/js/__tests__/utils"
+import { syncDriver } from "../animators/__tests__/utils"
 
 const duration = 0.001
 
@@ -32,9 +31,7 @@ describe("animate", () => {
 
         const [value, element] = await promise
         expect(value.get()).toBe(200)
-        expect(element).toHaveStyle(
-            "transform: translateX(200px) translateZ(0)"
-        )
+        expect(element).toHaveStyle("transform: translateX(200px)")
     })
 
     test("correctly animates normal values", async () => {

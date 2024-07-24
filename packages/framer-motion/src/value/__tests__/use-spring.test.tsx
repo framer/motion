@@ -1,10 +1,10 @@
 import { render } from "../../../jest.setup"
-import * as React from "react"
+import { useEffect } from "react";
 import { useSpring } from "../use-spring"
 import { useMotionValue } from "../use-motion-value"
 import { motionValue, MotionValue } from ".."
 import { motion } from "../../"
-import { syncDriver } from "../../animation/animators/js/__tests__/utils"
+import { syncDriver } from "../../animation/animators/__tests__/utils"
 
 describe("useSpring", () => {
     test("can create a motion value from a number", async () => {
@@ -12,7 +12,7 @@ describe("useSpring", () => {
             const Component = () => {
                 const x = useSpring(0)
 
-                React.useEffect(() => {
+                useEffect(() => {
                     x.on("change", (v) => resolve(v))
                     x.set(100)
                 })
@@ -36,7 +36,7 @@ describe("useSpring", () => {
                 const x = useMotionValue(0)
                 const y = useSpring(x)
 
-                React.useEffect(() => {
+                useEffect(() => {
                     y.on("change", (v) => resolve(v))
                     x.set(100)
                 })
@@ -63,7 +63,7 @@ describe("useSpring", () => {
                     driver: syncDriver(10),
                 } as any)
 
-                React.useEffect(() => {
+                useEffect(() => {
                     return y.on("change", (v) => {
                         if (output.length >= 10) {
                             resolve(output)
@@ -73,7 +73,7 @@ describe("useSpring", () => {
                     })
                 })
 
-                React.useEffect(() => {
+                useEffect(() => {
                     x.set(100)
                 }, [])
 
@@ -105,7 +105,7 @@ describe("useSpring", () => {
                     driver: syncDriver(10),
                 } as any)
 
-                React.useEffect(() => {
+                useEffect(() => {
                     return y.on("change", (v) => {
                         if (output.length >= 10) {
                         } else {
@@ -114,7 +114,7 @@ describe("useSpring", () => {
                     })
                 })
 
-                React.useEffect(() => {
+                useEffect(() => {
                     y.jump(100)
 
                     setTimeout(() => {

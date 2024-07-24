@@ -5,6 +5,7 @@ import { optimizedAppearDataId } from "./data-id"
 import { handoffOptimizedAppearAnimation } from "./handoff"
 import { appearAnimationStore } from "./store"
 import { noop } from "../../utils/noop"
+import "./types"
 
 /**
  * A single time to use across all animations to manually set startTime
@@ -58,6 +59,16 @@ export function startOptimizedAppearAnimation(
             animation: readyAnimation,
             startTime: null,
         })
+
+        if (!window.HandoffCancelAllAnimations) {
+            window.HandoffCancelAllAnimations = () => {
+                appearAnimationStore.forEach(({ animation }) => {
+                    animation.cancel()
+                })
+                appearAnimationStore.clear()
+                window.HandoffCancelAllAnimations = undefined
+            }
+        }
     }
 
     const startAnimation = () => {

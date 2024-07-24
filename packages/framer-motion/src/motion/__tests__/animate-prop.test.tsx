@@ -6,9 +6,8 @@ import {
     useMotionValue,
     useMotionValueEvent,
 } from "../../"
-import * as React from "react"
-import { createRef } from "react"
-import { nextFrame, nextMicrotask } from "../../gestures/__tests__/utils"
+import { useRef, createRef } from "react"
+import { nextFrame } from "../../gestures/__tests__/utils"
 
 describe("animate prop as object", () => {
     test("animates to set prop", async () => {
@@ -101,7 +100,7 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toBe(true)
     })
     test("uses transitionEnd on subsequent renders", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const x = motionValue(0)
             const Component = ({ animate }: any) => (
                 <motion.div animate={animate} style={{ x }} />
@@ -133,7 +132,11 @@ describe("animate prop as object", () => {
                     }}
                 />
             )
-            requestAnimationFrame(() => resolve(x.get()))
+
+            await nextFrame()
+            await nextFrame()
+
+            resolve(x.get())
         })
         return expect(promise).resolves.toBe(300)
     })
@@ -158,7 +161,7 @@ describe("animate prop as object", () => {
             )
         })
         return expect(promise).resolves.toHaveStyle(
-            "transform: translateX(20px) scale(0) translateZ(0)"
+            "transform: translateX(20px) scale(0)"
         )
     })
     test("style doesnt overwrite in subsequent renders", async () => {
@@ -203,14 +206,14 @@ describe("animate prop as object", () => {
         const promise = new Promise((resolve) => {
             const resolveContainer = () => {
                 requestAnimationFrame(() => {
-                    resolve(container)
+                    resolve(container.firstChild as any)
                 })
             }
             const Component = () => (
                 <motion.div
                     initial={{ x: 10 }}
                     animate={{ x: 30 }}
-                    transition={{ duration: 10 }}
+                    transition={{ duration: 0.01 }}
                     transformTemplate={({ x }, generated) =>
                         `translateY(${x}) ${generated}`
                     }
@@ -220,10 +223,147 @@ describe("animate prop as object", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
         })
-        expect(promise).resolves.toHaveStyle(
-            "transform: translateX(30px) translateX(30px) translateZ(0)"
+        return expect(promise).resolves.toHaveStyle(
+            "transform: translateY(30px) translateX(30px)"
         )
     })
+    test("animating between none/block fires onAnimationComplete", async () => {
+        const promise = new Promise((resolve) => {
+            const Component = () => (
+                <motion.div
+                    initial={{ display: "none" }}
+                    animate={{ display: "block" }}
+                    transition={{ duration: 0.01 }}
+                    onAnimationComplete={() => {
+                        resolve(true)
+                    }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toEqual(true)
+    })
+
+    test("animate display none => block immediately switches to block", async () => {
+        const promise = new Promise((resolve) => {
+            const Component = () => {
+                const display = useMotionValue("block")
+                let hasChecked = false
+
+                return (
+                    <motion.div
+                        initial={{ display: "none", opacity: 0 }}
+                        animate={{ display: "block", opacity: 1 }}
+                        style={{ display }}
+                        transition={{ duration: 0.1 }}
+                        onUpdate={(latest) => {
+                            if (!hasChecked) {
+                                expect(latest.display).toBe("block")
+                                hasChecked = true
+                            }
+                        }}
+                        onAnimationComplete={() => {
+                            resolve([hasChecked, display.get()])
+                        }}
+                    />
+                )
+            }
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toEqual([true, "block"])
+    })
+
+    test("animate display block => none switches to none on animation end", async () => {
+        const promise = new Promise((resolve) => {
+            let hasChecked = false
+            const Component = () => {
+                const display = useMotionValue("block")
+
+                return (
+                    <motion.div
+                        initial={{ display: "block", opacity: 1 }}
+                        animate={{ display: "none", opacity: 0 }}
+                        style={{ display }}
+                        transition={{ duration: 0.1 }}
+                        onUpdate={(latest) => {
+                            if (!hasChecked) {
+                                expect(latest.display).toBe("block")
+                                hasChecked = true
+                            }
+                        }}
+                        onAnimationComplete={() => {
+                            resolve([hasChecked, display.get()])
+                        }}
+                    />
+                )
+            }
+            render(<Component />)
+        })
+        return expect(promise).resolves.toEqual([true, "none"])
+    })
+
+    test("animate visibility hidden => visible immediately switches to visible", async () => {
+        const promise = new Promise((resolve) => {
+            const Component = () => {
+                const visibility = useMotionValue("visible")
+                let hasChecked = false
+
+                return (
+                    <motion.div
+                        initial={{ visibility: "hidden", opacity: 0 }}
+                        animate={{ visibility: "visible", opacity: 1 }}
+                        style={{ visibility }}
+                        transition={{ duration: 0.1 }}
+                        onUpdate={(latest) => {
+                            if (!hasChecked) {
+                                expect(latest.visibility).toBe("visible")
+                                hasChecked = true
+                            }
+                        }}
+                        onAnimationComplete={() => {
+                            resolve([hasChecked, visibility.get()])
+                        }}
+                    />
+                )
+            }
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toEqual([true, "visible"])
+    })
+
+    test("animate visibility visible => hidden switches to hidden on animation end", async () => {
+        const promise = new Promise((resolve) => {
+            const Component = () => {
+                const visibility = useMotionValue("hidden")
+                let hasChecked = false
+
+                return (
+                    <motion.div
+                        initial={{ visibility: "visible", opacity: 1 }}
+                        animate={{ visibility: "hidden", opacity: 0 }}
+                        style={{ visibility }}
+                        transition={{ duration: 0.1 }}
+                        onUpdate={(latest) => {
+                            if (!hasChecked) {
+                                expect(latest.visibility).toBe("visible")
+                                hasChecked = true
+                            }
+                        }}
+                        onAnimationComplete={() => {
+                            resolve([hasChecked, visibility.get()])
+                        }}
+                    />
+                )
+            }
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+        return expect(promise).resolves.toEqual([true, "hidden"])
+    })
+
     test("keyframes - accepts ease as an array", async () => {
         const promise = new Promise((resolve) => {
             const x = motionValue(0)
@@ -262,7 +402,7 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toHaveStyle("font-weight: 100")
     })
     test("doesn't animate no-op values", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             let isAnimating = false
             const Component = () => (
                 <motion.div
@@ -283,15 +423,16 @@ describe("animate prop as object", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
 
-            frame.postRender(() => {
-                frame.postRender(() => resolve(isAnimating))
-            })
+            await nextFrame()
+            await nextFrame()
+
+            resolve(isAnimating)
         })
 
         return expect(promise).resolves.toBe(false)
     })
     test("doesn't animate no-op keyframes", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             let isAnimating = false
             const Component = () => (
                 <motion.div
@@ -312,15 +453,16 @@ describe("animate prop as object", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
 
-            frame.postRender(() => {
-                frame.postRender(() => resolve(isAnimating))
-            })
+            await nextFrame()
+            await nextFrame()
+
+            resolve(isAnimating)
         })
 
         return expect(promise).resolves.toBe(false)
     })
-    test("doe animate different keyframes", async () => {
-        const promise = new Promise((resolve) => {
+    test("does animate different keyframes", async () => {
+        const promise = new Promise(async (resolve) => {
             let isAnimating = false
             const Component = () => (
                 <motion.div
@@ -341,9 +483,10 @@ describe("animate prop as object", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
 
-            frame.postRender(() => {
-                frame.postRender(() => resolve(isAnimating))
-            })
+            await nextFrame()
+            await nextFrame()
+
+            resolve(isAnimating)
         })
 
         return expect(promise).resolves.toBe(true)
@@ -377,13 +520,13 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toBe(true)
     })
     test("doesn't animate zIndex", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const Component = () => <motion.div animate={{ zIndex: 100 }} />
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
-            requestAnimationFrame(() =>
-                resolve(container.firstChild as Element)
-            )
+
+            await nextFrame()
+            resolve(container.firstChild as Element)
         })
         return expect(promise).resolves.toHaveStyle("z-index: 100")
     })
@@ -410,7 +553,7 @@ describe("animate prop as object", () => {
             rerender(<motion.div {...props} animate={{}} />)
             rerender(<motion.div {...props} animate={{}} />)
 
-            await nextMicrotask()
+            await nextFrame()
 
             expect(ref.current).toHaveStyle("opacity: 0")
 
@@ -452,7 +595,7 @@ describe("animate prop as object", () => {
                 />
             )
 
-            await nextMicrotask()
+            await nextFrame()
 
             expect(ref.current).toHaveStyle("opacity: 0.5")
 
@@ -762,7 +905,7 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toBe(20)
     })
 
-    test("animates previously unseen properties", async () => {
+    test("animates previously unseen properties, instant animation", async () => {
         const Component = ({ animate }: any) => (
             <motion.div animate={animate} transition={{ type: false }} />
         )
@@ -770,13 +913,34 @@ describe("animate prop as object", () => {
             <Component animate={{ x: 100 }} />
         )
         rerender(<Component animate={{ x: 100 }} />)
+
         rerender(<Component animate={{ y: 100 }} />)
         rerender(<Component animate={{ y: 100 }} />)
 
-        await nextMicrotask()
+        await nextFrame()
 
         return expect(container.firstChild as Element).toHaveStyle(
-            "transform: translateX(0px) translateY(100px) translateZ(0)"
+            "transform: translateX(0px) translateY(100px)"
+        )
+    })
+
+    test("animates previously unseen properties", async () => {
+        const Component = ({ animate }: any) => (
+            <motion.div animate={animate} transition={{ duration: 0 }} />
+        )
+        const { container, rerender } = render(
+            <Component animate={{ x: 100 }} />
+        )
+        rerender(<Component animate={{ x: 100 }} />)
+
+        rerender(<Component animate={{ y: 100 }} />)
+        rerender(<Component animate={{ y: 100 }} />)
+
+        await nextFrame()
+        await nextFrame()
+
+        return expect(container.firstChild as Element).toHaveStyle(
+            "transform: translateX(0px) translateY(100px)"
         )
     })
 
@@ -801,11 +965,17 @@ describe("animate prop as object", () => {
 
     test("animates previously unseen CSS variables", async () => {
         const promise = new Promise<string>((resolve) => {
+            let latestColor = ""
             const Component = () => (
                 <motion.div
                     style={{ "--foo": "#fff" } as any}
                     animate={{ "--foo": "#000" } as any}
-                    onUpdate={(latest) => resolve(latest["--foo"] as string)}
+                    onUpdate={(latest) => {
+                        latestColor = latest["--foo"] as string
+                    }}
+                    onAnimationComplete={() => {
+                        resolve(latestColor)
+                    }}
                     transition={{ type: false }}
                 />
             )
@@ -817,7 +987,7 @@ describe("animate prop as object", () => {
     })
 
     test("forces an animation to fallback if has been set to `null`", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const complete = () => resolve(true)
             const Component = ({ animate, onAnimationComplete }: any) => (
                 <motion.div
@@ -829,8 +999,10 @@ describe("animate prop as object", () => {
             const { container, rerender } = render(
                 <Component animate={{ x: 100 }} />
             )
+            await nextFrame()
             rerender(<Component animate={{ x: null }} />)
             rerender(<Component animate={{ x: null }} />)
+            await nextFrame()
             expect(container.firstChild as Element).toHaveStyle(
                 "transform: none"
             )
@@ -910,7 +1082,7 @@ describe("animate prop as object", () => {
     test("Correctly animates from RGB to HSLA", async () => {
         const element = await new Promise<HTMLDivElement>((resolve) => {
             const Component = () => {
-                const ref = React.useRef<HTMLDivElement>(null)
+                const ref = useRef<HTMLDivElement>(null)
                 return (
                     <motion.div
                         ref={ref}
@@ -935,15 +1107,15 @@ describe("animate prop as object", () => {
     test("Correctly animates from HEX to HSLA", async () => {
         const element = await new Promise<HTMLDivElement>((resolve) => {
             const Component = () => {
-                const ref = React.useRef<HTMLDivElement>(null)
+                const ref = useRef<HTMLDivElement>(null)
                 return (
                     <motion.div
                         ref={ref}
                         initial={{ backgroundColor: "#0088ff" }}
                         animate={{ backgroundColor: "hsl(345, 100%, 60%)" }}
-                        onAnimationComplete={() =>
+                        onAnimationComplete={() => {
                             ref.current && resolve(ref.current)
-                        }
+                        }}
                         transition={{ duration: 0.01 }}
                     />
                 )
@@ -960,7 +1132,7 @@ describe("animate prop as object", () => {
     test("Correctly animates from HSLA to Hex", async () => {
         const element = await new Promise<HTMLDivElement>((resolve) => {
             const Component = () => {
-                const ref = React.useRef<HTMLDivElement>(null)
+                const ref = useRef<HTMLDivElement>(null)
                 return (
                     <motion.div
                         ref={ref}
@@ -985,7 +1157,7 @@ describe("animate prop as object", () => {
     test("Correctly animates from HSLA to RGB", async () => {
         const element = await new Promise<HTMLDivElement>((resolve) => {
             const Component = () => {
-                const ref = React.useRef<HTMLDivElement>(null)
+                const ref = useRef<HTMLDivElement>(null)
                 return (
                     <motion.div
                         ref={ref}

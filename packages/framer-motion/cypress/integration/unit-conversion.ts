@@ -10,4 +10,39 @@ describe("Unit conversion", () => {
                 expect(left).to.equal(150)
             })
     })
+
+    it("Animate width and height to/from vh units", () => {
+        cy.viewport(400, 400)
+            .visit("?test=unit-conversion-vh")
+            .wait(100)
+            .get("#box")
+            .should(([$box]: any) => {
+                const { width, height } = $box.getBoundingClientRect()
+                expect(width).to.equal(150)
+                expect(height).to.equal(150)
+            })
+    })
+
+    it("Restores unapplied transforms", () => {
+        cy.viewport(400, 400)
+            .visit("?test=unit-conversion-rotate")
+            .wait(300)
+            .get("#box")
+            .should(([$box]: any) => {
+                const { transform } = $box.style
+                expect(transform).to.equal("rotate(45deg)")
+                expect($box.textContent).to.equal("Success")
+            })
+    })
+
+    it("Coerces none keyframes before measuring", () => {
+        cy.viewport(400, 400)
+            .visit("?test=unit-conversion-to-zero")
+            .wait(100)
+            .get("#box")
+            .should(([$box]: any) => {
+                const { top } = $box.getBoundingClientRect()
+                expect(top).to.equal(100)
+            })
+    })
 })

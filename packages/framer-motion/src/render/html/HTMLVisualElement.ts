@@ -7,13 +7,13 @@ import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-values"
 import { renderHTML } from "./utils/render"
 import { getDefaultValueType } from "../dom/value-types/defaults"
 import { measureViewportBox } from "../../projection/utils/measure"
-import { MotionProps, MotionStyle } from "../../motion/types"
-import { Box } from "../../projection/geometry/types"
+import { MotionProps } from "../../motion/types"
+import type { Box } from "../../projection/geometry/types"
 import { DOMVisualElement } from "../dom/DOMVisualElement"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 import type { ResolvedValues } from "../types"
-import type { IProjectionNode } from "../../projection/node/types"
+import { VisualElement } from "../VisualElement"
 
 export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)
@@ -25,6 +25,8 @@ export class HTMLVisualElement extends DOMVisualElement<
     DOMVisualElementOptions
 > {
     type = "html"
+
+    applyWillChange = true
 
     readValueFromInstance(
         instance: HTMLElement,
@@ -38,9 +40,9 @@ export class HTMLVisualElement extends DOMVisualElement<
             const value =
                 (isCSSVariableName(key)
                     ? computedStyle.getPropertyValue(key)
-                    : computedStyle[key]) || 0
+                    : computedStyle[key as keyof typeof computedStyle]) || 0
 
-            return typeof value === "string" ? value.trim() : value
+            return typeof value === "string" ? value.trim() : (value as number)
         }
     }
 
@@ -54,19 +56,17 @@ export class HTMLVisualElement extends DOMVisualElement<
     build(
         renderState: HTMLRenderState,
         latestValues: ResolvedValues,
-        options: DOMVisualElementOptions,
         props: MotionProps
     ) {
-        buildHTMLStyles(
-            renderState,
-            latestValues,
-            options,
-            props.transformTemplate
-        )
+        buildHTMLStyles(renderState, latestValues, props.transformTemplate)
     }
 
-    scrapeMotionValuesFromProps(props: MotionProps, prevProps: MotionProps) {
-        return scrapeMotionValuesFromProps(props, prevProps)
+    scrapeMotionValuesFromProps(
+        props: MotionProps,
+        prevProps: MotionProps,
+        visualElement: VisualElement
+    ) {
+        return scrapeMotionValuesFromProps(props, prevProps, visualElement)
     }
 
     childSubscription?: VoidFunction
@@ -84,12 +84,5 @@ export class HTMLVisualElement extends DOMVisualElement<
         }
     }
 
-    renderInstance(
-        instance: HTMLElement,
-        renderState: HTMLRenderState,
-        styleProp?: MotionStyle | undefined,
-        projection?: IProjectionNode<unknown> | undefined
-    ): void {
-        renderHTML(instance, renderState, styleProp, projection)
-    }
+    renderInstance = renderHTML
 }

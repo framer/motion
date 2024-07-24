@@ -11,10 +11,10 @@ import { getDefaultValueType } from "../dom/value-types/defaults"
 import { MotionProps, MotionStyle } from "../../motion/types"
 import { MotionValue } from "../../value"
 import { ResolvedValues } from "../types"
-import { Box } from "../../projection/geometry/types"
 import { createBox } from "../../projection/geometry/models"
 import { IProjectionNode } from "../../projection/node/types"
 import { isSVGTag } from "./utils/is-svg-tag"
+import { VisualElement } from "../VisualElement"
 
 export class SVGVisualElement extends DOMVisualElement<
     SVGElement,
@@ -29,7 +29,7 @@ export class SVGVisualElement extends DOMVisualElement<
         props: MotionProps,
         key: string
     ): string | number | MotionValue<any> | undefined {
-        return props[key]
+        return props[key as keyof MotionProps]
     }
 
     readValueFromInstance(instance: SVGElement, key: string) {
@@ -41,24 +41,24 @@ export class SVGVisualElement extends DOMVisualElement<
         return instance.getAttribute(key)
     }
 
-    measureInstanceViewportBox(): Box {
-        return createBox()
-    }
+    measureInstanceViewportBox = createBox
 
-    scrapeMotionValuesFromProps(props: MotionProps, prevProps: MotionProps) {
-        return scrapeMotionValuesFromProps(props, prevProps)
+    scrapeMotionValuesFromProps(
+        props: MotionProps,
+        prevProps: MotionProps,
+        visualElement: VisualElement
+    ) {
+        return scrapeMotionValuesFromProps(props, prevProps, visualElement)
     }
 
     build(
         renderState: SVGRenderState,
         latestValues: ResolvedValues,
-        options: DOMVisualElementOptions,
         props: MotionProps
     ) {
         buildSVGAttrs(
             renderState,
             latestValues,
-            options,
             this.isSVGTag,
             props.transformTemplate
         )

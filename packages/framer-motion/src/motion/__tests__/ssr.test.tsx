@@ -1,24 +1,32 @@
-import * as React from "react"
+import { Fragment, useRef, useState } from "react"
 import { renderToString, renderToStaticMarkup } from "react-dom/server"
 import { motion, useMotionValue } from "../../"
 import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
 import { Reorder } from "../../components/Reorder"
 
-const MotionFragment = motion(React.Fragment)
+const MotionFragment = motion(Fragment)
 
 function runTests(render: (components: any) => string) {
     test("doesn't throw", () => {
-        render(
-            <motion.div
-                initial={{ x: 100 }}
-                whileTap={{ opacity: 0 }}
-                drag
-                layout
-                layoutId="a"
-                style={{ opacity: 1 }}
-            />
-        )
+        function Component() {
+            const ref = useRef<HTMLDivElement>(null)
+            return (
+                <>
+                    <motion.div
+                        ref={ref}
+                        initial={{ x: 100 }}
+                        whileTap={{ opacity: 0 }}
+                        drag
+                        layout
+                        layoutId="a"
+                        style={{ opacity: 1 }}
+                    />
+                    <motion.button disabled />
+                </>
+            )
+        }
+        render(<Component />)
 
         expect(true).toBe(true)
     })
@@ -52,7 +60,7 @@ function runTests(render: (components: any) => string) {
         )
 
         expect(div).toBe(
-            '<div style="transform:translateX(100px) translateY(200px) translateZ(0)"></div>'
+            '<div style="will-change:transform;transform:translateX(100px) translateY(200px)"></div>'
         )
     })
 
@@ -71,7 +79,7 @@ function runTests(render: (components: any) => string) {
         )
 
         expect(customElement).toBe(
-            '<element-test style="transform:translateX(100px) translateY(200px) translateZ(0)"></element-test>'
+            '<element-test style="will-change:transform;transform:translateX(100px) translateY(200px)"></element-test>'
         )
     })
 
@@ -119,9 +127,7 @@ function runTests(render: (components: any) => string) {
             <motion.div initial={{ x: 100 }} style={{ x: 200 }} />
         )
 
-        expect(div).toBe(
-            `<div style="transform:translateX(100px) translateZ(0)"></div>`
-        )
+        expect(div).toBe(`<div style="transform:translateX(100px)"></div>`)
     })
 
     test("sets tabindex='0' if onTap is set", () => {
@@ -157,14 +163,12 @@ function runTests(render: (components: any) => string) {
             />
         )
 
-        expect(div).toBe(
-            `<div style="transform:translateX(100px) translateZ(0)"></div>`
-        )
+        expect(div).toBe(`<div style="transform:translateX(100px)"></div>`)
     })
 
     test("Reorder: Renders correct element", () => {
         function Component() {
-            const [state, setState] = React.useState([0])
+            const [state, setState] = useState([0])
             return (
                 <Reorder.Group onReorder={setState} values={state}>
                     <Reorder.Item value="a" />
@@ -180,7 +184,7 @@ function runTests(render: (components: any) => string) {
 
     test("Reorder: Doesn't render touch-scroll disabling styles if dragListener === false", () => {
         function Component() {
-            const [state, setState] = React.useState([0])
+            const [state, setState] = useState([0])
             return (
                 <Reorder.Group onReorder={setState} values={state}>
                     <Reorder.Item value="a" dragListener={false} />
@@ -196,7 +200,7 @@ function runTests(render: (components: any) => string) {
 
     test("Reorder: Renders provided element", () => {
         function Component() {
-            const [state, setState] = React.useState([0])
+            const [state, setState] = useState([0])
             return (
                 <Reorder.Group as="div" onReorder={setState} values={state}>
                     <Reorder.Item as="div" value="a" />

@@ -3,7 +3,10 @@ import { buildSVGPath } from "../path"
 
 describe("buildSVGPath", () => {
     it("correctly generates SVG path props", () => {
-        const attrs = {}
+        const attrs: {
+            ["stroke-dashoffset"]?: number
+            ["stroke-dasharray"]?: number
+        } = {}
 
         buildSVGPath(attrs, 0.5, 0.25, 0.25)
 

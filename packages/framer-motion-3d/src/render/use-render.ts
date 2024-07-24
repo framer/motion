@@ -43,12 +43,14 @@ function useVisualProps(props: ThreeMotionProps & MeshProps) {
         const visualProps: ThreeMotionProps & MeshProps = {}
 
         for (const key in props) {
-            const prop = props[key]
+            const prop = props[key as keyof typeof props]
 
             if (isMotionValue(prop)) {
-                visualProps[key] = prop.get()
+                visualProps[key as keyof ThreeMotionProps] = prop.get()
             } else if (Array.isArray(prop) && prop.includes(isMotionValue)) {
-                visualProps[key] = prop.map(resolveMotionValue)
+                visualProps[key as keyof ThreeMotionProps] = prop.map(
+                    resolveMotionValue as any
+                ) as any
             }
         }
 

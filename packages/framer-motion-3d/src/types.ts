@@ -21,9 +21,7 @@ export interface ThreeMotionProps
     onInstanceUpdate?: MeshProps["onUpdate"]
 }
 
-export interface ThreeRenderState {
-    latestValues: ResolvedValues
-}
+export interface ThreeRenderState extends ResolvedValues {}
 
 /**
  * @public

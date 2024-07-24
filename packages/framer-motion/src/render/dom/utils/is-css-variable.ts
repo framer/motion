@@ -4,16 +4,22 @@ export type CSSVariableToken = `var(${CSSVariableName})`
 
 const checkStringStartsWith =
     <T extends string>(token: string) =>
-    (key?: string): key is T =>
+    (key?: string | number | null): key is T =>
         typeof key === "string" && key.startsWith(token)
 
 export const isCSSVariableName = checkStringStartsWith<CSSVariableName>("--")
 
 const startsAsVariableToken = checkStringStartsWith<CSSVariableToken>("var(--")
-export const isCSSVariableToken = (key?: string): key is CSSVariableToken =>
-    startsAsVariableToken(key) && singleCssVariableRegex.test(key)
+export const isCSSVariableToken = (
+    value?: string
+): value is CSSVariableToken => {
+    const startsWithToken = startsAsVariableToken(value)
 
-export const cssVariableRegex =
-    /var\s*\(\s*--[\w-]+(\s*,\s*(?:(?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)+)?\s*\)/g
+    if (!startsWithToken) return false
+
+    // Ensure any comments are stripped from the value as this can harm performance of the regex.
+    return singleCssVariableRegex.test(value.split("/*")[0].trim())
+}
+
 const singleCssVariableRegex =
-    /var\s*\(\s*--[\w-]+(\s*,\s*(?:(?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)+)?\s*\)$/i
+    /var\(--(?:[\w-]+\s*|[\w-]+\s*,(?:\s*[^)(\s]|\s*\((?:[^)(]|\([^)(]*\))*\))+\s*)\)$/iu

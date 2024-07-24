@@ -13,8 +13,8 @@ export interface Step {
 }
 
 export type StepId =
-    | "prepare"
     | "read"
+    | "resolveKeyframes"
     | "update"
     | "preRender"
     | "render"

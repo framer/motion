@@ -1,5 +1,5 @@
 Cypress.config({
-    baseUrl: "http://localhost:8000/dev/optimized-appear/",
+    baseUrl: "http://localhost:8000/optimized-appear/",
 })
 
 describe("Correctly plays and resumes from optimized appear animations", () => {

@@ -8,7 +8,7 @@ export class ExitAnimationFeature extends Feature<unknown> {
     update() {
         if (!this.node.presenceContext) return
 
-        const { isPresent, onExitComplete, custom } = this.node.presenceContext
+        const { isPresent, onExitComplete } = this.node.presenceContext
         const { isPresent: prevIsPresent } = this.node.prevPresenceContext || {}
 
         if (!this.node.animationState || isPresent === prevIsPresent) {
@@ -17,8 +17,7 @@ export class ExitAnimationFeature extends Feature<unknown> {
 
         const exitAnimation = this.node.animationState.setActive(
             "exit",
-            !isPresent,
-            { custom: custom ?? this.node.getProps().custom }
+            !isPresent
         )
 
         if (onExitComplete && !isPresent) {

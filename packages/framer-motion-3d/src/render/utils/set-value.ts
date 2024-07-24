@@ -15,7 +15,7 @@ const setVector =
 
 const setEuler =
     (name: string, defaultValue: number) =>
-    (axis: string) =>
+    (axis: "x" | "y" | "z") =>
     (instance: Object3DNode<any, any>, value: number) => {
         if (instance[name] === undefined) {
             instance[name] = new Euler(defaultValue)
@@ -36,7 +36,14 @@ const setScale = setVector("scale", 1)
 const setPosition = setVector("position", 0)
 const setRotation = setEuler("rotation", 0)
 
-const setters = {
+interface ThreeSetters {
+    [key: string]: (
+        instance: Object3DNode<any, any>,
+        value: string | number
+    ) => void
+}
+
+const setters: ThreeSetters = {
     x: setPosition(0),
     y: setPosition(1),
     z: setPosition(2),
@@ -62,7 +69,7 @@ export function setThreeValue(
     key: string,
     values: ThreeRenderState
 ): void {
-    if (setters[key]) {
+    if (key in setters) {
         setters[key](instance, values[key])
     } else {
         if (key === "opacity" && !instance.transparent) {

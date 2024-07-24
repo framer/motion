@@ -1,6 +1,6 @@
 import { render, click } from "../../../jest.setup"
 import { fireEvent } from "@testing-library/react"
-import * as React from "react"
+import { useEffect } from "react";
 import { useCycle } from "../use-cycle"
 
 describe("useCycle", () => {
@@ -9,7 +9,7 @@ describe("useCycle", () => {
 
         const Component = () => {
             const [latest, cycle] = useCycle(1, 2, 3, 4)
-            React.useEffect(() => {
+            useEffect(() => {
                 if (results[results.length - 1] !== latest) results.push(latest)
             }, [latest])
 

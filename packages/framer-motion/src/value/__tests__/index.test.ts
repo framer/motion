@@ -221,4 +221,15 @@ describe("MotionValue velocity calculations", () => {
         value.setWithVelocity(200, 100, 10)
         expect(Math.round(value.getVelocity())).toBe(-10000)
     })
+
+    test("Velocity can be measured even if initialised with undefined", async () => {
+        const value = motionValue<undefined | number>(undefined)
+        expect((value as any).canTrackVelocity).toBe(null)
+        value.set(1)
+        expect((value as any).canTrackVelocity).toBe(true)
+
+        const value2 = motionValue<undefined | string>(undefined)
+        value2.set("test")
+        expect((value2 as any).canTrackVelocity).toBe(false)
+    })
 })

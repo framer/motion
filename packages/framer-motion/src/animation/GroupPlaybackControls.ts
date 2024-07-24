@@ -36,6 +36,7 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
                 animation.attachTimeline(timeline)
             } else {
                 animation.pause()
+
                 return observeTimeline((progress) => {
                     animation.time = animation.duration * progress
                 }, timeline)
@@ -76,7 +77,10 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
     }
 
     private runAll(
-        methodName: keyof Omit<AnimationPlaybackControls, PropNames | "then" | "state">
+        methodName: keyof Omit<
+            AnimationPlaybackControls,
+            PropNames | "then" | "state"
+        >
     ) {
         this.animations.forEach((controls) => controls[methodName]())
     }
@@ -89,9 +93,8 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
         this.runAll("pause")
     }
 
-    stop() {
-        this.runAll("stop")
-    }
+    // Bound to accomodate common `return animation.stop` pattern
+    stop = () => this.runAll("stop")
 
     cancel() {
         this.runAll("cancel")

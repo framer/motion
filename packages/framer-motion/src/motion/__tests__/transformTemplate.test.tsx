@@ -1,6 +1,5 @@
 import { render } from "../../../jest.setup"
 import { motion } from "../../"
-import * as React from "react"
 import { frame } from "../../frameloop"
 import { nextMicrotask } from "../../gestures/__tests__/utils"
 
@@ -15,7 +14,7 @@ describe("transformTemplate", () => {
             />
         )
         expect(container.firstChild).toHaveStyle(
-            "transform: translateY(10px) translateX(10px) translateZ(0)"
+            "transform: translateY(10px) translateX(10px)"
         )
     })
 
@@ -29,7 +28,7 @@ describe("transformTemplate", () => {
             />
         )
         expect(container.firstChild).toHaveStyle(
-            "transform: translateY(10px) translateX(10px) translateZ(0)"
+            "transform: translateY(10px) translateX(10px)"
         )
 
         rerender(
@@ -44,7 +43,7 @@ describe("transformTemplate", () => {
 
         await nextMicrotask()
         expect(container.firstChild).toHaveStyle(
-            "transform: translateY(20px) translateX(10px) translateZ(0)"
+            "transform: translateY(20px) translateX(10px)"
         )
     })
 
@@ -58,7 +57,7 @@ describe("transformTemplate", () => {
             />
         )
         expect(container.firstChild).toHaveStyle(
-            "transform: translateY(20px) translateX(10px) translateZ(0)"
+            "transform: translateY(20px) translateX(10px)"
         )
     })
 
@@ -82,9 +81,7 @@ describe("transformTemplate", () => {
 
         await new Promise((resolve) => frame.postRender(resolve))
 
-        expect(container.firstChild).toHaveStyle(
-            "transform: translateX(20px) translateZ(0)"
-        )
+        expect(container.firstChild).toHaveStyle("transform: translateX(20px)")
     })
 
     it("removes transformTemplate if prop is removed and transform is not changed", async () => {
@@ -99,9 +96,7 @@ describe("transformTemplate", () => {
 
         await new Promise((resolve) => frame.postRender(resolve))
 
-        expect(container.firstChild).toHaveStyle(
-            "transform: translateX(10px) translateZ(0)"
-        )
+        expect(container.firstChild).toHaveStyle("transform: translateX(10px)")
     })
 
     it("removes transformTemplate if prop is removed", async () => {

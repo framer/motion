@@ -1,5 +1,4 @@
 import { ResolvedValues, frame } from "framer-motion"
-import * as React from "react"
 import { useEffect, useRef } from "react"
 import { Euler, Vector3 } from "three"
 import { Canvas, Object3DNode } from "@react-three/fiber"
@@ -58,6 +57,7 @@ describe("motion for three", () => {
             ReactThreeTestRenderer.create(<Component />)
         })
 
+        expect(result.length).toBeGreaterThan(1)
         const lastFrame = result[result.length - 1]
         expect(lastFrame).toEqual({
             scale: 5,
@@ -171,7 +171,6 @@ describe("motion for three", () => {
                         position-x={x}
                         scale={scale}
                         rotation={[rotateX, 0, 0]}
-                        onAnimationComplete={() => resolve([x, scale, rotateX])}
                         transition={{ duration: 0.1 }}
                     />
                 )
@@ -230,8 +229,8 @@ describe("motion for three", () => {
                                 transition: { x: { type: false } },
                             },
                             off: {
-                                x: 0,
-                                y: 0,
+                                x: 1,
+                                y: 1,
                                 transition: { x: { type: false } },
                             },
                         }}
@@ -240,10 +239,10 @@ describe("motion for three", () => {
             }
 
             ReactThreeTestRenderer.create(<Component />)
-            frame.update(() => resolve([x.get(), y.get()]))
+            frame.postRender(() => resolve([x.get(), y.get()]))
         })
 
         expect(result[0]).toEqual(100)
-        expect(result[1]).toEqual(0)
+        expect(result[1]).not.toEqual(100)
     })
 })

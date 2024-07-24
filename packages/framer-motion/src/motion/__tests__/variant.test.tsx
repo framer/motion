@@ -4,14 +4,13 @@ import {
     pointerUp,
     render,
 } from "../../../jest.setup"
-import { motion, MotionConfig, useMotionValue } from "../../"
-import * as React from "react"
+import { frame, motion, MotionConfig, useMotionValue } from "../../"
+import { Fragment, useEffect, memo, useState } from "react"
 import { Variants } from "../../types"
 import { motionValue } from "../../value"
-import { useState } from "react"
 import { nextFrame } from "../../gestures/__tests__/utils"
 
-const MotionFragment = motion(React.Fragment)
+const MotionFragment = motion(Fragment)
 
 describe("animate prop as variant", () => {
     test("animates to set variant", async () => {
@@ -394,35 +393,79 @@ describe("animate prop as variant", () => {
     })
 
     test("when: afterChildren works correctly", async () => {
-        const promise = new Promise((resolve) => {
-            const opacity = motionValue(0.1)
-            const variants: Variants = {
-                visible: {
-                    opacity: 1,
+        const parentOpacity = motionValue(0.1)
+        const childOpacity = motionValue(0.1)
+        const variants: Variants = {
+            hidden: {
+                opacity: 0,
+                display: "block",
+            },
+            visible: {
+                opacity: 1,
+                transitionEnd: {
+                    display: "none",
                 },
-            }
-
-            render(
+            },
+        }
+        const Component = ({
+            animate,
+            onAnimationComplete,
+        }: {
+            animate: string
+            onAnimationComplete?: VoidFunction
+        }) => {
+            return (
                 <motion.div
                     variants={variants}
-                    initial="hidden"
-                    animate="visible"
-                    transition={{ duration: 1, when: "afterChildren" }}
-                    style={{ opacity }}
+                    initial={false}
+                    transition={{ duration: 0.1, when: "afterChildren" }}
+                    animate={animate}
+                    style={{ opacity: parentOpacity }}
+                    onAnimationComplete={onAnimationComplete}
                 >
                     <motion.div>
                         <motion.div
                             variants={variants}
-                            transition={{ duration: 1 }}
+                            transition={{ duration: 0.1 }}
+                            style={{ opacity: childOpacity }}
                         />
                     </motion.div>
                 </motion.div>
             )
+        }
 
-            setTimeout(() => resolve(opacity.get()), 200)
+        return await new Promise<void>(async (resolve) => {
+            const { rerender } = render(<Component animate="hidden" />)
+            rerender(
+                <Component
+                    animate="visible"
+                    onAnimationComplete={() => {
+                        expect(parentOpacity.get()).toBe(1)
+                        expect(childOpacity.get()).toBe(1)
+
+                        rerender(
+                            <Component
+                                animate="hidden"
+                                onAnimationComplete={() => {
+                                    expect(parentOpacity.get()).toBe(0)
+                                    expect(childOpacity.get()).toBe(0)
+
+                                    resolve()
+                                }}
+                            />
+                        )
+                        setTimeout(() => {
+                            expect(parentOpacity.get()).toBe(1)
+                            expect(childOpacity.get()).not.toBe(1)
+                        }, 50)
+                    }}
+                />
+            )
+            setTimeout(() => {
+                expect(parentOpacity.get()).toBe(0)
+                expect(childOpacity.get()).not.toBe(0)
+            }, 50)
         })
-
-        return expect(promise).resolves.toBe(0.1)
     })
 
     /**
@@ -508,7 +551,7 @@ describe("animate prop as variant", () => {
     })
 
     test("nested controlled variants switch correctly", async () => {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(async (resolve) => {
             const parentOpacity = motionValue(0.2)
             const childOpacity = motionValue(0.1)
 
@@ -539,16 +582,17 @@ describe("animate prop as variant", () => {
             }
 
             const { rerender } = render(<Component isOpen={false} />)
-            setTimeout(() => {
-                expect(parentOpacity.get()).toBe(0.4)
-                expect(childOpacity.get()).toBe(0.6)
 
-                rerender(<Component isOpen />)
+            await nextFrame()
 
-                setTimeout(() => {
-                    resolve([parentOpacity.get(), childOpacity.get()])
-                }, 0)
-            }, 0)
+            expect(parentOpacity.get()).toBe(0.4)
+            expect(childOpacity.get()).toBe(0.6)
+
+            rerender(<Component isOpen />)
+
+            await nextFrame()
+
+            resolve([parentOpacity.get(), childOpacity.get()])
         })
 
         return expect(promise).resolves.toEqual([0.3, 0.5])
@@ -565,7 +609,7 @@ describe("animate prop as variant", () => {
                 const a = useMotionValue(0)
                 const b = useMotionValue(0)
 
-                React.useEffect(
+                useEffect(
                     () =>
                         a.on("change", (latest) => {
                             if (latest >= 1 && b.get() === 0) resolve(true)
@@ -618,7 +662,7 @@ describe("animate prop as variant", () => {
                 const a = useMotionValue(0)
                 const b = useMotionValue(0)
 
-                React.useEffect(
+                useEffect(
                     () =>
                         a.on("change", (latest) => {
                             if (latest >= 1 && b.get() === 0) resolve(true)
@@ -658,106 +702,110 @@ describe("animate prop as variant", () => {
     })
 
     test("components without variants are transparent to stagger order", async () => {
-        const [recordedOrder, staggeredEqually] = await new Promise(
-            (resolve) => {
-                const order: number[] = []
-                const delayedBy: number[] = []
-                const staggerDuration = 0.1
+        const [recordedOrder, staggeredEqually] = await new Promise<
+            [number[], boolean]
+        >((resolve) => {
+            const order: number[] = []
+            const delayedBy: number[] = []
+            const staggerDuration = 0.1
 
-                const updateDelayedBy = (i: number) => {
-                    if (delayedBy[i]) return
-                    delayedBy[i] = performance.now()
-                }
-
-                // Checking a rough equidistance between stagger times allows us to see
-                // if any of the supposedly invisible interim `motion.div`s were considered part of the
-                // stagger order (which would mess up the timings)
-                const checkStaggerEquidistance = () => {
-                    let isEquidistant = true
-                    let prev = 0
-                    for (let i = 0; i < delayedBy.length; i++) {
-                        if (prev) {
-                            const timeSincePrev = prev - delayedBy[i]
-                            if (
-                                Math.round(timeSincePrev / 100) * 100 !==
-                                staggerDuration * 1000
-                            ) {
-                                isEquidistant = false
-                            }
-                        }
-                        prev = delayedBy[i]
-                    }
-
-                    return isEquidistant
-                }
-
-                const parentVariants: Variants = {
-                    visible: {
-                        transition: {
-                            staggerChildren: staggerDuration,
-                            staggerDirection: -1,
-                        },
-                    },
-                }
-
-                const variants: Variants = {
-                    hidden: { opacity: 0 },
-                    visible: {
-                        opacity: 1,
-                        transition: {
-                            duration: 0.000001,
-                        },
-                    },
-                }
-
-                render(
-                    <motion.div
-                        initial="hidden"
-                        animate="visible"
-                        variants={parentVariants}
-                        onAnimationComplete={() =>
-                            requestAnimationFrame(() =>
-                                resolve([order, checkStaggerEquidistance()])
-                            )
-                        }
-                    >
-                        <motion.div>
-                            <motion.div />
-                            <motion.div
-                                variants={variants}
-                                onUpdate={() => {
-                                    updateDelayedBy(0)
-                                    order.push(1)
-                                }}
-                            />
-                            <motion.div
-                                variants={variants}
-                                onUpdate={() => {
-                                    updateDelayedBy(1)
-                                    order.push(2)
-                                }}
-                            />
-                        </motion.div>
-                        <motion.div>
-                            <motion.div
-                                variants={variants}
-                                onUpdate={() => {
-                                    updateDelayedBy(2)
-                                    order.push(3)
-                                }}
-                            />
-                            <motion.div
-                                variants={variants}
-                                onUpdate={() => {
-                                    updateDelayedBy(3)
-                                    order.push(4)
-                                }}
-                            />
-                        </motion.div>
-                    </motion.div>
-                )
+            const updateDelayedBy = (i: number) => {
+                if (delayedBy[i]) return
+                delayedBy[i] = performance.now()
             }
-        )
+
+            // Checking a rough equidistance between stagger times allows us to see
+            // if any of the supposedly invisible interim `motion.div`s were considered part of the
+            // stagger order (which would mess up the timings)
+            const checkStaggerEquidistance = () => {
+                let isEquidistant = true
+                let prev = 0
+                for (let i = 0; i < delayedBy.length; i++) {
+                    if (prev) {
+                        const timeSincePrev = prev - delayedBy[i]
+                        if (
+                            Math.round(timeSincePrev / 100) * 100 !==
+                            staggerDuration * 1000
+                        ) {
+                            isEquidistant = false
+                        }
+                    }
+                    prev = delayedBy[i]
+                }
+
+                return isEquidistant
+            }
+
+            const parentVariants: Variants = {
+                visible: {
+                    transition: {
+                        staggerChildren: staggerDuration,
+                        staggerDirection: -1,
+                    },
+                },
+            }
+
+            const variants: Variants = {
+                hidden: { opacity: 0 },
+                visible: {
+                    opacity: 1,
+                    transition: {
+                        duration: 0.000001,
+                    },
+                },
+            }
+
+            render(
+                <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    variants={parentVariants}
+                    onAnimationComplete={() =>
+                        requestAnimationFrame(() =>
+                            resolve([order, checkStaggerEquidistance()])
+                        )
+                    }
+                >
+                    <motion.div>
+                        <motion.div />
+                        <motion.div
+                            variants={variants}
+                            onUpdate={() => {
+                                updateDelayedBy(0)
+                                order.push(1)
+                            }}
+                            style={{ willChange: "auto" }}
+                        />
+                        <motion.div
+                            variants={variants}
+                            onUpdate={() => {
+                                updateDelayedBy(1)
+                                order.push(2)
+                            }}
+                            style={{ willChange: "auto" }}
+                        />
+                    </motion.div>
+                    <motion.div>
+                        <motion.div
+                            variants={variants}
+                            onUpdate={() => {
+                                updateDelayedBy(2)
+                                order.push(3)
+                            }}
+                            style={{ willChange: "auto" }}
+                        />
+                        <motion.div
+                            variants={variants}
+                            onUpdate={() => {
+                                updateDelayedBy(3)
+                                order.push(4)
+                            }}
+                            style={{ willChange: "auto" }}
+                        />
+                    </motion.div>
+                </motion.div>
+            )
+        })
 
         expect(recordedOrder).toEqual([4, 3, 2, 1])
         expect(staggeredEqually).toEqual(true)
@@ -767,7 +815,11 @@ describe("animate prop as variant", () => {
         const promise = new Promise((resolve) => {
             let latest = {}
 
+            let frameCount = 0
+
             const onUpdate = (l: { [key: string]: number | string }) => {
+                frameCount++
+                if (frameCount === 2) expect(l.willChange).toBe("transform")
                 latest = l
             }
 
@@ -777,7 +829,9 @@ describe("animate prop as variant", () => {
                     initial={{ x: 0, y: 0 }}
                     animate={{ x: 100, y: 100 }}
                     transition={{ duration: 0.1 }}
-                    onAnimationComplete={() => resolve(latest)}
+                    onAnimationComplete={() => {
+                        frame.postRender(() => resolve(latest))
+                    }}
                 />
             )
 
@@ -785,7 +839,11 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        return expect(promise).resolves.toEqual({ x: 100, y: 100 })
+        return expect(promise).resolves.toEqual({
+            willChange: "auto",
+            x: 100,
+            y: 100,
+        })
     })
 
     test("onUpdate doesnt fire if no values have changed", async () => {
@@ -793,12 +851,17 @@ describe("animate prop as variant", () => {
 
         await new Promise<void>((resolve) => {
             const x = motionValue(0)
+
             const Component = ({ xTarget = 0 }) => (
                 <motion.div
                     animate={{ x: xTarget }}
                     transition={{ type: false }}
-                    onUpdate={onUpdate}
-                    style={{ x }}
+                    onUpdate={(latest) => {
+                        expect(latest.willChange).not.toBe("auto")
+                        onUpdate(latest)
+                    }}
+                    // Manually setting willChange to avoid triggering onUpdate
+                    style={{ x, willChange: "transform" }}
                 />
             )
 
@@ -847,7 +910,7 @@ describe("animate prop as variant", () => {
         }).not.toThrowError()
     })
 
-    test("new child items animate from initial to animate", () => {
+    test("new child items animate from initial to animate", async () => {
         const x = motionValue(0)
         const Component = ({ length }: { length: number }) => {
             const variants: Variants = {
@@ -877,6 +940,8 @@ describe("animate prop as variant", () => {
         rerender(<Component length={1} />)
         rerender(<Component length={2} />)
         rerender(<Component length={2} />)
+
+        await nextFrame()
 
         expect(x.get()).toBe(100)
     })
@@ -908,6 +973,67 @@ describe("animate prop as variant", () => {
 
         await nextFrame()
         expect(element).toHaveStyle("opacity: 0")
+    })
+
+    test("style is active once value has been removed from animate", async () => {
+        const Component = ({
+            animate,
+            opacity = 0,
+        }: {
+            animate?: string
+            opacity?: number
+        }) => {
+            return (
+                <motion.div
+                    animate={animate}
+                    variants={{ a: { opacity: 1, rotate: 1 } }}
+                    transition={{ type: false }}
+                    style={{ opacity, rotate: opacity }}
+                />
+            )
+        }
+
+        const { container, rerender } = render(<Component />)
+        const element = container.firstChild as Element
+        expect(element).toHaveStyle("opacity: 0")
+        expect(element).toHaveStyle("transform: none")
+
+        rerender(<Component animate="a" />)
+        rerender(<Component animate="a" />)
+
+        await nextFrame()
+        expect(element).toHaveStyle("opacity: 1")
+        expect(element).toHaveStyle("transform: rotate(1deg)")
+
+        rerender(<Component />)
+        rerender(<Component />)
+
+        await nextFrame()
+        expect(element).toHaveStyle("opacity: 0")
+        expect(element).toHaveStyle("transform: none")
+
+        rerender(<Component opacity={0.5} />)
+        rerender(<Component opacity={0.5} />)
+
+        await nextFrame()
+        expect(element).toHaveStyle("opacity: 0.5")
+        expect(element).toHaveStyle("transform: rotate(0.5deg)")
+
+        // Re-adding value to animated stack will animate value correctly
+        rerender(<Component animate="a" opacity={0.5} />)
+        rerender(<Component animate="a" opacity={0.5} />)
+
+        await nextFrame()
+        expect(element).toHaveStyle("opacity: 1")
+        expect(element).toHaveStyle("transform: rotate(1deg)")
+
+        // While animate is active, changing style doesn't change value
+        rerender(<Component animate="a" opacity={0.75} />)
+        rerender(<Component animate="a" opacity={0.75} />)
+
+        await nextFrame()
+        expect(element).toHaveStyle("opacity: 1")
+        expect(element).toHaveStyle("transform: rotate(1deg)")
     })
 
     test("variants work the same whether defined inline or not", async () => {
@@ -992,7 +1118,7 @@ describe("animate prop as variant", () => {
     })
 
     test("Children correctly animate to removed values even when not rendering along with parents", async () => {
-        const Child = React.memo(() => (
+        const Child = memo(() => (
             <motion.div
                 variants={{
                     visible: { x: 100, opacity: 1 },
@@ -1020,12 +1146,11 @@ describe("animate prop as variant", () => {
 
         await nextFrame()
 
-        expect(element).toHaveStyle(
-            "transform: translateX(100px) translateZ(0)"
-        )
+        expect(element).toHaveStyle("transform: translateX(100px)")
         rerender(<Parent isVisible={false} />)
 
         await nextFrame()
+
         expect(element).toHaveStyle("transform: none")
     })
 

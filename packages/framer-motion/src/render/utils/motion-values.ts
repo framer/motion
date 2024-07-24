@@ -1,4 +1,3 @@
-import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { MotionStyle } from "../../motion/types"
 import { warnOnce } from "../../utils/warn-once"
 import { motionValue } from "../../value"
@@ -10,11 +9,9 @@ export function updateMotionValuesFromProps(
     next: MotionStyle,
     prev: MotionStyle
 ) {
-    const { willChange } = next
-
     for (const key in next) {
-        const nextValue = next[key]
-        const prevValue = prev[key]
+        const nextValue = next[key as keyof MotionStyle]
+        const prevValue = prev[key as keyof MotionStyle]
 
         if (isMotionValue(nextValue)) {
             /**
@@ -22,10 +19,6 @@ export function updateMotionValuesFromProps(
              * to our visual element's motion value map.
              */
             element.addValue(key, nextValue)
-
-            if (isWillChangeMotionValue(willChange)) {
-                willChange.add(key)
-            }
 
             /**
              * Check the version of the incoming motion value with this version
@@ -43,10 +36,6 @@ export function updateMotionValuesFromProps(
              * create a new motion value from that
              */
             element.addValue(key, motionValue(nextValue, { owner: element }))
-
-            if (isWillChangeMotionValue(willChange)) {
-                willChange.remove(key)
-            }
         } else if (prevValue !== nextValue) {
             /**
              * If this is a flat value that has changed, update the motion value
@@ -55,8 +44,12 @@ export function updateMotionValuesFromProps(
              */
             if (element.hasValue(key)) {
                 const existingValue = element.getValue(key)!
-                // TODO: Only update values that aren't being animated or even looked at
-                !existingValue.hasAnimated && existingValue.set(nextValue)
+
+                if (existingValue.liveStyle === true) {
+                    existingValue.jump(nextValue)
+                } else if (!existingValue.hasAnimated) {
+                    existingValue.set(nextValue)
+                }
             } else {
                 const latestValue = element.getStaticValue(key)
                 element.addValue(
@@ -72,7 +65,8 @@ export function updateMotionValuesFromProps(
 
     // Handle removed values
     for (const key in prev) {
-        if (next[key] === undefined) element.removeValue(key)
+        if (next[key as keyof MotionStyle] === undefined)
+            element.removeValue(key)
     }
 
     return next

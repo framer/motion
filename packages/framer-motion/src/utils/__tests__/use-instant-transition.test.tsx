@@ -1,8 +1,7 @@
 import { render } from "../../../jest.setup"
 import { motion, motionValue } from "../.."
-import * as React from "react"
+import { useState, useEffect } from "react";
 import { useInstantTransition } from "../use-instant-transition"
-import { useEffect } from "react"
 import { act } from "@testing-library/react"
 import { renderHook } from "@testing-library/react"
 import { instantAnimationState } from "../use-instant-transition-state"
@@ -15,7 +14,7 @@ describe("useInstantTransition", () => {
             const xChild = motionValue(0)
 
             const Parent = () => {
-                const [state, setState] = React.useState(false)
+                const [state, setState] = useState(false)
 
                 return (
                     <motion.div
@@ -79,7 +78,7 @@ describe("useInstantTransition", () => {
             const xChild = motionValue(0)
 
             const Parent = () => {
-                const [state, setState] = React.useState(0)
+                const [state, setState] = useState(0)
                 const xTargets = [0, 50, 100]
                 return (
                     <motion.div

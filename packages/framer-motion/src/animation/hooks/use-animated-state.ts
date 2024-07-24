@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { useConstant } from "../../utils/use-constant"
-import { checkTargetForNewValues, getOrigin } from "../../render/utils/setters"
 import { TargetAndTransition } from "../../types"
 import { ResolvedValues } from "../../render/types"
 import { makeUseVisualState } from "../../motion/utils/use-visual-state"
@@ -21,9 +20,7 @@ class StateVisualElement extends VisualElement<
 > {
     type: "state"
     build() {}
-    measureInstanceViewportBox() {
-        return createBox()
-    }
+    measureInstanceViewportBox = createBox
     resetTransform() {}
     restoreTransform() {}
     removeValueFromRenderState() {}
@@ -45,16 +42,6 @@ class StateVisualElement extends VisualElement<
 
     sortInstanceNodePosition() {
         return 0
-    }
-
-    makeTargetAnimatableFromInstance({
-        transition,
-        transitionEnd,
-        ...target
-    }: TargetAndTransition) {
-        const origin = getOrigin(target as any, transition || {}, this)
-        checkTargetForNewValues(this, target, origin as any)
-        return { transition, transitionEnd, ...target }
     }
 }
 

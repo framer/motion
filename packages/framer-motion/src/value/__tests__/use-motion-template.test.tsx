@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import * as React from "react"
+import { useEffect } from "react";
 import { motion } from "../../"
 import { useMotionValue } from "../use-motion-value"
 import { useMotionTemplate } from "../use-motion-template"
@@ -28,7 +28,7 @@ describe("useMotionTemplate", () => {
             const y = useMotionValue(2)
             const transform = useMotionTemplate`translateX(${x}px) translateY(${y}px)`
 
-            React.useEffect(() => {
+            useEffect(() => {
                 x.set(10)
             }, [])
 

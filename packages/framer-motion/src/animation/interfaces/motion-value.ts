@@ -1,26 +1,37 @@
-import { warning } from "../../utils/errors"
-import { ResolvedValueTarget, Transition } from "../../types"
+import { Transition } from "../../types"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
-import { instantAnimationState } from "../../utils/use-instant-transition-state"
 import type { MotionValue, StartAnimation } from "../../value"
-import { createAcceleratedAnimation } from "../animators/waapi/create-accelerated-animation"
-import { createInstantAnimation } from "../animators/instant"
 import { getDefaultTransition } from "../utils/default-transitions"
-import { isAnimatable } from "../utils/is-animatable"
-import { getKeyframes } from "../utils/keyframes"
 import { getValueTransition, isTransitionDefined } from "../utils/transitions"
-import { animateValue } from "../animators/js"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
+import type { UnresolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { MotionGlobalConfig } from "../../utils/GlobalConfig"
+import { instantAnimationState } from "../../utils/use-instant-transition-state"
+import type { VisualElement } from "../../render/VisualElement"
+import { getFinalKeyframe } from "../animators/waapi/utils/get-final-keyframe"
+import { frame } from "../../frameloop/frame"
+import { AcceleratedAnimation } from "../animators/AcceleratedAnimation"
+import { MainThreadAnimation } from "../animators/MainThreadAnimation"
+import { GroupPlaybackControls } from "../GroupPlaybackControls"
 
-export const animateMotionValue = (
-    valueName: string,
-    value: MotionValue,
-    target: ResolvedValueTarget,
-    transition: Transition & { elapsed?: number; isHandoff?: boolean } = {}
-): StartAnimation => {
-    return (onComplete: VoidFunction): AnimationPlaybackControls => {
-        const valueTransition = getValueTransition(transition, valueName) || {}
+export const animateMotionValue =
+    <V extends string | number>(
+        name: string,
+        value: MotionValue<V>,
+        target: V | UnresolvedKeyframes<V>,
+        transition: Transition & { elapsed?: number } = {},
+        element?: VisualElement<any>,
+        isHandoff?: boolean,
+        /**
+         * Currently used to remove values from will-change when an animation ends.
+         * Preferably this would be handled by event listeners on the MotionValue
+         * but these aren't consistent enough yet when considering the different ways
+         * an animation can be cancelled.
+         */
+        onEnd?: VoidFunction
+    ): StartAnimation =>
+    (onComplete): AnimationPlaybackControls => {
+        const valueTransition = getValueTransition(transition, name) || {}
 
         /**
          * Most transition values are currently completely overwritten by value-specific
@@ -36,32 +47,10 @@ export const animateMotionValue = (
         let { elapsed = 0 } = transition
         elapsed = elapsed - secondsToMilliseconds(delay)
 
-        const keyframes = getKeyframes(
-            value,
-            valueName,
-            target,
-            valueTransition
-        )
-
-        /**
-         * Check if we're able to animate between the start and end keyframes,
-         * and throw a warning if we're attempting to animate between one that's
-         * animatable and another that isn't.
-         */
-        const originKeyframe = keyframes[0]
-        const targetKeyframe = keyframes[keyframes.length - 1]
-        const isOriginAnimatable = isAnimatable(valueName, originKeyframe)
-        const isTargetAnimatable = isAnimatable(valueName, targetKeyframe)
-
-        warning(
-            isOriginAnimatable === isTargetAnimatable,
-            `You are trying to animate ${valueName} from "${originKeyframe}" to "${targetKeyframe}". ${originKeyframe} is not an animatable value - to enable this animation set ${originKeyframe} to a value animatable to ${targetKeyframe} via the \`style\` property.`
-        )
-
         let options: ValueAnimationOptions = {
-            keyframes,
-            velocity: value.getVelocity(),
+            keyframes: Array.isArray(target) ? target : [null, target],
             ease: "easeOut",
+            velocity: value.getVelocity(),
             ...valueTransition,
             delay: -elapsed,
             onUpdate: (v) => {
@@ -71,7 +60,12 @@ export const animateMotionValue = (
             onComplete: () => {
                 onComplete()
                 valueTransition.onComplete && valueTransition.onComplete()
+                onEnd && onEnd()
             },
+            onStop: onEnd,
+            name,
+            motionValue: value,
+            element: isHandoff ? undefined : element,
         }
 
         /**
@@ -81,7 +75,7 @@ export const animateMotionValue = (
         if (!isTransitionDefined(valueTransition)) {
             options = {
                 ...options,
-                ...getDefaultTransition(valueName, options),
+                ...getDefaultTransition(name, options),
             }
         }
 
@@ -93,59 +87,67 @@ export const animateMotionValue = (
         if (options.duration) {
             options.duration = secondsToMilliseconds(options.duration)
         }
-
         if (options.repeatDelay) {
             options.repeatDelay = secondsToMilliseconds(options.repeatDelay)
         }
 
+        if (options.from !== undefined) {
+            options.keyframes[0] = options.from
+        }
+
+        let shouldSkip = false
+
         if (
-            !isOriginAnimatable ||
-            !isTargetAnimatable ||
+            (options as any).type === false ||
+            (options.duration === 0 && !options.repeatDelay)
+        ) {
+            options.duration = 0
+
+            if (options.delay === 0) {
+                shouldSkip = true
+            }
+        }
+
+        if (
             instantAnimationState.current ||
-            valueTransition.type === false ||
             MotionGlobalConfig.skipAnimations
         ) {
-            /**
-             * If we can't animate this value, or the global instant animation flag is set,
-             * or this is simply defined as an instant transition, return an instant transition.
-             */
-            return createInstantAnimation(
-                instantAnimationState.current
-                    ? { ...options, delay: 0 }
-                    : options
-            )
+            shouldSkip = true
+            options.duration = 0
+            options.delay = 0
         }
 
         /**
-         * Animate via WAAPI if possible.
+         * If we can or must skip creating the animation, and apply only
+         * the final keyframe, do so. We also check once keyframes are resolved but
+         * this early check prevents the need to create an animation at all.
          */
-        if (
-            /**
-             * If this is a handoff animation, the optimised animation will be running via
-             * WAAPI. Therefore, this animation must be JS to ensure it runs "under" the
-             * optimised animation.
-             */
-            !transition.isHandoff &&
-            value.owner &&
-            value.owner.current instanceof HTMLElement &&
-            /**
-             * If we're outputting values to onUpdate then we can't use WAAPI as there's
-             * no way to read the value from WAAPI every frame.
-             */
-            !value.owner.getProps().onUpdate
-        ) {
-            const acceleratedAnimation = createAcceleratedAnimation(
-                value,
-                valueName,
-                options
+        if (shouldSkip && !isHandoff && value.get() !== undefined) {
+            const finalKeyframe = getFinalKeyframe<V>(
+                options.keyframes as V[],
+                valueTransition
             )
 
-            if (acceleratedAnimation) return acceleratedAnimation
+            if (finalKeyframe !== undefined) {
+                frame.update(() => {
+                    options.onUpdate!(finalKeyframe)
+                    options.onComplete!()
+                })
+
+                // We still want to return some animation controls here rather
+                // than returning undefined
+                return new GroupPlaybackControls([])
+            }
         }
 
         /**
-         * If we didn't create an accelerated animation, create a JS animation
+         * Animate via WAAPI if possible. If this is a handoff animation, the optimised animation will be running via
+         * WAAPI. Therefore, this animation must be JS to ensure it runs "under" the
+         * optimised animation.
          */
-        return animateValue(options)
+        if (!isHandoff && AcceleratedAnimation.supports(options)) {
+            return new AcceleratedAnimation(options)
+        } else {
+            return new MainThreadAnimation(options)
+        }
     }
-}

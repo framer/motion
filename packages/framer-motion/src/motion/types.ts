@@ -335,6 +335,8 @@ export interface MotionProps
     ): string
 
     children?: React.ReactNode | MotionValue<number> | MotionValue<string>
+
+    "data-framer-appear-id"?: string
 }
 
 export type TransformTemplate = (

@@ -1,8 +1,9 @@
-import * as React from "react"
+import { useState } from "react"
 import { pointerDown, render } from "../../../../jest.setup"
 import { BoundingBox, motion, motionValue, MotionValue } from "../../../"
 import { MockDrag, drag, deferred, dragFrame, Point, sleep } from "./utils"
 import { nextFrame } from "../../__tests__/utils"
+import { WillChangeMotionValue } from "../../../value/use-will-change/WillChangeMotionValue"
 
 describe("drag", () => {
     test("onDragStart fires", async () => {
@@ -27,6 +28,67 @@ describe("drag", () => {
 })
 
 describe("dragging", () => {
+    test("willChange is applied correctly", async () => {
+        const willChange = new WillChangeMotionValue("auto")
+        const Component = () => (
+            <MockDrag>
+                <motion.div
+                    data-testid="draggable"
+                    drag
+                    dragTransition={{
+                        bounceStiffness: 100000,
+                        bounceDamping: 100000,
+                    }}
+                    style={{ willChange }}
+                />
+            </MockDrag>
+        )
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+
+        const pointer = await drag(container.firstChild).to(100, 100)
+
+        await nextFrame()
+
+        expect(expect(willChange.get()).toBe("transform"))
+
+        pointer.end()
+    })
+
+    test("willChange is applied correctly when other values are animating", async () => {
+        const Component = () => (
+            <MockDrag>
+                <motion.div
+                    data-testid="draggable"
+                    drag="y"
+                    dragTransition={{
+                        bounceStiffness: 100000,
+                        bounceDamping: 100000,
+                    }}
+                    initial={{ x: 0 }}
+                    animate={{ x: 100 }}
+                    transition={{ duration: 5 }}
+                />
+            </MockDrag>
+        )
+
+        const { container, getByTestId, rerender } = render(<Component />)
+        rerender(<Component />)
+
+        const pointer = await drag(container.firstChild).to(100, 100)
+
+        await nextFrame()
+
+        expect(getByTestId("draggable")).toHaveStyle("will-change: transform;")
+
+        pointer.end()
+
+        await nextFrame()
+
+        expect(getByTestId("draggable")).toHaveStyle("will-change: transform;")
+    })
+
     test("dragStart doesn't fire if dragListener === false", async () => {
         const onDragStart = jest.fn()
         const Component = () => (
@@ -124,7 +186,7 @@ describe("dragging", () => {
         let count = 0
         const onDragEnd = deferred()
         const Component = () => {
-            const [increment, setIncrement] = React.useState(1)
+            const [increment, setIncrement] = useState(1)
 
             return (
                 <MockDrag>
@@ -258,11 +320,17 @@ describe("dragging", () => {
         await pointer.to(50, 50)
         pointer.end()
 
-        const checkPointer = new Promise((resolve) => {
-            setTimeout(() => resolve(x.get()), 40)
+        const endValue = await new Promise<number>((resolve) => {
+            setTimeout(() => {
+                expect(container.firstChild).toHaveStyle(
+                    "will-change: transform;"
+                )
+
+                resolve(x.get())
+            }, 40)
         })
 
-        return await expect(checkPointer).resolves.toBeGreaterThan(50)
+        return expect(endValue).toBeGreaterThan(50)
     })
 
     test.skip("outputs to external values if provided", async () => {
@@ -496,6 +564,8 @@ describe("dragging", () => {
         expect(opacity.get()).toBe(0.5)
         await pointer.to(10, 200)
         pointer.end()
+
+        await nextFrame()
         expect(opacity.get()).toBe(0)
     })
 
@@ -553,6 +623,7 @@ describe("dragging", () => {
         rerender(<Component />)
 
         const pointer = await drag(getByTestId("child")).to(10, 10)
+
         await pointer.to(20, 20)
         pointer.end()
 
@@ -863,7 +934,7 @@ describe("dragging", () => {
         pointer.end()
 
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(105px) translateY(0px) translateZ(0)"
+            "transform: translateX(105px) translateY(0px)"
         )
     })
 })

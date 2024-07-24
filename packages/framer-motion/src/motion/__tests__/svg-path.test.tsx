@@ -1,11 +1,11 @@
 import { render } from "../../../jest.setup"
 import { motion } from "../.."
-import * as React from "react"
+import { createRef } from "react";
 
 describe("SVG path", () => {
     test("accepts custom transition prop", async () => {
         const element = await new Promise((resolve) => {
-            const ref = React.createRef<SVGRectElement>()
+            const ref = createRef<SVGRectElement>()
             const Component = () => (
                 <motion.rect
                     ref={ref}

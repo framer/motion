@@ -1,5 +1,3 @@
-"use client"
-
 /**
  * Components
  */
@@ -86,12 +84,13 @@ export { useInstantLayoutTransition } from "./projection/use-instant-layout-tran
 export { useResetProjection } from "./projection/use-reset-projection"
 export { buildTransform } from "./render/html/utils/build-transform"
 export { visualElementStore } from "./render/store"
-export { animateValue } from "./animation/animators/js"
+export { animateValue } from "./animation/animators/MainThreadAnimation"
 export { color } from "./value/types/color"
 export { complex } from "./value/types/complex"
 export { px } from "./value/types/numbers/units"
 export { ValueType } from "./value/types/types"
 export { MotionGlobalConfig } from "./utils/GlobalConfig"
+export { AcceleratedAnimation } from "./animation/animators/AcceleratedAnimation"
 
 /**
  * Appear animations
@@ -113,6 +112,7 @@ export { SwitchLayoutGroupContext } from "./context/SwitchLayoutGroupContext"
  * Types
  */
 export { HTMLMotionProps, ForwardRefComponent } from "./render/html/types"
+export { DOMMotionComponents } from "./render/dom/types"
 export { SVGMotionProps, SVGAttributesAsMotionValues } from "./render/svg/types"
 export { AnimationLifecycles } from "./render/types"
 export { CustomDomComponent } from "./render/dom/motion-proxy"

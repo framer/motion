@@ -11,7 +11,7 @@ export function unwrapMotionComponent(
     component: React.ComponentType | string
 ): React.ComponentType | string | undefined {
     if (isMotionComponent(component)) {
-        return component[motionComponentSymbol]
+        return component[motionComponentSymbol as keyof typeof component]
     }
 
     return undefined

@@ -21,7 +21,10 @@ const originalGetComputedStyle = window.getComputedStyle
 
 function getComputedStyleStub() {
     return {
-        getPropertyValue(variableName: "--from" | "--to" | "--a" | "--color") {
+        background: fromValue,
+        getPropertyValue(
+            variableName: "background" | "--from" | "--to" | "--a" | "--color"
+        ) {
             switch (variableName) {
                 case fromName:
                     return fromValue
@@ -53,6 +56,7 @@ describe("css variables", () => {
     test("should animate css color variables", async () => {
         const promise = new Promise((resolve) => {
             let frameCount = 0
+
             const Component = () => (
                 <motion.div
                     style={style}
@@ -98,7 +102,16 @@ describe("css variables", () => {
 
         const results = await promise
         expect(results).toEqual([
-            { "--a": "20px", "--color": "rgba(0, 0, 0, 1)" },
+            {
+                "--a": "20px",
+                "--color": "rgba(0, 0, 0, 1)",
+                willChange: "auto",
+            },
+            {
+                "--a": "20px",
+                "--color": "rgba(0, 0, 0, 1)",
+                willChange: "auto",
+            },
         ])
     })
 

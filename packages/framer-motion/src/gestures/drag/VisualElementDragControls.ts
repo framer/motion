@@ -15,7 +15,7 @@ import {
 } from "./utils/constraints"
 import type { VisualElement } from "../../render/VisualElement"
 import { MotionProps } from "../../motion/types"
-import { Point } from "../../projection/geometry/types"
+import { Axis, Point } from "../../projection/geometry/types"
 import { createBox } from "../../projection/geometry/models"
 import { eachAxis } from "../../projection/utils/each-axis"
 import { measurePageBox } from "../../projection/utils/measure"
@@ -31,8 +31,9 @@ import { calcLength } from "../../projection/geometry/delta-calc"
 import { mixNumber } from "../../utils/mix/number"
 import { percent } from "../../value/types/numbers/units"
 import { animateMotionValue } from "../../animation/interfaces/motion-value"
-import { frame } from "../../frameloop"
 import { getContextWindow } from "../../utils/get-context-window"
+import { frame } from "../../frameloop"
+import { addValueToWillChange } from "../../value/use-will-change/add-will-change"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -77,6 +78,8 @@ export class VisualElementDragControls {
      * The per-axis resolved elastic values.
      */
     private elastic = createBox()
+
+    private removeWillChange: VoidFunction | undefined
 
     constructor(visualElement: VisualElement<HTMLElement>) {
         this.visualElement = visualElement
@@ -154,8 +157,14 @@ export class VisualElementDragControls {
 
             // Fire onDragStart event
             if (onDragStart) {
-                frame.update(() => onDragStart(event, info), false, true)
+                frame.postRender(() => onDragStart(event, info))
             }
+
+            this.removeWillChange?.()
+            this.removeWillChange = addValueToWillChange(
+                this.visualElement,
+                "transform"
+            )
 
             const { animationState } = this.visualElement
             animationState && animationState.setActive("whileDrag", true)
@@ -235,6 +244,8 @@ export class VisualElementDragControls {
     }
 
     private stop(event: PointerEvent, info: PanInfo) {
+        this.removeWillChange?.()
+
         const isDragging = this.isDragging
         this.cancel()
         if (!isDragging) return
@@ -244,7 +255,7 @@ export class VisualElementDragControls {
 
         const { onDragEnd } = this.getProps()
         if (onDragEnd) {
-            frame.update(() => onDragEnd(event, info))
+            frame.postRender(() => onDragEnd(event, info))
         }
     }
 
@@ -326,7 +337,10 @@ export class VisualElementDragControls {
             !this.hasMutatedConstraints
         ) {
             eachAxis((axis) => {
-                if (this.getAxisMotionValue(axis)) {
+                if (
+                    this.constraints !== false &&
+                    this.getAxisMotionValue(axis)
+                ) {
                     this.constraints[axis] = rebaseAxisConstraints(
                         layout.layoutBox[axis],
                         this.constraints[axis]
@@ -393,7 +407,7 @@ export class VisualElementDragControls {
             onDragTransitionEnd,
         } = this.getProps()
 
-        const constraints = this.constraints || {}
+        const constraints: Partial<ResolvedConstraints> = this.constraints || {}
 
         const momentumAnimations = eachAxis((axis) => {
             if (!shouldDrag(axis, drag, this.currentDirection)) {
@@ -440,8 +454,17 @@ export class VisualElementDragControls {
         transition: Transition
     ) {
         const axisValue = this.getAxisMotionValue(axis)
+
         return axisValue.start(
-            animateMotionValue(axis, axisValue, 0, transition)
+            animateMotionValue(
+                axis,
+                axisValue,
+                0,
+                transition,
+                this.visualElement,
+                false,
+                addValueToWillChange(this.visualElement, axis)
+            )
         )
     }
 
@@ -464,7 +487,8 @@ export class VisualElementDragControls {
      * - Otherwise, we apply the delta to the x/y motion values.
      */
     private getAxisMotionValue(axis: DragDirection) {
-        const dragKey = "_drag" + axis.toUpperCase()
+        const dragKey =
+            `_drag${axis.toUpperCase()}` as `_drag${Uppercase<DragDirection>}`
         const props = this.visualElement.getProps()
         const externalMotionValue = props[dragKey]
 
@@ -472,7 +496,9 @@ export class VisualElementDragControls {
             ? externalMotionValue
             : this.visualElement.getValue(
                   axis,
-                  (props.initial ? props.initial[axis] : undefined) || 0
+                  (props.initial
+                      ? props.initial[axis as keyof typeof props.initial]
+                      : undefined) || 0
               )
     }
 
@@ -520,11 +546,11 @@ export class VisualElementDragControls {
         const boxProgress = { x: 0, y: 0 }
         eachAxis((axis) => {
             const axisValue = this.getAxisMotionValue(axis)
-            if (axisValue) {
+            if (axisValue && this.constraints !== false) {
                 const latest = axisValue.get()
                 boxProgress[axis] = calcOrigin(
                     { min: latest, max: latest },
-                    this.constraints[axis]
+                    this.constraints[axis] as Axis
                 )
             }
         })
@@ -551,7 +577,9 @@ export class VisualElementDragControls {
              * Calculate a new transform based on the previous box progress
              */
             const axisValue = this.getAxisMotionValue(axis)
-            const { min, max } = this.constraints[axis]
+            const { min, max } = (this.constraints as ResolvedConstraints)[
+                axis
+            ] as Axis
             axisValue.set(mixNumber(min, max, boxProgress[axis]))
         })
     }
@@ -575,7 +603,7 @@ export class VisualElementDragControls {
 
         const measureDragConstraints = () => {
             const { dragConstraints } = this.getProps()
-            if (isRefObject(dragConstraints)) {
+            if (isRefObject(dragConstraints) && dragConstraints.current) {
                 this.constraints = this.resolveRefConstraints()
             }
         }
@@ -592,7 +620,7 @@ export class VisualElementDragControls {
             projection.updateLayout()
         }
 
-        measureDragConstraints()
+        frame.read(measureDragConstraints)
 
         /**
          * Attach a window resize listener to scale the draggable target within its defined

@@ -1,4 +1,3 @@
-import * as React from "react"
 import { render } from "../../../jest.setup"
 import { isNodeOrChild } from "../utils/is-node-or-child"
 

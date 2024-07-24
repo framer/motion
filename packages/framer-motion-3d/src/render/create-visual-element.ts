@@ -1,15 +1,10 @@
 import type {
     CreateVisualElement,
-    TargetAndTransition,
     ResolvedValues,
     MotionProps,
 } from "framer-motion"
 
-import {
-    createBox,
-    checkTargetForNewValues,
-    VisualElement,
-} from "framer-motion"
+import { createBox, VisualElement } from "framer-motion"
 import { Object3DNode } from "@react-three/fiber"
 
 import { setThreeValue } from "./utils/set-value"
@@ -41,20 +36,9 @@ export class ThreeVisualElement extends VisualElement<
         return a.id - b.id
     }
 
-    makeTargetAnimatableFromInstance({
-        transition,
-        transitionEnd,
-        ...target
-    }: TargetAndTransition) {
-        checkTargetForNewValues(this, target, {})
-        return { ...target, transition, transitionEnd }
-    }
-
     removeValueFromRenderState() {}
 
-    measureInstanceViewportBox() {
-        return createBox()
-    }
+    measureInstanceViewportBox = createBox
 
     scrapeMotionValuesFromProps(props: MotionProps, prevProps: MotionProps) {
         return scrapeMotionValuesFromProps(props, prevProps)

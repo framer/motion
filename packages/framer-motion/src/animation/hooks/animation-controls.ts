@@ -1,11 +1,39 @@
 import { invariant } from "../../utils/errors"
-import { setValues } from "../../render/utils/setters"
+import { setTarget } from "../../render/utils/setters"
 import type { VisualElement } from "../../render/VisualElement"
-import { AnimationControls } from "../types"
+import { AnimationControls, AnimationDefinition } from "../types"
 import { animateVisualElement } from "../interfaces/visual-element"
 
 function stopAnimation(visualElement: VisualElement) {
     visualElement.values.forEach((value) => value.stop())
+}
+
+function setVariants(visualElement: VisualElement, variantLabels: string[]) {
+    const reversedLabels = [...variantLabels].reverse()
+
+    reversedLabels.forEach((key) => {
+        const variant = visualElement.getVariant(key)
+        variant && setTarget(visualElement, variant)
+
+        if (visualElement.variantChildren) {
+            visualElement.variantChildren.forEach((child) => {
+                setVariants(child, variantLabels)
+            })
+        }
+    })
+}
+
+export function setValues(
+    visualElement: VisualElement,
+    definition: AnimationDefinition
+) {
+    if (Array.isArray(definition)) {
+        return setVariants(visualElement, definition)
+    } else if (typeof definition === "string") {
+        return setVariants(visualElement, [definition])
+    } else {
+        setTarget(visualElement, definition as any)
+    }
 }
 
 /**

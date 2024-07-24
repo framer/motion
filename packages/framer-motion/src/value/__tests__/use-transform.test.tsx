@@ -1,6 +1,6 @@
 import { render } from "../../../jest.setup"
-import * as React from "react"
-import { frame, motion } from "../../"
+import { useEffect } from "react"
+import { cancelFrame, frame, motion } from "../../"
 import { useMotionValue } from "../use-motion-value"
 import { useTransform } from "../use-transform"
 import { MotionValue, motionValue } from ".."
@@ -32,7 +32,7 @@ describe("as function", () => {
 
         const { container } = render(<Component />)
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(100px) translateY(-100px) translateZ(0)"
+            "transform: translateX(100px) translateY(-100px)"
         )
     })
 })
@@ -101,7 +101,7 @@ describe("as input/output range", () => {
             const x = useMotionValue(100)
             const opacity = useTransform(x, [0, 200], [0, 1])
 
-            React.useEffect(() => {
+            useEffect(() => {
                 x.set(20)
             }, [])
 
@@ -157,7 +157,7 @@ describe("as input/output range", () => {
                 [new Custom(100), new Custom(200)]
             )
 
-            React.useEffect(() => {
+            useEffect(() => {
                 x.set(20)
             }, [])
 
@@ -169,7 +169,7 @@ describe("as input/output range", () => {
         await nextFrame()
 
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(20px) translateY(120px) translateZ(0)"
+            "transform: translateX(20px) translateY(120px)"
         )
     })
 })
@@ -183,6 +183,45 @@ test("is correctly typed", async () => {
     }
 
     render(<Component />)
+})
+
+test("frame scheduling", async () => {
+    return new Promise<void>((resolve) => {
+        const Component = () => {
+            const x = useMotionValue(0)
+            const y = useMotionValue(0)
+            const z = useTransform(() => x.get() + y.get())
+
+            useEffect(() => {
+                const setX = () => {
+                    x.set(1)
+                    frame.update(setY)
+                }
+                const setY = () => y.set(2)
+
+                const checkFrame = () => {
+                    expect(container.firstChild as Element).toHaveStyle(
+                        "transform: translateX(1px) translateY(2px) translateZ(3px)"
+                    )
+
+                    resolve()
+                }
+
+                frame.read(setX)
+                frame.postRender(checkFrame)
+
+                return () => {
+                    cancelFrame(setY)
+                    cancelFrame(checkFrame)
+                }
+            }, [])
+
+            return <motion.div style={{ x, y, z }} />
+        }
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+    })
 })
 
 test("can be re-pointed to another `MotionValue`", async () => {
@@ -200,12 +239,12 @@ test("can be re-pointed to another `MotionValue`", async () => {
 
     await nextMicrotask()
     expect(container.firstChild as Element).toHaveStyle(
-        "transform: translateX(4px) translateZ(0)"
+        "transform: translateX(4px)"
     )
 
     rerender(<Component target={a} />)
     await nextMicrotask()
     expect(container.firstChild as Element).toHaveStyle(
-        "transform: translateX(2px) translateZ(0)"
+        "transform: translateX(2px)"
     )
 })

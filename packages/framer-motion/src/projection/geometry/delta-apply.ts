@@ -65,6 +65,9 @@ export function applyBoxDelta(box: Box, { x, y }: Delta): void {
     applyAxisDelta(box.y, y.translate, y.scale, y.originPoint)
 }
 
+const TREE_SCALE_SNAP_MIN = 0.999999999999
+const TREE_SCALE_SNAP_MAX = 1.0000000000001
+
 /**
  * Apply a tree of deltas to a box. We do this to calculate the effect of all the transforms
  * in a tree upon our box before then calculating how to project it into our desired viewport-relative box
@@ -94,11 +97,11 @@ export function applyTreeDeltas(
          * TODO: Prefer to remove this, but currently we have motion components with
          * display: contents in Framer.
          */
-        const instance = node.instance as any
+        const { visualElement } = node.options
         if (
-            instance &&
-            instance.style &&
-            instance.style.display === "contents"
+            visualElement &&
+            visualElement.props.style &&
+            visualElement.props.style.display === "contents"
         ) {
             continue
         }
@@ -133,13 +136,18 @@ export function applyTreeDeltas(
      * Snap tree scale back to 1 if it's within a non-perceivable threshold.
      * This will help reduce useless scales getting rendered.
      */
-    treeScale.x = snapToDefault(treeScale.x)
-    treeScale.y = snapToDefault(treeScale.y)
-}
-
-function snapToDefault(scale: number): number {
-    if (Number.isInteger(scale)) return scale
-    return scale > 1.0000000000001 || scale < 0.999999999999 ? scale : 1
+    if (
+        treeScale.x < TREE_SCALE_SNAP_MAX &&
+        treeScale.x > TREE_SCALE_SNAP_MIN
+    ) {
+        treeScale.x = 1.0
+    }
+    if (
+        treeScale.y < TREE_SCALE_SNAP_MAX &&
+        treeScale.y > TREE_SCALE_SNAP_MIN
+    ) {
+        treeScale.y = 1.0
+    }
 }
 
 export function translateAxis(axis: Axis, distance: number) {
@@ -154,34 +162,33 @@ export function translateAxis(axis: Axis, distance: number) {
  */
 export function transformAxis(
     axis: Axis,
-    transforms: ResolvedValues,
-    [key, scaleKey, originKey]: string[]
+    axisTranslate?: number,
+    axisScale?: number,
+    boxScale?: number,
+    axisOrigin: number = 0.5
 ): void {
-    const axisOrigin =
-        transforms[originKey] !== undefined ? transforms[originKey] : 0.5
-
-    const originPoint = mixNumber(axis.min, axis.max, axisOrigin as number)
+    const originPoint = mixNumber(axis.min, axis.max, axisOrigin)
 
     // Apply the axis delta to the final axis
-    applyAxisDelta(
-        axis,
-        transforms[key] as number,
-        transforms[scaleKey] as number,
-        originPoint,
-        transforms.scale as number
-    )
+    applyAxisDelta(axis, axisTranslate, axisScale, originPoint, boxScale)
 }
-
-/**
- * The names of the motion values we want to apply as translation, scale and origin.
- */
-const xKeys = ["x", "scaleX", "originX"]
-const yKeys = ["y", "scaleY", "originY"]
 
 /**
  * Apply a transform to a box from the latest resolved motion values.
  */
 export function transformBox(box: Box, transform: ResolvedValues) {
-    transformAxis(box.x, transform, xKeys)
-    transformAxis(box.y, transform, yKeys)
+    transformAxis(
+        box.x,
+        transform.x as number,
+        transform.scaleX as number,
+        transform.scale as number,
+        transform.originX as number
+    )
+    transformAxis(
+        box.y,
+        transform.y as number,
+        transform.scaleY as number,
+        transform.scale as number,
+        transform.originY as number
+    )
 }

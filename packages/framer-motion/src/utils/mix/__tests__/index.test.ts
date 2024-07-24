@@ -37,4 +37,19 @@ describe("mix", () => {
             "var(--test-9) 35px"
         )
     })
+
+    test("mixes binary visibility", () => {
+        expect(mix("visible", "hidden")(0)).toBe("visible")
+        expect(mix("visible", "hidden")(0.5)).toBe("visible")
+        expect(mix("visible", "hidden")(1)).toBe("hidden")
+        expect(mix("hidden", "visible")(0)).toBe("hidden")
+        expect(mix("hidden", "visible")(0.5)).toBe("visible")
+        expect(mix("hidden", "visible")(1)).toBe("visible")
+        expect(mix("block", "none")(0)).toBe("block")
+        expect(mix("block", "none")(0.5)).toBe("block")
+        expect(mix("block", "none")(1)).toBe("none")
+        expect(mix("none", "block")(0)).toBe("none")
+        expect(mix("none", "block")(0.5)).toBe("block")
+        expect(mix("none", "block")(1)).toBe("block")
+    })
 })

@@ -55,7 +55,7 @@ export const PresenceChild = ({
          * we want to make a new context value to ensure they get re-rendered
          * so they can detect that layout change.
          */
-        presenceAffectsLayout ? undefined : [isPresent]
+        presenceAffectsLayout ? [Math.random()] : [isPresent]
     )
 
     useMemo(() => {

@@ -10,14 +10,14 @@
 describe("Drag SVG", () => {
     it("Drags the element by the defined distance", () => {
         cy.visit("?test=drag-svg")
-            .wait(200)
+            .wait(50)
             .get("[data-testid='draggable']")
-            .wait(200)
-            .trigger("pointerdown", 0, 0, { force: true })
-            .trigger("pointermove", 10, 10, { force: true }) // Gesture will start from first move past threshold
+            .trigger("pointerdown", 50, 50, { force: true })
             .wait(50)
-            .trigger("pointermove", 200, 300, { force: true })
-            .wait(50)
+            .trigger("pointermove", 60, 60, { force: true }) // Gesture will start from first move past threshold
+            .wait(100)
+            .trigger("pointermove", 210, 310, { force: true })
+            .wait(100)
             .trigger("pointerup", { force: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement

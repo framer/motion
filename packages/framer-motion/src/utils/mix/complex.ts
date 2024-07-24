@@ -11,14 +11,12 @@ import {
     complex,
 } from "../../value/types/complex"
 import { isCSSVariableToken } from "../../render/dom/utils/is-css-variable"
+import { invisibleValues, mixVisibility } from "./visibility"
+import { mixImmediate } from "./immediate"
 
 type MixableArray = Array<number | RGBA | HSLA | string>
 type MixableObject = {
     [key: string]: string | number | RGBA | HSLA
-}
-
-function mixImmediate<T>(a: T, b: T) {
-    return (p: number) => (p > 0 ? b : a)
 }
 
 function mixNumber(a: number, b: number) {
@@ -112,6 +110,15 @@ export const mixComplex = (
         originStats.indexes.number.length >= targetStats.indexes.number.length
 
     if (canInterpolate) {
+        if (
+            (invisibleValues.has(origin as string) &&
+                !targetStats.values.length) ||
+            (invisibleValues.has(target as string) &&
+                !originStats.values.length)
+        ) {
+            return mixVisibility(origin as string, target as string)
+        }
+
         return pipe(
             mixArray(matchOrder(originStats, targetStats), targetStats.values),
             template

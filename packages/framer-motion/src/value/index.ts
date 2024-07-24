@@ -77,7 +77,7 @@ export class MotionValue<V = any> {
     /**
      * The current state of the `MotionValue`.
      */
-    private current: V
+    private current: V | undefined
 
     /**
      * The previous state of the `MotionValue`.
@@ -112,9 +112,7 @@ export class MotionValue<V = any> {
     private stopPassiveEffect?: VoidFunction
 
     /**
-     * A reference to the currently-controlling Popmotion animation
-     *
-     *
+     * A reference to the currently-controlling animation.
      */
     animation?: AnimationPlaybackControls
 
@@ -125,7 +123,13 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    private canTrackVelocity = false
+    private canTrackVelocity: boolean | null = null
+
+    /**
+     * Tracks whether this value should be removed
+     * @internal
+     */
+    liveStyle?: boolean
 
     /**
      * @param init - The initiating value
@@ -137,13 +141,16 @@ export class MotionValue<V = any> {
      */
     constructor(init: V, options: MotionValueOptions = {}) {
         this.setCurrent(init)
-        this.canTrackVelocity = isFloat(this.current)
         this.owner = options.owner
     }
 
     setCurrent(current: V) {
         this.current = current
         this.updatedAt = time.now()
+
+        if (this.canTrackVelocity === null && current !== undefined) {
+            this.canTrackVelocity = isFloat(this.current)
+        }
     }
 
     setPrevFrameValue(prevFrameValue: V | undefined = this.current) {
@@ -287,11 +294,11 @@ export class MotionValue<V = any> {
      * Set the state of the `MotionValue`, stopping any active animations,
      * effects, and resets velocity to `0`.
      */
-    jump(v: V) {
+    jump(v: V, endAnimation = true) {
         this.updateAndNotify(v)
         this.prev = v
         this.prevUpdatedAt = this.prevFrameValue = undefined
-        this.stop()
+        endAnimation && this.stop()
         if (this.stopPassiveEffect) this.stopPassiveEffect()
     }
 
@@ -334,7 +341,7 @@ export class MotionValue<V = any> {
             collectMotionValues.current.push(this)
         }
 
-        return this.current
+        return this.current!
     }
 
     /**

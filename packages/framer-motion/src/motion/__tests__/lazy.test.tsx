@@ -1,6 +1,5 @@
 import { render } from "../../../jest.setup"
 import { m, motion, LazyMotion, domAnimation, domMax } from "../.."
-import * as React from "react"
 import { motionValue } from "../../value"
 
 describe("Lazy feature loading", () => {

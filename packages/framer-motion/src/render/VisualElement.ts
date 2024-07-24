@@ -1,17 +1,12 @@
 import { frame, cancelFrame } from "../frameloop"
-import { invariant, warning } from "../utils/errors"
 import {
     MotionConfigContext,
     ReducedMotionConfig,
 } from "../context/MotionConfigContext"
-import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
-import { FeatureBundle, FeatureDefinitions } from "../motion/features/types"
+import { FeatureDefinitions } from "../motion/features/types"
 import { MotionProps, MotionStyle } from "../motion/types"
-import { createBox } from "../projection/geometry/models"
-import { Box } from "../projection/geometry/types"
+import type { Box } from "../projection/geometry/types"
 import { IProjectionNode } from "../projection/node/types"
-import { TargetAndTransition } from "../types"
-import { isRefObject } from "../utils/is-ref-object"
 import { initPrefersReducedMotion } from "../utils/reduced-motion"
 import {
     hasReducedMotionListener,
@@ -19,7 +14,6 @@ import {
 } from "../utils/reduced-motion/state"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { motionValue, MotionValue } from "../value"
-import { isWillChangeMotionValue } from "../value/use-will-change/is"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import { transformProps } from "./html/utils/transform"
 import {
@@ -42,9 +36,17 @@ import { Feature } from "../motion/features/Feature"
 import type { PresenceContextProps } from "../context/PresenceContext"
 import { variantProps } from "./utils/variant-props"
 import { visualElementStore } from "./store"
-
-const featureNames = Object.keys(featureDefinitions)
-const numFeatures = featureNames.length
+import {
+    KeyframeResolver,
+    ResolvedKeyframes,
+    UnresolvedKeyframes,
+} from "./utils/KeyframesResolver"
+import { isNumericalString } from "../utils/is-numerical-string"
+import { isZeroValueString } from "../utils/is-zero-value-string"
+import { findValueType } from "./dom/value-types/find"
+import { complex } from "../value/types/complex"
+import { getAnimatableNone } from "./dom/value-types/animatable-none"
+import { createBox } from "../projection/geometry/models"
 
 const propEventHandlers = [
     "AnimationStart",
@@ -79,15 +81,6 @@ export abstract class VisualElement<
      * compare their respective positions within the tree.
      */
     abstract sortInstanceNodePosition(a: Instance, b: Instance): number
-
-    /**
-     * Take a target and make it animatable. For instance if provided
-     * height: "auto" we need to measure height in pixels and animate that instead.
-     */
-    abstract makeTargetAnimatableFromInstance(
-        target: TargetAndTransition,
-        isLive: boolean
-    ): TargetAndTransition
 
     /**
      * Measure the viewport-relative bounding box of the Instance.
@@ -135,7 +128,6 @@ export abstract class VisualElement<
     abstract build(
         renderState: RenderState,
         latestValues: ResolvedValues,
-        options: Options,
         props: MotionProps
     ): void
 
@@ -152,6 +144,30 @@ export abstract class VisualElement<
     ): void
 
     /**
+     * If true, will-change will be applied to the element. Only HTMLVisualElements
+     * currently support this.
+     */
+    applyWillChange = false
+
+    resolveKeyframes = <T extends string | number>(
+        keyframes: UnresolvedKeyframes<T>,
+        // We use an onComplete callback here rather than a Promise as a Promise
+        // resolution is a microtask and we want to retain the ability to force
+        // the resolution of keyframes synchronously.
+        onComplete: (resolvedKeyframes: ResolvedKeyframes<T>) => void,
+        name: string,
+        value: MotionValue<T>
+    ): KeyframeResolver<T> => {
+        return new this.KeyframeResolver(
+            keyframes,
+            onComplete,
+            name,
+            value,
+            this
+        )
+    }
+
+    /**
      * If the component child is provided as a motion value, handle subscriptions
      * with the renderer-specific VisualElement.
      */
@@ -166,7 +182,8 @@ export abstract class VisualElement<
      */
     scrapeMotionValuesFromProps(
         _props: MotionProps,
-        _prevProps: MotionProps
+        _prevProps: MotionProps,
+        _visualElement: VisualElement
     ): {
         [key: string]: MotionValue | string | number
     } {
@@ -260,11 +277,13 @@ export abstract class VisualElement<
      */
     animationState?: AnimationState
 
+    KeyframeResolver = KeyframeResolver
+
     /**
      * The options used to create this VisualElement. The Options type is defined
      * by the inheriting VisualElement and is passed straight through to the render functions.
      */
-    private readonly options: Options
+    readonly options: Options
 
     /**
      * A reference to the latest props provided to the VisualElement's host React component.
@@ -339,6 +358,7 @@ export abstract class VisualElement<
             props,
             presenceContext,
             reducedMotionConfig,
+            blockInitialAnimation,
             visualState,
         }: VisualElementOptions<Instance, RenderState>,
         options: Options = {} as any
@@ -354,6 +374,7 @@ export abstract class VisualElement<
         this.depth = parent ? parent.depth + 1 : 0
         this.reducedMotionConfig = reducedMotionConfig
         this.options = options
+        this.blockInitialAnimation = Boolean(blockInitialAnimation)
 
         this.isControllingVariants = checkIsControllingVariants(props)
         this.isVariantNode = checkIsVariantNode(props)
@@ -370,21 +391,17 @@ export abstract class VisualElement<
          * initial values for this component.
          *
          * TODO: This is impure and we should look at changing this to run on mount.
-         * Doing so will break some tests but this isn't neccessarily a breaking change,
+         * Doing so will break some tests but this isn't necessarily a breaking change,
          * more a reflection of the test.
          */
         const { willChange, ...initialMotionValues } =
-            this.scrapeMotionValuesFromProps(props, {})
+            this.scrapeMotionValuesFromProps(props, {}, this)
 
         for (const key in initialMotionValues) {
             const value = initialMotionValues[key]
 
             if (latestValues[key] !== undefined && isMotionValue(value)) {
                 value.set(latestValues[key], false)
-
-                if (isWillChangeMotionValue(willChange)) {
-                    willChange.add(key)
-                }
             }
         }
     }
@@ -434,11 +451,16 @@ export abstract class VisualElement<
         this.valueSubscriptions.forEach((remove) => remove())
         this.removeFromVariantTree && this.removeFromVariantTree()
         this.parent && this.parent.children.delete(this)
+
         for (const key in this.events) {
             this.events[key].clear()
         }
         for (const key in this.features) {
-            this.features[key].unmount()
+            const feature = this.features[key as keyof typeof this.features]
+            if (feature) {
+                feature.unmount()
+                feature.isMounted = false
+            }
         }
         this.current = null
     }
@@ -450,8 +472,8 @@ export abstract class VisualElement<
             "change",
             (latestValue: string | number) => {
                 this.latestValues[key] = latestValue
-                this.props.onUpdate &&
-                    frame.update(this.notifyUpdate, false, true)
+
+                this.props.onUpdate && frame.preRender(this.notifyUpdate)
 
                 if (valueIsTransform && this.projection) {
                     this.projection.isTransformDirty = true
@@ -467,6 +489,7 @@ export abstract class VisualElement<
         this.valueSubscriptions.set(key, () => {
             removeOnChange()
             removeOnRenderRequest()
+            if (value.owner) value.stop()
         })
     }
 
@@ -488,103 +511,38 @@ export abstract class VisualElement<
         )
     }
 
-    loadFeatures(
-        { children, ...renderedProps }: MotionProps,
-        isStrict: boolean,
-        preloadedFeatures?: FeatureBundle,
-        initialLayoutGroupConfig?: SwitchLayoutGroupContext
-    ) {
-        let ProjectionNodeConstructor: any
-        let MeasureLayout: undefined | React.ComponentType<MotionProps>
-
-        /**
-         * If we're in development mode, check to make sure we're not rendering a motion component
-         * as a child of LazyMotion, as this will break the file-size benefits of using it.
-         */
-        if (
-            process.env.NODE_ENV !== "production" &&
-            preloadedFeatures &&
-            isStrict
-        ) {
-            const strictMessage =
-                "You have rendered a `motion` component within a `LazyMotion` component. This will break tree shaking. Import and render a `m` component instead."
-            renderedProps.ignoreStrict
-                ? warning(false, strictMessage)
-                : invariant(false, strictMessage)
-        }
-
-        for (let i = 0; i < numFeatures; i++) {
-            const name = featureNames[i]
-            const {
-                isEnabled,
-                Feature: FeatureConstructor,
-                ProjectionNode,
-                MeasureLayout: MeasureLayoutComponent,
-            } = featureDefinitions[name]
-
-            if (ProjectionNode) ProjectionNodeConstructor = ProjectionNode
-
-            if (isEnabled(renderedProps)) {
-                if (!this.features[name] && FeatureConstructor) {
-                    this.features[name] = new (FeatureConstructor as any)(this)
-                }
-                if (MeasureLayoutComponent) {
-                    MeasureLayout = MeasureLayoutComponent
-                }
-            }
-        }
-
-        if (
-            (this.type === "html" || this.type === "svg") &&
-            !this.projection &&
-            ProjectionNodeConstructor
-        ) {
-            this.projection = new ProjectionNodeConstructor(
-                this.latestValues,
-                this.parent && this.parent.projection
-            ) as IProjectionNode
-
-            const {
-                layoutId,
-                layout,
-                drag,
-                dragConstraints,
-                layoutScroll,
-                layoutRoot,
-            } = renderedProps
-            this.projection.setOptions({
-                layoutId,
-                layout,
-                alwaysMeasureLayout:
-                    Boolean(drag) ||
-                    (dragConstraints && isRefObject(dragConstraints)),
-                visualElement: this,
-                scheduleRender: () => this.scheduleRender(),
-                /**
-                 * TODO: Update options in an effect. This could be tricky as it'll be too late
-                 * to update by the time layout animations run.
-                 * We also need to fix this safeToRemove by linking it up to the one returned by usePresence,
-                 * ensuring it gets called if there's no potential layout animations.
-                 *
-                 */
-                animationType: typeof layout === "string" ? layout : "both",
-                initialPromotionConfig: initialLayoutGroupConfig,
-                layoutScroll,
-                layoutRoot,
-            })
-        }
-
-        return MeasureLayout
-    }
-
     updateFeatures() {
-        for (const key in this.features) {
-            const feature = this.features[key] as Feature<any>
-            if (feature.isMounted) {
-                feature.update()
-            } else {
-                feature.mount()
-                feature.isMounted = true
+        let key: keyof typeof featureDefinitions = "animation"
+
+        for (key in featureDefinitions) {
+            const featureDefinition = featureDefinitions[key]
+
+            if (!featureDefinition) continue
+
+            const { isEnabled, Feature: FeatureConstructor } = featureDefinition
+
+            /**
+             * If this feature is enabled but not active, make a new instance.
+             */
+            if (
+                !this.features[key] &&
+                FeatureConstructor &&
+                isEnabled(this.props)
+            ) {
+                this.features[key] = new FeatureConstructor(this)
+            }
+
+            /**
+             * If we have a feature, mount or update it.
+             */
+            if (this.features[key]) {
+                const feature = this.features[key]!
+                if (feature.isMounted) {
+                    feature.update()
+                } else {
+                    feature.mount()
+                    feature.isMounted = true
+                }
             }
         }
     }
@@ -592,17 +550,12 @@ export abstract class VisualElement<
     notifyUpdate = () => this.notify("Update", this.latestValues)
 
     triggerBuild() {
-        this.build(
-            this.renderState,
-            this.latestValues,
-            this.options,
-            this.props
-        )
+        this.build(this.renderState, this.latestValues, this.props)
     }
 
     render = () => {
+        this.isRenderScheduled = false
         if (!this.current) return
-
         this.triggerBuild()
         this.renderInstance(
             this.current,
@@ -612,7 +565,13 @@ export abstract class VisualElement<
         )
     }
 
-    scheduleRender = () => frame.render(this.render, false, true)
+    private isRenderScheduled = false
+    scheduleRender = () => {
+        if (!this.isRenderScheduled) {
+            this.isRenderScheduled = true
+            frame.render(this.render, false, true)
+        }
+    }
 
     /**
      * Measure the current viewport box with or without transforms.
@@ -631,20 +590,6 @@ export abstract class VisualElement<
 
     setStaticValue(key: string, value: string | number) {
         this.latestValues[key] = value
-    }
-
-    /**
-     * Make a target animatable by Popmotion. For instance, if we're
-     * trying to animate width from 100px to 100vw we need to measure 100vw
-     * in pixels to determine what we really need to animate to. This is also
-     * pluggable to support Framer's custom value types like Color,
-     * and CSS variables.
-     */
-    makeTargetAnimatable(
-        target: TargetAndTransition,
-        canMutate = true
-    ): TargetAndTransition {
-        return this.makeTargetAnimatableFromInstance(target, canMutate)
     }
 
     /**
@@ -672,7 +617,8 @@ export abstract class VisualElement<
                 delete this.propEventSubscriptions[key]
             }
 
-            const listener = props["on" + key]
+            const listenerName = ("on" + key) as keyof typeof props
+            const listener = props[listenerName]
             if (listener) {
                 this.propEventSubscriptions[key] = this.on(key as any, listener)
             }
@@ -680,7 +626,7 @@ export abstract class VisualElement<
 
         this.prevMotionValues = updateMotionValuesFromProps(
             this,
-            this.scrapeMotionValuesFromProps(props, this.prevProps),
+            this.scrapeMotionValuesFromProps(props, this.prevProps, this),
             this.prevMotionValues
         )
 
@@ -736,7 +682,7 @@ export abstract class VisualElement<
 
         const context = {}
         for (let i = 0; i < numVariantProps; i++) {
-            const name = variantProps[i]
+            const name = variantProps[i] as keyof typeof context
             const prop = this.props[name]
 
             if (isVariantLabel(prop) || prop === false) {
@@ -764,13 +710,14 @@ export abstract class VisualElement<
      */
     addValue(key: string, value: MotionValue) {
         // Remove existing value if it exists
-        if (value !== this.values.get(key)) {
-            this.removeValue(key)
-            this.bindToMotionValue(key, value)
-        }
+        const existingValue = this.values.get(key)
 
-        this.values.set(key, value)
-        this.latestValues[key] = value.get()
+        if (value !== existingValue) {
+            if (existingValue) this.removeValue(key)
+            this.bindToMotionValue(key, value)
+            this.values.set(key, value)
+            this.latestValues[key] = value.get()
+        }
     }
 
     /**
@@ -799,10 +746,10 @@ export abstract class VisualElement<
      * value, we'll create one if none exists.
      */
     getValue(key: string): MotionValue | undefined
-    getValue(key: string, defaultValue: string | number): MotionValue
+    getValue(key: string, defaultValue: string | number | null): MotionValue
     getValue(
         key: string,
-        defaultValue?: string | number
+        defaultValue?: string | number | null
     ): MotionValue | undefined {
         if (this.props.values && this.props.values[key]) {
             return this.props.values[key]
@@ -811,7 +758,10 @@ export abstract class VisualElement<
         let value = this.values.get(key)
 
         if (value === undefined && defaultValue !== undefined) {
-            value = motionValue(defaultValue, { owner: this })
+            value = motionValue(
+                defaultValue === null ? undefined : defaultValue,
+                { owner: this }
+            )
             this.addValue(key, value)
         }
 
@@ -823,11 +773,28 @@ export abstract class VisualElement<
      * we need to check for it in our state and as a last resort read it
      * directly from the instance (which might have performance implications).
      */
-    readValue(key: string) {
-        return this.latestValues[key] !== undefined || !this.current
-            ? this.latestValues[key]
-            : this.getBaseTargetFromProps(this.props, key) ??
+    readValue(key: string, target?: string | number | null) {
+        let value =
+            this.latestValues[key] !== undefined || !this.current
+                ? this.latestValues[key]
+                : this.getBaseTargetFromProps(this.props, key) ??
                   this.readValueFromInstance(this.current, key, this.options)
+
+        if (value !== undefined && value !== null) {
+            if (
+                typeof value === "string" &&
+                (isNumericalString(value) || isZeroValueString(value))
+            ) {
+                // If this is a number read as a string, ie "0" or "200", convert it to a number
+                value = parseFloat(value)
+            } else if (!findValueType(value) && complex.test(target)) {
+                value = getAnimatableNone(key, target as string)
+            }
+
+            this.setBaseTarget(key, isMotionValue(value) ? value.get() : value)
+        }
+
+        return isMotionValue(value) ? value.get() : value
     }
 
     /**
@@ -842,12 +809,23 @@ export abstract class VisualElement<
      * Find the base target for a value thats been removed from all animation
      * props.
      */
-    getBaseTarget(key: string) {
+    getBaseTarget(key: string): ResolvedValues[string] | undefined | null {
         const { initial } = this.props
-        const valueFromInitial =
-            typeof initial === "string" || typeof initial === "object"
-                ? resolveVariantFromProps(this.props, initial as any)?.[key]
-                : undefined
+
+        let valueFromInitial: ResolvedValues[string] | undefined | null
+
+        if (typeof initial === "string" || typeof initial === "object") {
+            const variant = resolveVariantFromProps(
+                this.props,
+                initial as any,
+                this.presenceContext?.custom
+            )
+            if (variant) {
+                valueFromInitial = variant[
+                    key as keyof typeof variant
+                ] as string
+            }
+        }
 
         /**
          * If this value still exists in the current initial variant, read that.

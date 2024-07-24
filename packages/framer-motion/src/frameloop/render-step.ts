@@ -1,40 +1,12 @@
-import { Step, Process } from "./types"
-
-class Queue {
-    order: Process[] = []
-    scheduled: Set<Process> = new Set()
-
-    add(process: Process) {
-        if (!this.scheduled.has(process)) {
-            this.scheduled.add(process)
-            this.order.push(process)
-            return true
-        }
-    }
-
-    remove(process: Process) {
-        const index = this.order.indexOf(process)
-        if (index !== -1) {
-            this.order.splice(index, 1)
-            this.scheduled.delete(process)
-        }
-    }
-
-    clear() {
-        this.order.length = 0
-        this.scheduled.clear()
-    }
-}
+import { Step, Process, FrameData } from "./types"
 
 export function createRenderStep(runNextFrame: () => void): Step {
     /**
      * We create and reuse two queues, one to queue jobs for the current frame
      * and one for the next. We reuse to avoid triggering GC after x frames.
      */
-    let thisFrame = new Queue()
-    let nextFrame = new Queue()
-
-    let numToRun = 0
+    let thisFrame = new Set<Process>()
+    let nextFrame = new Set<Process>()
 
     /**
      * Track whether we're currently processing jobs in this step. This way
@@ -49,6 +21,21 @@ export function createRenderStep(runNextFrame: () => void): Step {
      */
     const toKeepAlive = new WeakSet<Process>()
 
+    let latestFrameData: FrameData = {
+        delta: 0.0,
+        timestamp: 0.0,
+        isProcessing: false,
+    }
+
+    function triggerCallback(callback: Process) {
+        if (toKeepAlive.has(callback)) {
+            step.schedule(callback)
+            runNextFrame()
+        }
+
+        callback(latestFrameData)
+    }
+
     const step: Step = {
         /**
          * Schedule a process to run on the next frame.
@@ -59,10 +46,7 @@ export function createRenderStep(runNextFrame: () => void): Step {
 
             if (keepAlive) toKeepAlive.add(callback)
 
-            if (queue.add(callback) && addToCurrentFrame && isProcessing) {
-                // If we're adding it to the currently running queue, update its measured size
-                numToRun = thisFrame.order.length
-            }
+            if (!queue.has(callback)) queue.add(callback)
 
             return callback
         },
@@ -71,7 +55,7 @@ export function createRenderStep(runNextFrame: () => void): Step {
          * Cancel the provided callback from running on the next frame.
          */
         cancel: (callback) => {
-            nextFrame.remove(callback)
+            nextFrame.delete(callback)
             toKeepAlive.delete(callback)
         },
 
@@ -79,6 +63,8 @@ export function createRenderStep(runNextFrame: () => void): Step {
          * Execute all schedule callbacks.
          */
         process: (frameData) => {
+            latestFrameData = frameData
+
             /**
              * If we're already processing we've probably been triggered by a flushSync
              * inside an existing process. Instead of executing, mark flushNextFrame
@@ -98,20 +84,7 @@ export function createRenderStep(runNextFrame: () => void): Step {
             nextFrame.clear()
 
             // Execute this frame
-            numToRun = thisFrame.order.length
-
-            if (numToRun) {
-                for (let i = 0; i < numToRun; i++) {
-                    const callback = thisFrame.order[i]
-
-                    if (toKeepAlive.has(callback)) {
-                        step.schedule(callback)
-                        runNextFrame()
-                    }
-
-                    callback(frameData)
-                }
-            }
+            thisFrame.forEach(triggerCallback)
 
             isProcessing = false
 

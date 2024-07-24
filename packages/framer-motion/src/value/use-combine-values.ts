@@ -31,7 +31,7 @@ export function useCombineMotionValues<R>(
      * schedule an update.
      */
     useIsomorphicLayoutEffect(() => {
-        const scheduleUpdate = () => frame.update(updateValue, false, true)
+        const scheduleUpdate = () => frame.preRender(updateValue, false, true)
         const subscriptions = values.map((v) => v.on("change", scheduleUpdate))
 
         return () => {

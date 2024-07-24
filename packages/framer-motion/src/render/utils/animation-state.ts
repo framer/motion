@@ -11,12 +11,10 @@ import { variantPriorityOrder } from "./variant-props"
 import { VisualElementAnimationOptions } from "../../animation/interfaces/types"
 import { AnimationDefinition } from "../../animation/types"
 import { animateVisualElement } from "../../animation/interfaces/visual-element"
+import { ResolvedValues } from "../types"
 
 export interface AnimationState {
-    animateChanges: (
-        options?: VisualElementAnimationOptions,
-        type?: AnimationType
-    ) => Promise<any>
+    animateChanges: (type?: AnimationType) => Promise<any>
     setActive: (
         type: AnimationType,
         isActive: boolean,
@@ -24,6 +22,7 @@ export interface AnimationState {
     ) => Promise<any>
     setAnimateFunction: (fn: any) => void
     getState: () => { [key: string]: AnimationTypeState }
+    reset: () => void
 }
 
 interface DefinitionAndOptions {
@@ -49,26 +48,34 @@ export function createAnimationState(
     visualElement: VisualElement
 ): AnimationState {
     let animate = animateList(visualElement)
-    const state = createState()
+    let state = createState()
     let isInitialRender = true
 
     /**
      * This function will be used to reduce the animation definitions for
      * each active animation type into an object of resolved values for it.
      */
-    const buildResolvedTypeValues = (
-        acc: { [key: string]: any },
-        definition: string | TargetAndTransition | undefined
-    ) => {
-        const resolved = resolveVariant(visualElement, definition)
+    const buildResolvedTypeValues =
+        (type: AnimationType) =>
+        (
+            acc: { [key: string]: any },
+            definition: string | TargetAndTransition | undefined
+        ) => {
+            const resolved = resolveVariant(
+                visualElement,
+                definition,
+                type === "exit"
+                    ? visualElement.presenceContext?.custom
+                    : undefined
+            )
 
-        if (resolved) {
-            const { transition, transitionEnd, ...target } = resolved
-            acc = { ...acc, ...target, ...transitionEnd }
+            if (resolved) {
+                const { transition, transitionEnd, ...target } = resolved
+                acc = { ...acc, ...target, ...transitionEnd }
+            }
+
+            return acc
         }
-
-        return acc
-    }
 
     /**
      * This just allows us to inject mocked animation functions
@@ -88,10 +95,7 @@ export function createAnimationState(
      * 3. Determine if any values have been removed from a type and figure out
      *    what to animate those to.
      */
-    function animateChanges(
-        options?: VisualElementAnimationOptions,
-        changedActiveType?: AnimationType
-    ) {
+    function animateChanges(changedActiveType?: AnimationType) {
         const props = visualElement.getProps()
         const context = visualElement.getVariantContext(true) || {}
 
@@ -129,7 +133,10 @@ export function createAnimationState(
         for (let i = 0; i < numAnimationTypes; i++) {
             const type = reversePriorityOrder[i]
             const typeState = state[type]
-            const prop = props[type] !== undefined ? props[type] : context[type]
+            const prop =
+                props[type] !== undefined
+                    ? props[type]
+                    : context[type as keyof typeof context]
             const propIsVariant = isVariantLabel(prop)
 
             /**
@@ -148,7 +155,9 @@ export function createAnimationState(
              * TODO: Can probably change this to a !isControllingVariants check
              */
             let isInherited =
-                prop === context[type] && prop !== props[type] && propIsVariant
+                prop === context[type as keyof typeof context] &&
+                prop !== props[type] &&
+                propIsVariant
 
             /**
              *
@@ -213,7 +222,7 @@ export function createAnimationState(
              * animateChanges calls to determine whether a value has changed.
              */
             let resolvedValues = definitionList.reduce(
-                buildResolvedTypeValues,
+                buildResolvedTypeValues(type),
                 {}
             )
 
@@ -241,6 +250,9 @@ export function createAnimationState(
                     removedKeys.delete(key)
                 }
                 typeState.needsAnimating[key] = true
+
+                const motionValue = visualElement.getValue(key)
+                if (motionValue) motionValue.liveStyle = false
             }
 
             for (const key in allKeys) {
@@ -261,7 +273,7 @@ export function createAnimationState(
                 }
 
                 if (valueHasChanged) {
-                    if (next !== undefined) {
+                    if (next !== undefined && next !== null) {
                         // If next is defined and doesn't equal prev, it needs animating
                         markToAnimate(key)
                     } else {
@@ -308,7 +320,7 @@ export function createAnimationState(
                 animations.push(
                     ...definitionList.map((animation) => ({
                         animation: animation as AnimationDefinition,
-                        options: { type, ...options },
+                        options: { type },
                     }))
                 )
             }
@@ -320,13 +332,15 @@ export function createAnimationState(
          * defined in the style prop, or the last read value.
          */
         if (removedKeys.size) {
-            const fallbackAnimation = {}
+            const fallbackAnimation: ResolvedValues = {}
             removedKeys.forEach((key) => {
                 const fallbackTarget = visualElement.getBaseTarget(key)
 
-                if (fallbackTarget !== undefined) {
-                    fallbackAnimation[key] = fallbackTarget
-                }
+                const motionValue = visualElement.getValue(key)
+                if (motionValue) motionValue.liveStyle = true
+
+                // @ts-expect-error - @mattgperry to figure if we should do something here
+                fallbackAnimation[key] = fallbackTarget ?? null
             })
 
             animations.push({ animation: fallbackAnimation })
@@ -349,11 +363,7 @@ export function createAnimationState(
     /**
      * Change whether a certain animation type is active.
      */
-    function setActive(
-        type: AnimationType,
-        isActive: boolean,
-        options?: VisualElementAnimationOptions
-    ) {
+    function setActive(type: AnimationType, isActive: boolean) {
         // If the active state hasn't changed, we can safely do nothing here
         if (state[type].isActive === isActive) return Promise.resolve()
 
@@ -364,10 +374,10 @@ export function createAnimationState(
 
         state[type].isActive = isActive
 
-        const animations = animateChanges(options, type)
+        const animations = animateChanges(type)
 
         for (const key in state) {
-            state[key].protectedKeys = {}
+            state[key as keyof typeof state].protectedKeys = {}
         }
 
         return animations
@@ -378,6 +388,10 @@ export function createAnimationState(
         setActive,
         setAnimateFunction,
         getState: () => state,
+        reset: () => {
+            state = createState()
+            isInitialRender = true
+        },
     }
 }
 

@@ -1,7 +1,7 @@
 import { VisualState } from "../motion/utils/use-visual-state"
 import { MotionValue } from "../value"
 import { ReducedMotionConfig } from "../context/MotionConfigContext"
-import { Axis, Box } from "../projection/geometry/types"
+import type { Axis, Box } from "../projection/geometry/types"
 import type { VisualElement } from "./VisualElement"
 import { PresenceContextProps } from "../context/PresenceContext"
 import { MotionProps } from "../motion/types"
@@ -28,7 +28,8 @@ export type VariantStateContext = {
 
 export type ScrapeMotionValuesFromProps = (
     props: MotionProps,
-    prevProps: MotionProps
+    prevProps: MotionProps,
+    visualElement?: VisualElement
 ) => {
     [key: string]: MotionValue | string | number
 }

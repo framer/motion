@@ -1,5 +1,4 @@
 import { render } from "../../../jest.setup"
-import * as React from "react"
 import { motion } from "../../"
 import { useMotionValue } from "../use-motion-value"
 import { motionValue, MotionValue } from ".."
@@ -13,9 +12,7 @@ describe("useMotionValue", () => {
         }
 
         const { container } = render(<Component />)
-        expect(container.firstChild).toHaveStyle(
-            "transform: translateX(100px) translateZ(0)"
-        )
+        expect(container.firstChild).toHaveStyle("transform: translateX(100px)")
     })
 
     test("can be set manually", async () => {
@@ -28,9 +25,7 @@ describe("useMotionValue", () => {
         }
 
         const { container } = render(<Component />)
-        expect(container.firstChild).toHaveStyle(
-            "transform: translateX(500px) translateZ(0)"
-        )
+        expect(container.firstChild).toHaveStyle("transform: translateX(500px)")
     })
 
     test("accepts new motion values", async () => {
@@ -47,9 +42,7 @@ describe("useMotionValue", () => {
 
         await nextMicrotask()
 
-        expect(container.firstChild).toHaveStyle(
-            "transform: translateX(5px) translateZ(0)"
-        )
+        expect(container.firstChild).toHaveStyle("transform: translateX(5px)")
     })
 
     test("fires callbacks", async () => {
@@ -77,8 +70,6 @@ describe("useMotionValue", () => {
         }
 
         const { container } = render(<Component />)
-        expect(container.firstChild).toHaveStyle(
-            "transform: translateX(100px) translateZ(0)"
-        )
+        expect(container.firstChild).toHaveStyle("transform: translateX(100px)")
     })
 })

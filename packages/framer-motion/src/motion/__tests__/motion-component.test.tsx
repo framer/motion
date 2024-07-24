@@ -1,4 +1,3 @@
-import * as React from "react"
 import { isMotionComponent, motion, unwrapMotionComponent } from "../.."
 
 function CustomComp() {

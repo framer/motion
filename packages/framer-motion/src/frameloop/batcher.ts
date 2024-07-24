@@ -3,12 +3,12 @@ import { createRenderStep } from "./render-step"
 import { Batcher, Process, StepId, Steps, FrameData } from "./types"
 
 export const stepsOrder: StepId[] = [
-    "prepare",
-    "read",
-    "update",
-    "preRender",
-    "render",
-    "postRender",
+    "read", // Read
+    "resolveKeyframes", // Write/Read/Write/Read
+    "update", // Compute
+    "preRender", // Compute
+    "render", // Write
+    "postRender", // Compute
 ]
 
 const maxElapsed = 40
@@ -21,19 +21,20 @@ export function createRenderBatcher(
     let useDefaultElapsed = true
 
     const state: FrameData = {
-        delta: 0,
-        timestamp: 0,
+        delta: 0.0,
+        timestamp: 0.0,
         isProcessing: false,
     }
 
+    const flagRunNextFrame = () => (runNextFrame = true)
+
     const steps = stepsOrder.reduce((acc, key) => {
-        acc[key] = createRenderStep(() => (runNextFrame = true))
+        acc[key] = createRenderStep(flagRunNextFrame)
         return acc
     }, {} as Steps)
 
-    const processStep = (stepId: StepId) => {
-        steps[stepId].process(state)
-    }
+    const { read, resolveKeyframes, update, preRender, render, postRender } =
+        steps
 
     const processBatch = () => {
         const timestamp = MotionGlobalConfig.useManualTiming
@@ -47,7 +48,15 @@ export function createRenderBatcher(
 
         state.timestamp = timestamp
         state.isProcessing = true
-        stepsOrder.forEach(processStep)
+
+        // Unrolled render loop for better per-frame performance
+        read.process(state)
+        resolveKeyframes.process(state)
+        update.process(state)
+        preRender.process(state)
+        render.process(state)
+        postRender.process(state)
+
         state.isProcessing = false
 
         if (runNextFrame && allowKeepAlive) {
@@ -69,13 +78,17 @@ export function createRenderBatcher(
         const step = steps[key]
         acc[key] = (process: Process, keepAlive = false, immediate = false) => {
             if (!runNextFrame) wake()
+
             return step.schedule(process, keepAlive, immediate)
         }
         return acc
     }, {} as Batcher)
 
-    const cancel = (process: Process) =>
-        stepsOrder.forEach((key) => steps[key].cancel(process))
+    const cancel = (process: Process) => {
+        for (let i = 0; i < stepsOrder.length; i++) {
+            steps[stepsOrder[i]].cancel(process)
+        }
+    }
 
     return { schedule, cancel, state, steps }
 }
