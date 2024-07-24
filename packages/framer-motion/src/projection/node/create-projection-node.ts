@@ -941,10 +941,7 @@ export function createProjectionNode<I>({
             const box = visualElement.measureViewportBox()
 
             const wasInScrollRoot =
-                this.scroll?.wasRoot ||
-                this.path.some(
-                    (node) => node !== node.root && node.scroll?.wasRoot
-                )
+                this.scroll?.wasRoot || this.path.some(checkNodeWasScrollRoot)
 
             if (!wasInScrollRoot) {
                 // Remove viewport scroll to give page-relative coordinates
@@ -2261,4 +2258,8 @@ function shouldAnimatePositionOnly(
         (animationType === "preserve-aspect" &&
             !isNear(aspectRatio(snapshot), aspectRatio(layout), 0.2))
     )
+}
+
+function checkNodeWasScrollRoot(node: IProjectionNode) {
+    return node !== node.root && node.scroll?.wasRoot
 }
