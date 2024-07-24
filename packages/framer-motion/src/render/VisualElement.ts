@@ -391,7 +391,7 @@ export abstract class VisualElement<
          * initial values for this component.
          *
          * TODO: This is impure and we should look at changing this to run on mount.
-         * Doing so will break some tests but this isn't neccessarily a breaking change,
+         * Doing so will break some tests but this isn't necessarily a breaking change,
          * more a reflection of the test.
          */
         const { willChange, ...initialMotionValues } =
