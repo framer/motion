@@ -15,6 +15,7 @@ export * from "./three-entry"
 /**
  * Features
  */
+export { domMin } from "./render/dom/features-min"
 export { domAnimation } from "./render/dom/features-animation"
 export { domMax } from "./render/dom/features-max"
 
