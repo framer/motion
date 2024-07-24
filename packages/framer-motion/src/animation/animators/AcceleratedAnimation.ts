@@ -313,6 +313,9 @@ export class AcceleratedAnimation<
         this.isStopped = true
         if (this.state === "idle") return
 
+        this.resolveFinishedPromise()
+        this.updateFinishedPromise()
+
         const { resolved } = this
         if (!resolved) return
 

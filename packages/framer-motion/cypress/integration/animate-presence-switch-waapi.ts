@@ -34,6 +34,7 @@ describe("AnimatePresence with WAAPI animations", () => {
             .get(".item")
             .should((items: any) => {
                 expect(items.length).to.equal(1)
+                expect(items[0].textContent).to.equal("0")
             })
     })
 })
