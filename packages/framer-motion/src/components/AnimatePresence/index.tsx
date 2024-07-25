@@ -242,9 +242,10 @@ export const AnimatePresence: React.FunctionComponent<
     // the same tree between renders
     childrenToRender = childrenToRender.map((child) => {
         const key = child.key as string | number
+        const exitingChild = exitingChildren.get(key)
 
-        return exitingChildren.get(key) ? (
-            exitingChildren.get(key)!
+        return exitingChild ? (
+            exitingChild
         ) : (
             <PresenceChild
                 key={getChildKey(child)}
