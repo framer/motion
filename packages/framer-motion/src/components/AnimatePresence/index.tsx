@@ -270,5 +270,5 @@ export const AnimatePresence: React.FunctionComponent<
         )
     }
 
-    return childrenToRender
+    return <>{childrenToRender}</>
 }
