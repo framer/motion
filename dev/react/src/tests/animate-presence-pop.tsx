@@ -49,7 +49,7 @@ export const App = () => {
                             opacity: 1,
                             transition: { duration: 0.001 },
                         }}
-                        exit={{ opacity: 0, transition: { duration: 10 } }}
+                        exit={{ opacity: 0 }}
                         layout
                         style={{ ...itemStyle, backgroundColor: "green" }}
                     />
