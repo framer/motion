@@ -1,6 +1,6 @@
 import { focus, blur, render } from "../../../jest.setup"
-import { createRef } from "react";
-import { motion, motionValue } from "../../"
+import { createRef } from "react"
+import { frame, motion, motionValue } from "../../"
 import { nextFrame } from "./utils"
 
 describe("focus", () => {
@@ -142,7 +142,9 @@ describe("focus", () => {
             const opacity = motionValue(1)
 
             let blurred = false
-            const onComplete = () => blurred && resolve(opacity.get())
+            const onComplete = () => {
+                frame.postRender(() => blurred && resolve(opacity.get()))
+            }
 
             const Component = ({ onAnimationComplete }: any) => (
                 <motion.a

@@ -455,6 +455,7 @@ export abstract class VisualElement<
         for (const key in this.events) {
             this.events[key].clear()
         }
+
         for (const key in this.features) {
             const feature = this.features[key as keyof typeof this.features]
             if (feature) {

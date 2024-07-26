@@ -198,6 +198,7 @@ export const AnimatePresence: React.FunctionComponent<
                     if (isEveryExitComplete) {
                         forceRender?.()
                         setRenderedChildren(pendingPresentChildren.current)
+
                         onExitComplete && onExitComplete()
                     }
                 }
