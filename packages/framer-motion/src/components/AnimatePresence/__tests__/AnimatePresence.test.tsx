@@ -192,6 +192,7 @@ describe("AnimatePresence", () => {
             const { rerender } = render(<Component isVisible />)
             rerender(<Component isVisible />)
             await nextFrame()
+            await nextFrame()
             rerender(<Component isVisible={false} />)
             rerender(<Component isVisible={false} />)
         })
@@ -398,6 +399,7 @@ describe("AnimatePresence", () => {
                 return (
                     <AnimatePresence mode="wait">
                         <motion.div
+                            initial={false}
                             key={i}
                             data-testid={i}
                             exit={{ opacity: 0 }}
@@ -414,14 +416,15 @@ describe("AnimatePresence", () => {
             rerender(<Component i={0} />)
             setTimeout(() => {
                 rerender(<Component i={1} />)
-            }, 50)
-            setTimeout(() => {
-                rerender(<Component i={2} />)
-                // wait for the exit animation to check the DOM again
+
                 setTimeout(() => {
-                    resolve(getByTestId("2").textContent === "2")
-                }, 200)
-            }, 200)
+                    rerender(<Component i={2} />)
+                    // wait for the exit animation to check the DOM again
+                    setTimeout(() => {
+                        resolve(getByTestId("2").textContent === "2")
+                    }, 250)
+                }, 50)
+            }, 50)
         })
 
         return await expect(promise).resolves.toBeTruthy()

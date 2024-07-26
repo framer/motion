@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion"
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
 
 /**
  * An example of AnimatePresence with exit defined as a variant through a tree.
