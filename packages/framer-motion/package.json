@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "11.3.17",
+    "version": "11.3.18-alpha.0",
     "description": "A simple and powerful JavaScript animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -104,5 +104,5 @@
             "maxSize": "18 kB"
         }
     ],
-    "gitHead": "7ce78149a4f0587c409a660214131a04fca04c51"
+    "gitHead": "f3c9de1ba4eb913f36e1f3e816f9c86784714910"
 }

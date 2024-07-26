@@ -4,7 +4,7 @@ import {
     pointerLeave,
     render,
 } from "../../../jest.setup"
-import { motion } from "../../"
+import { frame, motion } from "../../"
 import { motionValue } from "../../value"
 import { nextFrame } from "./utils"
 
@@ -140,7 +140,9 @@ describe("hover", () => {
             const opacity = motionValue(1)
 
             let hasMousedOut = false
-            const onComplete = () => hasMousedOut && resolve(opacity.get())
+            const onComplete = () => {
+                frame.postRender(() => hasMousedOut && resolve(opacity.get()))
+            }
 
             const Component = ({ onAnimationComplete }: any) => (
                 <motion.div

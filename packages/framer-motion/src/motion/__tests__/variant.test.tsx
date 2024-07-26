@@ -158,7 +158,9 @@ describe("animate prop as variant", () => {
                 },
             }
             const display = motionValue("block")
-            const onComplete = () => resolve(display.get())
+            const onComplete = () => {
+                frame.postRender(() => resolve(display.get()))
+            }
             const Component = () => (
                 <motion.div
                     initial="hidden"
