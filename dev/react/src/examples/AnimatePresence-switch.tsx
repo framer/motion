@@ -18,7 +18,6 @@ export const App = () => {
     return (
         <div
             onClick={() => {
-                console.log("========= click =========")
                 setKey(key === "a" ? "b" : "a")
             }}
         >
