@@ -153,7 +153,7 @@ describe("AnimatePresence", () => {
     })
 
     test("when: afterChildren fires correctly", async () => {
-        const child = await new Promise<number>((resolve) => {
+        const child = await new Promise<number>(async (resolve) => {
             const parentOpacityOutput: ResolvedValues[] = []
 
             const variants = {
@@ -191,6 +191,7 @@ describe("AnimatePresence", () => {
 
             const { rerender } = render(<Component isVisible />)
             rerender(<Component isVisible />)
+            await nextFrame()
             rerender(<Component isVisible={false} />)
             rerender(<Component isVisible={false} />)
         })
@@ -419,7 +420,7 @@ describe("AnimatePresence", () => {
                 // wait for the exit animation to check the DOM again
                 setTimeout(() => {
                     resolve(getByTestId("2").textContent === "2")
-                }, 150)
+                }, 200)
             }, 200)
         })
 
