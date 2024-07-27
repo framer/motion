@@ -15,6 +15,8 @@ const style = {
 export const App = () => {
     const [key, setKey] = useState("a")
 
+    console.log(key === "a" ? "green" : "blue")
+
     return (
         <div
             onClick={() => {
@@ -26,14 +28,14 @@ export const App = () => {
                 onExitComplete={() => console.log("rest")}
             >
                 <motion.div
-                    key={key}
+                    // key={key}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 1 }}
                     style={{
                         ...style,
-                        background: key === "a" ? "green" : "blue",
+                        backgroundColor: key === "a" ? "green" : "blue",
                     }}
                 />
             </AnimatePresence>
