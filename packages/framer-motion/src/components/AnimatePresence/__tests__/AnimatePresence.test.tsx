@@ -71,7 +71,7 @@ describe("AnimatePresence", () => {
         expect(element).toHaveStyle("transform: translateX(100px)")
     })
 
-    test.only("Normal rerenders work as expected", async () => {
+    test("Normal rerenders work as expected", async () => {
         const Component = ({ color }: { color: string }) => {
             return (
                 <AnimatePresence>
