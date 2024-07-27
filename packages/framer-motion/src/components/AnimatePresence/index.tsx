@@ -6,7 +6,7 @@ import { LayoutGroupContext } from "../../context/LayoutGroupContext"
 import { invariant } from "../../utils/errors"
 import { useIsomorphicLayoutEffect } from "../../three-entry"
 import { useConstant } from "../../utils/use-constant"
-import { ComponentKey, arrayEquals, getChildKey, onlyElements } from "./utils"
+import { ComponentKey, getChildKey, onlyElements } from "./utils"
 
 /**
  * `AnimatePresence` enables the animation of components that have been removed from the tree.
@@ -137,17 +137,7 @@ export const AnimatePresence: React.FunctionComponent<
             nextChildren = exitingChildren
         }
 
-        nextChildren = onlyElements(nextChildren)
-
-        const childrenHaveChanged = !arrayEquals(
-            nextChildren.map(getChildKey),
-            renderedChildren.map(getChildKey)
-        )
-
-        if (childrenHaveChanged) {
-            setRenderedChildren(nextChildren)
-        }
-
+        setRenderedChildren(onlyElements(nextChildren))
         setDiffedChildren(presentChildren)
 
         /**

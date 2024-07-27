@@ -71,6 +71,21 @@ describe("AnimatePresence", () => {
         expect(element).toHaveStyle("transform: translateX(100px)")
     })
 
+    test("Normal rerenders work as expected", async () => {
+        const Component = ({ color }: { color: string }) => {
+            return (
+                <AnimatePresence>
+                    <div style={{ backgroundColor: color }} />
+                </AnimatePresence>
+            )
+        }
+
+        const { container, rerender } = render(<Component color="red" />)
+        rerender(<Component color="green" />)
+
+        expect(container.firstChild).toHaveStyle("background-color: green")
+    })
+
     test("Animates out a component when its removed", async () => {
         const opacity = motionValue(1)
 
