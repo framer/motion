@@ -3,7 +3,6 @@ window.Animate = {}
 const {
     HTMLProjectionNode,
     frame,
-    buildTransform,
     animateDelta,
     addScaleCorrector,
     correctBoxShadow,

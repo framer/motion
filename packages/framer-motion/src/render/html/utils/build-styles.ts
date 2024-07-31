@@ -18,9 +18,6 @@ export function buildHTMLStyles(
     let hasTransform = false
     let hasTransformOrigin = false
 
-    // Does the calculated transform essentially equal "none"?
-    let transformIsNone = true
-
     /**
      * Loop over all our latest animated values and decide whether to handle them
      * as a style or CSS variable.
@@ -38,36 +35,28 @@ export function buildHTMLStyles(
             continue
         }
 
-        // Convert the value to its default value type, ie 0 -> "0px"
-        const valueType = numberValueTypes[key]
-        const valueAsType = getValueAsType(value, valueType)
-
         if (transformProps.has(key)) {
             // If this is a transform, flag to enable further transform processing
             hasTransform = true
-            transform[key] = valueAsType
-
-            // If we already know we have a non-default transform, early return
-            if (!transformIsNone) continue
-
-            // Otherwise check to see if this is a default transform
-            if (value !== (valueType.default || 0)) transformIsNone = false
-        } else if (key.startsWith("origin")) {
-            // If this is a transform origin, flag and enable further transform-origin processing
-            hasTransformOrigin = true
-            transformOrigin[key as keyof typeof transformOrigin] = valueAsType
+            transform[key] = value
         } else {
-            style[key] = valueAsType
+            // Convert the value to its default value type, ie 0 -> "0px"
+            const valueAsType = getValueAsType(value, numberValueTypes[key])
+
+            if (key.startsWith("origin")) {
+                // If this is a transform origin, flag and enable further transform-origin processing
+                hasTransformOrigin = true
+                transformOrigin[key as keyof typeof transformOrigin] =
+                    valueAsType
+            } else {
+                style[key] = valueAsType
+            }
         }
     }
 
     if (!latestValues.transform) {
         if (hasTransform || transformTemplate) {
-            style.transform = buildTransform(
-                state.transform,
-                transformIsNone,
-                transformTemplate
-            )
+            style.transform = buildTransform(state.transform, transformTemplate)
         } else if (style.transform) {
             /**
              * If we have previously created a transform but currently don't have any,
