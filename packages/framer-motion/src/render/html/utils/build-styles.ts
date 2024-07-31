@@ -55,6 +55,7 @@ export function buildHTMLStyles(
     }
 
     if (!latestValues.transform) {
+        console.log({ hasTransform })
         if (hasTransform || transformTemplate) {
             style.transform = buildTransform(state.transform, transformTemplate)
         } else if (style.transform) {

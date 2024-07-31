@@ -13,6 +13,18 @@ const translateAlias = {
 
 const numTransforms = transformPropOrder.length
 
+const defaultStringValues = {
+    x: "0px",
+    y: "0px",
+    rotate: "0deg",
+    rotateX: "0deg",
+    rotateY: "0deg",
+    rotateZ: "0deg",
+    skew: "0deg",
+    skewX: "0deg",
+    skewY: "0deg",
+}
+
 /**
  * Build a CSS transform style from individual x/y/scale etc properties.
  *
@@ -25,7 +37,7 @@ export function buildTransform(
 ) {
     // The transform string we're going to build into.
     let transformString = ""
-    let transformIsDefault = true
+    let transformIsDefault = false
 
     /**
      * Loop over all possible transforms in order, adding the ones that
@@ -37,20 +49,22 @@ export function buildTransform(
 
         if (value === undefined) continue
 
-        const valueAsNumber =
-            typeof value === "number" ? value : parseFloat(value)
-        const valueIsDefault =
-            valueAsNumber === (key.startsWith("scale") ? 1 : 0)
+        let valueIsDefault = true
+        if (typeof value === "number") {
+            valueIsDefault = value === (key.startsWith("scale") ? 1 : 0)
+        } else {
+            valueIsDefault =
+                value ===
+                defaultStringValues[key as keyof typeof defaultStringValues]
 
-        // TODO: Would it be better to provide this to a different value
-        // vs type changes
-        transform[key] = getValueAsType(value, numberValueTypes[key])
+            transform[key] = getValueAsType(value, numberValueTypes[key])
 
-        if (!valueIsDefault) {
-            const transformName = translateAlias[key] || key
+            if (!valueIsDefault) {
+                const transformName = translateAlias[key] || key
 
-            transformString += `${transformName}(${transform[key]}) `
-            transformIsDefault = false
+                transformString += `${transformName}(${transform[key]}) `
+                transformIsDefault = false
+            }
         }
     }
 
