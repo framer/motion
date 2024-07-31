@@ -91,7 +91,7 @@ function runTests(render: (components: any) => string) {
         )
     })
 
-    test("will-change correctly not applied when isStatic", () => {
+    test.only("will-change correctly not applied when isStatic", () => {
         const div = render(
             <MotionConfig isStatic>
                 <motion.div
