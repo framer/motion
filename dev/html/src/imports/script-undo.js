@@ -3,7 +3,6 @@ window.Undo = {}
 const {
     HTMLProjectionNode,
     frame,
-    buildTransform,
     animateDelta,
     addScaleCorrector,
     correctBoxShadow,

@@ -920,7 +920,7 @@ describe("animate prop as object", () => {
         await nextFrame()
 
         return expect(container.firstChild as Element).toHaveStyle(
-            "transform: translateX(0px) translateY(100px)"
+            "transform: translateY(100px)"
         )
     })
 
@@ -940,7 +940,7 @@ describe("animate prop as object", () => {
         await nextFrame()
 
         return expect(container.firstChild as Element).toHaveStyle(
-            "transform: translateX(0px) translateY(100px)"
+            "transform: translateY(100px)"
         )
     })
 

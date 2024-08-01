@@ -1,5 +1,8 @@
 import { transformPropOrder } from "./transform"
 import { MotionProps } from "../../../motion/types"
+import { getValueAsType } from "../../dom/value-types/get-as-type"
+import { numberValueTypes } from "../../dom/value-types/number"
+import { ResolvedValues } from "../../types"
 import { HTMLRenderState } from "../types"
 
 const translateAlias = {
@@ -18,12 +21,13 @@ const numTransforms = transformPropOrder.length
  * providing a transformTemplate function.
  */
 export function buildTransform(
+    latestValues: ResolvedValues,
     transform: HTMLRenderState["transform"],
-    transformIsDefault: boolean,
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
     // The transform string we're going to build into.
     let transformString = ""
+    let transformIsDefault = true
 
     /**
      * Loop over all possible transforms in order, adding the ones that
@@ -31,9 +35,29 @@ export function buildTransform(
      */
     for (let i = 0; i < numTransforms; i++) {
         const key = transformPropOrder[i] as keyof typeof translateAlias
-        if (transform[key] !== undefined) {
+        const value = latestValues[key]
+
+        if (value === undefined) continue
+
+        let valueIsDefault = true
+        if (typeof value === "number") {
+            valueIsDefault = value === (key.startsWith("scale") ? 1 : 0)
+        } else {
+            valueIsDefault = parseFloat(value) === 0
+        }
+
+        if (!valueIsDefault) {
+            transformIsDefault = false
+        }
+
+        if (!valueIsDefault || transformTemplate) {
             const transformName = translateAlias[key] || key
-            transformString += `${transformName}(${transform[key]}) `
+            const valueAsType = getValueAsType(value, numberValueTypes[key])
+            transformString += `${transformName}(${valueAsType}) `
+
+            if (transformTemplate) {
+                transform[key] = valueAsType
+            }
         }
     }
 
