@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.20] 2024-07-27
+
+### Changed
+
+-   Improved performance of `transform` by up to 30% when providing many default transforms as `MotionValue`s.
+
 ## [11.3.19] 2024-07-27
 
 ### Fixed
