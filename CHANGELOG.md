@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.21] 2024-07-27
+
+### Changed
+
+-   Removing default transforms from generated `transform` string provided to `transformTemplate`.
+
 ## [11.3.20] 2024-07-27
 
 ### Changed
