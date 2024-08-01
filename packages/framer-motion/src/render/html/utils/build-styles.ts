@@ -12,7 +12,7 @@ export function buildHTMLStyles(
     latestValues: ResolvedValues,
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
-    const { style, vars, transform, transformOrigin } = state
+    const { style, vars, transformOrigin } = state
 
     // Track whether we encounter any transform or transformOrigin values.
     let hasTransform = false
@@ -27,18 +27,13 @@ export function buildHTMLStyles(
     for (const key in latestValues) {
         const value = latestValues[key]
 
-        /**
-         * If this is a CSS variable we don't do any further processing.
-         */
-        if (isCSSVariableName(key)) {
-            vars[key] = value
-            continue
-        }
-
         if (transformProps.has(key)) {
             // If this is a transform, flag to enable further transform processing
             hasTransform = true
-            transform[key] = value
+            continue
+        } else if (isCSSVariableName(key)) {
+            vars[key] = value
+            continue
         } else {
             // Convert the value to its default value type, ie 0 -> "0px"
             const valueAsType = getValueAsType(value, numberValueTypes[key])
@@ -56,7 +51,7 @@ export function buildHTMLStyles(
 
     if (!latestValues.transform) {
         if (hasTransform || transformTemplate) {
-            style.transform = buildTransform(state.transform, transformTemplate)
+            style.transform = buildTransform(latestValues, transformTemplate)
         } else if (style.transform) {
             /**
              * If we have previously created a transform but currently don't have any,

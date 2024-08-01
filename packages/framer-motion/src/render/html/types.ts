@@ -17,12 +17,6 @@ export interface TransformOrigin {
 
 export interface HTMLRenderState {
     /**
-     * A mutable record of transforms we want to apply directly to the rendered Element
-     * every frame. We use a mutable data structure to reduce GC during animations.
-     */
-    transform: ResolvedValues
-
-    /**
      * A mutable record of transform origins we want to apply directly to the rendered Element
      * every frame. We use a mutable data structure to reduce GC during animations.
      */

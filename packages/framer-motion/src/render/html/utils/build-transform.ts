@@ -1,8 +1,8 @@
 import { transformPropOrder } from "./transform"
 import { MotionProps } from "../../../motion/types"
-import { HTMLRenderState } from "../types"
 import { getValueAsType } from "../../dom/value-types/get-as-type"
 import { numberValueTypes } from "../../dom/value-types/number"
+import { ResolvedValues } from "../../types"
 
 const translateAlias = {
     x: "translateX",
@@ -20,7 +20,7 @@ const numTransforms = transformPropOrder.length
  * providing a transformTemplate function.
  */
 export function buildTransform(
-    transform: HTMLRenderState["transform"],
+    transform: ResolvedValues,
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
     // The transform string we're going to build into.
