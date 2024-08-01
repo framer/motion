@@ -51,7 +51,11 @@ export function buildHTMLStyles(
 
     if (!latestValues.transform) {
         if (hasTransform || transformTemplate) {
-            style.transform = buildTransform(latestValues, transformTemplate)
+            style.transform = buildTransform(
+                latestValues,
+                state.transform,
+                transformTemplate
+            )
         } else if (style.transform) {
             /**
              * If we have previously created a transform but currently don't have any,

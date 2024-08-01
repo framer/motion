@@ -15,49 +15,55 @@ describe("transformProps.has", () => {
 
 describe("buildTransform", () => {
     it("Outputs 'none' when all values are default", () => {
-        expect(buildTransform({ x: 0 })).toBe("none")
-        expect(buildTransform({ x: "0px" })).toBe("none")
-        expect(buildTransform({ rotateX: 0 })).toBe("none")
-        expect(buildTransform({ rotateX: "0deg" })).toBe("none")
+        expect(buildTransform({ x: 0 }, {})).toBe("none")
+        expect(buildTransform({ x: "0px" }, {})).toBe("none")
+        expect(buildTransform({ rotateX: 0 }, {})).toBe("none")
+        expect(buildTransform({ rotateX: "0deg" }, {})).toBe("none")
         expect(
-            buildTransform({
-                x: 0,
-                y: 0,
-                scale: 1,
-                scaleX: 1,
-                scaleY: 1,
-                rotate: 0,
-                rotateX: 0,
-                rotateY: 0,
-                rotateZ: 0,
-                skewX: 0,
-                skewY: 0,
-            })
+            buildTransform(
+                {
+                    x: 0,
+                    y: 0,
+                    scale: 1,
+                    scaleX: 1,
+                    scaleY: 1,
+                    rotate: 0,
+                    rotateX: 0,
+                    rotateY: 0,
+                    rotateZ: 0,
+                    skewX: 0,
+                    skewY: 0,
+                },
+                {}
+            )
         ).toBe("none")
         expect(
-            buildTransform({
-                x: "0px",
-                y: "0px",
-                scale: 1,
-                scaleX: 1,
-                scaleY: 1,
-                rotate: "0deg",
-                rotateX: "0deg",
-                rotateY: "0deg",
-                rotateZ: "0deg",
-                skewX: 0,
-                skewY: 0,
-            })
+            buildTransform(
+                {
+                    x: "0px",
+                    y: "0px",
+                    scale: 1,
+                    scaleX: 1,
+                    scaleY: 1,
+                    rotate: "0deg",
+                    rotateX: "0deg",
+                    rotateY: "0deg",
+                    rotateZ: "0deg",
+                    skewX: 0,
+                    skewY: 0,
+                },
+                {}
+            )
         ).toBe("none")
     })
 
     it("Still outputs translateZ if z is explicitly assigned", () => {
-        expect(buildTransform({ x: 0, z: "5px" })).toBe("translateZ(5px)")
+        expect(buildTransform({ x: 0, z: "5px" }, {})).toBe("translateZ(5px)")
     })
 
     it("Correctly handles transformPerspective", () => {
         expect(
-            buildTransform({ x: "100px", transformPerspective: "200px" })
+            buildTransform({ x: "100px", transformPerspective: "200px" }, {})
         ).toBe("perspective(200px) translateX(100px)")
     })
 
@@ -65,6 +71,7 @@ describe("buildTransform", () => {
         expect(
             buildTransform(
                 { x: "5px" },
+                {},
                 ({ x }: { x: string }) => `translateX(${parseFloat(x) * 2}px)`
             )
         ).toBe("translateX(10px)")
@@ -72,13 +79,16 @@ describe("buildTransform", () => {
 
     it("Outputs transform values in the correct order", () => {
         expect(
-            buildTransform({
-                scale: 2,
-                rotate: "90deg",
-                x: 1,
-                y: "10px",
-                rotateZ: "190deg",
-            })
+            buildTransform(
+                {
+                    scale: 2,
+                    rotate: "90deg",
+                    x: 1,
+                    y: "10px",
+                    rotateZ: "190deg",
+                },
+                {}
+            )
         ).toBe(
             "translateX(1px) translateY(10px) scale(2) rotate(90deg) rotateZ(190deg)"
         )
