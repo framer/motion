@@ -46,14 +46,14 @@ export function buildTransform(
             valueIsDefault = parseFloat(value) === 0
         }
 
-        if (!valueIsDefault) {
-            transformIsDefault = false
-        }
-
         if (!valueIsDefault || transformTemplate) {
-            const transformName = translateAlias[key] || key
             const valueAsType = getValueAsType(value, numberValueTypes[key])
-            transformString += `${transformName}(${valueAsType}) `
+
+            if (!valueIsDefault) {
+                transformIsDefault = false
+                const transformName = translateAlias[key] || key
+                transformString += `${transformName}(${valueAsType}) `
+            }
 
             if (transformTemplate) {
                 transform[key] = valueAsType

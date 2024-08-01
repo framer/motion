@@ -75,6 +75,15 @@ describe("buildTransform", () => {
                 ({ x }: { x: string }) => `translateX(${parseFloat(x) * 2}px)`
             )
         ).toBe("translateX(10px)")
+
+        expect(
+            buildTransform(
+                { x: 0, y: 200 },
+                {},
+                ({ x }: { x: string }, generated) =>
+                    `translateX(${parseFloat(x) + 10}px) ${generated}`
+            )
+        ).toBe("translateX(10px) translateY(200px)")
     })
 
     it("Outputs transform values in the correct order", () => {
