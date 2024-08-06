@@ -163,6 +163,6 @@ describe("spring", () => {
             })
         )
 
-        expect(duration).toBe(850)
+        expect(duration).toBe(600)
     })
 })

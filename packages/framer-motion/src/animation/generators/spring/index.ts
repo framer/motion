@@ -145,6 +145,11 @@ export function spring({
             if (!isResolvedFromDuration) {
                 let currentVelocity = 0.0
 
+                /**
+                 * We only need to calculate velocity for under-damped springs
+                 * as over- and critically-damped springs can't overshoot, so
+                 * checking only for displacement is enough.
+                 */
                 if (dampingRatio < 1) {
                     currentVelocity =
                         t === 0
