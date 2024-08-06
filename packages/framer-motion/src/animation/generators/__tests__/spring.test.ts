@@ -1,6 +1,7 @@
 import { ValueAnimationOptions } from "../../types"
 import { spring } from "../spring"
 import { animateSync } from "../../animators/__tests__/utils"
+import { calcGeneratorDuration } from "../utils/calc-duration"
 
 describe("spring", () => {
     test("Runs animations with default values ", () => {
@@ -8,6 +9,7 @@ describe("spring", () => {
             0, 1, 1, 1, 1, 1, 1, 1,
         ])
     })
+
     test("Underdamped spring", () => {
         expect(
             animateSync(
@@ -149,5 +151,18 @@ describe("spring", () => {
 
         expect(resolvedSpring.next(0).value).toBe(500)
         expect(Math.floor(resolvedSpring.next(100).value)).toBe(420)
+    })
+
+    test("Spring animating back to same number returns correct duration", () => {
+        const duration = calcGeneratorDuration(
+            spring({
+                keyframes: [1, 1],
+                velocity: 5,
+                stiffness: 200,
+                damping: 15,
+            })
+        )
+
+        expect(duration).toBe(850)
     })
 })

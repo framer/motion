@@ -374,7 +374,7 @@ export class MainThreadAnimation<
             this.holdTime === null &&
             (this.state === "finished" || (this.state === "running" && done))
 
-        if (isAnimationFinished && finalKeyframe !== undefined) {
+        if (isAnimationFinished) {
             state.value = getFinalKeyframe(
                 keyframes,
                 this.options,
