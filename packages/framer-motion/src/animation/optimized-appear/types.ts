@@ -19,3 +19,9 @@ declare global {
         HandoffCancelAllAnimations?: VoidFunction
     }
 }
+
+declare global {
+    interface Window {
+        Motion: {}
+    }
+}
