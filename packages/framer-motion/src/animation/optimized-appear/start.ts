@@ -3,7 +3,7 @@ import { animateStyle } from "../animators/waapi"
 import { NativeAnimationOptions } from "../animators/waapi/types"
 import { optimizedAppearDataId } from "./data-id"
 import { handoffOptimizedAppearAnimation } from "./handoff"
-import { appearAnimationStore } from "./store"
+import { appearAnimationStore, elementsWithAppearAnimations } from "./store"
 import { noop } from "../../utils/noop"
 import "./types"
 
@@ -30,8 +30,8 @@ export function startOptimizedAppearAnimation(
     onReady?: (animation: Animation) => void
 ): void {
     // Prevent optimised appear animations if Motion has already started animating.
-    if (window.HandoffComplete) {
-        window.HandoffAppearAnimations = undefined
+    if (window.MotionHandoffIsComplete) {
+        window.MotionHandoffAnimation = undefined
         return
     }
 
@@ -39,10 +39,9 @@ export function startOptimizedAppearAnimation(
 
     if (!id) return
 
-    window.HandoffAppearAnimations = handoffOptimizedAppearAnimation
+    window.MotionHandoffAnimation = handoffOptimizedAppearAnimation
 
     const storeId = appearStoreId(id, name)
-
     if (!readyAnimation) {
         readyAnimation = animateStyle(
             element,
@@ -60,14 +59,41 @@ export function startOptimizedAppearAnimation(
             startTime: null,
         })
 
-        if (!window.HandoffCancelAllAnimations) {
-            window.HandoffCancelAllAnimations = () => {
-                appearAnimationStore.forEach(({ animation }) => {
+        /**
+         * If there's no readyAnimation then there's been no instantiation
+         * of handoff animations.
+         */
+        window.MotionHandoffAnimation = handoffOptimizedAppearAnimation
+
+        /**
+         * We only need to cancel transform animations as
+         * they're the ones that will interfere with the
+         * layout animation measurements.
+         */
+        window.MotionHandoffCancelAll = () => {
+            appearAnimationStore.forEach(({ animation }, animationId) => {
+                if (animationId.endsWith("transform")) {
                     animation.cancel()
-                })
-                appearAnimationStore.clear()
-                window.HandoffCancelAllAnimations = undefined
-            }
+                    appearAnimationStore.delete(animationId)
+                }
+            })
+
+            window.MotionHandoffCancelAll = undefined
+        }
+
+        /**
+         * Keep a map of elementIds that have started animating. We check
+         * via ID instead of Element because of hydration errors and
+         * pre-hydration checks. We also actively record IDs as they start
+         * animating rather than simply checking for data-appear-id as
+         * this attrbute might be present but not lead to an animation, for
+         * instance if the element's appear animation is on a different
+         * breakpoint.
+         */
+        window.MotionHasOptimisedAnimation = (elementId?: string) => {
+            return Boolean(
+                elementId && elementsWithAppearAnimations.has(elementId)
+            )
         }
     }
 
@@ -94,6 +120,8 @@ export function startOptimizedAppearAnimation(
 
         if (onReady) onReady(appearAnimation)
     }
+
+    elementsWithAppearAnimations.add(id)
 
     if (readyAnimation.ready) {
         readyAnimation.ready.then(startAnimation).catch(noop)

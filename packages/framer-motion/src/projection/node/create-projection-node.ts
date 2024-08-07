@@ -108,7 +108,7 @@ function resetDistortingTransform(
     }
 }
 
-function isOptimisedAppearTree(projectionNode: IProjectionNode) {
+function isOptimisedTransformAnimationInTree(projectionNode: IProjectionNode) {
     projectionNode.hasCheckedOptimisedAppear = true
     if (projectionNode.root === projectionNode) return false
 
@@ -116,13 +116,15 @@ function isOptimisedAppearTree(projectionNode: IProjectionNode) {
 
     if (!visualElement) {
         return false
-    } else if (getOptimisedAppearId(visualElement)) {
+    } else if (
+        window.MotionHasOptimisedAnimation!(getOptimisedAppearId(visualElement))
+    ) {
         return true
     } else if (
         projectionNode.parent &&
         !projectionNode.parent.hasCheckedOptimisedAppear
     ) {
-        return isOptimisedAppearTree(projectionNode.parent)
+        return isOptimisedTransformAnimationInTree(projectionNode.parent)
     } else {
         return false
     }
@@ -638,10 +640,10 @@ export function createProjectionNode<I>({
              * if a layout animation measurement is actually going to be affected by them.
              */
             if (
-                window.HandoffCancelAllAnimations &&
-                isOptimisedAppearTree(this)
+                window.MotionHandoffCancelAll &&
+                isOptimisedTransformAnimationInTree(this)
             ) {
-                window.HandoffCancelAllAnimations()
+                window.MotionHandoffCancelAll()
             }
 
             !this.root.isUpdating && this.root.startUpdate()

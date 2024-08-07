@@ -42,7 +42,7 @@
                 motionValue,
                 frame,
             } = window.Motion
-            const { matchViewportBox } = window.Assert
+            const { matchViewportBox, xTransformEquals } = window.Assert
             const root = document.getElementById("root")
 
             const duration = 0.5
@@ -55,7 +55,7 @@
                 React.useEffect(() => {
                     setTimeout(() => {
                         setTop(100)
-                    }, 250)
+                    }, 100)
                 }, [])
 
                 return React.createElement(motion.div, {
@@ -79,7 +79,7 @@
                         initial: {
                             x: 0,
                             opacity: 0,
-                            backgroundColor: "#00f",
+                            backgroundColor: "#f00",
                         },
                         animate: {
                             x: 100,
@@ -94,17 +94,25 @@
                             x,
                             position: "relative",
                         },
-                        onAnimationComplete: () => {
-                            const box = document.getElementById("optimised-box")
-                            const color =
-                                window.getComputedStyle(box).backgroundColor
-                            if (color !== "rgb(255, 0, 0)") {
-                                console.log(color)
-                                showError(
-                                    box,
-                                    `optimised animations cancelled by ancestor layout animations`
-                                )
-                            }
+                        onAnimationStart: () => {
+                            setTimeout(() => {
+                                const box =
+                                    document.getElementById("optimised-box")
+
+                                if (
+                                    box.style.opacity ===
+                                        window.getComputedStyle(box).opacity ||
+                                    box.style.backgroundColor ===
+                                        window.getComputedStyle(box)
+                                            .backgroundColor ||
+                                    xTransformEquals(box)
+                                ) {
+                                    showError(
+                                        box,
+                                        `Optimised animations cancelled by ancestor layout animations`
+                                    )
+                                }
+                            }, 150)
                         },
                         [optimizedAppearDataAttribute]: "a",
                         children: "Content",
@@ -128,14 +136,10 @@
                 }
             )
 
-            // Start optimised background-color animation
-            // This optimised animation is red -> red whereas the animation on the
-            // motion.div is blue -> blue. Therefore, if the optimised animations
-            // cancelled, the rendered color will be blue.
             startOptimizedAppearAnimation(
                 document.getElementById("optimised-box"),
                 "backgroundColor",
-                ["#f00", "#f00"],
+                ["#f00", "#00f"],
                 {
                     duration: duration * 1000,
                     ease: "linear",

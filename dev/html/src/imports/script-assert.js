@@ -94,6 +94,26 @@ window.Assert = {
             )
         }
     },
+    xTransformEquals: (element) => {
+        let style = element.style.transform
+        const computedStyle = window.getComputedStyle(element).transform
+
+        style = style.replace("translateX(", "").replace(")", "")
+
+        const matrixType = computedStyle.includes("3d") ? "3d" : "2d"
+
+        let x = 0
+        const matrixValues = computedStyle
+            .match(/matrix.*\((.+)\)/)[1]
+            .split(", ")
+        if (matrixType === "2d") {
+            x = parseFloat(matrixValues[4])
+        } else {
+            x = parseFloat(matrixValues[12])
+        }
+        console.log(x, parseFloat(style))
+        return x === parseFloat(style)
+    },
     addPageScroll({ top, right, bottom, left }, x, y) {
         return {
             top: top - y,

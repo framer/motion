@@ -1,11 +1,9 @@
 import type { Batcher } from "../../frameloop/types"
-import type { MotionValue } from "../../value"
 
 export type HandoffFunction = (
     storeId: string,
     valueName: string,
-    value?: MotionValue,
-    frame?: Batcher
+    frame: Batcher
 ) => null | number
 
 /**
@@ -14,14 +12,9 @@ export type HandoffFunction = (
  */
 declare global {
     interface Window {
-        HandoffAppearAnimations?: HandoffFunction
-        HandoffComplete?: boolean
-        HandoffCancelAllAnimations?: VoidFunction
-    }
-}
-
-declare global {
-    interface Window {
-        Motion: {}
+        MotionHandoffAnimation?: HandoffFunction
+        MotionHandoffIsComplete?: boolean
+        MotionHandoffCancelAll?: VoidFunction
+        MotionHasOptimisedAnimation?: (id?: string) => boolean
     }
 }

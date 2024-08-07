@@ -85,7 +85,7 @@ export function useVisualElement<Instance, RenderState>(
     const wantsHandoff = useRef(
         Boolean(
             props[optimizedAppearDataAttribute as keyof typeof props] &&
-                !window.HandoffComplete
+                !window.MotionHandoffIsComplete
         )
     )
 
@@ -132,7 +132,7 @@ export function useVisualElement<Instance, RenderState>(
 }
 
 function completeHandoff() {
-    window.HandoffComplete = true
+    window.MotionHandoffIsComplete = true
 }
 
 function createProjectionNode(

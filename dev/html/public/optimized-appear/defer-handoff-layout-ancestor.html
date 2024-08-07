@@ -55,7 +55,7 @@
                 React.useEffect(() => {
                     setTimeout(() => {
                         setTop(100)
-                    }, 250)
+                    }, 100)
                 }, [])
 
                 return React.createElement(motion.div, {
@@ -79,17 +79,41 @@
                         x,
                         position: "relative",
                     },
-                    onAnimationComplete: () => {
-                        const box = document.getElementById("optimised-box")
-                        const color =
-                            window.getComputedStyle(box).backgroundColor
-                        if (color !== "rgb(0, 0, 255)") {
-                            console.log(color)
-                            showError(
-                                box,
-                                `optimised animations not cancelled by child layout animation`
+
+                    onAnimationStart: () => {
+                        setTimeout(() => {
+                            const box = document.getElementById("optimised-box")
+                            console.log(
+                                box.style.opacity,
+                                window.getComputedStyle(box).opacity
                             )
-                        }
+                            if (
+                                box.style.opacity ===
+                                window.getComputedStyle(box).opacity
+                            ) {
+                                showError(
+                                    box,
+                                    `Optimised opacity animation cancelled by child layout animations`
+                                )
+                            }
+
+                            if (
+                                box.style.backgroundColor ===
+                                window.getComputedStyle(box).backgroundColor
+                            ) {
+                                showError(
+                                    box,
+                                    `Optimised background-color animation cancelled by child layout animations`
+                                )
+                            }
+
+                            if (!window.Assert.xTransformEquals(box)) {
+                                showError(
+                                    box,
+                                    `Optimised transform NOT animation cancelled by child layout animations`
+                                )
+                            }
+                        }, 150)
                     },
                     [optimizedAppearDataAttribute]: "a",
                     children: React.createElement(motion.div, {
