@@ -69,7 +69,7 @@
                         requestAnimationFrame(() => {
                             const box = document.getElementById("box")
                             const { top } = box.getBoundingClientRect()
-                            console.log(top)
+
                             if (top !== 100) {
                                 showError(
                                     box,
@@ -79,14 +79,14 @@
                         })
                     },
                     onAnimationComplete: () => {
-                        // const box = document.getElementById("box")
-                        // const { left } = box.getBoundingClientRect()
-                        // if (left !== 200) {
-                        //     showError(
-                        //         box,
-                        //         `optimised animation conflict with layout measurements`
-                        //     )
-                        // }
+                        const box = document.getElementById("box")
+                        const { left } = box.getBoundingClientRect()
+                        if (left !== 200) {
+                            showError(
+                                box,
+                                `optimised animation conflict with layout measurements`
+                            )
+                        }
                     },
                     [optimizedAppearDataAttribute]: "a",
                     children: "Content",

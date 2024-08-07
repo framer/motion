@@ -119,13 +119,11 @@ export function useVisualElement<Instance, RenderState>(
             visualElement.animationState.animateChanges()
         }
 
-        if (wantsHandoff.current) {
-            wantsHandoff.current = false
-            // This ensures all future calls to animateChanges() will run in useEffect
-            if (!scheduleHandoffComplete) {
-                scheduleHandoffComplete = true
-                queueMicrotask(completeHandoff)
-            }
+        wantsHandoff.current = false
+        // This ensures all future calls to animateChanges() will run in useEffect
+        if (!scheduleHandoffComplete) {
+            scheduleHandoffComplete = true
+            queueMicrotask(completeHandoff)
         }
     })
 
