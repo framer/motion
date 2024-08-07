@@ -46,17 +46,17 @@
                 React.useEffect(() => {
                     setTimeout(() => {
                         setTop(100)
-                    }, 200)
+                    }, 250)
                 }, [])
 
                 return React.createElement(motion.div, {
                     id: "box",
-                    initial: { x: 0, opacity: 0 },
-                    animate: { x: 100, opacity: 1 },
+                    initial: { opacity: 0 },
+                    animate: { opacity: 1 },
                     transition: {
                         duration,
                         ease: "linear",
-                        layout: { ease: () => 0, duration: 10 },
+                        layout: { duration: 10 },
                     },
                     style: {
                         x,
@@ -68,25 +68,21 @@
                     onLayoutAnimationStart: () => {
                         requestAnimationFrame(() => {
                             const box = document.getElementById("box")
-                            const { top } = box.getBoundingClientRect()
 
-                            if (top !== 100) {
+                            if (
+                                box.style.opacity ===
+                                window.getComputedStyle(box).opacity
+                            ) {
+                                /**
+                                 * If style.opacity and computed style.opacity are the same,
+                                 * it means the optimised opacity animation was cancelled by
+                                 * the layout animation.
+                                 */
                                 showError(
-                                    box,
-                                    `layout animation overridden by optimised animation`
+                                    "style attr and computed style should be slightly different"
                                 )
                             }
                         })
-                    },
-                    onAnimationComplete: () => {
-                        const box = document.getElementById("box")
-                        const { left } = box.getBoundingClientRect()
-                        if (left !== 200) {
-                            showError(
-                                box,
-                                `optimised animation conflict with layout measurements`
-                            )
-                        }
                     },
                     [optimizedAppearDataAttribute]: "a",
                     children: "Content",
@@ -98,22 +94,11 @@
                 React.createElement(Component)
             )
 
-            // Start optimised opacity animation
-            startOptimizedAppearAnimation(
-                document.getElementById("box"),
-                "opacity",
-                [0, 1],
-                {
-                    duration: duration * 1000,
-                    ease: "linear",
-                }
-            )
-
             // Start WAAPI animation
             const animation = startOptimizedAppearAnimation(
                 document.getElementById("box"),
-                "transform",
-                ["translateX(0px)", "translateX(100px)"],
+                "opacity",
+                [0, 1],
                 {
                     duration: duration * 1000,
                     ease: "linear",

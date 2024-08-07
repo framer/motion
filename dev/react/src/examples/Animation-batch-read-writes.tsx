@@ -9,7 +9,7 @@ const style = {
     color: "rgba(0,0,0,0)",
 }
 
-window.HandoffAppearAnimations = () => 0
+window.MotionHandoffAnimation = () => 0
 
 export const App = () => {
     return (

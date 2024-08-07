@@ -82,11 +82,12 @@ export function useVisualElement<Instance, RenderState>(
      * Cache this value as we want to know whether HandoffAppearAnimations
      * was present on initial render - it will be deleted after this.
      */
+    const optimisedAppearId =
+        props[optimizedAppearDataAttribute as keyof typeof props]
     const wantsHandoff = useRef(
-        Boolean(
-            props[optimizedAppearDataAttribute as keyof typeof props] &&
-                !window.HandoffComplete
-        )
+        Boolean(optimisedAppearId) &&
+            !window.MotionHandoffIsComplete &&
+            window.MotionHasOptimisedAnimation?.(optimisedAppearId)
     )
 
     useIsomorphicLayoutEffect(() => {
@@ -118,13 +119,11 @@ export function useVisualElement<Instance, RenderState>(
             visualElement.animationState.animateChanges()
         }
 
-        if (wantsHandoff.current) {
-            wantsHandoff.current = false
-            // This ensures all future calls to animateChanges() will run in useEffect
-            if (!scheduleHandoffComplete) {
-                scheduleHandoffComplete = true
-                queueMicrotask(completeHandoff)
-            }
+        wantsHandoff.current = false
+        // This ensures all future calls to animateChanges() will run in useEffect
+        if (!scheduleHandoffComplete) {
+            scheduleHandoffComplete = true
+            queueMicrotask(completeHandoff)
         }
     })
 
@@ -132,7 +131,7 @@ export function useVisualElement<Instance, RenderState>(
 }
 
 function completeHandoff() {
-    window.HandoffComplete = true
+    window.MotionHandoffIsComplete = true
 }
 
 function createProjectionNode(

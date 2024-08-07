@@ -13,6 +13,8 @@ function showError(element, msg) {
     }
 }
 
+window.showError = showError
+
 window.ProjectionFrames = []
 window.MotionDebug = {
     record: (action) => {
@@ -91,6 +93,26 @@ window.Assert = {
                 `skew in ${element.style.transform} doesn't match expected ${expected}deg`
             )
         }
+    },
+    xTransformEquals: (element) => {
+        let style = element.style.transform
+        const computedStyle = window.getComputedStyle(element).transform
+
+        style = style.replace("translateX(", "").replace(")", "")
+
+        const matrixType = computedStyle.includes("3d") ? "3d" : "2d"
+
+        let x = 0
+        const matrixValues = computedStyle
+            .match(/matrix.*\((.+)\)/)[1]
+            .split(", ")
+        if (matrixType === "2d") {
+            x = parseFloat(matrixValues[4])
+        } else {
+            x = parseFloat(matrixValues[12])
+        }
+
+        return x === parseFloat(style)
     },
     addPageScroll({ top, right, bottom, left }, x, y) {
         return {

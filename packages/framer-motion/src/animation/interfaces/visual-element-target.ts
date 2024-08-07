@@ -74,14 +74,13 @@ export function animateTarget(
          * to see if we're handling off from an existing animation.
          */
         let isHandoff = false
-        if (window.HandoffAppearAnimations) {
+        if (window.MotionHandoffAnimation) {
             const appearId = getOptimisedAppearId(visualElement)
 
             if (appearId) {
-                const elapsed = window.HandoffAppearAnimations(
+                const elapsed = window.MotionHandoffAnimation(
                     appearId,
                     key,
-                    value,
                     frame
                 )
 
