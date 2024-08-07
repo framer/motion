@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.22] 2024-08-07
+
+### Fixed
+
+-   Fixing spring animations with explicit velocities that animate to their current value.
+
 ## [11.3.21] 2024-07-27
 
 ### Changed
