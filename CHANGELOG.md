@@ -4,6 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.23] 2024-08-07
+
+### Fixed
+
+-   Improving optimised appear animation check from `data-appear-id` to active recording of started animations.
+-   Only cancelling optimised appear animations from layout animations when they're animating `transform`.
+
 ## [11.3.22] 2024-08-07
 
 ### Fixed
