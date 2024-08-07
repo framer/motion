@@ -10,7 +10,7 @@ export function handoffOptimizedAppearAnimation(
     elementId: string,
     valueName: string,
     frame: Batcher
-): number | null {
+): { elapsed: number; startTime: number } | null {
     const optimisedValueName = transformProps.has(valueName)
         ? "transform"
         : valueName
@@ -60,6 +60,9 @@ export function handoffOptimizedAppearAnimation(
          * an updated value for several frames, even as the animation plays smoothly via
          * the GPU.
          */
-        return handoffFrameTime - startTime || 0
+        return {
+            elapsed: handoffFrameTime - startTime || 0,
+            startTime: handoffFrameTime || 0,
+        }
     }
 }

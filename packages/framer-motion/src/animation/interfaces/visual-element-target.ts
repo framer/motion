@@ -78,15 +78,17 @@ export function animateTarget(
             const appearId = getOptimisedAppearId(visualElement)
 
             if (appearId) {
-                const elapsed = window.MotionHandoffAnimation(
+                const handoffInfo = window.MotionHandoffAnimation(
                     appearId,
                     key,
                     frame
                 )
 
-                if (elapsed !== null) {
-                    valueTransition.elapsed = elapsed
+                if (handoffInfo !== null) {
                     isHandoff = true
+                    const { elapsed, startTime } = handoffInfo
+                    valueTransition.elapsed = elapsed
+                    if (startTime) valueTransition.startTime = startTime
                 }
             }
         }

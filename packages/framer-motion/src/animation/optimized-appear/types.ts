@@ -4,7 +4,7 @@ export type HandoffFunction = (
     storeId: string,
     valueName: string,
     frame: Batcher
-) => null | number
+) => null | { elapsed: number; startTime: number }
 
 /**
  * The window global object acts as a bridge between our inline script
