@@ -117,7 +117,9 @@ function isOptimisedTransformAnimationInTree(projectionNode: IProjectionNode) {
     if (!visualElement) {
         return false
     } else if (
-        window.MotionHasOptimisedAnimation!(getOptimisedAppearId(visualElement))
+        window.MotionHasOptimisedTransformAnimation!(
+            getOptimisedAppearId(visualElement)
+        )
     ) {
         return true
     } else if (

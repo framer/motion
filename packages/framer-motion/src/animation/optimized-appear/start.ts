@@ -90,11 +90,16 @@ export function startOptimizedAppearAnimation(
          * instance if the element's appear animation is on a different
          * breakpoint.
          */
-        window.MotionHasOptimisedAnimation = (elementId?: string) => {
-            return Boolean(
-                elementId && elementsWithAppearAnimations.has(elementId)
+        window.MotionHasOptimisedAnimation = (elementId?: string) =>
+            Boolean(elementId && elementsWithAppearAnimations.has(elementId))
+
+        window.MotionHasOptimisedTransformAnimation = (elementId?: string) =>
+            Boolean(
+                elementId &&
+                    appearAnimationStore.has(
+                        appearStoreId(elementId, "transform")
+                    )
             )
-        }
     }
 
     const startAnimation = () => {

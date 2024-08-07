@@ -16,5 +16,6 @@ declare global {
         MotionHandoffIsComplete?: boolean
         MotionHandoffCancelAll?: VoidFunction
         MotionHasOptimisedAnimation?: (id?: string) => boolean
+        MotionHasOptimisedTransformAnimation?: (id?: string) => boolean
     }
 }
