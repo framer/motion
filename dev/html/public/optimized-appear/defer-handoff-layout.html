@@ -46,7 +46,13 @@
                 React.useEffect(() => {
                     setTimeout(() => {
                         setTop(100)
-                    }, 200)
+
+                        frame.update(() => {
+                            // Block thread for 1 second
+                            let startTime = performance.now()
+                            while (performance.now() - startTime < 200) {}
+                        })
+                    }, 100)
                 }, [])
 
                 return React.createElement(motion.div, {

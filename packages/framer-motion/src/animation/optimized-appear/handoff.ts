@@ -54,6 +54,12 @@ export function handoffOptimizedAppearAnimation(
             handoffFrameTime = performance.now()
         }
 
+        console.log({
+            elapsed: handoffFrameTime - startTime || 0,
+            startTime: handoffFrameTime || 0,
+            actualElapsed: animation.currentTime,
+        })
+
         /**
          * We use main thread timings vs those returned by Animation.currentTime as it
          * can be the case, particularly in Firefox, that currentTime doesn't return
