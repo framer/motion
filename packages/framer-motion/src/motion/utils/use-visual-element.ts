@@ -82,11 +82,12 @@ export function useVisualElement<Instance, RenderState>(
      * Cache this value as we want to know whether HandoffAppearAnimations
      * was present on initial render - it will be deleted after this.
      */
+    const optimisedAppearId =
+        props[optimizedAppearDataAttribute as keyof typeof props]
     const wantsHandoff = useRef(
-        Boolean(
-            props[optimizedAppearDataAttribute as keyof typeof props] &&
-                !window.MotionHandoffIsComplete
-        )
+        Boolean(optimisedAppearId) &&
+            !window.MotionHandoffIsComplete &&
+            window.MotionHasOptimisedAnimation?.(optimisedAppearId)
     )
 
     useIsomorphicLayoutEffect(() => {
