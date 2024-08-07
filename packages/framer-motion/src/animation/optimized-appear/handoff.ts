@@ -55,9 +55,12 @@ export function handoffOptimizedAppearAnimation(
         }
 
         console.log({
-            elapsed: handoffFrameTime - startTime || 0,
-            startTime: handoffFrameTime || 0,
+            recordedStartTime: startTime,
+            calculatedElapsed: handoffFrameTime - startTime || 0,
+            recordedHandoffTime: handoffFrameTime || 0,
             actualElapsed: animation.currentTime,
+            actualStartTime: animation.startTime,
+            sneakyElapsed: handoffFrameTime - startTime - 30 || 0,
         })
 
         /**
@@ -67,7 +70,7 @@ export function handoffOptimizedAppearAnimation(
          * the GPU.
          */
         return {
-            elapsed: handoffFrameTime - startTime || 0,
+            elapsed: handoffFrameTime - startTime - 50 || 0,
             startTime: handoffFrameTime || 0,
         }
     }
