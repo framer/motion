@@ -1,4 +1,7 @@
-import { millisecondsToSeconds } from "../../../utils/time-conversion"
+import {
+    millisecondsToSeconds,
+    secondsToMilliseconds,
+} from "../../../utils/time-conversion"
 import { ValueAnimationOptions, SpringOptions } from "../../types"
 import { AnimationState, KeyframeGenerator } from "../types"
 import { calcGeneratorVelocity } from "../utils/velocity"
@@ -20,7 +23,6 @@ function getSpringOptions(options: SpringOptions) {
         isResolvedFromDuration: false,
         ...options,
     }
-
     // stiffness/damping/mass overrides duration/bounce
     if (
         !isSpringType(options, physicsKeys) &&
@@ -65,6 +67,7 @@ export function spring({
         ...options,
         velocity: -millisecondsToSeconds(options.velocity || 0),
     })
+
     const initialVelocity = velocity || 0.0
     const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass))
 
@@ -140,23 +143,18 @@ export function spring({
             const current = resolveSpring(t)
 
             if (!isResolvedFromDuration) {
-                let currentVelocity = initialVelocity
+                let currentVelocity = 0.0
 
-                if (t !== 0) {
-                    /**
-                     * We only need to calculate velocity for under-damped springs
-                     * as over- and critically-damped springs can't overshoot, so
-                     * checking only for displacement is enough.
-                     */
-                    if (dampingRatio < 1) {
-                        currentVelocity = calcGeneratorVelocity(
-                            resolveSpring,
-                            t,
-                            current
-                        )
-                    } else {
-                        currentVelocity = 0
-                    }
+                /**
+                 * We only need to calculate velocity for under-damped springs
+                 * as over- and critically-damped springs can't overshoot, so
+                 * checking only for displacement is enough.
+                 */
+                if (dampingRatio < 1) {
+                    currentVelocity =
+                        t === 0
+                            ? secondsToMilliseconds(initialVelocity)
+                            : calcGeneratorVelocity(resolveSpring, t, current)
                 }
 
                 const isBelowVelocityThreshold =
