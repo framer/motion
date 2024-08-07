@@ -111,7 +111,7 @@ window.Assert = {
         } else {
             x = parseFloat(matrixValues[12])
         }
-        console.log(x, parseFloat(style))
+
         return x === parseFloat(style)
     },
     addPageScroll({ top, right, bottom, left }, x, y) {
