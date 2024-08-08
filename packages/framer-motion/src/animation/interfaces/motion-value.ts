@@ -12,6 +12,7 @@ import { frame } from "../../frameloop/frame"
 import { AcceleratedAnimation } from "../animators/AcceleratedAnimation"
 import { MainThreadAnimation } from "../animators/MainThreadAnimation"
 import { GroupPlaybackControls } from "../GroupPlaybackControls"
+import { time } from "../../frameloop/sync-time"
 
 export const animateMotionValue =
     <V extends string | number>(
@@ -55,6 +56,7 @@ export const animateMotionValue =
             keyframes: Array.isArray(target) ? target : [null, target],
             ease: "easeOut",
             velocity: value.getVelocity(),
+            startTime: time.now(),
             ...valueTransition,
             delay: -elapsed,
             onUpdate: (v) => {

@@ -67,7 +67,6 @@ export function animateTarget(
         const valueTransition = {
             delay,
             elapsed: 0,
-            startTime: time.now(),
             ...getValueTransition(transition || {}, key),
         }
 
