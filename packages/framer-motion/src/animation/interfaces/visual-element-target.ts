@@ -10,7 +10,6 @@ import { getValueTransition } from "../utils/transitions"
 import { frame } from "../../frameloop"
 import { getOptimisedAppearId } from "../optimized-appear/get-appear-id"
 import { addValueToWillChange } from "../../value/use-will-change/add-will-change"
-import { time } from "../../frameloop/sync-time"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
