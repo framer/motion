@@ -647,6 +647,9 @@ export function createProjectionNode<I>({
                 isOptimisedTransformAnimationInTree(this)
             ) {
                 flushKeyframeResolvers()
+                steps.update.process(frameData)
+                steps.preRender.process(frameData)
+                steps.render.process(frameData)
                 window.MotionHandoffCancelAll()
             }
 
