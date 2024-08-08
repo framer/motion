@@ -136,6 +136,7 @@ export class KeyframeResolver<T extends string | number = any> {
         element?: VisualElement<any>,
         isAsync = false
     ) {
+        console.log(this)
         this.unresolvedKeyframes = [...unresolvedKeyframes]
         this.onComplete = onComplete
         this.name = name
@@ -146,6 +147,7 @@ export class KeyframeResolver<T extends string | number = any> {
 
     scheduleResolve() {
         this.isScheduled = true
+
         if (this.isAsync) {
             toResolve.add(this)
 

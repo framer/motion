@@ -646,11 +646,18 @@ export function createProjectionNode<I>({
                 window.MotionHandoffCancelAll &&
                 isOptimisedTransformAnimationInTree(this)
             ) {
+                console.log("cancel all")
                 flushKeyframeResolvers()
+                const now = time.now()
+                frameData.delta = clamp(0, 1000 / 60, now - frameData.timestamp)
+                frameData.timestamp = now
+                frameData.isProcessing = true
                 steps.update.process(frameData)
                 steps.preRender.process(frameData)
                 steps.render.process(frameData)
+                frameData.isProcessing = false
                 window.MotionHandoffCancelAll()
+                console.log("cancel all done")
             }
 
             !this.root.isUpdating && this.root.startUpdate()
