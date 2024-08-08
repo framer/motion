@@ -20,7 +20,6 @@ import { clamp } from "../../utils/clamp"
 import { invariant } from "../../utils/errors"
 import { frameloopDriver } from "./drivers/driver-frameloop"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
-import { time } from "../../frameloop/sync-time"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
