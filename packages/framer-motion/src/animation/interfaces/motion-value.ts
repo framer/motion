@@ -46,7 +46,13 @@ export const animateMotionValue =
          */
         let { elapsed = 0 } = transition
         elapsed = elapsed - secondsToMilliseconds(delay)
-
+        if (
+            isHandoff &&
+            name === "x" &&
+            element?.current.dataset.framerAppearId === "li9k8z"
+        ) {
+            console.log("creating x animation")
+        }
         let options: ValueAnimationOptions = {
             keyframes: Array.isArray(target) ? target : [null, target],
             ease: "easeOut",
@@ -56,6 +62,14 @@ export const animateMotionValue =
             onUpdate: (v) => {
                 value.set(v)
                 valueTransition.onUpdate && valueTransition.onUpdate(v)
+
+                if (
+                    isHandoff &&
+                    name === "x" &&
+                    element?.current.dataset.framerAppearId === "li9k8z"
+                ) {
+                    console.log(v)
+                }
             },
             onComplete: () => {
                 onComplete()
