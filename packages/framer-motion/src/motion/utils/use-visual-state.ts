@@ -14,8 +14,8 @@ import {
     isControllingVariants as checkIsControllingVariants,
     isVariantNode as checkIsVariantNode,
 } from "../../render/utils/is-controlling-variants"
-import { getWillChangeName } from "../../value/use-will-change/get-will-change-name"
-import { addUniqueItem } from "../../utils/array"
+// import { getWillChangeName } from "../../value/use-will-change/get-will-change-name"
+// import { addUniqueItem } from "../../utils/array"
 import { TargetAndTransition } from "../../types"
 
 export interface VisualState<Instance, RenderState> {
@@ -81,13 +81,13 @@ export const makeUseVisualState =
         return isStatic ? make() : useConstant(make)
     }
 
-function addWillChange(willChange: string[], name: string) {
-    const memberName = getWillChangeName(name)
+// function addWillChange(willChange: string[], name: string) {
+//     const memberName = getWillChangeName(name)
 
-    if (memberName) {
-        addUniqueItem(willChange, memberName)
-    }
-}
+//     if (memberName) {
+//         addUniqueItem(willChange, memberName)
+//     }
+// }
 
 function forEachDefinition(
     props: MotionProps,
@@ -115,9 +115,9 @@ function makeLatestValues(
     scrapeMotionValues: ScrapeMotionValuesFromProps
 ) {
     const values: ResolvedValues = {}
-    const willChange: string[] = []
-    const applyWillChange =
-        shouldApplyWillChange && props.style?.willChange === undefined
+    // const willChange: string[] = []
+    // const applyWillChange =
+    //     shouldApplyWillChange && props.style?.willChange === undefined
 
     const motionValues = scrapeMotionValues(props, {})
     for (const key in motionValues) {
@@ -178,19 +178,19 @@ function makeLatestValues(
     }
 
     // Add animating values to will-change
-    if (applyWillChange) {
-        if (animate && initial !== false && !isAnimationControls(animate)) {
-            forEachDefinition(props, animate, (target) => {
-                for (const key in target) {
-                    addWillChange(willChange, key)
-                }
-            })
-        }
+    // if (applyWillChange) {
+    //     if (animate && initial !== false && !isAnimationControls(animate)) {
+    //         forEachDefinition(props, animate, (target) => {
+    //             for (const key in target) {
+    //                 addWillChange(willChange, key)
+    //             }
+    //         })
+    //     }
 
-        if (willChange.length) {
-            values.willChange = willChange.join(",")
-        }
-    }
+    //     if (willChange.length) {
+    //         values.willChange = willChange.join(",")
+    //     }
+    // }
 
     return values
 }
