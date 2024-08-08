@@ -70,7 +70,7 @@ export function handoffOptimizedAppearAnimation(
          * the GPU.
          */
         return {
-            elapsed: handoffFrameTime - startTime - 50 || 0,
+            elapsed: handoffFrameTime - startTime - 40 || 0,
             startTime: handoffFrameTime || 0,
         }
     }
