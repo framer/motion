@@ -21,7 +21,7 @@
         "test-e2e": "turbo run test-e2e",
         "test-ci": "turbo run test-ci --no-cache",
         "measure": "turbo run measure",
-        "prepare": "turbo run build measure test test-e2e",
+        "prepare": "turbo run build",
         "new": "lerna publish from-package",
         "new-alpha": "turbo run build && lerna publish from-package --canary --preid alpha"
     },
