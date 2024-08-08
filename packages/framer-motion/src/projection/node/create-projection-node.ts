@@ -648,7 +648,7 @@ export function createProjectionNode<I>({
             ) {
                 console.log("cancel all")
                 flushKeyframeResolvers()
-                const now = time.now()
+                const now = performance.now()
                 frameData.delta = clamp(0, 1000 / 60, now - frameData.timestamp)
                 frameData.timestamp = now
                 frameData.isProcessing = true
