@@ -110,6 +110,7 @@ export const animateMotionValue =
 
         if (
             instantAnimationState.current ||
+            element?.skipAnimations ||
             MotionGlobalConfig.skipAnimations
         ) {
             shouldSkip = true
