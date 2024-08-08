@@ -111,7 +111,7 @@ function makeLatestValues(
     props: MotionProps,
     context: MotionContextProps,
     presenceContext: PresenceContextProps | null,
-    shouldApplyWillChange: boolean,
+    _shouldApplyWillChange: boolean,
     scrapeMotionValues: ScrapeMotionValuesFromProps
 ) {
     const values: ResolvedValues = {}
