@@ -10,6 +10,7 @@ import { getValueTransition } from "../utils/transitions"
 import { frame } from "../../frameloop"
 import { getOptimisedAppearId } from "../optimized-appear/get-appear-id"
 import { addValueToWillChange } from "../../value/use-will-change/add-will-change"
+import { time } from "../../frameloop/sync-time"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
@@ -66,6 +67,7 @@ export function animateTarget(
         const valueTransition = {
             delay,
             elapsed: 0,
+            startTime: time.now(),
             ...getValueTransition(transition || {}, key),
         }
 
@@ -73,7 +75,6 @@ export function animateTarget(
          * If this is the first time a value is being animated, check
          * to see if we're handling off from an existing animation.
          */
-        let isHandoff = false
         if (window.MotionHandoffAnimation) {
             const appearId = getOptimisedAppearId(visualElement)
 
@@ -85,8 +86,8 @@ export function animateTarget(
                 )
 
                 if (handoffInfo !== null) {
-                    isHandoff = true
                     const { elapsed, startTime } = handoffInfo
+                    valueTransition.isHandoff = true
                     valueTransition.elapsed = elapsed
                     if (startTime) valueTransition.startTime = startTime
                 }
@@ -102,7 +103,6 @@ export function animateTarget(
                     ? { type: false }
                     : valueTransition,
                 visualElement,
-                isHandoff,
                 addValueToWillChange(visualElement, key)
             )
         )

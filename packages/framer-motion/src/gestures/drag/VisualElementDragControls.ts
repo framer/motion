@@ -34,6 +34,7 @@ import { animateMotionValue } from "../../animation/interfaces/motion-value"
 import { getContextWindow } from "../../utils/get-context-window"
 import { frame } from "../../frameloop"
 import { addValueToWillChange } from "../../value/use-will-change/add-will-change"
+import { ValueAnimationOptions } from "../../animation/types"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -460,9 +461,8 @@ export class VisualElementDragControls {
                 axis,
                 axisValue,
                 0,
-                transition,
+                transition as ValueAnimationOptions,
                 this.visualElement,
-                false,
                 addValueToWillChange(this.visualElement, axis)
             )
         )

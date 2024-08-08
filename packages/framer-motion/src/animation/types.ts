@@ -51,6 +51,7 @@ export interface ValueAnimationOptions<V extends string | number = number>
     motionValue?: MotionValue<V>
     from?: V
     isGenerator?: boolean
+    isHandoff?: boolean
 }
 
 export interface AnimationScope<T = any> {
