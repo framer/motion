@@ -395,13 +395,22 @@ export class MotionValue<V = any> {
      * @param animation - A function that starts the provided animation
      *
      * @internal
-     */
+    //  */
     start(startAnimation: StartAnimation) {
         this.stop()
 
         return new Promise<void>((resolve) => {
             this.hasAnimated = true
             this.animation = startAnimation(resolve)
+
+            // frame.read(() => {
+            //     frame.read(() => {
+            //         if (this.animation) {
+            //             this.animation.time = 0.6
+            //             this.animation.pause()
+            //         }
+            //     })
+            // })``
 
             if (this.events.animationStart) {
                 this.events.animationStart.notify()

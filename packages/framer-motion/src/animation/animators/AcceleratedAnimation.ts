@@ -140,6 +140,7 @@ export class AcceleratedAnimation<
             type,
             motionValue,
             name,
+            startTime,
         } = this.options
 
         /**
@@ -185,7 +186,7 @@ export class AcceleratedAnimation<
 
         // Override the browser calculated startTime with one synchronised to other JS
         // and WAAPI animations starting this event loop.
-        animation.startTime = time.now()
+        animation.startTime = startTime || time.now()
 
         if (this.pendingTimeline) {
             animation.timeline = this.pendingTimeline
@@ -218,6 +219,11 @@ export class AcceleratedAnimation<
             ease,
             keyframes: keyframes as string[] | number[],
         }
+    }
+
+    get startTime() {
+        if (!this.resolved) return 0
+        return this.resolved.animation.startTime
     }
 
     get duration() {
