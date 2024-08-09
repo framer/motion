@@ -98,8 +98,7 @@ export function animateTarget(
                 visualElement.shouldReduceMotion && transformProps.has(key)
                     ? { type: false }
                     : valueTransition,
-                visualElement,
-                isHandoff,
+                isHandoff ? undefined : visualElement,
                 addValueToWillChange(visualElement, key)
             )
         )

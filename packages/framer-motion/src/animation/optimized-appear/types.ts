@@ -1,5 +1,10 @@
 import type { Batcher } from "../../frameloop/types"
 
+export interface HandoffInfo {
+    elapsed: number
+    startTime: number
+}
+
 export type HandoffFunction = (
     storeId: string,
     valueName: string,
