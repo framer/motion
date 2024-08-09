@@ -433,7 +433,7 @@ export class MainThreadAnimation<
 
         if (this.isStopped) return
 
-        const { driver = frameloopDriver, onPlay } = this.options
+        const { driver = frameloopDriver, onPlay, startTime } = this.options
 
         if (!this.driver) {
             this.driver = driver((timestamp) => this.tick(timestamp))
@@ -444,7 +444,7 @@ export class MainThreadAnimation<
         if (this.holdTime !== null) {
             this.startTime = this.driver.now() - this.holdTime
         } else if (!this.startTime || this.state === "finished") {
-            this.startTime = this.calcStartTime()
+            this.startTime = startTime ?? this.calcStartTime()
         }
 
         if (this.state === "finished") {
