@@ -76,11 +76,6 @@ export class MainThreadAnimation<
     private holdTime: number | null = null
 
     /**
-     * The time at which the animation was started.
-     */
-    private startTime: number | null = null
-
-    /**
      * The time at which the animation was cancelled.
      */
     private cancelTime: number | null = null
@@ -101,6 +96,11 @@ export class MainThreadAnimation<
      * without us having to resolve it first.
      */
     private pendingPlayState: AnimationPlayState = "running"
+
+    /**
+     * The time at which the animation was started.
+     */
+    startTime: number | null = null
 
     constructor(options: ValueAnimationOptions<T>) {
         super(options)
@@ -466,7 +466,7 @@ export class MainThreadAnimation<
             this.pendingPlayState = "paused"
             return
         }
-
+        console.log(this.startTime)
         this.state = "paused"
         this.holdTime = this.currentTime ?? 0
     }
