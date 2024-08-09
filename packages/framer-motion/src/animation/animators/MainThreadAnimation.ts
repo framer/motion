@@ -441,10 +441,13 @@ export class MainThreadAnimation<
 
         onPlay && onPlay()
 
+        const now = this.driver.now()
         if (this.holdTime !== null) {
-            this.startTime = this.driver.now() - this.holdTime
-        } else if (!this.startTime || this.state === "finished") {
+            this.startTime = now - this.holdTime
+        } else if (!this.startTime) {
             this.startTime = startTime ?? this.calcStartTime()
+        } else if (this.state === "finished") {
+            this.startTime = now
         }
 
         if (this.state === "finished") {
