@@ -49,11 +49,11 @@ export const App = () => {
             settings
         )
 
-        const startTime = 101
+        const startTime = performance.now() + 10
 
         const waapiExplicitAnimation = animate(
             waapiRef.current,
-            { filter: ["blur(0px)", "blur(1px)"] },
+            { filter: ["none", "blur(1px)"] },
             { ...settings, startTime }
         )
         const syncExplicitAnimation = animate(
