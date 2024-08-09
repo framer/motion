@@ -114,14 +114,15 @@ export class AcceleratedAnimation<
     constructor(options: ValueAnimationOptions<T>) {
         super(options)
 
-        const { name, motionValue, keyframes } = this.options
+        const { name, motionValue, element, keyframes } = this.options
 
         this.resolver = new DOMKeyframesResolver<T>(
             keyframes,
             (resolvedKeyframes: ResolvedKeyframes<T>, finalKeyframe: T) =>
                 this.onKeyframesResolved(resolvedKeyframes, finalKeyframe),
             name,
-            motionValue
+            motionValue,
+            element
         )
 
         this.resolver.scheduleResolve()
@@ -154,7 +155,7 @@ export class AcceleratedAnimation<
          * If this animation needs pre-generated keyframes then generate.
          */
         if (requiresPregeneratedKeyframes(this.options)) {
-            const { onComplete, onUpdate, motionValue, ...options } =
+            const { onComplete, onUpdate, motionValue, element, ...options } =
                 this.options
             const pregeneratedAnimation = pregenerateKeyframes(
                 keyframes,
@@ -337,7 +338,7 @@ export class AcceleratedAnimation<
          * Motion to calculate velocity for any subsequent animation.
          */
         if (this.time) {
-            const { motionValue, onUpdate, onComplete, ...options } =
+            const { motionValue, onUpdate, onComplete, element, ...options } =
                 this.options
 
             const sampleAnimation = new MainThreadAnimation({
