@@ -53,7 +53,7 @@ export const App = () => {
 
         const waapiExplicitAnimation = animate(
             waapiRef.current,
-            { filter: ["none", "blur(1px)"] },
+            { filter: ["blur(0px)", "blur(1px)"] },
             { ...settings, startTime }
         )
         const syncExplicitAnimation = animate(
