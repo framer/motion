@@ -54,7 +54,7 @@ export const App = () => {
 
         const waapiExplicitAnimation = animate(
             waapiRef.current,
-            { filter: ["none", "blur(1px)"] },
+            { filter: ["blur(0px)", "blur(1px)"] },
             { ...settings, startTime }
         )
         const syncExplicitAnimation = animate(
@@ -93,24 +93,27 @@ export const App = () => {
             <motion.div
                 ref={syncRef}
                 className="box"
-                initial={{ opacity: 0 }}
+                initial={{ opacity: 0, y: 0 }}
                 style={{ opacity }}
             />
-            <motion.pre id="waapi-start-time" className="auto-timer">
+            <motion.pre
+                id="waapi-start-time"
+                className="auto-timer waapi-timer"
+            >
                 {waapiStartTime}
             </motion.pre>
-            <motion.pre id="sync-start-time" className="auto-timer">
+            <motion.pre id="sync-start-time" className="auto-timer sync-timer">
                 {syncStartTime}
             </motion.pre>
             <motion.pre
                 id="waapi-explicit-start-time"
-                className="explicit-timer"
+                className="explicit-timer waapi-timer"
             >
                 {waapiExplicitStartTime}
             </motion.pre>
             <motion.pre
                 id="sync-explicit-start-time"
-                className="explicit-timer"
+                className="explicit-timer sync-timer"
             >
                 {syncExplicitStartTime}
             </motion.pre>
