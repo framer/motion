@@ -49,6 +49,7 @@ export interface ValueAnimationOptions<V extends string | number = number>
     KeyframeResolver?: typeof KeyframeResolver
     name?: string
     motionValue?: MotionValue<V>
+    element?: VisualElement
     from?: V
     isGenerator?: boolean
 }

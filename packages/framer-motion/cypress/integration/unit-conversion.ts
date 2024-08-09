@@ -11,6 +11,18 @@ describe("Unit conversion", () => {
             })
     })
 
+    it("Animate x from 0 to calc with externally-defined motion value", () => {
+        cy.visit("?test=unit-conversion&use-motion-value=true")
+            .wait(100)
+            .get("#box")
+            .trigger("click")
+            .wait(100)
+            .should(([$box]: any) => {
+                const { left } = $box.getBoundingClientRect()
+                expect(left).to.equal(150)
+            })
+    })
+
     it("Animate width and height to/from vh units", () => {
         cy.viewport(400, 400)
             .visit("?test=unit-conversion-vh")
