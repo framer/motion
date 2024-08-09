@@ -143,6 +143,7 @@ export class AcceleratedAnimation<
             name,
             startTime = time.now(),
         } = this.options
+
         console.log(startTime)
         console.log("resolved accelerated animation", name, startTime)
 
