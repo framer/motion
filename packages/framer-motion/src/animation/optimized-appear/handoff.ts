@@ -2,7 +2,7 @@ import type { Batcher } from "../../frameloop/types"
 import { transformProps } from "../../render/html/utils/transform"
 import { appearAnimationStore } from "./store"
 import { appearStoreId } from "./store-id"
-import "./types"
+import { HandoffInfo } from "./types"
 
 let handoffFrameTime: number
 
@@ -10,7 +10,7 @@ export function handoffOptimizedAppearAnimation(
     elementId: string,
     valueName: string,
     frame: Batcher
-): number | null {
+): HandoffInfo | null {
     const optimisedValueName = transformProps.has(valueName)
         ? "transform"
         : valueName
@@ -60,6 +60,9 @@ export function handoffOptimizedAppearAnimation(
          * an updated value for several frames, even as the animation plays smoothly via
          * the GPU.
          */
-        return handoffFrameTime - startTime || 0
+        return {
+            elapsed: handoffFrameTime - startTime || 0,
+            startTime: handoffFrameTime,
+        }
     }
 }
