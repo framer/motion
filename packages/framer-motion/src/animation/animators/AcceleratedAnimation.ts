@@ -1,4 +1,5 @@
 import { EasingDefinition } from "../../easing/types"
+import { time } from "../../frameloop/sync-time"
 import { DOMKeyframesResolver } from "../../render/dom/DOMKeyframesResolver"
 import { ResolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { memo } from "../../utils/memo"
@@ -140,9 +141,8 @@ export class AcceleratedAnimation<
             type,
             motionValue,
             name,
+            startTime,
         } = this.options
-
-        console.log("resolved accelerated animation", name)
 
         /**
          * If element has since been unmounted, return false to indicate
@@ -187,7 +187,7 @@ export class AcceleratedAnimation<
 
         // Override the browser calculated startTime with one synchronised to other JS
         // and WAAPI animations starting this event loop.
-        animation.startTime = this.calcStartTime()
+        animation.startTime = startTime ?? this.calcStartTime()
 
         if (this.pendingTimeline) {
             animation.timeline = this.pendingTimeline
