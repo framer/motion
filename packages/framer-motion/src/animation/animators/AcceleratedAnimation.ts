@@ -317,6 +317,7 @@ export class AcceleratedAnimation<
         if (!resolved) return
 
         const { animation } = resolved
+        console.log(animation.startTime)
         animation.pause()
     }
 

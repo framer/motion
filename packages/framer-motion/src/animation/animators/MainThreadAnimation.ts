@@ -469,7 +469,7 @@ export class MainThreadAnimation<
             this.pendingPlayState = "paused"
             return
         }
-
+        console.log(this.startTime)
         this.state = "paused"
         this.holdTime = this.currentTime ?? 0
     }
