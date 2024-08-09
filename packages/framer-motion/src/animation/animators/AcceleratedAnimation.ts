@@ -141,9 +141,10 @@ export class AcceleratedAnimation<
             type,
             motionValue,
             name,
+            startTime = time.now(),
         } = this.options
-
-        console.log("resolved accelerated animation", name)
+        console.log(startTime)
+        console.log("resolved accelerated animation", name, startTime)
 
         /**
          * If element has since been unmounted, return false to indicate
@@ -188,7 +189,7 @@ export class AcceleratedAnimation<
 
         // Override the browser calculated startTime with one synchronised to other JS
         // and WAAPI animations starting this event loop.
-        animation.startTime = time.now()
+        animation.startTime = startTime
 
         if (this.pendingTimeline) {
             animation.timeline = this.pendingTimeline

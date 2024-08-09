@@ -88,6 +88,7 @@ describe("waapi", () => {
             .get(".explicit-timer")
             .should(([waapi, sync]: any) => {
                 expect(waapi.innerHTML).to.equal(sync.innerHTML)
+                expect(waapi.innerHTML).to.equal("101")
             })
             // Explicitly defined startTime should not be the same as automatically defined startTime
             .get(".sync-timer")
