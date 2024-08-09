@@ -1,10 +1,6 @@
 import {
     animate,
     motion,
-<<<<<<< HEAD
-=======
-    useAnimate,
->>>>>>> 80ea212f9 (adding startTime and test)
     useMotionValue,
     ValueAnimationTransition,
 } from "framer-motion"
