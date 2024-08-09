@@ -49,7 +49,7 @@ export const App = () => {
             settings
         )
 
-        const startTime = performance.now() + 10
+        const startTime = 101
 
         const waapiExplicitAnimation = animate(
             waapiRef.current,
