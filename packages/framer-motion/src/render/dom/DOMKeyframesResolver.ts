@@ -20,7 +20,7 @@ export class DOMKeyframesResolver<
     T extends string | number
 > extends KeyframeResolver<T> {
     name: string
-    element: VisualElement<HTMLElement | SVGElement>
+    element?: VisualElement<HTMLElement | SVGElement>
 
     private removedTransforms?: [string, string | number][]
     private measuredOrigin?: string | number
@@ -29,22 +29,16 @@ export class DOMKeyframesResolver<
         unresolvedKeyframes: UnresolvedKeyframes<string | number>,
         onComplete: OnKeyframesResolved<T>,
         name?: string,
-        motionValue?: MotionValue<T>
+        motionValue?: MotionValue<T>,
+        element?: VisualElement
     ) {
-        super(
-            unresolvedKeyframes,
-            onComplete,
-            name,
-            motionValue,
-            motionValue?.owner as VisualElement,
-            true
-        )
+        super(unresolvedKeyframes, onComplete, name, motionValue, element, true)
     }
 
     readKeyframes() {
         const { unresolvedKeyframes, element, name } = this
 
-        if (!element.current) return
+        if (!element || !element.current) return
 
         super.readKeyframes()
 
@@ -138,7 +132,7 @@ export class DOMKeyframesResolver<
     measureInitialState() {
         const { element, unresolvedKeyframes, name } = this
 
-        if (!element.current) return
+        if (!element || !element.current) return
 
         if (name === "height") {
             this.suspendedScrollY = window.pageYOffset
@@ -163,7 +157,7 @@ export class DOMKeyframesResolver<
     measureEndState() {
         const { element, name, unresolvedKeyframes } = this
 
-        if (!element.current) return
+        if (!element || !element.current) return
 
         const value = element.getValue(name)
         value && value.jump(this.measuredOrigin, false)
