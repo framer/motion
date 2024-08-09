@@ -273,6 +273,9 @@ export class AcceleratedAnimation<
         if (!resolved) return null
 
         const { animation } = resolved
+
+        // Coerce to number as TypeScript incorrectly types this
+        // as CSSNumberish
         return animation.startTime as number
     }
 
