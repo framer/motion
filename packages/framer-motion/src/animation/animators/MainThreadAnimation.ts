@@ -137,8 +137,6 @@ export class MainThreadAnimation<
 
         const generatorFactory = generators[type] || keyframesGeneratorFactory
 
-        console.log("resolved main thread aniamtion", this.options.name)
-
         /**
          * If our generator doesn't support mixing numbers, we need to replace keyframes with
          * [0, 100] and then make a function that maps that to the actual keyframes.
@@ -471,7 +469,7 @@ export class MainThreadAnimation<
             this.pendingPlayState = "paused"
             return
         }
-        console.log(this.startTime)
+
         this.state = "paused"
         this.holdTime = this.currentTime ?? 0
     }
