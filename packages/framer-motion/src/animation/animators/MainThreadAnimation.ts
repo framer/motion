@@ -108,7 +108,7 @@ export class MainThreadAnimation<
         const { name, motionValue, element, keyframes } = this.options
 
         const KeyframeResolver =
-            options.element?.KeyframeResolver || DefaultKeyframeResolver
+            element?.KeyframeResolver || DefaultKeyframeResolver
 
         const onResolved = (
             resolvedKeyframes: ResolvedKeyframes<T>,
