@@ -36,11 +36,7 @@ import { Feature } from "../motion/features/Feature"
 import type { PresenceContextProps } from "../context/PresenceContext"
 import { variantProps } from "./utils/variant-props"
 import { visualElementStore } from "./store"
-import {
-    KeyframeResolver,
-    ResolvedKeyframes,
-    UnresolvedKeyframes,
-} from "./utils/KeyframesResolver"
+import { KeyframeResolver } from "./utils/KeyframesResolver"
 import { isNumericalString } from "../utils/is-numerical-string"
 import { isZeroValueString } from "../utils/is-zero-value-string"
 import { findValueType } from "./dom/value-types/find"
@@ -148,24 +144,6 @@ export abstract class VisualElement<
      * currently support this.
      */
     applyWillChange = false
-
-    resolveKeyframes = <T extends string | number>(
-        keyframes: UnresolvedKeyframes<T>,
-        // We use an onComplete callback here rather than a Promise as a Promise
-        // resolution is a microtask and we want to retain the ability to force
-        // the resolution of keyframes synchronously.
-        onComplete: (resolvedKeyframes: ResolvedKeyframes<T>) => void,
-        name: string,
-        value: MotionValue<T>
-    ): KeyframeResolver<T> => {
-        return new this.KeyframeResolver(
-            keyframes,
-            onComplete,
-            name,
-            value,
-            this
-        )
-    }
 
     /**
      * If the component child is provided as a motion value, handle subscriptions
