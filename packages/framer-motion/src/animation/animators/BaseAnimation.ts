@@ -117,6 +117,7 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
     abstract set time(newTime: number)
     abstract get duration(): number
     abstract get state(): AnimationPlayState
+    abstract get startTime(): number | null
 
     /**
      * A getter for resolved data. If keyframes are not yet resolved, accessing

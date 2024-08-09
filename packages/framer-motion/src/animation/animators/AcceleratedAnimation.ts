@@ -266,6 +266,14 @@ export class AcceleratedAnimation<
         return animation.playState
     }
 
+    get startTime() {
+        const { resolved } = this
+        if (!resolved) return null
+
+        const { animation } = resolved
+        return animation.startTime as number
+    }
+
     /**
      * Replace the default DocumentTimeline with another AnimationTimeline.
      * Currently used for scroll animations.
@@ -305,6 +313,7 @@ export class AcceleratedAnimation<
         if (!resolved) return
 
         const { animation } = resolved
+        console.log(animation.startTime)
         animation.pause()
     }
 
