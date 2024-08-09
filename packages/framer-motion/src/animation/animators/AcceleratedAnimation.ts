@@ -143,6 +143,8 @@ export class AcceleratedAnimation<
             startTime,
         } = this.options
 
+        console.log("resolved accelerated animation", name)
+
         /**
          * If element has since been unmounted, return false to indicate
          * the animation failed to initialised.
