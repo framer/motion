@@ -1,9 +1,12 @@
-import { Transition } from "../../types"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
 import type { MotionValue, StartAnimation } from "../../value"
 import { getDefaultTransition } from "../utils/default-transitions"
 import { getValueTransition, isTransitionDefined } from "../utils/transitions"
-import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
+import {
+    AnimationPlaybackControls,
+    ValueAnimationOptions,
+    ValueAnimationTransition,
+} from "../types"
 import type { UnresolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { MotionGlobalConfig } from "../../utils/GlobalConfig"
 import { instantAnimationState } from "../../utils/use-instant-transition-state"
@@ -19,9 +22,8 @@ export const animateMotionValue =
         name: string,
         value: MotionValue<V>,
         target: V | UnresolvedKeyframes<V>,
-        transition: Transition & { elapsed?: number } = {},
+        transition: ValueAnimationTransition & { elapsed?: number } = {},
         element?: VisualElement<any>,
-        isHandoff?: boolean,
         /**
          * Currently used to remove values from will-change when an animation ends.
          * Preferably this would be handled by event listeners on the MotionValue
@@ -44,7 +46,7 @@ export const animateMotionValue =
          * Elapsed isn't a public transition option but can be passed through from
          * optimized appear effects in milliseconds.
          */
-        let { elapsed = 0 } = transition
+        let { elapsed = 0, isHandoff } = transition
         elapsed = elapsed - secondsToMilliseconds(delay)
 
         let options: ValueAnimationOptions = {

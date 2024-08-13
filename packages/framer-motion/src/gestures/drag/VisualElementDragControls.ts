@@ -460,9 +460,8 @@ export class VisualElementDragControls {
                 axis,
                 axisValue,
                 0,
-                transition,
+                transition as any,
                 this.visualElement,
-                false,
                 addValueToWillChange(this.visualElement, axis)
             )
         )

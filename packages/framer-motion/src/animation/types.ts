@@ -35,7 +35,9 @@ export interface Transition
 
 export interface ValueAnimationTransition<V = any>
     extends Transition,
-        AnimationPlaybackLifecycles<V> {}
+        AnimationPlaybackLifecycles<V> {
+    isHandoff?: boolean
+}
 
 export type ResolveKeyframes<V extends string | number> = (
     keyframes: V[],

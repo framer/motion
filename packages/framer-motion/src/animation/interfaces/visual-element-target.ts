@@ -73,7 +73,6 @@ export function animateTarget(
          * If this is the first time a value is being animated, check
          * to see if we're handling off from an existing animation.
          */
-        let isHandoff = false
         if (window.MotionHandoffAnimation) {
             const appearId = getOptimisedAppearId(visualElement)
 
@@ -81,8 +80,11 @@ export function animateTarget(
                 const info = window.MotionHandoffAnimation(appearId, key, frame)
 
                 if (info !== null) {
-                    valueTransition = { ...valueTransition, ...info }
-                    isHandoff = true
+                    valueTransition = {
+                        ...valueTransition,
+                        ...info,
+                        isHandoff: true,
+                    }
                 }
             }
         }
@@ -96,7 +98,6 @@ export function animateTarget(
                     ? { type: false }
                     : valueTransition,
                 visualElement,
-                isHandoff,
                 addValueToWillChange(visualElement, key)
             )
         )
