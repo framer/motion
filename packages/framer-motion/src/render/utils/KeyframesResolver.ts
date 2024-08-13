@@ -135,7 +135,7 @@ export class KeyframeResolver<T extends string | number = any> {
         name?: string,
         motionValue?: MotionValue<T>,
         element?: VisualElement<any>,
-        isAsync = false
+        isAsync = true
     ) {
         this.unresolvedKeyframes = [...unresolvedKeyframes]
         this.onComplete = onComplete
