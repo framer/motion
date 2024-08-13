@@ -444,7 +444,7 @@ export class MainThreadAnimation<
         if (this.holdTime !== null) {
             this.startTime = now - this.holdTime
         } else if (!this.startTime || this.state === "finished") {
-            this.startTime = now
+            this.startTime = this.getStartTime()
         }
 
         if (this.state === "finished") {

@@ -1,5 +1,4 @@
 import { EasingDefinition } from "../../easing/types"
-import { time } from "../../frameloop/sync-time"
 import { DOMKeyframesResolver } from "../../render/dom/DOMKeyframesResolver"
 import { ResolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { memo } from "../../utils/memo"
@@ -186,7 +185,7 @@ export class AcceleratedAnimation<
 
         // Override the browser calculated startTime with one synchronised to other JS
         // and WAAPI animations starting this event loop.
-        animation.startTime = time.now()
+        animation.startTime = this.getStartTime()
 
         if (this.pendingTimeline) {
             animation.timeline = this.pendingTimeline
