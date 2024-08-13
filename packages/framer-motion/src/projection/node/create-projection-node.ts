@@ -59,6 +59,7 @@ import { microtask } from "../../frameloop/microtask"
 import { VisualElement } from "../../render/VisualElement"
 import { getOptimisedAppearId } from "../../animation/optimized-appear/get-appear-id"
 import { createBox, createDelta } from "../geometry/models"
+import { flushKeyframeResolvers } from "../../render/utils/KeyframesResolver"
 
 const metrics = {
     type: "projectionFrame",
@@ -121,6 +122,7 @@ function cancelTreeOptimisedTransformAnimations(
     const appearId = getOptimisedAppearId(visualElement)
 
     if (window.MotionHasOptimisedTransformAnimation!(appearId)) {
+        flushKeyframeResolvers()
         window.MotionCancelOptimisedTransform!(appearId)
     }
 
