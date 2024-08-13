@@ -1,9 +1,17 @@
+import { frameData } from "../../../frameloop"
+import { time } from "../../../frameloop/sync-time"
 import { KeyframeGenerator } from "../../generators/types"
 
 export const syncDriver = (interval = 10) => {
+    time.set(0)
+
     const driver = (update: (v: number) => void) => {
         let isRunning = true
         let elapsed = 0
+
+        frameData.isProcessing = true
+        frameData.delta = interval
+        frameData.timestamp = elapsed
 
         return {
             start: () => {
@@ -17,6 +25,7 @@ export const syncDriver = (interval = 10) => {
                 }, 0)
             },
             stop: () => {
+                frameData.isProcessing = false
                 isRunning = false
             },
             now: () => elapsed,
