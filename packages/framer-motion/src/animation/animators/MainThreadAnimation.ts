@@ -20,6 +20,7 @@ import { clamp } from "../../utils/clamp"
 import { invariant } from "../../utils/errors"
 import { frameloopDriver } from "./drivers/driver-frameloop"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
+import { frameData } from "../../frameloop"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -444,7 +445,13 @@ export class MainThreadAnimation<
         if (this.holdTime !== null) {
             this.startTime = now - this.holdTime
         } else if (!this.startTime || this.state === "finished") {
-            this.startTime = this.getStartTime()
+            console.log(
+                "setting start time",
+                this.calcStartTime(),
+                now,
+                frameData
+            )
+            this.startTime = this.calcStartTime()
         }
 
         if (this.state === "finished") {
