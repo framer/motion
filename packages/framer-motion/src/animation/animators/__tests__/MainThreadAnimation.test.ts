@@ -1196,7 +1196,7 @@ describe("MainThreadAnimation", () => {
         expect(output).toEqual([0, 20, 40])
     })
 
-    test.only("Correctly cancels an animation", async () => {
+    test("Correctly cancels an animation", async () => {
         const output: number[] = []
 
         const animation = animateValue({
