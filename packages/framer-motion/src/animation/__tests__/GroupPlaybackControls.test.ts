@@ -196,6 +196,19 @@ describe("GroupPlaybackControls", () => {
         expect(b.speed).toEqual(-1)
     })
 
+    test("Gets correct startTime", async () => {
+        const a = createTestAnimationControls({
+            startTime: 2,
+        })
+        const b = createTestAnimationControls({
+            startTime: 2,
+        })
+
+        const controls = new GroupPlaybackControls([a, b])
+
+        expect(controls.startTime).toEqual(2)
+    })
+
     test("Gets max duration", async () => {
         const a = createTestAnimationControls({
             duration: 3,
