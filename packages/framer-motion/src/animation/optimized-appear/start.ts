@@ -65,6 +65,13 @@ export function startOptimizedAppearAnimation(
          */
         window.MotionHandoffAnimation = handoffOptimizedAppearAnimation
 
+        window.MotionHasOptimisedTransformAnimation = (elementId?: string) => {
+            if (!elementId) return false
+
+            const animationId = appearStoreId(elementId, "transform")
+            return Boolean(appearAnimationStore.get(animationId))
+        }
+
         /**
          * We only need to cancel transform animations as
          * they're the ones that will interfere with the

@@ -127,6 +127,7 @@ export class MainThreadAnimation<
     }
 
     protected initPlayback(keyframes: ResolvedKeyframes<T>) {
+        console.log("resolved animtion", this.options.name)
         const {
             type = "keyframes",
             repeat = 0,
