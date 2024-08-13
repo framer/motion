@@ -185,7 +185,7 @@ export class AcceleratedAnimation<
 
         // Override the browser calculated startTime with one synchronised to other JS
         // and WAAPI animations starting this event loop.
-        animation.startTime = this.getStartTime()
+        animation.startTime = this.calcStartTime()
 
         if (this.pendingTimeline) {
             animation.timeline = this.pendingTimeline
