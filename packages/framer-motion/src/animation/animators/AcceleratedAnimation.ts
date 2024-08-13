@@ -1,5 +1,4 @@
 import { EasingDefinition } from "../../easing/types"
-import { time } from "../../frameloop/sync-time"
 import { DOMKeyframesResolver } from "../../render/dom/DOMKeyframesResolver"
 import { ResolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { memo } from "../../utils/memo"
