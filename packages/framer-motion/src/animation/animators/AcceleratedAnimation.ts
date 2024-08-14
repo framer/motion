@@ -140,6 +140,7 @@ export class AcceleratedAnimation<
             type,
             motionValue,
             name,
+            startTime,
         } = this.options
 
         /**
@@ -185,7 +186,7 @@ export class AcceleratedAnimation<
 
         // Override the browser calculated startTime with one synchronised to other JS
         // and WAAPI animations starting this event loop.
-        animation.startTime = this.calcStartTime()
+        animation.startTime = startTime ?? this.calcStartTime()
 
         if (this.pendingTimeline) {
             animation.timeline = this.pendingTimeline
@@ -264,6 +265,17 @@ export class AcceleratedAnimation<
 
         const { animation } = resolved
         return animation.playState
+    }
+
+    get startTime() {
+        const { resolved } = this
+        if (!resolved) return null
+
+        const { animation } = resolved
+
+        // Coerce to number as TypeScript incorrectly types this
+        // as CSSNumberish
+        return animation.startTime as number
     }
 
     /**

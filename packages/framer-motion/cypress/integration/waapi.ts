@@ -75,4 +75,31 @@ describe("waapi", () => {
                 expect(result.length).to.equal(0)
             })
     })
+
+    it("Should match WAAPI and main thread startTimes, and allow explicitly setting startTime", () => {
+        cy.visit("?test=waapi-sync")
+            .wait(400)
+            // Automatically recorded startTime should be the same between main thread and WAAPI
+            .get(".auto-timer")
+            .should(([waapi, sync]: any) => {
+                expect(waapi.innerHTML).to.equal(sync.innerHTML)
+            })
+            // Explicitly defined startTime should be the same between main thread and WAAPI
+            .get(".explicit-timer")
+            .should(([waapi, sync]: any) => {
+                expect(waapi.innerHTML).to.equal(sync.innerHTML)
+                expect(waapi.innerHTML).to.equal("101")
+            })
+            // Explicitly defined startTime should not be the same as automatically defined startTime
+            .get(".sync-timer")
+            .should(([syncAuto, syncExplicit]: any) => {
+                expect(syncAuto.innerHTML).not.to.equal(syncExplicit.innerHTML)
+            })
+            .get(".waapi-timer")
+            .should(([waapiAuto, waapiExplicit]: any) => {
+                expect(waapiAuto.innerHTML).not.to.equal(
+                    waapiExplicit.innerHTML
+                )
+            })
+    })
 })
