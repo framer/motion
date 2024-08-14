@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.27] 2024-08-14
+
+### Changed
+
+-   Allow manual setting of `startTime` via animation options (currently for internal use only).
+
 ## [11.3.26] 2024-08-14
 
 ### Fixed
