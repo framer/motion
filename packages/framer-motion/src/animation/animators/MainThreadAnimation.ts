@@ -291,7 +291,7 @@ export class MainThreadAnimation<
             this.speed >= 0
                 ? timeWithoutDelay < 0
                 : timeWithoutDelay > totalDuration
-        this.currentTime = Math.max(timeWithoutDelay, 0)
+        this.currentTime = Math.max(timeWithoutDelay, this.options.elapsed || 0)
 
         // If this animation has finished, set the current time  to the total duration.
         if (this.state === "finished" && this.holdTime === null) {
