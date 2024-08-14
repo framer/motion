@@ -105,7 +105,8 @@ export class MainThreadAnimation<
     constructor(options: ValueAnimationOptions<T>) {
         super(options)
 
-        const { name, motionValue, element, keyframes } = this.options
+        const { name, motionValue, element, keyframes, isGenerator } =
+            this.options
 
         const KeyframeResolver =
             element?.KeyframeResolver || DefaultKeyframeResolver
@@ -120,7 +121,8 @@ export class MainThreadAnimation<
             onResolved,
             name,
             motionValue,
-            element
+            element,
+            !isGenerator
         )
 
         this.resolver.scheduleResolve()
