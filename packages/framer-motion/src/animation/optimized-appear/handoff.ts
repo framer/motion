@@ -53,6 +53,15 @@ export function handoffOptimizedAppearAnimation(
         if (handoffFrameTime === undefined) {
             handoffFrameTime = performance.now()
         }
+        const urlParams = new URLSearchParams(window.location.search)
+        const useCalcTime = urlParams.get("use-calc-time") === "true"
+
+        return {
+            elapsed: useCalcTime
+                ? handoffFrameTime - startTime
+                : (animation.currentTime as number) || 0,
+            startTime: handoffFrameTime,
+        }
 
         /**
          * We use main thread timings vs those returned by Animation.currentTime as it
@@ -60,9 +69,9 @@ export function handoffOptimizedAppearAnimation(
          * an updated value for several frames, even as the animation plays smoothly via
          * the GPU.
          */
-        return {
-            elapsed: handoffFrameTime - startTime || 0,
-            startTime: handoffFrameTime,
-        }
+        // return {
+        //     elapsed: handoffFrameTime - startTime || 0,
+        //     startTime: handoffFrameTime,
+        // }
     }
 }

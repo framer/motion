@@ -45,7 +45,7 @@ export function createRenderBatcher(
         state.delta = useDefaultElapsed
             ? 1000 / 60
             : Math.max(Math.min(timestamp - state.timestamp, maxElapsed), 1)
-
+        allowKeepAlive && console.log("frame delta", state.delta)
         state.timestamp = timestamp
         state.isProcessing = true
 
