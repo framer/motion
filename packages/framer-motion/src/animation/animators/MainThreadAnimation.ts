@@ -102,34 +102,26 @@ export class MainThreadAnimation<
      */
     private pendingPlayState: AnimationPlayState = "running"
 
-    constructor({
-        KeyframeResolver = DefaultKeyframeResolver,
-        ...options
-    }: ValueAnimationOptions<T>) {
+    constructor(options: ValueAnimationOptions<T>) {
         super(options)
 
-        const { name, motionValue, keyframes } = this.options
+        const { name, motionValue, element, keyframes } = this.options
+
+        const KeyframeResolver =
+            element?.KeyframeResolver || DefaultKeyframeResolver
 
         const onResolved = (
             resolvedKeyframes: ResolvedKeyframes<T>,
             finalKeyframe: T
         ) => this.onKeyframesResolved(resolvedKeyframes, finalKeyframe)
 
-        if (name && motionValue && motionValue.owner) {
-            this.resolver = (motionValue.owner as any).resolveKeyframes(
-                keyframes,
-                onResolved,
-                name,
-                motionValue
-            )
-        } else {
-            this.resolver = new KeyframeResolver(
-                keyframes,
-                onResolved,
-                name,
-                motionValue
-            )
-        }
+        this.resolver = new KeyframeResolver(
+            keyframes,
+            onResolved,
+            name,
+            motionValue,
+            element
+        )
 
         this.resolver.scheduleResolve()
     }
