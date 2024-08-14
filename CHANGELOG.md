@@ -4,6 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.26] 2024-08-14
+
+### Fixed
+
+-   Improving synchronisation between DOM animations on externally-provided `MotionValue`s and internal `MotionValue`s.
+-   Fixing unit conversion on DOM animations with externally-provided `MotionValue`s.
+
 ## [11.3.25] 2024-08-14
 
 ### Changed
