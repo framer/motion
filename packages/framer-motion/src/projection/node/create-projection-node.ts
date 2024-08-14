@@ -123,10 +123,13 @@ function cancelTreeOptimisedTransformAnimations(
 
     if (window.MotionHasOptimisedTransformAnimation!(appearId)) {
         const now = time.now()
-        frameData.delta = clamp(0, 1000 / 60, now - frameData.timestamp)
+        frameData.delta = 8
         frameData.timestamp = now
         frameData.isProcessing = true
         flushKeyframeResolvers()
+        steps.update.process(frameData)
+        steps.preRender.process(frameData)
+        steps.render.process(frameData)
         frameData.isProcessing = false
         window.MotionCancelOptimisedTransform!(appearId)
     }

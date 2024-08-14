@@ -83,7 +83,6 @@ function readAllKeyframes() {
 }
 
 export function flushKeyframeResolvers() {
-    console.log("early flush", toResolve.size)
     readAllKeyframes()
     measureAllKeyframes()
 }
