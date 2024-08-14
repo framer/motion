@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.25] 2024-08-14
+
+### Changed
+
+-   Improve calculation of `startTime` to prefer the immediacy of animation creation over keyframe resolution, but fall back to the latter if the former would lead to a perceptual jump.
+
 ## [11.3.24] 2024-08-08
 
 ### Fixed
