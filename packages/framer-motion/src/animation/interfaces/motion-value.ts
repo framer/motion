@@ -67,7 +67,7 @@ export const animateMotionValue =
             onStop: onEnd,
             name,
             motionValue: value,
-            element: isHandoff ? undefined : element,
+            element,
         }
 
         /**

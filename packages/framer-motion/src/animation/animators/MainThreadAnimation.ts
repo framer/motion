@@ -116,8 +116,7 @@ export class MainThreadAnimation<
             finalKeyframe: T
         ) => this.onKeyframesResolved(resolvedKeyframes, finalKeyframe)
 
-        const urlParams = new URLSearchParams(window.location.search)
-        const logId = urlParams.get("log-id")
+        const logId = new URLSearchParams(window.location.search).get("log-id")
 
         if (
             element &&
