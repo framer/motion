@@ -54,6 +54,26 @@ export function handoffOptimizedAppearAnimation(
             handoffFrameTime = performance.now()
         }
 
+        if (
+            new URLSearchParams(window.location.search).get(
+                "use-animation-timing"
+            ) === "true"
+        ) {
+            return {
+                elapsed: animation.currentTime as number,
+                startTime: startTime + (animation.currentTime as number),
+            }
+        } else if (
+            new URLSearchParams(window.location.search).get(
+                "use-start-time"
+            ) === "true"
+        ) {
+            return {
+                elapsed: 0,
+                startTime: startTime,
+            }
+        }
+
         /**
          * We use main thread timings vs those returned by Animation.currentTime as it
          * can be the case, particularly in Firefox, that currentTime doesn't return
