@@ -11,8 +11,6 @@ export const stepsOrder: StepId[] = [
     "postRender", // Compute
 ]
 
-const maxElapsed = 40
-
 export function createRenderBatcher(
     scheduleNextBatch: (callback: Function) => void,
     allowKeepAlive: boolean
@@ -44,7 +42,7 @@ export function createRenderBatcher(
 
         state.delta = useDefaultElapsed
             ? 1000 / 60
-            : Math.max(Math.min(timestamp - state.timestamp, maxElapsed), 1)
+            : Math.max(timestamp - state.timestamp, 1)
         allowKeepAlive && console.log("frame delta", state.delta)
         state.timestamp = timestamp
         state.isProcessing = true

@@ -86,15 +86,6 @@ export function animateTarget(
                         ...info,
                         isHandoff: true,
                     }
-
-                    const urlParams = new URLSearchParams(
-                        window.location.search
-                    )
-                    const useFrameTime =
-                        urlParams.get("use-frame-time") === "true"
-                    if (useFrameTime) {
-                        valueTransition.startTime = time.now()
-                    }
                 }
             }
         }
