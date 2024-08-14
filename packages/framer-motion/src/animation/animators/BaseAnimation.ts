@@ -1,3 +1,4 @@
+import { time } from "../../frameloop/sync-time"
 import {
     KeyframeResolver,
     ResolvedKeyframes,
@@ -11,6 +12,16 @@ import {
 } from "../types"
 import { canAnimate } from "./utils/can-animate"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
+
+/**
+ * Maximum time allowed between an animation being created and it being
+ * resolved for us to use the latter as the start time.
+ *
+ * This is to ensure that while we prefer to "start" an animation as soon
+ * as it's triggered, we also want to avoid a visual jump if there's a big delay
+ * between these two moments.
+ */
+const MAX_RESOLVE_DELAY = 40
 
 export interface ValueAnimationOptionsWithDefaults<T extends string | number>
     extends ValueAnimationOptions<T> {
@@ -44,6 +55,10 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
     // Reference to the active keyframes resolver.
     protected resolver: KeyframeResolver<T>
 
+    private createdAt: number
+
+    private resolvedAt: number | undefined
+
     constructor({
         autoplay = true,
         delay = 0,
@@ -53,6 +68,8 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
         repeatType = "loop",
         ...options
     }: ValueAnimationOptions<T>) {
+        this.createdAt = time.now()
+
         this.options = {
             autoplay,
             delay,
@@ -64,6 +81,24 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
         }
 
         this.updateFinishedPromise()
+    }
+
+    /**
+     * This method uses the createdAt and resolvedAt to calculate the
+     * animation startTime. *Ideally*, we would use the createdAt time as t=0
+     * as the following frame would then be the first frame of the animation in
+     * progress, which would feel snappier.
+     *
+     * However, if there's a delay (main thread work) between the creation of
+     * the animation and the first commited frame, we prefer to use resolvedAt
+     * to avoid a sudden jump into the animation.
+     */
+    calcStartTime() {
+        if (!this.resolvedAt) return this.createdAt
+
+        return this.resolvedAt - this.createdAt > MAX_RESOLVE_DELAY
+            ? this.resolvedAt
+            : this.createdAt
     }
 
     protected abstract initPlayback(
@@ -110,6 +145,7 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
         keyframes: ResolvedKeyframes<T>,
         finalKeyframe?: T
     ) {
+        this.resolvedAt = time.now()
         this.hasAttemptedResolve = true
         const {
             name,
