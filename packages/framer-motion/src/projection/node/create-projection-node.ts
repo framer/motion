@@ -122,7 +122,8 @@ function cancelTreeOptimisedTransformAnimations(
     const appearId = getOptimisedAppearId(visualElement)
 
     if (window.MotionHasOptimisedTransformAnimation!(appearId)) {
-        const now = time.now()
+        const now = performance.now()
+        console.log(now, time.now())
         frameData.delta = 8
         frameData.timestamp = now
         frameData.isProcessing = true

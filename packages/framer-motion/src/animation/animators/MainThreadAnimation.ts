@@ -116,6 +116,13 @@ export class MainThreadAnimation<
             finalKeyframe: T
         ) => this.onKeyframesResolved(resolvedKeyframes, finalKeyframe)
 
+        if (
+            element &&
+            element.getProps()["data-framer-appear-id"] === "iok7gr"
+        ) {
+            this.log = true
+        }
+
         this.resolver = new KeyframeResolver(
             keyframes,
             onResolved,
@@ -127,6 +134,8 @@ export class MainThreadAnimation<
 
         this.resolver.scheduleResolve()
     }
+
+    log: boolean = false
 
     protected initPlayback(keyframes: ResolvedKeyframes<T>) {
         const {
@@ -373,6 +382,17 @@ export class MainThreadAnimation<
                 keyframes,
                 this.options,
                 finalKeyframe
+            )
+        }
+
+        if (this.log) {
+            console.log(
+                "startTime",
+                this.startTime,
+                "elapsed",
+                elapsed,
+                "value",
+                state.value
             )
         }
 
