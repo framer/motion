@@ -116,9 +116,13 @@ export class MainThreadAnimation<
             finalKeyframe: T
         ) => this.onKeyframesResolved(resolvedKeyframes, finalKeyframe)
 
+        const urlParams = new URLSearchParams(window.location.search)
+        const logId = urlParams.get("log-id")
+
         if (
             element &&
-            element.getProps()["data-framer-appear-id"] === "iok7gr"
+            logId &&
+            element.getProps()["data-framer-appear-id"] === logId
         ) {
             this.log = true
         }
