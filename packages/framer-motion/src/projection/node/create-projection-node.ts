@@ -59,6 +59,7 @@ import { microtask } from "../../frameloop/microtask"
 import { VisualElement } from "../../render/VisualElement"
 import { getOptimisedAppearId } from "../../animation/optimized-appear/get-appear-id"
 import { createBox, createDelta } from "../geometry/models"
+import { flushKeyframeResolvers } from "../../render/utils/KeyframesResolver"
 
 const metrics = {
     type: "projectionFrame",
@@ -645,6 +646,27 @@ export function createProjectionNode<I>({
                 window.MotionHandoffCancelAll &&
                 isOptimisedTransformAnimationInTree(this)
             ) {
+                if (
+                    new URLSearchParams(window.location.search).get(
+                        "flush-frame"
+                    )
+                ) {
+                    flushKeyframeResolvers()
+                    time.set(performance.now())
+                    const now = time.now()
+                    frameData.delta = clamp(
+                        0,
+                        1000 / 60,
+                        now - frameData.timestamp
+                    )
+                    frameData.timestamp = now
+                    frameData.isProcessing = true
+                    steps.update.process(frameData)
+                    steps.preRender.process(frameData)
+                    steps.render.process(frameData)
+                    frameData.isProcessing = false
+                }
+
                 window.MotionHandoffCancelAll()
             }
 
