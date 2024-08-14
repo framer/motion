@@ -63,9 +63,8 @@ export function animateTarget(
             continue
         }
 
-        let valueTransition = {
+        const valueTransition = {
             delay,
-            elapsed: 0,
             ...getValueTransition(transition || {}, key),
         }
 
@@ -78,10 +77,14 @@ export function animateTarget(
             const appearId = getOptimisedAppearId(visualElement)
 
             if (appearId) {
-                const info = window.MotionHandoffAnimation(appearId, key, frame)
+                const startTime = window.MotionHandoffAnimation(
+                    appearId,
+                    key,
+                    frame
+                )
 
-                if (info !== null) {
-                    valueTransition = { ...valueTransition, ...info }
+                if (startTime !== null) {
+                    valueTransition.startTime = startTime
                     isHandoff = true
                 }
             }

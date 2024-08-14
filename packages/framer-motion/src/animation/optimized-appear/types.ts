@@ -1,15 +1,10 @@
 import type { Batcher } from "../../frameloop/types"
 
-export interface HandoffInfo {
-    elapsed: number
-    startTime: number
-}
-
 export type HandoffFunction = (
     storeId: string,
     valueName: string,
     frame: Batcher
-) => null | HandoffInfo
+) => number | null
 
 /**
  * The window global object acts as a bridge between our inline script
