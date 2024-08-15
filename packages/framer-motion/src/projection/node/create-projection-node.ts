@@ -108,9 +108,10 @@ function resetDistortingTransform(
     }
 }
 
-function cancelTreeOptimisedTransformAnimations(
+function suspendTreeOptimisedTransformAnimations(
     projectionNode: IProjectionNode
 ) {
+    // TODO This needs to be reset if we're suspending animations
     projectionNode.hasCheckedOptimisedAppear = true
     if (projectionNode.root === projectionNode) return
 
@@ -121,12 +122,12 @@ function cancelTreeOptimisedTransformAnimations(
     const appearId = getOptimisedAppearId(visualElement)
 
     if (window.MotionHasOptimisedTransformAnimation!(appearId)) {
-        window.MotionCancelOptimisedTransform!(appearId)
+        window.MotionSuspendOptimisedTransform!(appearId)
     }
 
     const { parent } = projectionNode
     if (parent && !parent.hasCheckedOptimisedAppear) {
-        cancelTreeOptimisedTransformAnimations(parent)
+        suspendTreeOptimisedTransformAnimations(parent)
     }
 }
 
@@ -640,10 +641,10 @@ export function createProjectionNode<I>({
              * if a layout animation measurement is actually going to be affected by them.
              */
             if (
-                window.MotionCancelOptimisedTransform &&
+                window.MotionSuspendOptimisedTransform &&
                 !this.hasCheckedOptimisedAppear
             ) {
-                cancelTreeOptimisedTransformAnimations(this)
+                suspendTreeOptimisedTransformAnimations(this)
             }
 
             !this.root.isUpdating && this.root.startUpdate()
@@ -726,6 +727,7 @@ export function createProjectionNode<I>({
             frameData.isProcessing = true
             steps.update.process(frameData)
             steps.preRender.process(frameData)
+            window.MotionUnsuspendOptimisedTransform?.()
             steps.render.process(frameData)
             frameData.isProcessing = false
         }
