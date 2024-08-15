@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.28] 2024-08-15
+
+### Fixed
+
+-   Use `startTime` instead of `elapsed` to sync optimised animations.
+
 ## [11.3.27] 2024-08-14
 
 ### Changed
