@@ -3,7 +3,11 @@ import { animateStyle } from "../animators/waapi"
 import { NativeAnimationOptions } from "../animators/waapi/types"
 import { optimizedAppearDataId } from "./data-id"
 import { handoffOptimizedAppearAnimation } from "./handoff"
-import { appearAnimationStore, elementsWithAppearAnimations } from "./store"
+import {
+    appearAnimationStore,
+    AppearStoreEntry,
+    elementsWithAppearAnimations,
+} from "./store"
 import { noop } from "../../utils/noop"
 import "./types"
 
@@ -21,6 +25,8 @@ let startFrameTime: number
  * https://bugs.chromium.org/p/chromium/issues/detail?id=1406850
  */
 let readyAnimation: Animation
+
+const suspendedAnimations = new Set<AppearStoreEntry>()
 
 export function startOptimizedAppearAnimation(
     element: HTMLElement,
@@ -77,14 +83,30 @@ export function startOptimizedAppearAnimation(
          * they're the ones that will interfere with the
          * layout animation measurements.
          */
-        window.MotionCancelOptimisedTransform = (elementId: string) => {
+        window.MotionCancelOptimisedTransform = (
+            elementId: string,
+            canSuspend: boolean
+        ) => {
             const animationId = appearStoreId(elementId, "transform")
             const data = appearAnimationStore.get(animationId)
 
             if (data) {
                 data.animation.cancel()
-                appearAnimationStore.delete(animationId)
+
+                if (!canSuspend) {
+                    appearAnimationStore.delete(animationId)
+                } else {
+                    suspendedAnimations.add(data)
+                }
             }
+        }
+
+        window.MotionResumeOptimisedAnimations = () => {
+            suspendedAnimations.forEach((data) => {
+                data.animation.play()
+                data.animation.startTime = data.startTime
+            })
+            suspendedAnimations.clear()
         }
 
         /**

@@ -14,8 +14,12 @@ declare global {
     interface Window {
         MotionHandoffAnimation?: HandoffFunction
         MotionHandoffIsComplete?: boolean
-        MotionCancelOptimisedTransform?: (id?: string) => void
+        MotionCancelOptimisedTransform?: (
+            id: string | undefined,
+            canSuspend: boolean
+        ) => void
         MotionHasOptimisedTransformAnimation?: (id?: string) => boolean
         MotionHasOptimisedAnimation?: (id?: string) => boolean
+        MotionResumeOptimisedAnimations?: () => void
     }
 }

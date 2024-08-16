@@ -121,7 +121,8 @@ function cancelTreeOptimisedTransformAnimations(
     const appearId = getOptimisedAppearId(visualElement)
 
     if (window.MotionHasOptimisedTransformAnimation!(appearId)) {
-        window.MotionCancelOptimisedTransform!(appearId)
+        const { layout, layoutId } = projectionNode.options
+        window.MotionCancelOptimisedTransform!(appearId, !(layout || layoutId))
     }
 
     const { parent } = projectionNode
@@ -727,6 +728,7 @@ export function createProjectionNode<I>({
             steps.update.process(frameData)
             steps.preRender.process(frameData)
             steps.render.process(frameData)
+            window.MotionResumeOptimisedAnimations?.()
             frameData.isProcessing = false
         }
 
@@ -1972,6 +1974,7 @@ export function createProjectionNode<I>({
 
         clearSnapshot() {
             this.resumeFrom = this.snapshot = undefined
+            this.hasCheckedOptimisedAppear = false
         }
 
         // Only run on root
