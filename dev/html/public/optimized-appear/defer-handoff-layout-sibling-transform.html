@@ -90,13 +90,17 @@
                                         .getElementById("layout-box")
                                         .getAnimations().length
 
-                                    if (
-                                        numAnimationsOnA !== 1 ||
-                                        numAnimationsOnB !== 0
-                                    ) {
+                                    if (numAnimationsOnA !== 1) {
                                         showError(
                                             document.getElementById("box"),
-                                            "Layout animation on B cancelled optimised animation on A"
+                                            "Optimised animation on A incorrectly cancelled by layout animation on B"
+                                        )
+                                    }
+
+                                    if (numAnimationsOnB !== 0) {
+                                        showError(
+                                            document.getElementById("box"),
+                                            "Optimised animation on B incorrectly NOT cancelled by layout animation on B"
                                         )
                                     }
                                 })
