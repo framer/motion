@@ -727,8 +727,8 @@ export function createProjectionNode<I>({
             frameData.isProcessing = true
             steps.update.process(frameData)
             steps.preRender.process(frameData)
+            // window.MotionResumeOptimisedAnimations?.()
             steps.render.process(frameData)
-            window.MotionResumeOptimisedAnimations?.()
             frameData.isProcessing = false
         }
 
@@ -1690,6 +1690,8 @@ export function createProjectionNode<I>({
                 targetWithTransforms!,
                 latestValues
             )
+
+            console.log(latestValues.y)
         }
 
         /**
