@@ -76,11 +76,6 @@ export class MainThreadAnimation<
     private holdTime: number | null = null
 
     /**
-     * The time at which the animation was started.
-     */
-    private startTime: number | null = null
-
-    /**
      * The time at which the animation was cancelled.
      */
     private cancelTime: number | null = null
@@ -102,34 +97,31 @@ export class MainThreadAnimation<
      */
     private pendingPlayState: AnimationPlayState = "running"
 
-    constructor({
-        KeyframeResolver = DefaultKeyframeResolver,
-        ...options
-    }: ValueAnimationOptions<T>) {
+    /**
+     * The time at which the animation was started.
+     */
+    startTime: number | null = null
+
+    constructor(options: ValueAnimationOptions<T>) {
         super(options)
 
-        const { name, motionValue, keyframes } = this.options
+        const { name, motionValue, element, keyframes } = this.options
+
+        const KeyframeResolver =
+            element?.KeyframeResolver || DefaultKeyframeResolver
 
         const onResolved = (
             resolvedKeyframes: ResolvedKeyframes<T>,
             finalKeyframe: T
         ) => this.onKeyframesResolved(resolvedKeyframes, finalKeyframe)
 
-        if (name && motionValue && motionValue.owner) {
-            this.resolver = (motionValue.owner as any).resolveKeyframes(
-                keyframes,
-                onResolved,
-                name,
-                motionValue
-            )
-        } else {
-            this.resolver = new KeyframeResolver(
-                keyframes,
-                onResolved,
-                name,
-                motionValue
-            )
-        }
+        this.resolver = new KeyframeResolver(
+            keyframes,
+            onResolved,
+            name,
+            motionValue,
+            element
+        )
 
         this.resolver.scheduleResolve()
     }
@@ -439,7 +431,7 @@ export class MainThreadAnimation<
 
         if (this.isStopped) return
 
-        const { driver = frameloopDriver, onPlay } = this.options
+        const { driver = frameloopDriver, onPlay, startTime } = this.options
 
         if (!this.driver) {
             this.driver = driver((timestamp) => this.tick(timestamp))
@@ -448,10 +440,11 @@ export class MainThreadAnimation<
         onPlay && onPlay()
 
         const now = this.driver.now()
-
         if (this.holdTime !== null) {
             this.startTime = now - this.holdTime
-        } else if (!this.startTime || this.state === "finished") {
+        } else if (!this.startTime) {
+            this.startTime = startTime ?? this.calcStartTime()
+        } else if (this.state === "finished") {
             this.startTime = now
         }
 

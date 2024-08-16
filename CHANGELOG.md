@@ -4,6 +4,31 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.28] 2024-08-15
+
+### Fixed
+
+-   Use `startTime` instead of `elapsed` to sync optimised animations.
+
+## [11.3.27] 2024-08-14
+
+### Changed
+
+-   Allow manual setting of `startTime` via animation options (currently for internal use only).
+
+## [11.3.26] 2024-08-14
+
+### Fixed
+
+-   Improving synchronisation between DOM animations on externally-provided `MotionValue`s and internal `MotionValue`s.
+-   Fixing unit conversion on DOM animations with externally-provided `MotionValue`s.
+
+## [11.3.25] 2024-08-14
+
+### Changed
+
+-   Improve calculation of `startTime` to prefer the immediacy of animation creation over keyframe resolution, but fall back to the latter if the former would lead to a perceptual jump.
+
 ## [11.3.24] 2024-08-08
 
 ### Fixed

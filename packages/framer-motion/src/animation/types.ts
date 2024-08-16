@@ -30,6 +30,7 @@ export interface Transition
     type?: "decay" | "spring" | "keyframes" | "tween" | "inertia"
     duration?: number
     autoplay?: boolean
+    startTime?: number
 }
 
 export interface ValueAnimationTransition<V = any>
@@ -49,6 +50,7 @@ export interface ValueAnimationOptions<V extends string | number = number>
     KeyframeResolver?: typeof KeyframeResolver
     name?: string
     motionValue?: MotionValue<V>
+    element?: VisualElement
     from?: V
     isGenerator?: boolean
 }
@@ -97,6 +99,7 @@ export type ElementOrSelector =
 export interface AnimationPlaybackControls {
     time: number
     speed: number
+    startTime: number | null
     state?: AnimationPlayState
 
     /*
