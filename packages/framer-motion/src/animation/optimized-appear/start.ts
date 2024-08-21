@@ -65,20 +65,26 @@ export function startOptimizedAppearAnimation(
          */
         window.MotionHandoffAnimation = handoffOptimizedAppearAnimation
 
+        window.MotionHasOptimisedTransformAnimation = (elementId?: string) => {
+            if (!elementId) return false
+
+            const animationId = appearStoreId(elementId, "transform")
+            return Boolean(appearAnimationStore.get(animationId))
+        }
+
         /**
          * We only need to cancel transform animations as
          * they're the ones that will interfere with the
          * layout animation measurements.
          */
-        window.MotionHandoffCancelAll = () => {
-            appearAnimationStore.forEach(({ animation }, animationId) => {
-                if (animationId.endsWith("transform")) {
-                    animation.cancel()
-                    appearAnimationStore.delete(animationId)
-                }
-            })
+        window.MotionCancelOptimisedTransform = (elementId: string) => {
+            const animationId = appearStoreId(elementId, "transform")
+            const data = appearAnimationStore.get(animationId)
 
-            window.MotionHandoffCancelAll = undefined
+            if (data) {
+                data.animation.cancel()
+                appearAnimationStore.delete(animationId)
+            }
         }
 
         /**
@@ -92,14 +98,6 @@ export function startOptimizedAppearAnimation(
          */
         window.MotionHasOptimisedAnimation = (elementId?: string) =>
             Boolean(elementId && elementsWithAppearAnimations.has(elementId))
-
-        window.MotionHasOptimisedTransformAnimation = (elementId?: string) =>
-            Boolean(
-                elementId &&
-                    appearAnimationStore.has(
-                        appearStoreId(elementId, "transform")
-                    )
-            )
     }
 
     const startAnimation = () => {

@@ -1,0 +1,161 @@
+<!--
+  This test checks that the layout animation firing on an child element
+  cancel the optimized appear animation on an ancestor element.
+-->
+<html>
+    <head>
+        <style>
+            body {
+                padding: 100px;
+                margin: 0;
+            }
+
+            #container {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .box {
+                width: 100px;
+                height: 100px;
+                background-color: #0077ff;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 1 !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="module" src="/src/imports/optimized-appear.js"></script>
+        <script type="module" src="/src/imports/script-assert.js"></script>
+
+        <script type="module">
+            const {
+                motion,
+                animateStyle,
+                animate,
+                startOptimizedAppearAnimation,
+                optimizedAppearDataAttribute,
+                motionValue,
+                frame,
+            } = window.Motion
+            const { matchViewportBox } = window.Assert
+            const root = document.getElementById("root")
+
+            const duration = 0.5
+            const x = motionValue(0)
+
+            let isFirstFrame = true
+
+            function Component() {
+                const [top, setTop] = React.useState(0)
+                React.useEffect(() => {
+                    const timeout = setTimeout(() => {
+                        setTop(100)
+                        setTimeout(() => {
+                            const optimisedBox =
+                                document.getElementById("optimised-box")
+                            const layoutBox =
+                                document.getElementById("layout-box")
+
+                            console.log(
+                                optimisedBox.getAnimations().length,
+                                layoutBox.getAnimations().length
+                            )
+
+                            // TODO: Uncomment with follow up PR to resume cancelled WAAPI animations
+                            // if (optimisedBox.getAnimations().length !== 1) {
+                            //     showError(
+                            //         optimisedBox,
+                            //         `Optimised parent should have resumed WAAPI animation`
+                            //     )
+                            // }
+
+                            if (layoutBox.getAnimations().length !== 0) {
+                                showError(
+                                    layoutBox,
+                                    `Projecting child should NOT have resumed WAAPI animation`
+                                )
+                            }
+                        }, 100)
+                    }, 100)
+
+                    return () => clearTimeout(timeout)
+                }, [])
+
+                return React.createElement(motion.div, {
+                    id: "optimised-box",
+                    className: "box",
+                    initial: { x: 0 },
+                    animate: { x: 100 },
+                    transition: {
+                        duration,
+                        ease: "linear",
+                    },
+                    style: {
+                        x,
+                        position: "relative",
+                    },
+                    [optimizedAppearDataAttribute]: "a",
+                    children: React.createElement(motion.div, {
+                        id: "layout-box",
+                        className: "box",
+                        initial: { y: 0 },
+                        animate: { y: 100 },
+                        transition: {
+                            duration,
+                            ease: "linear",
+                            // layout: { ease: () => 0, duration: 10 },
+                        },
+                        style: {
+                            top,
+                            position: "relative",
+                            background: top ? "red" : "blue",
+                        },
+                        layout: true,
+                        children: "Content",
+                        [optimizedAppearDataAttribute]: "b",
+                    }),
+                })
+            }
+
+            // Emulate server rendering of element
+            root.innerHTML = ReactDOMServer.renderToString(
+                React.createElement(Component)
+            )
+
+            // Start WAAPI animation
+            startOptimizedAppearAnimation(
+                document.getElementById("layout-box"),
+                "transform",
+                ["translateY(0px)", "translateY(100px)"],
+                {
+                    duration: duration * 1000,
+                    ease: "linear",
+                }
+            )
+
+            // Start WAAPI animation
+            const animation = startOptimizedAppearAnimation(
+                document.getElementById("optimised-box"),
+                "transform",
+                ["translateX(0px)", "translateX(100px)"],
+                {
+                    duration: duration * 1000,
+                    ease: "linear",
+                },
+                (animation) => {
+                    setTimeout(() => {
+                        ReactDOM.hydrateRoot(
+                            root,
+                            React.createElement(Component)
+                        )
+                    }, (duration * 1000) / 4)
+                }
+            )
+        </script>
+    </body>
+</html>
