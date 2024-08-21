@@ -82,6 +82,14 @@
                             [optimizedAppearDataAttribute]: "b",
                             onLayoutAnimationStart: () => {
                                 frame.postRender(() => {
+                                    // Cypress browser doesn't support getAnimations
+                                    if (
+                                        !document.getElementById("box")
+                                            .getAnimations
+                                    ) {
+                                        return
+                                    }
+
                                     const numAnimationsOnA = document
                                         .getElementById("box")
                                         .getAnimations().length
