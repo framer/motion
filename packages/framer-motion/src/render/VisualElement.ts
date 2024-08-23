@@ -452,14 +452,13 @@ export abstract class VisualElement<
         }
 
         const valueIsTransform = transformProps.has(key)
-
-        const appearId = getOptimisedAppearId(this)
-
+        console.log(key)
+        console.trace()
         const removeOnChange = value.on(
             "change",
             (latestValue: string | number) => {
                 this.latestValues[key] = latestValue
-
+                console.log("on change", key, latestValue)
                 this.props.onUpdate && frame.preRender(this.notifyUpdate)
 
                 if (valueIsTransform && this.projection) {
@@ -467,24 +466,6 @@ export abstract class VisualElement<
                 }
             }
         )
-
-        const valueIsOptimised = window.MotionHasOptimisedAnimation?.(
-            appearId,
-            key
-        )
-        const externalAnimationValue = this.props.values?.[key]
-        let removeSyncCheck: VoidFunction
-        if (valueIsOptimised && externalAnimationValue) {
-            removeSyncCheck = value.on(
-                "change",
-                (latestValue: string | number) => {
-                    if (externalAnimationValue.get() === latestValue) {
-                        window.MotionCancelOptimisedAnimation?.(appearId, key)
-                        removeSyncCheck()
-                    }
-                }
-            )
-        }
 
         const removeOnRenderRequest = value.on(
             "renderRequest",
@@ -499,7 +480,6 @@ export abstract class VisualElement<
         this.valueSubscriptions.set(key, () => {
             removeOnChange()
             removeOnRenderRequest()
-            if (removeSyncCheck) removeSyncCheck()
             if (value.owner) value.stop()
         })
     }
@@ -722,6 +702,27 @@ export abstract class VisualElement<
     addValue(key: string, value: MotionValue) {
         // Remove existing value if it exists
         const existingValue = this.values.get(key)
+
+        // const appearId = getOptimisedAppearId(this)
+        // const valueIsOptimised = window.MotionHasOptimisedAnimation?.(
+        //     appearId,
+        //     key
+        // )
+        // const externalAnimationValue = this.props.values?.[key]
+        // console.log(key, externalAnimationValue, valueIsOptimised)
+
+        // let removeSyncCheck: VoidFunction
+        // if (valueIsOptimised && externalAnimationValue) {
+        //     removeSyncCheck = value.on(
+        //         "change",
+        //         (latestValue: string | number) => {
+        //             if (externalAnimationValue.get() === latestValue) {
+        //                 window.MotionCancelOptimisedAnimation?.(appearId, key)
+        //                 removeSyncCheck()
+        //             }
+        //         }
+        //     )
+        // }
 
         if (value !== existingValue) {
             if (existingValue) this.removeValue(key)
