@@ -445,6 +445,10 @@ export abstract class VisualElement<
     }
 
     private bindToMotionValue(key: string, value: MotionValue) {
+        if (this.valueSubscriptions.has(key)) {
+            this.valueSubscriptions.get(key)!()
+        }
+
         const valueIsTransform = transformProps.has(key)
 
         const removeOnChange = value.on(
@@ -508,7 +512,7 @@ export abstract class VisualElement<
                 FeatureConstructor &&
                 isEnabled(this.props)
             ) {
-                this.features[key] = new FeatureConstructor(this)
+                this.features[key] = new FeatureConstructor(this) as any
             }
 
             /**
