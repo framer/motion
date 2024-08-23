@@ -1242,4 +1242,26 @@ describe("animate prop as object", () => {
 
         return expect(result.length).not.toBe(1)
     })
+
+    test("Doesn't double-add listeners to externally-provided motion values", async () => {
+        const result = await new Promise<number>((resolve) => {
+            const Component = () => {
+                const x = useMotionValue(0)
+                return (
+                    <motion.div
+                        animate={{ x: 100 }}
+                        transition={{ duration: 0.01 }}
+                        onAnimationStart={() =>
+                            resolve((x as any).events.change.getSize())
+                        }
+                        style={{ x }}
+                    />
+                )
+            }
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(result).toBe(1)
+    })
 })
