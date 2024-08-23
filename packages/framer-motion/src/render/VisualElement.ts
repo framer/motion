@@ -450,20 +450,17 @@ export abstract class VisualElement<
     }
 
     private bindToMotionValue(key: string, value: MotionValue) {
-        console.log("binding to ", key)
         if (this.valueSubscriptions.has(key)) {
             this.valueSubscriptions.get(key)!()
         }
 
         const valueIsTransform = transformProps.has(key)
 
-        if (key === "x") console.trace()
-
         const removeOnChange = value.on(
             "change",
             (latestValue: string | number) => {
                 this.latestValues[key] = latestValue
-                if (key === "x") console.log("on change", key, latestValue)
+
                 this.props.onUpdate && frame.preRender(this.notifyUpdate)
 
                 if (valueIsTransform && this.projection) {
@@ -749,7 +746,6 @@ export abstract class VisualElement<
         defaultValue?: string | number | null
     ): MotionValue | undefined {
         if (this.props.values && this.props.values[key]) {
-            console.log("returning from values prop")
             return this.props.values[key]
         }
 
