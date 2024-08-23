@@ -9,6 +9,7 @@ import "./types"
 import { getOptimisedAppearId } from "./get-appear-id"
 import { MotionValue } from "../../value"
 import type { WithAppearProps } from "./types"
+import { Batcher } from "../../frameloop/types"
 
 /**
  * A single time to use across all animations to manually set startTime
@@ -98,14 +99,35 @@ export function startOptimizedAppearAnimation(
          */
         window.MotionCancelOptimisedAnimation = (
             elementId: string,
-            valueName: string
+            valueName: string,
+            frame: Batcher
         ) => {
             const animationId = appearStoreId(elementId, valueName)
             const data = appearAnimationStore.get(animationId)
 
             if (data) {
-                data.animation.cancel()
+                if (frame) {
+                    // Wait until the end of the subsequent frame to cancel the animation
+                    // to ensure we don't remove the animation before the main thread has
+                    // had a chance to resolve keyframes and render.
+                    frame.postRender(() => {
+                        frame.postRender(() => {
+                            data.animation.cancel()
+                        })
+                    })
+                } else {
+                    data.animation.cancel()
+                }
+
                 appearAnimationStore.delete(animationId)
+
+                /**
+                 * If there are no more animations left, we can remove the cancel function.
+                 * This will let us know when we can stop checking for conflicting layout animations.
+                 */
+                if (!appearAnimationStore.size) {
+                    window.MotionCancelOptimisedAnimation = undefined
+                }
             }
         }
 

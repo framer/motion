@@ -64,18 +64,13 @@
                             // Cypress browser doesn't support getAnimations
                             if (!optimisedBox.getAnimations) return
 
-                            console.log(
-                                optimisedBox.getAnimations().length,
-                                layoutBox.getAnimations().length
-                            )
-
                             // TODO: Uncomment with follow up PR to resume cancelled WAAPI animations
-                            // if (optimisedBox.getAnimations().length !== 1) {
-                            //     showError(
-                            //         optimisedBox,
-                            //         `Optimised parent should have resumed WAAPI animation`
-                            //     )
-                            // }
+                            if (optimisedBox.getAnimations().length !== 1) {
+                                showError(
+                                    optimisedBox,
+                                    `Optimised parent should have resumed WAAPI animation`
+                                )
+                            }
 
                             if (layoutBox.getAnimations().length !== 0) {
                                 showError(
