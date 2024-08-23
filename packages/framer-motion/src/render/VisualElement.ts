@@ -43,7 +43,6 @@ import { findValueType } from "./dom/value-types/find"
 import { complex } from "../value/types/complex"
 import { getAnimatableNone } from "./dom/value-types/animatable-none"
 import { createBox } from "../projection/geometry/models"
-import { getOptimisedAppearId } from "../animation/optimized-appear/get-appear-id"
 
 const propEventHandlers = [
     "AnimationStart",
@@ -398,7 +397,11 @@ export abstract class VisualElement<
             this.removeFromVariantTree = this.parent.addVariantChild(this)
         }
 
-        this.values.forEach((value, key) => this.bindToMotionValue(key, value))
+        this.values.forEach((value, key) => {
+            if (!this.valueSubscriptions.has(key)) {
+                this.bindToMotionValue(key, value)
+            }
+        })
 
         if (!hasReducedMotionListener.current) {
             initPrefersReducedMotion()
@@ -428,6 +431,7 @@ export abstract class VisualElement<
         cancelFrame(this.notifyUpdate)
         cancelFrame(this.render)
         this.valueSubscriptions.forEach((remove) => remove())
+        this.valueSubscriptions.clear()
         this.removeFromVariantTree && this.removeFromVariantTree()
         this.parent && this.parent.children.delete(this)
 
@@ -446,18 +450,20 @@ export abstract class VisualElement<
     }
 
     private bindToMotionValue(key: string, value: MotionValue) {
+        console.log("binding to ", key)
         if (this.valueSubscriptions.has(key)) {
             this.valueSubscriptions.get(key)!()
         }
 
         const valueIsTransform = transformProps.has(key)
-        console.log(key)
-        console.trace()
+
+        if (key === "x") console.trace()
+
         const removeOnChange = value.on(
             "change",
             (latestValue: string | number) => {
                 this.latestValues[key] = latestValue
-                console.log("on change", key, latestValue)
+                if (key === "x") console.log("on change", key, latestValue)
                 this.props.onUpdate && frame.preRender(this.notifyUpdate)
 
                 if (valueIsTransform && this.projection) {
@@ -471,9 +477,15 @@ export abstract class VisualElement<
             this.scheduleRender
         )
 
+        let removeSyncCheck: VoidFunction | void
+        if (window.MotionCheckAppearSync) {
+            removeSyncCheck = window.MotionCheckAppearSync(this, key, value)
+        }
+
         this.valueSubscriptions.set(key, () => {
             removeOnChange()
             removeOnRenderRequest()
+            if (removeSyncCheck) removeSyncCheck()
             if (value.owner) value.stop()
         })
     }
@@ -697,27 +709,6 @@ export abstract class VisualElement<
         // Remove existing value if it exists
         const existingValue = this.values.get(key)
 
-        // const appearId = getOptimisedAppearId(this)
-        // const valueIsOptimised = window.MotionHasOptimisedAnimation?.(
-        //     appearId,
-        //     key
-        // )
-        // const externalAnimationValue = this.props.values?.[key]
-        // console.log(key, externalAnimationValue, valueIsOptimised)
-
-        // let removeSyncCheck: VoidFunction
-        // if (valueIsOptimised && externalAnimationValue) {
-        //     removeSyncCheck = value.on(
-        //         "change",
-        //         (latestValue: string | number) => {
-        //             if (externalAnimationValue.get() === latestValue) {
-        //                 window.MotionCancelOptimisedAnimation?.(appearId, key)
-        //                 removeSyncCheck()
-        //             }
-        //         }
-        //     )
-        // }
-
         if (value !== existingValue) {
             if (existingValue) this.removeValue(key)
             this.bindToMotionValue(key, value)
@@ -758,6 +749,7 @@ export abstract class VisualElement<
         defaultValue?: string | number | null
     ): MotionValue | undefined {
         if (this.props.values && this.props.values[key]) {
+            console.log("returning from values prop")
             return this.props.values[key]
         }
 

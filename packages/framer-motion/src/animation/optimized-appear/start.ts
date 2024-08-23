@@ -6,6 +6,9 @@ import { handoffOptimizedAppearAnimation } from "./handoff"
 import { appearAnimationStore, elementsWithAppearAnimations } from "./store"
 import { noop } from "../../utils/noop"
 import "./types"
+import { getOptimisedAppearId } from "./get-appear-id"
+import type { VisualElement } from "../../render/VisualElement"
+import type { MotionValue } from "../../value"
 
 /**
  * A single time to use across all animations to manually set startTime
@@ -104,6 +107,40 @@ export function startOptimizedAppearAnimation(
                 data.animation.cancel()
                 appearAnimationStore.delete(animationId)
             }
+        }
+
+        window.MotionCheckAppearSync = (
+            visualElement: VisualElement,
+            valueName: string,
+            value: MotionValue
+        ) => {
+            const appearId = getOptimisedAppearId(visualElement)
+
+            if (!appearId) return
+
+            const valueIsOptimised = window.MotionHasOptimisedAnimation?.(
+                appearId,
+                valueName
+            )
+            const externalAnimationValue =
+                visualElement.props.values?.[valueName]
+
+            if (!valueIsOptimised || !externalAnimationValue) return
+
+            const removeSyncCheck = value.on(
+                "change",
+                (latestValue: string | number) => {
+                    if (externalAnimationValue.get() !== latestValue) {
+                        window.MotionCancelOptimisedAnimation?.(
+                            appearId,
+                            valueName
+                        )
+                        removeSyncCheck()
+                    }
+                }
+            )
+
+            return removeSyncCheck
         }
     }
 

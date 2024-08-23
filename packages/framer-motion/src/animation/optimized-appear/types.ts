@@ -1,4 +1,6 @@
 import type { Batcher } from "../../frameloop/types"
+import type { VisualElement } from "../../render/VisualElement"
+import { MotionValue } from "../../value"
 
 export type HandoffFunction = (
     storeId: string,
@@ -22,5 +24,10 @@ declare global {
             elementId?: string,
             valueName?: string
         ) => void
+        MotionCheckAppearSync?: (
+            visualElement: VisualElement,
+            valueName: string,
+            value: MotionValue
+        ) => VoidFunction | void
     }
 }

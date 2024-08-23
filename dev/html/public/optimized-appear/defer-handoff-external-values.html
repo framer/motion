@@ -63,16 +63,16 @@
                         position: "relative",
                         background: "blue",
                     },
-                    values: { animateX },
+                    values: { x: animateX },
                     onAnimationComplete: () => {
                         const box = document.getElementById("box")
                         const { left } = box.getBoundingClientRect()
-                        console.log(left)
-                        if (Math.round(left) === 100) {
-                            // showError(
-                            //     box,
-                            //     `optimised animation not cancelled by external value mismatch with rendered style`
-                            // )
+
+                        if (Math.round(left) !== 300) {
+                            showError(
+                                box,
+                                `optimised animation not cancelled by external value mismatch with rendered style`
+                            )
                         }
                     },
                     [optimizedAppearDataAttribute]: "a",
