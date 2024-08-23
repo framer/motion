@@ -36,7 +36,7 @@
             const { matchViewportBox } = window.Assert
             const root = document.getElementById("root")
 
-            const duration = 4
+            const duration = 1
             const x = motionValue(0)
             const xTarget = 500
 
@@ -85,7 +85,7 @@
                             )
 
                             const startTime = performance.now()
-                            while (performance.now() - startTime < 1000) {}
+                            while (performance.now() - startTime < 200) {}
                         })
 
                         /**
