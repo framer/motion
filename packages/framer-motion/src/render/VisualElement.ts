@@ -43,6 +43,7 @@ import { findValueType } from "./dom/value-types/find"
 import { complex } from "../value/types/complex"
 import { getAnimatableNone } from "./dom/value-types/animatable-none"
 import { createBox } from "../projection/geometry/models"
+import { getOptimisedAppearId } from "../animation/optimized-appear/get-appear-id"
 
 const propEventHandlers = [
     "AnimationStart",
@@ -451,6 +452,8 @@ export abstract class VisualElement<
 
         const valueIsTransform = transformProps.has(key)
 
+        const appearId = getOptimisedAppearId(this)
+
         const removeOnChange = value.on(
             "change",
             (latestValue: string | number) => {
@@ -464,6 +467,24 @@ export abstract class VisualElement<
             }
         )
 
+        const valueIsOptimised = window.MotionHasOptimisedAnimation?.(
+            appearId,
+            key
+        )
+        const externalAnimationValue = this.props.values?.[key]
+        let removeSyncCheck: VoidFunction
+        if (valueIsOptimised && externalAnimationValue) {
+            removeSyncCheck = value.on(
+                "change",
+                (latestValue: string | number) => {
+                    if (externalAnimationValue.get() === latestValue) {
+                        window.MotionCancelOptimisedAnimation?.(appearId, key)
+                        removeSyncCheck()
+                    }
+                }
+            )
+        }
+
         const removeOnRenderRequest = value.on(
             "renderRequest",
             this.scheduleRender
@@ -472,6 +493,7 @@ export abstract class VisualElement<
         this.valueSubscriptions.set(key, () => {
             removeOnChange()
             removeOnRenderRequest()
+            if (removeSyncCheck) removeSyncCheck()
             if (value.owner) value.stop()
         })
     }

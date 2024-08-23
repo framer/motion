@@ -120,8 +120,8 @@ function cancelTreeOptimisedTransformAnimations(
 
     const appearId = getOptimisedAppearId(visualElement)
 
-    if (window.MotionHasOptimisedTransformAnimation!(appearId)) {
-        window.MotionCancelOptimisedTransform!(appearId)
+    if (window.MotionHasOptimisedAnimation!(appearId, "transform")) {
+        window.MotionCancelOptimisedAnimation!(appearId, "transform")
     }
 
     const { parent } = projectionNode
@@ -640,7 +640,7 @@ export function createProjectionNode<I>({
              * if a layout animation measurement is actually going to be affected by them.
              */
             if (
-                window.MotionCancelOptimisedTransform &&
+                window.MotionCancelOptimisedAnimation &&
                 !this.hasCheckedOptimisedAppear
             ) {
                 cancelTreeOptimisedTransformAnimations(this)
