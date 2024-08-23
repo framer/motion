@@ -7,8 +7,8 @@ import { appearAnimationStore, elementsWithAppearAnimations } from "./store"
 import { noop } from "../../utils/noop"
 import "./types"
 import { getOptimisedAppearId } from "./get-appear-id"
-import type { VisualElement } from "../../render/VisualElement"
-import type { MotionValue } from "../../value"
+import { MotionValue } from "../../value"
+import type { WithAppearProps } from "./types"
 
 /**
  * A single time to use across all animations to manually set startTime
@@ -110,7 +110,7 @@ export function startOptimizedAppearAnimation(
         }
 
         window.MotionCheckAppearSync = (
-            visualElement: VisualElement,
+            visualElement: WithAppearProps,
             valueName: string,
             value: MotionValue
         ) => {
