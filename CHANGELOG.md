@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.30] 2024-08-23
+
+### Fixed
+
+-   Removed double `"change"` handler on externally-provided `MotionValue`s.
+
 ## [11.3.29] 2024-08-21
 
 ### Fixed
