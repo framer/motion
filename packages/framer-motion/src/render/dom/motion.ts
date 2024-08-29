@@ -34,6 +34,8 @@ export const motion = /*@__PURE__*/ createMotionProxy(
         ) as any
 )
 
+export const MotionSpan = motion("span")
+
 /**
  * Create a DOM `motion` component with the provided string. This is primarily intended
  * as a full alternative to `motion` for consumers who have to support environments that don't

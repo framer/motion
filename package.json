@@ -69,6 +69,7 @@
         "rollup": "4.14.0",
         "rollup-plugin-analyzer": "^4.0.0",
         "rollup-plugin-dts": "6.1.0",
+        "rollup-plugin-preserve-directives": "^0.4.0",
         "rollup-plugin-terser": "^5.3.0",
         "rollup-plugin-visualizer": "^5.7.1",
         "start-server-and-test": "^1.14.0",
