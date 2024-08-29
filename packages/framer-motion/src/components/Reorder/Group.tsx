@@ -64,7 +64,7 @@ type ReorderGroupProps<V> = Props<V> &
     Omit<HTMLMotionProps<any>, "values"> &
     React.PropsWithChildren<{}>
 
-export function ReorderGroup<V>(
+export function ReorderGroupComponent<V>(
     {
         children,
         as = "ul",
@@ -125,9 +125,9 @@ export function ReorderGroup<V>(
     )
 }
 
-export const Group = forwardRef(ReorderGroup) as <V>(
+export const ReorderGroup = forwardRef(ReorderGroupComponent) as <V>(
     props: ReorderGroupProps<V> & { ref?: React.ForwardedRef<any> }
-) => ReturnType<typeof ReorderGroup>
+) => ReturnType<typeof ReorderGroupComponent>
 
 function getValue<V>(item: ItemData<V>) {
     return item.value

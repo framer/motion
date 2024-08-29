@@ -43,7 +43,7 @@ type ReorderItemProps<V> = Props<V> &
     HTMLMotionProps<any> &
     React.PropsWithChildren<{}>
 
-export function ReorderItem<V>(
+export function ReorderItemComponent<V>(
     {
         children,
         style = {},
@@ -96,6 +96,6 @@ export function ReorderItem<V>(
     )
 }
 
-export const Item = forwardRef(ReorderItem) as <V>(
+export const ReorderItem = forwardRef(ReorderItemComponent) as <V>(
     props: ReorderItemProps<V> & { ref?: React.ForwardedRef<any> }
-) => ReturnType<typeof ReorderItem>
+) => ReturnType<typeof ReorderItemComponent>
