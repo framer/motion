@@ -31,6 +31,7 @@ export function useVisualElement<Instance, RenderState>(
     const lazyContext = useContext(LazyContext)
     const presenceContext = useContext(PresenceContext)
     const reducedMotionConfig = useContext(MotionConfigContext).reducedMotion
+    const skipAnimations = useContext(MotionConfigContext).skipAnimations
 
     const visualElementRef = useRef<VisualElement<Instance>>()
 
@@ -49,6 +50,7 @@ export function useVisualElement<Instance, RenderState>(
                 ? presenceContext.initial === false
                 : false,
             reducedMotionConfig,
+            skipAnimations,
         })
     }
 
@@ -126,6 +128,15 @@ export function useVisualElement<Instance, RenderState>(
             queueMicrotask(completeHandoff)
         }
     })
+
+    /**
+     * Keep `skipAnimations` in sync with the context.
+     */
+    useEffect(() => {
+        if (!visualElement) return
+
+        visualElement.skipAnimations = skipAnimations ?? false
+    }, [skipAnimations])
 
     return visualElement
 }
