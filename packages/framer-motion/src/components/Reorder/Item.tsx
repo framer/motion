@@ -1,11 +1,8 @@
+"use client"
+
 import { invariant } from "../../utils/errors"
 import * as React from "react"
-import {
-    ReactHTML,
-    FunctionComponent,
-    useContext,
-    forwardRef,
-} from "react"
+import { ReactHTML, FunctionComponent, useContext, forwardRef } from "react"
 import { ReorderContext } from "../../context/ReorderContext"
 import { motion } from "../../render/dom/motion"
 import { HTMLMotionProps } from "../../render/html/types"

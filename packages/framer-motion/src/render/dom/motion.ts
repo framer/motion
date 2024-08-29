@@ -1,3 +1,5 @@
+"use client"
+
 import { DOMMotionComponents } from "./types"
 import { createMotionComponent } from "../../motion"
 import { createMotionProxy } from "./motion-proxy"

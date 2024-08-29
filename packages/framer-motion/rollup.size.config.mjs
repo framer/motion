@@ -20,6 +20,12 @@ const motion = Object.assign({}, es, {
     }),
     plugins: [...sizePlugins],
     external,
+    onwarn(warning, warn) {
+        if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
+            return
+        }
+        warn(warning)
+    },
 })
 
 const m = Object.assign({}, es, {
@@ -31,6 +37,12 @@ const m = Object.assign({}, es, {
     }),
     plugins: [...sizePlugins, visualizer()],
     external,
+    onwarn(warning, warn) {
+        if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
+            return
+        }
+        warn(warning)
+    },
 })
 
 const sizeAnimate = Object.assign({}, es, {
@@ -42,6 +54,12 @@ const sizeAnimate = Object.assign({}, es, {
     }),
     plugins: [...sizePlugins],
     external,
+    onwarn(warning, warn) {
+        if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
+            return
+        }
+        warn(warning)
+    },
 })
 
 const domAnimation = Object.assign({}, es, {
@@ -59,6 +77,12 @@ const domAnimation = Object.assign({}, es, {
     },
     plugins: [...sizePlugins],
     external,
+    onwarn(warning, warn) {
+        if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
+            return
+        }
+        warn(warning)
+    },
 })
 
 const domMax = Object.assign({}, es, {
@@ -72,6 +96,12 @@ const domMax = Object.assign({}, es, {
     },
     plugins: sizePlugins,
     external,
+    onwarn(warning, warn) {
+        if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
+            return
+        }
+        warn(warning)
+    },
 })
 
 // eslint-disable-next-line import/no-default-export

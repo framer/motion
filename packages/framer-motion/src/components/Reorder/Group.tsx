@@ -1,3 +1,5 @@
+"use client"
+
 import { invariant } from "../../utils/errors"
 import * as React from "react"
 import {

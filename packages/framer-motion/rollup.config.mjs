@@ -7,6 +7,7 @@ import path from "node:path"
 import { fileURLToPath } from 'url'
 import pkg from "./package.json" with { type: "json"}
 import tsconfig from "./tsconfig.json" with {type: "json"}
+import preserveDirectives from "rollup-plugin-preserve-directives";
 
 const config = {
     input: "lib/index.js",
@@ -59,6 +60,12 @@ const umd = Object.assign({}, config, {
     },
     external: ["react", "react-dom"],
     plugins: [resolve(), replaceSettings("development"), shimReactJSXRuntimePlugin],
+    onwarn(warning, warn) {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+            return
+        }
+        warn(warning)
+    }
 })
 
 const umdProd = Object.assign({}, umd, {
@@ -72,6 +79,12 @@ const umdProd = Object.assign({}, umd, {
         shimReactJSXRuntimePlugin,
         terser({ output: { comments: false } }),
     ],
+    onwarn(warning, warn) {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+            return
+        }
+        warn(warning)
+    }
 })
 
 const umdDomProd = Object.assign({}, umd, {
@@ -86,6 +99,12 @@ const umdDomProd = Object.assign({}, umd, {
         shimReactJSXRuntimePlugin,
         terser({ output: { comments: false } }),
     ],
+    onwarn(warning, warn) {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+            return
+        }
+        warn(warning)
+    }
 })
 
 const cjs = Object.assign({}, config, {
@@ -99,6 +118,12 @@ const cjs = Object.assign({}, config, {
     },
     plugins: [resolve(), replaceSettings()],
     external,
+    onwarn(warning, warn) {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+            return
+        }
+        warn(warning)
+    }
 })
 
 /**
@@ -115,8 +140,14 @@ export const es = Object.assign({}, config, {
         preserveModules: true,
         dir: "dist/es",
     },
-    plugins: [resolve(), replaceSettings()],
+    plugins: [resolve(), replaceSettings(), preserveDirectives()],
     external,
+    onwarn(warning, warn) {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+            return
+        }
+        warn(warning)
+    }
 })
 
 const typePlugins = [dts({compilerOptions: {...tsconfig, baseUrl:"types"}})]
