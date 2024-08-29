@@ -35,7 +35,9 @@ declare global {
         ) => boolean
         MotionCancelOptimisedAnimation?: (
             elementId?: string,
-            valueName?: string
+            valueName?: string,
+            frame?: Batcher,
+            canResume?: boolean
         ) => void
         MotionCheckAppearSync?: (
             visualElement: WithAppearProps,

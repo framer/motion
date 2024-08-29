@@ -121,7 +121,13 @@ function cancelTreeOptimisedTransformAnimations(
     const appearId = getOptimisedAppearId(visualElement)
 
     if (window.MotionHasOptimisedAnimation!(appearId, "transform")) {
-        window.MotionCancelOptimisedAnimation!(appearId, "transform")
+        const { layout, layoutId } = projectionNode.options
+        window.MotionCancelOptimisedAnimation!(
+            appearId,
+            "transform",
+            frame,
+            !(layout || layoutId)
+        )
     }
 
     const { parent } = projectionNode

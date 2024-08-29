@@ -3,12 +3,17 @@ import { animateStyle } from "../animators/waapi"
 import { NativeAnimationOptions } from "../animators/waapi/types"
 import { optimizedAppearDataId } from "./data-id"
 import { handoffOptimizedAppearAnimation } from "./handoff"
-import { appearAnimationStore, elementsWithAppearAnimations } from "./store"
+import {
+    appearAnimationStore,
+    AppearStoreEntry,
+    elementsWithAppearAnimations,
+} from "./store"
 import { noop } from "../../utils/noop"
 import "./types"
 import { getOptimisedAppearId } from "./get-appear-id"
 import { MotionValue } from "../../value"
 import type { WithAppearProps } from "./types"
+import { Batcher } from "../../frameloop/types"
 
 /**
  * A single time to use across all animations to manually set startTime
@@ -24,6 +29,20 @@ let startFrameTime: number
  * https://bugs.chromium.org/p/chromium/issues/detail?id=1406850
  */
 let readyAnimation: Animation
+
+/**
+ * Keep track of animations that were suspended vs cancelled so we
+ * can easily resume them when we're done measuring layout.
+ */
+const suspendedAnimations = new Set<AppearStoreEntry>()
+
+function resumeSuspendedAnimations() {
+    suspendedAnimations.forEach((data) => {
+        data.animation.play()
+        data.animation.startTime = data.startTime
+    })
+    suspendedAnimations.clear()
+}
 
 export function startOptimizedAppearAnimation(
     element: HTMLElement,
@@ -98,14 +117,43 @@ export function startOptimizedAppearAnimation(
          */
         window.MotionCancelOptimisedAnimation = (
             elementId: string,
-            valueName: string
+            valueName: string,
+            frame?: Batcher,
+            canResume?: boolean
         ) => {
             const animationId = appearStoreId(elementId, valueName)
             const data = appearAnimationStore.get(animationId)
 
-            if (data) {
+            if (!data) return
+
+            if (frame && canResume === undefined) {
+                /**
+                 * Wait until the end of the subsequent frame to cancel the animation
+                 * to ensure we don't remove the animation before the main thread has
+                 * had a chance to resolve keyframes and render.
+                 */
+                frame.postRender(() => {
+                    frame.postRender(() => {
+                        data.animation.cancel()
+                    })
+                })
+            } else {
                 data.animation.cancel()
+            }
+
+            if (frame && canResume) {
+                suspendedAnimations.add(data)
+                frame.render(resumeSuspendedAnimations)
+            } else {
                 appearAnimationStore.delete(animationId)
+
+                /**
+                 * If there are no more animations left, we can remove the cancel function.
+                 * This will let us know when we can stop checking for conflicting layout animations.
+                 */
+                if (!appearAnimationStore.size) {
+                    window.MotionCancelOptimisedAnimation = undefined
+                }
             }
         }
 
