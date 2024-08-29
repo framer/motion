@@ -83,10 +83,7 @@
                     onAnimationStart: () => {
                         setTimeout(() => {
                             const box = document.getElementById("optimised-box")
-                            console.log(
-                                box.style.opacity,
-                                window.getComputedStyle(box).opacity
-                            )
+
                             if (
                                 box.style.opacity ===
                                 window.getComputedStyle(box).opacity
@@ -107,10 +104,10 @@
                                 )
                             }
 
-                            if (!window.Assert.xTransformEquals(box)) {
+                            if (window.Assert.xTransformEquals(box)) {
                                 showError(
                                     box,
-                                    `Optimised transform NOT animation cancelled by child layout animations`
+                                    `Optimised transform NOT animation resumed after being cancelled by child layout animations`
                                 )
                             }
                         }, 150)
