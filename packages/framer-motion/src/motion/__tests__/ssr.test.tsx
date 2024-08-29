@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState } from "react"
+import { Fragment, useRef, useState, forwardRef } from "react"
 import { renderToString, renderToStaticMarkup } from "react-dom/server"
 import { motion, createMotionComponent, useMotionValue } from "../../"
 import { motionValue } from "../../value"
@@ -9,8 +9,17 @@ const MotionFragment = createMotionComponent(Fragment)
 
 function runTests(render: (components: any) => string) {
     test("doesn't throw", () => {
+        const CustomMotionComponent = forwardRef((props, ref) => {
+            return <div ref={ref} {...props} />
+        })
+
+        const CustomMotionDiv = createMotionComponent("div")
+        const CustomMotionCircle = createMotionComponent("circle")
+
         function Component() {
             const ref = useRef<HTMLDivElement>(null)
+            const ref2 = useRef<HTMLDivElement>(null)
+            const value = useMotionValue(0)
             return (
                 <>
                     <motion.div
@@ -21,8 +30,22 @@ function runTests(render: (components: any) => string) {
                         layout
                         layoutId="a"
                         style={{ opacity: 1 }}
+                        data-testid="box"
                     />
                     <motion.button disabled />
+                    <motion.circle cx={1} cy={value} />
+                    <CustomMotionDiv
+                        ref={ref2}
+                        initial={{ x: 100 }}
+                        whileTap={{ opacity: 0 }}
+                        drag
+                        layout
+                        layoutId="a"
+                        style={{ opacity: 1 }}
+                        data-testid="box"
+                    />
+                    <CustomMotionComponent id="test" />
+                    <CustomMotionCircle cx={1} cy={value} />
                 </>
             )
         }
