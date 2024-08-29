@@ -7,8 +7,11 @@ import { SVGRenderState } from "../../svg/types"
 import { svgMotionConfig } from "../../svg/config-motion"
 import { htmlMotionConfig } from "../../html/config-motion"
 import { CreateVisualElement } from "../../types"
-import { CustomMotionComponentConfig } from "../motion-proxy"
 import { FeaturePackages } from "../../../motion/features/types"
+
+export interface CustomMotionComponentConfig {
+    forwardMotionProps?: boolean
+}
 
 export function createDomMotionConfig<Props>(
     Component: string | React.ComponentType<React.PropsWithChildren<Props>>,

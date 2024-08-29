@@ -1,11 +1,12 @@
 import { Fragment, useRef, useState } from "react"
 import { renderToString, renderToStaticMarkup } from "react-dom/server"
-import { motion, useMotionValue } from "../../"
+import { motion, createMotionComponent, useMotionValue } from "../../"
 import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
 import { Reorder } from "../../components/Reorder"
+import { createMotionComponent } from "../../render/components/motion/create"
 
-const MotionFragment = motion(Fragment)
+const MotionFragment = createMotionComponent(Fragment)
 
 function runTests(render: (components: any) => string) {
     test("doesn't throw", () => {
@@ -66,7 +67,7 @@ function runTests(render: (components: any) => string) {
 
     test("correctly renders custom HTML tag", () => {
         const y = motionValue(200)
-        const CustomComponent = motion("element-test")
+        const CustomComponent = createMotionComponent("element-test")
         const customElement = render(
             <AnimatePresence>
                 <CustomComponent

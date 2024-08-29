@@ -1,11 +1,11 @@
-import { motion } from "framer-motion"
+import { createMotionComponent } from "framer-motion"
 
 /**
  * An example of creating a `motion` version of a custom element. This will render <global> into the HTML
  */
 
 export const App = () => {
-    const CustomComponent = motion("global")
+    const CustomComponent = createMotionComponent("global")
 
     return (
         <CustomComponent

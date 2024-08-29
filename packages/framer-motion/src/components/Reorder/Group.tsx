@@ -10,7 +10,7 @@ import {
     useRef,
 } from "react"
 import { ReorderContext } from "../../context/ReorderContext"
-import { motion } from "../../render/dom/motion"
+import { motion } from "../../render/components/motion"
 import { HTMLMotionProps } from "../../render/html/types"
 import { useConstant } from "../../utils/use-constant"
 import { ItemData, ReorderContextProps } from "./types"
@@ -75,7 +75,9 @@ export function ReorderGroupComponent<V>(
     }: ReorderGroupProps<V>,
     externalRef?: React.ForwardedRef<any>
 ) {
-    const Component = useConstant(() => motion(as)) as FunctionComponent<
+    const Component = useConstant(
+        () => motion[as as keyof typeof motion]
+    ) as FunctionComponent<
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
     >
 

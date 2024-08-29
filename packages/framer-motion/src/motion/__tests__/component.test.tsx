@@ -1,6 +1,6 @@
 import { render } from "../../../jest.setup"
 import { fireEvent } from "@testing-library/react"
-import { createDomMotionComponent, motion } from "framer-motion"
+import { createMotionComponent, motion } from "framer-motion"
 import * as React from "react"
 import styled from "styled-components"
 
@@ -10,9 +10,9 @@ describe("motion component rendering and styles", () => {
         expect(container.firstChild).toBeTruthy()
     })
 
-    it("renders motion div component (using createDomMotionComponent) without type errors ", () => {
+    it("renders motion div component (using createMotionComponent) without type errors ", () => {
         // onTap is a motion component specific prop
-        const MotionDiv = createDomMotionComponent("div")
+        const MotionDiv = createMotionComponent("div")
         render(
             <MotionDiv
                 id={"myCreatedMotionDiv"}
@@ -107,7 +107,7 @@ describe("motion component rendering and styles", () => {
                 <button type="submit" disabled ref={ref} />
             )
         )
-        const MotionComponent = motion(Component)
+        const MotionComponent = createMotionComponent(Component)
 
         const promise = new Promise<Element>((resolve) => {
             const { rerender } = render(
@@ -249,7 +249,7 @@ describe("motion component rendering and styles", () => {
             background-color: #fff;
         `
 
-        const MotionBox = motion(Box)
+        const MotionBox = createMotionComponent(Box)
         const { container } = render(
             <MotionBox style={{ backgroundColor: "#f00" }} />
         )

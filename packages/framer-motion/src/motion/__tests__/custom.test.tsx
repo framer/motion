@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import { motion, useMotionValue } from "../.."
+import { motion, createMotionComponent, useMotionValue } from "../.."
 import * as React from "react"
 import { RefObject } from "react"
 import { MotionProps } from "../types"
@@ -8,7 +8,7 @@ interface Props {
     foo: boolean
 }
 
-describe("motion()", () => {
+describe("createMotionComponent()", () => {
     test("accepts custom types", () => {
         const BaseComponent = React.forwardRef(
             (_props: Props, ref: RefObject<HTMLDivElement>) => {
@@ -16,7 +16,7 @@ describe("motion()", () => {
             }
         )
 
-        const MotionComponent = motion<Props>(BaseComponent)
+        const MotionComponent = createMotionComponent(BaseComponent)
 
         const Component = () => <MotionComponent foo />
 
