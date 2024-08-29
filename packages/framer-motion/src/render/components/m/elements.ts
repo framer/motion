@@ -1,5 +1,6 @@
-import { DetailedHTMLFactory, ReactHTML } from "react"
+import { DetailedHTMLFactory, ReactHTML, ReactSVG, SVGAttributes } from "react"
 import { createMinimalMotionComponent } from "./create"
+import { MakeMotion, MotionProps } from "../../../motion/types"
 
 type UnwrapFactoryAttributes<F> = F extends DetailedHTMLFactory<infer P, any>
     ? P
@@ -7,6 +8,25 @@ type UnwrapFactoryAttributes<F> = F extends DetailedHTMLFactory<infer P, any>
 type UnwrapFactoryElement<F> = F extends DetailedHTMLFactory<any, infer P>
     ? P
     : never
+
+/**
+ * Blanket-accept any SVG attribute as a `MotionValue`
+ * @public
+ */
+interface SVGAttributesWithoutMotionProps<T>
+    extends Pick<
+        SVGAttributes<T>,
+        Exclude<keyof SVGAttributes<T>, keyof MotionProps>
+    > {}
+export type SVGAttributesAsMotionValues<T> = MakeMotion<
+    SVGAttributesWithoutMotionProps<T>
+>
+
+type UnwrapSVGFactoryElement<F> = F extends React.SVGProps<infer P> ? P : never
+
+export interface SVGMotionProps<T>
+    extends SVGAttributesAsMotionValues<T>,
+        MotionProps {}
 
 /**
  * HTML components
@@ -456,92 +476,279 @@ export const MotionWebview = /*@__PURE__*/ createMinimalMotionComponent<
  * SVG components
  * TODO: Generate list with props/instance
  */
-export const MotionAnimate =
-    /*@__PURE__*/ createMinimalMotionComponent("animate")
-export const MotionCircle = /*@__PURE__*/ createMinimalMotionComponent("circle")
-export const MotionDefs = /*@__PURE__*/ createMinimalMotionComponent("defs")
-export const MotionDesc = /*@__PURE__*/ createMinimalMotionComponent("desc")
-export const MotionEllipse =
-    /*@__PURE__*/ createMinimalMotionComponent("ellipse")
-export const MotionG = /*@__PURE__*/ createMinimalMotionComponent("g")
-export const MotionImage = /*@__PURE__*/ createMinimalMotionComponent("image")
-export const MotionLine = /*@__PURE__*/ createMinimalMotionComponent("line")
-export const MotionFilter = /*@__PURE__*/ createMinimalMotionComponent("filter")
-export const MotionMarker = /*@__PURE__*/ createMinimalMotionComponent("marker")
-export const MotionMask = /*@__PURE__*/ createMinimalMotionComponent("mask")
-export const MotionMetadata =
-    /*@__PURE__*/ createMinimalMotionComponent("metadata")
-export const MotionPath = /*@__PURE__*/ createMinimalMotionComponent("path")
-export const MotionPattern =
-    /*@__PURE__*/ createMinimalMotionComponent("pattern")
-export const MotionPolygon =
-    /*@__PURE__*/ createMinimalMotionComponent("polygon")
-export const MotionPolyline =
-    /*@__PURE__*/ createMinimalMotionComponent("polyline")
-export const MotionRect = /*@__PURE__*/ createMinimalMotionComponent("rect")
-export const MotionStop = /*@__PURE__*/ createMinimalMotionComponent("stop")
-export const MotionSvg = /*@__PURE__*/ createMinimalMotionComponent("svg")
-export const MotionSymbol = /*@__PURE__*/ createMinimalMotionComponent("symbol")
-export const MotionText = /*@__PURE__*/ createMinimalMotionComponent("text")
-export const MotionTspan = /*@__PURE__*/ createMinimalMotionComponent("tspan")
-export const MotionUse = /*@__PURE__*/ createMinimalMotionComponent("use")
-export const MotionView = /*@__PURE__*/ createMinimalMotionComponent("view")
-export const MotionClipPath =
-    /*@__PURE__*/ createMinimalMotionComponent("clipPath")
-export const MotionFeBlend =
-    /*@__PURE__*/ createMinimalMotionComponent("feBlend")
-export const MotionFeColorMatrix =
-    /*@__PURE__*/ createMinimalMotionComponent("feColorMatrix")
+export const MotionAnimate = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["animate"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["animate"]>
+>("animate")
+
+export const MotionCircle = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["circle"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["circle"]>
+>("circle")
+
+export const MotionDefs = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["defs"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["defs"]>
+>("defs")
+
+export const MotionDesc = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["desc"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["desc"]>
+>("desc")
+
+export const MotionEllipse = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["ellipse"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["ellipse"]>
+>("ellipse")
+
+export const MotionG = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["g"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["g"]>
+>("g")
+
+export const MotionImage = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["image"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["image"]>
+>("image")
+
+export const MotionLine = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["line"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["line"]>
+>("line")
+
+export const MotionFilter = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["filter"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["filter"]>
+>("filter")
+
+export const MotionMarker = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["marker"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["marker"]>
+>("marker")
+
+export const MotionMask = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["mask"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["mask"]>
+>("mask")
+
+export const MotionMetadata = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["metadata"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["metadata"]>
+>("metadata")
+
+export const MotionPath = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["path"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["path"]>
+>("path")
+
+export const MotionPattern = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["pattern"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["pattern"]>
+>("pattern")
+
+export const MotionPolygon = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["polygon"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["polygon"]>
+>("polygon")
+
+export const MotionPolyline = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["polyline"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["polyline"]>
+>("polyline")
+
+export const MotionRect = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["rect"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["rect"]>
+>("rect")
+
+export const MotionStop = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["stop"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["stop"]>
+>("stop")
+
+export const MotionSvg = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["svg"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["svg"]>
+>("svg")
+
+export const MotionSymbol = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["symbol"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["symbol"]>
+>("symbol")
+
+export const MotionText = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["text"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["text"]>
+>("text")
+
+export const MotionTspan = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["tspan"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["tspan"]>
+>("tspan")
+
+export const MotionUse = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["use"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["use"]>
+>("use")
+
+export const MotionView = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["view"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["view"]>
+>("view")
+
+export const MotionClipPath = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["clipPath"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["clipPath"]>
+>("clipPath")
+
+export const MotionFeBlend = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feBlend"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feBlend"]>
+>("feBlend")
+
+export const MotionFeColorMatrix = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feColorMatrix"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feColorMatrix"]>
+>("feColorMatrix")
+
 export const MotionFeComponentTransfer =
-    /*@__PURE__*/ createMinimalMotionComponent("feComponentTransfer")
-export const MotionFeComposite =
-    /*@__PURE__*/ createMinimalMotionComponent("feComposite")
+    /*@__PURE__*/ createMinimalMotionComponent<
+        SVGMotionProps<
+            UnwrapSVGFactoryElement<ReactSVG["feComponentTransfer"]>
+        >,
+        UnwrapSVGFactoryElement<ReactSVG["feComponentTransfer"]>
+    >("feComponentTransfer")
+
+export const MotionFeComposite = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feComposite"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feComposite"]>
+>("feComposite")
+
 export const MotionFeConvolveMatrix =
-    /*@__PURE__*/ createMinimalMotionComponent("feConvolveMatrix")
+    /*@__PURE__*/ createMinimalMotionComponent<
+        SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feConvolveMatrix"]>>,
+        UnwrapSVGFactoryElement<ReactSVG["feConvolveMatrix"]>
+    >("feConvolveMatrix")
+
 export const MotionFeDiffuseLighting =
-    /*@__PURE__*/ createMinimalMotionComponent("feDiffuseLighting")
+    /*@__PURE__*/ createMinimalMotionComponent<
+        SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feDiffuseLighting"]>>,
+        UnwrapSVGFactoryElement<ReactSVG["feDiffuseLighting"]>
+    >("feDiffuseLighting")
+
 export const MotionFeDisplacementMap =
-    /*@__PURE__*/ createMinimalMotionComponent("feDisplacementMap")
-export const MotionFeDistantLight =
-    /*@__PURE__*/ createMinimalMotionComponent("feDistantLight")
-export const MotionFeDropShadow =
-    /*@__PURE__*/ createMinimalMotionComponent("feDropShadow")
-export const MotionFeFlood =
-    /*@__PURE__*/ createMinimalMotionComponent("feFlood")
-export const MotionFeFuncA =
-    /*@__PURE__*/ createMinimalMotionComponent("feFuncA")
-export const MotionFeFuncB =
-    /*@__PURE__*/ createMinimalMotionComponent("feFuncB")
-export const MotionFeFuncG =
-    /*@__PURE__*/ createMinimalMotionComponent("feFuncG")
-export const MotionFeFuncR =
-    /*@__PURE__*/ createMinimalMotionComponent("feFuncR")
-export const MotionFeGaussianBlur =
-    /*@__PURE__*/ createMinimalMotionComponent("feGaussianBlur")
-export const MotionFeImage =
-    /*@__PURE__*/ createMinimalMotionComponent("feImage")
-export const MotionFeMerge =
-    /*@__PURE__*/ createMinimalMotionComponent("feMerge")
-export const MotionFeMergeNode =
-    /*@__PURE__*/ createMinimalMotionComponent("feMergeNode")
-export const MotionFeMorphology =
-    /*@__PURE__*/ createMinimalMotionComponent("feMorphology")
-export const MotionFeOffset =
-    /*@__PURE__*/ createMinimalMotionComponent("feOffset")
-export const MotionFePointLight =
-    /*@__PURE__*/ createMinimalMotionComponent("fePointLight")
+    /*@__PURE__*/ createMinimalMotionComponent<
+        SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feDisplacementMap"]>>,
+        UnwrapSVGFactoryElement<ReactSVG["feDisplacementMap"]>
+    >("feDisplacementMap")
+
+export const MotionFeDistantLight = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feDistantLight"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feDistantLight"]>
+>("feDistantLight")
+
+export const MotionFeDropShadow = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feDropShadow"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feDropShadow"]>
+>("feDropShadow")
+
+export const MotionFeFlood = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feFlood"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feFlood"]>
+>("feFlood")
+
+export const MotionFeFuncA = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feFuncA"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feFuncA"]>
+>("feFuncA")
+
+export const MotionFeFuncB = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feFuncB"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feFuncB"]>
+>("feFuncB")
+
+export const MotionFeFuncG = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feFuncG"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feFuncG"]>
+>("feFuncG")
+
+export const MotionFeFuncR = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feFuncR"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feFuncR"]>
+>("feFuncR")
+
+export const MotionFeGaussianBlur = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feGaussianBlur"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feGaussianBlur"]>
+>("feGaussianBlur")
+
+export const MotionFeImage = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feImage"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feImage"]>
+>("feImage")
+
+export const MotionFeMerge = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feMerge"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feMerge"]>
+>("feMerge")
+
+export const MotionFeMergeNode = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feMergeNode"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feMergeNode"]>
+>("feMergeNode")
+
+export const MotionFeMorphology = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feMorphology"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feMorphology"]>
+>("feMorphology")
+
+export const MotionFeOffset = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feOffset"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feOffset"]>
+>("feOffset")
+
+export const MotionFePointLight = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["fePointLight"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["fePointLight"]>
+>("fePointLight")
+
 export const MotionFeSpecularLighting =
-    /*@__PURE__*/ createMinimalMotionComponent("feSpecularLighting")
-export const MotionFeSpotLight =
-    /*@__PURE__*/ createMinimalMotionComponent("feSpotLight")
-export const MotionFeTile = /*@__PURE__*/ createMinimalMotionComponent("feTile")
-export const MotionFeTurbulence =
-    /*@__PURE__*/ createMinimalMotionComponent("feTurbulence")
-export const MotionForeignObject =
-    /*@__PURE__*/ createMinimalMotionComponent("foreignObject")
-export const MotionLinearGradient =
-    /*@__PURE__*/ createMinimalMotionComponent("linearGradient")
-export const MotionRadialGradient =
-    /*@__PURE__*/ createMinimalMotionComponent("radialGradient")
-export const MotionTextPath =
-    /*@__PURE__*/ createMinimalMotionComponent("textPath")
+    /*@__PURE__*/ createMinimalMotionComponent<
+        SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feSpecularLighting"]>>,
+        UnwrapSVGFactoryElement<ReactSVG["feSpecularLighting"]>
+    >("feSpecularLighting")
+
+export const MotionFeSpotLight = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feSpotLight"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feSpotLight"]>
+>("feSpotLight")
+
+export const MotionFeTile = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feTile"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feTile"]>
+>("feTile")
+
+export const MotionFeTurbulence = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["feTurbulence"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["feTurbulence"]>
+>("feTurbulence")
+
+export const MotionForeignObject = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["foreignObject"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["foreignObject"]>
+>("foreignObject")
+
+export const MotionLinearGradient = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["linearGradient"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["linearGradient"]>
+>("linearGradient")
+
+export const MotionRadialGradient = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["radialGradient"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["radialGradient"]>
+>("radialGradient")
+
+export const MotionTextPath = /*@__PURE__*/ createMinimalMotionComponent<
+    SVGMotionProps<UnwrapSVGFactoryElement<ReactSVG["textPath"]>>,
+    UnwrapSVGFactoryElement<ReactSVG["textPath"]>
+>("textPath")

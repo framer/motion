@@ -1,4 +1,9 @@
-import { isMotionComponent, motion, unwrapMotionComponent } from "../.."
+import {
+    createMotionComponent,
+    isMotionComponent,
+    motion,
+    unwrapMotionComponent,
+} from "../.."
 
 function CustomComp() {
     return <div />
@@ -7,7 +12,7 @@ function CustomComp() {
 describe("isMotionComponent", () => {
     it("returns true for motion components", () => {
         expect(isMotionComponent(motion.div)).toBe(true)
-        expect(isMotionComponent(motion(CustomComp))).toBe(true)
+        expect(isMotionComponent(createMotionComponent(CustomComp))).toBe(true)
     })
 
     it("returns false for other components", () => {
@@ -19,7 +24,9 @@ describe("isMotionComponent", () => {
 describe("unwrapMotionComponent", () => {
     it("returns the wrapped component for motion components", () => {
         expect(unwrapMotionComponent(motion.div)).toBe("div")
-        expect(unwrapMotionComponent(motion(CustomComp))).toBe(CustomComp)
+        expect(unwrapMotionComponent(createMotionComponent(CustomComp))).toBe(
+            CustomComp
+        )
     })
 
     it("returns undefined for other components", () => {

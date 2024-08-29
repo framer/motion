@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import { motion, createMotionComponent, useMotionValue } from "../.."
+import { createMotionComponent, useMotionValue } from "../.."
 import * as React from "react"
 import { RefObject } from "react"
 import { MotionProps } from "../types"
@@ -34,7 +34,7 @@ describe("createMotionComponent()", () => {
             }
         )
 
-        const MotionComponent = motion<Props>(BaseComponent)
+        const MotionComponent = createMotionComponent<Props>(BaseComponent)
 
         const Component = () => <MotionComponent foo animate={{ x: 100 }} />
 
@@ -58,7 +58,7 @@ describe("createMotionComponent()", () => {
             }
         )
 
-        const MotionComponent = motion<Props>(BaseComponent, {
+        const MotionComponent = createMotionComponent<Props>(BaseComponent, {
             forwardMotionProps: true,
         })
 
@@ -82,7 +82,7 @@ describe("createMotionComponent()", () => {
             }
         )
 
-        const MotionComponent = motion<Props>(BaseComponent)
+        const MotionComponent = createMotionComponent<Props>(BaseComponent)
 
         const Component = () => (
             <MotionComponent foo>{useMotionValue(5)}</MotionComponent>
