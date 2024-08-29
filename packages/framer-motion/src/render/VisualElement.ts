@@ -427,6 +427,7 @@ export abstract class VisualElement<
         cancelFrame(this.notifyUpdate)
         cancelFrame(this.render)
         this.valueSubscriptions.forEach((remove) => remove())
+        this.valueSubscriptions.clear()
         this.removeFromVariantTree && this.removeFromVariantTree()
         this.parent && this.parent.children.delete(this)
 
@@ -469,9 +470,15 @@ export abstract class VisualElement<
             this.scheduleRender
         )
 
+        let removeSyncCheck: VoidFunction | void
+        if (window.MotionCheckAppearSync) {
+            removeSyncCheck = window.MotionCheckAppearSync(this, key, value)
+        }
+
         this.valueSubscriptions.set(key, () => {
             removeOnChange()
             removeOnRenderRequest()
+            if (removeSyncCheck) removeSyncCheck()
             if (value.owner) value.stop()
         })
     }

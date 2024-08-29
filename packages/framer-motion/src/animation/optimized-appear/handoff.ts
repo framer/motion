@@ -1,5 +1,4 @@
 import type { Batcher } from "../../frameloop/types"
-import { transformProps } from "../../render/html/utils/transform"
 import { appearAnimationStore } from "./store"
 import { appearStoreId } from "./store-id"
 
@@ -8,10 +7,7 @@ export function handoffOptimizedAppearAnimation(
     valueName: string,
     frame: Batcher
 ): number | null {
-    const optimisedValueName = transformProps.has(valueName)
-        ? "transform"
-        : valueName
-    const storeId = appearStoreId(elementId, optimisedValueName)
+    const storeId = appearStoreId(elementId, valueName)
     const optimisedAnimation = appearAnimationStore.get(storeId)
 
     if (!optimisedAnimation) {

@@ -6,6 +6,9 @@ import { handoffOptimizedAppearAnimation } from "./handoff"
 import { appearAnimationStore, elementsWithAppearAnimations } from "./store"
 import { noop } from "../../utils/noop"
 import "./types"
+import { getOptimisedAppearId } from "./get-appear-id"
+import { MotionValue } from "../../value"
+import type { WithAppearProps } from "./types"
 
 /**
  * A single time to use across all animations to manually set startTime
@@ -65,10 +68,26 @@ export function startOptimizedAppearAnimation(
          */
         window.MotionHandoffAnimation = handoffOptimizedAppearAnimation
 
-        window.MotionHasOptimisedTransformAnimation = (elementId?: string) => {
+        window.MotionHasOptimisedAnimation = (
+            elementId?: string,
+            valueName?: string
+        ) => {
             if (!elementId) return false
 
-            const animationId = appearStoreId(elementId, "transform")
+            /**
+             * Keep a map of elementIds that have started animating. We check
+             * via ID instead of Element because of hydration errors and
+             * pre-hydration checks. We also actively record IDs as they start
+             * animating rather than simply checking for data-appear-id as
+             * this attrbute might be present but not lead to an animation, for
+             * instance if the element's appear animation is on a different
+             * breakpoint.
+             */
+            if (!valueName) {
+                return elementsWithAppearAnimations.has(elementId)
+            }
+
+            const animationId = appearStoreId(elementId, valueName)
             return Boolean(appearAnimationStore.get(animationId))
         }
 
@@ -77,8 +96,11 @@ export function startOptimizedAppearAnimation(
          * they're the ones that will interfere with the
          * layout animation measurements.
          */
-        window.MotionCancelOptimisedTransform = (elementId: string) => {
-            const animationId = appearStoreId(elementId, "transform")
+        window.MotionCancelOptimisedAnimation = (
+            elementId: string,
+            valueName: string
+        ) => {
+            const animationId = appearStoreId(elementId, valueName)
             const data = appearAnimationStore.get(animationId)
 
             if (data) {
@@ -87,17 +109,39 @@ export function startOptimizedAppearAnimation(
             }
         }
 
-        /**
-         * Keep a map of elementIds that have started animating. We check
-         * via ID instead of Element because of hydration errors and
-         * pre-hydration checks. We also actively record IDs as they start
-         * animating rather than simply checking for data-appear-id as
-         * this attrbute might be present but not lead to an animation, for
-         * instance if the element's appear animation is on a different
-         * breakpoint.
-         */
-        window.MotionHasOptimisedAnimation = (elementId?: string) =>
-            Boolean(elementId && elementsWithAppearAnimations.has(elementId))
+        window.MotionCheckAppearSync = (
+            visualElement: WithAppearProps,
+            valueName: string,
+            value: MotionValue
+        ) => {
+            const appearId = getOptimisedAppearId(visualElement)
+
+            if (!appearId) return
+
+            const valueIsOptimised = window.MotionHasOptimisedAnimation?.(
+                appearId,
+                valueName
+            )
+            const externalAnimationValue =
+                visualElement.props.values?.[valueName]
+
+            if (!valueIsOptimised || !externalAnimationValue) return
+
+            const removeSyncCheck = value.on(
+                "change",
+                (latestValue: string | number) => {
+                    if (externalAnimationValue.get() !== latestValue) {
+                        window.MotionCancelOptimisedAnimation?.(
+                            appearId,
+                            valueName
+                        )
+                        removeSyncCheck()
+                    }
+                }
+            )
+
+            return removeSyncCheck
+        }
     }
 
     const startAnimation = () => {
