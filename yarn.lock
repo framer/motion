@@ -1277,6 +1277,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jridgewell/sourcemap-codec@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@jridgewell/sourcemap-codec@npm:1.5.0"
+  checksum: 05df4f2538b3b0f998ea4c1cd34574d0feba216fa5d4ccaef0187d12abf82eafe6021cec8b49f9bb4d90f2ba4582ccc581e72986a5fcf4176ae0cfeb04cf52ec
+  languageName: node
+  linkType: hard
+
 "@jridgewell/trace-mapping@npm:^0.3.12, @jridgewell/trace-mapping@npm:^0.3.18, @jridgewell/trace-mapping@npm:^0.3.20, @jridgewell/trace-mapping@npm:^0.3.24, @jridgewell/trace-mapping@npm:^0.3.25":
   version: 0.3.25
   resolution: "@jridgewell/trace-mapping@npm:0.3.25"
@@ -2467,7 +2474,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/pluginutils@npm:^5.0.1":
+"@rollup/pluginutils@npm:^5.0.1, @rollup/pluginutils@npm:^5.1.0":
   version: 5.1.0
   resolution: "@rollup/pluginutils@npm:5.1.0"
   dependencies:
@@ -7213,7 +7220,7 @@ __metadata:
     "@react-three/fiber": ^8.2.2
     "@react-three/test-renderer": ^9.0.0
     "@rollup/plugin-commonjs": ^22.0.1
-    framer-motion: ^11.3.30
+    framer-motion: ^11.3.31
     react-merge-refs: ^2.0.1
     three: ^0.137.0
   peerDependencies:
@@ -7224,10 +7231,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion@^11.3.30, framer-motion@workspace:packages/framer-motion":
+"framer-motion@^11.3.31, framer-motion@workspace:packages/framer-motion":
   version: 0.0.0-use.local
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
+    rollup-plugin-preserve-directives: ^0.4.0
     tslib: ^2.4.0
   peerDependencies:
     "@emotion/is-prop-valid": "*"
@@ -10084,6 +10092,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"magic-string@npm:^0.30.5":
+  version: 0.30.11
+  resolution: "magic-string@npm:0.30.11"
+  dependencies:
+    "@jridgewell/sourcemap-codec": ^1.5.0
+  checksum: e041649453c9a3f31d2e731fc10e38604d50e20d3585cd48bc7713a6e2e1a3ad3012105929ca15750d59d0a3f1904405e4b95a23b7e69dc256db3c277a73a3ca
+  languageName: node
+  linkType: hard
+
 "make-dir@npm:^2.1.0":
   version: 2.1.0
   resolution: "make-dir@npm:2.1.0"
@@ -12260,7 +12277,7 @@ __metadata:
     "@typescript-eslint/parser": ^7.2.0
     "@vitejs/plugin-react-swc": ^3.5.0
     eslint-plugin-react-refresh: ^0.4.6
-    framer-motion: ^11.3.30
+    framer-motion: ^11.3.31
     react: ^18.2.0
     react-dom: ^18.2.0
     styled-components: ^6.1.11
@@ -12752,6 +12769,18 @@ __metadata:
     "@babel/code-frame":
       optional: true
   checksum: a90f8e975e4515734c84fa17e0feaf8fdd9ed9368722c3908687875903a393cba4d07d9934bae9b91a0c1b6c63ac1ef0ccd7363d3e6e4dc10eabca3540be9f11
+  languageName: node
+  linkType: hard
+
+"rollup-plugin-preserve-directives@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "rollup-plugin-preserve-directives@npm:0.4.0"
+  dependencies:
+    "@rollup/pluginutils": ^5.1.0
+    magic-string: ^0.30.5
+  peerDependencies:
+    rollup: 2.x || 3.x || 4.x
+  checksum: 457ca1f60d2cdbe5485339dbc4b228bec5684a99b6589c771bc2268ffaeb29dce2d248f83a85da2fbf572a23cc592d7f59e6485369965210df1035f22ce67feb
   languageName: node
   linkType: hard
 
