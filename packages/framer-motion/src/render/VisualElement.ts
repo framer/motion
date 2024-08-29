@@ -397,11 +397,7 @@ export abstract class VisualElement<
             this.removeFromVariantTree = this.parent.addVariantChild(this)
         }
 
-        this.values.forEach((value, key) => {
-            if (!this.valueSubscriptions.has(key)) {
-                this.bindToMotionValue(key, value)
-            }
-        })
+        this.values.forEach((value, key) => this.bindToMotionValue(key, value))
 
         if (!hasReducedMotionListener.current) {
             initPrefersReducedMotion()
