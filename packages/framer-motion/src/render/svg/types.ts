@@ -1,5 +1,5 @@
 import { ResolvedValues } from "../types"
-import { ReactSVG, SVGAttributes } from "react"
+import { SVGAttributes } from "react"
 import { MakeMotion, MotionProps } from "../../motion/types"
 import { SVGElements } from "./supported-elements"
 import { ForwardRefComponent, HTMLRenderState } from "../html/types"
@@ -38,7 +38,9 @@ export type SVGAttributesAsMotionValues<T> = MakeMotion<
     SVGAttributesWithoutMotionProps<T>
 >
 
-type UnwrapSVGFactoryElement<F> = F extends React.SVGProps<infer P> ? P : never
+export type UnwrapSVGFactoryElement<F> = F extends React.SVGProps<infer P>
+    ? P
+    : never
 
 /**
  * @public
@@ -54,7 +56,7 @@ export interface SVGMotionProps<T>
  */
 export type SVGMotionComponents = {
     [K in SVGElements]: ForwardRefComponent<
-        UnwrapSVGFactoryElement<ReactSVG[K]>,
+        UnwrapSVGFactoryElement<JSX.IntrinsicElements[K]>,
         SVGMotionProps<UnwrapSVGFactoryElement<JSX.IntrinsicElements[K]>>
     >
 }

@@ -1,6 +1,8 @@
-import { Fragment, useRef, useState, forwardRef } from "react"
+import { Fragment, useRef, useState, forwardRef, ForwardedRef } from "react"
 import { renderToString, renderToStaticMarkup } from "react-dom/server"
-import { motion, createMotionComponent, useMotionValue } from "../../"
+import { createMotionComponent, useMotionValue } from "../../"
+import { motion } from "../../render/components/motion"
+import { motion as motionProxy } from "../../render/components/motion/proxy"
 import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
 import { Reorder } from "../../components/Reorder"
@@ -8,22 +10,41 @@ import { Reorder } from "../../components/Reorder"
 const MotionFragment = createMotionComponent(Fragment)
 
 function runTests(render: (components: any) => string) {
-    test("doesn't throw", () => {
-        const CustomMotionComponent = forwardRef((props, ref) => {
-            return <div ref={ref} {...props} />
-        })
+    test("doesn't throw type or runtime errors", () => {
+        interface CustomProps {
+            foo: string
+        }
 
+        const CustomMotionComponent = createMotionComponent(
+            forwardRef(
+                (props: CustomProps, ref: ForwardedRef<HTMLDivElement>) => {
+                    return <div ref={ref} {...props} />
+                }
+            )
+        )
         const CustomMotionDiv = createMotionComponent("div")
         const CustomMotionCircle = createMotionComponent("circle")
 
+        const ProxyCustomMotionComponent = motionProxy(
+            forwardRef(
+                (props: CustomProps, ref: ForwardedRef<HTMLInputElement>) => {
+                    return <input ref={ref} {...props} />
+                }
+            )
+        )
+        const ProxyCustomMotionDiv = motionProxy("div")
+        const ProxyCustomMotionCircle = motionProxy("circle")
+
         function Component() {
-            const ref = useRef<HTMLDivElement>(null)
-            const ref2 = useRef<HTMLDivElement>(null)
+            const divRef = useRef<HTMLDivElement>(null)
+            const buttonRef = useRef<HTMLButtonElement>(null)
+            const circleRef = useRef<SVGCircleElement>(null)
+            const inputRef = useRef<HTMLInputElement>(null)
             const value = useMotionValue(0)
             return (
                 <>
                     <motion.div
-                        ref={ref}
+                        ref={divRef}
                         initial={{ x: 100 }}
                         whileTap={{ opacity: 0 }}
                         drag
@@ -32,10 +53,22 @@ function runTests(render: (components: any) => string) {
                         style={{ opacity: 1 }}
                         data-testid="box"
                     />
-                    <motion.button disabled />
-                    <motion.circle cx={1} cy={value} />
+                    <motion.button ref={buttonRef} disabled />
+                    <motion.circle ref={circleRef} cx={1} cy={value} />
+                    <motionProxy.div
+                        ref={divRef}
+                        initial={{ x: 100 }}
+                        whileTap={{ opacity: 0 }}
+                        drag
+                        layout
+                        layoutId="a"
+                        style={{ opacity: 1 }}
+                        data-testid="box"
+                    />
+                    <motionProxy.button ref={buttonRef} disabled />
+                    <motionProxy.circle ref={circleRef} cx={1} cy={value} />
                     <CustomMotionDiv
-                        ref={ref2}
+                        ref={divRef}
                         initial={{ x: 100 }}
                         whileTap={{ opacity: 0 }}
                         drag
@@ -44,8 +77,38 @@ function runTests(render: (components: any) => string) {
                         style={{ opacity: 1 }}
                         data-testid="box"
                     />
-                    <CustomMotionComponent id="test" />
-                    <CustomMotionCircle cx={1} cy={value} />
+                    <CustomMotionComponent
+                        ref={divRef}
+                        foo="test"
+                        whileTap={{ opacity: 0 }}
+                    />
+                    <CustomMotionCircle
+                        ref={circleRef}
+                        whileTap={{ opacity: 0 }}
+                        cx={1}
+                        cy={value}
+                    />
+                    <ProxyCustomMotionDiv
+                        ref={divRef}
+                        initial={{ x: 100 }}
+                        whileTap={{ opacity: 0 }}
+                        drag
+                        layout
+                        layoutId="a"
+                        style={{ opacity: 1 }}
+                        data-testid="box"
+                    />
+                    <ProxyCustomMotionComponent
+                        ref={inputRef}
+                        foo="test"
+                        whileTap={{ opacity: 0 }}
+                    />
+                    <ProxyCustomMotionCircle
+                        ref={circleRef}
+                        whileTap={{ opacity: 0 }}
+                        cx={1}
+                        cy={value}
+                    />
                 </>
             )
         }

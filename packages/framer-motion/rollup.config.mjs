@@ -130,9 +130,10 @@ const cjs = Object.assign({}, config, {
  * Bundle seperately so bundles don't share common modules
  */
 const cjsDom = Object.assign({}, cjs, { input : "lib/dom-entry.js" })
+const cjsClient = Object.assign({}, cjs, { input : "lib/client-entry.js" })
 
 export const es = Object.assign({}, config, {
-    input: ["lib/index.js", "lib/dom-entry.js", "lib/projection-entry.js"],
+    input: ["lib/index.js", "lib/dom-entry.js", "lib/client-entry.js","lib/projection-entry.js"],
     output: {
         entryFileNames: "[name].mjs",
         format: "es",
@@ -170,6 +171,16 @@ const animateTypes = {
     plugins: typePlugins,
 }
 
+
+const clientTypes = {
+    input: "types/client-entry.d.ts",
+    output: {
+        format: "es",
+        file: "dist/client-entry.d.ts",
+    },
+    plugins: typePlugins,
+}
+
 const threeTypes = {
     input: "types/three-entry.d.ts",
     output: {
@@ -186,8 +197,10 @@ export default [
     umdDomProd,
     cjs,
     cjsDom,
+    cjsClient,
     es,
     types,
+    clientTypes,
     animateTypes,
     threeTypes,
 ]

@@ -25,7 +25,7 @@ export interface MotionComponentConfig<Instance, RenderState> {
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>
 }
 
-type MotionComponentProps<Props> = {
+export type MotionComponentProps<Props> = {
     [K in Exclude<keyof Props, keyof MotionProps>]?: Props[K]
 } & MotionProps
 
