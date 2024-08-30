@@ -7199,6 +7199,7 @@ __metadata:
     rollup: 4.14.0
     rollup-plugin-analyzer: ^4.0.0
     rollup-plugin-dts: 6.1.0
+    rollup-plugin-preserve-directives: ^0.4.0
     rollup-plugin-terser: ^5.3.0
     rollup-plugin-visualizer: ^5.7.1
     start-server-and-test: ^1.14.0
@@ -7220,7 +7221,7 @@ __metadata:
     "@react-three/fiber": ^8.2.2
     "@react-three/test-renderer": ^9.0.0
     "@rollup/plugin-commonjs": ^22.0.1
-    framer-motion: ^11.3.32-alpha.1
+    framer-motion: ^11.3.32-alpha.3
     react-merge-refs: ^2.0.1
     three: ^0.137.0
   peerDependencies:
@@ -7231,11 +7232,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion@^11.3.32-alpha.1, framer-motion@workspace:packages/framer-motion":
+"framer-motion@^11.3.32-alpha.3, framer-motion@workspace:packages/framer-motion":
   version: 0.0.0-use.local
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
-    rollup-plugin-preserve-directives: ^0.4.0
     tslib: ^2.4.0
   peerDependencies:
     "@emotion/is-prop-valid": "*"
@@ -12277,7 +12277,7 @@ __metadata:
     "@typescript-eslint/parser": ^7.2.0
     "@vitejs/plugin-react-swc": ^3.5.0
     eslint-plugin-react-refresh: ^0.4.6
-    framer-motion: ^11.3.32-alpha.1
+    framer-motion: ^11.3.32-alpha.3
     react: ^18.2.0
     react-dom: ^18.2.0
     styled-components: ^6.1.11
