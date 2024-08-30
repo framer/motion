@@ -1,3 +1,5 @@
+"use client"
+
 import { createMotionComponent } from "./create"
 
 /**
