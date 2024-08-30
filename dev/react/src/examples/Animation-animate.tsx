@@ -16,7 +16,8 @@ export const App = () => {
         setTimeout(() => {
             setState(true)
         }, 300)
-    })
+    }, [state])
+
     return (
         <motion.div
             animate={{ x: state ? 0 : 100 }}

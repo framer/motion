@@ -4,10 +4,9 @@ import {
     motion,
     unwrapMotionComponent,
 } from "../.."
+import { forwardRef } from "react"
 
-function CustomComp() {
-    return <div />
-}
+const CustomComp = forwardRef(() => <div />)
 
 describe("isMotionComponent", () => {
     it("returns true for motion components", () => {

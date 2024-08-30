@@ -17,7 +17,7 @@ type MotionComponent<T, P> = T extends keyof DOMMotionComponents
       >
 
 export function createMotionComponentFactory(
-    features?: FeaturePackages,
+    preloadedFeatures?: FeaturePackages,
     createVisualElement?: CreateVisualElement<any>
 ) {
     return function createMotionComponent<
@@ -25,7 +25,7 @@ export function createMotionComponentFactory(
         TagName extends keyof DOMMotionComponents | string = "div"
     >(
         Component: TagName | string | React.ForwardRefExoticComponent<Props>,
-        options = { forwardMotionProps: false }
+        { forwardMotionProps } = { forwardMotionProps: false }
     ) {
         const baseConfig = isSVGComponent(Component)
             ? svgMotionConfig
@@ -33,8 +33,8 @@ export function createMotionComponentFactory(
 
         const config = {
             ...baseConfig,
-            features,
-            useRender: createUseRender(options.forwardMotionProps),
+            preloadedFeatures,
+            useRender: createUseRender(forwardMotionProps),
             createVisualElement,
             Component,
         }
