@@ -53,24 +53,41 @@
             function Component() {
                 const [top, setTop] = React.useState(0)
                 React.useEffect(() => {
-                    setTimeout(() => {
+                    const timeout = setTimeout(() => {
                         setTop(100)
+                        setTimeout(() => {
+                            const optimisedBox =
+                                document.getElementById("optimised-box")
+                            const layoutBox =
+                                document.getElementById("layout-box")
+
+                            // Cypress browser doesn't support getAnimations
+                            if (!optimisedBox.getAnimations) return
+
+                            if (optimisedBox.getAnimations().length !== 1) {
+                                showError(
+                                    optimisedBox,
+                                    `Optimised parent should have resumed WAAPI animation`
+                                )
+                            }
+
+                            if (layoutBox.getAnimations().length !== 0) {
+                                showError(
+                                    layoutBox,
+                                    `Projecting child should NOT have resumed WAAPI animation`
+                                )
+                            }
+                        }, 100)
                     }, 100)
+
+                    return () => clearTimeout(timeout)
                 }, [])
 
                 return React.createElement(motion.div, {
                     id: "optimised-box",
                     className: "box",
-                    initial: {
-                        x: 0,
-                        opacity: 0,
-                        backgroundColor: "#00f",
-                    },
-                    animate: {
-                        x: 100,
-                        opacity: 1,
-                        backgroundColor: "#00f",
-                    },
+                    initial: { x: 0 },
+                    animate: { x: 100 },
                     transition: {
                         duration,
                         ease: "linear",
@@ -79,47 +96,16 @@
                         x,
                         position: "relative",
                     },
-
-                    onAnimationStart: () => {
-                        setTimeout(() => {
-                            const box = document.getElementById("optimised-box")
-
-                            if (
-                                box.style.opacity ===
-                                window.getComputedStyle(box).opacity
-                            ) {
-                                showError(
-                                    box,
-                                    `Optimised opacity animation cancelled by child layout animations`
-                                )
-                            }
-
-                            if (
-                                box.style.backgroundColor ===
-                                window.getComputedStyle(box).backgroundColor
-                            ) {
-                                showError(
-                                    box,
-                                    `Optimised background-color animation cancelled by child layout animations`
-                                )
-                            }
-
-                            if (window.Assert.xTransformEquals(box)) {
-                                showError(
-                                    box,
-                                    `Optimised transform NOT animation resumed after being cancelled by child layout animations`
-                                )
-                            }
-                        }, 150)
-                    },
                     [optimizedAppearDataAttribute]: "a",
                     children: React.createElement(motion.div, {
                         id: "layout-box",
                         className: "box",
+                        initial: { y: 0 },
+                        animate: { y: 100 },
                         transition: {
                             duration,
                             ease: "linear",
-                            layout: { ease: () => 1, duration: 10 },
+                            // layout: { ease: () => 0, duration: 10 },
                         },
                         style: {
                             top,
@@ -128,6 +114,7 @@
                         },
                         layout: true,
                         children: "Content",
+                        [optimizedAppearDataAttribute]: "b",
                     }),
                 })
             }
@@ -137,25 +124,11 @@
                 React.createElement(Component)
             )
 
-            // Start optimised opacity animation
+            // Start WAAPI animation
             startOptimizedAppearAnimation(
-                document.getElementById("optimised-box"),
-                "opacity",
-                [0, 1],
-                {
-                    duration: duration * 1000,
-                    ease: "linear",
-                }
-            )
-
-            // Start optimised background-color animation
-            // This optimised animation is red -> red whereas the animation on the
-            // motion.div is blue -> blue. Therefore, if the optimised animations
-            // cancelled, the rendered color will be blue.
-            startOptimizedAppearAnimation(
-                document.getElementById("optimised-box"),
-                "backgroundColor",
-                ["#f00", "#f00"],
+                document.getElementById("layout-box"),
+                "transform",
+                ["translateY(0px)", "translateY(100px)"],
                 {
                     duration: duration * 1000,
                     ease: "linear",

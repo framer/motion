@@ -1,5 +1,4 @@
 import type { Batcher } from "../../frameloop/types"
-import { transformProps } from "../../render/html/utils/transform"
 import { appearAnimationStore } from "./store"
 import { appearStoreId } from "./store-id"
 
@@ -8,10 +7,7 @@ export function handoffOptimizedAppearAnimation(
     valueName: string,
     frame: Batcher
 ): number | null {
-    const optimisedValueName = transformProps.has(valueName)
-        ? "transform"
-        : valueName
-    const storeId = appearStoreId(elementId, optimisedValueName)
+    const storeId = appearStoreId(elementId, valueName)
     const optimisedAnimation = appearAnimationStore.get(storeId)
 
     if (!optimisedAnimation) {
@@ -19,6 +15,19 @@ export function handoffOptimizedAppearAnimation(
     }
 
     const { animation, startTime } = optimisedAnimation
+
+    function cancelAnimation() {
+        window.MotionCancelOptimisedAnimation?.(elementId, valueName, frame)
+    }
+
+    /**
+     * We can cancel the animation once it's finished now that we've synced
+     * with Motion.
+     *
+     * Prefer onfinish over finished as onfinish is backwards compatible with
+     * older browsers.
+     */
+    animation.onfinish = cancelAnimation
 
     if (startTime === null || window.MotionHandoffIsComplete) {
         /**
@@ -28,16 +37,7 @@ export function handoffOptimizedAppearAnimation(
          * Or if we've already handed off the animation then we're now interrupting it.
          * In which case we need to cancel it.
          */
-        appearAnimationStore.delete(storeId)
-
-        frame.render(() =>
-            frame.render(() => {
-                try {
-                    animation.cancel()
-                } catch (error) {}
-            })
-        )
-
+        cancelAnimation()
         return null
     } else {
         return startTime

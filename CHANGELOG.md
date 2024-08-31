@@ -4,6 +4,25 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.3.31] 2024-08-29
+
+### Fixed
+
+-   Detects conflicts between optimised animations and rendered `style`.
+-   Resumes optimised animations where possible once layout measurements are complete.
+
+## [11.3.30] 2024-08-23
+
+### Fixed
+
+-   Removed double `"change"` handler on externally-provided `MotionValue`s.
+
+## [11.3.29] 2024-08-21
+
+### Fixed
+
+-   Selective cancellation of optimised appear animations.
+
 ## [11.3.28] 2024-08-15
 
 ### Fixed

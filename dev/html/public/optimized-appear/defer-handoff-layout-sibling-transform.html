@@ -1,0 +1,157 @@
+<!--
+  This test checks that the layout animation firing on the sibling element
+  doesn't cancel the optimized appear animation on the first element.
+-->
+<html>
+    <head>
+        <style>
+            body {
+                padding: 100px;
+                margin: 0;
+            }
+
+            #container {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .box {
+                width: 100px;
+                height: 100px;
+                background-color: #0077ff;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 1 !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="module" src="/src/imports/optimized-appear.js"></script>
+        <script type="module" src="/src/imports/script-assert.js"></script>
+
+        <script type="module">
+            const {
+                motion,
+                animateStyle,
+                animate,
+                startOptimizedAppearAnimation,
+                optimizedAppearDataAttribute,
+                motionValue,
+                frame,
+            } = window.Motion
+            const { matchViewportBox } = window.Assert
+            const root = document.getElementById("root")
+
+            const duration = 1
+            const x = motionValue(0)
+
+            let isFirstFrame = true
+
+            function Component() {
+                const [top, setTop] = React.useState(0)
+                React.useEffect(() => {
+                    setTimeout(() => {
+                        setTop(100)
+                    }, 100)
+                }, [])
+
+                return React.createElement("div", {
+                    id: "container",
+                    children: [
+                        React.createElement(motion.div, {
+                            id: "box",
+                            className: "box",
+                            initial: { x: 0 },
+                            animate: { x: 100 },
+                            transition: { duration, ease: "linear" },
+                            style: { x, position: "relative" },
+                            [optimizedAppearDataAttribute]: "a",
+                            children: "Content",
+                        }),
+                        React.createElement(motion.div, {
+                            id: "layout-box",
+                            className: "box",
+                            initial: { x: 0 },
+                            animate: { x: 100 },
+                            transition: { duration, ease: "linear" },
+                            style: { x, position: "relative", top },
+                            layout: true,
+                            [optimizedAppearDataAttribute]: "b",
+                            onLayoutAnimationStart: () => {
+                                frame.postRender(() => {
+                                    // Cypress browser doesn't support getAnimations
+                                    if (
+                                        !document.getElementById("box")
+                                            .getAnimations
+                                    ) {
+                                        return
+                                    }
+
+                                    const numAnimationsOnA = document
+                                        .getElementById("box")
+                                        .getAnimations().length
+
+                                    const numAnimationsOnB = document
+                                        .getElementById("layout-box")
+                                        .getAnimations().length
+
+                                    if (numAnimationsOnA !== 1) {
+                                        showError(
+                                            document.getElementById("box"),
+                                            "Optimised animation on A incorrectly cancelled by layout animation on B"
+                                        )
+                                    }
+
+                                    if (numAnimationsOnB !== 0) {
+                                        showError(
+                                            document.getElementById("box"),
+                                            "Optimised animation on B incorrectly NOT cancelled by layout animation on B"
+                                        )
+                                    }
+                                })
+                            },
+                            children: "Content",
+                        }),
+                    ],
+                })
+            }
+
+            // Emulate server rendering of element
+            root.innerHTML = ReactDOMServer.renderToString(
+                React.createElement(Component)
+            )
+
+            startOptimizedAppearAnimation(
+                document.getElementById("box"),
+                "transform",
+                ["translateX(0px)", "translateX(100px)"],
+                {
+                    duration: duration * 1000,
+                    ease: "linear",
+                }
+            )
+
+            // Start WAAPI animation
+            const animation = startOptimizedAppearAnimation(
+                document.getElementById("layout-box"),
+                "transform",
+                ["translateX(0px)", "translateX(100px)"],
+                {
+                    duration: duration * 1000,
+                    ease: "linear",
+                },
+                (animation) => {
+                    setTimeout(() => {
+                        ReactDOM.hydrateRoot(
+                            root,
+                            React.createElement(Component)
+                        )
+                    }, (duration * 1000) / 4)
+                }
+            )
+        </script>
+    </body>
+</html>

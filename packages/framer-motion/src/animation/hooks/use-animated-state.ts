@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState, useLayoutEffect } from "react"
 import { useConstant } from "../../utils/use-constant"
 import { TargetAndTransition } from "../../types"
 import { ResolvedValues } from "../../render/types"
@@ -60,26 +60,23 @@ export function useAnimatedState(initialState: any) {
 
     const element = useConstant(() => {
         return new StateVisualElement(
-            { props: {}, visualState, presenceContext: null },
+            {
+                props: {
+                    onUpdate: (v) => {
+                        setAnimationState({ ...v })
+                    },
+                },
+                visualState,
+                presenceContext: null,
+            },
             { initialState }
         )
     })
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         element.mount({})
         return () => element.unmount()
     }, [element])
-
-    useEffect(() => {
-        element.update(
-            {
-                onUpdate: (v) => {
-                    setAnimationState({ ...v })
-                },
-            },
-            null
-        )
-    }, [setAnimationState, element])
 
     const startAnimation = useConstant(
         () => (animationDefinition: TargetAndTransition) => {

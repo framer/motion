@@ -427,6 +427,7 @@ export abstract class VisualElement<
         cancelFrame(this.notifyUpdate)
         cancelFrame(this.render)
         this.valueSubscriptions.forEach((remove) => remove())
+        this.valueSubscriptions.clear()
         this.removeFromVariantTree && this.removeFromVariantTree()
         this.parent && this.parent.children.delete(this)
 
@@ -445,6 +446,10 @@ export abstract class VisualElement<
     }
 
     private bindToMotionValue(key: string, value: MotionValue) {
+        if (this.valueSubscriptions.has(key)) {
+            this.valueSubscriptions.get(key)!()
+        }
+
         const valueIsTransform = transformProps.has(key)
 
         const removeOnChange = value.on(
@@ -465,9 +470,15 @@ export abstract class VisualElement<
             this.scheduleRender
         )
 
+        let removeSyncCheck: VoidFunction | void
+        if (window.MotionCheckAppearSync) {
+            removeSyncCheck = window.MotionCheckAppearSync(this, key, value)
+        }
+
         this.valueSubscriptions.set(key, () => {
             removeOnChange()
             removeOnRenderRequest()
+            if (removeSyncCheck) removeSyncCheck()
             if (value.owner) value.stop()
         })
     }
@@ -508,7 +519,7 @@ export abstract class VisualElement<
                 FeatureConstructor &&
                 isEnabled(this.props)
             ) {
-                this.features[key] = new FeatureConstructor(this)
+                this.features[key] = new FeatureConstructor(this) as any
             }
 
             /**

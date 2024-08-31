@@ -1,8 +1,8 @@
-import { VisualElement } from "../../render/VisualElement"
 import { optimizedAppearDataAttribute } from "./data-id"
+import { WithAppearProps } from "./types"
 
 export function getOptimisedAppearId(
-    visualElement: VisualElement
+    visualElement: WithAppearProps
 ): string | undefined {
-    return visualElement.getProps()[optimizedAppearDataAttribute]
+    return visualElement.props[optimizedAppearDataAttribute]
 }

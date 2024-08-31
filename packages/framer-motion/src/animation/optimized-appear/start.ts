@@ -3,9 +3,17 @@ import { animateStyle } from "../animators/waapi"
 import { NativeAnimationOptions } from "../animators/waapi/types"
 import { optimizedAppearDataId } from "./data-id"
 import { handoffOptimizedAppearAnimation } from "./handoff"
-import { appearAnimationStore, elementsWithAppearAnimations } from "./store"
+import {
+    appearAnimationStore,
+    AppearStoreEntry,
+    elementsWithAppearAnimations,
+} from "./store"
 import { noop } from "../../utils/noop"
 import "./types"
+import { getOptimisedAppearId } from "./get-appear-id"
+import { MotionValue } from "../../value"
+import type { WithAppearProps } from "./types"
+import { Batcher } from "../../frameloop/types"
 
 /**
  * A single time to use across all animations to manually set startTime
@@ -21,6 +29,20 @@ let startFrameTime: number
  * https://bugs.chromium.org/p/chromium/issues/detail?id=1406850
  */
 let readyAnimation: Animation
+
+/**
+ * Keep track of animations that were suspended vs cancelled so we
+ * can easily resume them when we're done measuring layout.
+ */
+const suspendedAnimations = new Set<AppearStoreEntry>()
+
+function resumeSuspendedAnimations() {
+    suspendedAnimations.forEach((data) => {
+        data.animation.play()
+        data.animation.startTime = data.startTime
+    })
+    suspendedAnimations.clear()
+}
 
 export function startOptimizedAppearAnimation(
     element: HTMLElement,
@@ -65,41 +87,109 @@ export function startOptimizedAppearAnimation(
          */
         window.MotionHandoffAnimation = handoffOptimizedAppearAnimation
 
+        window.MotionHasOptimisedAnimation = (
+            elementId?: string,
+            valueName?: string
+        ) => {
+            if (!elementId) return false
+
+            /**
+             * Keep a map of elementIds that have started animating. We check
+             * via ID instead of Element because of hydration errors and
+             * pre-hydration checks. We also actively record IDs as they start
+             * animating rather than simply checking for data-appear-id as
+             * this attrbute might be present but not lead to an animation, for
+             * instance if the element's appear animation is on a different
+             * breakpoint.
+             */
+            if (!valueName) {
+                return elementsWithAppearAnimations.has(elementId)
+            }
+
+            const animationId = appearStoreId(elementId, valueName)
+            return Boolean(appearAnimationStore.get(animationId))
+        }
+
         /**
          * We only need to cancel transform animations as
          * they're the ones that will interfere with the
          * layout animation measurements.
          */
-        window.MotionHandoffCancelAll = () => {
-            appearAnimationStore.forEach(({ animation }, animationId) => {
-                if (animationId.endsWith("transform")) {
-                    animation.cancel()
-                    appearAnimationStore.delete(animationId)
-                }
-            })
+        window.MotionCancelOptimisedAnimation = (
+            elementId: string,
+            valueName: string,
+            frame?: Batcher,
+            canResume?: boolean
+        ) => {
+            const animationId = appearStoreId(elementId, valueName)
+            const data = appearAnimationStore.get(animationId)
 
-            window.MotionHandoffCancelAll = undefined
+            if (!data) return
+
+            if (frame && canResume === undefined) {
+                /**
+                 * Wait until the end of the subsequent frame to cancel the animation
+                 * to ensure we don't remove the animation before the main thread has
+                 * had a chance to resolve keyframes and render.
+                 */
+                frame.postRender(() => {
+                    frame.postRender(() => {
+                        data.animation.cancel()
+                    })
+                })
+            } else {
+                data.animation.cancel()
+            }
+
+            if (frame && canResume) {
+                suspendedAnimations.add(data)
+                frame.render(resumeSuspendedAnimations)
+            } else {
+                appearAnimationStore.delete(animationId)
+
+                /**
+                 * If there are no more animations left, we can remove the cancel function.
+                 * This will let us know when we can stop checking for conflicting layout animations.
+                 */
+                if (!appearAnimationStore.size) {
+                    window.MotionCancelOptimisedAnimation = undefined
+                }
+            }
         }
 
-        /**
-         * Keep a map of elementIds that have started animating. We check
-         * via ID instead of Element because of hydration errors and
-         * pre-hydration checks. We also actively record IDs as they start
-         * animating rather than simply checking for data-appear-id as
-         * this attrbute might be present but not lead to an animation, for
-         * instance if the element's appear animation is on a different
-         * breakpoint.
-         */
-        window.MotionHasOptimisedAnimation = (elementId?: string) =>
-            Boolean(elementId && elementsWithAppearAnimations.has(elementId))
+        window.MotionCheckAppearSync = (
+            visualElement: WithAppearProps,
+            valueName: string,
+            value: MotionValue
+        ) => {
+            const appearId = getOptimisedAppearId(visualElement)
 
-        window.MotionHasOptimisedTransformAnimation = (elementId?: string) =>
-            Boolean(
-                elementId &&
-                    appearAnimationStore.has(
-                        appearStoreId(elementId, "transform")
-                    )
+            if (!appearId) return
+
+            const valueIsOptimised = window.MotionHasOptimisedAnimation?.(
+                appearId,
+                valueName
             )
+            const externalAnimationValue =
+                visualElement.props.values?.[valueName]
+
+            if (!valueIsOptimised || !externalAnimationValue) return
+
+            const removeSyncCheck = value.on(
+                "change",
+                (latestValue: string | number) => {
+                    if (externalAnimationValue.get() !== latestValue) {
+                        window.MotionCancelOptimisedAnimation?.(
+                            appearId,
+                            valueName
+                        )
+                        removeSyncCheck()
+                    }
+                }
+            )
+
+            return removeSyncCheck
+        }
     }
 
     const startAnimation = () => {
