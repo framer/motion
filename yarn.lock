@@ -6433,6 +6433,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-react-compiler@npm:^0.0.0-experimental-b8a7b48-20240830":
+  version: 0.0.0
+  resolution: "eslint-plugin-react-compiler@npm:0.0.0"
+  checksum: 1c391119bbc3712408394508effb1f1ee6b8f57f225bdec0ecc651cc78727e01b6feffdeb27de0894e6a78811c1f61873dbaa4b2e91b0c105c630bb2cbbbe3e6
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-react-hooks@npm:^4.6.0":
   version: 4.6.0
   resolution: "eslint-plugin-react-hooks@npm:4.6.0"
@@ -7175,6 +7182,7 @@ __metadata:
     eslint-config-prettier: ^8.5.0
     eslint-plugin-import: ^2.26.0
     eslint-plugin-react: ^7.30.1
+    eslint-plugin-react-compiler: ^0.0.0-experimental-b8a7b48-20240830
     eslint-plugin-react-hooks: ^4.6.0
     eslint-plugin-redos-detector: ^2.4.0
     eslint-plugin-regexp: ^2.2.0
@@ -7213,7 +7221,7 @@ __metadata:
     "@react-three/fiber": ^8.2.2
     "@react-three/test-renderer": ^9.0.0
     "@rollup/plugin-commonjs": ^22.0.1
-    framer-motion: ^11.3.30
+    framer-motion: ^11.3.31
     react-merge-refs: ^2.0.1
     three: ^0.137.0
   peerDependencies:
@@ -7224,7 +7232,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion@^11.3.30, framer-motion@workspace:packages/framer-motion":
+"framer-motion@^11.3.31, framer-motion@workspace:packages/framer-motion":
   version: 0.0.0-use.local
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
@@ -12260,7 +12268,7 @@ __metadata:
     "@typescript-eslint/parser": ^7.2.0
     "@vitejs/plugin-react-swc": ^3.5.0
     eslint-plugin-react-refresh: ^0.4.6
-    framer-motion: ^11.3.30
+    framer-motion: ^11.3.31
     react: ^18.2.0
     react-dom: ^18.2.0
     styled-components: ^6.1.11
