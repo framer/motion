@@ -1,0 +1,16 @@
+{
+    "name": "next-env",
+    "private": true,
+    "version": "11.3.32-alpha.4",
+    "type": "module",
+    "scripts": {
+        "dev": "next dev",
+        "start": "next start"
+    },
+    "dependencies": {
+        "framer-motion": "^11.3.32-alpha.4",
+        "next": "14.x",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    }
+}
