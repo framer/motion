@@ -7992,20 +7992,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"html-env@workspace:dev/html":
+  version: 0.0.0-use.local
+  resolution: "html-env@workspace:dev/html"
+  dependencies:
+    vite: ^5.2.0
+  languageName: unknown
+  linkType: soft
+
 "html-escaper@npm:^2.0.0":
   version: 2.0.2
   resolution: "html-escaper@npm:2.0.2"
   checksum: d2df2da3ad40ca9ee3a39c5cc6475ef67c8f83c234475f24d8e9ce0dc80a2c82df8e1d6fa78ddd1e9022a586ea1bd247a615e80a5cd9273d90111ddda7d9e974
   languageName: node
   linkType: hard
-
-"html@workspace:dev/html":
-  version: 0.0.0-use.local
-  resolution: "html@workspace:dev/html"
-  dependencies:
-    vite: ^5.2.0
-  languageName: unknown
-  linkType: soft
 
 "http-cache-semantics@npm:^4.1.0":
   version: 4.1.1
@@ -12188,6 +12188,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-env@workspace:dev/react":
+  version: 0.0.0-use.local
+  resolution: "react-env@workspace:dev/react"
+  dependencies:
+    "@types/react": ^18.2.66
+    "@types/react-dom": ^18.2.22
+    "@typescript-eslint/eslint-plugin": ^7.2.0
+    "@typescript-eslint/parser": ^7.2.0
+    "@vitejs/plugin-react-swc": ^3.5.0
+    eslint-plugin-react-refresh: ^0.4.6
+    framer-motion: ^11.3.32-alpha.4
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    styled-components: ^6.1.11
+    vite: ^5.2.0
+  languageName: unknown
+  linkType: soft
+
 "react-error-boundary@npm:^3.1.0":
   version: 3.1.4
   resolution: "react-error-boundary@npm:3.1.4"
@@ -12266,24 +12284,6 @@ __metadata:
   checksum: 88e38092da8839b830cda6feef2e8505dec8ace60579e46aa5490fc3dc9bba0bd50336507dc166f43e3afc1c42939c09fe33b25fae889d6f402721dcd78fca1b
   languageName: node
   linkType: hard
-
-"react@workspace:dev/react":
-  version: 0.0.0-use.local
-  resolution: "react@workspace:dev/react"
-  dependencies:
-    "@types/react": ^18.2.66
-    "@types/react-dom": ^18.2.22
-    "@typescript-eslint/eslint-plugin": ^7.2.0
-    "@typescript-eslint/parser": ^7.2.0
-    "@vitejs/plugin-react-swc": ^3.5.0
-    eslint-plugin-react-refresh: ^0.4.6
-    framer-motion: ^11.3.32-alpha.4
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    styled-components: ^6.1.11
-    vite: ^5.2.0
-  languageName: unknown
-  linkType: soft
 
 "read-cmd-shim@npm:^2.0.0":
   version: 2.0.0

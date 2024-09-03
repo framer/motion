@@ -1,5 +1,5 @@
 {
-    "name": "html",
+    "name": "html-env",
     "private": true,
     "version": "11.3.32-alpha.4",
     "type": "module",
