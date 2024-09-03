@@ -5,6 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "next dev",
+        "dev-server": "next dev",
         "start": "next start"
     },
     "dependencies": {
