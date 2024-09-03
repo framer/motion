@@ -10,7 +10,7 @@ export const App = () => {
     return (
         <motion.div
             drag
-            dragConstraints={{ left: 0, right: 400 }}
+            dragConstraints={{ left: 0, right: 300 }}
             style={styleA}
         />
     )
