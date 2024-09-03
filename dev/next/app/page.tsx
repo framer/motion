@@ -1,5 +1,6 @@
-import { motion } from "framer-motion"
-
+import { animate } from "framer-motion/dom"
+import { AnimatePresence } from "framer-motion"
+animate()
 export default function Page() {
-    return <motion.div id="test" />
+    return <AnimatePresence>{/* <motion.div id="test" /> */}</AnimatePresence>
 }

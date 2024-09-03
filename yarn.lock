@@ -7294,7 +7294,6 @@ __metadata:
     jest-watch-typeahead: ^2.2.2
     lerna: ^4.0.0
     lint-staged: ^8.0.4
-    next: latest
     path-browserify: ^1.0.1
     prettier: ^2.5.1
     react: ^18.2.0
