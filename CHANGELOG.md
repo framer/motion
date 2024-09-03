@@ -8,7 +8,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Added
 
--   Support for React Server Components, including a new `framer-motion/client` entrypoint for `motion` and `m` components.
+-   Support for React Server Components, including new entrypoints for `motion` and `m` components.
 
 ## [11.3.31] 2024-08-29
 
