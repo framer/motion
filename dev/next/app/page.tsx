@@ -1,3 +1,11 @@
+import { MotionConfig, AnimatePresence } from "framer-motion"
+
 export default function Page() {
-    return <div id="test">Hello World</div>
+    return (
+        <MotionConfig>
+            <AnimatePresence>
+                <div id="test">Hello World</div>
+            </AnimatePresence>
+        </MotionConfig>
+    )
 }
