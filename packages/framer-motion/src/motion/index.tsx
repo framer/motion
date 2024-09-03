@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { forwardRef, useContext } from "react"
 import { MotionProps } from "./types"
@@ -25,6 +27,10 @@ export interface MotionComponentConfig<Instance, RenderState> {
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>
 }
 
+export type MotionComponentProps<Props> = {
+    [K in Exclude<keyof Props, keyof MotionProps>]?: Props[K]
+} & MotionProps
+
 /**
  * Create a `motion` component.
  *
@@ -34,7 +40,11 @@ export interface MotionComponentConfig<Instance, RenderState> {
  * Alongside this is a config option which provides a way of rendering the provided
  * component "offline", or outside the React render cycle.
  */
-export function createMotionComponent<Props extends {}, Instance, RenderState>({
+export function createRendererMotionComponent<
+    Props extends {},
+    Instance,
+    RenderState
+>({
     preloadedFeatures,
     createVisualElement,
     useRender,
@@ -44,7 +54,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
     preloadedFeatures && loadFeatures(preloadedFeatures)
 
     function MotionComponent(
-        props: Props & MotionProps,
+        props: MotionComponentProps<Props>,
         externalRef?: React.Ref<Instance>
     ) {
         /**
@@ -114,9 +124,9 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
         )
     }
 
-    const ForwardRefComponent = forwardRef(MotionComponent)
-    ;(ForwardRefComponent as any)[motionComponentSymbol] = Component
-    return ForwardRefComponent
+    const ForwardRefMotionComponent = forwardRef(MotionComponent)
+    ;(ForwardRefMotionComponent as any)[motionComponentSymbol] = Component
+    return ForwardRefMotionComponent
 }
 
 function useLayoutId({ layoutId }: MotionProps) {

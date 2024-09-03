@@ -3,6 +3,8 @@ import commonjs from "@rollup/plugin-commonjs"
 import dts from "rollup-plugin-dts"
 import pkg from "./package.json" with { type: "json" }
 import motionPkg from "../framer-motion/package.json" with { type: "json" }
+import preserveDirectives from "rollup-plugin-preserve-directives";
+
 
 const config = {
     input: "lib/index.js",
@@ -26,6 +28,12 @@ const cjs = Object.assign({}, config, {
     },
     plugins: [resolve()],
     external,
+    onwarn(warning, warn) {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+            return
+        }
+        warn(warning)
+    }
 })
 
 const es = Object.assign({}, config, {
@@ -37,8 +45,14 @@ const es = Object.assign({}, config, {
         preserveModules: true,
         dir: "dist/es",
     },
-    plugins: [commonjs(), resolve()],
+    plugins: [commonjs(), resolve(), preserveDirectives()],
     external,
+    onwarn(warning, warn) {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+            return
+        }
+        warn(warning)
+    }
 })
 
 const types = {

@@ -51,10 +51,16 @@ export type ForwardRefComponent<T, P> = { readonly $$typeof: symbol } & ((
 /**
  * Support for React component props
  */
-type UnwrapFactoryAttributes<F> = F extends DetailedHTMLFactory<infer P, any>
+export type UnwrapFactoryAttributes<F> = F extends DetailedHTMLFactory<
+    infer P,
+    any
+>
     ? P
     : never
-type UnwrapFactoryElement<F> = F extends DetailedHTMLFactory<any, infer P>
+export type UnwrapFactoryElement<F> = F extends DetailedHTMLFactory<
+    any,
+    infer P
+>
     ? P
     : never
 

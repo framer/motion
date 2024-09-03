@@ -1,3 +1,5 @@
+"use client"
+
 import { useContext, useState, useMemo, useRef } from "react"
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"

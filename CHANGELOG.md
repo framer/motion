@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.4.0] 2024-09-02
+
+### Added
+
+-   Support for React Server Components, including a new `framer-motion/client` entrypoint for `motion` and `m` components.
+
 ## [11.3.31] 2024-08-29
 
 ### Fixed

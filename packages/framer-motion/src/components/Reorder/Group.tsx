@@ -1,3 +1,5 @@
+"use client"
+
 import { invariant } from "../../utils/errors"
 import * as React from "react"
 import {
@@ -8,7 +10,7 @@ import {
     useRef,
 } from "react"
 import { ReorderContext } from "../../context/ReorderContext"
-import { motion } from "../../render/dom/motion"
+import { motion } from "../../render/components/motion"
 import { HTMLMotionProps } from "../../render/html/types"
 import { useConstant } from "../../utils/use-constant"
 import { ItemData, ReorderContextProps } from "./types"
@@ -62,7 +64,7 @@ type ReorderGroupProps<V> = Props<V> &
     Omit<HTMLMotionProps<any>, "values"> &
     React.PropsWithChildren<{}>
 
-export function ReorderGroup<V>(
+export function ReorderGroupComponent<V>(
     {
         children,
         as = "ul",
@@ -73,7 +75,9 @@ export function ReorderGroup<V>(
     }: ReorderGroupProps<V>,
     externalRef?: React.ForwardedRef<any>
 ) {
-    const Component = useConstant(() => motion(as)) as FunctionComponent<
+    const Component = useConstant(
+        () => motion[as as keyof typeof motion]
+    ) as FunctionComponent<
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
     >
 
@@ -123,9 +127,9 @@ export function ReorderGroup<V>(
     )
 }
 
-export const Group = forwardRef(ReorderGroup) as <V>(
+export const ReorderGroup = forwardRef(ReorderGroupComponent) as <V>(
     props: ReorderGroupProps<V> & { ref?: React.ForwardedRef<any> }
-) => ReturnType<typeof ReorderGroup>
+) => ReturnType<typeof ReorderGroupComponent>
 
 function getValue<V>(item: ItemData<V>) {
     return item.value

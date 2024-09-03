@@ -1,8 +1,12 @@
+"use client"
+
 /**
  * Components
  */
-export { motion, createDomMotionComponent } from "./render/dom/motion"
-export { m } from "./render/dom/motion-minimal"
+export { createMotionComponent } from "./render/components/motion/create"
+export { createMinimalMotionComponent } from "./render/components/m/create"
+export { motion } from "./render/components/motion/proxy"
+export { m } from "./render/components/m/proxy"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { MotionConfig } from "./components/MotionConfig"
 export { LazyMotion } from "./components/LazyMotion"
@@ -72,7 +76,7 @@ export {
     DragControls,
 } from "./gestures/drag/use-drag-controls"
 export { useDomEvent } from "./events/use-dom-event"
-export { createMotionComponent } from "./motion"
+export { createRendererMotionComponent } from "./motion"
 export { isMotionComponent } from "./motion/utils/is-motion-component"
 export { unwrapMotionComponent } from "./motion/utils/unwrap-motion-component"
 export { VisualElement } from "./render/VisualElement"
@@ -116,7 +120,6 @@ export { HTMLMotionProps, ForwardRefComponent } from "./render/html/types"
 export { DOMMotionComponents } from "./render/dom/types"
 export { SVGMotionProps, SVGAttributesAsMotionValues } from "./render/svg/types"
 export { AnimationLifecycles } from "./render/types"
-export { CustomDomComponent } from "./render/dom/motion-proxy"
 export { ScrollMotionValues } from "./value/scroll/utils"
 export {
     AnimationProps,

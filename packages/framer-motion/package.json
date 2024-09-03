@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "11.3.31",
+    "version": "11.3.32-alpha.4",
     "description": "A simple and powerful JavaScript animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -16,6 +16,18 @@
             "require": "./dist/cjs/dom-entry.js",
             "import": "./dist/es/dom-entry.mjs",
             "default": "./dist/cjs/dom-entry.js"
+        },
+        "./client": {
+            "types": "./dist/client-entry.d.ts",
+            "require": "./dist/cjs/client-entry.js",
+            "import": "./dist/es/client-entry.mjs",
+            "default": "./dist/cjs/client-entry.js"
+        },
+        "./m": {
+            "types": "./dist/m-entry.d.ts",
+            "require": "./dist/cjs/m-entry.js",
+            "import": "./dist/es/m-entry.mjs",
+            "default": "./dist/cjs/m-entry.js"
         },
         "./projection": {
             "import": "./dist/es/projection-entry.mjs",
@@ -54,9 +66,10 @@
         "test-client": "jest --config jest.config.json --max-workers=2",
         "test-server": "jest --config jest.config.ssr.json",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov --config jest.config.json",
-        "test-e2e": "yarn test-e2e-html && yarn test-e2e-react",
+        "test-e2e": "yarn test-e2e-next && yarn test-e2e-html && yarn test-e2e-react",
         "test-e2e-html": "node ../../dev/inc/collect-html-tests.js && start-server-and-test 'pushd ../../; yarn dev-server; popd' http://localhost:8000 'cypress run -s cypress/integration/appear.chrome.ts --config baseUrl=http://localhost:8000/ && cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
         "test-e2e-react": "start-server-and-test 'pushd ../../; yarn dev-server; popd' http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
+        "test-e2e-next": "start-server-and-test 'pushd ../../; yarn dev-server; popd' http://localhost:3000 'cypress run --headless --config-file=cypress.rsc.json'",
         "prettier": "prettier ./src/* --write",
         "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
         "prepack": "yarn build",

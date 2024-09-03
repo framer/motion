@@ -1,0 +1,6 @@
+{
+    "private": true,
+    "types": "../dist/client-entry.d.ts",
+    "main": "../dist/cjs/client-entry.js",
+    "module": "../dist/es/client-entry.mjs"
+}

@@ -1,6 +1,4 @@
 {
-    "npmClient": "yarn",
-    "baseBranch": "origin/main",
     "pipeline": {
         "build": {
             "dependsOn": ["^build"],
@@ -10,20 +8,15 @@
             "dependsOn": ["^watch"],
             "outputs": ["dist/**", "types/**"]
         },
-        "lint": {
-            "outputs": []
-        },
+        "lint": {},
         "test": {
-            "dependsOn": ["^build"],
-            "outputs": []
+            "dependsOn": ["^build"]
         },
         "test-server": {
-            "dependsOn": ["^build"],
-            "outputs": []
+            "dependsOn": ["^build"]
         },
         "test-e2e": {
-            "dependsOn": ["build"],
-            "outputs": []
+            "dependsOn": ["build"]
         },
         "test-ci": {
             "dependsOn": ["^build"],
@@ -31,19 +24,24 @@
             "outputs": []
         },
         "deploy": {
-            "dependsOn": ["build", "test", "lint"]
+            "dependsOn": ["build", "test", "lint"],
+            "outputs": ["dist/**", "build/**"]
         },
         "measure": {
-            "dependsOn": ["build"]
+            "dependsOn": ["build"],
+            "outputs": ["dist/**", "build/**"]
         },
         "publish": {
-            "dependsOn": []
+            "dependsOn": [],
+            "outputs": ["dist/**", "build/**"]
         },
         "dev": {
             "dependsOn": ["build"],
             "cache": false,
             "outputs": ["dist/**"]
         },
-        "dev-server": {}
+        "dev-server": {
+            "outputs": ["dist/**", "build/**"]
+        }
     }
 }

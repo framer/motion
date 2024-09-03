@@ -1,3 +1,5 @@
+"use client"
+
 import { createContext, MutableRefObject, RefObject, Ref } from "react"
 
 export type DimensionsState = {

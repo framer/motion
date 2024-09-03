@@ -1,0 +1,7 @@
+{
+    "baseUrl": "http://localhost:3000",
+    "integrationFolder": "cypress/integration-rsc",
+    "video": true,
+    "screenshots": false,
+    "retries": 2
+}

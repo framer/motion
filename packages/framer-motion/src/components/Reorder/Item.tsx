@@ -1,13 +1,10 @@
+"use client"
+
 import { invariant } from "../../utils/errors"
 import * as React from "react"
-import {
-    ReactHTML,
-    FunctionComponent,
-    useContext,
-    forwardRef,
-} from "react"
+import { ReactHTML, FunctionComponent, useContext, forwardRef } from "react"
 import { ReorderContext } from "../../context/ReorderContext"
-import { motion } from "../../render/dom/motion"
+import { motion } from "../../render/components/motion"
 import { HTMLMotionProps } from "../../render/html/types"
 import { useConstant } from "../../utils/use-constant"
 import { useMotionValue } from "../../value/use-motion-value"
@@ -46,7 +43,7 @@ type ReorderItemProps<V> = Props<V> &
     HTMLMotionProps<any> &
     React.PropsWithChildren<{}>
 
-export function ReorderItem<V>(
+export function ReorderItemComponent<V>(
     {
         children,
         style = {},
@@ -58,7 +55,9 @@ export function ReorderItem<V>(
     }: ReorderItemProps<V>,
     externalRef?: React.ForwardedRef<any>
 ) {
-    const Component = useConstant(() => motion(as)) as FunctionComponent<
+    const Component = useConstant(
+        () => motion[as as keyof typeof motion]
+    ) as FunctionComponent<
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
     >
 
@@ -99,6 +98,6 @@ export function ReorderItem<V>(
     )
 }
 
-export const Item = forwardRef(ReorderItem) as <V>(
+export const ReorderItem = forwardRef(ReorderItemComponent) as <V>(
     props: ReorderItemProps<V> & { ref?: React.ForwardedRef<any> }
-) => ReturnType<typeof ReorderItem>
+) => ReturnType<typeof ReorderItemComponent>
