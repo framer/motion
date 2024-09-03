@@ -41,10 +41,11 @@ If applicable, let us know which OS, browser, browser version etc you're using.
 
 ### React Server Components `"use client"` error
 
-If you're importing `motion` into a React Server Component environment, ensure you're importing from `framer-motion/client` instead of `framer-motion`.
+If you're importing `motion` or `m` into a React Server Component environment, ensure you're importing from `framer-motion/client` instead of `framer-motion`.
 
 ```javascript
-import { motion } from "framer-motion/client"
+import * as motion from "framer-motion/client"
+import * as m from "framer-motion/m"
 ```
 
 ### Framer Motion won't install
