@@ -23,6 +23,12 @@
             "import": "./dist/es/client-entry.mjs",
             "default": "./dist/cjs/client-entry.js"
         },
+        "./m": {
+            "types": "./dist/m-entry.d.ts",
+            "require": "./dist/cjs/m-entry.js",
+            "import": "./dist/es/m-entry.mjs",
+            "default": "./dist/cjs/m-entry.js"
+        },
         "./projection": {
             "import": "./dist/es/projection-entry.mjs",
             "default": "./dist/es/projection-entry.mjs"

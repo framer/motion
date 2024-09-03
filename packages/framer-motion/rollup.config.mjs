@@ -131,9 +131,10 @@ const cjs = Object.assign({}, config, {
  */
 const cjsDom = Object.assign({}, cjs, { input : "lib/dom-entry.js" })
 const cjsClient = Object.assign({}, cjs, { input : "lib/client-entry.js" })
+const cjsM = Object.assign({}, cjs, { input : "lib/m-entry.js" })
 
 export const es = Object.assign({}, config, {
-    input: ["lib/index.js", "lib/dom-entry.js", "lib/client-entry.js","lib/projection-entry.js"],
+    input: ["lib/index.js", "lib/dom-entry.js", "lib/client-entry.js", "lib/m-entry.js","lib/projection-entry.js"],
     output: {
         entryFileNames: "[name].mjs",
         format: "es",
@@ -171,6 +172,14 @@ const animateTypes = {
     plugins: typePlugins,
 }
 
+const mTypes = {
+    input: "types/m-entry.d.ts",
+    output: {
+        format: "es",
+        file: "dist/m-entry.d.ts",
+    },
+    plugins: typePlugins,
+}
 
 const clientTypes = {
     input: "types/client-entry.d.ts",
@@ -197,9 +206,9 @@ export default [
     umdDomProd,
     cjs,
     cjsDom,
-    cjsClient,
+    cjsClient,cjsM,
     es,
-    types,
+    types,mTypes,
     clientTypes,
     animateTypes,
     threeTypes,

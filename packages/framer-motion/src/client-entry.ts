@@ -1,5 +1,3 @@
-export * from "./"
-import { m } from "./render/components/m"
-import { motion } from "./render/components/motion"
+"use client"
 
-export { m, motion }
+export * from "./render/components/motion/namespace"
