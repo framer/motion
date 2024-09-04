@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import { motion, createMotionComponent, useMotionValue } from "../.."
+import { motion, useMotionValue } from "../.."
 import * as React from "react"
 import { ForwardedRef } from "react"
 import { MotionProps } from "../types"
@@ -96,5 +96,4 @@ function runTests(name: string, motionFactory: any) {
     })
 }
 
-runTests("createMotionComponent()", createMotionComponent)
 runTests("motion.create()", motion.create)
