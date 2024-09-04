@@ -1,5 +1,5 @@
 import { MotionProps } from "../../motion/types"
-import { warning } from "../../utils/errors"
+import { warnOnce } from "../../utils/warn-once"
 import { DOMMotionComponents } from "../dom/types"
 import type { createMotionComponent } from "./motion/create"
 
@@ -32,7 +32,12 @@ export function createDOMMotionComponentProxy(
     const deprecatedFactoryFunction: typeof createMotionComponent = (
         ...args
     ) => {
-        warning(false, "motion() is deprecated. Use motion.create() instead.")
+        if (process.env.NODE_ENV !== "production") {
+            warnOnce(
+                false,
+                "motion() is deprecated. Use motion.create() instead."
+            )
+        }
         return componentFactory(...args)
     }
 
