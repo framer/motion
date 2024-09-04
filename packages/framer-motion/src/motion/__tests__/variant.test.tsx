@@ -4,19 +4,13 @@ import {
     pointerUp,
     render,
 } from "../../../jest.setup"
-import {
-    frame,
-    motion,
-    MotionConfig,
-    useMotionValue,
-    createMotionComponent,
-} from "../../"
+import { frame, motion, MotionConfig, useMotionValue } from "../../"
 import { Fragment, useEffect, memo, useState } from "react"
 import { Variants } from "../../types"
 import { motionValue } from "../../value"
 import { nextFrame } from "../../gestures/__tests__/utils"
 
-const MotionFragment = createMotionComponent(Fragment)
+const MotionFragment = motion.create(Fragment)
 
 describe("animate prop as variant", () => {
     test("animates to set variant", async () => {

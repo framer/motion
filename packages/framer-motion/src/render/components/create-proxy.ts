@@ -1,4 +1,5 @@
 import { MotionProps } from "../../motion/types"
+import { warning } from "../../utils/errors"
 import { DOMMotionComponents } from "../dom/types"
 import type { createMotionComponent } from "./motion/create"
 
@@ -15,8 +16,11 @@ export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<
 export function createDOMMotionComponentProxy(
     componentFactory: typeof createMotionComponent
 ) {
+    type MotionProxy = typeof componentFactory &
+        DOMMotionComponents & { create: typeof componentFactory }
+
     if (typeof Proxy === "undefined") {
-        return componentFactory as typeof componentFactory & DOMMotionComponents
+        return componentFactory as MotionProxy
     }
 
     /**
@@ -25,13 +29,22 @@ export function createDOMMotionComponentProxy(
      */
     const componentCache = new Map<string, any>()
 
-    return new Proxy(componentFactory, {
+    const deprecatedFactoryFunction: typeof createMotionComponent = (
+        ...args
+    ) => {
+        warning(false, "motion() is deprecated. Use motion.create() instead.")
+        return componentFactory(...args)
+    }
+
+    return new Proxy(deprecatedFactoryFunction, {
         /**
          * Called when `motion` is referenced with a prop: `motion.div`, `motion.input` etc.
          * The prop name is passed through as `key` and we can use that to generate a `motion`
          * DOM component with that name.
          */
         get: (_target, key: string) => {
+            if (key === "create") return componentFactory
+
             /**
              * If this element doesn't exist in the component cache, create it and cache.
              */
@@ -41,5 +54,5 @@ export function createDOMMotionComponentProxy(
 
             return componentCache.get(key)!
         },
-    }) as typeof componentFactory & DOMMotionComponents
+    }) as MotionProxy
 }

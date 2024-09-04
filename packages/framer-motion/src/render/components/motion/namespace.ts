@@ -1,3 +1,5 @@
+export { createMotionComponent as create } from "./create"
+
 export {
     MotionA as a,
     MotionAbbr as abbr,

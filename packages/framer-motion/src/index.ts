@@ -3,8 +3,6 @@
 /**
  * Components
  */
-export { createMotionComponent } from "./render/components/motion/create"
-export { createMinimalMotionComponent } from "./render/components/m/create"
 export { motion } from "./render/components/motion/proxy"
 export { m } from "./render/components/m/proxy"
 export { AnimatePresence } from "./components/AnimatePresence"

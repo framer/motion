@@ -1,8 +1,8 @@
 import { render } from "../../../jest.setup"
-import { createMotionComponent } from "../../render/components/motion/create"
+import { motion as motionProxy } from "../../render/components/motion/proxy"
 import { motionValue } from "../../value"
 
-const motion = { div: createMotionComponent("div") }
+const motion = { div: motionProxy.create("div") }
 
 describe("Create DOM Motion component", () => {
     test("Animates", async () => {
