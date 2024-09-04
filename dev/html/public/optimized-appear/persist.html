@@ -82,7 +82,7 @@
                      */
                     setTimeout(() => {
                         // Hydrate root mid-way through animation
-                        ReactDOM.hydrateRoot(root, Component)
+                        ReactDOMClient.hydrateRoot(root, Component)
                     }, duration * 1000 + 1000)
                 }
             )
