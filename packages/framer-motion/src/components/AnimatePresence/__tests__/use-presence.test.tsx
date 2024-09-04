@@ -1,9 +1,5 @@
 import { render } from "../../../../jest.setup"
-<<<<<<< HEAD
 import { act, useEffect } from "react"
-=======
-import { useEffect, act } from "react"
->>>>>>> e4a856df6 (Upgrade React 19)
 import { AnimatePresence } from ".."
 import { usePresence } from "../use-presence"
 
