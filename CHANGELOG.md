@@ -4,7 +4,17 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [11.4.0] 2024-09-02
+## [11.5.0] 2024-09-04
+
+### Added
+
+-   `motion.create()` and `m.create()`.
+
+### Deprecrated
+
+-   `motion()` and `m()`.
+
+## [11.4.0] 2024-09-03
 
 ### Added
 
