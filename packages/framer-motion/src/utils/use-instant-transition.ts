@@ -7,7 +7,7 @@ import { instantAnimationState } from "./use-instant-transition-state"
 export function useInstantTransition() {
     const [forceUpdate, forcedRenderCount] = useForceUpdate()
     const startInstantLayoutTransition = useInstantLayoutTransition()
-    const unlockOnFrameRef = useRef<number>()
+    const unlockOnFrameRef = useRef<number>(undefined)
 
     useEffect(() => {
         /**

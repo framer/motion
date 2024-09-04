@@ -1,5 +1,5 @@
 import { motion, useMotionValue } from "framer-motion"
-import { useState } from "react";
+import { useState } from "react"
 
 export const App = () => {
     const params = new URLSearchParams(window.location.search)

@@ -1,6 +1,6 @@
 "use client"
 
-import { forwardRef } from "react"
+import { forwardRef, type JSX } from "react"
 import { PerspectiveCamera as PerspectiveCameraImpl } from "three"
 import { mergeRefs } from "react-merge-refs"
 import { LayoutCameraProps } from "./types"

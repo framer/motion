@@ -188,7 +188,7 @@ export interface DraggableProps extends DragHandlers {
      * }
      * ```
      */
-    dragConstraints?: false | Partial<BoundingBox> | RefObject<Element>
+    dragConstraints?: false | Partial<BoundingBox> | RefObject<Element | null>
 
     /**
      * The degree of movement allowed outside constraints. 0 = no movement, 1 =
