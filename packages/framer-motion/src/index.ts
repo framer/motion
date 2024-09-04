@@ -101,6 +101,7 @@ export { AcceleratedAnimation } from "./animation/animators/AcceleratedAnimation
 export { startOptimizedAppearAnimation } from "./animation/optimized-appear/start"
 export { optimizedAppearDataAttribute } from "./animation/optimized-appear/data-id"
 export { spring } from "./animation/generators/spring"
+export { findSpring } from "./animation/generators/spring/find"
 
 /**
  * Contexts
