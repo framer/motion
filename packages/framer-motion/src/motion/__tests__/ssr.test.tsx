@@ -1,13 +1,13 @@
 import { Fragment, useRef, useState, forwardRef, ForwardedRef } from "react"
 import { renderToString, renderToStaticMarkup } from "react-dom/server"
-import { createMotionComponent, useMotionValue } from "../../"
+import { useMotionValue } from "../../"
 import { motion } from "../../render/components/motion"
 import { motion as motionProxy } from "../../render/components/motion/proxy"
 import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
 import { Reorder } from "../../components/Reorder"
 
-const MotionFragment = createMotionComponent(Fragment)
+const MotionFragment = motion.create(Fragment)
 
 function runTests(render: (components: any) => string) {
     test("doesn't throw type or runtime errors", () => {
@@ -15,15 +15,15 @@ function runTests(render: (components: any) => string) {
             foo: string
         }
 
-        const CustomMotionComponent = createMotionComponent(
+        const CustomMotionComponent = motion.create(
             forwardRef(
                 (props: CustomProps, ref: ForwardedRef<HTMLDivElement>) => {
                     return <div ref={ref} {...props} />
                 }
             )
         )
-        const CustomMotionDiv = createMotionComponent("div")
-        const CustomMotionCircle = createMotionComponent("circle")
+        const CustomMotionDiv = motion.create("div")
+        const CustomMotionCircle = motion.create("circle")
 
         const ProxyCustomMotionComponent = motionProxy(
             forwardRef(
@@ -152,7 +152,7 @@ function runTests(render: (components: any) => string) {
 
     test("correctly renders custom HTML tag", () => {
         const y = motionValue(200)
-        const CustomComponent = createMotionComponent("element-test")
+        const CustomComponent = motion.create("element-test")
         const customElement = render(
             <AnimatePresence>
                 <CustomComponent
