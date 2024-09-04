@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.5.2] 2024-09-04
+
+### Added
+
+-   Changing `motion()` deprecation warning to `warnOnce`.
+
 ## [11.5.1] 2024-09-04
 
 ### Added
