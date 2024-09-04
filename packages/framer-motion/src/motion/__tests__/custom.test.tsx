@@ -97,4 +97,4 @@ function runTests(name: string, motionFactory: any) {
 }
 
 runTests("createMotionComponent()", createMotionComponent)
-runTests("motion()", motion)
+runTests("motion.create()", motion.create)
