@@ -25,15 +25,15 @@ function runTests(render: (components: any) => string) {
         const CustomMotionDiv = motion.create("div")
         const CustomMotionCircle = motion.create("circle")
 
-        const ProxyCustomMotionComponent = motionProxy(
+        const ProxyCustomMotionComponent = motionProxy.create(
             forwardRef(
                 (props: CustomProps, ref: ForwardedRef<HTMLInputElement>) => {
                     return <input ref={ref} {...props} />
                 }
             )
         )
-        const ProxyCustomMotionDiv = motionProxy("div")
-        const ProxyCustomMotionCircle = motionProxy("circle")
+        const ProxyCustomMotionDiv = motionProxy.create("div")
+        const ProxyCustomMotionCircle = motionProxy.create("circle")
 
         function Component() {
             const divRef = useRef<HTMLDivElement>(null)

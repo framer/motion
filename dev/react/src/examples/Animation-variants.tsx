@@ -1,7 +1,7 @@
 import { Fragment, useState } from "react"
-import { motion, createMotionComponent, useMotionValue } from "framer-motion"
+import { motion, useMotionValue } from "framer-motion"
 
-const MotionFragment = createMotionComponent(Fragment)
+const MotionFragment = motion.create(Fragment)
 
 export function App() {
     const backgroundColor = useMotionValue("#f00")
