@@ -2235,18 +2235,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-three/fiber@npm:^9.0.0-beta.0":
-  version: 9.0.0-beta.1
-  resolution: "@react-three/fiber@npm:9.0.0-beta.1"
+"@react-three/fiber@npm:9.0.0-beta.0":
+  version: 9.0.0-beta.0
+  resolution: "@react-three/fiber@npm:9.0.0-beta.0"
   dependencies:
     "@babel/runtime": ^7.17.8
     "@types/react-reconciler": ^0.28.8
     base64-js: ^1.5.1
     buffer: ^6.0.3
     its-fine: ^1.2.5
-    react-reconciler: 0.31.0-rc.0
+    react-reconciler: 0.31.0-rc-38e3b23483-20240529
     react-use-measure: ^2.1.1
-    scheduler: 0.25.0-rc.0
+    scheduler: 0.25.0-rc-38e3b23483-20240529
     suspend-react: ^0.1.3
     zustand: ^4.1.2
   peerDependencies:
@@ -2271,7 +2271,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: d78a95f2da36bd01cd999ca7075833236508edb7a475d9067c48d0fdf672b16ad6275e6a2a3ea5dbb2585ef10efca362c1cb4f95ea5749236175af1db9da8608
+  checksum: 5089847df73b1d2bee3c47878658232b6cb8a0b4eca6607a716782772b1ea7844684c3551551b07da97a802a093051bcddcec875011b055f84afdc12e62f787e
   languageName: node
   linkType: hard
 
@@ -6762,14 +6762,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "framer-motion-3d@workspace:packages/framer-motion-3d"
   dependencies:
-    "@react-three/fiber": ^9.0.0-beta.0
+    "@react-three/fiber": 9.0.0-beta.0
     "@react-three/test-renderer": ^9.0.0
     "@rollup/plugin-commonjs": ^22.0.1
     framer-motion: ^12.0.0-alpha.0
     react-merge-refs: ^2.0.1
     three: ^0.141.0
   peerDependencies:
-    "@react-three/fiber": ^9.0.0-beta.1
+    "@react-three/fiber": 9.0.0-beta.0
     react: ">=19.0"
     react-dom: ">=19.0"
     three: ">=0.141"
@@ -11581,14 +11581,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-reconciler@npm:0.31.0-rc.0":
-  version: 0.31.0-rc.0
-  resolution: "react-reconciler@npm:0.31.0-rc.0"
+"react-reconciler@npm:0.31.0-rc-38e3b23483-20240529":
+  version: 0.31.0-rc-38e3b23483-20240529
+  resolution: "react-reconciler@npm:0.31.0-rc-38e3b23483-20240529"
   dependencies:
-    scheduler: 0.25.0-rc.0
+    scheduler: 0.25.0-rc-38e3b23483-20240529
   peerDependencies:
-    react: 19.0.0-rc.0
-  checksum: 3f94e242f54a7c77260f25168e99fde90486cb5e134197a863ac9efc99705e169793850452da64ca31d6a72f23e09e3b21a4e7b7d4ed12ccb15a8265f3722691
+    react: 19.0.0-rc-38e3b23483-20240529
+  checksum: e029b7eb6f60e9a945240a83d95b85118fb42b46a3d27e584f91906fec729083d1e9866fdf508db03f04beaae8df89f16309c4479e2be4c40e5620922a9b1bd1
   languageName: node
   linkType: hard
 
@@ -12350,17 +12350,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"scheduler@npm:0.25.0-rc-38e3b23483-20240529":
+  version: 0.25.0-rc-38e3b23483-20240529
+  resolution: "scheduler@npm:0.25.0-rc-38e3b23483-20240529"
+  checksum: 41ed4674caf2d65f0da251458106b57de7da977f6456bfcaa9d00a2aa235117df6a3797c79950981afe44d6dab1cc84296fa8ea7b263555327c83bb5ea693627
+  languageName: node
+  linkType: hard
+
 "scheduler@npm:0.25.0-rc-4f604941-20240830":
   version: 0.25.0-rc-4f604941-20240830
   resolution: "scheduler@npm:0.25.0-rc-4f604941-20240830"
   checksum: 667cf0fd4033517f76f552e1b6dc5852fdbb499a34315ef7a234ff2bfbeab2c8b038802c6e2e1a4bdf9751bfafa212954c79da7cbea98f42e7ee39b891bbd4fa
-  languageName: node
-  linkType: hard
-
-"scheduler@npm:0.25.0-rc.0":
-  version: 0.25.0-rc.0
-  resolution: "scheduler@npm:0.25.0-rc.0"
-  checksum: dbcad03e5ae6a8f88ade5df6adaccdfe75dbd105df70b0682a3f686a94395a15cc8aec66bb89b5dcecb2be5618329611b7505a6b221f640b5caaa3407f2805b4
   languageName: node
   linkType: hard
 
