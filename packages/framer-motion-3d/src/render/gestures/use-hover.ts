@@ -18,11 +18,11 @@ export function useHover(
     if (isStatic || !visualElement || !isHoverEnabled) return {}
 
     return {
-        onPointerOver: (event: ThreeEvent<any>) => {
+        onPointerOver: (event: ThreeEvent<PointerEvent>) => {
             visualElement.animationState?.setActive("whileHover", true)
             onPointerOver && onPointerOver(event)
         },
-        onPointerOut: (event: ThreeEvent<any>) => {
+        onPointerOut: (event: ThreeEvent<PointerEvent>) => {
             visualElement.animationState?.setActive("whileHover", false)
             onPointerOut && onPointerOut(event)
         },
