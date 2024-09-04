@@ -1,7 +1,6 @@
 import * as React from "react"
 import { frame } from "../../../frameloop"
 import { MotionConfig } from "../../../components/MotionConfig"
-import { act } from "react-dom/test-utils"
 import { pointerDown, pointerMove, pointerUp } from "../../../../jest.setup"
 
 export type Point = {
@@ -41,7 +40,7 @@ export const drag = (element: any, triggerElement?: any) => {
             pos.x = x
             pos.y = y
 
-            await act(async () => {
+            await React.act(async () => {
                 pointerMove(document.body)
                 await dragFrame.postRender()
             })
