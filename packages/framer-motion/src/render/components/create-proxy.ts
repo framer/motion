@@ -1,4 +1,5 @@
 import { MotionProps } from "../../motion/types"
+import { warning } from "../../utils/errors"
 import { DOMMotionComponents } from "../dom/types"
 import type { createMotionComponent } from "./motion/create"
 
@@ -28,7 +29,14 @@ export function createDOMMotionComponentProxy(
      */
     const componentCache = new Map<string, any>()
 
-    return new Proxy(componentFactory, {
+    const deprecatedFactoryFunction: typeof createMotionComponent = (
+        ...args
+    ) => {
+        warning(false, "motion() is deprecated. Use motion.create() instead.")
+        return componentFactory(...args)
+    }
+
+    return new Proxy(deprecatedFactoryFunction, {
         /**
          * Called when `motion` is referenced with a prop: `motion.div`, `motion.input` etc.
          * The prop name is passed through as `key` and we can use that to generate a `motion`
