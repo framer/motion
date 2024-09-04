@@ -51,7 +51,7 @@
         "react-merge-refs": "^2.0.1"
     },
     "peerDependencies": {
-        "@react-three/fiber": "^9.0.0-beta.0",
+        "@react-three/fiber": "^9.0.0-beta.1",
         "react": ">=19.0",
         "react-dom": ">=19.0",
         "three": ">=0.141"
