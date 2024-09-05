@@ -3,5 +3,9 @@
     "integrationFolder": "cypress/integration-rsc",
     "video": true,
     "screenshots": false,
-    "retries": 2
+    "retries": 2,
+    "reporter": "junit",
+    "reporterOptions": {
+        "mochaFile": "../../test_reports/framer-motion-rsc.xml"
+    }
 }

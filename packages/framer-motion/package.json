@@ -76,7 +76,6 @@
         "test": "yarn test-server && yarn test-client",
         "test-client": "jest --config jest.config.json --max-workers=2",
         "test-server": "jest --config jest.config.ssr.json",
-        "test-e2e-next": "start-server-and-test 'pushd ../../; yarn dev-server; popd' http://localhost:3000 'cypress run --headless --config-file=cypress.rsc.json'",
         "prettier": "prettier ./src/* --write",
         "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
         "prepack": "yarn build",

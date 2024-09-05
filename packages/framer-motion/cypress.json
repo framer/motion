@@ -5,7 +5,6 @@
     "retries": 2,
     "reporter": "junit",
     "reporterOptions": {
-        "mochaFile": "../../test_reports/framer-motion-[hash].xml",
-        "toConsole": true
+        "mochaFile": "../../test_reports/framer-motion-[hash].xml"
     }
 }
