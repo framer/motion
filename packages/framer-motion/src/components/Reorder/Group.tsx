@@ -10,7 +10,7 @@ import {
     useRef,
 } from "react"
 import { ReorderContext } from "../../context/ReorderContext"
-import { motion } from "../../render/components/motion"
+import { motion } from "../../render/components/motion/proxy"
 import { HTMLMotionProps } from "../../render/html/types"
 import { useConstant } from "../../utils/use-constant"
 import { ItemData, ReorderContextProps } from "./types"
