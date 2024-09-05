@@ -84,7 +84,7 @@ test-html: build test-mkdir
 	yarn start-server-and-test "yarn dev-server" http://localhost:8000 "cd packages/framer-motion && cypress run -s cypress/integration/html-tests/appear.ts --config-file cypress.appear.json $(if $(CI), --config video=false, --reporter spec) && cypress run -s cypress/integration/html-tests/projection.ts --config-file cypress.projection.json $(if $(CI), --config video=false, --reporter spec)"
 
 test-nextjs: build test-mkdir
-	yarn start-server-and-test "yarn dev-server" http://localhost:3000 "cd packages/framer-motion && cypress run --headless --config-file=cypress.rsc.json $(if $(CI), --config video=false, --reporter spec)"
+	yarn start-server-and-test "yarn dev-server || true" http://localhost:3000 "cd packages/framer-motion && cypress run --headless --config-file=cypress.rsc.json $(if $(CI), --config video=false, --reporter spec)"
 
 test-e2e: test-nextjs test-html test-react
 
