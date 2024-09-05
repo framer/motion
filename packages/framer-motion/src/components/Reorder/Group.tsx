@@ -127,7 +127,9 @@ export function ReorderGroupComponent<V>(
     )
 }
 
-export const ReorderGroup = forwardRef(ReorderGroupComponent) as <V>(
+export const ReorderGroup = /*@__PURE__*/ forwardRef(ReorderGroupComponent) as <
+    V
+>(
     props: ReorderGroupProps<V> & { ref?: React.ForwardedRef<any> }
 ) => ReturnType<typeof ReorderGroupComponent>
 

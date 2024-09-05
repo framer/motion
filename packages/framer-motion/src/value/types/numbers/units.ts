@@ -7,11 +7,11 @@ const createUnitType = (unit: string) => ({
     transform: (v: number | string) => `${v}${unit}`,
 })
 
-export const degrees = createUnitType("deg")
-export const percent = createUnitType("%")
-export const px = createUnitType("px")
-export const vh = createUnitType("vh")
-export const vw = createUnitType("vw")
+export const degrees = /*@__PURE__*/ createUnitType("deg")
+export const percent = /*@__PURE__*/ createUnitType("%")
+export const px = /*@__PURE__*/ createUnitType("px")
+export const vh = /*@__PURE__*/ createUnitType("vh")
+export const vw = /*@__PURE__*/ createUnitType("vw")
 
 export const progressPercentage = {
     ...percent,

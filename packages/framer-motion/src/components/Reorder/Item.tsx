@@ -98,6 +98,8 @@ export function ReorderItemComponent<V>(
     )
 }
 
-export const ReorderItem = forwardRef(ReorderItemComponent) as <V>(
+export const ReorderItem = /*@__PURE__*/ forwardRef(ReorderItemComponent) as <
+    V
+>(
     props: ReorderItemProps<V> & { ref?: React.ForwardedRef<any> }
 ) => ReturnType<typeof ReorderItemComponent>

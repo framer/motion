@@ -121,8 +121,8 @@ function getRadius(values: ResolvedValues, radiusName: string) {
 //     )(p)
 // }
 
-const easeCrossfadeIn = compress(0, 0.5, circOut)
-const easeCrossfadeOut = compress(0.5, 0.95, noop)
+const easeCrossfadeIn = /*@__PURE__*/ compress(0, 0.5, circOut)
+const easeCrossfadeOut = /*@__PURE__*/ compress(0.5, 0.95, noop)
 
 function compress(
     min: number,

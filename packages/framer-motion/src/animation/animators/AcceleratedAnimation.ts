@@ -19,7 +19,7 @@ import { animateStyle } from "./waapi"
 import { isWaapiSupportedEasing } from "./waapi/easing"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
 
-const supportsWaapi = memo(() =>
+const supportsWaapi = /*@__PURE__*/ memo(() =>
     Object.hasOwnProperty.call(Element.prototype, "animate")
 )
 
