@@ -99,5 +99,5 @@ workflows:
     build:
         jobs:
             - test
-            - test-e2e
+            - test-react
             - test-html
