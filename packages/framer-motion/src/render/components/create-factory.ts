@@ -20,7 +20,7 @@ export function createMotionComponentFactory(
     preloadedFeatures?: FeaturePackages,
     createVisualElement?: CreateVisualElement<any>
 ) {
-    return /*@__PURE__*/ function createMotionComponent<
+    return function createMotionComponent<
         Props,
         TagName extends keyof DOMMotionComponents | string = "div"
     >(
