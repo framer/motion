@@ -119,6 +119,10 @@ export type ResolveLayoutTransition = (
     info: RelayoutInfo
 ) => Transition | boolean
 
+type CSSVariables = {
+  [key: `--${string}`]: string;
+};
+
 /**
  * @public
  */
@@ -142,7 +146,7 @@ export interface AnimationProps {
      * <motion.div initial={false} animate={{ opacity: 0 }} />
      * ```
      */
-    initial?: boolean | Target | VariantLabels
+    initial?: boolean | Target | VariantLabels | CSSVariables
 
     /**
      * Values to animate to, variant label(s), or `AnimationControls`.
@@ -161,7 +165,7 @@ export interface AnimationProps {
      * <motion.div animate={animation} />
      * ```
      */
-    animate?: AnimationControls | TargetAndTransition | VariantLabels | boolean
+    animate?: AnimationControls | TargetAndTransition | VariantLabels | boolean | CSSVariables  
 
     /**
      * A target to animate to when this component is removed from the tree.
@@ -189,7 +193,7 @@ export interface AnimationProps {
      * }
      * ```
      */
-    exit?: TargetAndTransition | VariantLabels
+    exit?: TargetAndTransition | VariantLabels | CSSVariables
 
     /**
      * Variants allow you to define animation states and organise them by name. They allow
