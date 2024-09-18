@@ -16,16 +16,6 @@ export interface MotionPoint {
     y: MotionValue<number>
 }
 
-export type VariantStateContext = {
-    initial?: string | string[]
-    animate?: string | string[]
-    exit?: string | string[]
-    whileHover?: string | string[]
-    whileDrag?: string | string[]
-    whileFocus?: string | string[]
-    whileTap?: string | string[]
-}
-
 export type ScrapeMotionValuesFromProps = (
     props: MotionProps,
     prevProps: MotionProps,

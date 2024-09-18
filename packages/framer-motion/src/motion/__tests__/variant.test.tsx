@@ -1296,10 +1296,10 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toBe("visible")
     })
 
-    test.only("changing values within an inherited variant triggers an animation", async () => {
+    test("changing values within an inherited variant triggers an animation", async () => {
         const Component = ({ x }: { x: number }) => {
             return (
-                <motion.div initial="variant">
+                <motion.div initial={false} animate="variant">
                     <motion.div
                         data-testid="element"
                         variants={{ variant: { x } }}
