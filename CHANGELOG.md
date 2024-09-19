@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.5.5] 2024-09-19
+
+### Fixed
+
+-   Changed values of child variants now animate even when the parent variant name hasn't changed.
+
 ## [11.5.4] 2024-09-05
 
 ### Fixed
