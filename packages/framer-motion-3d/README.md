@@ -29,7 +29,7 @@
   <a href="https://www.npmjs.com/package/framer-motion-3d" target="_blank">
   <img src="https://img.shields.io/npm/dm/framer-motion-3d.svg?style=flat-square" />
   </a>
-  <a href="https://twitter.com/framer" target="_blank">
+  <a href="https://twitter.com/motiondotdev" target="_blank">
   <img src="https://img.shields.io/twitter/follow/framer.svg?style=social&label=Follow"  />
   </a>
   <a href="https://discord.gg/DfkSpYe" target="_blank">

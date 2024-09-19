@@ -1,25 +1,7 @@
 <p align="center">
-  <img src="https://framerusercontent.com/images/48ha9ZR9oZQGQ6gZ8YUfElP3T0A.png" width="50" height="50" alt="Motion One Icon" />
+  <img width="100" height="100" alt="Motion One logo" src="https://user-images.githubusercontent.com/7850794/164965523-3eced4c4-6020-467e-acde-f11b7900ad62.png" alt="Motion One Icon" />
 </p>
-<h1 align="center">Motion One</h1>
-<h3 align="center">
-  An open source motion library for React, made by Framer.
-</h3>
-<h3 align="center">
-Motion powers Framer, the web builder for creative pros. Design and ship your dream site. Zero code, maximum speed.
-</h3>
-<br/>
-<p align="center">
-  <a href="https://www.framer.com?utm_source=motion-readme">
-    <img src="https://framerusercontent.com/images/atXqxn4JhKm4LXVncdNjkKV7yCU.png" width="140" alt="Start for free" />
-  </a>
-</p>
-<br/>
-<p align="center">
-  <a href="https://www.framer.com?utm_source=motion-readme">
-    <img src="https://framerusercontent.com/images/pMSOmGP2V8sSaZRV2D7i4HTBTe4.png" width="1000" alt="Framer Banner" />
-  </a>
-</p>
+<h1 align="center">Motion One for React</h1>
 
 <br>
 
@@ -30,7 +12,7 @@ Motion powers Framer, the web builder for creative pros. Design and ship your dr
   <a href="https://www.npmjs.com/package/framer-motion" target="_blank">
   <img src="https://img.shields.io/npm/dm/framer-motion.svg?style=flat-square" />
   </a>
-  <a href="https://twitter.com/framer" target="_blank">
+  <a href="https://twitter.com/motiondotdev" target="_blank">
   <img src="https://img.shields.io/twitter/follow/framer.svg?style=social&label=Follow"  />
   </a>
   <a href="https://discord.gg/DfkSpYe" target="_blank">
@@ -42,7 +24,9 @@ Motion powers Framer, the web builder for creative pros. Design and ship your dr
 <hr>
 <br>
 
-Motion One is an open source, production-ready library that’s designed for all creative developers.
+Motion One for React is an open source, production-ready library that’s designed for all creative developers.
+
+It's the only animation library with a hybrid engine, combining the power of JavaScript animations combined with the performance of native browser APIs.
 
 It looks like this:
 
@@ -71,26 +55,21 @@ It does all this:
 
 ### 🐇 Quick start
 
-Install `framer-motion` with via your package manager:
+Install `motion` with via your package manager:
 
 ```
-npm install framer-motion
+npm install motion
 ```
 
 Then import the `motion` component:
 
 ```jsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 
-export const MyComponent = ({ isVisible }) => (
-    <motion.div animate={{ opacity: isVisible ? 1 : 0 }} />
-)
+export function Component({ isVisible }) {
+    return <motion.div animate={{ opacity: isVisible ? 1 : 0 }} />
+}
 ```
-
-### 📚 Docs
-
--   Check out [our documentation](https://www.framer.com/docs/?utm_source=motion-readme-docs) for guides and a full API reference.
--   Or see [our examples](https://www.framer.com/docs/examples/?utm_source=motion-readme-docs) for inspiration.
 
 ### 💎 Contribute
 
@@ -98,8 +77,21 @@ export const MyComponent = ({ isVisible }) => (
 
 ### 👩🏻‍⚖️ License
 
--   Motion One is MIT licensed.
+-   Motion One for React is MIT licensed.
 
 ### ✨ Framer
 
--   Design and publish sites that inspire. [Try Framer for free](https://www.framer.com/?utm_source=motion-readme).
+Motion One powers Framer animations, the web builder for creative pros. Design and ship your dream site. Zero code, maximum speed.
+<br/>
+
+<p align="center">
+  <a href="https://www.framer.com?utm_source=motion-readme">
+    <img src="https://framerusercontent.com/images/atXqxn4JhKm4LXVncdNjkKV7yCU.png" width="140" alt="Start for free" />
+  </a>
+</p>
+<br/>
+<p align="center">
+  <a href="https://www.framer.com?utm_source=motion-readme">
+    <img src="https://framerusercontent.com/images/pMSOmGP2V8sSaZRV2D7i4HTBTe4.png" width="1000" alt="Framer Banner" />
+  </a>
+</p>

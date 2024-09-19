@@ -34,7 +34,10 @@ Read the full [JavaScript docs](https://motion.dev/docs/quick-start).
 
 ```jsx
 import { motion } from "motion/react"
-;<motion.div animate={{ x: 100 }} />
+
+function Component() {
+    return <motion.div animate={{ x: 100 }} />
+}
 ```
 
 Read the full [React docs](https://motion.dev/docs/react-quick-start).
