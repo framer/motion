@@ -1295,4 +1295,32 @@ describe("animate prop as variant", () => {
 
         return expect(promise).resolves.toBe("visible")
     })
+
+    test("changing values within an inherited variant triggers an animation", async () => {
+        const Component = ({ x }: { x: number }) => {
+            return (
+                <motion.div initial={false} animate="variant">
+                    <motion.div
+                        data-testid="element"
+                        variants={{ variant: { x } }}
+                        transition={{ type: false }}
+                    />
+                </motion.div>
+            )
+        }
+
+        const { rerender, getByTestId } = render(<Component x={0} />)
+
+        await nextFrame()
+
+        const element = getByTestId("element")
+
+        expect(element).toHaveStyle("transform: none")
+
+        rerender(<Component x={100} />)
+
+        await nextFrame()
+
+        expect(element).toHaveStyle("transform: translateX(100px)")
+    })
 })
