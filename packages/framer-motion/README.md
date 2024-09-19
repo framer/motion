@@ -36,18 +36,18 @@ It looks like this:
 
 It does all this:
 
--   [Springs](https://www.framer.com/docs/transition/#spring?utm_source=motion-readme-docs)
--   [Keyframes](https://www.framer.com/docs/animation/##keyframes?utm_source=motion-readme-docs)
--   [Layout animations](https://www.framer.com/docs/layout-animations/?utm_source=motion-readme-docs)
--   [Shared layout animations](https://www.framer.com/docs/layout-animations/#shared-layout-animations?utm_source=motion-readme-docs)
--   [Gestures (drag/tap/hover)](https://www.framer.com/docs/gestures/?utm_source=motion-readme-docs)
--   [Scroll animations](https://www.framer.com/docs/scroll-animations?utm_source=motion-readme-docs)
--   [SVG paths](https://www.framer.com/docs/component/###svg-line-drawing?utm_source=motion-readme-docs)
--   [Exit animations](https://www.framer.com/docs/animate-presence/?utm_source=motion-readme-docs)
--   Server-side rendering
--   [Hardware-accelerated animations](https://www.framer.com/docs/animation/#hardware-accelerated-animations?utm_source=motion-readme-docs)
--   [Orchestrate animations across components](https://www.framer.com/docs/animation/##orchestration?utm_source=motion-readme-docs)
--   [CSS variables](https://www.framer.com/docs/component/##css-variables?utm_source=motion-readme-docs)
+-   [Springs](https://motion.dev/docs/react-transitions#spring)
+-   [Keyframes](https://motion.dev/docs/react-animation#keyframes)
+-   [Layout animations](https://motion/dev/docs/react-layout-animations)
+-   [Shared layout animations](https://motion.dev/docs/react-layout-animations#shared-layout-animations)
+-   [Gestures (drag/tap/hover)](https://motion.dev/docs/react-gestures)
+-   [Scroll animations](https://motion.dev/docs/react-scroll-animations)
+-   [SVG paths](https://motion.dev/docs/react-animation#svg-line-drawing)
+-   [Exit animations](https://motion.dev/docs/react-animation#exit-animations)
+-   [Server-side rendering](https://motion.dev//docs/react-motion-component#server-side-rendering)
+-   [Independent transforms](https://motion.dev/docs/react-motion-component#independent-transforms)
+-   [Orchestrate animations across components](https://motion.dev/docs/react-animation#orchestration)
+-   [CSS variables](https://motion.dev/docs/react-animation#css-variables)
 
 ...and a whole lot more.
 

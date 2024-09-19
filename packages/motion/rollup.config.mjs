@@ -5,7 +5,7 @@ import dts from "rollup-plugin-dts"
 import alias from "@rollup/plugin-alias"
 import path from "node:path"
 import { fileURLToPath } from 'url'
-import pkg from "./package.json" with { type: "json"}
+import pkg from "./package.json" with { type: "json" }
 import tsconfig from "./tsconfig.json" with { type: "json" }
 import preserveDirectives from "rollup-plugin-preserve-directives";
 
@@ -68,28 +68,6 @@ const umd = Object.assign({}, config, {
     }
 })
 
-function createUmd(input, file) {
-    return Object.assign({}, umd, {
-        input,
-        output: Object.assign({}, umd.output, {
-            file
-        }),
-        plugins: [
-            resolve(),
-            replaceSettings("production"),
-            pureClass,
-            shimReactJSXRuntimePlugin,
-            terser({ output: { comments: false } }),
-        ],
-        onwarn(warning, warn) {
-            if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
-                return
-            }
-            warn(warning)
-        }
-    })
-}
-
 const umdProd = Object.assign({}, umd, {
     output: Object.assign({}, umd.output, {
         file: `dist/${pkg.name}.js`,
@@ -108,10 +86,6 @@ const umdProd = Object.assign({}, umd, {
         warn(warning)
     }
 })
-
-const umdMiniProd = createUmd("lib/mini.js", `dist/mini.js`)
-const umdDomProd = createUmd("lib/dom.js", `dist/dom.js`)
-const umdDomMiniProd = createUmd("lib/dom-mini.js", `dist/dom-mini.js`)
 
 const cjs = Object.assign({}, config, {
     input: "lib/index.js",
@@ -135,14 +109,11 @@ const cjs = Object.assign({}, config, {
 /**
  * Bundle seperately so bundles don't share common modules
  */
-const cjsDom = Object.assign({}, cjs, { input : "lib/dom.js" })
-const cjsMini = Object.assign({}, cjs, { input : "lib/mini.js" })
-const cjsDomMini = Object.assign({}, cjs, { input : "lib/dom-mini.js" })
-const cjsClient = Object.assign({}, cjs, { input : "lib/client.js" })
-const cjsM = Object.assign({}, cjs, { input : "lib/m.js" })
+const cjsClient = Object.assign({}, cjs, { input : "lib/react-client.js" })
+const cjsM = Object.assign({}, cjs, { input : "lib/react-m.js" })
 
 export const es = Object.assign({}, config, {
-    input: ["lib/index.js", "lib/mini.js", "lib/dom.js", "lib/dom-mini.js", "lib/client.js", "lib/m.js","lib/projection.js"],
+    input: ["lib/index.js",  "lib/react-client.js", "lib/react-m.js"],
     output: {
         entryFileNames: "[name].mjs",
         format: "es",
@@ -162,45 +133,42 @@ export const es = Object.assign({}, config, {
 
 const typePlugins = [dts({compilerOptions: {...tsconfig, baseUrl:"types"}})]
 
-function createTypes(input, file) {   
-    return {
-        input,
-        output: {
-            format: "es",
-            file: file,
-        },
-        plugins: typePlugins,
-    }
+const types = {
+    input: "types/index.d.ts",
+    output: {
+        format: "es",
+        file: "dist/index.d.ts",
+    },
+    plugins: typePlugins,
 }
 
+const mTypes = {
+    input: "types/react-m.d.ts",
+    output: {
+        format: "es",
+        file: "dist/react-m.d.ts",
+    },
+    plugins: typePlugins,
+}
 
-const types = createTypes("types/index.d.ts", "dist/index.d.ts")
-const miniTypes = createTypes("types/mini.d.ts", "dist/mini.d.ts")
-const animateTypes = createTypes("types/dom.d.ts", "dist/dom.d.ts")
-const animateMiniTypes = createTypes("types/dom-mini.d.ts", "dist/dom-mini.d.ts")
-const mTypes = createTypes("types/m.d.ts", "dist/m.d.ts")
-const clientTypes = createTypes("types/client.d.ts", "dist/client.d.ts")
-const threeTypes = createTypes("types/three-entry.d.ts", "dist/three.d.ts")
+const clientTypes = {
+    input: "types/react-client.d.ts",
+    output: {
+        format: "es",
+        file: "dist/react-client.d.ts",
+    },
+    plugins: typePlugins,
+}
 
 // eslint-disable-next-line import/no-default-export
 export default [
     umd,
     umdProd,
-    umdMiniProd,
-    umdDomProd,
-    umdDomMiniProd,
     cjs,
-    cjsMini,
-    cjsDom,
-    cjsDomMini,
     cjsClient,
     cjsM,
     es,
     types,
     mTypes,
-    miniTypes,
     clientTypes,
-    animateTypes,
-    animateMiniTypes,
-    threeTypes,
 ]
