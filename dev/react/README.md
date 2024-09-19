@@ -1,6 +1,6 @@
-# Framer Motion React Dev Environment
+# Motion One React Dev Environment
 
-This is a React dev environment for Framer Motion tests and examples.
+This is a React dev environment for Motion One tests and examples.
 
 ## Run
 

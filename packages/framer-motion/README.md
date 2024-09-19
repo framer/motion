@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="https://framerusercontent.com/images/48ha9ZR9oZQGQ6gZ8YUfElP3T0A.png" width="50" height="50" alt="Framer Motion Icon" />
+  <img src="https://framerusercontent.com/images/48ha9ZR9oZQGQ6gZ8YUfElP3T0A.png" width="50" height="50" alt="Motion One Icon" />
 </p>
-<h1 align="center">Framer Motion</h1>
+<h1 align="center">Motion One</h1>
 <h3 align="center">
   An open source motion library for React, made by Framer.
 </h3>
@@ -42,7 +42,7 @@ Motion powers Framer, the web builder for creative pros. Design and ship your dr
 <hr>
 <br>
 
-Framer Motion is an open source, production-ready library that’s designed for all creative developers.
+Motion One is an open source, production-ready library that’s designed for all creative developers.
 
 It looks like this:
 
@@ -94,11 +94,11 @@ export const MyComponent = ({ isVisible }) => (
 
 ### 💎 Contribute
 
--   Want to contribute to Framer Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
+-   Want to contribute to Motion One? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
 
 ### 👩🏻‍⚖️ License
 
--   Framer Motion is MIT licensed.
+-   Motion One is MIT licensed.
 
 ### ✨ Framer
 

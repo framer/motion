@@ -1,6 +1,6 @@
-# Framer Motion Vanilla Dev Environment
+# Motion One Vanilla Dev Environment
 
-This is the Vanilla dev environment for Framer Motion.
+This is the Vanilla dev environment for Motion One.
 
 It hosts:
 

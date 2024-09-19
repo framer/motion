@@ -33,7 +33,7 @@ function asRGBA(color: Color | string) {
     let model = type!.parse(color)
 
     if (type === hsla) {
-        // TODO Remove this cast - needed since Framer Motion's stricter typing
+        // TODO Remove this cast - needed since Motion One's stricter typing
         model = hslaToRgba(model as HSLA)
     }
 
