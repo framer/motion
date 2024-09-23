@@ -52,7 +52,7 @@ import { frameData } from "../../dom-entry"
 import { isSVGElement } from "../../render/dom/utils/is-svg-element"
 import { animateSingleValue } from "../../animation/interfaces/single-value"
 import { clamp } from "../../utils/clamp"
-import { steps } from "../../frameloop/frame"
+import { frameSteps } from "../../frameloop/frame"
 import { noop } from "../../utils/noop"
 import { time } from "../../frameloop/sync-time"
 import { microtask } from "../../frameloop/microtask"
@@ -730,9 +730,9 @@ export function createProjectionNode<I>({
             frameData.delta = clamp(0, 1000 / 60, now - frameData.timestamp)
             frameData.timestamp = now
             frameData.isProcessing = true
-            steps.update.process(frameData)
-            steps.preRender.process(frameData)
-            steps.render.process(frameData)
+            frameSteps.update.process(frameData)
+            frameSteps.preRender.process(frameData)
+            frameSteps.render.process(frameData)
             frameData.isProcessing = false
         }
 

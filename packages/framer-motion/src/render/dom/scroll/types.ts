@@ -1,11 +1,17 @@
 import { EasingFunction } from "../../../easing/types"
 
 export interface ScrollOptions {
-    source?: Element
+    source?: HTMLElement
+    container?: HTMLElement
+    target?: Element
     axis?: "x" | "y"
+    offset?: ScrollOffset
 }
 
-export type OnScroll = (progress: number) => void
+export type OnScrollProgress = (progress: number) => void
+export type OnScrollWithInfo = (progress: number, info: ScrollInfo) => void
+
+export type OnScroll = OnScrollProgress | OnScrollWithInfo
 
 export interface AxisScrollInfo {
     current: number
@@ -58,5 +64,4 @@ export interface ScrollInfoOptions {
     target?: Element
     axis?: "x" | "y"
     offset?: ScrollOffset
-    smooth?: number
 }

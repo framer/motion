@@ -62,6 +62,23 @@ const sizeAnimate = Object.assign({}, es, {
     },
 })
 
+const sizeScroll = Object.assign({}, es, {
+    input: "lib/render/dom/scroll/index.js",
+    output: Object.assign({}, es.output, {
+        file: `dist/size-rollup-scroll.js`,
+        preserveModules: false,
+        dir: undefined,
+    }),
+    plugins: [...sizePlugins],
+    external,
+    onwarn(warning, warn) {
+        if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
+            return
+        }
+        warn(warning)
+    },
+})
+
 const domAnimation = Object.assign({}, es, {
     input: {
         "size-rollup-dom-animation-m": "lib/render/components/m/size.js",
@@ -105,4 +122,4 @@ const domMax = Object.assign({}, es, {
 })
 
 // eslint-disable-next-line import/no-default-export
-export default [motion, m, domAnimation, domMax, sizeAnimate]
+export default [motion, m, domAnimation, domMax, sizeAnimate, sizeScroll]
