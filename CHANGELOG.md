@@ -4,6 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.6.0] 2024-09-24
+
+### Added
+
+-   Added `info` and element tracking to `scroll`.
+-   Added `steps` easing.
+
 ## [11.5.6] 2024-09-20
 
 ### Fixed
