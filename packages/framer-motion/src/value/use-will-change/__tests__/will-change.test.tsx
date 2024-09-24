@@ -16,7 +16,8 @@ describe("WillChangeMotionValue", () => {
         removeX!()
         expect(willChange.get()).toBe("transform")
         removeY!()
-        expect(willChange.get()).toBe("auto")
+        // Don't remove values from will-change
+        expect(willChange.get()).toBe("transform")
     })
 })
 
@@ -139,7 +140,7 @@ describe("willChange", () => {
         expect(container.firstChild).not.toHaveStyle("will-change: opacity;")
     })
 
-    test("Removes values when they finish animating", async () => {
+    test("Don't remove values when they finish animating", async () => {
         return new Promise<void>((resolve) => {
             const Component = () => {
                 return (
@@ -149,7 +150,7 @@ describe("willChange", () => {
                         onAnimationComplete={() => {
                             frame.postRender(() => {
                                 expect(container.firstChild).toHaveStyle(
-                                    "will-change: auto;"
+                                    "will-change: transform;"
                                 )
                                 resolve()
                             })

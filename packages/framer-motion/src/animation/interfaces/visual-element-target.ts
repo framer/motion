@@ -90,6 +90,8 @@ export function animateTarget(
             }
         }
 
+        addValueToWillChange(visualElement, key)
+
         value.start(
             animateMotionValue(
                 key,
@@ -99,8 +101,7 @@ export function animateTarget(
                     ? { type: false }
                     : valueTransition,
                 visualElement,
-                isHandoff,
-                addValueToWillChange(visualElement, key)
+                isHandoff
             )
         )
 
