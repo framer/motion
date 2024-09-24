@@ -1,22 +1,48 @@
-import { memo } from "../../utils/memo"
+import { noop } from "../../utils/noop"
+import {
+    millisecondsToSeconds,
+    secondsToMilliseconds,
+} from "../../utils/time-conversion"
 import {
     AnimationPlaybackControls,
     ValueAnimationOptions,
     ValueKeyframesDefinition,
 } from "../types"
 
-const supportsWaapi = /*@__PURE__*/ memo(() =>
-    Object.hasOwnProperty.call(Element.prototype, "animate")
-)
+// const supportsWaapi = /*@__PURE__*/ memo(() =>
+//     Object.hasOwnProperty.call(Element.prototype, "animate")
+// )
+
+interface ResolvedAcceleratedAnimation {
+    animation: Animation
+    duration: number
+    times: ValueAnimationOptions["times"]
+    type: ValueAnimationOptions["type"]
+    ease: ValueAnimationOptions["ease"]
+    keyframes: string[] | number[]
+}
 
 export class NativeAnimation implements AnimationPlaybackControls {
+    _resolved: ResolvedAcceleratedAnimation
     resolved: ResolvedAcceleratedAnimation
+
+    /**
+     * An AnimationTimline to attach to the WAAPI animation once it's created.
+     */
+    pendingTimeline: AnimationTimeline | undefined
+    private isStopped = false
+
     constructor(
-        element: Element,
-        valueName: string,
-        valueKeyframes: ValueKeyframesDefinition,
-        valueOptions: ValueAnimationOptions
+        _element: Element,
+        _valueName: string,
+        _valueKeyframes: ValueKeyframesDefinition,
+        _valueOptions: ValueAnimationOptions
     ) {}
+
+    then() {
+        return true as any
+    }
+
     get duration() {
         const { resolved } = this
         if (!resolved) return 0
@@ -94,6 +120,10 @@ export class NativeAnimation implements AnimationPlaybackControls {
         return noop<void>
     }
 
+    updateFinishedPromise() {}
+
+    resolveFinishedPromise() {}
+
     play() {
         if (this.isStopped) return
         const { resolved } = this
@@ -117,7 +147,7 @@ export class NativeAnimation implements AnimationPlaybackControls {
     }
 
     stop() {
-        this.resolver.cancel()
+        // this.resolver.cancel()
         this.isStopped = true
         if (this.state === "idle") return
 
@@ -127,7 +157,7 @@ export class NativeAnimation implements AnimationPlaybackControls {
         const { resolved } = this
         if (!resolved) return
 
-        const { animation, keyframes, duration, type, ease, times } = resolved
+        const { animation } = resolved
 
         if (
             animation.playState === "idle" ||
@@ -145,9 +175,8 @@ export class NativeAnimation implements AnimationPlaybackControls {
          * Motion to calculate velocity for any subsequent animation.
          */
         if (this.time) {
-            const { motionValue, onUpdate, onComplete, element, ...options } =
-                this.options
-
+            // const { motionValue, onUpdate, onComplete, element, ...options } =
+            //     this.options
             // const sampleAnimation = new MainThreadAnimation({
             //     ...options,
             //     keyframes,
@@ -157,18 +186,16 @@ export class NativeAnimation implements AnimationPlaybackControls {
             //     times,
             //     isGenerator: true,
             // })
-
-            const sampleTime = secondsToMilliseconds(this.time)
-
-            motionValue.setWithVelocity(
-                sampleAnimation.sample(sampleTime - sampleDelta).value,
-                sampleAnimation.sample(sampleTime).value,
-                sampleDelta
-            )
+            // const sampleTime = secondsToMilliseconds(this.time)
+            // motionValue.setWithVelocity(
+            //     sampleAnimation.sample(sampleTime - sampleDelta).value,
+            //     sampleAnimation.sample(sampleTime).value,
+            //     sampleDelta
+            // )
         }
 
-        const { onStop } = this.options
-        onStop && onStop()
+        // const { onStop } = this.options
+        // onStop && onStop()
 
         this.cancel()
     }
