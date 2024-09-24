@@ -11,7 +11,7 @@ import {
     Transition,
 } from "../../types"
 import { getValueTransition } from "../../utils/transitions"
-import { NativeAnimation } from "../NativeAnimation"
+import { NativeAnimation } from "./NativeAnimation"
 
 function animateElement(
     element: Element,

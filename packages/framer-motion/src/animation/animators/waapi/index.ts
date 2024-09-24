@@ -4,13 +4,13 @@ import { NativeAnimationOptions } from "./types"
 export function startWaapiAnimation(
     element: Element,
     valueName: string,
-    keyframes: string[] | number[],
+    keyframes: string | number | string[] | number[],
     {
         delay = 0,
         duration = 300,
         repeat = 0,
         repeatType = "loop",
-        ease,
+        ease = "easeInOut",
         times,
     }: NativeAnimationOptions = {}
 ) {
