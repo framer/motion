@@ -53,12 +53,12 @@ watch: bootstrap
 	cd packages/framer-motion && yarn watch
 
 check-status:
-	BUILD_STATUS=$(shell gh api repos/framer/motion/commits/main/status | jq -r .state); \
+	BUILD_STATUS=$(shell gh api repos/framer/motion/commits/$(git rev-parse HEAD)/status | jq -r .state); \
 	echo $$BUILD_STATUS; \
 	if [ "$$BUILD_STATUS" = "success" ]; then \
 	 echo "Build succeeded"; \
 	else \
-	 BUILD_URL=$(shell gh api repos/framer/motion/commits/main/status | jq -r .statuses[0].target_url); \
+	 BUILD_URL=$(shell gh api repos/framer/motion/commits/$(git rev-parse HEAD)/status | jq -r .statuses[0].target_url); \
 	 echo "Build failed: $$BUILD_URL"; exit 1; \
 	fi;
 
