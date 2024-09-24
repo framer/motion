@@ -55,7 +55,7 @@ watch: bootstrap
 check-status:
 	BUILD_STATUS=$(shell gh api repos/framer/motion/commits/main/status | jq -r .state); \
 	echo $$BUILD_STATUS; \
-	if [ "$$BUILD_STATUS" = "success" ]; then \
+	if [ "$$BUILD_STATUS" = "fail" ]; then \
 	 echo "Build succeeded"; \
 	else \
 	 BUILD_URL=$(shell gh api repos/framer/motion/commits/main/status | jq -r .statuses[0].target_url); \
