@@ -22,8 +22,7 @@
         "test-ci": "turbo run test-ci --no-cache",
         "measure": "turbo run measure",
         "version": "yarn install && git stage yarn.lock",
-        "check-status": "sh -c 'if [ \"$(gh api repos/framer/motion/commits/main/status | jq -r .state)\" = \"fail\" ]; then echo \"Build succeeded\"; else echo \"Build failed\"; exit 1; fi'",
-        "prepare": "yarn check-status && turbo run build measure",
+        "prepare": "make check-status && turbo run build measure",
         "new": "lerna publish from-package",
         "new-alpha": "turbo run build && lerna publish from-package --canary --preid alpha"
     },
