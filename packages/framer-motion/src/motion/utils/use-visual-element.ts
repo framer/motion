@@ -84,6 +84,7 @@ export function useVisualElement<Instance, RenderState>(
         props[optimizedAppearDataAttribute as keyof typeof props]
     const wantsHandoff = useRef(
         Boolean(optimisedAppearId) &&
+            !window.MotionOptimisedAnimationHandedover?.(optimisedAppearId) &&
             window.MotionHasOptimisedAnimation?.(optimisedAppearId)
     )
 
@@ -112,8 +113,16 @@ export function useVisualElement<Instance, RenderState>(
     useEffect(() => {
         if (!visualElement) return
 
-        if (!wantsHandoff.current && visualElement.animationState) {
+        const handoffNeeded = wantsHandoff.current
+        if (!handoffNeeded && visualElement.animationState) {
             visualElement.animationState.animateChanges()
+        }
+
+        if (handoffNeeded) {
+            // This ensures all future calls to animateChanges() in this component will run in useEffect
+            queueMicrotask(() =>
+                window.MotionOptimisedAnimationHandoff?.(optimisedAppearId)
+            )
         }
 
         wantsHandoff.current = false

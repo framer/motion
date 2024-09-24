@@ -52,13 +52,11 @@ export function startOptimizedAppearAnimation(
     onReady?: (animation: Animation) => void
 ): void {
     // Prevent optimised appear animations if Motion has already started animating.
-    if (window.MotionHandoffIsComplete) {
-        window.MotionHandoffAnimation = undefined
+    if (window.MotionOptimisedAnimationHandedover?.(optimizedAppearDataId)) {
         return
     }
 
     const id = element.dataset[optimizedAppearDataId]
-
     if (!id) return
 
     window.MotionHandoffAnimation = handoffOptimizedAppearAnimation
@@ -108,6 +106,18 @@ export function startOptimizedAppearAnimation(
 
             const animationId = appearStoreId(elementId, valueName)
             return Boolean(appearAnimationStore.get(animationId))
+        }
+
+        window.MotionOptimisedAnimationHandoff = (elementId: string): void => {
+            if (elementsWithAppearAnimations.has(elementId)) {
+                elementsWithAppearAnimations.set(elementId, true)
+            }
+        }
+
+        window.MotionOptimisedAnimationHandedover = (
+            elementId: string
+        ): boolean => {
+            return elementsWithAppearAnimations.get(elementId) === true
         }
 
         /**
@@ -216,7 +226,7 @@ export function startOptimizedAppearAnimation(
         if (onReady) onReady(appearAnimation)
     }
 
-    elementsWithAppearAnimations.add(id)
+    elementsWithAppearAnimations.set(id, false)
 
     if (readyAnimation.ready) {
         readyAnimation.ready.then(startAnimation).catch(noop)
