@@ -29,7 +29,7 @@
             "outputs": ["dist/**", "build/**"]
         },
         "measure": {
-            "dependsOn": ["^build"],
+            "dependsOn": ["^build", "build"],
             "outputs": ["dist/**", "build/**"]
         },
         "publish": {
