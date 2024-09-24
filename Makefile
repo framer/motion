@@ -61,10 +61,6 @@ test-watch: bootstrap
 bump:
 	npm version patch
 
-publish: clean bootstrap
-	npm publish
-	git push
-
 test: bootstrap
 	yarn test
 
