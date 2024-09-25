@@ -119,6 +119,14 @@
         {
             "path": "./dist/size-rollup-scroll.js",
             "maxSize": "5.2 kB"
+        },
+        {
+            "path": "./dist/size-rollup-waapi-animate.js",
+            "maxSize": "2.5 kB"
+        },
+        {
+            "path": "./dist/size-rollup-waapi-animate-sequence.js",
+            "maxSize": "3.5 kB"
         }
     ],
     "gitHead": "bff50291f7a5e6bbb3746ec57ffeff02bfd13bc3"
