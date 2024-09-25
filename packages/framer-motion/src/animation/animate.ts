@@ -186,4 +186,4 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
     return scopedAnimate
 }
 
-export const animate = createScopedAnimate()
+export const animate = /*@__PURE__*/ createScopedAnimate()
