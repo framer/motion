@@ -8,81 +8,83 @@ import {
     DOMKeyframesDefinition,
     DynamicAnimationOptions,
     ElementOrSelector,
-    Transition,
 } from "../../types"
 import { getValueTransition } from "../../utils/transitions"
 import { NativeAnimation } from "./NativeAnimation"
 
-function animateElement(
-    element: Element,
+export function animateElements(
+    elementOrSelector: ElementOrSelector,
     keyframes: DOMKeyframesDefinition,
-    options: Transition
-): AnimationPlaybackControls[] {
+    options?: DynamicAnimationOptions,
+    scope?: AnimationScope
+) {
+    const elements = resolveElements(elementOrSelector, scope)
+    const numElements = elements.length
+
+    invariant(Boolean(numElements), "No valid element provided.")
+
     const animations: AnimationPlaybackControls[] = []
 
-    for (const valueName in keyframes) {
-        const valueKeyframes = keyframes[valueName as keyof typeof keyframes]!
-        const valueOptions = getValueTransition(options as any, valueName)
+    for (let i = 0; i < numElements; i++) {
+        const element = elements[i]
+        const elementTransition = { ...options }
 
-        if (options.duration) {
-            options.duration = secondsToMilliseconds(options.duration)
-        }
-        if (options.delay) {
-            options.delay = secondsToMilliseconds(options.delay || 0)
+        /**
+         * Resolve stagger function if provided.
+         */
+        if (typeof elementTransition.delay === "function") {
+            elementTransition.delay = elementTransition.delay(i, numElements)
         }
 
-        animations.push(
-            new NativeAnimation(
-                element,
-                valueName,
-                valueKeyframes,
-                valueOptions
+        for (const valueName in keyframes) {
+            const valueKeyframes =
+                keyframes[valueName as keyof typeof keyframes]!
+            const valueOptions = {
+                ...getValueTransition(options as any, valueName),
+            }
+
+            if (valueOptions.duration) {
+                valueOptions.duration = secondsToMilliseconds(
+                    valueOptions.duration
+                )
+            }
+            if (valueOptions.delay) {
+                valueOptions.delay = secondsToMilliseconds(
+                    valueOptions.delay || 0
+                )
+            }
+
+            animations.push(
+                new NativeAnimation(
+                    element,
+                    valueName,
+                    valueKeyframes,
+                    valueOptions
+                )
             )
-        )
+        }
     }
 
     return animations
 }
 
 export const createScopedWaapiAnimate = (scope?: AnimationScope) => {
-    // TODO: This could be combined with the function in animation/animate
-    return (
+    function scopedAnimate(
         elementOrSelector: ElementOrSelector,
         keyframes: DOMKeyframesDefinition,
         options?: DynamicAnimationOptions
-    ): AnimationPlaybackControls => {
-        const elements = resolveElements(elementOrSelector, scope)
-        const numElements = elements.length
-
-        invariant(Boolean(numElements), "No valid element provided.")
-
-        const animations: AnimationPlaybackControls[] = []
-
-        for (let i = 0; i < numElements; i++) {
-            const element = elements[i]
-            const elementTransition = { ...options }
-
-            /**
-             * Resolve stagger function if provided.
-             */
-            if (typeof elementTransition.delay === "function") {
-                elementTransition.delay = elementTransition.delay(
-                    i,
-                    numElements
-                )
-            }
-
-            animations.push(
-                ...animateElement(
-                    element,
-                    keyframes,
-                    elementTransition as Transition
-                )
+    ) {
+        return new GroupPlaybackControls(
+            animateElements(
+                elementOrSelector,
+                keyframes as DOMKeyframesDefinition,
+                options,
+                scope
             )
-        }
-
-        return new GroupPlaybackControls(animations)
+        )
     }
+
+    return scopedAnimate
 }
 
 export const animateDom = createScopedWaapiAnimate()

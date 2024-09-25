@@ -50,6 +50,10 @@ const sizeAnimateMini = createSizeBundle(
     "lib/animation/animators/waapi/animate-style.js",
     "dist/size-rollup-waapi-animate.js"
 )
+const sizeFeatherweightAnimateSequence = createSizeBundle(
+    "lib/animation/animators/waapi/animate-sequence.js",
+    "dist/size-rollup-waapi-animate-sequence.js"
+)
 
 const domAnimation = Object.assign({}, es, {
     input: {

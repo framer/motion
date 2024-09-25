@@ -5,6 +5,7 @@ export { animateMini } from "./animation/animators/waapi/animate-style"
 export { scroll } from "./render/dom/scroll"
 export { scrollInfo } from "./render/dom/scroll/track"
 export { inView } from "./render/dom/viewport"
+export { sequence } from "./animation/sequence/create"
 
 /**
  * Easing
