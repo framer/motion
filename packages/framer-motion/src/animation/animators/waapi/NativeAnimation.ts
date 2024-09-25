@@ -1,5 +1,6 @@
 import { startWaapiAnimation } from "."
 import { ProgressTimeline } from "../../../render/dom/scroll/observe"
+import { numberValueTypes } from "../../../render/dom/value-types/number"
 import { memo } from "../../../utils/memo"
 import { noop } from "../../../utils/noop"
 import {
@@ -31,12 +32,17 @@ const supportsPartialKeyframes = memo(() => {
 })
 
 function hydrateKeyframes(
+    valueName: string,
     keyframes: ValueKeyframe[] | UnresolvedValueKeyframe[],
     read: () => string | number
 ) {
     for (let i = 0; i < keyframes.length; i++) {
         if (keyframes[i] === null) {
             keyframes[i] = i === 0 ? read() : keyframes[i - 1]
+        }
+
+        if (typeof keyframes[i] === "number" && numberValueTypes[valueName]) {
+            keyframes[i] = numberValueTypes[valueName].transform!(keyframes[i])
         }
     }
 }
@@ -56,7 +62,7 @@ export class NativeAnimation implements AnimationPlaybackControls {
     ) {
         this.options = options
         const existingAnimation = state.get(element)?.get(valueName)
-
+        console.log(existingAnimation)
         if (existingAnimation) {
             existingAnimation.stop()
         }
@@ -67,9 +73,11 @@ export class NativeAnimation implements AnimationPlaybackControls {
                 : window.getComputedStyle(element)[valueName as any]
         }
 
-        if (Array.isArray(valueKeyframes)) {
-            hydrateKeyframes(valueKeyframes, readInitialKeyframe)
+        if (!Array.isArray(valueKeyframes)) {
+            valueKeyframes = [valueKeyframes]
         }
+
+        hydrateKeyframes(valueName, valueKeyframes, readInitialKeyframe)
 
         const { type = "keyframes" } = options
         if (isGenerator(type)) {
@@ -115,8 +123,9 @@ export class NativeAnimation implements AnimationPlaybackControls {
                 attachTimeline(this.animation, this.pendingTimeline)
             }
 
-            const elementAnimationState = state.get(element) || new Map()
-            elementAnimationState.set(valueName, this.animation)
+            const elementAnimationState =
+                state.get(element) || new Map<string, NativeAnimation>()
+            elementAnimationState.set(valueName, this)
             state.set(element, elementAnimationState)
         }
     }

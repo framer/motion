@@ -2,6 +2,7 @@ import { Easing } from "../../../easing/types"
 import { motionValue } from "../../../value"
 import { stagger } from "../../utils/stagger"
 import { createAnimationsFromSequence } from "../create"
+import { spring } from "../../generators/spring"
 
 describe("createAnimationsFromSequence", () => {
     const a = document.createElement("div")
@@ -10,13 +11,18 @@ describe("createAnimationsFromSequence", () => {
     const value = motionValue(0)
 
     test("It creates a single animation", () => {
-        const animations = createAnimationsFromSequence([
+        const animations = createAnimationsFromSequence(
             [
-                a,
-                { opacity: 1 },
-                { duration: 1, ease: [0, 1, 2, 3], times: [0, 1] },
+                [
+                    a,
+                    { opacity: 1 },
+                    { duration: 1, ease: [0, 1, 2, 3], times: [0, 1] },
+                ],
             ],
-        ])
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(a)!.keyframes.opacity).toEqual([null, 1])
         expect(animations.get(a)!.transition.opacity).toEqual({
@@ -30,18 +36,26 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("It orders grouped keyframes correctly", () => {
-        const animations = createAnimationsFromSequence([
-            [a, { x: 100 }],
-            [a, { x: [200, 300] }],
-        ])
+        const animations = createAnimationsFromSequence(
+            [
+                [a, { x: 100 }],
+                [a, { x: [200, 300] }],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(a)!.keyframes.x).toEqual([null, 100, 200, 300])
     })
 
     test("It creates a single animation with defaults", () => {
-        const animations = createAnimationsFromSequence([
-            [a, { opacity: 1 }, { duration: 1 }],
-        ])
+        const animations = createAnimationsFromSequence(
+            [[a, { opacity: 1 }, { duration: 1 }]],
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(a)!.keyframes.opacity).toEqual([null, 1])
         expect(animations.get(a)!.transition.opacity).toEqual({
@@ -52,13 +66,22 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("It creates a single animation with defaults - 2", () => {
-        const animations = createAnimationsFromSequence([
+        const animations = createAnimationsFromSequence(
             [
-                a,
-                { x: [100, 100, 200, 300] },
-                { duration: 0.5, times: [0, 0.5, 0.7, 1], ease: "easeInOut" },
+                [
+                    a,
+                    { x: [100, 100, 200, 300] },
+                    {
+                        duration: 0.5,
+                        times: [0, 0.5, 0.7, 1],
+                        ease: "easeInOut",
+                    },
+                ],
             ],
-        ])
+            undefined,
+            undefined,
+            { spring }
+        )
         expect(animations.get(a)!.keyframes.x).toEqual([100, 100, 200, 300])
         expect(animations.get(a)!.transition.x).toEqual({
             duration: 0.5,
@@ -68,10 +91,15 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("It assigns the correct easing to the correct keyframes", () => {
-        const animations = createAnimationsFromSequence([
-            [a, { x: 1 }, { duration: 1, ease: "circIn" }],
-            [a, { x: 2, opacity: 0 }, { duration: 1, ease: "backInOut" }],
-        ])
+        const animations = createAnimationsFromSequence(
+            [
+                [a, { x: 1 }, { duration: 1, ease: "circIn" }],
+                [a, { x: 2, opacity: 0 }, { duration: 1, ease: "backInOut" }],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
 
         const { keyframes, transition } = animations.get(a)!
         expect(keyframes.x).toEqual([null, 1, null, 2])
@@ -89,15 +117,20 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("It sequences one animation after another", () => {
-        const animations = createAnimationsFromSequence([
+        const animations = createAnimationsFromSequence(
             [
-                a,
-                { x: [100, 200, 300], opacity: 1 },
-                { duration: 0.5, ease: "easeInOut" },
+                [
+                    a,
+                    { x: [100, 200, 300], opacity: 1 },
+                    { duration: 0.5, ease: "easeInOut" },
+                ],
+                [b, { y: 500 }, { duration: 0.5 }],
+                [a, { x: 400 }, { duration: 1 }],
             ],
-            [b, { y: 500 }, { duration: 0.5 }],
-            [a, { x: 400 }, { duration: 1 }],
-        ])
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(a)!.keyframes.x).toEqual([
             100,
@@ -128,9 +161,12 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("It accepts motion values", () => {
-        const animations = createAnimationsFromSequence([
-            [value, 100, { duration: 0.5 }],
-        ])
+        const animations = createAnimationsFromSequence(
+            [[value, 100, { duration: 0.5 }]],
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(value)!.keyframes.default).toEqual([null, 100])
         expect(animations.get(value)!.transition.default).toEqual({
@@ -141,9 +177,12 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("It accepts motion values keyframes", () => {
-        const animations = createAnimationsFromSequence([
-            [value, [50, 100], { duration: 0.5 }],
-        ])
+        const animations = createAnimationsFromSequence(
+            [[value, [50, 100], { duration: 0.5 }]],
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(value)!.keyframes.default).toEqual([50, 100])
         expect(animations.get(value)!.transition.default).toEqual({
@@ -154,10 +193,15 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("It adds relative time to another animation", () => {
-        const animations = createAnimationsFromSequence([
-            [a, { x: 100 }, { duration: 1 }],
-            [b, { y: 500 }, { duration: 0.5, at: "+0.5" }],
-        ])
+        const animations = createAnimationsFromSequence(
+            [
+                [a, { x: 100 }, { duration: 1 }],
+                [b, { y: 500 }, { duration: 0.5, at: "+0.5" }],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(a)!.keyframes.x).toEqual([null, 100, null])
         expect(animations.get(a)!.transition.x).toEqual({
@@ -175,10 +219,15 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("It adds moves the playhead back to the previous animation", () => {
-        const animations = createAnimationsFromSequence([
-            [a, { x: 100 }, { duration: 1 }],
-            [b, { y: 500 }, { duration: 0.5, at: "<" }],
-        ])
+        const animations = createAnimationsFromSequence(
+            [
+                [a, { x: 100 }, { duration: 1 }],
+                [b, { y: 500 }, { duration: 0.5, at: "<" }],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(a)!.keyframes.x).toEqual([null, 100])
         expect(animations.get(a)!.transition.x).toEqual({
@@ -196,10 +245,15 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("It adds subtracts time to another animation", () => {
-        const animations = createAnimationsFromSequence([
-            [a, { x: 100 }, { duration: 1 }],
-            [b, { y: 500 }, { duration: 0.5, at: "-1" }],
-        ])
+        const animations = createAnimationsFromSequence(
+            [
+                [a, { x: 100 }, { duration: 1 }],
+                [b, { y: 500 }, { duration: 0.5, at: "-1" }],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(a)!.keyframes.x).toEqual([null, 100])
         expect(animations.get(a)!.transition.x).toEqual({
@@ -217,10 +271,15 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("It sets another animation at a specific time", () => {
-        const animations = createAnimationsFromSequence([
-            [a, { x: 100 }, { duration: 1 }],
-            [b, { y: 500 }, { duration: 0.5, at: 1.5 }],
-        ])
+        const animations = createAnimationsFromSequence(
+            [
+                [a, { x: 100 }, { duration: 1 }],
+                [b, { y: 500 }, { duration: 0.5, at: 1.5 }],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(a)!.keyframes.x).toEqual([null, 100, null])
         expect(animations.get(a)!.transition.x).toEqual({
@@ -238,12 +297,17 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("It sets labels from strings", () => {
-        const animations = createAnimationsFromSequence([
-            [a, { x: 100 }, { duration: 1 }],
-            "my label",
-            [a, { opacity: 0 }, { duration: 1 }],
-            [b, { y: 500 }, { duration: 1, at: "my label" }],
-        ])
+        const animations = createAnimationsFromSequence(
+            [
+                [a, { x: 100 }, { duration: 1 }],
+                "my label",
+                [a, { opacity: 0 }, { duration: 1 }],
+                [b, { y: 500 }, { duration: 1, at: "my label" }],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(a)!.keyframes.x).toEqual([null, 100, null])
         expect(animations.get(a)!.transition.x).toEqual({
@@ -268,12 +332,17 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("It sets annotated labels with absolute at times", () => {
-        const animations = createAnimationsFromSequence([
-            [a, { x: 100 }, { duration: 1 }],
-            { name: "my label", at: 0 },
-            [a, { opacity: 0 }, { duration: 1 }],
-            [b, { y: 500 }, { duration: 1, at: "my label" }],
-        ])
+        const animations = createAnimationsFromSequence(
+            [
+                [a, { x: 100 }, { duration: 1 }],
+                { name: "my label", at: 0 },
+                [a, { opacity: 0 }, { duration: 1 }],
+                [b, { y: 500 }, { duration: 1, at: "my label" }],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(a)!.keyframes.x).toEqual([null, 100, null])
         expect(animations.get(a)!.transition.x).toEqual({
@@ -298,12 +367,17 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("It sets annotated labels with relative at times", () => {
-        const animations = createAnimationsFromSequence([
-            [a, { x: 100 }, { duration: 1 }],
-            { name: "my label", at: "-1" },
-            [a, { opacity: 0 }, { duration: 1 }],
-            [b, { y: 500 }, { duration: 1, at: "my label" }],
-        ])
+        const animations = createAnimationsFromSequence(
+            [
+                [a, { x: 100 }, { duration: 1 }],
+                { name: "my label", at: "-1" },
+                [a, { opacity: 0 }, { duration: 1 }],
+                [b, { y: 500 }, { duration: 1, at: "my label" }],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(a)!.keyframes.x).toEqual([null, 100, null])
         expect(animations.get(a)!.transition.x).toEqual({
@@ -457,10 +531,15 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("Adds spring as duration-based easing when only one keyframe defined", () => {
-        const animations = createAnimationsFromSequence([
-            [a, { x: 200 }, { duration: 1 }],
-            [a, { x: 0 }, { duration: 1, type: "spring", bounce: 0 }],
-        ])
+        const animations = createAnimationsFromSequence(
+            [
+                [a, { x: 200 }, { duration: 1 }],
+                [a, { x: 0 }, { duration: 1, type: "spring", bounce: 0 }],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(a)!.keyframes.x).toEqual([null, 200, null, 0])
         const { duration, ease, times } = animations.get(a)!.transition.x
@@ -473,9 +552,12 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("Adds spring as duration-based easing when only one keyframe defined", () => {
-        const animations = createAnimationsFromSequence([
-            [a, { x: [0, 100] }, { type: "spring" }],
-        ])
+        const animations = createAnimationsFromSequence(
+            [[a, { x: [0, 100] }, { type: "spring" }]],
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(a)!.keyframes.x).toEqual([0, 100])
         const { duration, ease } = animations.get(a)!.transition.x
@@ -485,10 +567,19 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("Adds springs as duration-based simulation when two keyframes defined", () => {
-        const animations = createAnimationsFromSequence([
-            [a, { x: 200 }, { duration: 1, ease: "linear" }],
-            [a, { x: [200, 0] }, { duration: 1, type: "spring", bounce: 0 }],
-        ])
+        const animations = createAnimationsFromSequence(
+            [
+                [a, { x: 200 }, { duration: 1, ease: "linear" }],
+                [
+                    a,
+                    { x: [200, 0] },
+                    { duration: 1, type: "spring", bounce: 0 },
+                ],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(a)!.keyframes.x).toEqual([null, 200, 200, 0])
         const { duration, ease, times } = animations.get(a)!.transition.x
@@ -501,14 +592,19 @@ describe("createAnimationsFromSequence", () => {
     })
 
     test("It correctly adds type: spring to timeline with simulated spring", () => {
-        const animations = createAnimationsFromSequence([
-            [a, { x: 200 }, { duration: 1 }],
+        const animations = createAnimationsFromSequence(
             [
-                a,
-                { x: [100, 0] },
-                { type: "spring", stiffness: 200, damping: 10 },
+                [a, { x: 200 }, { duration: 1 }],
+                [
+                    a,
+                    { x: [100, 0] },
+                    { type: "spring", stiffness: 200, damping: 10 },
+                ],
             ],
-        ])
+            undefined,
+            undefined,
+            { spring }
+        )
 
         expect(animations.get(a)!.keyframes.x).toEqual([null, 200, 100, 0])
         const { duration, ease, times } = animations.get(a)!.transition.x
