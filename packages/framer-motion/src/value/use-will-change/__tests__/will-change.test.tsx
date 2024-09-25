@@ -6,18 +6,13 @@ import { WillChangeMotionValue } from "../WillChangeMotionValue"
 describe("WillChangeMotionValue", () => {
     test("Can manage transform alongside independent transforms", async () => {
         const willChange = new WillChangeMotionValue("auto")
-        const removeTransform = willChange.add("transform")
+        willChange.add("transform")
         expect(willChange.get()).toBe("transform")
-        removeTransform!()
-        expect(willChange.get()).toBe("auto")
-        const removeX = willChange.add("x")
-        const removeY = willChange.add("y")
-        expect(willChange.get()).toBe("transform")
-        removeX!()
-        expect(willChange.get()).toBe("transform")
-        removeY!()
-        // Don't remove values from will-change
-        expect(willChange.get()).toBe("transform")
+
+        const willChange2 = new WillChangeMotionValue("auto")
+        willChange2.add("x")
+        willChange2.add("y")
+        expect(willChange2.get()).toBe("transform")
     })
 })
 
