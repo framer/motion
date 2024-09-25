@@ -22,7 +22,7 @@ import {
 } from "./BaseAnimation"
 import { MainThreadAnimation } from "./MainThreadAnimation"
 import { acceleratedValues } from "./utils/accelerated-values"
-import { animateStyle } from "./waapi"
+import { startWaapiAnimation } from "./waapi"
 import { isWaapiSupportedEasing, supportsLinearEasing } from "./waapi/easing"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
 
@@ -213,7 +213,7 @@ export class AcceleratedAnimation<
             type = "keyframes"
         }
 
-        const animation = animateStyle(
+        const animation = startWaapiAnimation(
             motionValue.owner!.current as unknown as HTMLElement,
             name,
             keyframes as string[],
