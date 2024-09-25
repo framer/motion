@@ -8,7 +8,7 @@ import { secondsToMilliseconds } from "../../utils/time-conversion"
 import type { MotionValue } from "../../value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 import { isGenerator } from "../generators/utils/is-generator"
-import { DynamicAnimationOptions } from "../types"
+import { DynamicAnimationOptions, GeneratorFactory } from "../types"
 import {
     AnimationScope,
     DOMKeyframesDefinition,
@@ -32,7 +32,8 @@ const defaultSegmentEasing = "easeInOut"
 export function createAnimationsFromSequence(
     sequence: AnimationSequence,
     { defaultTransition = {}, ...sequenceTransition }: SequenceOptions = {},
-    scope?: AnimationScope
+    scope?: AnimationScope,
+    generators?: { [key: string]: GeneratorFactory }
 ): ResolvedAnimationDefinitions {
     const defaultDuration = defaultTransition.duration || 0.3
     const animationDefinitions: ResolvedAnimationDefinitions = new Map()
@@ -116,7 +117,11 @@ export function createAnimationsFromSequence(
              * If this animation should and can use a spring, generate a spring easing function.
              */
             const numKeyframes = valueKeyframesAsList.length
-            if ((numKeyframes <= 2 && type === "spring") || isGenerator(type)) {
+            const createGenerator = isGenerator(type)
+                ? type
+                : generators?.[type]
+
+            if (numKeyframes <= 2 && createGenerator) {
                 /**
                  * As we're creating an easing function from a spring,
                  * ideally we want to generate it using the real distance
@@ -140,7 +145,8 @@ export function createAnimationsFromSequence(
 
                 const springEasing = createGeneratorEasing(
                     springTransition,
-                    absoluteDelta
+                    absoluteDelta,
+                    createGenerator
                 )
 
                 ease = springEasing.ease

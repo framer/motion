@@ -19,7 +19,7 @@ function createSizeBundle(input, output) {
             preserveModules: false,
             dir: undefined,
         }),
-        plugins: [...sizePlugins],
+        plugins: [...sizePlugins, visualizer()],
         external,
         onwarn(warning, warn) {
             if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
@@ -47,7 +47,7 @@ const sizeScroll = createSizeBundle(
     "dist/size-rollup-scroll.js"
 )
 const sizeFeatherweightAnimate = createSizeBundle(
-    "lib/animation/animators/waapi/animate-dom.js",
+    "lib/animation/animators/waapi/animate-style.js",
     "dist/size-rollup-waapi-animate.js"
 )
 const sizeFeatherweightAnimateSequence = createSizeBundle(
