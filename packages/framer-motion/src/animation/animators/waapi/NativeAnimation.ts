@@ -17,6 +17,8 @@ import {
     ValueKeyframesDefinition,
 } from "../../types"
 import { attachTimeline } from "./utils/attach-timeline"
+import { getFinalKeyframe } from "./utils/get-final-keyframe"
+import { setCSSVar, setStyle } from "./utils/style"
 import { supportsLinearEasing } from "./utils/supports-linear-easing"
 import { supportsWaapi } from "./utils/supports-waapi"
 
@@ -54,12 +56,27 @@ export class NativeAnimation implements AnimationPlaybackControls {
 
     private pendingTimeline: ProgressTimeline | undefined
 
+    // Resolve the current finished promise
+    private resolveFinishedPromise: VoidFunction
+
+    // A promise that resolves when the animation is complete
+    private currentFinishedPromise: Promise<void>
+
+    private setValue: (
+        element: HTMLElement,
+        name: string,
+        value: string
+    ) => void
+
     constructor(
         element: Element,
         valueName: string,
         valueKeyframes: number | string | ValueKeyframesDefinition,
         options: ValueAnimationOptions
     ) {
+        const isCSSVar = valueName.startsWith("--")
+        this.setValue = isCSSVar ? setCSSVar : setStyle
+
         this.options = options
         const existingAnimation = state.get(element)?.get(valueName)
         console.log(existingAnimation)
@@ -119,6 +136,16 @@ export class NativeAnimation implements AnimationPlaybackControls {
                 this.animation.pause()
             }
 
+            this.animation.onfinish = () => {
+                this.setValue(
+                    element as HTMLElement,
+                    valueName,
+                    getFinalKeyframe(valueKeyframes as string[], this.options)
+                )
+                this.cancel()
+                this.resolveFinishedPromise()
+            }
+
             if (this.pendingTimeline) {
                 attachTimeline(this.animation, this.pendingTimeline)
             }
@@ -166,9 +193,17 @@ export class NativeAnimation implements AnimationPlaybackControls {
         return this.animation ? (this.animation.startTime as number) : null
     }
 
-    play() {}
+    play() {
+        if (this.state === "finished") {
+            this.updateFinishedPromise()
+        }
 
-    pause() {}
+        this.animation && this.animation.play()
+    }
+
+    pause() {
+        this.animation && this.animation.pause()
+    }
 
     stop() {
         if (
@@ -185,12 +220,27 @@ export class NativeAnimation implements AnimationPlaybackControls {
         } catch (e) {}
     }
 
-    complete() {}
+    complete() {
+        this.animation && this.animation.finish()
+    }
 
-    cancel() {}
+    cancel() {
+        this.animation && this.animation.cancel()
+    }
 
-    then() {
-        return new Promise(() => {}) as any
+    /**
+     * Allows the returned animation to be awaited or promise-chained. Currently
+     * resolves when the animation finishes at all but in a future update could/should
+     * reject if its cancels.
+     */
+    then(resolve: VoidFunction, reject?: VoidFunction) {
+        return this.currentFinishedPromise.then(resolve, reject)
+    }
+
+    private updateFinishedPromise() {
+        this.currentFinishedPromise = new Promise((resolve) => {
+            this.resolveFinishedPromise = resolve
+        })
     }
 
     attachTimeline(timeline: any) {

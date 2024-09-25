@@ -13,6 +13,8 @@ export const App = () => {
             { duration: 0.1 }
         )
 
+        animation.pause()
+
         return () => animation.stop()
     }, [])
 

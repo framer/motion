@@ -10,7 +10,7 @@ export const App = () => {
         const animation = animateStyle(
             ref.current,
             { width: 200 },
-            { duration: 0.1 }
+            { duration: 0.1, autoplay: false }
         )
 
         return () => animation.stop()
