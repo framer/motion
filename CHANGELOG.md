@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.7.0] 2024-09-25
+
+### Added
+
+-   Added support for custom animation generators via `type`.
+
 ## [11.6.0] 2024-09-24
 
 ### Added
