@@ -8,6 +8,7 @@ import {
     secondsToMilliseconds,
 } from "../../utils/time-conversion"
 import { MotionValue } from "../../value"
+import { isGenerator } from "../generators/utils/is-generator"
 import { ValueAnimationOptions } from "../types"
 import {
     BaseAnimation,
@@ -44,7 +45,11 @@ const maxDuration = 20_000
 function requiresPregeneratedKeyframes<T extends string | number>(
     options: ValueAnimationOptions<T>
 ) {
-    return options.type === "spring" || !isWaapiSupportedEasing(options.ease)
+    return (
+        isGenerator(options.type) ||
+        options.type === "spring" ||
+        !isWaapiSupportedEasing(options.ease)
+    )
 }
 
 function pregenerateKeyframes<T extends string | number>(

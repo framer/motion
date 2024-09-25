@@ -20,6 +20,7 @@ import { clamp } from "../../utils/clamp"
 import { invariant } from "../../utils/errors"
 import { frameloopDriver } from "./drivers/driver-frameloop"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
+import { isGenerator } from "../generators/utils/is-generator"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -135,8 +136,9 @@ export class MainThreadAnimation<
             velocity = 0,
         } = this.options
 
-        const generatorFactory = generators[type] || keyframesGeneratorFactory
-
+        const generatorFactory = isGenerator(type)
+            ? type
+            : generators[type] || keyframesGeneratorFactory
         /**
          * If our generator doesn't support mixing numbers, we need to replace keyframes with
          * [0, 100] and then make a function that maps that to the actual keyframes.
