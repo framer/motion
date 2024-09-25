@@ -1,10 +1,25 @@
 import { BezierDefinition, Easing } from "../../../easing/types"
 import { isBezierDefinition } from "../../../easing/utils/is-bezier-definition"
+import { generateLinearEasing } from "./utils/linear"
+import { memoSupports } from "./utils/memo-supports"
+
+export const supportsLinearEasing = /*@__PURE__*/ memoSupports(() => {
+    try {
+        document
+            .createElement("div")
+            .animate({ opacity: 0 }, { easing: "linear(0, 1)" })
+    } catch (e) {
+        return false
+    }
+    return true
+}, "linearEasing")
 
 export function isWaapiSupportedEasing(easing?: Easing | Easing[]): boolean {
     return Boolean(
-        !easing ||
-            (typeof easing === "string" && easing in supportedWaapiEasing) ||
+        (typeof easing === "function" && supportsLinearEasing()) ||
+            !easing ||
+            (typeof easing === "string" &&
+                (easing in supportedWaapiEasing || supportsLinearEasing())) ||
             isBezierDefinition(easing) ||
             (Array.isArray(easing) && easing.every(isWaapiSupportedEasing))
     )
@@ -25,22 +40,22 @@ export const supportedWaapiEasing = {
     backOut: /*@__PURE__*/ cubicBezierAsString([0.33, 1.53, 0.69, 0.99]),
 }
 
-function mapEasingToNativeEasingWithDefault(easing: Easing): string {
-    return (
-        (mapEasingToNativeEasing(easing) as string) ||
-        supportedWaapiEasing.easeOut
-    )
-}
-
 export function mapEasingToNativeEasing(
-    easing?: Easing | Easing[]
+    easing: Easing | Easing[] | undefined,
+    duration: number
 ): undefined | string | string[] {
     if (!easing) {
         return undefined
+    } else if (typeof easing === "function" && supportsLinearEasing()) {
+        return generateLinearEasing(easing, duration)
     } else if (isBezierDefinition(easing)) {
         return cubicBezierAsString(easing)
     } else if (Array.isArray(easing)) {
-        return easing.map(mapEasingToNativeEasingWithDefault)
+        return easing.map(
+            (segmentEasing) =>
+                (mapEasingToNativeEasing(segmentEasing, duration) as string) ||
+                supportedWaapiEasing.easeOut
+        )
     } else {
         return supportedWaapiEasing[easing as keyof typeof supportedWaapiEasing]
     }

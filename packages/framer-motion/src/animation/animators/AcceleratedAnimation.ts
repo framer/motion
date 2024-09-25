@@ -1,3 +1,6 @@
+import { anticipate } from "../../easing/anticipate"
+import { backInOut } from "../../easing/back"
+import { circInOut } from "../../easing/circ"
 import { EasingDefinition } from "../../easing/types"
 import { DOMKeyframesResolver } from "../../render/dom/DOMKeyframesResolver"
 import { ResolvedKeyframes } from "../../render/utils/KeyframesResolver"
@@ -20,7 +23,7 @@ import {
 import { MainThreadAnimation } from "./MainThreadAnimation"
 import { acceleratedValues } from "./utils/accelerated-values"
 import { animateStyle } from "./waapi"
-import { isWaapiSupportedEasing } from "./waapi/easing"
+import { isWaapiSupportedEasing, supportsLinearEasing } from "./waapi/easing"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
 
 const supportsWaapi = /*@__PURE__*/ memo(() =>
@@ -110,6 +113,12 @@ interface ResolvedAcceleratedAnimation {
     keyframes: string[] | number[]
 }
 
+const unsupportedEasingFunctions = {
+    anticipate,
+    backInOut,
+    circInOut,
+}
+
 export class AcceleratedAnimation<
     T extends string | number
 > extends BaseAnimation<T, ResolvedAcceleratedAnimation> {
@@ -157,6 +166,22 @@ export class AcceleratedAnimation<
          */
         if (!motionValue.owner?.current) {
             return false
+        }
+
+        /**
+         * If the user has provided an easing function name that isn't supported
+         * by WAAPI (like "anticipate"), we need to provide the corressponding
+         * function. This will later get converted to a linear() easing function.
+         */
+        if (
+            typeof ease === "string" &&
+            supportsLinearEasing() &&
+            ease in unsupportedEasingFunctions
+        ) {
+            ease =
+                unsupportedEasingFunctions[
+                    ease as keyof typeof unsupportedEasingFunctions
+                ]
         }
 
         /**
