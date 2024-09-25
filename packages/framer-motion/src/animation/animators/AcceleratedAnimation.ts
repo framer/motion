@@ -8,7 +8,11 @@ import {
     secondsToMilliseconds,
 } from "../../utils/time-conversion"
 import { MotionValue } from "../../value"
-import { ValueAnimationOptions } from "../types"
+import { isGenerator } from "../generators/utils/is-generator"
+import {
+    ValueAnimationOptions,
+    ValueAnimationOptionsWithRenderContext,
+} from "../types"
 import {
     BaseAnimation,
     ValueAnimationOptionsWithDefaults,
@@ -44,7 +48,11 @@ const maxDuration = 20_000
 function requiresPregeneratedKeyframes<T extends string | number>(
     options: ValueAnimationOptions<T>
 ) {
-    return options.type === "spring" || !isWaapiSupportedEasing(options.ease)
+    return (
+        isGenerator(options.type) ||
+        options.type === "spring" ||
+        !isWaapiSupportedEasing(options.ease)
+    )
 }
 
 function pregenerateKeyframes<T extends string | number>(
@@ -110,7 +118,7 @@ export class AcceleratedAnimation<
         motionValue: MotionValue<T>
     }
 
-    constructor(options: ValueAnimationOptions<T>) {
+    constructor(options: ValueAnimationOptionsWithRenderContext<T>) {
         super(options)
 
         const { name, motionValue, element, keyframes } = this.options
@@ -390,7 +398,7 @@ export class AcceleratedAnimation<
     }
 
     static supports(
-        options: ValueAnimationOptions
+        options: ValueAnimationOptionsWithRenderContext
     ): options is AcceleratedValueAnimationOptions {
         const { motionValue, name, repeatDelay, repeatType, damping, type } =
             options

@@ -5,7 +5,7 @@ import {
     pointerUp,
     render,
 } from "../../../jest.setup"
-import { motion, useMotionValue } from "../../"
+import { motion, spring, useMotionValue } from "../../"
 import { act, useState, createRef } from "react"
 import { nextFrame } from "../../gestures/__tests__/utils"
 import "../../animation/animators/waapi/__tests__/setup"
@@ -648,6 +648,47 @@ describe("WAAPI animations", () => {
                 animate={{ opacity: 1 }}
                 transition={{
                     type: "spring",
+                    duration: 0.1,
+                    bounce: 0,
+                }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        await nextFrame()
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                opacity: [
+                    0, 0.23606867982504365, 0.5509083741195555,
+                    0.7637684153125726, 0.8831910398786699, 0.9444771835619267,
+                    0.9743215604668359, 0.9883608373299467, 0.9948051108537942,
+                    0.9977094774280534, 1,
+                ],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                direction: "normal",
+                duration: 100,
+                easing: "linear",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
+    test("WAAPI is called with pre-generated generator keyframes", async () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                    type: spring,
                     duration: 0.1,
                     bounce: 0,
                 }}

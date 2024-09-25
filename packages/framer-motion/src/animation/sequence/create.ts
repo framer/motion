@@ -7,6 +7,7 @@ import { progress } from "../../utils/progress"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
 import type { MotionValue } from "../../value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
+import { isGenerator } from "../generators/utils/is-generator"
 import { DynamicAnimationOptions } from "../types"
 import {
     AnimationScope,
@@ -115,7 +116,7 @@ export function createAnimationsFromSequence(
              * If this animation should and can use a spring, generate a spring easing function.
              */
             const numKeyframes = valueKeyframesAsList.length
-            if (numKeyframes <= 2 && type === "spring") {
+            if ((numKeyframes <= 2 && type === "spring") || isGenerator(type)) {
                 /**
                  * As we're creating an easing function from a spring,
                  * ideally we want to generate it using the real distance
