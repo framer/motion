@@ -5,7 +5,10 @@ import {
 import { spring } from "../generators/spring/index"
 import { inertia } from "../generators/inertia"
 import { keyframes as keyframesGeneratorFactory } from "../generators/keyframes"
-import { ValueAnimationOptions } from "../types"
+import {
+    ValueAnimationOptions,
+    ValueAnimationOptionsWithRenderContext,
+} from "../types"
 import { BaseAnimation } from "./BaseAnimation"
 import { AnimationState, KeyframeGenerator } from "../generators/types"
 import { pipe } from "../../utils/pipe"
@@ -139,6 +142,7 @@ export class MainThreadAnimation<
         const generatorFactory = isGenerator(type)
             ? type
             : generators[type] || keyframesGeneratorFactory
+
         /**
          * If our generator doesn't support mixing numbers, we need to replace keyframes with
          * [0, 100] and then make a function that maps that to the actual keyframes.
@@ -537,7 +541,7 @@ export class MainThreadAnimation<
 
 // Legacy interface
 export function animateValue(
-    options: ValueAnimationOptions<any>
+    options: ValueAnimationOptionsWithRenderContext<any>
 ): MainThreadAnimation<any> {
     return new MainThreadAnimation(options)
 }
