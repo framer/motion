@@ -9,7 +9,10 @@ import {
 } from "../../utils/time-conversion"
 import { MotionValue } from "../../value"
 import { isGenerator } from "../generators/utils/is-generator"
-import { ValueAnimationOptions } from "../types"
+import {
+    ValueAnimationOptions,
+    ValueAnimationOptionsWithRenderContext,
+} from "../types"
 import {
     BaseAnimation,
     ValueAnimationOptionsWithDefaults,
@@ -115,7 +118,7 @@ export class AcceleratedAnimation<
         motionValue: MotionValue<T>
     }
 
-    constructor(options: ValueAnimationOptions<T>) {
+    constructor(options: ValueAnimationOptionsWithRenderContext<T>) {
         super(options)
 
         const { name, motionValue, element, keyframes } = this.options
@@ -395,7 +398,7 @@ export class AcceleratedAnimation<
     }
 
     static supports(
-        options: ValueAnimationOptions
+        options: ValueAnimationOptionsWithRenderContext
     ): options is AcceleratedValueAnimationOptions {
         const { motionValue, name, repeatDelay, repeatType, damping, type } =
             options
