@@ -11,6 +11,10 @@ Undocumented APIs should be considered internal and may change without warning.
 -   Added `info` and element tracking to `scroll`.
 -   Added `steps` easing.
 
+### Changed
+
+-   Values added to `will-change` now stay there for their lifespan to prevent GPU thrashing and weird Safari subpixel jitters.
+
 ## [11.5.6] 2024-09-20
 
 ### Fixed
