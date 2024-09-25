@@ -41,11 +41,6 @@ function hydrateKeyframes(
     }
 }
 
-/**
- * A WAAPI animation wrapper that is largely API-compatible
- * with Framer Motion but behaviourally similar to Motion One's
- * old animate() function.
- */
 export class NativeAnimation implements AnimationPlaybackControls {
     animation: Animation
 
