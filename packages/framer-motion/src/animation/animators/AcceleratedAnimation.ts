@@ -119,6 +119,12 @@ const unsupportedEasingFunctions = {
     circInOut,
 }
 
+function isUnsupportedEase(
+    key: string
+): key is keyof typeof unsupportedEasingFunctions {
+    return key in unsupportedEasingFunctions
+}
+
 export class AcceleratedAnimation<
     T extends string | number
 > extends BaseAnimation<T, ResolvedAcceleratedAnimation> {
@@ -176,12 +182,9 @@ export class AcceleratedAnimation<
         if (
             typeof ease === "string" &&
             supportsLinearEasing() &&
-            ease in unsupportedEasingFunctions
+            isUnsupportedEase(ease)
         ) {
-            ease =
-                unsupportedEasingFunctions[
-                    ease as keyof typeof unsupportedEasingFunctions
-                ]
+            ease = unsupportedEasingFunctions[ease]
         }
 
         /**
