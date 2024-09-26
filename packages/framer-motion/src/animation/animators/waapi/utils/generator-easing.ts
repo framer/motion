@@ -9,11 +9,13 @@ export function createGeneratorEasing(options: ValueAnimationOptions) {
     if (isGenerator(type)) {
         const generator = type({ ...options, keyframes: [0, 100] })
         const pregenerated = pregenerateKeyframes(generator)
-        options.duration = secondsToMilliseconds(pregenerated.duration)
+        const duration = secondsToMilliseconds(pregenerated.duration)
+        options.duration = duration
 
         if (supportsLinearEasing()) {
-            options.ease = (progress: number) =>
-                generator.next(pregenerated.duration * progress).value / 100
+            options.ease = (progress: number) => {
+                return generator.next(duration * progress).value / 100
+            }
         } else {
             options.ease = "easeOut"
         }

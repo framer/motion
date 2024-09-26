@@ -1,6 +1,7 @@
 import { startWaapiAnimation } from "."
 import { ProgressTimeline } from "../../../render/dom/scroll/observe"
 import { numberValueTypes } from "../../../render/dom/value-types/number"
+import { invariant } from "../../../utils/errors"
 import { noop } from "../../../utils/noop"
 import {
     millisecondsToSeconds,
@@ -67,6 +68,11 @@ export class NativeAnimation implements AnimationPlaybackControls {
         this.setValue = isCSSVar ? setCSSVar : setStyle
         this.options = options
         this.updateFinishedPromise()
+
+        invariant(
+            typeof options.type !== "string",
+            `animateStyle doesn't support "type" as a string. Did you mean to import { spring } from "framer-motion"?`
+        )
 
         const existingAnimation = state.get(element)?.get(valueName)
         if (existingAnimation) {
