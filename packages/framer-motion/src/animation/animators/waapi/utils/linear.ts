@@ -9,7 +9,7 @@ export const generateLinearEasing = (
     duration: number // as milliseconds
 ): string => {
     let points = ""
-    const numPoints = Math.round(duration / resolution)
+    const numPoints = Math.max(Math.round(duration / resolution), 2)
 
     for (let i = 0; i < numPoints; i++) {
         points += easing(progress(0, numPoints - 1, i)) + ", "

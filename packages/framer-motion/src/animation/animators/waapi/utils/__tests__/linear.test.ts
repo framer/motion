@@ -9,5 +9,6 @@ describe("generateLinearEasing", () => {
         expect(generateLinearEasing(() => 0.5, 200)).toEqual(
             "linear(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)"
         )
+        expect(generateLinearEasing(() => 0.5, 0)).toEqual("linear(0.5, 0.5)")
     })
 })
