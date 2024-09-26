@@ -1,9 +1,9 @@
-import { scroll, useAnimateStyle } from "framer-motion"
+import { scroll, useAnimateStyle as useAnimateNative } from "framer-motion"
 import * as React from "react"
 import { useEffect } from "react"
 
 export const App = () => {
-    const [scope, animate] = useAnimateStyle()
+    const [scope, animate] = useAnimateNative()
 
     useEffect(() => {
         if (!scope.current) return
@@ -27,7 +27,7 @@ export const App = () => {
             <div style={{ ...spacer, backgroundColor: "green" }} />
             <div style={{ ...spacer, backgroundColor: "blue" }} />
             <div style={{ ...spacer, backgroundColor: "yellow" }} />
-            <div ref={scope.current} id="color" style={progressStyle}>
+            <div ref={scope} style={progressStyle}>
                 A
             </div>
         </>

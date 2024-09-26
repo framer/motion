@@ -94,6 +94,7 @@ export class NativeAnimation implements AnimationPlaybackControls {
         createGeneratorEasing(options)
 
         const onFinish = () => {
+            state.get(element)?.delete(valueName)
             this.setValue(
                 element as HTMLElement,
                 valueName,

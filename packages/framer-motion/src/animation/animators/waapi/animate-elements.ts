@@ -42,16 +42,10 @@ export function animateElements(
                 ...getValueTransition(options as any, valueName),
             }
 
-            if (valueOptions.duration) {
-                valueOptions.duration = secondsToMilliseconds(
-                    valueOptions.duration
-                )
-            }
-            if (valueOptions.delay) {
-                valueOptions.delay = secondsToMilliseconds(
-                    valueOptions.delay || 0
-                )
-            }
+            valueOptions.duration = secondsToMilliseconds(
+                valueOptions.duration || 0
+            )
+            valueOptions.delay = secondsToMilliseconds(valueOptions.delay || 0)
 
             animations.push(
                 new NativeAnimation(
