@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.8.0] 2024-09-25
+
+### Added
+
+-   Easing functions now get compiled into `linear()` easings when animating via WAAPI.
+
 ## [11.7.0] 2024-09-25
 
 ### Added
