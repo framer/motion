@@ -48,4 +48,26 @@ describe("animateStyle()", () => {
                 expect($element.style.width).to.equal("200px")
             })
     })
+
+    it("stop correctly resumes the animation", () => {
+        cy.visit("?test=animate-style-stop")
+            .wait(200)
+            .get("#box")
+            .should(([$element]: any) => {
+                const { width } = $element.getBoundingClientRect()
+                expect(width).to.lessThan(200).and.greaterThan(100)
+                expect(parseFloat($element.style.width))
+                    .to.lessThan(200)
+                    .and.greaterThan(100)
+            })
+    })
+
+    it("fires its promise on end", () => {
+        cy.visit("?test=animate-style-promise")
+            .wait(200)
+            .get("#box")
+            .should(([$element]: any) => {
+                expect($element.style.backgroundColor).to.equal("red")
+            })
+    })
 })

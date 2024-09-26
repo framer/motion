@@ -76,10 +76,10 @@ export class NativeAnimation implements AnimationPlaybackControls {
     ) {
         const isCSSVar = valueName.startsWith("--")
         this.setValue = isCSSVar ? setCSSVar : setStyle
-
         this.options = options
+        this.updateFinishedPromise()
+
         const existingAnimation = state.get(element)?.get(valueName)
-        console.log(existingAnimation)
         if (existingAnimation) {
             existingAnimation.stop()
         }
@@ -115,7 +115,6 @@ export class NativeAnimation implements AnimationPlaybackControls {
          *  - Polyfill promise
          *  - Ensure final keyframe is applied on animation complete
          *  - Add duration
-         *  - Add timeline() for animateDom
          *  - Tests
          */
 
@@ -179,14 +178,13 @@ export class NativeAnimation implements AnimationPlaybackControls {
     }
 
     set speed(newSpeed: number) {
-        // TODO Force resolve
         if (this.animation) {
             this.animation.playbackRate = newSpeed
         }
     }
 
     get state() {
-        return this.animation?.playState || "idle"
+        return this.animation?.playState || "finished"
     }
 
     get startTime() {
