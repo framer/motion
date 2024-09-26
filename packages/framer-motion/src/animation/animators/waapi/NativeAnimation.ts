@@ -7,8 +7,6 @@ import {
     millisecondsToSeconds,
     secondsToMilliseconds,
 } from "../../../utils/time-conversion"
-import { isGenerator } from "../../generators/utils/is-generator"
-import { pregenerateKeyframes } from "../../generators/utils/pregenerate"
 import {
     AnimationPlaybackControls,
     UnresolvedValueKeyframe,
@@ -17,9 +15,9 @@ import {
     ValueKeyframesDefinition,
 } from "../../types"
 import { attachTimeline } from "./utils/attach-timeline"
+import { createGeneratorEasing } from "./utils/generator-easing"
 import { getFinalKeyframe } from "./utils/get-final-keyframe"
 import { setCSSVar, setStyle } from "./utils/style"
-import { supportsLinearEasing } from "./utils/supports-linear-easing"
 import { supportsWaapi } from "./utils/supports-waapi"
 
 const state = new WeakMap<Element, Map<string, NativeAnimation>>()
@@ -96,29 +94,20 @@ export class NativeAnimation implements AnimationPlaybackControls {
 
         hydrateKeyframes(valueName, valueKeyframes, readInitialKeyframe)
 
-        const { type = "keyframes" } = options
-        if (isGenerator(type)) {
-            const generator = type({ ...options, keyframes: [0, 100] })
-            const pregenerated = pregenerateKeyframes(generator)
-            options.duration = pregenerated.duration
+        createGeneratorEasing(options)
 
-            if (supportsLinearEasing()) {
-                options.ease = (progress: number) =>
-                    generator.next(pregenerated.duration * progress).value / 100
-            } else {
-                options.ease = "easeOut"
-            }
+        const onFinish = () => {
+            this.setValue(
+                element as HTMLElement,
+                valueName,
+                getFinalKeyframe(valueKeyframes as string[], this.options)
+            )
+            this.cancel()
+            this.resolveFinishedPromise()
         }
 
-        /**
-         * TODO:
-         *  - Polyfill promise
-         *  - Ensure final keyframe is applied on animation complete
-         *  - Add duration
-         *  - Tests
-         */
-
         if (!supportsWaapi()) {
+            onFinish()
         } else {
             if (!supportsPartialKeyframes() && !Array.isArray(valueKeyframes)) {
                 valueKeyframes = [readInitialKeyframe(), valueKeyframes]
@@ -135,15 +124,7 @@ export class NativeAnimation implements AnimationPlaybackControls {
                 this.animation.pause()
             }
 
-            this.animation.onfinish = () => {
-                this.setValue(
-                    element as HTMLElement,
-                    valueName,
-                    getFinalKeyframe(valueKeyframes as string[], this.options)
-                )
-                this.cancel()
-                this.resolveFinishedPromise()
-            }
+            this.animation.onfinish = onFinish
 
             if (this.pendingTimeline) {
                 attachTimeline(this.animation, this.pendingTimeline)
