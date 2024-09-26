@@ -11,8 +11,8 @@ export const generateLinearEasing = (
     let points = ""
     const numPoints = Math.round(duration / resolution)
 
-    for (let i = 0; i <= numPoints; i++) {
-        points += easing(progress(0, numPoints, i)) + ", "
+    for (let i = 0; i < numPoints; i++) {
+        points += easing(progress(0, numPoints - 1, i)) + ", "
     }
 
     return `linear(${points.substring(0, points.length - 2)})`

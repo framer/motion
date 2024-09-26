@@ -456,7 +456,7 @@ describe("WAAPI animations", () => {
                 delay: 2000,
                 duration: 50,
                 direction: "normal",
-                easing: "linear(0, 0.2, 0.4, 0.6, 0.8, 1)",
+                easing: "linear(0, 0.25, 0.5, 0.75, 1)",
                 fill: "both",
                 iterations: 1,
             }
@@ -847,7 +847,7 @@ describe("WAAPI animations", () => {
                 delay: -0,
                 direction: "normal",
                 duration: 50,
-                easing: "linear(0, -0.04224417777368217, 0.15596336740345584, 0.875, 0.9921875, 0.99951171875)",
+                easing: "linear(0, -0.033628590829175686, 0.5, 0.984375, 0.99951171875)",
                 fill: "both",
                 iterations: 1,
             }
@@ -920,7 +920,7 @@ describe("WAAPI animations", () => {
                 delay: -0,
                 direction: "normal",
                 duration: 50,
-                easing: "linear(0, -0.04224417777368217, 0.15596336740345584, 0.8440366325965442, 1.0422441777736822, 1)",
+                easing: "linear(0, -0.033628590829175686, 0.5, 1.0336285908291756, 1)",
                 fill: "both",
                 iterations: 1,
             }
@@ -991,7 +991,7 @@ describe("WAAPI animations", () => {
                 delay: -0,
                 direction: "normal",
                 duration: 50,
-                easing: "linear(0, 0.041742430504416006, 0.20000000000000007, 0.7999999999999999, 0.958257569495584, 1)",
+                easing: "linear(0, 0.06698729810778065, 0.5, 0.9330127018922194, 1)",
                 fill: "both",
                 iterations: 1,
             }
