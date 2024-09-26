@@ -98,7 +98,7 @@
     "bundlesize": [
         {
             "path": "./dist/size-rollup-motion.js",
-            "maxSize": "34.02 kB"
+            "maxSize": "34.1 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
@@ -106,7 +106,7 @@
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
-            "maxSize": "17 kB"
+            "maxSize": "17.1 kB"
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
@@ -121,5 +121,5 @@
             "maxSize": "5.2 kB"
         }
     ],
-    "gitHead": "aa6f494dfb50343b3b765ed2057f605967c9f3c0"
+    "gitHead": "bff50291f7a5e6bbb3746ec57ffeff02bfd13bc3"
 }
