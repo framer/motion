@@ -1,7 +1,6 @@
 import { startWaapiAnimation } from "."
 import { ProgressTimeline } from "../../../render/dom/scroll/observe"
 import { numberValueTypes } from "../../../render/dom/value-types/number"
-import { memo } from "../../../utils/memo"
 import { noop } from "../../../utils/noop"
 import {
     millisecondsToSeconds,
@@ -18,18 +17,10 @@ import { attachTimeline } from "./utils/attach-timeline"
 import { createGeneratorEasing } from "./utils/generator-easing"
 import { getFinalKeyframe } from "./utils/get-final-keyframe"
 import { setCSSVar, setStyle } from "./utils/style"
+import { supportsPartialKeyframes } from "./utils/supports-partial-keyframes"
 import { supportsWaapi } from "./utils/supports-waapi"
 
 const state = new WeakMap<Element, Map<string, NativeAnimation>>()
-
-const supportsPartialKeyframes = memo(() => {
-    try {
-        document.createElement("div").animate({ opacity: [1] })
-    } catch (e) {
-        return false
-    }
-    return true
-})
 
 function hydrateKeyframes(
     valueName: string,
@@ -69,7 +60,7 @@ export class NativeAnimation implements AnimationPlaybackControls {
     constructor(
         element: Element,
         valueName: string,
-        valueKeyframes: number | string | ValueKeyframesDefinition,
+        valueKeyframes: ValueKeyframesDefinition,
         options: ValueAnimationOptions
     ) {
         const isCSSVar = valueName.startsWith("--")
@@ -138,7 +129,7 @@ export class NativeAnimation implements AnimationPlaybackControls {
     }
 
     get duration() {
-        return this.options.duration || 0.3
+        return millisecondsToSeconds(this.options.duration || 300)
     }
 
     get time() {
@@ -148,7 +139,6 @@ export class NativeAnimation implements AnimationPlaybackControls {
     }
 
     set time(newTime: number) {
-        // TODO Force resolve
         if (this.animation) {
             this.animation.currentTime = secondsToMilliseconds(newTime)
         }

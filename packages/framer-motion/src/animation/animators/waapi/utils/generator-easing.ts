@@ -1,3 +1,4 @@
+import { secondsToMilliseconds } from "../../../../utils/time-conversion"
 import { isGenerator } from "../../../generators/utils/is-generator"
 import { pregenerateKeyframes } from "../../../generators/utils/pregenerate"
 import { ValueAnimationOptions } from "../../../types"
@@ -8,7 +9,7 @@ export function createGeneratorEasing(options: ValueAnimationOptions) {
     if (isGenerator(type)) {
         const generator = type({ ...options, keyframes: [0, 100] })
         const pregenerated = pregenerateKeyframes(generator)
-        options.duration = pregenerated.duration
+        options.duration = secondsToMilliseconds(pregenerated.duration)
 
         if (supportsLinearEasing()) {
             options.ease = (progress: number) =>

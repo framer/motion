@@ -70,4 +70,23 @@ describe("animateStyle()", () => {
                 expect($element.style.backgroundColor).to.equal("red")
             })
     })
+
+    it("correctly reads wildcard keyframes", () => {
+        cy.visit("?test=animate-style-wildcard")
+            .wait(200)
+            .get("#box")
+            .should(([$element]: any) => {
+                expect($element.getBoundingClientRect().width).to.equal(200)
+                expect($element.style.width).to.equal("200px")
+            })
+    })
+
+    it("correctly measures duration", () => {
+        cy.visit("?test=animate-style-duration")
+            .wait(400)
+            .get("#box")
+            .should(([$element]: any) => {
+                expect($element.style.backgroundColor).to.equal("green")
+            })
+    })
 })
