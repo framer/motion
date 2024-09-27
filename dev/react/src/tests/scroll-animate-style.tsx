@@ -27,7 +27,7 @@ export const App = () => {
             <div style={{ ...spacer, backgroundColor: "green" }} />
             <div style={{ ...spacer, backgroundColor: "blue" }} />
             <div style={{ ...spacer, backgroundColor: "yellow" }} />
-            <div ref={scope} style={progressStyle}>
+            <div ref={scope} id="color" style={progressStyle}>
                 A
             </div>
         </>

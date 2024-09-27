@@ -135,7 +135,7 @@ describe("scroll() animation", () => {
             })
     })
 
-    it("With useAnimateMini,  updates window scroll progress callback", () => {
+    it("With useAnimateMini, updates window scroll progress callback", () => {
         cy.visit("?test=scroll-animate-style").wait(100).viewport(100, 400)
 
         cy.scrollTo(0, 600)
@@ -149,6 +149,7 @@ describe("scroll() animation", () => {
                     "rgb(180, 180, 180)"
                 )
             })
+
         cy.viewport(100, 800)
             .wait(200)
             .get("#color")
