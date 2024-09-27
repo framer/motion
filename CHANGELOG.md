@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.9.0] 2024-09-27
+
+### Added
+
+-   Mini `animate` and `useAnimate` functions.
+
 ## [11.8.0] 2024-09-25
 
 ### Added
