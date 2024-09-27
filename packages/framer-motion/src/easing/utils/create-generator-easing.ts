@@ -13,7 +13,7 @@ export function createGeneratorEasing(
     scale = 100,
     createGenerator: GeneratorFactory
 ) {
-    const generator = createGenerator({ keyframes: [0, scale], ...options })
+    const generator = createGenerator({ ...options, keyframes: [0, scale] })
     const duration = Math.min(
         calcGeneratorDuration(generator),
         maxGeneratorDuration

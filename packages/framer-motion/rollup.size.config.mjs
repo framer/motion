@@ -46,13 +46,9 @@ const sizeScroll = createSizeBundle(
     "lib/render/dom/scroll/index.js",
     "dist/size-rollup-scroll.js"
 )
-const sizeFeatherweightAnimate = createSizeBundle(
+const sizeAnimateMini = createSizeBundle(
     "lib/animation/animators/waapi/animate-style.js",
     "dist/size-rollup-waapi-animate.js"
-)
-const sizeFeatherweightAnimateSequence = createSizeBundle(
-    "lib/animation/animators/waapi/animate-sequence.js",
-    "dist/size-rollup-waapi-animate-sequence.js"
 )
 
 const domAnimation = Object.assign({}, es, {
@@ -103,8 +99,7 @@ export default [
     m,
     sizeAnimate,
     sizeScroll,
-    sizeFeatherweightAnimate,
-    sizeFeatherweightAnimateSequence,
+    sizeAnimateMini,
     domAnimation,
     domMax,
 ]

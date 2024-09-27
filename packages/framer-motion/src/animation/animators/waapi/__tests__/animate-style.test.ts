@@ -11,12 +11,11 @@ const duration = 0.001
 describe("animateMini", () => {
     test("No type errors", async () => {
         const div = document.createElement("div")
-        const animation = animateMini(
+        animateMini(
             div,
-            { opacity: 0.6, x: 1, scale: 1, "--css-var": 2 },
+            { opacity: 0.6, "--css-var": 2 },
             {
                 duration,
-                x: {},
                 "--css-var": {
                     repeatType: "mirror",
                 },
@@ -25,9 +24,6 @@ describe("animateMini", () => {
                 times: [0],
             }
         )
-        await animation.then(() => {
-            expect(true).toBe(true)
-        })
     })
 
     test("Applies target keyframe when animation has finished", async () => {
@@ -51,16 +47,6 @@ describe("animateMini", () => {
         )
         await animation.then(() => {
             expect(div).toHaveStyle("opacity: 0.5")
-        })
-    })
-
-    test("Applies transform template", async () => {
-        const div = document.createElement("div")
-        const animation = animateMini(div, { x: 1 }, { duration })
-        await animation.then(() => {
-            expect(div).toHaveStyle(
-                "transform: translateX(var(--motion-translateX))"
-            )
         })
     })
 
@@ -131,18 +117,5 @@ describe("animateMini", () => {
         })
 
         return expect(promise).resolves.not.toBe("0px")
-    })
-
-    test("Split transforms support other units", async () => {
-        const div = document.createElement("div")
-        const animation = animateMini(div, { x: "10%" }, { duration })
-        await animation.then(() => {
-            expect(div).toHaveStyle(
-                "transform: translateX(var(--motion-translateX))"
-            )
-            expect(div.style.getPropertyValue("--motion-translateX")).toBe(
-                "10%"
-            )
-        })
     })
 })

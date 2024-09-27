@@ -8,7 +8,7 @@ import {
     DynamicAnimationOptions,
     ElementOrSelector,
 } from "../../types"
-import { getValueTransition } from "../../utils/transitions"
+import { getValueTransition } from "../../utils/get-value-transition"
 import { NativeAnimation } from "./NativeAnimation"
 
 export function animateElements(

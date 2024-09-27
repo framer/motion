@@ -19,7 +19,7 @@ export const App = () => {
 
         return () => {
             clearTimeout(timer)
-            animation.stop()
+            animation.cancel()
         }
     }, [])
 

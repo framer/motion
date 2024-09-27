@@ -15,7 +15,7 @@ export const App = () => {
 
         animation.complete()
 
-        return () => animation.stop()
+        return () => animation.cancel()
     }, [])
 
     return <div id="box" ref={ref} style={style} />

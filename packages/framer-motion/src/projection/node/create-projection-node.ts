@@ -16,7 +16,7 @@ import { removeBoxTransforms } from "../geometry/delta-remove"
 import { Axis, AxisDelta, Box, Delta } from "../geometry/types"
 import { transformBox, translateAxis } from "../geometry/delta-apply"
 import { Point } from "../geometry/types"
-import { getValueTransition } from "../../animation/utils/transitions"
+import { getValueTransition } from "../../animation/utils/get-value-transition"
 import {
     aspectRatio,
     axisDeltaEquals,

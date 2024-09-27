@@ -1,12 +1,14 @@
 import { startWaapiAnimation } from "."
+import { createGeneratorEasing } from "../../../easing/utils/create-generator-easing"
 import { ProgressTimeline } from "../../../render/dom/scroll/observe"
-import { numberValueTypes } from "../../../render/dom/value-types/number"
+import { browserNumberValueTypes } from "../../../render/dom/value-types/number-browser"
 import { invariant } from "../../../utils/errors"
 import { noop } from "../../../utils/noop"
 import {
     millisecondsToSeconds,
     secondsToMilliseconds,
 } from "../../../utils/time-conversion"
+import { isGenerator } from "../../generators/utils/is-generator"
 import {
     AnimationPlaybackControls,
     UnresolvedValueKeyframe,
@@ -15,9 +17,9 @@ import {
     ValueKeyframesDefinition,
 } from "../../types"
 import { attachTimeline } from "./utils/attach-timeline"
-import { createGeneratorEasing } from "./utils/generator-easing"
 import { getFinalKeyframe } from "./utils/get-final-keyframe"
 import { setCSSVar, setStyle } from "./utils/style"
+import { supportsLinearEasing } from "./utils/supports-linear-easing"
 import { supportsPartialKeyframes } from "./utils/supports-partial-keyframes"
 import { supportsWaapi } from "./utils/supports-waapi"
 
@@ -26,17 +28,35 @@ const state = new WeakMap<Element, Map<string, NativeAnimation>>()
 function hydrateKeyframes(
     valueName: string,
     keyframes: ValueKeyframe[] | UnresolvedValueKeyframe[],
-    read: () => string | number
+    read: () => ValueKeyframe
 ) {
     for (let i = 0; i < keyframes.length; i++) {
         if (keyframes[i] === null) {
             keyframes[i] = i === 0 ? read() : keyframes[i - 1]
         }
 
-        if (typeof keyframes[i] === "number" && numberValueTypes[valueName]) {
-            keyframes[i] = numberValueTypes[valueName].transform!(keyframes[i])
+        if (
+            typeof keyframes[i] === "number" &&
+            browserNumberValueTypes[valueName]
+        ) {
+            keyframes[i] = browserNumberValueTypes[valueName].transform!(
+                keyframes[i]
+            )
         }
     }
+
+    if (!supportsPartialKeyframes() && keyframes.length < 2) {
+        keyframes.unshift(read())
+    }
+}
+
+const defaultEasing = "easeOut"
+
+function getElementAnimationState(element: Element) {
+    const animationState =
+        state.get(element) || new Map<string, NativeAnimation>()
+    state.set(element, animationState)
+    return state.get(element)!
 }
 
 export class NativeAnimation implements AnimationPlaybackControls {
@@ -58,6 +78,8 @@ export class NativeAnimation implements AnimationPlaybackControls {
         value: string
     ) => void
 
+    removeAnimation: VoidFunction
+
     constructor(
         element: Element,
         valueName: string,
@@ -74,10 +96,9 @@ export class NativeAnimation implements AnimationPlaybackControls {
             `animateMini doesn't support "type" as a string. Did you mean to import { spring } from "framer-motion"?`
         )
 
-        const existingAnimation = state.get(element)?.get(valueName)
-        if (existingAnimation) {
-            existingAnimation.stop()
-        }
+        const existingAnimation =
+            getElementAnimationState(element).get(valueName)
+        existingAnimation && existingAnimation.stop()
 
         const readInitialKeyframe = () => {
             return valueName.startsWith("--")
@@ -91,10 +112,25 @@ export class NativeAnimation implements AnimationPlaybackControls {
 
         hydrateKeyframes(valueName, valueKeyframes, readInitialKeyframe)
 
-        createGeneratorEasing(options)
+        if (isGenerator(options.type)) {
+            const generatorOptions = createGeneratorEasing(
+                options,
+                100,
+                options.type
+            )
+
+            options.ease = supportsLinearEasing()
+                ? generatorOptions.ease
+                : defaultEasing
+            options.duration = generatorOptions.duration
+            options.type = "keyframes"
+        } else {
+            options.ease = options.ease || defaultEasing
+        }
+
+        this.removeAnimation = () => state.get(element)?.delete(valueName)
 
         const onFinish = () => {
-            state.get(element)?.delete(valueName)
             this.setValue(
                 element as HTMLElement,
                 valueName,
@@ -107,10 +143,6 @@ export class NativeAnimation implements AnimationPlaybackControls {
         if (!supportsWaapi()) {
             onFinish()
         } else {
-            if (!supportsPartialKeyframes() && !Array.isArray(valueKeyframes)) {
-                valueKeyframes = [readInitialKeyframe(), valueKeyframes]
-            }
-
             this.animation = startWaapiAnimation(
                 element,
                 valueName,
@@ -128,10 +160,7 @@ export class NativeAnimation implements AnimationPlaybackControls {
                 attachTimeline(this.animation, this.pendingTimeline)
             }
 
-            const elementAnimationState =
-                state.get(element) || new Map<string, NativeAnimation>()
-            elementAnimationState.set(valueName, this)
-            state.set(element, elementAnimationState)
+            getElementAnimationState(element).set(valueName, this)
         }
     }
 
@@ -140,9 +169,12 @@ export class NativeAnimation implements AnimationPlaybackControls {
     }
 
     get time() {
-        return millisecondsToSeconds(
-            (this.animation?.currentTime as number) || 0
-        )
+        if (this.animation) {
+            return millisecondsToSeconds(
+                (this.animation?.currentTime as number) || 0
+            )
+        }
+        return 0
     }
 
     set time(newTime: number) {
@@ -152,7 +184,7 @@ export class NativeAnimation implements AnimationPlaybackControls {
     }
 
     get speed() {
-        return this.animation?.playbackRate || 1
+        return this.animation ? this.animation.playbackRate : 1
     }
 
     set speed(newSpeed: number) {
@@ -162,7 +194,7 @@ export class NativeAnimation implements AnimationPlaybackControls {
     }
 
     get state() {
-        return this.animation?.playState || "finished"
+        return this.animation ? this.animation.playState : "finished"
     }
 
     get startTime() {
@@ -191,9 +223,7 @@ export class NativeAnimation implements AnimationPlaybackControls {
         }
 
         this.animation.commitStyles()
-        try {
-            this.animation.cancel()
-        } catch (e) {}
+        this.cancel()
     }
 
     complete() {
@@ -201,7 +231,10 @@ export class NativeAnimation implements AnimationPlaybackControls {
     }
 
     cancel() {
-        this.animation && this.animation.cancel()
+        this.removeAnimation()
+        try {
+            this.animation && this.animation.cancel()
+        } catch (e) {}
     }
 
     /**

@@ -14,7 +14,7 @@ export const App = () => {
         )
 
         return () => {
-            animation.stop()
+            animation.cancel()
         }
     }, [])
 

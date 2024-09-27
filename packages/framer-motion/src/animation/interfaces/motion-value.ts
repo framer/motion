@@ -2,7 +2,7 @@ import { Transition } from "../../types"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
 import type { MotionValue, StartAnimation } from "../../value"
 import { getDefaultTransition } from "../utils/default-transitions"
-import { getValueTransition, isTransitionDefined } from "../utils/transitions"
+import { getValueTransition } from "../utils/get-value-transition"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
 import type { UnresolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { MotionGlobalConfig } from "../../utils/GlobalConfig"
@@ -13,6 +13,7 @@ import { frame } from "../../frameloop/frame"
 import { AcceleratedAnimation } from "../animators/AcceleratedAnimation"
 import { MainThreadAnimation } from "../animators/MainThreadAnimation"
 import { GroupPlaybackControls } from "../GroupPlaybackControls"
+import { isTransitionDefined } from "../utils/is-transition-defined"
 
 export const animateMotionValue =
     <V extends string | number>(

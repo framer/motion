@@ -1,7 +1,7 @@
 import { clamp } from "../../../utils/clamp"
 import { alpha as alphaType, number } from "../numbers"
 import { RGBA } from "../types"
-import { sanitize } from "../utils"
+import { sanitize } from "../utils/sanitize"
 import { isColorString, splitColor } from "./utils"
 
 const clampRgbUnit = (v: number) => clamp(0, 255, v)
