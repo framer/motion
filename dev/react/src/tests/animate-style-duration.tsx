@@ -10,17 +10,17 @@ export const App = () => {
 
         ref.current.style.backgroundColor = "red"
 
-        let animation = animateMini(
+        let animation = animate(
             ref.current,
             { width: [null, 200] },
             { duration: 0.1 }
         )
 
         if (animation.duration === 0.1) {
-            animation = animateMini(ref.current, { width: [null, 200] }, {})
+            animation = animate(ref.current, { width: [null, 200] }, {})
 
             if (animation.duration === 0.3) {
-                animation = animateMini(
+                animation = animate(
                     ref.current,
                     { width: [null, 200] },
                     { type: spring }
