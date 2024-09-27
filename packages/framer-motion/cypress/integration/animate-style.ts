@@ -1,4 +1,4 @@
-describe("animateStyle()", () => {
+describe("animateMini()", () => {
     it("correctly runs an animation", () => {
         cy.visit("?test=animate-style")
             .wait(200)

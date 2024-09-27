@@ -1,9 +1,9 @@
-import { scroll, useAnimateStyle as useAnimateNative } from "framer-motion"
+import { scroll, useAnimateMini } from "framer-motion"
 import * as React from "react"
 import { useEffect } from "react"
 
 export const App = () => {
-    const [scope, animate] = useAnimateNative()
+    const [scope, animate] = useAnimateMini()
 
     useEffect(() => {
         if (!scope.current) return

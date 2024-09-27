@@ -71,7 +71,7 @@ export class NativeAnimation implements AnimationPlaybackControls {
 
         invariant(
             typeof options.type !== "string",
-            `animateStyle doesn't support "type" as a string. Did you mean to import { spring } from "framer-motion"?`
+            `animateMini doesn't support "type" as a string. Did you mean to import { spring } from "framer-motion"?`
         )
 
         const existingAnimation = state.get(element)?.get(valueName)

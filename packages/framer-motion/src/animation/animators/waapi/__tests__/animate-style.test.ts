@@ -1,5 +1,5 @@
 import "../../../../../jest.setup"
-import { animateStyle } from "../animate-style"
+import { animateMini } from "../animate-style"
 import "./polyfill"
 
 /**
@@ -8,10 +8,10 @@ import "./polyfill"
  */
 const duration = 0.001
 
-describe("animateStyle", () => {
+describe("animateMini", () => {
     test("No type errors", async () => {
         const div = document.createElement("div")
-        const animation = animateStyle(
+        const animation = animateMini(
             div,
             { opacity: 0.6, x: 1, scale: 1, "--css-var": 2 },
             {
@@ -32,7 +32,7 @@ describe("animateStyle", () => {
 
     test("Applies target keyframe when animation has finished", async () => {
         const div = document.createElement("div")
-        const animation = animateStyle(
+        const animation = animateMini(
             div,
             { opacity: 0.6 },
             { duration, x: {}, "--css-var": {} }
@@ -44,7 +44,7 @@ describe("animateStyle", () => {
 
     test("Applies final target keyframe when animation has finished", async () => {
         const div = document.createElement("div")
-        const animation = animateStyle(
+        const animation = animateMini(
             div,
             { opacity: [0.2, 0.5] },
             { duration }
@@ -56,7 +56,7 @@ describe("animateStyle", () => {
 
     test("Applies transform template", async () => {
         const div = document.createElement("div")
-        const animation = animateStyle(div, { x: 1 }, { duration })
+        const animation = animateMini(div, { x: 1 }, { duration })
         await animation.then(() => {
             expect(div).toHaveStyle(
                 "transform: translateX(var(--motion-translateX))"
@@ -66,7 +66,7 @@ describe("animateStyle", () => {
 
     test("time sets and gets time", async () => {
         const div = document.createElement("div")
-        const animation = animateStyle(div, { opacity: 0.5 }, { duration: 10 })
+        const animation = animateMini(div, { opacity: 0.5 }, { duration: 10 })
 
         expect(animation.time).toBe(0)
         animation.time = 5
@@ -75,7 +75,7 @@ describe("animateStyle", () => {
 
     test("autoplay false pauses animation", async () => {
         const div = document.createElement("div")
-        const animation = animateStyle(
+        const animation = animateMini(
             div,
             { opacity: 0.5 },
             { duration: 0.1, autoplay: false }
@@ -97,7 +97,7 @@ describe("animateStyle", () => {
     test("time can be set to duration", async () => {
         const div = document.createElement("div")
         div.style.opacity = "0"
-        const animation = animateStyle(div, { opacity: 0.5 }, { duration: 1 })
+        const animation = animateMini(div, { opacity: 0.5 }, { duration: 1 })
         animation.pause()
         animation.time = 1
 
@@ -111,18 +111,18 @@ describe("animateStyle", () => {
 
     test("duration gets the duration of the animation", async () => {
         const div = document.createElement("div")
-        const animation = animateStyle(div, { opacity: 0.5 }, { duration: 10 })
+        const animation = animateMini(div, { opacity: 0.5 }, { duration: 10 })
 
         expect(animation.duration).toBe(10)
     })
 
     test("Interrupt polyfilled transforms", async () => {
         const div = document.createElement("div")
-        animateStyle(div, { x: 300 }, { duration: 1 })
+        animateMini(div, { x: 300 }, { duration: 1 })
 
         const promise = new Promise<string | undefined>((resolve) => {
             setTimeout(() => {
-                const animation = animateStyle(div, { x: 0 }, { duration: 1 })
+                const animation = animateMini(div, { x: 0 }, { duration: 1 })
                 setTimeout(() => {
                     animation.stop()
                     resolve(div.style.getPropertyValue("--motion-translateX"))
@@ -135,7 +135,7 @@ describe("animateStyle", () => {
 
     test("Split transforms support other units", async () => {
         const div = document.createElement("div")
-        const animation = animateStyle(div, { x: "10%" }, { duration })
+        const animation = animateMini(div, { x: "10%" }, { duration })
         await animation.then(() => {
             expect(div).toHaveStyle(
                 "transform: translateX(var(--motion-translateX))"

@@ -1,4 +1,4 @@
-import { animateStyle } from "framer-motion/dom"
+import { animateMini } from "framer-motion/dom"
 import { useRef, useEffect } from "react"
 
 export const App = () => {
@@ -7,7 +7,7 @@ export const App = () => {
     useEffect(() => {
         if (!ref.current) return
 
-        const animation = animateStyle(
+        const animation = animateMini(
             ref.current,
             { width: 200 },
             { duration: 0.1 }

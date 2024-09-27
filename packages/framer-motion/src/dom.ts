@@ -1,11 +1,10 @@
 export { motionValue, MotionValue } from "./value"
 export type { PassiveEffect, Subscriber } from "./value"
 export { animate, createScopedAnimate } from "./animation/animate"
+export { animateMini } from "./animation/animators/waapi/animate-style"
 export { scroll } from "./render/dom/scroll"
 export { scrollInfo } from "./render/dom/scroll/track"
 export { inView } from "./render/dom/viewport"
-export { animateStyle } from "./animation/animators/waapi/animate-style"
-export { animateSequence } from "./animation/animators/waapi/animate-sequence"
 
 /**
  * Easing

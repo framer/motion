@@ -1,5 +1,5 @@
 import { spring } from "framer-motion"
-import { animateStyle } from "framer-motion/dom"
+import { animateMini } from "framer-motion/dom"
 import { useRef, useEffect } from "react"
 
 export const App = () => {
@@ -10,17 +10,17 @@ export const App = () => {
 
         ref.current.style.backgroundColor = "red"
 
-        let animation = animateStyle(
+        let animation = animateMini(
             ref.current,
             { width: [null, 200] },
             { duration: 0.1 }
         )
 
         if (animation.duration === 0.1) {
-            animation = animateStyle(ref.current, { width: [null, 200] }, {})
+            animation = animateMini(ref.current, { width: [null, 200] }, {})
 
             if (animation.duration === 0.3) {
-                animation = animateStyle(
+                animation = animateMini(
                     ref.current,
                     { width: [null, 200] },
                     { type: spring }

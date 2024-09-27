@@ -124,7 +124,7 @@ describe("scroll() animation", () => {
                 )
             })
     })
-    it("With useAnimateStyle, updates animation on first frame, before scroll event", () => {
+    it("With useAnimateMini, updates animation on first frame, before scroll event", () => {
         cy.visit("?test=scroll-animate-style")
             .wait(100)
             .get("#color")
@@ -135,7 +135,7 @@ describe("scroll() animation", () => {
             })
     })
 
-    it("With useAnimateStyle,  updates window scroll progress callback", () => {
+    it("With useAnimateMini,  updates window scroll progress callback", () => {
         cy.visit("?test=scroll-animate-style").wait(100).viewport(100, 400)
 
         cy.scrollTo(0, 600)

@@ -3,7 +3,7 @@ import { useUnmountEffect } from "../../utils/use-unmount-effect"
 import { createScopedWaapiAnimate } from "../animators/waapi/animate-style"
 import { AnimationScope } from "../types"
 
-export function useAnimateStyle<T extends Element = any>() {
+export function useAnimateMini<T extends Element = any>() {
     const scope: AnimationScope<T> = useConstant(() => ({
         current: null!, // Will be hydrated by React
         animations: [],

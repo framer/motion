@@ -26,4 +26,4 @@ export const createScopedWaapiAnimate = (scope?: AnimationScope) => {
     return scopedAnimate
 }
 
-export const animateStyle = /*@__PURE__*/ createScopedWaapiAnimate()
+export const animateMini = /*@__PURE__*/ createScopedWaapiAnimate()
