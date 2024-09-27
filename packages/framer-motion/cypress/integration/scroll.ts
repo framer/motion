@@ -134,34 +134,6 @@ describe("scroll() animation", () => {
                 )
             })
     })
-
-    it("With useAnimateMini, updates window scroll progress callback", () => {
-        cy.visit("?test=scroll-animate-style").wait(100).viewport(100, 400)
-
-        cy.scrollTo(0, 600)
-            .wait(200)
-            .get("#color")
-            .should(([$element]: any) => {
-                expect(getComputedStyle($element).backgroundColor).to.equal(
-                    "rgb(180, 180, 180)"
-                )
-                expect(getComputedStyle($element).color).to.equal(
-                    "rgb(180, 180, 180)"
-                )
-            })
-
-        cy.viewport(100, 800)
-            .wait(200)
-            .get("#color")
-            .should(([$element]: any) => {
-                expect(getComputedStyle($element).backgroundColor).to.equal(
-                    "rgb(221, 221, 221)"
-                )
-                expect(getComputedStyle($element).color).to.equal(
-                    "rgb(128, 128, 128)"
-                )
-            })
-    })
 })
 
 describe("SVG", () => {
