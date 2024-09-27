@@ -222,7 +222,9 @@ export class NativeAnimation implements AnimationPlaybackControls {
             return
         }
 
-        this.animation.commitStyles()
+        if (this.animation.commitStyles) {
+            this.animation.commitStyles()
+        }
         this.cancel()
     }
 

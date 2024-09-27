@@ -1,5 +1,5 @@
 import { spring } from "framer-motion"
-import { animateMini } from "framer-motion/dom"
+import { animate } from "framer-motion/dom/mini"
 import { useRef, useEffect } from "react"
 
 export const App = () => {

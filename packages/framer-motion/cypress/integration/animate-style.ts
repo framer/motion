@@ -34,7 +34,7 @@ describe("animateMini()", () => {
             .wait(200)
             .get("#box")
             .should(([$element]: any) => {
-                expect($element.getBoundingClientRect().width).not.to.equal(100)
+                expect($element.getBoundingClientRect().width).to.equal(100)
                 expect($element.style.width).to.equal("100px")
             })
     })
