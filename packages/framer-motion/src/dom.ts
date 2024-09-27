@@ -1,6 +1,7 @@
 export { motionValue, MotionValue } from "./value"
 export type { PassiveEffect, Subscriber } from "./value"
 export { animate, createScopedAnimate } from "./animation/animate"
+export { animateMini } from "./animation/animators/waapi/animate-style"
 export { scroll } from "./render/dom/scroll"
 export { scrollInfo } from "./render/dom/scroll/track"
 export { inView } from "./render/dom/viewport"
@@ -16,6 +17,13 @@ export * from "./easing/cubic-bezier"
 export * from "./easing/steps"
 export * from "./easing/modifiers/mirror"
 export * from "./easing/modifiers/reverse"
+
+/**
+ * Animation generators
+ */
+export { spring } from "./animation/generators/spring"
+export { inertia } from "./animation/generators/inertia"
+export { keyframes } from "./animation/generators/keyframes"
 
 /**
  * Utils

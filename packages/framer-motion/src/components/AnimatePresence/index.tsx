@@ -6,7 +6,7 @@ import { AnimatePresenceProps } from "./types"
 import { PresenceChild } from "./PresenceChild"
 import { LayoutGroupContext } from "../../context/LayoutGroupContext"
 import { invariant } from "../../utils/errors"
-import { useIsomorphicLayoutEffect } from "../../three-entry"
+import { useIsomorphicLayoutEffect } from "../../three"
 import { useConstant } from "../../utils/use-constant"
 import { ComponentKey, getChildKey, onlyElements } from "./utils"
 

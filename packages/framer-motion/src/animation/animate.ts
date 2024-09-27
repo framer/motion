@@ -19,6 +19,7 @@ import { animateSingleValue } from "./interfaces/single-value"
 import { AnimationSequence, SequenceOptions } from "./sequence/types"
 import { createAnimationsFromSequence } from "./sequence/create"
 import { isMotionValue } from "../value/utils/is-motion-value"
+import { spring } from "./generators/spring"
 
 function animateElements(
     elementOrSelector: ElementOrSelector,
@@ -84,7 +85,8 @@ function animateSequence(
     const animationDefinitions = createAnimationsFromSequence(
         sequence,
         options,
-        scope
+        scope,
+        { spring }
     )
 
     animationDefinitions.forEach(({ keyframes, transition }, subject) => {

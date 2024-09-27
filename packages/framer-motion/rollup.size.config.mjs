@@ -11,73 +11,45 @@ const sizePlugins = [
 
 const external = ["react", "react-dom", "react/jsx-runtime"]
 
-const motion = Object.assign({}, es, {
-    input: "lib/render/components/motion/size.js",
-    output: Object.assign({}, es.output, {
-        file: `dist/size-rollup-motion.js`,
-        preserveModules: false,
-        dir: undefined,
-    }),
-    plugins: [...sizePlugins],
-    external,
-    onwarn(warning, warn) {
-        if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
-            return
-        }
-        warn(warning)
-    },
-})
+function createSizeBundle(input, output) {
+    return Object.assign({}, es, {
+        input,
+        output: Object.assign({}, es.output, {
+            file: output,
+            preserveModules: false,
+            dir: undefined,
+        }),
+        plugins: [...sizePlugins, visualizer()],
+        external,
+        onwarn(warning, warn) {
+            if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
+                return
+            }
+            warn(warning)
+        },
+    })
+}
 
-const m = Object.assign({}, es, {
-    input: "lib/render/components/m/size.js",
-    output: Object.assign({}, es.output, {
-        file: `dist/size-rollup-m.js`,
-        preserveModules: false,
-        dir: undefined,
-    }),
-    plugins: [...sizePlugins, visualizer()],
-    external,
-    onwarn(warning, warn) {
-        if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
-            return
-        }
-        warn(warning)
-    },
-})
-
-const sizeAnimate = Object.assign({}, es, {
-    input: "lib/animation/animate.js",
-    output: Object.assign({}, es.output, {
-        file: `dist/size-rollup-animate.js`,
-        preserveModules: false,
-        dir: undefined,
-    }),
-    plugins: [...sizePlugins],
-    external,
-    onwarn(warning, warn) {
-        if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
-            return
-        }
-        warn(warning)
-    },
-})
-
-const sizeScroll = Object.assign({}, es, {
-    input: "lib/render/dom/scroll/index.js",
-    output: Object.assign({}, es.output, {
-        file: `dist/size-rollup-scroll.js`,
-        preserveModules: false,
-        dir: undefined,
-    }),
-    plugins: [...sizePlugins],
-    external,
-    onwarn(warning, warn) {
-        if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
-            return
-        }
-        warn(warning)
-    },
-})
+const motion = createSizeBundle(
+    "lib/render/components/motion/size.js",
+    "dist/size-rollup-motion.js"
+)
+const m = createSizeBundle(
+    "lib/render/components/m/size.js",
+    "dist/size-rollup-m.js"
+)
+const sizeAnimate = createSizeBundle(
+    "lib/animation/animate.js",
+    "dist/size-rollup-animate.js"
+)
+const sizeScroll = createSizeBundle(
+    "lib/render/dom/scroll/index.js",
+    "dist/size-rollup-scroll.js"
+)
+const sizeAnimateMini = createSizeBundle(
+    "lib/animation/animators/waapi/animate-style.js",
+    "dist/size-rollup-waapi-animate.js"
+)
 
 const domAnimation = Object.assign({}, es, {
     input: {
@@ -122,4 +94,12 @@ const domMax = Object.assign({}, es, {
 })
 
 // eslint-disable-next-line import/no-default-export
-export default [motion, m, domAnimation, domMax, sizeAnimate, sizeScroll]
+export default [
+    motion,
+    m,
+    sizeAnimate,
+    sizeScroll,
+    sizeAnimateMini,
+    domAnimation,
+    domMax,
+]

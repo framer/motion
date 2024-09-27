@@ -1,7 +1,7 @@
 import { mapEasingToNativeEasing } from "./easing"
 import { NativeAnimationOptions } from "./types"
 
-export function animateStyle(
+export function startWaapiAnimation(
     element: Element,
     valueName: string,
     keyframes: string[] | number[],

@@ -133,7 +133,10 @@ export interface AnimationPlaybackControls {
     complete: () => void
     cancel: () => void
     then: (onResolve: VoidFunction, onReject?: VoidFunction) => Promise<void>
-    attachTimeline?: (timeline: ProgressTimeline) => VoidFunction
+    attachTimeline?: (
+        timeline: ProgressTimeline,
+        fallback?: (animation: AnimationPlaybackControls) => VoidFunction
+    ) => VoidFunction
 }
 
 export type DynamicOption<T> = (i: number, total: number) => T

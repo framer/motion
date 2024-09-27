@@ -1,5 +1,5 @@
 import { complex } from "."
-import { floatRegex } from "../utils"
+import { floatRegex } from "../utils/float-regex"
 
 /**
  * Properties that should default to 1 or 100%

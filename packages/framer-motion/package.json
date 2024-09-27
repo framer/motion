@@ -11,27 +11,39 @@
             "import": "./dist/es/index.mjs",
             "default": "./dist/cjs/index.js"
         },
+        "./dom/mini": {
+            "types": "./dist/dom-mini.d.ts",
+            "require": "./dist/cjs/dom-mini.js",
+            "import": "./dist/es/dom-mini.mjs",
+            "default": "./dist/cjs/dom-mini.js"
+        },
         "./dom": {
-            "types": "./dist/dom-entry.d.ts",
-            "require": "./dist/cjs/dom-entry.js",
-            "import": "./dist/es/dom-entry.mjs",
-            "default": "./dist/cjs/dom-entry.js"
+            "types": "./dist/dom.d.ts",
+            "require": "./dist/cjs/dom.js",
+            "import": "./dist/es/dom.mjs",
+            "default": "./dist/cjs/dom.js"
         },
         "./client": {
-            "types": "./dist/client-entry.d.ts",
-            "require": "./dist/cjs/client-entry.js",
-            "import": "./dist/es/client-entry.mjs",
-            "default": "./dist/cjs/client-entry.js"
+            "types": "./dist/client.d.ts",
+            "require": "./dist/cjs/client.js",
+            "import": "./dist/es/client.mjs",
+            "default": "./dist/cjs/client.js"
         },
         "./m": {
-            "types": "./dist/m-entry.d.ts",
-            "require": "./dist/cjs/m-entry.js",
-            "import": "./dist/es/m-entry.mjs",
-            "default": "./dist/cjs/m-entry.js"
+            "types": "./dist/m.d.ts",
+            "require": "./dist/cjs/m.js",
+            "import": "./dist/es/m.mjs",
+            "default": "./dist/cjs/m.js"
+        },
+        "./mini": {
+            "types": "./dist/mini.d.ts",
+            "require": "./dist/cjs/mini.js",
+            "import": "./dist/es/mini.mjs",
+            "default": "./dist/cjs/mini.js"
         },
         "./projection": {
-            "import": "./dist/es/projection-entry.mjs",
-            "default": "./dist/es/projection-entry.mjs"
+            "import": "./dist/es/projection.mjs",
+            "default": "./dist/es/projection.mjs"
         },
         "./package.json": "./package.json"
     },
@@ -98,7 +110,7 @@
     "bundlesize": [
         {
             "path": "./dist/size-rollup-motion.js",
-            "maxSize": "34.1 kB"
+            "maxSize": "34.02 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
@@ -119,6 +131,10 @@
         {
             "path": "./dist/size-rollup-scroll.js",
             "maxSize": "5.2 kB"
+        },
+        {
+            "path": "./dist/size-rollup-waapi-animate.js",
+            "maxSize": "2.5 kB"
         }
     ],
     "gitHead": "bff50291f7a5e6bbb3746ec57ffeff02bfd13bc3"

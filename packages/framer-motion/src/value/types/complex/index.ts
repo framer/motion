@@ -1,12 +1,14 @@
 import { CSSVariableToken } from "../../../render/dom/utils/is-css-variable"
 import { color } from "../color"
 import { Color } from "../types"
-import { colorRegex, floatRegex, isString, sanitize } from "../utils"
+import { colorRegex } from "../utils/color-regex"
+import { floatRegex } from "../utils/float-regex"
+import { sanitize } from "../utils/sanitize"
 
 function test(v: any) {
     return (
         isNaN(v) &&
-        isString(v) &&
+        typeof v === "string" &&
         (v.match(floatRegex)?.length || 0) +
             (v.match(colorRegex)?.length || 0) >
             0

@@ -16,7 +16,7 @@ import { removeBoxTransforms } from "../geometry/delta-remove"
 import { Axis, AxisDelta, Box, Delta } from "../geometry/types"
 import { transformBox, translateAxis } from "../geometry/delta-apply"
 import { Point } from "../geometry/types"
-import { getValueTransition } from "../../animation/utils/transitions"
+import { getValueTransition } from "../../animation/utils/get-value-transition"
 import {
     aspectRatio,
     axisDeltaEquals,
@@ -48,7 +48,7 @@ import { delay } from "../../utils/delay"
 import { mixNumber } from "../../utils/mix/number"
 import { Process } from "../../frameloop/types"
 import { ValueAnimationOptions } from "../../animation/types"
-import { frameData } from "../../dom-entry"
+import { frameData } from "../../dom"
 import { isSVGElement } from "../../render/dom/utils/is-svg-element"
 import { animateSingleValue } from "../../animation/interfaces/single-value"
 import { clamp } from "../../utils/clamp"

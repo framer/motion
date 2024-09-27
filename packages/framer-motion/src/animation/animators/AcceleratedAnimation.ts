@@ -4,7 +4,6 @@ import { circInOut } from "../../easing/circ"
 import { EasingDefinition } from "../../easing/types"
 import { DOMKeyframesResolver } from "../../render/dom/DOMKeyframesResolver"
 import { ResolvedKeyframes } from "../../render/utils/KeyframesResolver"
-import { memo } from "../../utils/memo"
 import { noop } from "../../utils/noop"
 import {
     millisecondsToSeconds,
@@ -22,13 +21,12 @@ import {
 } from "./BaseAnimation"
 import { MainThreadAnimation } from "./MainThreadAnimation"
 import { acceleratedValues } from "./utils/accelerated-values"
-import { animateStyle } from "./waapi"
-import { isWaapiSupportedEasing, supportsLinearEasing } from "./waapi/easing"
+import { startWaapiAnimation } from "./waapi"
+import { isWaapiSupportedEasing } from "./waapi/easing"
+import { attachTimeline } from "./waapi/utils/attach-timeline"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
-
-const supportsWaapi = /*@__PURE__*/ memo(() =>
-    Object.hasOwnProperty.call(Element.prototype, "animate")
-)
+import { supportsLinearEasing } from "./waapi/utils/supports-linear-easing"
+import { supportsWaapi } from "./waapi/utils/supports-waapi"
 
 /**
  * 10ms is chosen here as it strikes a balance between smooth
@@ -213,7 +211,7 @@ export class AcceleratedAnimation<
             type = "keyframes"
         }
 
-        const animation = animateStyle(
+        const animation = startWaapiAnimation(
             motionValue.owner!.current as unknown as HTMLElement,
             name,
             keyframes as string[],
@@ -225,7 +223,7 @@ export class AcceleratedAnimation<
         animation.startTime = startTime ?? this.calcStartTime()
 
         if (this.pendingTimeline) {
-            animation.timeline = this.pendingTimeline
+            attachTimeline(animation, this.pendingTimeline)
             this.pendingTimeline = undefined
         } else {
             /**
@@ -326,9 +324,7 @@ export class AcceleratedAnimation<
             if (!resolved) return noop<void>
 
             const { animation } = resolved
-
-            animation.timeline = timeline
-            animation.onfinish = null
+            attachTimeline(animation, timeline)
         }
 
         return noop<void>

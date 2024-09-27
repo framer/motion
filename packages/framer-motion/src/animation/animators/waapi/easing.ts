@@ -1,18 +1,7 @@
 import { BezierDefinition, Easing } from "../../../easing/types"
 import { isBezierDefinition } from "../../../easing/utils/is-bezier-definition"
 import { generateLinearEasing } from "./utils/linear"
-import { memoSupports } from "./utils/memo-supports"
-
-export const supportsLinearEasing = /*@__PURE__*/ memoSupports(() => {
-    try {
-        document
-            .createElement("div")
-            .animate({ opacity: 0 }, { easing: "linear(0, 1)" })
-    } catch (e) {
-        return false
-    }
-    return true
-}, "linearEasing")
+import { supportsLinearEasing } from "./utils/supports-linear-easing"
 
 export function isWaapiSupportedEasing(easing?: Easing | Easing[]): boolean {
     return Boolean(

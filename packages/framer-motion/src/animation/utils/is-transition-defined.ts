@@ -20,11 +20,3 @@ export function isTransitionDefined({
 }: Transition & { elapsed?: number }) {
     return !!Object.keys(transition).length
 }
-
-export function getValueTransition(transition: Transition, key: string) {
-    return (
-        transition[key as keyof typeof transition] ||
-        (transition as any)["default"] ||
-        transition
-    )
-}

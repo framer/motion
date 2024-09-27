@@ -11,8 +11,8 @@ export { LazyMotion } from "./components/LazyMotion"
 export { LayoutGroup } from "./components/LayoutGroup"
 export { Reorder } from "./components/Reorder"
 
-export * from "./dom-entry"
-export * from "./three-entry"
+export * from "./dom"
+export * from "./three"
 
 /**
  * Features
@@ -48,6 +48,7 @@ export { useReducedMotionConfig } from "./utils/reduced-motion/use-reduced-motio
  */
 export { animationControls } from "./animation/hooks/animation-controls"
 export { useAnimate } from "./animation/hooks/use-animate"
+export { useAnimateMini } from "./animation/hooks/use-animate-style"
 export {
     useAnimation,
     useAnimationControls,

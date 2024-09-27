@@ -1,5 +1,4 @@
 import { HSLA, RGBA } from "../types"
-import { isString } from "../utils"
 import { hex } from "./hex"
 import { hsla } from "./hsla"
 import { rgba } from "./rgba"
@@ -16,7 +15,7 @@ export const color = {
         }
     },
     transform: (v: HSLA | RGBA | string) => {
-        return isString(v)
+        return typeof v === "string"
             ? v
             : v.hasOwnProperty("red")
             ? rgba.transform(v as RGBA)
