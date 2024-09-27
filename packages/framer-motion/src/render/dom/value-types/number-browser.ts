@@ -20,7 +20,6 @@ export const browserNumberValueTypes: ValueTypeMap = {
     maxWidth: px,
     height: px,
     maxHeight: px,
-    size: px,
     top: px,
     right: px,
     bottom: px,
