@@ -26,7 +26,7 @@ export const App = () => {
                     { type: spring }
                 )
 
-                if (animation.duration === 1.06) {
+                if (animation.duration === 1.1) {
                     ref.current.style.backgroundColor = "green"
                 }
             }

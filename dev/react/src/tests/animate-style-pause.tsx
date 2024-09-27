@@ -17,8 +17,6 @@ export const App = () => {
             animation.pause()
         }, 100)
 
-        animation.pause()
-
         return () => animation.cancel()
     }, [])
 

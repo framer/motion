@@ -122,7 +122,7 @@ export class NativeAnimation implements AnimationPlaybackControls {
             options.ease = supportsLinearEasing()
                 ? generatorOptions.ease
                 : defaultEasing
-            options.duration = generatorOptions.duration
+            options.duration = secondsToMilliseconds(generatorOptions.duration)
             options.type = "keyframes"
         } else {
             options.ease = options.ease || defaultEasing

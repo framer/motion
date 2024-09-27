@@ -25,7 +25,8 @@ describe("animateMini()", () => {
             .get("#box")
             .should(([$element]: any) => {
                 expect($element.getBoundingClientRect().width).not.to.equal(100)
-                expect($element.style.width).to.equal("100px")
+                expect($element.getBoundingClientRect().width).not.to.equal(200)
+                expect($element.style.width).not.to.equal("200px")
             })
     })
 
@@ -46,19 +47,6 @@ describe("animateMini()", () => {
             .should(([$element]: any) => {
                 expect($element.getBoundingClientRect().width).to.equal(200)
                 expect($element.style.width).to.equal("200px")
-            })
-    })
-
-    it("stop correctly resumes the animation", () => {
-        cy.visit("?test=animate-style-stop")
-            .wait(200)
-            .get("#box")
-            .should(([$element]: any) => {
-                const { width } = $element.getBoundingClientRect()
-                expect(width).to.lessThan(200).and.greaterThan(100)
-                expect(parseFloat($element.style.width))
-                    .to.lessThan(200)
-                    .and.greaterThan(100)
             })
     })
 

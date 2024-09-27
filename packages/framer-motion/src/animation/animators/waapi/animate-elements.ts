@@ -42,9 +42,10 @@ export function animateElements(
                 ...getValueTransition(options as any, valueName),
             }
 
-            valueOptions.duration = secondsToMilliseconds(
-                valueOptions.duration || 0
-            )
+            valueOptions.duration = valueOptions.duration
+                ? secondsToMilliseconds(valueOptions.duration)
+                : valueOptions.duration
+
             valueOptions.delay = secondsToMilliseconds(valueOptions.delay || 0)
 
             animations.push(
