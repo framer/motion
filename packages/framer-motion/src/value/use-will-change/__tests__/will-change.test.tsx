@@ -88,7 +88,7 @@ describe("willChange", () => {
 
         const { container } = render(<Component />)
 
-        expect(container.firstChild).toHaveStyle("will-change: filter;")
+        expect(container.firstChild).toHaveStyle("will-change: transform;")
     })
 
     test("Don't render values defined in animate on initial render if initial is false", async () => {
@@ -116,7 +116,7 @@ describe("willChange", () => {
 
         const { container } = render(<Component />)
 
-        expect(container.firstChild).not.toHaveStyle("will-change: opacity;")
+        expect(container.firstChild).not.toHaveStyle("will-change: transform;")
     })
 
     test("Static mode: Doesn't add externally-provided motion values", async () => {
@@ -132,6 +132,7 @@ describe("willChange", () => {
 
         const { container } = render(<Component />)
 
+        expect(container.firstChild).not.toHaveStyle("will-change: transform;")
         expect(container.firstChild).not.toHaveStyle("will-change: opacity;")
     })
 

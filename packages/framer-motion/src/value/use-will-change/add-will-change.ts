@@ -2,10 +2,7 @@ import { WillChangeMotionValue } from "./WillChangeMotionValue"
 import type { VisualElement } from "../../render/VisualElement"
 import { isWillChangeMotionValue } from "./is"
 
-export function addValueToWillChange(
-    visualElement: VisualElement,
-    key: string
-) {
+export function enableWillChange(visualElement: VisualElement) {
     if (!visualElement.applyWillChange) return
 
     let willChange = visualElement.getValue("willChange")
@@ -24,6 +21,6 @@ export function addValueToWillChange(
      * in which case we can't add the value to it.
      */
     if (isWillChangeMotionValue(willChange)) {
-        return willChange.add(key)
+        return willChange.add("transform")
     }
 }
