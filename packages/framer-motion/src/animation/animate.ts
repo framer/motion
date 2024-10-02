@@ -11,46 +11,44 @@ import {
     ElementOrSelector,
     ValueAnimationTransition,
 } from "./types"
-import { isDOMKeyframes } from "./utils/is-dom-keyframes"
 import { animateTarget } from "./interfaces/visual-element-target"
 import { GenericKeyframesTarget, TargetAndTransition } from "../types"
-import { createVisualElement } from "./utils/create-visual-element"
+import {
+    createDOMVisualElement,
+    createObjectVisualElement,
+} from "./utils/create-visual-element"
 import { animateSingleValue } from "./interfaces/single-value"
 import { AnimationSequence, SequenceOptions } from "./sequence/types"
 import { createAnimationsFromSequence } from "./sequence/create"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import { spring } from "./generators/spring"
 
-function animateElements(
-    elementOrSelector: ElementOrSelector,
-    keyframes: DOMKeyframesDefinition,
-    options?: DynamicAnimationOptions,
-    scope?: AnimationScope
-): AnimationPlaybackControls {
-    const elements = resolveElements(elementOrSelector, scope)
-    const numElements = elements.length
+type VisualElementFactory = (subject: any) => void
 
-    invariant(Boolean(numElements), "No valid element provided.")
+function animateSubjects(
+    createVisualElement: VisualElementFactory,
+    subjects: any[],
+    keyframes: { [key: string]: GenericKeyframesTarget<string | number> },
+    options?: DynamicAnimationOptions
+) {
+    const numSubjects = subjects.length
+
+    invariant(Boolean(numSubjects), "No valid animation subjects provided.")
 
     const animations: AnimationPlaybackControls[] = []
 
-    for (let i = 0; i < numElements; i++) {
-        const element = elements[i]
+    for (let i = 0; i < numSubjects; i++) {
+        const subject = subjects[i]
 
         /**
          * Check each element for an associated VisualElement. If none exists,
          * we need to create one.
          */
-        if (!visualElementStore.has(element)) {
-            /**
-             * TODO: We only need render-specific parts of the VisualElement.
-             * With some additional work the size of the animate() function
-             * could be reduced significantly.
-             */
-            createVisualElement(element as HTMLElement | SVGElement)
+        if (!visualElementStore.has(subject)) {
+            createVisualElement(subject)
         }
 
-        const visualElement = visualElementStore.get(element)!
+        const visualElement = visualElementStore.get(subject)!
 
         const transition = { ...options }
 
@@ -58,7 +56,7 @@ function animateElements(
          * Resolve stagger function if provided.
          */
         if (typeof transition.delay === "function") {
-            transition.delay = transition.delay(i, numElements)
+            transition.delay = transition.delay(i, numSubjects)
         }
 
         animations.push(
@@ -71,6 +69,16 @@ function animateElements(
     }
 
     return new GroupPlaybackControls(animations)
+}
+
+function animateElements(
+    elementOrSelector: ElementOrSelector,
+    keyframes: DOMKeyframesDefinition,
+    options?: DynamicAnimationOptions,
+    scope?: AnimationScope
+) {
+    const elements = resolveElements(elementOrSelector, scope)
+    return animateSubjects(createDOMVisualElement, elements, keyframes, options)
 }
 
 const isSequence = (value: unknown): value is AnimationSequence =>
@@ -108,6 +116,10 @@ function animateSequence(
     return new GroupPlaybackControls(animations)
 }
 
+type ObjectTarget<O extends Object> = {
+    [K in keyof O]: O[K] | GenericKeyframesTarget<O[K]>
+}
+
 export const createScopedAnimate = (scope?: AnimationScope) => {
     /**
      * Animate a single value
@@ -116,6 +128,14 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
         from: V,
         to: V | GenericKeyframesTarget<V>,
         options?: ValueAnimationTransition<V>
+    ): AnimationPlaybackControls
+    /**
+     * Animate an object
+     */
+    function scopedAnimate<O extends Object>(
+        from: O,
+        to: ObjectTarget<O>,
+        options?: DynamicAnimationOptions
     ): AnimationPlaybackControls
     /**
      * Animate a MotionValue
@@ -143,37 +163,45 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
     /**
      * Implementation
      */
-    function scopedAnimate<V extends string | number>(
-        valueOrElementOrSequence:
-            | AnimationSequence
-            | ElementOrSelector
-            | MotionValue<V>
-            | V,
+    function scopedAnimate<V extends string | number, O extends Object>(
+        subject: AnimationSequence | ElementOrSelector | MotionValue<V> | V | O,
         keyframes:
             | SequenceOptions
             | DOMKeyframesDefinition
             | V
+            | ObjectTarget<O>
             | GenericKeyframesTarget<V>,
         options?: ValueAnimationTransition<V> | DynamicAnimationOptions
     ): AnimationPlaybackControls {
         let animation: AnimationPlaybackControls
 
-        if (isSequence(valueOrElementOrSequence)) {
+        if (isSequence(subject)) {
             animation = animateSequence(
-                valueOrElementOrSequence,
+                subject,
                 keyframes as SequenceOptions,
                 scope
             )
-        } else if (isDOMKeyframes(keyframes)) {
+        } else if (
+            subject instanceof Element ||
+            (Array.isArray(subject) && subject[0] instanceof Element) ||
+            (typeof subject === "string" && typeof keyframes === "object")
+        ) {
             animation = animateElements(
-                valueOrElementOrSequence as ElementOrSelector,
-                keyframes,
+                subject as ElementOrSelector,
+                keyframes as DOMKeyframesDefinition,
                 options as DynamicAnimationOptions | undefined,
                 scope
             )
+        } else if (typeof subject === "object") {
+            animation = animateSubjects(
+                createObjectVisualElement,
+                subject as O,
+                keyframes as ObjectTarget<O>,
+                options as DynamicAnimationOptions
+            )
         } else {
             animation = animateSingleValue(
-                valueOrElementOrSequence as MotionValue<V> | V,
+                subject as MotionValue<V> | V,
                 keyframes as V | GenericKeyframesTarget<V>,
                 options as ValueAnimationTransition<V> | undefined
             )

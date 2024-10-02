@@ -40,7 +40,6 @@
         "@types/react": "latest",
         "@types/react-dom": "latest",
         "@types/styled-components": "^5.1.25",
-        "@types/three": "^0.143.0",
         "@typescript-eslint/eslint-plugin": "^7.4.0",
         "@typescript-eslint/parser": "^7.4.0",
         "animejs": "^3.2.2",

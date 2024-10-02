@@ -5,6 +5,7 @@ import { animate } from "../animate"
 import { useMotionValue } from "../../value/use-motion-value"
 import { motionValue, MotionValue } from "../../value"
 import { syncDriver } from "../animators/__tests__/utils"
+import * as THREE from "three"
 
 const duration = 0.001
 
@@ -310,5 +311,42 @@ describe("animate", () => {
             [div, { x: 100 }],
             [div, { y: 100 }],
         ])
+    })
+})
+
+describe("animate: Objects", () => {
+    test("Types: Object to object", () => {
+        animate({ x: 100 }, { x: 200 })
+    })
+
+    test("Types: Object to object with transition", () => {
+        animate({ x: 100 }, { x: 200 }, { duration: 0.01 })
+    })
+
+    test("Types: Object to object with value-specific transitions", () => {
+        animate({ x: 100 }, { x: 200 }, { x: { duration: 0.01 } })
+    })
+
+    test("Types: Object to object with onUpdate", () => {
+        const output = { x: 0 }
+        animate(
+            { x: 100 },
+            { x: 200, y: 300 },
+            {
+                onUpdate: (latest) => {
+                    output.x = latest.x
+                },
+            }
+        )
+    })
+
+    test("Types: Three.js Object3D", () => {
+        const object = new THREE.Object3D()
+        animate(object.rotation, { x: 10 }, { duration: 0.01 })
+    })
+
+    test("Types: Three.js Object3D keyframes", () => {
+        const object = new THREE.Object3D()
+        animate(object.rotation, { x: [null, 10] }, { duration: 0.01 })
     })
 })

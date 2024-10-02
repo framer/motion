@@ -6,7 +6,7 @@ import {
     SVGPathProperties,
 } from "./motion/types"
 
-export type GenericKeyframesTarget<V> = [null, ...V[]] | V[]
+export type GenericKeyframesTarget<V> = V[] | Array<null | V>
 
 /**
  * @public

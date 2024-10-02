@@ -91,6 +91,10 @@
     "dependencies": {
         "tslib": "^2.4.0"
     },
+    "devDependencies": {
+        "@types/three": "0.137.0",
+        "three": "0.137.0"
+    },
     "peerDependencies": {
         "@emotion/is-prop-valid": "*",
         "react": "^18.0.0",

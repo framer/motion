@@ -12,7 +12,7 @@ export { LayoutGroup } from "./components/LayoutGroup"
 export { Reorder } from "./components/Reorder"
 
 export * from "./dom"
-export * from "./three"
+export * from "./three-entry"
 
 /**
  * Features
