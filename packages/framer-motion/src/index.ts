@@ -178,3 +178,6 @@ export { DeprecatedLayoutGroupContext } from "./context/DeprecatedLayoutGroupCon
 export { useAnimatedState as useDeprecatedAnimatedState } from "./animation/hooks/use-animated-state"
 export { useInvertedScale as useDeprecatedInvertedScale } from "./value/use-inverted-scale"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
+
+// Keep explict delay in milliseconds export for BC with Framer
+export { delay, DelayedFunction } from "./utils/delay"

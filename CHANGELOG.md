@@ -4,6 +4,16 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.10.0] 2024-10-02
+
+### Added
+
+-   `delay` with seconds now exported from `"framer-motion/dom"`.
+
+### Fixed
+
+-   Values no longer added to `will-change` if animation has been skipped.
+
 ## [11.9.0] 2024-09-27
 
 ### Added
