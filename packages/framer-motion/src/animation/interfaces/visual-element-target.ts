@@ -9,7 +9,7 @@ import { AnimationPlaybackControls } from "../types"
 import { getValueTransition } from "../utils/get-value-transition"
 import { frame } from "../../frameloop"
 import { getOptimisedAppearId } from "../optimized-appear/get-appear-id"
-import { enableWillChange } from "../../value/use-will-change/add-will-change"
+import { addValueToWillChange } from "../../value/use-will-change/add-will-change"
 
 /**
  * Decide whether we should block this animation. Previously, we achieved this
@@ -90,7 +90,7 @@ export function animateTarget(
             }
         }
 
-        enableWillChange(visualElement)
+        addValueToWillChange(visualElement, key)
 
         value.start(
             animateMotionValue(
