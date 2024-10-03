@@ -18,6 +18,7 @@ import {
     createDOMVisualElement,
     createObjectVisualElement,
 } from "../utils/create-visual-element"
+import { isDOMKeyframes } from "../utils/is-dom-keyframes"
 import { animateSingleValue } from "./single-value"
 
 export type AnimationSubject = Element | MotionValue<any> | any
@@ -28,8 +29,8 @@ function isSingleValue(
 ): subject is MotionValue | string | number {
     return (
         isMotionValue(subject) ||
-        (typeof subject === "string" && typeof keyframes !== "object") ||
-        typeof subject === "number"
+        typeof subject === "number" ||
+        (typeof subject === "string" && !isDOMKeyframes(keyframes))
     )
 }
 
@@ -100,7 +101,7 @@ export function animateSubject<O extends Object>(
     } else {
         let subjects: Array<O | Element>
 
-        if (typeof subject === "string") {
+        if (typeof subject === "string" && isDOMKeyframes(keyframes)) {
             subjects = resolveElements(subject, scope)
         } else if (subject instanceof NodeList) {
             subjects = Array.from(subject)
