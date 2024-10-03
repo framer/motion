@@ -1,7 +1,7 @@
-import { invariant } from "../../dom"
 import { resolveElements } from "../../render/dom/utils/resolve-element"
 import { visualElementStore } from "../../render/store"
 import { GenericKeyframesTarget, TargetAndTransition } from "../../types"
+import { invariant } from "../../utils/errors"
 import type { MotionValue } from "../../value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 import { animateTarget } from "../interfaces/visual-element-target"
