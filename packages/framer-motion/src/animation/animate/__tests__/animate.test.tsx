@@ -384,4 +384,16 @@ describe("animate: Objects", () => {
         await animate(obj.rotation, { x: 10 }, { duration: 0.01 })
         expect(obj.rotation.x).toBe(10)
     })
+
+    test("Object animates in sequence", async () => {
+        const obj = { x: 100 }
+        await animate([[obj, { x: 200 }, { duration: 0.01 }]])
+        expect(obj.x).toBe(200)
+    })
+
+    test("Three.js Object3D animates in sequence", async () => {
+        const obj = new THREE.Object3D()
+        await animate([[obj.rotation, { x: 10 }, { duration: 0.01 }]])
+        expect(obj.rotation.x).toBe(10)
+    })
 })
