@@ -96,7 +96,13 @@ export function animateSubject<O extends Object>(
 
     if (isSingleValue(subject, keyframes)) {
         animations.push(
-            animateSingleValue(subject, keyframes as any, options as any)
+            animateSingleValue(
+                subject,
+                isDOMKeyframes(keyframes)
+                    ? (keyframes as any).default || keyframes
+                    : keyframes,
+                options ? (options as any).default || options : options
+            )
         )
     } else {
         let subjects: Array<O | Element>
