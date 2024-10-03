@@ -207,7 +207,11 @@ export function createAnimationsFromSequence(
              * Find all the elements specified in the definition and parse value
              * keyframes from their timeline definitions.
              */
-            const elements = resolveElements(subject, scope, elementCache)
+            const elements = resolveElements(
+                subject as any,
+                scope,
+                elementCache
+            )
             const numElements = elements.length
 
             /**

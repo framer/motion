@@ -18,7 +18,11 @@ import {
     createObjectVisualElement,
 } from "./utils/create-visual-element"
 import { animateSingleValue } from "./interfaces/single-value"
-import { AnimationSequence, SequenceOptions } from "./sequence/types"
+import {
+    AnimationSequence,
+    ObjectTarget,
+    SequenceOptions,
+} from "./sequence/types"
 import { createAnimationsFromSequence } from "./sequence/create"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import { spring } from "./generators/spring"
@@ -78,7 +82,12 @@ function animateElements(
     scope?: AnimationScope
 ) {
     const elements = resolveElements(elementOrSelector, scope)
-    return animateSubjects(createDOMVisualElement, elements, keyframes, options)
+    return animateSubjects(
+        createDOMVisualElement,
+        elements,
+        keyframes as any,
+        options
+    )
 }
 
 const isSequence = (value: unknown): value is AnimationSequence =>
@@ -114,10 +123,6 @@ function animateSequence(
     })
 
     return new GroupPlaybackControls(animations)
-}
-
-type ObjectTarget<O extends Object> = {
-    [K in keyof O]: O[K] | GenericKeyframesTarget<O[K]>
 }
 
 export const createScopedAnimate = (scope?: AnimationScope) => {
@@ -195,8 +200,8 @@ export const createScopedAnimate = (scope?: AnimationScope) => {
         } else if (typeof subject === "object") {
             animation = animateSubjects(
                 createObjectVisualElement,
-                subject as O,
-                keyframes as ObjectTarget<O>,
+                subject as any,
+                keyframes as any,
                 options as DynamicAnimationOptions
             )
         } else {

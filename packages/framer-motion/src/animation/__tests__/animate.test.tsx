@@ -327,6 +327,18 @@ describe("animate: Objects", () => {
         animate({ x: 100 }, { x: 200 }, { x: { duration: 0.01 } })
     })
 
+    test("Types: Object in sequence", () => {
+        animate([[{ x: 100 }, { x: 200 }]])
+    })
+
+    test("Types: Object in sequence with transition", () => {
+        animate([[{ x: 100 }, { x: 200 }, { duration: 1 }]])
+    })
+
+    test("Types: Object in sequence with value-specific transition", () => {
+        animate([[{ x: 100 }, { x: 200 }, { x: { duration: 1 } }]])
+    })
+
     test("Types: Object to object with onUpdate", () => {
         const output = { x: 0 }
         animate(
@@ -348,5 +360,15 @@ describe("animate: Objects", () => {
     test("Types: Three.js Object3D keyframes", () => {
         const object = new THREE.Object3D()
         animate(object.rotation, { x: [null, 10] }, { duration: 0.01 })
+    })
+
+    test("Types: Three.js Object3D in sequence", () => {
+        const object = new THREE.Object3D()
+        animate([[object.rotation, { x: 10 }]])
+    })
+
+    test("Types: Three.js Object3D in sequence with transition", () => {
+        const object = new THREE.Object3D()
+        animate([[object.rotation, { x: 10 }, { duration: 0.01 }]])
     })
 })
