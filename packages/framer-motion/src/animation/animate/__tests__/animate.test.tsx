@@ -88,7 +88,7 @@ describe("animate", () => {
     test("Accepts all overloads", () => {
         // Checking types only, these are expected to fail given the selector
         expect(() => {
-            animate("div", { opacity: "test" })
+            animate("div", { opacity: 0 })
             animate("div", { opacity: 0 }, { duration: 2 })
         }).toThrow()
 
