@@ -1,4 +1,4 @@
-import { animateMotionValue } from "./motion-value"
+import { animateMotionValue } from "../interfaces/motion-value"
 import { motionValue as createMotionValue, MotionValue } from "../../value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 import { GenericKeyframesTarget } from "../../types"

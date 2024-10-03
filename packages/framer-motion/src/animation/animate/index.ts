@@ -17,7 +17,7 @@ import {
     createDOMVisualElement,
     createObjectVisualElement,
 } from "../utils/create-visual-element"
-import { animateSingleValue } from "../interfaces/single-value"
+import { animateSingleValue } from "./single-value"
 import {
     AnimationSequence,
     ObjectTarget,
