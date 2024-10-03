@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.11.0] 2024-10-03
+
+### Added
+
+-   `animate` can now animate any object.
+
 ## [11.10.0] 2024-10-02
 
 ### Added
