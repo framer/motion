@@ -1,3 +1,4 @@
+import { invariant } from "../../dom"
 import { resolveElements } from "../../render/dom/utils/resolve-element"
 import { visualElementStore } from "../../render/store"
 import { GenericKeyframesTarget, TargetAndTransition } from "../../types"
@@ -110,6 +111,9 @@ export function animateSubject<O extends Object>(
         }
 
         const numSubjects = subjects.length
+
+        invariant(Boolean(numSubjects), "No valid elements provided.")
+
         for (let i = 0; i < numSubjects; i++) {
             const thisSubject = subjects[i]
 
@@ -122,7 +126,7 @@ export function animateSubject<O extends Object>(
                 createVisualElement(thisSubject as any)
             }
 
-            const visualElement = visualElementStore.get(subject)!
+            const visualElement = visualElementStore.get(thisSubject)!
 
             const transition = { ...options }
 
