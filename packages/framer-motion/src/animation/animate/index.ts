@@ -1,8 +1,11 @@
-import { resolveElements } from "../../render/dom/utils/resolve-element"
-import { visualElementStore } from "../../render/store"
-import { invariant } from "../../utils/errors"
-import { MotionValue } from "../../value"
+import { GenericKeyframesTarget } from "../../types"
+import type { MotionValue } from "../../value"
 import { GroupPlaybackControls } from "../GroupPlaybackControls"
+import {
+    AnimationSequence,
+    ObjectTarget,
+    SequenceOptions,
+} from "../sequence/types"
 import {
     AnimationPlaybackControls,
     AnimationScope,
@@ -11,206 +14,101 @@ import {
     ElementOrSelector,
     ValueAnimationTransition,
 } from "../types"
-import { animateTarget } from "../interfaces/visual-element-target"
-import { GenericKeyframesTarget, TargetAndTransition } from "../../types"
-import {
-    createDOMVisualElement,
-    createObjectVisualElement,
-} from "../utils/create-visual-element"
-import { animateSingleValue } from "./single-value"
-import {
-    AnimationSequence,
-    ObjectTarget,
-    SequenceOptions,
-} from "../sequence/types"
-import { createAnimationsFromSequence } from "../sequence/create"
-import { isMotionValue } from "../../value/utils/is-motion-value"
-import { spring } from "../generators/spring"
+import { animateSequence } from "./sequence"
+import { animateSubject } from "./subject"
 
-type VisualElementFactory = (subject: any) => void
-
-function animateSubjects(
-    createVisualElement: VisualElementFactory,
-    subjects: any[],
-    keyframes: { [key: string]: GenericKeyframesTarget<string | number> },
-    options?: DynamicAnimationOptions
-) {
-    const numSubjects = subjects.length
-
-    invariant(Boolean(numSubjects), "No valid animation subjects provided.")
-
-    const animations: AnimationPlaybackControls[] = []
-
-    for (let i = 0; i < numSubjects; i++) {
-        const subject = subjects[i]
-
-        /**
-         * Check each element for an associated VisualElement. If none exists,
-         * we need to create one.
-         */
-        if (!visualElementStore.has(subject)) {
-            createVisualElement(subject)
-        }
-
-        const visualElement = visualElementStore.get(subject)!
-
-        const transition = { ...options }
-
-        /**
-         * Resolve stagger function if provided.
-         */
-        if (typeof transition.delay === "function") {
-            transition.delay = transition.delay(i, numSubjects)
-        }
-
-        animations.push(
-            ...animateTarget(
-                visualElement,
-                { ...keyframes, transition } as TargetAndTransition,
-                {}
-            )
-        )
-    }
-
-    return new GroupPlaybackControls(animations)
+function isSequence(value: unknown): value is AnimationSequence {
+    return Array.isArray(value) && Array.isArray(value[0])
 }
 
-function animateElements(
-    elementOrSelector: ElementOrSelector,
-    keyframes: DOMKeyframesDefinition,
-    options?: DynamicAnimationOptions,
-    scope?: AnimationScope
-) {
-    const elements = resolveElements(elementOrSelector, scope)
-    return animateSubjects(
-        createDOMVisualElement,
-        elements,
-        keyframes as any,
-        options
-    )
-}
-
-const isSequence = (value: unknown): value is AnimationSequence =>
-    Array.isArray(value) && Array.isArray(value[0])
-
-function animateSequence(
-    sequence: AnimationSequence,
-    options?: SequenceOptions,
-    scope?: AnimationScope
-) {
-    const animations: AnimationPlaybackControls[] = []
-    const animationDefinitions = createAnimationsFromSequence(
-        sequence,
-        options,
-        scope,
-        { spring }
-    )
-
-    animationDefinitions.forEach(({ keyframes, transition }, subject) => {
-        let animation: AnimationPlaybackControls
-
-        if (isMotionValue(subject)) {
-            animation = animateSingleValue(
-                subject,
-                keyframes.default,
-                transition.default
-            )
-        } else {
-            animation = animateElements(subject, keyframes, transition)
-        }
-
-        animations.push(animation)
-    })
-
-    return new GroupPlaybackControls(animations)
-}
-
-export const createScopedAnimate = (scope?: AnimationScope) => {
+/**
+ * Creates an animation function that is optionally scoped
+ * to a specific element.
+ */
+export function createScopedAnimate(scope?: AnimationScope) {
     /**
-     * Animate a single value
-     */
-    function scopedAnimate<V>(
-        from: V,
-        to: V | GenericKeyframesTarget<V>,
-        options?: ValueAnimationTransition<V>
-    ): AnimationPlaybackControls
-    /**
-     * Animate an object
-     */
-    function scopedAnimate<O extends Object>(
-        from: O,
-        to: ObjectTarget<O>,
-        options?: DynamicAnimationOptions
-    ): AnimationPlaybackControls
-    /**
-     * Animate a MotionValue
-     */
-    function scopedAnimate<V>(
-        value: MotionValue<V>,
-        keyframes: V | GenericKeyframesTarget<V>,
-        options?: ValueAnimationTransition<V>
-    ): AnimationPlaybackControls
-    /**
-     * Animate DOM
-     */
-    function scopedAnimate(
-        value: ElementOrSelector,
-        keyframes: DOMKeyframesDefinition,
-        options?: DynamicAnimationOptions
-    ): AnimationPlaybackControls
-    /**
-     * Animate sequences
+     * Animate a sequence
      */
     function scopedAnimate(
         sequence: AnimationSequence,
         options?: SequenceOptions
     ): AnimationPlaybackControls
     /**
+     * Animate a string
+     */
+    function scopedAnimate(
+        value: string | MotionValue<string>,
+        keyframes: string | GenericKeyframesTarget<string>,
+        options?: ValueAnimationTransition<string>
+    ): AnimationPlaybackControls
+    /**
+     * Animate a number
+     */
+    function scopedAnimate(
+        value: number | MotionValue<number>,
+        keyframes: number | GenericKeyframesTarget<number>,
+        options?: ValueAnimationTransition<number>
+    ): AnimationPlaybackControls
+    /**
+     * Animate an Element
+     */
+    function scopedAnimate(
+        element: ElementOrSelector,
+        keyframes: DOMKeyframesDefinition,
+        options?: DynamicAnimationOptions
+    ): AnimationPlaybackControls
+    /**
+     * Animate an object
+     */
+    function scopedAnimate<O extends {}>(
+        object: O | O[],
+        keyframes: ObjectTarget<O>,
+        options?: DynamicAnimationOptions
+    ): AnimationPlaybackControls
+    /**
      * Implementation
      */
-    function scopedAnimate<V extends string | number, O extends Object>(
-        subject: AnimationSequence | ElementOrSelector | MotionValue<V> | V | O,
-        keyframes:
+    function scopedAnimate<O extends {}>(
+        subjectOrSequence:
+            | AnimationSequence
+            | MotionValue<number>
+            | MotionValue<string>
+            | number
+            | string
+            | ElementOrSelector
+            | O
+            | O[],
+        optionsOrKeyframes?:
             | SequenceOptions
+            | number
+            | string
+            | GenericKeyframesTarget<number>
+            | GenericKeyframesTarget<string>
             | DOMKeyframesDefinition
-            | V
-            | ObjectTarget<O>
-            | GenericKeyframesTarget<V>,
-        options?: ValueAnimationTransition<V> | DynamicAnimationOptions
+            | ObjectTarget<O>,
+        options?:
+            | ValueAnimationTransition<number>
+            | ValueAnimationTransition<string>
+            | DynamicAnimationOptions
     ): AnimationPlaybackControls {
-        let animation: AnimationPlaybackControls
+        let animations: AnimationPlaybackControls[] = []
 
-        if (isSequence(subject)) {
-            animation = animateSequence(
-                subject,
-                keyframes as SequenceOptions,
+        if (isSequence(subjectOrSequence)) {
+            animations = animateSequence(
+                subjectOrSequence,
+                optionsOrKeyframes as SequenceOptions,
                 scope
-            )
-        } else if (
-            subject instanceof Element ||
-            (Array.isArray(subject) && subject[0] instanceof Element) ||
-            (typeof subject === "string" && typeof keyframes === "object")
-        ) {
-            animation = animateElements(
-                subject as ElementOrSelector,
-                keyframes as DOMKeyframesDefinition,
-                options as DynamicAnimationOptions | undefined,
-                scope
-            )
-        } else if (typeof subject === "object") {
-            animation = animateSubjects(
-                createObjectVisualElement,
-                subject as any,
-                keyframes as any,
-                options as DynamicAnimationOptions
             )
         } else {
-            animation = animateSingleValue(
-                subject as MotionValue<V> | V,
-                keyframes as V | GenericKeyframesTarget<V>,
-                options as ValueAnimationTransition<V> | undefined
+            animations = animateSubject(
+                subjectOrSequence as ElementOrSelector,
+                optionsOrKeyframes as DOMKeyframesDefinition,
+                options as DynamicAnimationOptions,
+                scope
             )
         }
+
+        const animation = new GroupPlaybackControls(animations)
 
         if (scope) {
             scope.animations.push(animation)

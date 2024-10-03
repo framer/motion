@@ -88,7 +88,7 @@ describe("animate", () => {
     test("Accepts all overloads", () => {
         // Checking types only, these are expected to fail given the selector
         expect(() => {
-            animate("div", { opacity: 0 })
+            animate("div", { opacity: "test" })
             animate("div", { opacity: 0 }, { duration: 2 })
         }).toThrow()
 
@@ -317,6 +317,7 @@ describe("animate", () => {
 describe("animate: Objects", () => {
     test("Types: Object to object", () => {
         animate({ x: 100 }, { x: 200 })
+        animate({ x: 100, y: 0 }, { x: 200 })
     })
 
     test("Types: Object to object with transition", () => {
@@ -343,7 +344,7 @@ describe("animate: Objects", () => {
         const output = { x: 0 }
         animate(
             { x: 100 },
-            { x: 200, y: 300 },
+            { x: 200 },
             {
                 onUpdate: (latest) => {
                     output.x = latest.x
@@ -370,5 +371,17 @@ describe("animate: Objects", () => {
     test("Types: Three.js Object3D in sequence with transition", () => {
         const object = new THREE.Object3D()
         animate([[object.rotation, { x: 10 }, { duration: 0.01 }]])
+    })
+
+    test("Object animates", async () => {
+        const obj = { x: 100 }
+        await animate(obj, { x: 200 }, { duration: 0.01 })
+        expect(obj.x).toBe(200)
+    })
+
+    test("Three.js Object3D animates", async () => {
+        const obj = new THREE.Object3D()
+        await animate(obj.rotation, { x: 10 }, { duration: 0.01 })
+        expect(obj.rotation.x).toBe(10)
     })
 })

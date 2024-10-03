@@ -10,8 +10,8 @@ import {
     UnresolvedValueKeyframe,
 } from "../types"
 
-export type ObjectTarget<O extends Object> = {
-    [K in keyof O]: O[K] | GenericKeyframesTarget<O[K]>
+export type ObjectTarget<O> = {
+    [K in keyof O]?: O[K] | GenericKeyframesTarget<O[K]>
 }
 
 export type SequenceTime =
@@ -51,23 +51,23 @@ export type DOMSegmentWithTransition = [
     DynamicAnimationOptions & At
 ]
 
-export type ObjectSegment<O extends Object = Object> = [O, ObjectTarget<O>]
+export type ObjectSegment<O extends {} = {}> = [O, ObjectTarget<O>]
 
-export type ObbjectSegmentWithTransition<O extends Object = Object> = [
+export type ObjectSegmentWithTransition<O extends {} = {}> = [
     O,
     ObjectTarget<O>,
     DynamicAnimationOptions & At
 ]
 
 export type Segment =
+    | ObjectSegment
+    | ObjectSegmentWithTransition
+    | SequenceLabel
+    | SequenceLabelWithTime
     | MotionValueSegment
     | MotionValueSegmentWithTransition
     | DOMSegment
     | DOMSegmentWithTransition
-    | ObjectSegment
-    | ObbjectSegmentWithTransition
-    | SequenceLabel
-    | SequenceLabelWithTime
 
 export type AnimationSequence = Segment[]
 
