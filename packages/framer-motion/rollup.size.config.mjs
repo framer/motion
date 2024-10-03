@@ -39,7 +39,7 @@ const m = createSizeBundle(
     "dist/size-rollup-m.js"
 )
 const sizeAnimate = createSizeBundle(
-    "lib/animation/animate.js",
+    "lib/animation/animate/index.js",
     "dist/size-rollup-animate.js"
 )
 const sizeScroll = createSizeBundle(

@@ -1,4 +1,5 @@
 import { Easing } from "../../easing/types"
+import { GenericKeyframesTarget } from "../../types"
 import type { MotionValue } from "../../value"
 import { DynamicAnimationOptions } from "../types"
 import {
@@ -8,6 +9,10 @@ import {
     AnimationPlaybackOptions,
     UnresolvedValueKeyframe,
 } from "../types"
+
+export type ObjectTarget<O> = {
+    [K in keyof O]?: O[K] | GenericKeyframesTarget<O[K]>
+}
 
 export type SequenceTime =
     | number
@@ -46,13 +51,23 @@ export type DOMSegmentWithTransition = [
     DynamicAnimationOptions & At
 ]
 
+export type ObjectSegment<O extends {} = {}> = [O, ObjectTarget<O>]
+
+export type ObjectSegmentWithTransition<O extends {} = {}> = [
+    O,
+    ObjectTarget<O>,
+    DynamicAnimationOptions & At
+]
+
 export type Segment =
+    | ObjectSegment
+    | ObjectSegmentWithTransition
+    | SequenceLabel
+    | SequenceLabelWithTime
     | MotionValueSegment
     | MotionValueSegmentWithTransition
     | DOMSegment
     | DOMSegmentWithTransition
-    | SequenceLabel
-    | SequenceLabelWithTime
 
 export type AnimationSequence = Segment[]
 
