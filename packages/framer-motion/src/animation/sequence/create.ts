@@ -1,12 +1,12 @@
 import { Easing } from "../../easing/types"
 import { createGeneratorEasing } from "../../easing/utils/create-generator-easing"
-import { resolveElements } from "../../render/dom/utils/resolve-element"
 import { defaultOffset } from "../../utils/offsets/default"
 import { fillOffset } from "../../utils/offsets/fill"
 import { progress } from "../../utils/progress"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
 import type { MotionValue } from "../../value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
+import { resolveSubjects } from "../animate/resolve-subjects"
 import { isGenerator } from "../generators/utils/is-generator"
 import { DynamicAnimationOptions, GeneratorFactory } from "../types"
 import {
@@ -93,7 +93,7 @@ export function createAnimationsFromSequence(
             valueTransition: Transition | DynamicAnimationOptions,
             valueSequence: ValueSequence,
             elementIndex = 0,
-            numElements = 0
+            numSubjects = 0
         ) => {
             const valueKeyframesAsList = keyframesAsList(valueKeyframes)
             const {
@@ -110,7 +110,7 @@ export function createAnimationsFromSequence(
              */
             const calculatedDelay =
                 typeof delay === "function"
-                    ? delay(elementIndex, numElements)
+                    ? delay(elementIndex, numSubjects)
                     : delay
 
             /**
@@ -203,24 +203,22 @@ export function createAnimationsFromSequence(
                 getValueSequence("default", subjectSequence)
             )
         } else {
-            /**
-             * Find all the elements specified in the definition and parse value
-             * keyframes from their timeline definitions.
-             */
-            const elements = resolveElements(
-                subject as any,
+            const subjects = resolveSubjects(
+                subject,
+                keyframes as DOMKeyframesDefinition,
                 scope,
                 elementCache
             )
-            const numElements = elements.length
+
+            const numSubjects = subjects.length
 
             /**
              * For every element in this segment, process the defined values.
              */
             for (
-                let elementIndex = 0;
-                elementIndex < numElements;
-                elementIndex++
+                let subjectIndex = 0;
+                subjectIndex < numSubjects;
+                subjectIndex++
             ) {
                 /**
                  * Cast necessary, but we know these are of this type
@@ -228,8 +226,11 @@ export function createAnimationsFromSequence(
                 keyframes = keyframes as DOMKeyframesDefinition
                 transition = transition as DynamicAnimationOptions
 
-                const element = elements[elementIndex]
-                const subjectSequence = getSubjectSequence(element, sequences)
+                const thisSubject = subjects[subjectIndex]
+                const subjectSequence = getSubjectSequence(
+                    thisSubject,
+                    sequences
+                )
 
                 for (const key in keyframes) {
                     resolveValueSequence(
@@ -238,8 +239,8 @@ export function createAnimationsFromSequence(
                         ] as UnresolvedValueKeyframe,
                         getValueTransition(transition, key),
                         getValueSequence(key, subjectSequence),
-                        elementIndex,
-                        numElements
+                        subjectIndex,
+                        numSubjects
                     )
                 }
             }
@@ -320,9 +321,9 @@ export function createAnimationsFromSequence(
     return animationDefinitions
 }
 
-function getSubjectSequence(
-    subject: Element | MotionValue,
-    sequences: Map<Element | MotionValue, SequenceMap>
+function getSubjectSequence<O extends {}>(
+    subject: Element | MotionValue | O,
+    sequences: Map<Element | MotionValue | O, SequenceMap>
 ): SequenceMap {
     !sequences.has(subject) && sequences.set(subject, {})
     return sequences.get(subject)!

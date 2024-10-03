@@ -1,4 +1,3 @@
-import { resolveElements } from "../../render/dom/utils/resolve-element"
 import { visualElementStore } from "../../render/store"
 import { GenericKeyframesTarget, TargetAndTransition } from "../../types"
 import { invariant } from "../../utils/errors"
@@ -19,6 +18,7 @@ import {
     createObjectVisualElement,
 } from "../utils/create-visual-element"
 import { isDOMKeyframes } from "../utils/is-dom-keyframes"
+import { resolveSubjects } from "./resolve-subjects"
 import { animateSingleValue } from "./single-value"
 
 export type AnimationSubject = Element | MotionValue<any> | any
@@ -105,17 +105,11 @@ export function animateSubject<O extends Object>(
             )
         )
     } else {
-        let subjects: Array<O | Element>
-
-        if (typeof subject === "string" && isDOMKeyframes(keyframes)) {
-            subjects = resolveElements(subject, scope)
-        } else if (subject instanceof NodeList) {
-            subjects = Array.from(subject)
-        } else if (Array.isArray(subject)) {
-            subjects = subject
-        } else {
-            subjects = [subject]
-        }
+        const subjects = resolveSubjects(
+            subject,
+            keyframes as DOMKeyframesDefinition,
+            scope
+        )
 
         const numSubjects = subjects.length
 
