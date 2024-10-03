@@ -43,9 +43,7 @@ export class ObjectVisualElement extends VisualElement<
     }
 
     build(renderState: ObjectRenderState, latestValues: ResolvedValues) {
-        for (const key in latestValues) {
-            renderState.output[key] = latestValues[key]
-        }
+        Object.assign(renderState.output, latestValues)
     }
 
     renderInstance(instance: Object, { output }: ObjectRenderState) {
