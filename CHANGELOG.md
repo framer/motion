@@ -12,7 +12,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Values no longer added to `will-change` if animation has been skipped.
+-   Only `transform` is added to `will-change` when a potentially layerising value is animated as `opacity` and `filter` will prematurely flatten `preserve-3d`.
 
 ## [11.9.0] 2024-09-27
 
