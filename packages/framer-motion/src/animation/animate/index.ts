@@ -1,8 +1,8 @@
-import { resolveElements } from "../render/dom/utils/resolve-element"
-import { visualElementStore } from "../render/store"
-import { invariant } from "../utils/errors"
-import { MotionValue } from "../value"
-import { GroupPlaybackControls } from "./GroupPlaybackControls"
+import { resolveElements } from "../../render/dom/utils/resolve-element"
+import { visualElementStore } from "../../render/store"
+import { invariant } from "../../utils/errors"
+import { MotionValue } from "../../value"
+import { GroupPlaybackControls } from "../GroupPlaybackControls"
 import {
     AnimationPlaybackControls,
     AnimationScope,
@@ -10,22 +10,22 @@ import {
     DynamicAnimationOptions,
     ElementOrSelector,
     ValueAnimationTransition,
-} from "./types"
-import { animateTarget } from "./interfaces/visual-element-target"
-import { GenericKeyframesTarget, TargetAndTransition } from "../types"
+} from "../types"
+import { animateTarget } from "../interfaces/visual-element-target"
+import { GenericKeyframesTarget, TargetAndTransition } from "../../types"
 import {
     createDOMVisualElement,
     createObjectVisualElement,
-} from "./utils/create-visual-element"
-import { animateSingleValue } from "./interfaces/single-value"
+} from "../utils/create-visual-element"
+import { animateSingleValue } from "../interfaces/single-value"
 import {
     AnimationSequence,
     ObjectTarget,
     SequenceOptions,
-} from "./sequence/types"
-import { createAnimationsFromSequence } from "./sequence/create"
-import { isMotionValue } from "../value/utils/is-motion-value"
-import { spring } from "./generators/spring"
+} from "../sequence/types"
+import { createAnimationsFromSequence } from "../sequence/create"
+import { isMotionValue } from "../../value/utils/is-motion-value"
+import { spring } from "../generators/spring"
 
 type VisualElementFactory = (subject: any) => void
 
