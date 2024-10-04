@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "11.5.4",
+    "version": "11.11.1",
     "description": "A simple and powerful JavaScript animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -11,27 +11,39 @@
             "import": "./dist/es/index.mjs",
             "default": "./dist/cjs/index.js"
         },
+        "./dom/mini": {
+            "types": "./dist/dom-mini.d.ts",
+            "require": "./dist/cjs/dom-mini.js",
+            "import": "./dist/es/dom-mini.mjs",
+            "default": "./dist/cjs/dom-mini.js"
+        },
         "./dom": {
-            "types": "./dist/dom-entry.d.ts",
-            "require": "./dist/cjs/dom-entry.js",
-            "import": "./dist/es/dom-entry.mjs",
-            "default": "./dist/cjs/dom-entry.js"
+            "types": "./dist/dom.d.ts",
+            "require": "./dist/cjs/dom.js",
+            "import": "./dist/es/dom.mjs",
+            "default": "./dist/cjs/dom.js"
         },
         "./client": {
-            "types": "./dist/client-entry.d.ts",
-            "require": "./dist/cjs/client-entry.js",
-            "import": "./dist/es/client-entry.mjs",
-            "default": "./dist/cjs/client-entry.js"
+            "types": "./dist/client.d.ts",
+            "require": "./dist/cjs/client.js",
+            "import": "./dist/es/client.mjs",
+            "default": "./dist/cjs/client.js"
         },
         "./m": {
-            "types": "./dist/m-entry.d.ts",
-            "require": "./dist/cjs/m-entry.js",
-            "import": "./dist/es/m-entry.mjs",
-            "default": "./dist/cjs/m-entry.js"
+            "types": "./dist/m.d.ts",
+            "require": "./dist/cjs/m.js",
+            "import": "./dist/es/m.mjs",
+            "default": "./dist/cjs/m.js"
+        },
+        "./mini": {
+            "types": "./dist/mini.d.ts",
+            "require": "./dist/cjs/mini.js",
+            "import": "./dist/es/mini.mjs",
+            "default": "./dist/cjs/mini.js"
         },
         "./projection": {
-            "import": "./dist/es/projection-entry.mjs",
-            "default": "./dist/es/projection-entry.mjs"
+            "import": "./dist/es/projection.mjs",
+            "default": "./dist/es/projection.mjs"
         },
         "./package.json": "./package.json"
     },
@@ -79,6 +91,10 @@
     "dependencies": {
         "tslib": "^2.4.0"
     },
+    "devDependencies": {
+        "@types/three": "0.137.0",
+        "three": "0.137.0"
+    },
     "peerDependencies": {
         "@emotion/is-prop-valid": "*",
         "react": "^18.0.0",
@@ -98,11 +114,11 @@
     "bundlesize": [
         {
             "path": "./dist/size-rollup-motion.js",
-            "maxSize": "34.05 kB"
+            "maxSize": "33.96 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
-            "maxSize": "6 kB"
+            "maxSize": "5.9 kB"
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
@@ -110,12 +126,20 @@
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
-            "maxSize": "29 kB"
+            "maxSize": "29.1 kB"
         },
         {
             "path": "./dist/size-rollup-animate.js",
             "maxSize": "18 kB"
+        },
+        {
+            "path": "./dist/size-rollup-scroll.js",
+            "maxSize": "5.2 kB"
+        },
+        {
+            "path": "./dist/size-rollup-waapi-animate.js",
+            "maxSize": "2.5 kB"
         }
     ],
-    "gitHead": "dcf88c8f6c178d1af7a8f7dec81326db5fd68cea"
+    "gitHead": "3354bb93024f87e493edf688f546879b0649e372"
 }

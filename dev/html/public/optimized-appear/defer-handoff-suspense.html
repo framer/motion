@@ -1,0 +1,184 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 100px;
+                margin: 0;
+            }
+
+            #box1,
+            #box2 {
+                width: 100px;
+                height: 100px;
+                background-color: #0077ff;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 1 !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="module" src="/src/imports/optimized-appear.js"></script>
+        <script type="module" src="/src/imports/script-assert.js"></script>
+
+        <script type="module">
+            const {
+                motion,
+                animateStyle,
+                animate,
+                startOptimizedAppearAnimation,
+                optimizedAppearDataAttribute,
+                motionValue,
+                frame,
+            } = window.Motion
+            const { matchViewportBox } = window.Assert
+            const root = document.getElementById("root")
+
+            const duration = 2
+            const x1 = motionValue(0)
+            const x2 = motionValue(0)
+
+            let suspendPromise = false
+            const SuspendingComponent = ({ children }) => {
+                if (suspendPromise === undefined) {
+                    suspendPromise = new Promise((resolve) => {
+                        setTimeout(() => {
+                            suspendPromise = true
+                            resolve()
+                        }, 10)
+                    })
+                    throw suspendPromise
+                }
+                return children
+            }
+
+            const getDiv = (i, children) =>
+                React.createElement(motion.div, {
+                    id: "box" + i,
+                    initial: { x: 0, opacity: 0 },
+                    animate: { x: 100, opacity: 1 },
+                    transition: { duration, ease: "linear" },
+                    style: { x: i === 1 ? x1 : x2 },
+                    /**
+                     * On animation start, check the values we expect to see here
+                     */
+                    onAnimationStart: () => {
+                        console.log("start", i)
+                        const box = document.getElementById("box" + i)
+
+                        box.style.backgroundColor = i === 1 ? "green" : "blue"
+
+                        setTimeout(() => {
+                            /**
+                             * This animation interrupts the optimised animation. Notably, we are animating
+                             * x in the optimised transform animation and only scale here. This ensures
+                             * that any transform can force the cancellation of the optimised animation on transform,
+                             * not just those involved in the original animation.
+                             */
+                            animate(
+                                box,
+                                { scale: 2, opacity: 0.1 },
+                                { duration: 0.3, ease: "linear" }
+                            ).then(() => {
+                                frame.postRender(() => {
+                                    const style = getComputedStyle(box)
+                                    if (style.opacity !== "0.1") {
+                                        showError(
+                                            box,
+                                            `${i} opacity animation didn't interrupt optimised animation. Opacity was ${style.opacity} instead of 0.1.`
+                                        )
+                                    }
+
+                                    const { width, left } =
+                                        box.getBoundingClientRect()
+                                    // the width scales with the parent, e.g. if the parent scales 2x, the child scales scales 2x on top
+                                    if (Math.round(width) !== 200 * i) {
+                                        showError(
+                                            box,
+                                            `${i} scale animation didn't interrupt optimised animation. Width was ${width}px instead of ${
+                                                200 * i
+                                            }px.`
+                                        )
+                                    }
+
+                                    if (left <= 100) {
+                                        showError(
+                                            box,
+                                            `${i} scale animation incorrectly interrupted optimised animation. Left was ${left}px instead of 100px.`
+                                        )
+                                    }
+                                })
+                            })
+                        }, 100)
+                    },
+                    [optimizedAppearDataAttribute]: "a" + i,
+                    children: children ?? "Content",
+                })
+
+            // This is the tree to be rendered "server" and client-side.
+            const Component = getDiv(
+                1,
+                React.createElement(
+                    React.Suspense,
+                    {},
+                    React.createElement(SuspendingComponent, {}, getDiv(2))
+                )
+            )
+
+            // Emulate server rendering of element
+            root.innerHTML = ReactDOMServer.renderToString(Component)
+            suspendPromise = undefined
+
+            // Start optimised opacity animation
+            startOptimizedAppearAnimation(
+                document.getElementById("box1"),
+                "opacity",
+                [0, 1],
+                {
+                    duration: duration * 1000,
+                    ease: "linear",
+                }
+            )
+
+            // Start WAAPI animation
+            startOptimizedAppearAnimation(
+                document.getElementById("box1"),
+                "transform",
+                ["translateX(0px)", "translateX(100px)"],
+                {
+                    duration: duration * 1000,
+                    ease: "linear",
+                },
+                (animation) => {}
+            )
+
+            // Start optimised opacity animation
+            startOptimizedAppearAnimation(
+                document.getElementById("box2"),
+                "opacity",
+                [0, 1],
+                {
+                    duration: duration * 1000,
+                    ease: "linear",
+                }
+            )
+            startOptimizedAppearAnimation(
+                document.getElementById("box2"),
+                "transform",
+                ["translateX(0px)", "translateX(100px)"],
+                {
+                    duration: duration * 1000,
+                    ease: "linear",
+                },
+                (animation) => {
+                    setTimeout(() => {
+                        ReactDOMClient.hydrateRoot(root, Component)
+                    }, (duration * 1000) / 2)
+                }
+            )
+        </script>
+    </body>
+</html>

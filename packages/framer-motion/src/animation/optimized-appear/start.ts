@@ -1,13 +1,9 @@
 import { appearStoreId } from "./store-id"
-import { animateStyle } from "../animators/waapi"
+import { startWaapiAnimation } from "../animators/waapi"
 import { NativeAnimationOptions } from "../animators/waapi/types"
 import { optimizedAppearDataId } from "./data-id"
 import { handoffOptimizedAppearAnimation } from "./handoff"
-import {
-    appearAnimationStore,
-    AppearStoreEntry,
-    elementsWithAppearAnimations,
-} from "./store"
+import { appearAnimationStore, AppearStoreEntry, appearComplete } from "./store"
 import { noop } from "../../utils/noop"
 import "./types"
 import { getOptimisedAppearId } from "./get-appear-id"
@@ -52,20 +48,18 @@ export function startOptimizedAppearAnimation(
     onReady?: (animation: Animation) => void
 ): void {
     // Prevent optimised appear animations if Motion has already started animating.
-    if (window.MotionHandoffIsComplete) {
-        window.MotionHandoffAnimation = undefined
+    if (window.MotionIsMounted) {
         return
     }
 
     const id = element.dataset[optimizedAppearDataId]
-
     if (!id) return
 
     window.MotionHandoffAnimation = handoffOptimizedAppearAnimation
 
     const storeId = appearStoreId(id, name)
     if (!readyAnimation) {
-        readyAnimation = animateStyle(
+        readyAnimation = startWaapiAnimation(
             element,
             name,
             [keyframes[0] as number, keyframes[0] as number],
@@ -103,11 +97,21 @@ export function startOptimizedAppearAnimation(
              * breakpoint.
              */
             if (!valueName) {
-                return elementsWithAppearAnimations.has(elementId)
+                return appearComplete.has(elementId)
             }
 
             const animationId = appearStoreId(elementId, valueName)
             return Boolean(appearAnimationStore.get(animationId))
+        }
+
+        window.MotionHandoffMarkAsComplete = (elementId: string): void => {
+            if (appearComplete.has(elementId)) {
+                appearComplete.set(elementId, true)
+            }
+        }
+
+        window.MotionHandoffIsComplete = (elementId: string): boolean => {
+            return appearComplete.get(elementId) === true
         }
 
         /**
@@ -195,7 +199,12 @@ export function startOptimizedAppearAnimation(
     const startAnimation = () => {
         readyAnimation.cancel()
 
-        const appearAnimation = animateStyle(element, name, keyframes, options)
+        const appearAnimation = startWaapiAnimation(
+            element,
+            name,
+            keyframes,
+            options
+        )
 
         /**
          * Record the time of the first started animation. We call performance.now() once
@@ -216,7 +225,7 @@ export function startOptimizedAppearAnimation(
         if (onReady) onReady(appearAnimation)
     }
 
-    elementsWithAppearAnimations.add(id)
+    appearComplete.set(id, false)
 
     if (readyAnimation.ready) {
         readyAnimation.ready.then(startAnimation).catch(noop)

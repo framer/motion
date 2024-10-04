@@ -18,7 +18,6 @@ import { isMotionValue } from "../value/utils/is-motion-value"
 import { transformProps } from "./html/utils/transform"
 import {
     ResolvedValues,
-    VariantStateContext,
     VisualElementEventCallbacks,
     VisualElementOptions,
 } from "./types"
@@ -27,14 +26,12 @@ import {
     isControllingVariants as checkIsControllingVariants,
     isVariantNode as checkIsVariantNode,
 } from "./utils/is-controlling-variants"
-import { isVariantLabel } from "./utils/is-variant-label"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
 import { resolveVariantFromProps } from "./utils/resolve-variants"
 import { warnOnce } from "../utils/warn-once"
 import { featureDefinitions } from "../motion/features/definitions"
 import { Feature } from "../motion/features/Feature"
 import type { PresenceContextProps } from "../context/PresenceContext"
-import { variantProps } from "./utils/variant-props"
 import { visualElementStore } from "./store"
 import { KeyframeResolver } from "./utils/KeyframesResolver"
 import { isNumericalString } from "../utils/is-numerical-string"
@@ -43,6 +40,7 @@ import { findValueType } from "./dom/value-types/find"
 import { complex } from "../value/types/complex"
 import { getAnimatableNone } from "./dom/value-types/animatable-none"
 import { createBox } from "../projection/geometry/models"
+import { time } from "../frameloop/sync-time"
 
 const propEventHandlers = [
     "AnimationStart",
@@ -53,8 +51,6 @@ const propEventHandlers = [
     "LayoutAnimationStart",
     "LayoutAnimationComplete",
 ] as const
-
-const numVariantProps = variantProps.length
 
 /**
  * A VisualElement is an imperative abstraction around UI elements such as
@@ -544,7 +540,6 @@ export abstract class VisualElement<
     }
 
     render = () => {
-        this.isRenderScheduled = false
         if (!this.current) return
         this.triggerBuild()
         this.renderInstance(
@@ -555,10 +550,11 @@ export abstract class VisualElement<
         )
     }
 
-    private isRenderScheduled = false
+    private renderScheduledAt = 0.0
     scheduleRender = () => {
-        if (!this.isRenderScheduled) {
-            this.isRenderScheduled = true
+        const now = time.now()
+        if (this.renderScheduledAt < now) {
+            this.renderScheduledAt = now
             frame.render(this.render, false, true)
         }
     }
@@ -653,34 +649,6 @@ export abstract class VisualElement<
             : this.parent
             ? this.parent.getClosestVariantNode()
             : undefined
-    }
-
-    getVariantContext(startAtParent = false): undefined | VariantStateContext {
-        if (startAtParent) {
-            return this.parent ? this.parent.getVariantContext() : undefined
-        }
-
-        if (!this.isControllingVariants) {
-            const context = this.parent
-                ? this.parent.getVariantContext() || {}
-                : {}
-            if (this.props.initial !== undefined) {
-                context.initial = this.props.initial as any
-            }
-            return context
-        }
-
-        const context = {}
-        for (let i = 0; i < numVariantProps; i++) {
-            const name = variantProps[i] as keyof typeof context
-            const prop = this.props[name]
-
-            if (isVariantLabel(prop) || prop === false) {
-                context[name] = prop
-            }
-        }
-
-        return context
     }
 
     /**

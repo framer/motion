@@ -3185,12 +3185,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:^0.143.0":
-  version: 0.143.2
-  resolution: "@types/three@npm:0.143.2"
-  dependencies:
-    "@types/webxr": "*"
-  checksum: 34687c9b026bf4c095de131c0cd7b393d1ec251ceb2cdc178ac7f2500fe8326f762333c03a06854f2e381304d4e3b4fe53b1cabc882de623e6e6a67e5dba6f67
+"@types/three@npm:0.137.0":
+  version: 0.137.0
+  resolution: "@types/three@npm:0.137.0"
+  checksum: 32674dd002b0f249b995167b52e0e4d21af314260339ab09cf6898ae7d1bf000442d1da76673a0fcb5f8164878ba62b61202a1e2175afe2d76de8119d9821e04
   languageName: node
   linkType: hard
 
@@ -7270,7 +7268,6 @@ __metadata:
     "@types/react": latest
     "@types/react-dom": latest
     "@types/styled-components": ^5.1.25
-    "@types/three": ^0.143.0
     "@typescript-eslint/eslint-plugin": ^7.4.0
     "@typescript-eslint/parser": ^7.4.0
     animejs: ^3.2.2
@@ -7321,7 +7318,7 @@ __metadata:
     "@react-three/fiber": ^8.2.2
     "@react-three/test-renderer": ^9.0.0
     "@rollup/plugin-commonjs": ^22.0.1
-    framer-motion: ^11.5.4
+    framer-motion: ^11.11.1
     react-merge-refs: ^2.0.1
     three: ^0.137.0
   peerDependencies:
@@ -7332,10 +7329,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion@^11.5.4, framer-motion@workspace:packages/framer-motion":
+"framer-motion@^11.11.1, framer-motion@workspace:packages/framer-motion":
   version: 0.0.0-use.local
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
+    "@types/three": 0.137.0
+    three: 0.137.0
     tslib: ^2.4.0
   peerDependencies:
     "@emotion/is-prop-valid": "*"
@@ -10998,7 +10997,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "next-env@workspace:dev/next"
   dependencies:
-    framer-motion: ^11.5.4
+    framer-motion: ^11.11.1
     next: 14.x
     react: ^18.3.1
     react-dom: ^18.3.1
@@ -12546,7 +12545,7 @@ __metadata:
     "@typescript-eslint/parser": ^7.2.0
     "@vitejs/plugin-react-swc": ^3.5.0
     eslint-plugin-react-refresh: ^0.4.6
-    framer-motion: ^11.5.4
+    framer-motion: ^11.11.1
     react: ^18.3.1
     react-dom: ^18.3.1
     styled-components: ^6.1.11
@@ -14675,6 +14674,13 @@ __metadata:
   version: 0.2.0
   resolution: "text-table@npm:0.2.0"
   checksum: b6937a38c80c7f84d9c11dd75e49d5c44f71d95e810a3250bd1f1797fc7117c57698204adf676b71497acc205d769d65c16ae8fa10afad832ae1322630aef10a
+  languageName: node
+  linkType: hard
+
+"three@npm:0.137.0":
+  version: 0.137.0
+  resolution: "three@npm:0.137.0"
+  checksum: c3d005a73818a8023d014af4803c12e34ab5b095f50ac58c994173d6f433a480ad4547543b106f95ee240c827272b1de2eca48dcafd2b65cdcd0a0f3e5bf128b
   languageName: node
   linkType: hard
 

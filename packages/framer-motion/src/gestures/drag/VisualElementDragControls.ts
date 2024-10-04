@@ -79,8 +79,6 @@ export class VisualElementDragControls {
      */
     private elastic = createBox()
 
-    private removeWillChange: VoidFunction | undefined
-
     constructor(visualElement: VisualElement<HTMLElement>) {
         this.visualElement = visualElement
     }
@@ -160,11 +158,7 @@ export class VisualElementDragControls {
                 frame.postRender(() => onDragStart(event, info))
             }
 
-            this.removeWillChange?.()
-            this.removeWillChange = addValueToWillChange(
-                this.visualElement,
-                "transform"
-            )
+            addValueToWillChange(this.visualElement, "transform")
 
             const { animationState } = this.visualElement
             animationState && animationState.setActive("whileDrag", true)
@@ -244,8 +238,6 @@ export class VisualElementDragControls {
     }
 
     private stop(event: PointerEvent, info: PanInfo) {
-        this.removeWillChange?.()
-
         const isDragging = this.isDragging
         this.cancel()
         if (!isDragging) return
@@ -455,6 +447,8 @@ export class VisualElementDragControls {
     ) {
         const axisValue = this.getAxisMotionValue(axis)
 
+        addValueToWillChange(this.visualElement, axis)
+
         return axisValue.start(
             animateMotionValue(
                 axis,
@@ -462,8 +456,7 @@ export class VisualElementDragControls {
                 0,
                 transition,
                 this.visualElement,
-                false,
-                addValueToWillChange(this.visualElement, axis)
+                false
             )
         )
     }
