@@ -3,11 +3,7 @@ import { startWaapiAnimation } from "../animators/waapi"
 import { NativeAnimationOptions } from "../animators/waapi/types"
 import { optimizedAppearDataId } from "./data-id"
 import { handoffOptimizedAppearAnimation } from "./handoff"
-import {
-    appearAnimationStore,
-    AppearStoreEntry,
-    elementsWithAppearAnimations,
-} from "./store"
+import { appearAnimationStore, AppearStoreEntry, appearComplete } from "./store"
 import { noop } from "../../utils/noop"
 import "./types"
 import { getOptimisedAppearId } from "./get-appear-id"
@@ -52,7 +48,7 @@ export function startOptimizedAppearAnimation(
     onReady?: (animation: Animation) => void
 ): void {
     // Prevent optimised appear animations if Motion has already started animating.
-    if (window.MotionOptimisedAnimationHandedover?.(optimizedAppearDataId)) {
+    if (window.MotionIsMounted) {
         return
     }
 
@@ -101,23 +97,21 @@ export function startOptimizedAppearAnimation(
              * breakpoint.
              */
             if (!valueName) {
-                return elementsWithAppearAnimations.has(elementId)
+                return appearComplete.has(elementId)
             }
 
             const animationId = appearStoreId(elementId, valueName)
             return Boolean(appearAnimationStore.get(animationId))
         }
 
-        window.MotionOptimisedAnimationHandoff = (elementId: string): void => {
-            if (elementsWithAppearAnimations.has(elementId)) {
-                elementsWithAppearAnimations.set(elementId, true)
+        window.MotionHandoffMarkAsComplete = (elementId: string): void => {
+            if (appearComplete.has(elementId)) {
+                appearComplete.set(elementId, true)
             }
         }
 
-        window.MotionOptimisedAnimationHandedover = (
-            elementId: string
-        ): boolean => {
-            return elementsWithAppearAnimations.get(elementId) === true
+        window.MotionHandoffIsComplete = (elementId: string): boolean => {
+            return appearComplete.get(elementId) === true
         }
 
         /**
@@ -231,7 +225,7 @@ export function startOptimizedAppearAnimation(
         if (onReady) onReady(appearAnimation)
     }
 
-    elementsWithAppearAnimations.set(id, false)
+    appearComplete.set(id, false)
 
     if (readyAnimation.ready) {
         readyAnimation.ready.then(startAnimation).catch(noop)

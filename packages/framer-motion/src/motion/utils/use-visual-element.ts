@@ -84,12 +84,14 @@ export function useVisualElement<Instance, RenderState>(
         props[optimizedAppearDataAttribute as keyof typeof props]
     const wantsHandoff = useRef(
         Boolean(optimisedAppearId) &&
-            !window.MotionOptimisedAnimationHandedover?.(optimisedAppearId) &&
+            !window.MotionHandoffIsComplete?.(optimisedAppearId) &&
             window.MotionHasOptimisedAnimation?.(optimisedAppearId)
     )
 
     useIsomorphicLayoutEffect(() => {
         if (!visualElement) return
+
+        window.MotionIsMounted = true
 
         visualElement.updateFeatures()
 
@@ -113,19 +115,18 @@ export function useVisualElement<Instance, RenderState>(
     useEffect(() => {
         if (!visualElement) return
 
-        const handoffNeeded = wantsHandoff.current
-        if (!handoffNeeded && visualElement.animationState) {
+        if (!wantsHandoff.current && visualElement.animationState) {
             visualElement.animationState.animateChanges()
         }
 
-        if (handoffNeeded) {
+        if (wantsHandoff.current) {
             // This ensures all future calls to animateChanges() in this component will run in useEffect
-            queueMicrotask(() =>
-                window.MotionOptimisedAnimationHandoff?.(optimisedAppearId)
-            )
-        }
+            queueMicrotask(() => {
+                window.MotionHandoffMarkAsComplete?.(optimisedAppearId)
+            })
 
-        wantsHandoff.current = false
+            wantsHandoff.current = false
+        }
     })
 
     return visualElement

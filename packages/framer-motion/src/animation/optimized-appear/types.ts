@@ -28,8 +28,8 @@ export type HandoffFunction = (
 declare global {
     interface Window {
         MotionHandoffAnimation?: HandoffFunction
-        MotionOptimisedAnimationHandoff?: (elementId: string) => void
-        MotionOptimisedAnimationHandedover?: (elementId: string) => boolean
+        MotionHandoffMarkAsComplete?: (elementId: string) => void
+        MotionHandoffIsComplete?: (elementId: string) => boolean
         MotionHasOptimisedAnimation?: (
             elementId?: string,
             valueName?: string
@@ -45,5 +45,6 @@ declare global {
             valueName: string,
             value: MotionValue
         ) => VoidFunction | void
+        MotionIsMounted?: boolean
     }
 }
