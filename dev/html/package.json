@@ -1,7 +1,7 @@
 {
     "name": "html-env",
     "private": true,
-    "version": "11.9.0",
+    "version": "11.11.1",
     "type": "module",
     "scripts": {
         "dev": "vite",
