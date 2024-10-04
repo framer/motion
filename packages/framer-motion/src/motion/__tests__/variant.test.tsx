@@ -842,7 +842,7 @@ describe("animate prop as variant", () => {
         })
 
         return expect(promise).resolves.toEqual({
-            willChange: "auto",
+            willChange: "transform",
             x: 100,
             y: 100,
         })

@@ -1,5 +1,5 @@
 import { appearStoreId } from "./store-id"
-import { animateStyle } from "../animators/waapi"
+import { startWaapiAnimation } from "../animators/waapi"
 import { NativeAnimationOptions } from "../animators/waapi/types"
 import { optimizedAppearDataId } from "./data-id"
 import { handoffOptimizedAppearAnimation } from "./handoff"
@@ -63,7 +63,7 @@ export function startOptimizedAppearAnimation(
 
     const storeId = appearStoreId(id, name)
     if (!readyAnimation) {
-        readyAnimation = animateStyle(
+        readyAnimation = startWaapiAnimation(
             element,
             name,
             [keyframes[0] as number, keyframes[0] as number],
@@ -205,7 +205,12 @@ export function startOptimizedAppearAnimation(
     const startAnimation = () => {
         readyAnimation.cancel()
 
-        const appearAnimation = animateStyle(element, name, keyframes, options)
+        const appearAnimation = startWaapiAnimation(
+            element,
+            name,
+            keyframes,
+            options
+        )
 
         /**
          * Record the time of the first started animation. We call performance.now() once

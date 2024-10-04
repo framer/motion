@@ -6,17 +6,13 @@ import { WillChangeMotionValue } from "../WillChangeMotionValue"
 describe("WillChangeMotionValue", () => {
     test("Can manage transform alongside independent transforms", async () => {
         const willChange = new WillChangeMotionValue("auto")
-        const removeTransform = willChange.add("transform")
+        willChange.add("transform")
         expect(willChange.get()).toBe("transform")
-        removeTransform!()
-        expect(willChange.get()).toBe("auto")
-        const removeX = willChange.add("x")
-        const removeY = willChange.add("y")
-        expect(willChange.get()).toBe("transform")
-        removeX!()
-        expect(willChange.get()).toBe("transform")
-        removeY!()
-        expect(willChange.get()).toBe("auto")
+
+        const willChange2 = new WillChangeMotionValue("auto")
+        willChange2.add("x")
+        willChange2.add("y")
+        expect(willChange2.get()).toBe("transform")
     })
 })
 
@@ -92,7 +88,7 @@ describe("willChange", () => {
 
         const { container } = render(<Component />)
 
-        expect(container.firstChild).toHaveStyle("will-change: filter;")
+        expect(container.firstChild).toHaveStyle("will-change: transform;")
     })
 
     test("Don't render values defined in animate on initial render if initial is false", async () => {
@@ -120,7 +116,7 @@ describe("willChange", () => {
 
         const { container } = render(<Component />)
 
-        expect(container.firstChild).not.toHaveStyle("will-change: opacity;")
+        expect(container.firstChild).not.toHaveStyle("will-change: transform;")
     })
 
     test("Static mode: Doesn't add externally-provided motion values", async () => {
@@ -136,10 +132,11 @@ describe("willChange", () => {
 
         const { container } = render(<Component />)
 
+        expect(container.firstChild).not.toHaveStyle("will-change: transform;")
         expect(container.firstChild).not.toHaveStyle("will-change: opacity;")
     })
 
-    test("Removes values when they finish animating", async () => {
+    test("Don't remove values when they finish animating", async () => {
         return new Promise<void>((resolve) => {
             const Component = () => {
                 return (
@@ -149,7 +146,7 @@ describe("willChange", () => {
                         onAnimationComplete={() => {
                             frame.postRender(() => {
                                 expect(container.firstChild).toHaveStyle(
-                                    "will-change: auto;"
+                                    "will-change: transform;"
                                 )
                                 resolve()
                             })

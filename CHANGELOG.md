@@ -4,12 +4,50 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.11.0] 2024-10-03
+
+### Added
+
+-   `animate` can now animate any object.
+
+## [11.10.0] 2024-10-02
+
+### Added
+
+-   `delay` with seconds now exported from `"framer-motion/dom"`.
+
+### Fixed
+
+-   Only `transform` is added to `will-change` when a potentially layerising value is animated as `opacity` and `filter` will prematurely flatten `preserve-3d`.
+
+## [11.9.0] 2024-09-27
+
+### Added
+
+-   Mini `animate` and `useAnimate` functions.
+
+## [11.8.0] 2024-09-25
+
+### Added
+
+-   Easing functions now get compiled into `linear()` easings when animating via WAAPI.
+
+## [11.7.0] 2024-09-25
+
+### Added
+
+-   Added support for custom animation generators via `type`.
+
 ## [11.6.0] 2024-09-24
 
 ### Added
 
 -   Added `info` and element tracking to `scroll`.
 -   Added `steps` easing.
+
+### Changed
+
+-   Values added to `will-change` now stay there for their lifespan to prevent GPU thrashing and weird Safari subpixel jitters.
 
 ## [11.5.6] 2024-09-20
 

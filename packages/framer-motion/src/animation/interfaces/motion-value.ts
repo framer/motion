@@ -2,7 +2,7 @@ import { Transition } from "../../types"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
 import type { MotionValue, StartAnimation } from "../../value"
 import { getDefaultTransition } from "../utils/default-transitions"
-import { getValueTransition, isTransitionDefined } from "../utils/transitions"
+import { getValueTransition } from "../utils/get-value-transition"
 import { AnimationPlaybackControls, ValueAnimationOptions } from "../types"
 import type { UnresolvedKeyframes } from "../../render/utils/KeyframesResolver"
 import { MotionGlobalConfig } from "../../utils/GlobalConfig"
@@ -13,6 +13,7 @@ import { frame } from "../../frameloop/frame"
 import { AcceleratedAnimation } from "../animators/AcceleratedAnimation"
 import { MainThreadAnimation } from "../animators/MainThreadAnimation"
 import { GroupPlaybackControls } from "../GroupPlaybackControls"
+import { isTransitionDefined } from "../utils/is-transition-defined"
 
 export const animateMotionValue =
     <V extends string | number>(
@@ -21,14 +22,7 @@ export const animateMotionValue =
         target: V | UnresolvedKeyframes<V>,
         transition: Transition & { elapsed?: number } = {},
         element?: VisualElement<any>,
-        isHandoff?: boolean,
-        /**
-         * Currently used to remove values from will-change when an animation ends.
-         * Preferably this would be handled by event listeners on the MotionValue
-         * but these aren't consistent enough yet when considering the different ways
-         * an animation can be cancelled.
-         */
-        onEnd?: VoidFunction
+        isHandoff?: boolean
     ): StartAnimation =>
     (onComplete): AnimationPlaybackControls => {
         const valueTransition = getValueTransition(transition, name) || {}
@@ -60,9 +54,7 @@ export const animateMotionValue =
             onComplete: () => {
                 onComplete()
                 valueTransition.onComplete && valueTransition.onComplete()
-                onEnd && onEnd()
             },
-            onStop: onEnd,
             name,
             motionValue: value,
             element: isHandoff ? undefined : element,

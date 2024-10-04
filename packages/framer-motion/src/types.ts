@@ -6,7 +6,7 @@ import {
     SVGPathProperties,
 } from "./motion/types"
 
-export type GenericKeyframesTarget<V> = [null, ...V[]] | V[]
+export type GenericKeyframesTarget<V> = V[] | Array<null | V>
 
 /**
  * @public
@@ -897,36 +897,6 @@ export interface Keyframes {
 /**
  * @public
  */
-export interface Just {
-    /**
-     * @public
-     */
-    type: "just"
-
-    /**
-     * @internal
-     */
-    to?: number | string | ValueTarget
-
-    /**
-     * @internal
-     */
-    from?: number | string
-
-    /**
-     * @internal
-     */
-    delay?: number
-
-    /**
-     * @internal
-     */
-    velocity?: number
-}
-
-/**
- * @public
- */
 export interface None {
     /**
      * Set `type` to `false` for an instant transition.
@@ -954,12 +924,7 @@ export interface None {
 /**
  * @public
  */
-export type PopmotionTransitionProps =
-    | Tween
-    | Spring
-    | Keyframes
-    | Inertia
-    | Just
+export type PopmotionTransitionProps = Tween | Spring | Keyframes | Inertia
 
 /**
  * @public
@@ -976,7 +941,6 @@ export type TransitionDefinition =
     | Spring
     | Keyframes
     | Inertia
-    | Just
     | None
     | PermissiveTransitionDefinition
 
