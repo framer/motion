@@ -5,4 +5,4 @@ export interface AppearStoreEntry {
 
 export const appearAnimationStore = new Map<string, AppearStoreEntry>()
 
-export const elementsWithAppearAnimations = new Set<string>()
+export const elementsWithAppearAnimations = new Map<string, boolean>() // optimisedAppearId, handedOff

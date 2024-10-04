@@ -18,8 +18,6 @@ import {
     SwitchLayoutGroupContext,
 } from "../../context/SwitchLayoutGroupContext"
 
-let scheduleHandoffComplete = false
-
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
     visualState: VisualState<Instance, RenderState>,
@@ -86,7 +84,7 @@ export function useVisualElement<Instance, RenderState>(
         props[optimizedAppearDataAttribute as keyof typeof props]
     const wantsHandoff = useRef(
         Boolean(optimisedAppearId) &&
-            !window.MotionHandoffIsComplete &&
+            !window.MotionOptimisedAnimationHandedover?.(optimisedAppearId) &&
             window.MotionHasOptimisedAnimation?.(optimisedAppearId)
     )
 
@@ -115,23 +113,22 @@ export function useVisualElement<Instance, RenderState>(
     useEffect(() => {
         if (!visualElement) return
 
-        if (!wantsHandoff.current && visualElement.animationState) {
+        const handoffNeeded = wantsHandoff.current
+        if (!handoffNeeded && visualElement.animationState) {
             visualElement.animationState.animateChanges()
         }
 
-        wantsHandoff.current = false
-        // This ensures all future calls to animateChanges() will run in useEffect
-        if (!scheduleHandoffComplete) {
-            scheduleHandoffComplete = true
-            queueMicrotask(completeHandoff)
+        if (handoffNeeded) {
+            // This ensures all future calls to animateChanges() in this component will run in useEffect
+            queueMicrotask(() =>
+                window.MotionOptimisedAnimationHandoff?.(optimisedAppearId)
+            )
         }
+
+        wantsHandoff.current = false
     })
 
     return visualElement
-}
-
-function completeHandoff() {
-    window.MotionHandoffIsComplete = true
 }
 
 function createProjectionNode(
