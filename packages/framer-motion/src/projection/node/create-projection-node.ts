@@ -59,6 +59,7 @@ import { microtask } from "../../frameloop/microtask"
 import { VisualElement } from "../../render/VisualElement"
 import { getOptimisedAppearId } from "../../animation/optimized-appear/get-appear-id"
 import { createBox, createDelta } from "../geometry/models"
+import { mountVisualElement } from "../../render/utils/methods/mount"
 
 const metrics = {
     type: "projectionFrame",
@@ -441,7 +442,7 @@ export function createProjectionNode<I>({
 
             const { layoutId, layout, visualElement } = this.options
             if (visualElement && !visualElement.current) {
-                visualElement.mount(instance)
+                mountVisualElement(visualElement, instance)
             }
 
             this.root.nodes!.add(this)

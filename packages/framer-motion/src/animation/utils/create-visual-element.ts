@@ -3,6 +3,7 @@ import { SVGVisualElement } from "../../render/svg/SVGVisualElement"
 import { HTMLVisualElement } from "../../render/html/HTMLVisualElement"
 import { visualElementStore } from "../../render/store"
 import { ObjectVisualElement } from "../../render/object/ObjectVisualElement"
+import { mountVisualElement } from "../../render/utils/methods/mount"
 
 export function createDOMVisualElement(element: HTMLElement | SVGElement) {
     const options = {
@@ -23,7 +24,7 @@ export function createDOMVisualElement(element: HTMLElement | SVGElement) {
         ? new SVGVisualElement(options)
         : new HTMLVisualElement(options)
 
-    node.mount(element as any)
+    mountVisualElement(node, element as any)
 
     visualElementStore.set(element, node)
 }
@@ -41,7 +42,7 @@ export function createObjectVisualElement(subject: Object) {
     }
     const node = new ObjectVisualElement(options)
 
-    node.mount(subject)
+    mountVisualElement(node, subject)
 
     visualElementStore.set(subject, node)
 }

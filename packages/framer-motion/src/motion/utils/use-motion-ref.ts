@@ -3,6 +3,8 @@ import { useCallback } from "react"
 import type { VisualElement } from "../../render/VisualElement"
 import { isRefObject } from "../../utils/is-ref-object"
 import { VisualState } from "./use-visual-state"
+import { unmountVisualElement } from "../../render/utils/methods/unmount"
+import { mountVisualElement } from "../../render/utils/methods/mount"
 
 /**
  * Creates a ref function that, when called, hydrates the provided
@@ -19,9 +21,9 @@ export function useMotionRef<Instance, RenderState>(
 
             if (visualElement) {
                 if (instance) {
-                    visualElement.mount(instance)
+                    mountVisualElement(visualElement, instance)
                 } else {
-                    visualElement.unmount()
+                    unmountVisualElement(visualElement)
                 }
             }
 

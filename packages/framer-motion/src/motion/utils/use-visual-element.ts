@@ -17,6 +17,7 @@ import {
     InitialPromotionConfig,
     SwitchLayoutGroupContext,
 } from "../../context/SwitchLayoutGroupContext"
+import { updateVisualElementProps } from "../../render/utils/methods/update-props"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -73,7 +74,8 @@ export function useVisualElement<Instance, RenderState>(
     }
 
     useInsertionEffect(() => {
-        visualElement && visualElement.update(props, presenceContext)
+        visualElement &&
+            updateVisualElementProps(visualElement, props, presenceContext)
     })
 
     /**

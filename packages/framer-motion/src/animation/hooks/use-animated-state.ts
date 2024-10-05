@@ -6,6 +6,8 @@ import { makeUseVisualState } from "../../motion/utils/use-visual-state"
 import { createBox } from "../../projection/geometry/models"
 import { VisualElement } from "../../render/VisualElement"
 import { animateVisualElement } from "../interfaces/visual-element"
+import { unmountVisualElement } from "../../render/utils/methods/unmount"
+import { mountVisualElement } from "../../render/utils/methods/mount"
 
 interface AnimatedStateOptions {
     initialState: ResolvedValues
@@ -74,8 +76,8 @@ export function useAnimatedState(initialState: any) {
     })
 
     useLayoutEffect(() => {
-        element.mount({})
-        return () => element.unmount()
+        mountVisualElement(element, {})
+        return () => unmountVisualElement(element)
     }, [element])
 
     const startAnimation = useConstant(

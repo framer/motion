@@ -97,9 +97,9 @@ const domMax = Object.assign({}, es, {
 export default [
     motion,
     m,
-    sizeAnimate,
     sizeScroll,
     sizeAnimateMini,
     domAnimation,
     domMax,
+    sizeAnimate,
 ]

@@ -13,8 +13,8 @@ import { MotionValue } from "../../value"
 import { ResolvedValues } from "../types"
 import { createBox } from "../../projection/geometry/models"
 import { IProjectionNode } from "../../projection/node/types"
-import { isSVGTag } from "./utils/is-svg-tag"
 import { VisualElement } from "../VisualElement"
+import { isSVGTag } from "./utils/is-svg-tag"
 
 export class SVGVisualElement extends DOMVisualElement<
     SVGElement,
@@ -59,7 +59,7 @@ export class SVGVisualElement extends DOMVisualElement<
         buildSVGAttrs(
             renderState,
             latestValues,
-            this.isSVGTag,
+            isSVGTag(this.current?.tagName),
             props.transformTemplate
         )
     }
@@ -71,10 +71,5 @@ export class SVGVisualElement extends DOMVisualElement<
         projection?: IProjectionNode<unknown> | undefined
     ): void {
         renderSVG(instance, renderState, styleProp, projection)
-    }
-
-    mount(instance: SVGElement) {
-        this.isSVGTag = isSVGTag(instance.tagName)
-        super.mount(instance)
     }
 }

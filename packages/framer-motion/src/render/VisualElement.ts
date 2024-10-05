@@ -1,4 +1,4 @@
-import { frame, cancelFrame } from "../frameloop"
+import { frame } from "../frameloop"
 import {
     MotionConfigContext,
     ReducedMotionConfig,
@@ -7,11 +7,6 @@ import { FeatureDefinitions } from "../motion/features/types"
 import { MotionProps, MotionStyle } from "../motion/types"
 import type { Box } from "../projection/geometry/types"
 import { IProjectionNode } from "../projection/node/types"
-import { initPrefersReducedMotion } from "../utils/reduced-motion"
-import {
-    hasReducedMotionListener,
-    prefersReducedMotion,
-} from "../utils/reduced-motion/state"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
@@ -26,13 +21,10 @@ import {
     isControllingVariants as checkIsControllingVariants,
     isVariantNode as checkIsVariantNode,
 } from "./utils/is-controlling-variants"
-import { updateMotionValuesFromProps } from "./utils/motion-values"
 import { resolveVariantFromProps } from "./utils/resolve-variants"
-import { warnOnce } from "../utils/warn-once"
 import { featureDefinitions } from "../motion/features/definitions"
 import { Feature } from "../motion/features/Feature"
 import type { PresenceContextProps } from "../context/PresenceContext"
-import { visualElementStore } from "./store"
 import { KeyframeResolver } from "./utils/KeyframesResolver"
 import { isNumericalString } from "../utils/is-numerical-string"
 import { isZeroValueString } from "../utils/is-zero-value-string"
@@ -41,16 +33,6 @@ import { complex } from "../value/types/complex"
 import { getAnimatableNone } from "./dom/value-types/animatable-none"
 import { createBox } from "../projection/geometry/models"
 import { time } from "../frameloop/sync-time"
-
-const propEventHandlers = [
-    "AnimationStart",
-    "AnimationComplete",
-    "Update",
-    "BeforeLayoutMeasure",
-    "LayoutMeasure",
-    "LayoutAnimationStart",
-    "LayoutAnimationComplete",
-] as const
 
 /**
  * A VisualElement is an imperative abstraction around UI elements such as
@@ -269,35 +251,42 @@ export abstract class VisualElement<
     prevPresenceContext?: PresenceContextProps | null
 
     /**
-     * Cleanup functions for active features (hover/tap/exit etc)
-     */
-    private features: {
-        [K in keyof FeatureDefinitions]?: Feature<Instance>
-    } = {}
-
-    /**
      * A map of every subscription that binds the provided or generated
      * motion values onChange listeners to this visual element.
      */
-    private valueSubscriptions = new Map<string, VoidFunction>()
-
-    /**
-     * A reference to the ReducedMotionConfig passed to the VisualElement's host React component.
-     */
-    private reducedMotionConfig: ReducedMotionConfig | undefined
+    valueSubscriptions = new Map<string, VoidFunction>()
 
     /**
      * On mount, this will be hydrated with a callback to disconnect
      * this visual element from its parent on unmount.
      */
-    private removeFromVariantTree: undefined | VoidFunction
+    removeFromVariantTree: undefined | VoidFunction
+
+    /**
+     * An object containing a SubscriptionManager for each active event.
+     */
+    events: {
+        [key: string]: SubscriptionManager<any>
+    } = {}
+
+    /**
+     * Cleanup functions for active features (hover/tap/exit etc)
+     */
+    features: {
+        [K in keyof FeatureDefinitions]?: Feature<Instance>
+    } = {}
+
+    /**
+     * A reference to the ReducedMotionConfig passed to the VisualElement's host React component.
+     */
+    reducedMotionConfig: ReducedMotionConfig | undefined
 
     /**
      * A reference to the previously-provided motion values as returned
      * from scrapeMotionValuesFromProps. We use the keys in here to determine
      * if any motion values need to be removed after props are updated.
      */
-    private prevMotionValues: MotionStyle = {}
+    prevMotionValues: MotionStyle = {}
 
     /**
      * When values are removed from all animation props we need to search
@@ -311,18 +300,11 @@ export abstract class VisualElement<
     private initialValues: ResolvedValues
 
     /**
-     * An object containing a SubscriptionManager for each active event.
-     */
-    private events: {
-        [key: string]: SubscriptionManager<any>
-    } = {}
-
-    /**
      * An object containing an unsubscribe function for each prop event subscription.
      * For example, every "Update" event can have multiple subscribers via
      * VisualElement.on(), but only one of those can be defined via the onUpdate prop.
      */
-    private propEventSubscriptions: {
+    propEventSubscriptions: {
         [key: string]: VoidFunction
     } = {}
 
@@ -380,68 +362,7 @@ export abstract class VisualElement<
         }
     }
 
-    mount(instance: Instance) {
-        this.current = instance
-
-        visualElementStore.set(instance, this)
-
-        if (this.projection && !this.projection.instance) {
-            this.projection.mount(instance)
-        }
-
-        if (this.parent && this.isVariantNode && !this.isControllingVariants) {
-            this.removeFromVariantTree = this.parent.addVariantChild(this)
-        }
-
-        this.values.forEach((value, key) => this.bindToMotionValue(key, value))
-
-        if (!hasReducedMotionListener.current) {
-            initPrefersReducedMotion()
-        }
-
-        this.shouldReduceMotion =
-            this.reducedMotionConfig === "never"
-                ? false
-                : this.reducedMotionConfig === "always"
-                ? true
-                : prefersReducedMotion.current
-
-        if (process.env.NODE_ENV !== "production") {
-            warnOnce(
-                this.shouldReduceMotion !== true,
-                "You have Reduced Motion enabled on your device. Animations may not appear as expected."
-            )
-        }
-
-        if (this.parent) this.parent.children.add(this)
-        this.update(this.props, this.presenceContext)
-    }
-
-    unmount() {
-        visualElementStore.delete(this.current)
-        this.projection && this.projection.unmount()
-        cancelFrame(this.notifyUpdate)
-        cancelFrame(this.render)
-        this.valueSubscriptions.forEach((remove) => remove())
-        this.valueSubscriptions.clear()
-        this.removeFromVariantTree && this.removeFromVariantTree()
-        this.parent && this.parent.children.delete(this)
-
-        for (const key in this.events) {
-            this.events[key].clear()
-        }
-
-        for (const key in this.features) {
-            const feature = this.features[key as keyof typeof this.features]
-            if (feature) {
-                feature.unmount()
-                feature.isMounted = false
-            }
-        }
-        this.current = null
-    }
-
-    private bindToMotionValue(key: string, value: MotionValue) {
+    bindToMotionValue(key: string, value: MotionValue) {
         if (this.valueSubscriptions.has(key)) {
             this.valueSubscriptions.get(key)!()
         }
@@ -576,49 +497,6 @@ export abstract class VisualElement<
 
     setStaticValue(key: string, value: string | number) {
         this.latestValues[key] = value
-    }
-
-    /**
-     * Update the provided props. Ensure any newly-added motion values are
-     * added to our map, old ones removed, and listeners updated.
-     */
-    update(props: MotionProps, presenceContext: PresenceContextProps | null) {
-        if (props.transformTemplate || this.props.transformTemplate) {
-            this.scheduleRender()
-        }
-
-        this.prevProps = this.props
-        this.props = props
-
-        this.prevPresenceContext = this.presenceContext
-        this.presenceContext = presenceContext
-
-        /**
-         * Update prop event handlers ie onAnimationStart, onAnimationComplete
-         */
-        for (let i = 0; i < propEventHandlers.length; i++) {
-            const key = propEventHandlers[i]
-            if (this.propEventSubscriptions[key]) {
-                this.propEventSubscriptions[key]()
-                delete this.propEventSubscriptions[key]
-            }
-
-            const listenerName = ("on" + key) as keyof typeof props
-            const listener = props[listenerName]
-            if (listener) {
-                this.propEventSubscriptions[key] = this.on(key as any, listener)
-            }
-        }
-
-        this.prevMotionValues = updateMotionValuesFromProps(
-            this,
-            this.scrapeMotionValuesFromProps(props, this.prevProps, this),
-            this.prevMotionValues
-        )
-
-        if (this.handleChildMotionValue) {
-            this.handleChildMotionValue()
-        }
     }
 
     getProps() {
