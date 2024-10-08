@@ -3,7 +3,7 @@ Cypress.config({
 })
 
 describe("Correctly plays and resumes from optimized appear animations", () => {
-    const tests = require("../../fixtures/appear-tests.json")
+    const tests = require("../fixtures/appear-tests.json")
 
     tests.forEach((test) => {
         it(test, () => {

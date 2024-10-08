@@ -3,7 +3,7 @@ Cypress.config({
 })
 
 describe("Project the element to its original box", () => {
-    const tests = require("../../fixtures/projection-tests.json")
+    const tests = require("../fixtures/projection-tests.json")
 
     tests.forEach((test) => {
         it(test, () => {
