@@ -344,7 +344,7 @@ export function getValueTransition(
     transition: DynamicAnimationOptions & At,
     key: string
 ): DynamicAnimationOptions {
-    return transition[key as keyof typeof transition]
+    return transition && transition[key as keyof typeof transition]
         ? {
               ...transition,
               ...(transition[key as keyof typeof transition] as Transition),

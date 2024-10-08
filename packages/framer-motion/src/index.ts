@@ -128,8 +128,6 @@ export {
     MotionStyle,
     MotionTransform,
     VariantLabels,
-    RelayoutInfo,
-    ResolveLayoutTransition,
 } from "./motion/types"
 export {
     Orchestration,
