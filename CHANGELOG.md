@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.11.2] 2024-10-08
+
+### Fix
+
+-   Make `BezierDefinition` `readonly` for easier definition outside a `Transition`.
+
 ## [11.11.1] 2024-10-04
 
 ### Fix
