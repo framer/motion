@@ -106,7 +106,8 @@ function makeLatestValues(
     scrapeMotionValues: ScrapeMotionValuesFromProps
 ) {
     const values: ResolvedValues = {}
-    let applyWillChange =
+    const willChange = new Set()
+    const applyWillChange =
         shouldApplyWillChange && props.style?.willChange === undefined
 
     const motionValues = scrapeMotionValues(props, {})
@@ -171,14 +172,16 @@ function makeLatestValues(
     if (applyWillChange) {
         if (animate && initial !== false && !isAnimationControls(animate)) {
             forEachDefinition(props, animate, (target) => {
-                for (const key in target) {
-                    const willChangeName = getWillChangeName(key)
-                    if (willChangeName) {
-                        values.willChange = "transform"
-                        return
-                    }
+                for (const name in target) {
+                    // TODO Check if origin and target are different
+                    const memberName = getWillChangeName(name)
+                    memberName && willChange.add(memberName)
                 }
             })
+        }
+
+        if (willChange.size) {
+            values.willChange = Array.from(willChange).join(",")
         }
     }
 
