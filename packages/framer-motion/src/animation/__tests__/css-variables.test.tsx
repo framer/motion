@@ -133,6 +133,7 @@ describe("css variables", () => {
             {
                 "--a": "20px",
                 "--color": "rgba(0, 0, 0, 1)",
+                willChange: "auto",
             },
         ])
     })

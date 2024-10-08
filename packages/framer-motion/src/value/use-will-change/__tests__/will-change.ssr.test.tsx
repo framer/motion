@@ -24,7 +24,7 @@ function runTests(render: (components: any) => string) {
         )
 
         expect(div).toBe(
-            `<div style="--color:#000;clip-path:inset(10px);will-change:transform;transform:translateX(100px)"></div>`
+            `<div style="--color:#000;clip-path:inset(10px);will-change:transform,clip-path;transform:translateX(100px)"></div>`
         )
     })
 
