@@ -82,7 +82,7 @@ export const App = () => {
                 syncExplicitAnimation.startTime?.toString() ||
                     "sync explicit start time not available"
             )
-        }, 300)
+        }, 500)
 
         return () => {
             waapiAnimation.stop()
