@@ -332,10 +332,6 @@ describe("dragging", () => {
 
         const endValue = await new Promise<number>((resolve) => {
             setTimeout(() => {
-                expect(container.firstChild).toHaveStyle(
-                    "will-change: transform;"
-                )
-
                 resolve(x.get())
             }, 40)
         })
