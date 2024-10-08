@@ -2,7 +2,7 @@ export type EasingFunction = (v: number) => number
 
 export type EasingModifier = (easing: EasingFunction) => EasingFunction
 
-export type BezierDefinition = [number, number, number, number]
+export type BezierDefinition = readonly [number, number, number, number]
 
 export type EasingDefinition =
     | BezierDefinition

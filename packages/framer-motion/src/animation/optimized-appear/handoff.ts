@@ -29,7 +29,7 @@ export function handoffOptimizedAppearAnimation(
      */
     animation.onfinish = cancelAnimation
 
-    if (startTime === null || window.MotionHandoffIsComplete) {
+    if (startTime === null || window.MotionHandoffIsComplete?.(elementId)) {
         /**
          * If the startTime is null, this animation is the Paint Ready detection animation
          * and we can cancel it immediately without handoff.

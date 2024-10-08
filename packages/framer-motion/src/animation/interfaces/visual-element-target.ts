@@ -6,7 +6,7 @@ import type { VisualElementAnimationOptions } from "./types"
 import { animateMotionValue } from "./motion-value"
 import { setTarget } from "../../render/utils/setters"
 import { AnimationPlaybackControls } from "../types"
-import { getValueTransition } from "../utils/transitions"
+import { getValueTransition } from "../utils/get-value-transition"
 import { frame } from "../../frameloop"
 import { getOptimisedAppearId } from "../optimized-appear/get-appear-id"
 import { addValueToWillChange } from "../../value/use-will-change/add-will-change"
@@ -90,6 +90,8 @@ export function animateTarget(
             }
         }
 
+        addValueToWillChange(visualElement, key)
+
         value.start(
             animateMotionValue(
                 key,
@@ -99,8 +101,7 @@ export function animateTarget(
                     ? { type: false }
                     : valueTransition,
                 visualElement,
-                isHandoff,
-                addValueToWillChange(visualElement, key)
+                isHandoff
             )
         )
 

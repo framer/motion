@@ -1,5 +1,7 @@
 import { ResolvedKeyframes } from "../../../render/utils/KeyframesResolver"
 import { warning } from "../../../utils/errors"
+import { isGenerator } from "../../generators/utils/is-generator"
+import { AnimationGeneratorType } from "../../types"
 import { isAnimatable } from "../../utils/is-animatable"
 
 function hasKeyframesChanged(keyframes: ResolvedKeyframes<any>) {
@@ -13,7 +15,7 @@ function hasKeyframesChanged(keyframes: ResolvedKeyframes<any>) {
 export function canAnimate(
     keyframes: ResolvedKeyframes<any>,
     name?: string,
-    type?: string,
+    type?: AnimationGeneratorType,
     velocity?: number
 ) {
     /**
@@ -45,5 +47,8 @@ export function canAnimate(
         return false
     }
 
-    return hasKeyframesChanged(keyframes) || (type === "spring" && velocity)
+    return (
+        hasKeyframesChanged(keyframes) ||
+        ((type === "spring" || isGenerator(type)) && velocity)
+    )
 }

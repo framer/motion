@@ -8,10 +8,12 @@ export interface WithQuerySelectorAll {
     querySelectorAll: Element["querySelectorAll"]
 }
 
+export type SelectorCache = { [key: string]: NodeListOf<Element> }
+
 export function resolveElements(
     elements: ElementOrSelector,
     scope?: AnimationScope,
-    selectorCache?: { [key: string]: NodeListOf<Element> }
+    selectorCache?: SelectorCache
 ): Element[] {
     if (typeof elements === "string") {
         let root: WithQuerySelectorAll = document

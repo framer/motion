@@ -11,7 +11,7 @@ export { LazyMotion } from "./components/LazyMotion"
 export { LayoutGroup } from "./components/LayoutGroup"
 export { Reorder } from "./components/Reorder"
 
-export * from "./dom-entry"
+export * from "./dom"
 export * from "./three-entry"
 
 /**
@@ -48,6 +48,7 @@ export { useReducedMotionConfig } from "./utils/reduced-motion/use-reduced-motio
  */
 export { animationControls } from "./animation/hooks/animation-controls"
 export { useAnimate } from "./animation/hooks/use-animate"
+export { useAnimateMini } from "./animation/hooks/use-animate-style"
 export {
     useAnimation,
     useAnimationControls,
@@ -127,8 +128,6 @@ export {
     MotionStyle,
     MotionTransform,
     VariantLabels,
-    RelayoutInfo,
-    ResolveLayoutTransition,
 } from "./motion/types"
 export {
     Orchestration,
@@ -177,3 +176,6 @@ export { DeprecatedLayoutGroupContext } from "./context/DeprecatedLayoutGroupCon
 export { useAnimatedState as useDeprecatedAnimatedState } from "./animation/hooks/use-animated-state"
 export { useInvertedScale as useDeprecatedInvertedScale } from "./value/use-inverted-scale"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
+
+// Keep explict delay in milliseconds export for BC with Framer
+export { delay, DelayedFunction } from "./utils/delay"

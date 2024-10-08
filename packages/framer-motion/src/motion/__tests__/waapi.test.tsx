@@ -5,10 +5,11 @@ import {
     pointerUp,
     render,
 } from "../../../jest.setup"
-import { motion, useMotionValue } from "../../"
+import { motion, spring, useMotionValue } from "../../"
 import { act, useState, createRef } from "react"
 import { nextFrame } from "../../gestures/__tests__/utils"
 import "../../animation/animators/waapi/__tests__/setup"
+import { supportsFlags } from "../../animation/animators/waapi/utils/supports-flags"
 
 describe("WAAPI animations", () => {
     test("opacity animates with WAAPI at default settings", async () => {
@@ -389,7 +390,8 @@ describe("WAAPI animations", () => {
         )
     })
 
-    test("WAAPI is called with expected arguments with pre-generated keyframes", async () => {
+    test("WAAPI is called with pre-generated keyframes when linear() is unsupported ", async () => {
+        supportsFlags.linearEasing = false
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -399,7 +401,7 @@ describe("WAAPI animations", () => {
                 transition={{
                     duration: 0.05,
                     delay: 2,
-                    ease: () => 0.5,
+                    ease: (p) => p,
                     times: [0, 1],
                 }}
             />
@@ -411,7 +413,10 @@ describe("WAAPI animations", () => {
 
         expect(ref.current!.animate).toBeCalled()
         expect(ref.current!.animate).toBeCalledWith(
-            { opacity: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5], offset: undefined },
+            {
+                opacity: [0, 0.2, 0.4, 0.6, 0.8, 1],
+                offset: undefined,
+            },
             {
                 delay: 2000,
                 duration: 50,
@@ -421,6 +426,42 @@ describe("WAAPI animations", () => {
                 iterations: 1,
             }
         )
+        supportsFlags.linearEasing = undefined
+    })
+
+    test("WAAPI is called with generated linear() easing function when supported", async () => {
+        supportsFlags.linearEasing = true
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                    duration: 0.05,
+                    delay: 2,
+                    ease: (p) => p,
+                }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        await nextFrame()
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            { opacity: [0, 1], offset: undefined },
+            {
+                delay: 2000,
+                duration: 50,
+                direction: "normal",
+                easing: "linear(0, 0.25, 0.5, 0.75, 1)",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+        supportsFlags.linearEasing = undefined
     })
 
     test("Maps 'easeIn' to 'ease-in'", async () => {
@@ -680,6 +721,47 @@ describe("WAAPI animations", () => {
         )
     })
 
+    test("WAAPI is called with pre-generated generator keyframes", async () => {
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                    type: spring,
+                    duration: 0.1,
+                    bounce: 0,
+                }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        await nextFrame()
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                opacity: [
+                    0, 0.23606867982504365, 0.5509083741195555,
+                    0.7637684153125726, 0.8831910398786699, 0.9444771835619267,
+                    0.9743215604668359, 0.9883608373299467, 0.9948051108537942,
+                    0.9977094774280534, 1,
+                ],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                direction: "normal",
+                duration: 100,
+                easing: "linear",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+    })
+
     /**
      * TODO: We could not accelerate but scrub WAAPI animation if repeatDelay is defined
      */
@@ -701,39 +783,8 @@ describe("WAAPI animations", () => {
         expect(ref.current!.animate).not.toBeCalled()
     })
 
-    test("Pregenerates keyframes if ease is function", async () => {
-        const ref = createRef<HTMLDivElement>()
-        const Component = () => (
-            <motion.div
-                ref={ref}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.9 }}
-                transition={{ ease: () => 0.5, duration: 0.05 }}
-            />
-        )
-        const { rerender } = render(<Component />)
-        rerender(<Component />)
-
-        await nextFrame()
-
-        expect(ref.current!.animate).toBeCalled()
-        expect(ref.current!.animate).toBeCalledWith(
-            {
-                opacity: [0.45, 0.45, 0.45, 0.45, 0.45, 0.45],
-                offset: undefined,
-            },
-            {
-                delay: -0,
-                direction: "normal",
-                duration: 50,
-                easing: "linear",
-                fill: "both",
-                iterations: 1,
-            }
-        )
-    })
-
-    test("Pregenerates keyframes if ease is anticipate", async () => {
+    test("Pregenerates keyframes if ease is anticipate and linear() is not supported", async () => {
+        supportsFlags.linearEasing = false
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -766,9 +817,47 @@ describe("WAAPI animations", () => {
                 iterations: 1,
             }
         )
+
+        supportsFlags.linearEasing = undefined
     })
 
-    test("Pregenerates keyframes if ease is backInOut", async () => {
+    test("Generates linear() easing if ease is anticipate", async () => {
+        supportsFlags.linearEasing = true
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.9 }}
+                transition={{ ease: "anticipate", duration: 0.05 }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        await nextFrame()
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                opacity: [0, 0.9],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                direction: "normal",
+                duration: 50,
+                easing: "linear(0, -0.033628590829175686, 0.5, 0.984375, 0.99951171875)",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+        supportsFlags.linearEasing = undefined
+    })
+
+    test("Pregenerates keyframes if ease is backInOut and linear() is not supported", async () => {
+        supportsFlags.linearEasing = false
+
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -801,9 +890,46 @@ describe("WAAPI animations", () => {
                 iterations: 1,
             }
         )
+        supportsFlags.linearEasing = undefined
     })
 
-    test("Pregenerates keyframes if ease is circInOut", async () => {
+    test("Generates linear() if ease is backInOut", async () => {
+        supportsFlags.linearEasing = true
+
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.7 }}
+                transition={{ ease: "backInOut", duration: 0.05 }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        await nextFrame()
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                opacity: [0, 0.7],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                direction: "normal",
+                duration: 50,
+                easing: "linear(0, -0.033628590829175686, 0.5, 1.0336285908291756, 1)",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+        supportsFlags.linearEasing = undefined
+    })
+
+    test("Pregenerates keyframes if ease is circInOut and linear() is not supported", async () => {
+        supportsFlags.linearEasing = false
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -836,6 +962,41 @@ describe("WAAPI animations", () => {
                 iterations: 1,
             }
         )
+        supportsFlags.linearEasing = undefined
+    })
+
+    test("Generates linear() if ease is circInOut", async () => {
+        supportsFlags.linearEasing = true
+        const ref = createRef<HTMLDivElement>()
+        const Component = () => (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.9 }}
+                transition={{ ease: "circInOut", duration: 0.05 }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        await nextFrame()
+
+        expect(ref.current!.animate).toBeCalled()
+        expect(ref.current!.animate).toBeCalledWith(
+            {
+                opacity: [0, 0.9],
+                offset: undefined,
+            },
+            {
+                delay: -0,
+                direction: "normal",
+                duration: 50,
+                easing: "linear(0, 0.06698729810778065, 0.5, 0.9330127018922194, 1)",
+                fill: "both",
+                iterations: 1,
+            }
+        )
+        supportsFlags.linearEasing = undefined
     })
 
     test("Doesn't animate with WAAPI if repeatType is defined as mirror", async () => {
@@ -892,6 +1053,7 @@ describe("WAAPI animations", () => {
     })
 
     test("Animates with WAAPI if repeat is defined and we need to generate keyframes", async () => {
+        supportsFlags.linearEasing = false
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -928,9 +1090,11 @@ describe("WAAPI animations", () => {
                 iterations: 3,
             }
         )
+        supportsFlags.linearEasing = undefined
     })
 
     test("Animates with WAAPI if repeat is Infinity and we need to generate keyframes", async () => {
+        supportsFlags.linearEasing = false
         const ref = createRef<HTMLDivElement>()
         const Component = () => (
             <motion.div
@@ -967,6 +1131,7 @@ describe("WAAPI animations", () => {
                 iterations: Infinity,
             }
         )
+        supportsFlags.linearEasing = undefined
     })
 })
 

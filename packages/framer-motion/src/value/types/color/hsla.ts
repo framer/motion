@@ -1,7 +1,7 @@
 import { alpha as alphaType } from "../numbers"
 import { percent } from "../numbers/units"
 import { HSLA } from "../types"
-import { sanitize } from "../utils"
+import { sanitize } from "../utils/sanitize"
 import { isColorString, splitColor } from "./utils"
 
 export const hsla = {

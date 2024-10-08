@@ -124,6 +124,16 @@ describe("scroll() animation", () => {
                 )
             })
     })
+    it("With useAnimateMini, updates animation on first frame, before scroll event", () => {
+        cy.visit("?test=scroll-animate-style")
+            .wait(100)
+            .get("#color")
+            .should(([$element]: any) => {
+                expect(getComputedStyle($element).backgroundColor).to.equal(
+                    "rgb(255, 255, 255)"
+                )
+            })
+    })
 })
 
 describe("SVG", () => {

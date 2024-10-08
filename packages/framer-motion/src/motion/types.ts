@@ -20,8 +20,6 @@ import {
 } from "../gestures/types"
 import { ViewportProps } from "./features/viewport/types"
 
-export type MotionStyleProp = string | number | MotionValue
-
 /**
  * Either a string, or array of strings, that reference variants defined via the `variants` prop.
  * @public
@@ -90,34 +88,24 @@ export type MotionCSS = MakeMotion<
  */
 export type MotionTransform = MakeMotion<TransformProperties>
 
-/**
- * @public
- */
-export type MotionStyle = MotionCSS &
-    MotionTransform &
-    MakeMotion<SVGPathProperties> &
-    MakeCustomValueType<CustomStyles>
-
-export type OnUpdate = (v: Target) => void
-
-/**
- * @public
- */
-export interface RelayoutInfo {
-    delta: {
-        x: number
-        y: number
-        width: number
-        height: number
-    }
+export type MotionCSSVariables = {
+    [key: `--${string}`]:
+        | MotionValue<number>
+        | MotionValue<string>
+        | string
+        | number
 }
 
 /**
  * @public
  */
-export type ResolveLayoutTransition = (
-    info: RelayoutInfo
-) => Transition | boolean
+export type MotionStyle = MotionCSSVariables &
+    MotionCSS &
+    MotionTransform &
+    MakeMotion<SVGPathProperties> &
+    MakeCustomValueType<CustomStyles>
+
+export type OnUpdate = (v: Target) => void
 
 /**
  * @public

@@ -5,7 +5,7 @@ export const {
     schedule: frame,
     cancel: cancelFrame,
     state: frameData,
-    steps,
+    steps: frameSteps,
 } = createRenderBatcher(
     typeof requestAnimationFrame !== "undefined" ? requestAnimationFrame : noop,
     true

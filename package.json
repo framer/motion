@@ -22,6 +22,7 @@
         "test-ci": "turbo run test-ci --no-cache",
         "measure": "turbo run measure",
         "prepare": "turbo run build measure test test-e2e",
+        "version": "yarn install && git stage yarn.lock",
         "new": "lerna publish from-package",
         "new-alpha": "turbo run build && lerna publish from-package --canary --preid alpha"
     },
@@ -39,7 +40,6 @@
         "@types/react": "latest",
         "@types/react-dom": "latest",
         "@types/styled-components": "^5.1.25",
-        "@types/three": "^0.143.0",
         "@typescript-eslint/eslint-plugin": "^7.4.0",
         "@typescript-eslint/parser": "^7.4.0",
         "animejs": "^3.2.2",

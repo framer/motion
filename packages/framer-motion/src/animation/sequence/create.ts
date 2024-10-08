@@ -1,13 +1,14 @@
 import { Easing } from "../../easing/types"
 import { createGeneratorEasing } from "../../easing/utils/create-generator-easing"
-import { resolveElements } from "../../render/dom/utils/resolve-element"
 import { defaultOffset } from "../../utils/offsets/default"
 import { fillOffset } from "../../utils/offsets/fill"
 import { progress } from "../../utils/progress"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
 import type { MotionValue } from "../../value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
-import { DynamicAnimationOptions } from "../types"
+import { resolveSubjects } from "../animate/resolve-subjects"
+import { isGenerator } from "../generators/utils/is-generator"
+import { DynamicAnimationOptions, GeneratorFactory } from "../types"
 import {
     AnimationScope,
     DOMKeyframesDefinition,
@@ -31,7 +32,8 @@ const defaultSegmentEasing = "easeInOut"
 export function createAnimationsFromSequence(
     sequence: AnimationSequence,
     { defaultTransition = {}, ...sequenceTransition }: SequenceOptions = {},
-    scope?: AnimationScope
+    scope?: AnimationScope,
+    generators?: { [key: string]: GeneratorFactory }
 ): ResolvedAnimationDefinitions {
     const defaultDuration = defaultTransition.duration || 0.3
     const animationDefinitions: ResolvedAnimationDefinitions = new Map()
@@ -91,7 +93,7 @@ export function createAnimationsFromSequence(
             valueTransition: Transition | DynamicAnimationOptions,
             valueSequence: ValueSequence,
             elementIndex = 0,
-            numElements = 0
+            numSubjects = 0
         ) => {
             const valueKeyframesAsList = keyframesAsList(valueKeyframes)
             const {
@@ -108,14 +110,18 @@ export function createAnimationsFromSequence(
              */
             const calculatedDelay =
                 typeof delay === "function"
-                    ? delay(elementIndex, numElements)
+                    ? delay(elementIndex, numSubjects)
                     : delay
 
             /**
              * If this animation should and can use a spring, generate a spring easing function.
              */
             const numKeyframes = valueKeyframesAsList.length
-            if (numKeyframes <= 2 && type === "spring") {
+            const createGenerator = isGenerator(type)
+                ? type
+                : generators?.[type]
+
+            if (numKeyframes <= 2 && createGenerator) {
                 /**
                  * As we're creating an easing function from a spring,
                  * ideally we want to generate it using the real distance
@@ -139,7 +145,8 @@ export function createAnimationsFromSequence(
 
                 const springEasing = createGeneratorEasing(
                     springTransition,
-                    absoluteDelta
+                    absoluteDelta,
+                    createGenerator
                 )
 
                 ease = springEasing.ease
@@ -196,20 +203,22 @@ export function createAnimationsFromSequence(
                 getValueSequence("default", subjectSequence)
             )
         } else {
-            /**
-             * Find all the elements specified in the definition and parse value
-             * keyframes from their timeline definitions.
-             */
-            const elements = resolveElements(subject, scope, elementCache)
-            const numElements = elements.length
+            const subjects = resolveSubjects(
+                subject,
+                keyframes as DOMKeyframesDefinition,
+                scope,
+                elementCache
+            )
+
+            const numSubjects = subjects.length
 
             /**
              * For every element in this segment, process the defined values.
              */
             for (
-                let elementIndex = 0;
-                elementIndex < numElements;
-                elementIndex++
+                let subjectIndex = 0;
+                subjectIndex < numSubjects;
+                subjectIndex++
             ) {
                 /**
                  * Cast necessary, but we know these are of this type
@@ -217,8 +226,11 @@ export function createAnimationsFromSequence(
                 keyframes = keyframes as DOMKeyframesDefinition
                 transition = transition as DynamicAnimationOptions
 
-                const element = elements[elementIndex]
-                const subjectSequence = getSubjectSequence(element, sequences)
+                const thisSubject = subjects[subjectIndex]
+                const subjectSequence = getSubjectSequence(
+                    thisSubject,
+                    sequences
+                )
 
                 for (const key in keyframes) {
                     resolveValueSequence(
@@ -227,8 +239,8 @@ export function createAnimationsFromSequence(
                         ] as UnresolvedValueKeyframe,
                         getValueTransition(transition, key),
                         getValueSequence(key, subjectSequence),
-                        elementIndex,
-                        numElements
+                        subjectIndex,
+                        numSubjects
                     )
                 }
             }
@@ -309,9 +321,9 @@ export function createAnimationsFromSequence(
     return animationDefinitions
 }
 
-function getSubjectSequence(
-    subject: Element | MotionValue,
-    sequences: Map<Element | MotionValue, SequenceMap>
+function getSubjectSequence<O extends {}>(
+    subject: Element | MotionValue | O,
+    sequences: Map<Element | MotionValue | O, SequenceMap>
 ): SequenceMap {
     !sequences.has(subject) && sequences.set(subject, {})
     return sequences.get(subject)!
@@ -332,7 +344,7 @@ export function getValueTransition(
     transition: DynamicAnimationOptions & At,
     key: string
 ): DynamicAnimationOptions {
-    return transition[key as keyof typeof transition]
+    return transition && transition[key as keyof typeof transition]
         ? {
               ...transition,
               ...(transition[key as keyof typeof transition] as Transition),

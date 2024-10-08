@@ -1,4 +1,4 @@
-import { frame, cancelFrame, steps, frameData } from ".."
+import { frame, cancelFrame, frameSteps, frameData } from ".."
 
 describe("frame", () => {
     it("fires callbacks in the correct order", () => {
@@ -134,7 +134,7 @@ describe("frame", () => {
             let v = 0
 
             frame.update(() => {
-                if (v === 2) steps.update.process(frameData)
+                if (v === 2) frameSteps.update.process(frameData)
             }, true)
 
             frame.update(() => {
@@ -142,7 +142,7 @@ describe("frame", () => {
                 if (v > 6) resolve(true)
             }, true)
         })
-        steps.update.process(frameData)
+        frameSteps.update.process(frameData)
         return expect(promise).resolves.toBe(true)
     })
 })

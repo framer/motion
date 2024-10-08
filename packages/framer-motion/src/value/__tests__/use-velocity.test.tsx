@@ -1,9 +1,9 @@
 import { render } from "../../../jest.setup"
-import { useEffect } from "react";
+import { useEffect } from "react"
 import { useVelocity } from "../use-velocity"
 import { useMotionValue } from "../use-motion-value"
 import { animate } from "../../animation/animate"
-import { frame, steps } from "../../frameloop"
+import { frame, frameSteps } from "../../frameloop"
 import { frameData } from "../../frameloop"
 import { useMotionValueEvent } from "../../utils/use-motion-value-event"
 import { mirrorEasing } from "../../easing/modifiers/mirror"
@@ -32,7 +32,7 @@ const syncDriver =
                         elapsed += interval
                         setFrameData(interval, elapsed)
                         update(elapsed)
-                        steps.update.process(frameData)
+                        frameSteps.update.process(frameData)
                     }
                 }, 0)
             },
@@ -79,19 +79,19 @@ describe("useVelocity", () => {
                              * all values to settle.
                              */
                             frameData.timestamp = 110
-                            steps.update.process(frameData)
+                            frameSteps.update.process(frameData)
                             frame.postRender(() => {
                                 frameData.timestamp = 120
-                                steps.update.process(frameData)
+                                frameSteps.update.process(frameData)
                                 frame.postRender(() => {
                                     frameData.timestamp = 130
-                                    steps.update.process(frameData)
+                                    frameSteps.update.process(frameData)
                                     frame.postRender(() => {
                                         frameData.timestamp = 140
-                                        steps.update.process(frameData)
+                                        frameSteps.update.process(frameData)
                                         frame.postRender(() => {
                                             frameData.timestamp = 150
-                                            steps.update.process(frameData)
+                                            frameSteps.update.process(frameData)
                                             resolve(undefined)
                                         })
                                     })
