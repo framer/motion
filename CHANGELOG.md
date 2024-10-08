@@ -9,6 +9,7 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Fixed
 
 -   Memoize `AnimatePresence` `safeToRemove`.
+-   Remove duplicate `layout="size"` annotation.
 
 ## [11.11.3] 2024-10-08
 
