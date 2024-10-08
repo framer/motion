@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.11.4] 2024-10-08
+
+### Fixed
+
+-   Memoize `AnimatePresence` `safeToRemove`.
+
 ## [11.11.3] 2024-10-08
 
 ### Fixed
