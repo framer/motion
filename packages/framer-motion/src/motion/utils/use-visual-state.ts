@@ -173,9 +173,11 @@ function makeLatestValues(
         if (animate && initial !== false && !isAnimationControls(animate)) {
             forEachDefinition(props, animate, (target) => {
                 for (const name in target) {
-                    // TODO Check if origin and target are different
                     const memberName = getWillChangeName(name)
-                    memberName && willChange.add(memberName)
+
+                    if (memberName) {
+                        willChange.add(memberName)
+                    }
                 }
             })
         }

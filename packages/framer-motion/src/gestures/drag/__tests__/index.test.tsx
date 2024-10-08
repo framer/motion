@@ -1,6 +1,12 @@
 import { useState } from "react"
 import { pointerDown, render } from "../../../../jest.setup"
-import { BoundingBox, motion, motionValue, MotionValue } from "../../../"
+import {
+    BoundingBox,
+    motion,
+    motionValue,
+    MotionValue,
+    useWillChange,
+} from "../../../"
 import { MockDrag, drag, deferred, dragFrame, Point, sleep } from "./utils"
 import { nextFrame } from "../../__tests__/utils"
 import { WillChangeMotionValue } from "../../../value/use-will-change/WillChangeMotionValue"
@@ -57,21 +63,25 @@ describe("dragging", () => {
     })
 
     test("willChange is applied correctly when other values are animating", async () => {
-        const Component = () => (
-            <MockDrag>
-                <motion.div
-                    data-testid="draggable"
-                    drag="y"
-                    dragTransition={{
-                        bounceStiffness: 100000,
-                        bounceDamping: 100000,
-                    }}
-                    initial={{ x: 0 }}
-                    animate={{ x: 100 }}
-                    transition={{ duration: 5 }}
-                />
-            </MockDrag>
-        )
+        const Component = () => {
+            const willChange = useWillChange()
+            return (
+                <MockDrag>
+                    <motion.div
+                        data-testid="draggable"
+                        drag="y"
+                        dragTransition={{
+                            bounceStiffness: 100000,
+                            bounceDamping: 100000,
+                        }}
+                        initial={{ x: 0 }}
+                        animate={{ x: 100 }}
+                        transition={{ duration: 5 }}
+                        style={{ willChange }}
+                    />
+                </MockDrag>
+            )
+        }
 
         const { container, getByTestId, rerender } = render(<Component />)
         rerender(<Component />)

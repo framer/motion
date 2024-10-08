@@ -1,6 +1,5 @@
 import type { VisualElement } from "../../render/VisualElement"
 import { isWillChangeMotionValue } from "./is"
-import { WillChangeMotionValue } from "./WillChangeMotionValue"
 
 export function addValueToWillChange(
     visualElement: VisualElement,
@@ -8,16 +7,7 @@ export function addValueToWillChange(
 ) {
     if (!visualElement.applyWillChange) return
 
-    let willChange = visualElement.getValue("willChange")
-
-    /**
-     * If we haven't created a willChange MotionValue, and the we haven't been
-     * manually provided one, create one.
-     */
-    if (!willChange && !visualElement.props.style?.willChange) {
-        willChange = new WillChangeMotionValue("auto")
-        visualElement.addValue("willChange", willChange)
-    }
+    const willChange = visualElement.getValue("willChange")
 
     /**
      * It could be that a user has set willChange to a regular MotionValue,
