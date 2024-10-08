@@ -4,9 +4,15 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.11.3] 2024-10-08
+
+### Fixed
+
+-   Remove `as any` requirement for CSS variables.
+
 ## [11.11.2] 2024-10-08
 
-### Fix
+### Fixed
 
 -   Make `BezierDefinition` `readonly` for easier definition outside a `Transition`.
 
