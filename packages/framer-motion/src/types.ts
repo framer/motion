@@ -5,6 +5,7 @@ import {
     CustomStyles,
     SVGPathProperties,
 } from "./motion/types"
+import { VariableKeyframesDefinition } from "./animation/types"
 
 export type GenericKeyframesTarget<V> = V[] | Array<null | V>
 
@@ -975,7 +976,8 @@ type TargetProperties = CSSPropertiesWithoutTransitionOrSingleTransforms &
     SVGTransformAttributes &
     TransformProperties &
     CustomStyles &
-    SVGPathProperties
+    SVGPathProperties &
+    VariableKeyframesDefinition
 
 /**
  * @public
