@@ -32,12 +32,14 @@ describe("willChange", () => {
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
 
+        await nextFrame()
+
         expect(container.firstChild).toHaveStyle("will-change: transform;")
     })
 
     test("Doesn't render CSS variables or non-hardware accelerated values", async () => {
-        const willChange = useWillChange()
         const Component = () => {
+            const willChange = useWillChange()
             return (
                 <motion.div
                     animate={
@@ -53,6 +55,8 @@ describe("willChange", () => {
         }
 
         const { container } = render(<Component />)
+
+        await nextFrame()
 
         expect(container.firstChild).toHaveStyle("will-change: filter;")
     })
@@ -77,7 +81,7 @@ describe("willChange", () => {
     })
 
     test("Don't remove values when they finish animating", async () => {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>(async (resolve) => {
             const Component = () => {
                 const willChange = useWillChange()
                 return (
@@ -98,6 +102,8 @@ describe("willChange", () => {
             }
 
             const { container } = render(<Component />)
+
+            await nextFrame()
 
             expect(container.firstChild).toHaveStyle("will-change: transform;")
         })
