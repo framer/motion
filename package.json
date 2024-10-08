@@ -18,7 +18,6 @@
         "dev-server": "turbo run dev-server",
         "lint": "turbo run lint",
         "test": "turbo run test",
-        "test-e2e": "turbo run test-e2e",
         "test-ci": "turbo run test-ci --no-cache",
         "measure": "turbo run measure",
         "version": "yarn install && git stage yarn.lock",
