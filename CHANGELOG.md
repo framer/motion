@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.11.7] 2024-10-09
+
+### Fixed
+
+-   Improving generic value signature for `animate`.
+
 ## [11.11.6] 2024-10-09
 
 ### Fixed

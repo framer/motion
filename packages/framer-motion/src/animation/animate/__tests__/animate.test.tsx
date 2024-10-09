@@ -110,13 +110,14 @@ describe("animate", () => {
         animate(motionValue("#fff"), ["#fff", "#000"])
 
         function animateType<V extends string | number>(
-            value: MotionValue<V>,
-            target: V
+            value: V | MotionValue<V>,
+            target: V | V[]
         ) {
             animate(value, target)
         }
 
         animateType(motionValue<number>(0), 100)
+        animateType(motionValue<number>(0), [100])
         animateType(motionValue<string>("#fff"), "#000")
     })
 
