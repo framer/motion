@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.11.5] 2024-10-09
+
+### Fixed
+
+-   Removed ability to define CSS variables on `style` without casting, as this was conflicting with React `CSSProperties`.
+
 ## [11.11.4] 2024-10-08
 
 ### Fixed

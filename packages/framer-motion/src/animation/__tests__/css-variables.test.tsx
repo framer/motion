@@ -69,6 +69,12 @@ describe("css variables", () => {
         })
     })
 
+    test("motion component still accetps React.CSSProperties", () => {
+        ;() => (
+            <motion.div style={{ transform: "none" } as React.CSSProperties} />
+        )
+    })
+
     test("should animate css color variables", async () => {
         const promise = new Promise((resolve) => {
             let frameCount = 0

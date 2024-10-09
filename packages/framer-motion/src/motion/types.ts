@@ -88,6 +88,10 @@ export type MotionCSS = MakeMotion<
  */
 export type MotionTransform = MakeMotion<TransformProperties>
 
+/**
+ * TODO: Currently unused, would like to reimplement with the ability
+ * to still accept React.CSSProperties.
+ */
 export type MotionCSSVariables = {
     [key: `--${string}`]:
         | MotionValue<number>
@@ -99,8 +103,7 @@ export type MotionCSSVariables = {
 /**
  * @public
  */
-export type MotionStyle = MotionCSSVariables &
-    MotionCSS &
+export type MotionStyle = MotionCSS &
     MotionTransform &
     MakeMotion<SVGPathProperties> &
     MakeCustomValueType<CustomStyles>
