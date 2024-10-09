@@ -108,6 +108,16 @@ describe("animate", () => {
         animate(motionValue("#fff"), "#000")
         animate(motionValue("#fff"), [null, "#000"])
         animate(motionValue("#fff"), ["#fff", "#000"])
+
+        function animateType<V extends string | number>(
+            value: MotionValue<V>,
+            target: V
+        ) {
+            animate(value, target)
+        }
+
+        animateType(motionValue<number>(0), 100)
+        animateType(motionValue<string>("#fff"), "#000")
     })
 
     test("animates a motion value in sequence", async () => {

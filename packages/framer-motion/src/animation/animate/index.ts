@@ -50,6 +50,14 @@ export function createScopedAnimate(scope?: AnimationScope) {
         options?: ValueAnimationTransition<number>
     ): AnimationPlaybackControls
     /**
+     * Animate a generic motion value
+     */
+    function scopedAnimate<V>(
+        value: MotionValue<V>,
+        keyframes: V | GenericKeyframesTarget<V>,
+        options?: ValueAnimationTransition<V>
+    ): AnimationPlaybackControls
+    /**
      * Animate an Element
      */
     function scopedAnimate(
