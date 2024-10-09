@@ -12,7 +12,7 @@ const toVariable = `var(${toName})`
 const style = {
     [fromName]: fromValue,
     [toName]: toValue,
-}
+} as React.CSSProperties
 
 // Stub getPropertyValue because CSS variables aren't supported by JSDom
 
@@ -58,7 +58,13 @@ describe("css variables", () => {
                 initial={{ x: 0, "--from": "#f00", "--to": 0 }}
                 transition={{ "--from": { duration: 1 } }}
                 whileHover={{ x: 100, "--from": "#f00", "--to": 0 }}
-                style={{ "--from": "#f00", "--to": 0, x: 100 }}
+                style={
+                    {
+                        "--from": "#f00",
+                        "--to": 0,
+                        x: 100,
+                    } as React.CSSProperties
+                }
             />
         )
 
@@ -111,7 +117,7 @@ describe("css variables", () => {
             const output: string[] = []
             const Component = () => (
                 <motion.div
-                    style={{ "--color": " #fff " }}
+                    style={{ "--color": " #fff " } as React.CSSProperties}
                     animate={{ "--a": "20px", "--color": "#000" }}
                     transition={{ duration: 0.001 }}
                     onUpdate={(latest: any) => output.push(latest)}
@@ -141,7 +147,7 @@ describe("css variables", () => {
             const Component = () => {
                 return (
                     <motion.div
-                        style={style}
+                        style={style as React.CSSProperties}
                         initial={{ background: fromVariable }}
                         animate={{ background: toVariable }}
                         // transition={{ duration: 0.01 }}
