@@ -52,7 +52,7 @@ export function createScopedAnimate(scope?: AnimationScope) {
     /**
      * Animate a generic motion value
      */
-    function scopedAnimate<V extends string | number>(
+    function scopedAnimate<V>(
         value: V | MotionValue<V>,
         keyframes: V | GenericKeyframesTarget<V>,
         options?: ValueAnimationTransition<V>
