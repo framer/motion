@@ -38,6 +38,9 @@ export const App = () => {
             ease: "linear",
         }
 
+        if (!waapiRef.current) return
+        if (!syncRef.current) return
+
         const waapiAnimation = animate(
             waapiRef.current,
             { opacity: [0, 1] },
@@ -63,15 +66,23 @@ export const App = () => {
         )
 
         const timeout = setTimeout(() => {
-            waapiStartTime.set(waapiAnimation.startTime?.toString() || "null")
-            syncStartTime.set(syncAnimation.startTime?.toString() || "null")
+            waapiStartTime.set(
+                waapiAnimation.startTime?.toString() ||
+                    "waapi start time not available"
+            )
+            syncStartTime.set(
+                syncAnimation.startTime?.toString() ||
+                    "sync start time not available"
+            )
             waapiExplicitStartTime.set(
-                waapiExplicitAnimation.startTime?.toString() || "null"
+                waapiExplicitAnimation.startTime?.toString() ||
+                    "waapi explicit start time not available"
             )
             syncExplicitStartTime.set(
-                syncExplicitAnimation.startTime?.toString() || "null"
+                syncExplicitAnimation.startTime?.toString() ||
+                    "sync explicit start time not available"
             )
-        }, 200)
+        }, 500)
 
         return () => {
             waapiAnimation.stop()

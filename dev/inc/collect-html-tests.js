@@ -15,13 +15,16 @@ function collect(sourceDir, outputFile) {
         "utf8",
         (err) => {
             if (err) {
-                return console.error("Fail to collect HTML tests:", err.message)
+                return console.error(
+                    `Fail to collect ${sourceDir} tests:`,
+                    err.message
+                )
             }
-
-            console.log("HTML tests collected!")
         }
     )
 }
 
 collect("optimized-appear", "appear-tests")
 collect("projection", "projection-tests")
+
+console.log("HTML tests collected!")

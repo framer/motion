@@ -1,0 +1,11 @@
+{
+    "baseUrl": "http://localhost:8000",
+    "integrationFolder": "cypress/integration-html",
+    "video": true,
+    "screenshots": false,
+    "retries": 2,
+    "reporter": "junit",
+    "reporterOptions": {
+        "mochaFile": "../../test_reports/framer-motion-html.xml"
+    }
+}

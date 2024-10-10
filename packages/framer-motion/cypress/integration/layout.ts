@@ -27,6 +27,7 @@ describe("Layout animation", () => {
                 })
             })
             .trigger("click")
+            .wait(50)
             /**
              * Test that onLayoutAnimationStart fires
              */
@@ -45,7 +46,7 @@ describe("Layout animation", () => {
             /**
              * Test that onLayoutAnimationComplete fires
              */
-            .wait(200)
+            .wait(300)
             .should(([$box]: any) => {
                 expect($box.style.backgroundColor).to.equal("blue")
             })

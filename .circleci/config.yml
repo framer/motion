@@ -1,22 +1,12 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2.1
 jobs:
-    build:
+    test:
         docker:
-            # This python image includes node 14.17.1 according to
-            # https://circleci.com/developer/images/image/cimg/python#image-tags
-            # It's a bit weird to use a python image when we care about node
-            # first, but it's needed to get node-gyp to work to build iltorb
-            - image: cimg/python:3.12.2-node
-
-            # Specify service dependencies here if necessary
-            # CircleCI maintains a library of pre-built images
-            # documented at https://circleci.com/docs/2.0/circleci-images/
-            # - image: circleci/mongo:3.4.4
+            - image: cimg/node:lts-browsers
 
         working_directory: ~/repo
-
+        resource_class: large
         steps:
             - checkout
 
@@ -27,11 +17,88 @@ jobs:
                       # fallback to using the latest cache if no exact match is found
                       - v1-dependencies-
 
-            # run tests!
-            - run: |
-                  make test-ci
+            - run:
+                  name: Test Jest
+                  command: make test-jest
+
+            - store_test_results:
+                  path: test_reports
 
             - save_cache:
                   paths:
                       - node_modules
                   key: v1-dependencies-{{ checksum "package.json" }}
+
+    test-react:
+        docker:
+            - image: cimg/node:lts-browsers
+
+        working_directory: ~/repo
+        parallelism: 6
+        resource_class: large
+        steps:
+            - checkout
+
+            # Download and cache dependencies
+            - restore_cache:
+                  keys:
+                      - v1-dependencies-{{ checksum "package.json" }}
+                      # fallback to using the latest cache if no exact match is found
+                      - v1-dependencies-
+
+            - run:
+                  name: React tests
+                  command: make test-react
+                  environment:
+                      JEST_JUNIT_OUTPUT: test_reports/framer-motion-react.xml
+
+            - store_test_results:
+                  path: test_reports
+
+            - save_cache:
+                  paths:
+                      - node_modules
+                  key: v1-dependencies-{{ checksum "package.json" }}
+
+    test-html:
+        docker:
+            - image: cimg/node:lts-browsers
+        resource_class: large
+        working_directory: ~/repo
+        steps:
+            - checkout
+
+            # Download and cache dependencies
+            - restore_cache:
+                  keys:
+                      - v1-dependencies-{{ checksum "package.json" }}
+                      # fallback to using the latest cache if no exact match is found
+                      - v1-dependencies-
+
+            - run:
+                  name: HTML tests
+                  command: make test-html
+                  environment:
+                      JEST_JUNIT_OUTPUT: test_reports/framer-motion-html.xml
+
+            - run:
+                  name: Next.js tests
+                  command: make test-nextjs
+                  environment:
+                      JEST_JUNIT_OUTPUT: test_reports/framer-motion-next.xml
+
+            - store_test_results:
+                  path: test_reports
+
+            - save_cache:
+                  paths:
+                      - node_modules
+                  key: v1-dependencies-{{ checksum "package.json" }}
+
+workflows:
+    version: 2
+    build:
+        jobs:
+            - test
+            - test-react
+            - test-html

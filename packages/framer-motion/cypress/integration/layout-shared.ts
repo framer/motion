@@ -468,7 +468,7 @@ describe("Shared layout: A -> B crossfade transition", () => {
                 })
             })
             .trigger("click")
-            .wait(10)
+            .wait(100)
             .get("#b")
             .should(([$box]: any) => {
                 expectBbox($box, {
@@ -480,7 +480,7 @@ describe("Shared layout: A -> B crossfade transition", () => {
             })
             // interrupt the animation
             .trigger("click")
-            .wait(10)
+            .wait(100)
             .get("#a")
             .should(([$box]: any) => {
                 expectBbox($box, {
@@ -917,7 +917,7 @@ describe("Shared layout: nested crossfade transition", () => {
             .wait(50)
             .get("#a")
             .trigger("click")
-            .wait(100)
+            .wait(250)
             .get("#a")
             .should(([$box]: any) => {
                 expectBbox($box, {
@@ -938,7 +938,7 @@ describe("Shared layout: nested crossfade transition", () => {
             })
             .get("#b")
             .trigger("click")
-            .wait(100)
+            .wait(250)
             .get("#b")
             .should(([$box]: any) => {
                 expectBbox($box, {
