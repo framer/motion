@@ -6,7 +6,7 @@ jobs:
             - image: cimg/node:lts-browsers
 
         working_directory: ~/repo
-
+        resource_class: large
         steps:
             - checkout
 
@@ -63,7 +63,7 @@ jobs:
     test-html:
         docker:
             - image: cimg/node:lts-browsers
-
+        resource_class: large
         working_directory: ~/repo
         steps:
             - checkout
