@@ -195,18 +195,19 @@ describe("Drag to reorder", () => {
             const delta = 20
             chain = chain
                 .trigger("pointerdown", 360, baseY, { force: true })
-                .wait(50)
+                .wait(150)
+
             steps.forEach((step) => {
                 Array.from({ length: Math.abs(step) }).forEach(() => {
                     const y = step > 0 ? delta : -delta
                     chain = chain
                         .trigger("pointermove", 360, baseY + y, { force: true })
-                        .wait(100)
+                        .wait(150)
                 })
             })
             return chain
                 .trigger("pointerup", 360, baseY, { force: true })
-                .wait(100)
+                .wait(150)
         }
 
         const chain = checkBox(
