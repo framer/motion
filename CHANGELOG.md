@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.11.8] 2024-10-11
+
+### Fixed
+
+-   Fixing fallback `package.json` for entrypoints in older versions of Node.
+
 ## [11.11.7] 2024-10-09
 
 ### Fixed
