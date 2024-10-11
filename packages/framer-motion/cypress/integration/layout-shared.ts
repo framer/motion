@@ -50,6 +50,7 @@ describe("Shared layout: A -> B transition", () => {
                 expect(getComputedStyle($box).opacity).to.equal("0.4")
             })
             .trigger("click")
+            .wait(50)
             .get("#b")
             /**
              * Test that onLayoutAnimationStart fires
@@ -57,7 +58,7 @@ describe("Shared layout: A -> B transition", () => {
             .should(([$box]: any) => {
                 expect($box.style.backgroundColor).to.equal("rgb(0, 255, 0)")
             })
-            .wait(50)
+            .wait(100)
             .should(([$box]: any) => {
                 expect(window.getComputedStyle($box).borderRadius).to.equal(
                     "5% / 4%"
