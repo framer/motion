@@ -1,6 +1,5 @@
 import type { VisualElement } from "../../render/VisualElement"
 import { isWillChangeMotionValue } from "./is"
-import { getWillChangeName } from "./get-will-change-name"
 
 export function addValueToWillChange(
     visualElement: VisualElement,
@@ -10,12 +9,11 @@ export function addValueToWillChange(
 
     const willChange = visualElement.getValue("willChange")
 
+    /**
+     * It could be that a user has set willChange to a regular MotionValue,
+     * in which case we can't add the value to it.
+     */
     if (isWillChangeMotionValue(willChange)) {
         return willChange.add(key)
-    } else if (
-        !visualElement.props.style?.willChange &&
-        getWillChangeName(key)
-    ) {
-        visualElement.setStaticValue("willChange", "transform")
     }
 }
