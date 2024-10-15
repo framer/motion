@@ -87,8 +87,9 @@ describe("waapi", () => {
             // Explicitly defined startTime should be the same between main thread and WAAPI
             .get(".explicit-timer")
             .should(([waapi, sync]: any) => {
-                expect(waapi.innerHTML).to.equal(sync.innerHTML)
+                expect(sync.innerHTML).to.equal("101")
                 expect(waapi.innerHTML).to.equal("101")
+                expect(waapi.innerHTML).to.equal(sync.innerHTML)
             })
             // Explicitly defined startTime should not be the same as automatically defined startTime
             .get(".sync-timer")
