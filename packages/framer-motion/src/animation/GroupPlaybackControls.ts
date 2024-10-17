@@ -31,7 +31,7 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
 
     attachTimeline(
         timeline: any,
-        fallback: (animation: AnimationPlaybackControls) => VoidFunction | undefined
+        fallback?: (animation: AnimationPlaybackControls) => VoidFunction
     ) {
         const subscriptions = this.animations.map((animation) => {
             if (supportsScrollTimeline() && animation.attachTimeline) {
