@@ -68,10 +68,7 @@ export function createRenderBatcher(
     const wake = () => {
         runNextFrame = true
         useDefaultElapsed = true
-
-        if (!state.isProcessing) {
-            scheduleNextBatch(processBatch)
-        }
+        if (!state.isProcessing) scheduleNextBatch(processBatch)
     }
 
     const schedule = stepsOrder.reduce((acc, key) => {
