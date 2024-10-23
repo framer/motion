@@ -16,6 +16,18 @@ describe("child as motion value", () => {
         return expect(promise).resolves.toHaveTextContent("1")
     })
 
+    test("accepts motion values as children for motion.text inside an svg", async () => {
+        const promise = new Promise<HTMLDivElement>((resolve) => {
+            const child = motionValue(3)
+            const Component = () => <svg><motion.text>{child}</motion.text></svg>
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+            resolve(container.firstChild as HTMLDivElement)
+        })
+
+        return expect(promise).resolves.toHaveTextContent("3")
+    })
+
     test("updates textContent when motion value changes", async () => {
         const promise = new Promise<HTMLDivElement>((resolve) => {
             const child = motionValue(1)
