@@ -79,7 +79,13 @@ export class HTMLVisualElement extends DOMVisualElement<
         const { children } = this.props
         if (isMotionValue(children)) {
             this.childSubscription = children.on("change", (latest) => {
-                if (this.current) this.current.textContent = `${latest}`
+                if (
+                    this.current
+                    && this.current.firstChild
+                    && this.current.firstChild.nodeType === Node.TEXT_NODE
+                ) {
+                    this.current.firstChild.nodeValue = `${latest}`
+                }
             })
         }
     }
