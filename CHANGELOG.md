@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.11.10] 2024-10-23
+
+### Changed
+
+- Fixed `motion` components accept a `MotionValue` as `children` for elements that doen't support innerText (such as `motion.text` in SVGs).
+
 ## [11.11.9] 2024-10-15
 
 ### Changed
