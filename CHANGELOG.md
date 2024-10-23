@@ -8,7 +8,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Changed
 
-- Fixed `motion` components accept a `MotionValue` as `children` for elements that doen't support innerText (such as `motion.text` in SVGs).
+- SVG `motion.text` and similar components now properly update when provided a `MotionValue` as children.
 
 ## [11.11.9] 2024-10-15
 
