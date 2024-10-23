@@ -8,7 +8,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Changed
 
-- SVG `motion.text` and similar components now properly update when provided a `MotionValue` as children.
+- SVG elements (like `motion.text`) now update when given a `MotionValue` as children, matching HTML element behavior.
 
 ## [11.11.9] 2024-10-15
 
