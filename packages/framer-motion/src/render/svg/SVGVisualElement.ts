@@ -15,6 +15,7 @@ import { createBox } from "../../projection/geometry/models"
 import { IProjectionNode } from "../../projection/node/types"
 import { isSVGTag } from "./utils/is-svg-tag"
 import { VisualElement } from "../VisualElement"
+import { isMotionValue } from "../../value/utils/is-motion-value"
 
 export class SVGVisualElement extends DOMVisualElement<
     SVGElement,
@@ -76,5 +77,27 @@ export class SVGVisualElement extends DOMVisualElement<
     mount(instance: SVGElement) {
         this.isSVGTag = isSVGTag(instance.tagName)
         super.mount(instance)
+    }
+
+    childSubscription?: VoidFunction
+    handleChildMotionValue() {
+        if (this.childSubscription) {
+            this.childSubscription()
+            delete this.childSubscription
+        }
+
+        const { children } = this.props
+        if (isMotionValue(children)) {
+            this.childSubscription = children.on("change", (latest) => {
+                if (
+                    this.current
+                    && this.current.firstChild
+                    && this.current.firstChild.nodeType === Node.TEXT_NODE
+                ) {
+                    // In SVG, the text can only be set through the value of the child text node
+                    this.current.firstChild.nodeValue = `${latest}`
+                }
+            })
+        }
     }
 }

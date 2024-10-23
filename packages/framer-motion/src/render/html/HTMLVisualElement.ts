@@ -79,19 +79,8 @@ export class HTMLVisualElement extends DOMVisualElement<
         const { children } = this.props
         if (isMotionValue(children)) {
             this.childSubscription = children.on("change", (latest) => {
-                if (
-                    this.current
-                    && this.current.textContent
-                ) {
-                    // In H1, H2, etc. the textContent can be set directly
+                if (this.current) {
                     this.current.textContent = `${latest}`
-                } else if (
-                    this.current
-                    && this.current.firstChild
-                    && this.current.firstChild.nodeType === Node.TEXT_NODE
-                ) {
-                    // In SVG, the text can only be set through the value of the child text node
-                    this.current.firstChild.nodeValue = `${latest}`
                 }
             })
         }
