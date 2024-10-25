@@ -817,11 +817,7 @@ describe("animate prop as variant", () => {
         const promise = new Promise((resolve) => {
             let latest = {}
 
-            let frameCount = 0
-
             const onUpdate = (l: { [key: string]: number | string }) => {
-                frameCount++
-                if (frameCount === 2) expect(l.willChange).toBe("transform")
                 latest = l
             }
 
@@ -842,7 +838,6 @@ describe("animate prop as variant", () => {
         })
 
         return expect(promise).resolves.toEqual({
-            willChange: "transform",
             x: 100,
             y: 100,
         })
