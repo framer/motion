@@ -136,12 +136,6 @@ export abstract class VisualElement<
     ): void
 
     /**
-     * If true, will-change will be applied to the element. Only HTMLVisualElements
-     * currently support this.
-     */
-    applyWillChange = false
-
-    /**
      * If the component child is provided as a motion value, handle subscriptions
      * with the renderer-specific VisualElement.
      */

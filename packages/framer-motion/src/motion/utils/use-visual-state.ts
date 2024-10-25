@@ -15,7 +15,6 @@ import {
     isVariantNode as checkIsVariantNode,
 } from "../../render/utils/is-controlling-variants"
 import { TargetAndTransition } from "../../types"
-import { getWillChangeName } from "../../value/use-will-change/get-will-change-name"
 
 export interface VisualState<Instance, RenderState> {
     renderState: RenderState
@@ -29,7 +28,6 @@ export type UseVisualState<Instance, RenderState> = (
 ) => VisualState<Instance, RenderState>
 
 export interface UseVisualStateConfig<Instance, RenderState> {
-    applyWillChange?: boolean
     scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps
     createRenderState: () => RenderState
     onMount?: (
@@ -41,22 +39,19 @@ export interface UseVisualStateConfig<Instance, RenderState> {
 
 function makeState<I, RS>(
     {
-        applyWillChange = false,
         scrapeMotionValuesFromProps,
         createRenderState,
         onMount,
     }: UseVisualStateConfig<I, RS>,
     props: MotionProps,
     context: MotionContextProps,
-    presenceContext: PresenceContextProps | null,
-    isStatic: boolean
+    presenceContext: PresenceContextProps | null
 ) {
     const state: VisualState<I, RS> = {
         latestValues: makeLatestValues(
             props,
             context,
             presenceContext,
-            isStatic ? false : applyWillChange,
             scrapeMotionValuesFromProps
         ),
         renderState: createRenderState(),
@@ -74,8 +69,7 @@ export const makeUseVisualState =
     (props: MotionProps, isStatic: boolean): VisualState<I, RS> => {
         const context = useContext(MotionContext)
         const presenceContext = useContext(PresenceContext)
-        const make = () =>
-            makeState(config, props, context, presenceContext, isStatic)
+        const make = () => makeState(config, props, context, presenceContext)
 
         return isStatic ? make() : useConstant(make)
     }
@@ -102,13 +96,9 @@ function makeLatestValues(
     props: MotionProps,
     context: MotionContextProps,
     presenceContext: PresenceContextProps | null,
-    shouldApplyWillChange: boolean,
     scrapeMotionValues: ScrapeMotionValuesFromProps
 ) {
     const values: ResolvedValues = {}
-    const willChange = new Set()
-    const applyWillChange =
-        shouldApplyWillChange && props.style?.willChange === undefined
 
     const motionValues = scrapeMotionValues(props, {})
     for (const key in motionValues) {
@@ -166,25 +156,6 @@ function makeLatestValues(
                 ] as string | number
             }
         })
-    }
-
-    // Add animating values to will-change
-    if (applyWillChange) {
-        if (animate && initial !== false && !isAnimationControls(animate)) {
-            forEachDefinition(props, animate, (target) => {
-                for (const name in target) {
-                    const memberName = getWillChangeName(name)
-
-                    if (memberName) {
-                        willChange.add(memberName)
-                    }
-                }
-            })
-        }
-
-        if (willChange.size) {
-            values.willChange = Array.from(willChange).join(",")
-        }
     }
 
     return values

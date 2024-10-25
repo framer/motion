@@ -146,7 +146,7 @@ function runTests(render: (components: any) => string) {
         )
 
         expect(div).toBe(
-            '<div style="will-change:transform;transform:translateX(100px) translateY(200px)"></div>'
+            '<div style="transform:translateX(100px) translateY(200px)"></div>'
         )
     })
 
@@ -165,7 +165,7 @@ function runTests(render: (components: any) => string) {
         )
 
         expect(customElement).toBe(
-            '<element-test style="will-change:transform;transform:translateX(100px) translateY(200px)"></element-test>'
+            '<element-test style="transform:translateX(100px) translateY(200px)"></element-test>'
         )
     })
 
