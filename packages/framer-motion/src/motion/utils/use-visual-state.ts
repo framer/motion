@@ -14,7 +14,6 @@ import {
     isControllingVariants as checkIsControllingVariants,
     isVariantNode as checkIsVariantNode,
 } from "../../render/utils/is-controlling-variants"
-import { TargetAndTransition } from "../../types"
 
 export interface VisualState<Instance, RenderState> {
     renderState: RenderState
@@ -74,24 +73,6 @@ export const makeUseVisualState =
         return isStatic ? make() : useConstant(make)
     }
 
-function forEachDefinition(
-    props: MotionProps,
-    definition: MotionProps["animate"] | MotionProps["initial"],
-    callback: (
-        target: TargetAndTransition,
-        transitionEnd: ResolvedValues
-    ) => void
-) {
-    const list = Array.isArray(definition) ? definition : [definition]
-    for (let i = 0; i < list.length; i++) {
-        const resolved = resolveVariantFromProps(props, list[i] as any)
-        if (resolved) {
-            const { transitionEnd, transition, ...target } = resolved
-            callback(target, transitionEnd as ResolvedValues)
-        }
-    }
-}
-
 function makeLatestValues(
     props: MotionProps,
     context: MotionContextProps,
@@ -131,31 +112,36 @@ function makeLatestValues(
         typeof variantToSet !== "boolean" &&
         !isAnimationControls(variantToSet)
     ) {
-        forEachDefinition(props, variantToSet, (target, transitionEnd) => {
-            for (const key in target) {
-                let valueTarget = target[key as keyof typeof target]
+        const list = Array.isArray(variantToSet) ? variantToSet : [variantToSet]
+        for (let i = 0; i < list.length; i++) {
+            const resolved = resolveVariantFromProps(props, list[i] as any)
+            if (resolved) {
+                const { transitionEnd, transition, ...target } = resolved
+                for (const key in target) {
+                    let valueTarget = target[key as keyof typeof target]
 
-                if (Array.isArray(valueTarget)) {
-                    /**
-                     * Take final keyframe if the initial animation is blocked because
-                     * we want to initialise at the end of that blocked animation.
-                     */
-                    const index = isInitialAnimationBlocked
-                        ? valueTarget.length - 1
-                        : 0
-                    valueTarget = valueTarget[index]
+                    if (Array.isArray(valueTarget)) {
+                        /**
+                         * Take final keyframe if the initial animation is blocked because
+                         * we want to initialise at the end of that blocked animation.
+                         */
+                        const index = isInitialAnimationBlocked
+                            ? valueTarget.length - 1
+                            : 0
+                        valueTarget = valueTarget[index]
+                    }
+
+                    if (valueTarget !== null) {
+                        values[key] = valueTarget as string | number
+                    }
                 }
-
-                if (valueTarget !== null) {
-                    values[key] = valueTarget as string | number
+                for (const key in transitionEnd) {
+                    values[key] = transitionEnd[
+                        key as keyof typeof transitionEnd
+                    ] as string | number
                 }
             }
-            for (const key in transitionEnd) {
-                values[key] = transitionEnd[
-                    key as keyof typeof transitionEnd
-                ] as string | number
-            }
-        })
+        }
     }
 
     return values
