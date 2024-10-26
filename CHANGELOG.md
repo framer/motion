@@ -4,11 +4,17 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [11.11.10] 2024-10-23
+## [11.11.11] 2024-10-26
 
 ### Changed
 
 - SVG elements (like `motion.text`) now update when given a `MotionValue` as children, matching HTML element behavior.
+
+## [11.11.10] 2024-10-25
+
+### Fixed
+
+-   Removing `will-change` from SSR.
 
 ## [11.11.9] 2024-10-15
 

@@ -5,8 +5,6 @@ export function addValueToWillChange(
     visualElement: VisualElement,
     key: string
 ) {
-    if (!visualElement.applyWillChange) return
-
     const willChange = visualElement.getValue("willChange")
 
     /**
