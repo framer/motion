@@ -51,7 +51,7 @@ class PopChildMeasure extends React.Component<MeasureProps> {
     }
 }
 
-export function PopChild({ children, isPresent, parentDom = document.head }: Props) {
+export function PopChild({ children, isPresent, parentDom }: Props) {
     const id = useId()
     const ref = useRef<HTMLElement>(null)
     const size = useRef<Size>({
@@ -79,7 +79,8 @@ export function PopChild({ children, isPresent, parentDom = document.head }: Pro
 
         const style = document.createElement("style")
         if (nonce) style.nonce = nonce
-        parentDom.appendChild(style)
+        const parent = parentDom ?? document.head;
+        parent.appendChild(style)
         if (style.sheet) {
             style.sheet.insertRule(`
           [data-motion-pop-id="${id}"] {
@@ -93,7 +94,7 @@ export function PopChild({ children, isPresent, parentDom = document.head }: Pro
         }
 
         return () => {
-            parentDom.removeChild(style)
+            parent.removeChild(style)
         }
     }, [isPresent])
 
