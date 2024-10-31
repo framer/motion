@@ -72,9 +72,14 @@ export function useVisualElement<Instance, RenderState>(
         )
     }
 
+    const isMounted = useRef(false)
     useInsertionEffect(() => {
-        if (visualElement && visualElement.current) {
-            visualElement && visualElement.update(props, presenceContext)
+        /**
+         * Check the component has already mounted before calling
+         * `update` unnecessarily. This ensures we skip the initial update.
+         */
+        if (visualElement && isMounted.current) {
+            visualElement.update(props, presenceContext)
         }
     })
 
@@ -93,6 +98,7 @@ export function useVisualElement<Instance, RenderState>(
     useIsomorphicLayoutEffect(() => {
         if (!visualElement) return
 
+        isMounted.current = true
         window.MotionIsMounted = true
 
         visualElement.updateFeatures()
