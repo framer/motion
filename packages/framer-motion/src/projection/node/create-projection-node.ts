@@ -698,8 +698,11 @@ export function createProjectionNode<I>({
                 return
             }
 
+            console.log(this.isUpdating)
+
             if (!this.isUpdating) {
                 this.nodes!.forEach(clearIsLayoutDirty)
+                return
             }
 
             this.isUpdating = false
@@ -740,7 +743,7 @@ export function createProjectionNode<I>({
         scheduleUpdate = () => this.update()
 
         didUpdate() {
-            if (this.isUpdating && !this.updateScheduled) {
+            if (!this.updateScheduled) {
                 this.updateScheduled = true
                 microtask.read(this.scheduleUpdate)
             }
