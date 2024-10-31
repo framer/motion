@@ -628,6 +628,7 @@ export function createProjectionNode<I>({
 
         willUpdate(shouldNotifyListeners = true) {
             this.root.hasTreeAnimated = true
+
             if (this.root.isUpdateBlocked()) {
                 this.options.onExitComplete && this.options.onExitComplete()
                 return
@@ -739,7 +740,7 @@ export function createProjectionNode<I>({
         scheduleUpdate = () => this.update()
 
         didUpdate() {
-            if (!this.updateScheduled) {
+            if (this.isUpdating && !this.updateScheduled) {
                 this.updateScheduled = true
                 microtask.read(this.scheduleUpdate)
             }
@@ -821,15 +822,14 @@ export function createProjectionNode<I>({
         updateLayout() {
             if (!this.instance) return
 
-            // TODO: Incorporate into a forwarded scroll offset
-            this.updateScroll()
-
             if (
                 !(this.options.alwaysMeasureLayout && this.isLead()) &&
                 !this.isLayoutDirty
             ) {
                 return
             }
+
+            this.updateScroll()
 
             /**
              * When a node is mounted, it simply resumes from the prevLead's
