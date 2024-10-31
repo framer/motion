@@ -4,6 +4,18 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.11.11] 2024-10-31
+
+### Fixed
+
+-   Fixing double `update()` call on mount.
+
+## [11.11.10] 2024-10-25
+
+### Fixed
+
+-   Removing `will-change` from SSR.
+
 ## [11.11.9] 2024-10-15
 
 ### Changed

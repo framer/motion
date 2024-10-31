@@ -23,13 +23,5 @@ export function scrapeMotionValuesFromProps(
         }
     }
 
-    /**
-     * If the willChange style has been manually set as a string, set
-     * applyWillChange to false to prevent it from automatically being applied.
-     */
-    if (visualElement && style && typeof style.willChange === "string") {
-        visualElement.applyWillChange = false
-    }
-
     return newValues
 }
