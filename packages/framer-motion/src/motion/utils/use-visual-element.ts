@@ -73,7 +73,9 @@ export function useVisualElement<Instance, RenderState>(
     }
 
     useInsertionEffect(() => {
-        visualElement && visualElement.update(props, presenceContext)
+        if (visualElement && visualElement.current) {
+            visualElement && visualElement.update(props, presenceContext)
+        }
     })
 
     /**
