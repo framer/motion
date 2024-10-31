@@ -822,14 +822,14 @@ export function createProjectionNode<I>({
         updateLayout() {
             if (!this.instance) return
 
+            this.updateScroll()
+
             if (
                 !(this.options.alwaysMeasureLayout && this.isLead()) &&
                 !this.isLayoutDirty
             ) {
                 return
             }
-
-            this.updateScroll()
 
             /**
              * When a node is mounted, it simply resumes from the prevLead's
