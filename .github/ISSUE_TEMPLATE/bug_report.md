@@ -48,9 +48,9 @@ import * as motion from "motion/react-client"
 import * as m from "framer-motion/react-m"
 ```
 
-### Motion One for React won't install
+### Motion for React won't install
 
-Different versions of Motion One for React are compatible with different versions of React.
+Different versions of Motion for React are compatible with different versions of React.
 
 React 19: `framer-motion@12.0.0-alpha.0` or higher
 React 18: `framer-motion@7.0.0` to `framer-motion@11.x`, or `motion`
@@ -64,7 +64,7 @@ The recommended solution is to move padding to a child element. See [this issue]
 
 ### Preact isn't working
 
-Motion One for React isn't compatible with Preact.
+Motion for React isn't compatible with Preact.
 
 ### `AnimatePresence` isn't working
 

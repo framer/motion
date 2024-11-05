@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="100" height="100" alt="Motion One logo" src="https://user-images.githubusercontent.com/7850794/164965523-3eced4c4-6020-467e-acde-f11b7900ad62.png" alt="Motion One Icon" />
+  <img width="100" height="100" alt="Motion logo" src="https://user-images.githubusercontent.com/7850794/164965523-3eced4c4-6020-467e-acde-f11b7900ad62.png" alt="Motion Icon" />
 </p>
 <h1 align="center">Contributing</h1>
 
@@ -23,7 +23,7 @@ This will let us talk through your proposal API and/or implementation before you
 
 Follow these steps to get your code PR-ready:
 
-1. Fork the Motion One repo.
+1. Fork the Motion repo.
 2. Clone your fork to your local computer.
 3. Install [Yarn](https://yarnpkg.com/).
 4. Run `make bootstrap` in the repo root.

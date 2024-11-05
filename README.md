@@ -1,14 +1,14 @@
 <p align="center">
-  <img width="100" height="100" alt="Motion One logo" src="https://user-images.githubusercontent.com/7850794/164965523-3eced4c4-6020-467e-acde-f11b7900ad62.png" alt="Motion One Icon" />
+  <img width="100" height="100" alt="Motion logo" src="https://user-images.githubusercontent.com/7850794/164965523-3eced4c4-6020-467e-acde-f11b7900ad62.png" alt="Motion Icon" />
 </p>
-<h1 align="center">Motion One</h1>
+<h1 align="center">Motion</h1>
 <h3 align="center">
   An open source motion library for JavaScript and React.
 </h3>
 
 <br>
 
-Motion One is the only animation library with first-class APIs for both JavaScript and React.
+Motion is the only animation library with first-class APIs for both JavaScript and React.
 
 It also sports a unique hybrid engine, with all the power of JavaScript animations combined with the performance of native browser APIs.
 
@@ -44,15 +44,15 @@ Read the full [React docs](https://motion.dev/docs/react-quick-start).
 
 ### 💎 Contribute
 
--   Want to contribute to Motion One? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
+-   Want to contribute to Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
 
 ### 👩🏻‍⚖️ License
 
--   Motion One is MIT licensed.
+-   Motion is MIT licensed.
 
 ### ✨ Framer
 
-Motion One powers Framer animations, the web builder for creative pros. Design and ship your dream site. Zero code, maximum speed.
+Motion powers Framer animations, the web builder for creative pros. Design and ship your dream site. Zero code, maximum speed.
 <br/>
 
 <p align="center">

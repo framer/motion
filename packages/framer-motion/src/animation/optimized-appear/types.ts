@@ -23,7 +23,7 @@ export type HandoffFunction = (
 
 /**
  * The window global object acts as a bridge between our inline script
- * triggering the optimized appear animations, and Motion One.
+ * triggering the optimized appear animations, and Motion.
  */
 declare global {
     interface Window {

@@ -20,6 +20,6 @@ Add any other context or screenshots about the feature request here.
 
 ## FAQs
 
-### Does Motion One support Preact?
+### Does Motion support Preact?
 
 It might work with Preact, but we don't explicitly support it, so if it does currently work you'd be using it at your own risk.

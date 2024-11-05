@@ -472,7 +472,7 @@ describe("animate prop as variant", () => {
 
     /**
      * This test enshrines the behaviour that when a value is removed from an element as the result of a parent variant,
-     * it should fallback to the style prop. This is a bug in Motion One - the desired behaviour is that it falls
+     * it should fallback to the style prop. This is a bug in Motion - the desired behaviour is that it falls
      * back to the defined variant in initial. However, changing this behaviour would break generated code in Framer
      * so we can't fix it until we find a migration path out of that.
      */

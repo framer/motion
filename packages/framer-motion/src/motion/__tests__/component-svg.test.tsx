@@ -56,7 +56,7 @@ describe("SVG", () => {
             const ref = useRef<SVGTextElement>(null)
             return (
                 <svg>
-                    <motion.text ref={ref}>Motion One</motion.text>
+                    <motion.text ref={ref}>Motion</motion.text>
                 </svg>
             )
         }

@@ -30,7 +30,7 @@ type Transformer<I, O> =
  *
  *
  * The input range must be a linear series of numbers. The output range
- * can be any value type supported by Motion One: numbers, colors, shadows, etc.
+ * can be any value type supported by Motion: numbers, colors, shadows, etc.
  *
  * Every value in the output range must be of the same type and in the same format.
  *
