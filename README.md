@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="100" height="100" alt="Motion logo" src="https://user-images.githubusercontent.com/7850794/164965523-3eced4c4-6020-467e-acde-f11b7900ad62.png" alt="Motion Icon" />
+  <img width="100" height="100" alt="Motion logo" src="https://user-images.githubusercontent.com/7850794/164965523-3eced4c4-6020-467e-acde-f11b7900ad62.png" alt="Motion logo" />
 </p>
 <h1 align="center">Motion</h1>
 <h3 align="center">
@@ -12,7 +12,7 @@ Motion is the only animation library with first-class APIs for both JavaScript a
 
 It also sports a unique hybrid engine, with all the power of JavaScript animations combined with the performance of native browser APIs.
 
-### 🏎️ Quick start
+## 🏎️ Quick start
 
 Install `motion` with via your package manager:
 
@@ -20,7 +20,7 @@ Install `motion` with via your package manager:
 npm install motion
 ```
 
-#### JavaScript
+### JavaScript
 
 ```javascript
 import { animate } from "motion"
@@ -30,7 +30,7 @@ animate("#box", { x: 100 })
 
 Read the full [JavaScript docs](https://motion.dev/docs/quick-start).
 
-#### React
+### React
 
 ```jsx
 import { motion } from "motion/react"
@@ -42,15 +42,19 @@ function Component() {
 
 Read the full [React docs](https://motion.dev/docs/react-quick-start).
 
-### 💎 Contribute
+## 💎 Contribute
 
 -   Want to contribute to Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
 
-### 👩🏻‍⚖️ License
+## 👩🏻‍⚖️ License
 
 -   Motion is MIT licensed.
 
-### ✨ Framer
+## ✨ Sponsors
+
+Motion is sustainable thanks to the kind support of its sponsors.
+
+### Framer
 
 Motion powers Framer animations, the web builder for creative pros. Design and ship your dream site. Zero code, maximum speed.
 <br/>
@@ -66,3 +70,7 @@ Motion powers Framer animations, the web builder for creative pros. Design and s
     <img src="https://framerusercontent.com/images/pMSOmGP2V8sSaZRV2D7i4HTBTe4.png" width="1000" alt="Framer Banner" />
   </a>
 </p>
+
+### Silver
+
+-   [Tailwind](https://tailwindcss.com)
