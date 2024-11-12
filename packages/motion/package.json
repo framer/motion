@@ -1,6 +1,6 @@
 {
     "name": "motion",
-    "version": "11.6.0",
+    "version": "11.11.12",
     "description": "An animation library for JavaScript and React.",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
