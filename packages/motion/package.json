@@ -76,5 +76,6 @@
         "react-dom": {
             "optional": true
         }
-    }
+    },
+    "gitHead": "df031688e68a69675707b9a73c052920d701d0d4"
 }
