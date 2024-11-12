@@ -69,7 +69,7 @@ export class MotionValue<V = any> {
     version = "__VERSION__"
 
     /**
-     * If a MotionValue has an owner, it was created internally within Framer Motion
+     * If a MotionValue has an owner, it was created internally within Motion
      * and therefore has no external listeners. It is therefore safe to animate via WAAPI.
      */
     owner?: Owner

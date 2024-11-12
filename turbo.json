@@ -1,5 +1,6 @@
 {
     "pipeline": {
+        "clean": {},
         "build": {
             "dependsOn": ["^build"],
             "outputs": ["dist/**", "types/**"]
@@ -28,7 +29,7 @@
             "outputs": ["dist/**", "build/**"]
         },
         "measure": {
-            "dependsOn": ["build"],
+            "dependsOn": ["^build", "build"],
             "outputs": ["dist/**", "build/**"]
         },
         "publish": {
