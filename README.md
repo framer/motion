@@ -60,7 +60,7 @@ Motion powers Framer animations, the web builder for creative pros. Design and s
 <br/>
 
 <a href="https://www.framer.com?utm_source=motion-readme">
-  <img alt="Framer logo" src="https://github.com/user-attachments/assets/ead6d5d9-c2fd-474a-bcd5-76d1d4fb9867">
+  <img alt="Framer logo" src="https://github.com/user-attachments/assets/ead6d5d9-c2fd-474a-bcd5-76d1d4fb9867" width="350px" height="350px">
 </a>
 
 ### Gold
