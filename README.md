@@ -73,4 +73,8 @@ Motion powers Framer animations, the web builder for creative pros. Design and s
 
 ### Silver
 
+<img decoding="async" loading="lazy" sizes="max(171px, 1px)" srcset="https://framerusercontent.com/images/r1bAaOiShCFKgphjfh4R5LZcwGE.svg?scale-down-to=512 512w,https://framerusercontent.com/images/r1bAaOiShCFKgphjfh4R5LZcwGE.svg 530w" src="https://framerusercontent.com/images/r1bAaOiShCFKgphjfh4R5LZcwGE.svg" alt="Frontend.fyi logo" style="display:block;width:100%;height:100%;border-radius:inherit;object-position:center;object-fit:contain">
+
+### Silver
+
 -   [Tailwind](https://tailwindcss.com)
