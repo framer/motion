@@ -79,27 +79,31 @@ export function Component({ isVisible }) {
 
 -   Motion for React is MIT licensed.
 
-### ✨ Sponsors
+## ✨ Sponsors
 
 Motion is sustainable thanks to the kind support of its sponsors.
 
-#### Framer
+### Platinum
 
 Motion powers Framer animations, the web builder for creative pros. Design and ship your dream site. Zero code, maximum speed.
 <br/>
 
-<p align="center">
-  <a href="https://www.framer.com?utm_source=motion-readme">
-    <img src="https://framerusercontent.com/images/atXqxn4JhKm4LXVncdNjkKV7yCU.png" width="140" alt="Start for free" />
-  </a>
-</p>
-<br/>
-<p align="center">
-  <a href="https://www.framer.com?utm_source=motion-readme">
-    <img src="https://framerusercontent.com/images/pMSOmGP2V8sSaZRV2D7i4HTBTe4.png" width="1000" alt="Framer Banner" />
-  </a>
-</p>
+<a href="https://www.framer.com?utm_source=motion-readme">
+  <img alt="Framer logo" src="https://github.com/user-attachments/assets/ead6d5d9-c2fd-474a-bcd5-76d1d4fb9867" width="350px" height="350px">
+</a>
+
+### Gold
+
+<a href="https://tailwindcss.com">
+  <img alt="Tailwind logo" src="https://github.com/user-attachments/assets/4dbfa620-e2e0-434f-a5c0-70268f61176a" width="250px" height="250px">
+</a>
 
 ### Silver
 
--   [Tailwind](https://tailwindcss.com)
+<a href="https://www.frontend.fyi/?utm_source=motion">
+  <img alt="Frontend.fyi logo" src="https://github.com/user-attachments/assets/f6c2a4f8-59a5-424c-8509-ad7876ebebcd" width="150px" height="150px">
+</a>
+
+### Personal
+
+-   [Nusu](https://x.com/nusualabuga)
