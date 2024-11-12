@@ -60,19 +60,19 @@ Motion powers Framer animations, the web builder for creative pros. Design and s
 <br/>
 
 <a href="https://www.framer.com?utm_source=motion-readme">
-  ![Framer logo](https://github.com/user-attachments/assets/ead6d5d9-c2fd-474a-bcd5-76d1d4fb9867)
+  <img alt="Framer logo" src="https://github.com/user-attachments/assets/ead6d5d9-c2fd-474a-bcd5-76d1d4fb9867">
 </a>
 
 ### Gold
 
 <a href="https://tailwindcss.com">
-  ![Tailwind logo](https://github.com/user-attachments/assets/4dbfa620-e2e0-434f-a5c0-70268f61176a)
+  <img alt="Tailwind logo" src="https://github.com/user-attachments/assets/4dbfa620-e2e0-434f-a5c0-70268f61176a">
 </a>
 
 ### Silver
 
 <a href="https://www.frontend.fyi/?utm_source=motion">
-  ![Frontend.fyi](https://github.com/user-attachments/assets/f6c2a4f8-59a5-424c-8509-ad7876ebebcd)
+  <img alt="Frontend.fyi logo" src="https://github.com/user-attachments/assets/f6c2a4f8-59a5-424c-8509-ad7876ebebcd">
 </a>
 
 ### Personal
