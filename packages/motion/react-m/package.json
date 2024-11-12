@@ -2,5 +2,5 @@
     "private": true,
     "types": "../dist/react-m.d.ts",
     "main": "../dist/cjs/react-m.js",
-    "module": "../dist/es/react-m.mjs"
+    "module": "../dist/es/motion/lib/react-m.mjs"
 }
