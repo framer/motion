@@ -113,7 +113,7 @@ const cjsClient = Object.assign({}, cjs, { input : "lib/react-client.js" })
 const cjsM = Object.assign({}, cjs, { input : "lib/react-m.js" })
 
 export const es = Object.assign({}, config, {
-    input: ["lib/index.js",  "lib/react-client.js", "lib/react-m.js"],
+    input: ["lib/index.js", "lib/react.js",  "lib/react-client.js", "lib/react-m.js"],
     output: {
         entryFileNames: "[name].mjs",
         format: "es",
@@ -122,7 +122,7 @@ export const es = Object.assign({}, config, {
         dir: "dist/es",
     },
     plugins: [resolve(), replaceSettings(), preserveDirectives()],
-    external,
+    external: ["react", "react-dom", "react/jsx-runtime"],
     onwarn(warning, warn) {
         if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
             return
@@ -138,6 +138,15 @@ const types = {
     output: {
         format: "es",
         file: "dist/index.d.ts",
+    },
+    plugins: typePlugins,
+}
+
+const reactTypes = {
+    input: "types/react.d.ts",
+    output: {
+        format: "es",
+        file: "dist/react.d.ts",
     },
     plugins: typePlugins,
 }
@@ -169,6 +178,7 @@ export default [
     cjsM,
     es,
     types,
+    reactTypes,
     mTypes,
     clientTypes,
 ]

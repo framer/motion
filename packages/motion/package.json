@@ -3,31 +3,31 @@
     "version": "11.11.12",
     "description": "An animation library for JavaScript and React.",
     "main": "dist/cjs/index.js",
-    "module": "dist/es/index.mjs",
+    "module": "dist/es/motion/lib/index.mjs",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
             "require": "./dist/cjs/index.js",
-            "import": "./dist/es/index.mjs",
+            "import": "./dist/es/motion/lib/index.mjs",
             "default": "./dist/cjs/index.js"
         },
         "./react": {
-            "types": "./dist/dom-entry.d.ts",
-            "require": "./dist/cjs/dom-entry.js",
-            "import": "./dist/es/dom-entry.mjs",
-            "default": "./dist/cjs/dom-entry.js"
+            "types": "./dist/react.d.ts",
+            "require": "./dist/cjs/react.js",
+            "import": "./dist/es/motion/lib/react.mjs",
+            "default": "./dist/cjs/react.js"
         },
         "./react-client": {
-            "types": "./dist/client-entry.d.ts",
-            "require": "./dist/cjs/client-entry.js",
-            "import": "./dist/es/client-entry.mjs",
-            "default": "./dist/cjs/client-entry.js"
+            "types": "./dist/react-client.d.ts",
+            "require": "./dist/cjs/react-client.js",
+            "import": "./dist/es/motion/lib/react-client.mjs",
+            "default": "./dist/cjs/react-client.js"
         },
         "./react-m": {
-            "types": "./dist/m-entry.d.ts",
-            "require": "./dist/cjs/m-entry.js",
-            "import": "./dist/es/m-entry.mjs",
-            "default": "./dist/cjs/m-entry.js"
+            "types": "./dist/react-m.d.ts",
+            "require": "./dist/cjs/react-m.js",
+            "import": "./dist/es/motion/lib/react-m.mjs",
+            "default": "./dist/cjs/react-m.js"
         },
         "./package.json": "./package.json"
     },
