@@ -58,7 +58,7 @@
         "postpublish": "git push --tags"
     },
     "dependencies": {
-        "framer-motion": "11.6.0",
+        "framer-motion": "11.11.12",
         "tslib": "^2.4.0"
     },
     "peerDependencies": {
@@ -77,5 +77,5 @@
             "optional": true
         }
     },
-    "gitHead": "df031688e68a69675707b9a73c052920d701d0d4"
+    "gitHead": "eeb41e5d5630ef9475b918f01f0ec71bddc9be0f"
 }
