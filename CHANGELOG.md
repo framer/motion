@@ -709,6 +709,10 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ## [11.0.0] 2024-01-23
 
+## Breaking
+
+-   glide has been removed. Users of glide can instead use type: "inertia" via the hybrid animate function.
+
 ### Changed
 
 -   Replaced velocity-check jobs in favour of passive detection.
