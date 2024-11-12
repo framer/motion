@@ -263,14 +263,4 @@ export class NativeAnimation implements AnimationPlaybackControls {
 
         return noop<void>
     }
-
-    attachTimeline(timeline: any) {
-        if (!this.animation) {
-            this.pendingTimeline = timeline
-        } else {
-            attachTimeline(this.animation, timeline)
-        }
-
-        return noop<void>
-    }
 }

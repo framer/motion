@@ -29,8 +29,8 @@ import { compareByTime } from "./utils/sort"
 
 const defaultSegmentEasing = "easeInOut"
 
-export function sequence(
-    sequenceDefinition: AnimationSequence,
+export function createAnimationsFromSequence(
+    sequence: AnimationSequence,
     { defaultTransition = {}, ...sequenceTransition }: SequenceOptions = {},
     scope?: AnimationScope,
     generators?: { [key: string]: GeneratorFactory }
@@ -50,8 +50,8 @@ export function sequence(
      * the definitions into keyframes and offsets with absolute time values.
      * These will later get converted into relative offsets in a second pass.
      */
-    for (let i = 0; i < sequenceDefinition.length; i++) {
-        const segment = sequenceDefinition[i]
+    for (let i = 0; i < sequence.length; i++) {
+        const segment = sequence[i]
 
         /**
          * If this is a timeline label, mark it and skip the rest of this iteration.
