@@ -71,6 +71,18 @@ Motion powers Framer animations, the web builder for creative pros. Design and s
   </a>
 </p>
 
+### Gold
+
+<a href="https://tailwindcss.com">
+  <img decoding="async" sizes="max(252px, 1px)" src="https://framerusercontent.com/images/2MLM1UlOYvTkdL65Fo8j01403qs.svg" alt="" style="display:block;width:100%;height:100%;border-radius:inherit;object-position:center;object-fit:contain">
+</a>
+
 ### Silver
 
--   [Tailwind](https://tailwindcss.com)
+<a href="https://www.frontend.fyi/?utm_source=motion">
+  <img decoding="async" loading="lazy" sizes="max(171px, 1px)" srcset="https://framerusercontent.com/images/r1bAaOiShCFKgphjfh4R5LZcwGE.svg?scale-down-to=512 512w,https://framerusercontent.com/images/r1bAaOiShCFKgphjfh4R5LZcwGE.svg 530w" src="https://framerusercontent.com/images/r1bAaOiShCFKgphjfh4R5LZcwGE.svg" alt="Frontend.fyi logo" style="display:block;width:100%;height:100%;border-radius:inherit;object-position:center;object-fit:contain">
+</a>
+
+### Personal
+
+- [Nusu](https://x.com/nusualabuga)
