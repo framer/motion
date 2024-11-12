@@ -77,4 +77,5 @@ Motion powers Framer animations, the web builder for creative pros. Design and s
 
 ### Personal
 
-- [Nusu](https://x.com/nusualabuga)
+-   [Nusu](https://x.com/nusualabuga)
+-   [OlegWock](https://sinja.io)
