@@ -5,21 +5,16 @@ import { useEffect } from "react"
 export const App = () => {
     useEffect(() => {
         const stopScrollAnimation = scroll(
-            animate(
-                "#color",
-                { x: [0, 100], backgroundColor: ["#fff", "#000"] },
-                { ease: "linear" }
-            )
+            animate("#color", {
+                x: [0, 100],
+                backgroundColor: ["#fff", "#000"],
+            })
         )
 
         const stopMiniScrollAnimation = scroll(
-            animateMini(
-                "#color",
-                {
-                    color: ["#000", "#fff"],
-                },
-                { ease: "linear" }
-            )
+            animateMini("#color", {
+                color: ["#000", "#fff"],
+            })
         )
 
         return () => {
