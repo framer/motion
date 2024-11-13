@@ -54,25 +54,33 @@ Read the full [React docs](https://motion.dev/docs/react-quick-start).
 
 Motion is sustainable thanks to the kind support of its sponsors.
 
-### Platinum
+### Partners
 
 Motion powers Framer animations, the web builder for creative pros. Design and ship your dream site. Zero code, maximum speed.
 <br/>
 
 <a href="https://www.framer.com?utm_source=motion-readme">
-  <img alt="Framer logo" src="https://github.com/user-attachments/assets/ead6d5d9-c2fd-474a-bcd5-76d1d4fb9867" width="350px" height="350px">
+  <img alt="Framer" src="https://github.com/user-attachments/assets/b0bc15ec-4c74-4b3c-8624-85fa7c7e78e9" width="300px" height="200px">
 </a>
 
-### Gold
+### Platinum
 
 <a href="https://tailwindcss.com">
-  <img alt="Tailwind logo" src="https://github.com/user-attachments/assets/4dbfa620-e2e0-434f-a5c0-70268f61176a" width="250px" height="250px">
+  <img alt="Tailwind" src="https://github.com/user-attachments/assets/c0496f09-b8ee-4bc4-85ab-83a071bbbdec" width="300px" height="200px">
+</a>
+
+<a href="https://emilkowal.ski">
+  <img alt="Emil Kowalski" src="https://github.com/user-attachments/assets/82ec7385-c8cf-4ce4-a9bf-3c38a76b7a4c" width="300px" height="200px">
 </a>
 
 ### Silver
 
 <a href="https://www.frontend.fyi/?utm_source=motion">
-  <img alt="Frontend.fyi logo" src="https://github.com/user-attachments/assets/f6c2a4f8-59a5-424c-8509-ad7876ebebcd" width="150px" height="150px">
+  <img alt="Frontend.fyi" src="https://github.com/user-attachments/assets/07d23aa5-69db-44a0-849d-90177e6fc817" width="150px" height="100px">
+</a>
+
+<a href="https://www.frontend.fyi/?utm_source=motion">
+  <img alt="Statamic" src="https://github.com/user-attachments/assets/5d28f090-bdd9-4b31-b134-fb2b94ca636f" width="150px" height="100px">
 </a>
 
 ### Personal
