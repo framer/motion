@@ -109,11 +109,14 @@ const cjs = Object.assign({}, config, {
 /**
  * Bundle seperately so bundles don't share common modules
  */
+const cjsReact = Object.assign({}, cjs, { input : "lib/react.js" })
+const cjsMini = Object.assign({}, cjs, { input : "lib/mini.js" })
+const cjsReactMini = Object.assign({}, cjs, { input : "lib/react-mini.js" })
 const cjsClient = Object.assign({}, cjs, { input : "lib/react-client.js" })
 const cjsM = Object.assign({}, cjs, { input : "lib/react-m.js" })
 
 export const es = Object.assign({}, config, {
-    input: ["lib/index.js", "lib/react.js",  "lib/react-client.js", "lib/react-m.js"],
+    input: ["lib/index.js", "lib/mini.js", "lib/react.js", "lib/react-mini.js",  "lib/react-client.js", "lib/react-m.js"],
     output: {
         entryFileNames: "[name].mjs",
         format: "es",
@@ -175,6 +178,9 @@ export default [
     umdProd,
     cjs,
     cjsClient,
+    cjsReact,
+    cjsMini,
+    cjsReactMini,
     cjsM,
     es,
     types,

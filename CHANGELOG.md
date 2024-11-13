@@ -4,6 +4,12 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.11.15] 2024-11-13
+
+### Fixed
+
+-   Fixing `mini` and `react-mini` entrypoints.
+
 ## [11.11.14] 2024-11-12
 
 ### Fixed
@@ -21,6 +27,7 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Changed
 
 -   Adding `"motion"` package.
+-   Replaced Motion One (see [upgrade guide](https://motion.dev/docs/upgrade-guide)).
 
 ## [11.11.11] 2024-10-31
 

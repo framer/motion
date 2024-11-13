@@ -11,6 +11,12 @@
             "import": "./dist/es/motion/lib/index.mjs",
             "default": "./dist/cjs/index.js"
         },
+        "./mini": {
+            "types": "./dist/mini.d.ts",
+            "require": "./dist/cjs/mini.js",
+            "import": "./dist/es/motion/lib/mini.mjs",
+            "default": "./dist/cjs/mini.js"
+        },
         "./react": {
             "types": "./dist/react.d.ts",
             "require": "./dist/cjs/react.js",
@@ -28,6 +34,12 @@
             "require": "./dist/cjs/react-m.js",
             "import": "./dist/es/motion/lib/react-m.mjs",
             "default": "./dist/cjs/react-m.js"
+        },
+        "./react-mini": {
+            "types": "./dist/react-mini.d.ts",
+            "require": "./dist/cjs/react-mini.js",
+            "import": "./dist/es/motion/lib/react-mini.mjs",
+            "default": "./dist/cjs/react-mini.js"
         },
         "./package.json": "./package.json"
     },
