@@ -67,7 +67,7 @@ Motion powers Framer animations, the web builder for creative pros. Design and s
 
 <a href="https://tailwindcss.com"><img alt="Tailwind" src="https://github.com/user-attachments/assets/c0496f09-b8ee-4bc4-85ab-83a071bbbdec" width="300px" height="200px"></a>
 
-<a href="https://emilkowal.ski"><img alt="Emil Kowalski" src="https://github.com/user-attachments/assets/82ec7385-c8cf-4ce4-a9bf-3c38a76b7a4c" width="300px" height="200px"></a>
+<a href="https://emilkowal.ski"><img alt="Emil Kowalski" src="https://github.com/user-attachments/assets/29f56b1a-37fb-4695-a6a6-151f6c24864f" width="300px" height="200px"></a>
 
 <a href="https://linear.app"><img alt="Linear" src="https://github.com/user-attachments/assets/a93710bb-d8ed-40e3-b0fb-1c5b3e2b16bb" width="300px" height="200px"></a>
 
