@@ -69,6 +69,8 @@ Motion powers Framer animations, the web builder for creative pros. Design and s
 
 <a href="https://emilkowal.ski"><img alt="Emil Kowalski" src="https://github.com/user-attachments/assets/82ec7385-c8cf-4ce4-a9bf-3c38a76b7a4c" width="300px" height="200px"></a>
 
+<a href="https://linear.app"><img alt="Linear" src="https://github.com/user-attachments/assets/a93710bb-d8ed-40e3-b0fb-1c5b3e2b16bb" width="300px" height="200px"></a>
+
 ### Silver
 
 <a href="https://www.frontend.fyi/?utm_source=motion"><img alt="Frontend.fyi" src="https://github.com/user-attachments/assets/07d23aa5-69db-44a0-849d-90177e6fc817" width="150px" height="100px"></a>
