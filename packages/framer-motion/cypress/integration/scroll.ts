@@ -117,6 +117,8 @@ describe("scroll() animation", () => {
 
                 expect(getComputedStyle($element).opacity).to.equal("0.5")
                 expect($element.style.transform).to.equal("translateX(50px)")
+
+                expect($element.innerText).to.equal("50")
             })
         cy.viewport(100, 800)
             .wait(200)

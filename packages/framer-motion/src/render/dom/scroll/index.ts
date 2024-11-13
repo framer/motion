@@ -98,6 +98,8 @@ function scrollAnimation(
     animation: AnimationPlaybackControls,
     options: ScrollOptions
 ) {
+    animation.flatten()
+
     if (needsElementTracking(options)) {
         animation.pause()
         return scrollInfo((info) => {

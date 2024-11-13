@@ -130,6 +130,17 @@ export class MainThreadAnimation<
         this.resolver.scheduleResolve()
     }
 
+    flatten() {
+        super.flatten()
+
+        if (this._resolved) {
+            this._resolved = {
+                ...this._resolved,
+                ...this.initPlayback(this._resolved.keyframes),
+            }
+        }
+    }
+
     protected initPlayback(keyframes: ResolvedKeyframes<T>) {
         const {
             type = "keyframes",

@@ -1,27 +1,46 @@
-import { scroll, animate, animateMini } from "framer-motion"
+import {
+    scroll,
+    animate,
+    animateMini,
+    useMotionValue,
+    useTransform,
+    motion,
+} from "framer-motion"
 import * as React from "react"
 import { useEffect } from "react"
 
 export const App = () => {
+    const progress = useMotionValue(0)
+
     useEffect(() => {
+        console.log("Effect ============================")
+        console.log("x, opacity and background color")
         const stopScrollAnimation = scroll(
             animate("#color", {
                 x: [0, 100],
+                opacity: [0, 1],
                 backgroundColor: ["#fff", "#000"],
             })
         )
 
+        console.log("color")
         const stopMiniScrollAnimation = scroll(
             animateMini("#color", {
                 color: ["#000", "#fff"],
             })
         )
 
+        console.log("motion value")
+        const stopMotionValueAnimation = scroll(animate(progress, 100))
+
         return () => {
             stopScrollAnimation()
             stopMiniScrollAnimation()
+            stopMotionValueAnimation()
         }
     }, [])
+
+    const progressDisplay = useTransform(() => Math.round(progress.get()))
 
     return (
         <>
@@ -29,9 +48,9 @@ export const App = () => {
             <div style={{ ...spacer, backgroundColor: "green" }} />
             <div style={{ ...spacer, backgroundColor: "blue" }} />
             <div style={{ ...spacer, backgroundColor: "yellow" }} />
-            <div id="color" style={progressStyle}>
-                A
-            </div>
+            <motion.div id="color" style={progressStyle}>
+                {progressDisplay}
+            </motion.div>
         </>
     )
 }
