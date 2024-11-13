@@ -4,6 +4,12 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.11.16] 2024-11-13
+
+### Fixed
+
+-   Ensuring animations passed to `scroll` are flattened.
+
 ## [11.11.15] 2024-11-13
 
 ### Fixed

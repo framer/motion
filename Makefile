@@ -93,6 +93,9 @@ test-nextjs: build test-mkdir
 
 test-e2e: test-nextjs test-html test-react
 
+test-single: build test-mkdir
+	yarn start-server-and-test "yarn dev-server" http://localhost:9990 "cd packages/framer-motion && cypress run --headless --spec cypress/integration/scroll.ts"
+
 lint: bootstrap
 	yarn lint
 

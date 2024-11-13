@@ -1,23 +1,31 @@
-import { scroll, animate } from "framer-motion"
+import { scroll, animate, animateMini } from "framer-motion"
 import * as React from "react"
 import { useEffect } from "react"
 
 export const App = () => {
     useEffect(() => {
-        /**
-         * Animate both transform (WAAPI) and colors (JS)
-         */
-        return scroll(
+        const stopScrollAnimation = scroll(
             animate(
                 "#color",
+                { x: [0, 100], backgroundColor: ["#fff", "#000"] },
+                { ease: "linear" }
+            )
+        )
+
+        const stopMiniScrollAnimation = scroll(
+            animateMini(
+                "#color",
                 {
-                    backgroundColor: ["#fff", "#000"],
                     color: ["#000", "#fff"],
-                    transform: ["none", "translateX(100px)"],
                 },
                 { ease: "linear" }
             )
         )
+
+        return () => {
+            stopScrollAnimation()
+            stopMiniScrollAnimation()
+        }
     }, [])
 
     return (

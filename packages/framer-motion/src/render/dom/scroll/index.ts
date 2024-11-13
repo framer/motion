@@ -1,8 +1,9 @@
 import { ScrollOptions, OnScroll, OnScrollWithInfo } from "./types"
 import { scrollInfo } from "./track"
-import { GroupPlaybackControls } from "../../../animation/GroupPlaybackControls"
 import { ProgressTimeline, observeTimeline } from "./observe"
 import { supportsScrollTimeline } from "./supports"
+import { AnimationPlaybackControls } from "../../../animation/types"
+import { noop } from "../../../utils/noop"
 
 declare class ScrollTimeline implements ProgressTimeline {
     constructor(options: ScrollOptions)
@@ -94,7 +95,7 @@ function scrollFunction(onScroll: OnScroll, options: ScrollOptions) {
 }
 
 function scrollAnimation(
-    animation: GroupPlaybackControls,
+    animation: AnimationPlaybackControls,
     options: ScrollOptions
 ) {
     if (needsElementTracking(options)) {
@@ -105,18 +106,22 @@ function scrollAnimation(
     } else {
         const timeline = getTimeline(options)
 
-        return animation.attachTimeline(timeline, (valueAnimation) => {
-            valueAnimation.pause()
+        if (animation.attachTimeline) {
+            return animation.attachTimeline(timeline, (valueAnimation) => {
+                valueAnimation.pause()
 
-            return observeTimeline((progress) => {
-                valueAnimation.time = valueAnimation.duration * progress
-            }, timeline)
-        })
+                return observeTimeline((progress) => {
+                    valueAnimation.time = valueAnimation.duration * progress
+                }, timeline)
+            })
+        } else {
+            return noop as VoidFunction
+        }
     }
 }
 
 export function scroll(
-    onScroll: OnScroll | GroupPlaybackControls,
+    onScroll: OnScroll | AnimationPlaybackControls,
     { axis = "y", ...options }: ScrollOptions = {}
 ): VoidFunction {
     const optionsWithDefaults = { axis, ...options }
