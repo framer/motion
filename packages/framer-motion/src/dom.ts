@@ -40,6 +40,8 @@ export { pipe } from "./utils/pipe"
 export { progress } from "./utils/progress"
 export { wrap } from "./utils/wrap"
 export * from "./frameloop"
+export {buildHTMLStyles} from "./render/html/utils/build-styles"
+export {buildTransform} from "./render/html/utils/build-transform"
 
 /**
  * Deprecated
