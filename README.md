@@ -77,6 +77,8 @@ Motion powers Framer animations, the web builder for creative pros. Design and s
 
 <a href="https://www.frontend.fyi/?utm_source=motion"><img alt="Statamic" src="https://github.com/user-attachments/assets/5d28f090-bdd9-4b31-b134-fb2b94ca636f" width="150px" height="100px"></a>
 
+<a href="https://firecrawl.dev"><img alt="Firecrawl" src="https://github.com/user-attachments/assets/cba90e54-1329-4353-8fba-85beef4d2ee9" width="150px" height="100px"></a>
+
 ### Personal
 
 -   [Nusu](https://x.com/nusualabuga)
