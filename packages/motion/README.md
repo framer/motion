@@ -85,11 +85,13 @@ Motion is sustainable thanks to the kind support of its sponsors.
 
 ### Partners
 
+#### Framer
+
 Motion powers Framer animations, the web builder for creative pros. Design and ship your dream site. Zero code, maximum speed.
 <br/>
 
 <a href="https://www.framer.com?utm_source=motion-readme">
-  <img alt="Framer" src="https://github.com/user-attachments/assets/b0bc15ec-4c74-4b3c-8624-85fa7c7e78e9" width="300px" height="200px">
+  <img alt="Framer" src="https://github.com/user-attachments/assets/0404c7a1-c29d-4785-89ae-aae315f3c759" width="300px" height="200px">
 </a>
 
 ### Platinum
