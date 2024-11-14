@@ -1,4 +1,4 @@
-import { motion, stagger, animate, animateMini } from "framer-motion"
+import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
 
 /**
@@ -14,15 +14,13 @@ export const App = () => {
     const [state, setState] = useState(false)
     useEffect(() => {
         setTimeout(() => {
-            // setState(true)
-
-            animateMini("div", { x: 100 }, { duration: 1, delay: stagger(0) })
+            setState(true)
         }, 300)
     }, [state])
 
     return (
         <motion.div
-            // animate={{ x: state ? 0 : 100 }}
+            animate={{ x: state ? 0 : 100 }}
             transition={{ duration: 1 }}
             style={style}
         />
