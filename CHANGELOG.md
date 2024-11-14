@@ -10,6 +10,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 -   Ensuring animations passed to `scroll` are scrubbed linearly.
 -   Fixing `mini` types entrypoint.
+-   Exporting easing types from `"motion"`.
 
 ## [11.11.15] 2024-11-13
 
