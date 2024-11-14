@@ -13,8 +13,6 @@ export const App = () => {
     const progress = useMotionValue(0)
 
     useEffect(() => {
-        console.log("Effect ============================")
-        console.log("x, opacity and background color")
         const stopScrollAnimation = scroll(
             animate("#color", {
                 x: [0, 100],
@@ -23,14 +21,12 @@ export const App = () => {
             })
         )
 
-        console.log("color")
         const stopMiniScrollAnimation = scroll(
             animateMini("#color", {
                 color: ["#000", "#fff"],
             })
         )
 
-        console.log("motion value")
         const stopMotionValueAnimation = scroll(animate(progress, 100))
 
         return () => {

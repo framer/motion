@@ -133,11 +133,12 @@ export class MainThreadAnimation<
     flatten() {
         super.flatten()
 
+        // If we've already resolved the animation, re-initialise it
         if (this._resolved) {
-            this._resolved = {
-                ...this._resolved,
-                ...this.initPlayback(this._resolved.keyframes),
-            }
+            Object.assign(
+                this._resolved,
+                this.initPlayback(this._resolved.keyframes)
+            )
         }
     }
 
