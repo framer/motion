@@ -60,5 +60,5 @@
         "@rollup/plugin-commonjs": "^22.0.1",
         "three": "^0.137.0"
     },
-    "gitHead": "eeb41e5d5630ef9475b918f01f0ec71bddc9be0f"
+    "gitHead": "eeb1cc452e2b468d838ec76fd501b131b383c5c9"
 }
