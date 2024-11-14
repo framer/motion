@@ -201,6 +201,12 @@ export class NativeAnimation implements AnimationPlaybackControls {
         return this.animation ? (this.animation.startTime as number) : null
     }
 
+    flatten() {
+        if (!this.animation) return
+
+        this.animation.effect?.updateTiming({ easing: "linear" })
+    }
+
     play() {
         if (this.state === "finished") {
             this.updateFinishedPromise()

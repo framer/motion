@@ -154,11 +154,29 @@ const reactTypes = {
     plugins: typePlugins,
 }
 
+const miniTypes = {
+    input: "types/mini.d.ts",
+    output: {
+        format: "es",
+        file: "dist/mini.d.ts",
+    },
+    plugins: typePlugins,
+}
+
 const mTypes = {
     input: "types/react-m.d.ts",
     output: {
         format: "es",
         file: "dist/react-m.d.ts",
+    },
+    plugins: typePlugins,
+}
+
+const reactMiniTypes = {
+    input: "types/react-mini.d.ts",
+    output: {
+        format: "es",
+        file: "dist/react-mini.d.ts",
     },
     plugins: typePlugins,
 }
@@ -185,6 +203,8 @@ export default [
     es,
     types,
     reactTypes,
+    reactMiniTypes,
     mTypes,
+    miniTypes,
     clientTypes,
 ]

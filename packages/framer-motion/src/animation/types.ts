@@ -137,6 +137,7 @@ export interface AnimationPlaybackControls {
         timeline: ProgressTimeline,
         fallback?: (animation: AnimationPlaybackControls) => VoidFunction
     ) => VoidFunction
+    flatten: () => void
 }
 
 export type DynamicOption<T> = (i: number, total: number) => T
