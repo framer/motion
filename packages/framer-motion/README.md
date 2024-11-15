@@ -109,7 +109,12 @@ Motion powers Framer animations, the web builder for creative pros. Design and s
 
 <a href="https://firecrawl.dev"><img alt="Firecrawl" src="https://github.com/user-attachments/assets/cba90e54-1329-4353-8fba-85beef4d2ee9" width="150px" height="100px"></a>
 
+<a href="https://puzzmo.com"><img alt="Puzzmo" src="https://github.com/user-attachments/assets/aa2d5586-e5e2-43b9-8446-db456e4b0758" width="150px" height="100px"></a>
+
+<a href="https://buildui.com"><img alt="Build UI" src="https://github.com/user-attachments/assets/024bfcd5-50e8-4b3d-a115-d5c6d6030d1c" width="150px" height="100px"></a>
+
 ### Personal
 
 -   [Nusu](https://x.com/nusualabuga)
 -   [OlegWock](https://sinja.io)
+-   [Lambert Weller](https://github.com/l-mbert)
