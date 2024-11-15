@@ -1,0 +1,11 @@
+{
+    "name": "motionui",
+    "version": "11.11.17",
+    "description": "",
+    "main": "index.js",
+    "module": "",
+    "author": "Matt Perry",
+    "license": "MIT",
+    "repository": "https://github.com/motiondivision/motion/",
+    "sideEffects": false
+}
