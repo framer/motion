@@ -53,10 +53,10 @@ watch: bootstrap
 	cd packages/framer-motion && yarn watch
 
 check-status:
-	@BUILD_STATUS=$(shell gh api repos/framer/motion/commits/$(shell git rev-parse HEAD)/status | jq -r .state); \
+	@BUILD_STATUS=$(shell gh api repos/motiondivision/motion/commits/$(shell git rev-parse HEAD)/status | jq -r .state); \
 	echo "Build $$BUILD_STATUS"; \
 	if [ "$$BUILD_STATUS" != "success" ]; then \
-	 BUILD_URL=$(shell gh api repos/framer/motion/commits/$(shell git rev-parse HEAD)/status | jq -r .statuses[0].target_url); \
+	 BUILD_URL=$(shell gh api repos/motiondivision/motion/commits/$(shell git rev-parse HEAD)/status | jq -r .statuses[0].target_url); \
 	 echo "Build URL: $$BUILD_URL"; exit 1; \
 	fi;
 
@@ -92,6 +92,9 @@ test-nextjs: build test-mkdir
 	yarn start-server-and-test "yarn dev-server || true" http://localhost:3000 "cd packages/framer-motion && cypress run --headless --config-file=cypress.rsc.json $(if $(CI), --config video=false, --reporter spec)"
 
 test-e2e: test-nextjs test-html test-react
+
+test-single: build test-mkdir
+	yarn start-server-and-test "yarn dev-server" http://localhost:9990 "cd packages/framer-motion && cypress run --headless --spec cypress/integration/scroll.ts"
 
 lint: bootstrap
 	yarn lint

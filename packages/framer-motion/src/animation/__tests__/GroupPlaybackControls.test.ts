@@ -15,6 +15,7 @@ function createTestAnimationControls(
         then: (resolve: VoidFunction) => {
             return Promise.resolve().then(resolve)
         },
+        flatten: () => {},
         complete: () => {},
         cancel: () => {},
         ...partialControls,

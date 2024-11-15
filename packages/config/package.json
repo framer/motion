@@ -1,0 +1,10 @@
+{
+    "name": "config",
+    "version": "11.11.12",
+    "main": "index.js",
+    "private": true,
+    "license": "MIT",
+    "files": [
+        "tsconfig.json"
+    ]
+}

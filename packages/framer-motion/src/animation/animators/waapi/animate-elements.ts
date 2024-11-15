@@ -39,7 +39,7 @@ export function animateElements(
             const valueKeyframes =
                 keyframes[valueName as keyof typeof keyframes]!
             const valueOptions = {
-                ...getValueTransition(options as any, valueName),
+                ...getValueTransition(elementTransition as any, valueName),
             }
 
             valueOptions.duration = valueOptions.duration

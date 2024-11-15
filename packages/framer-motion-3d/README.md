@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/22095598/123793419-f5528800-d8e1-11eb-8c5f-e2dad45a9c81.png" width="108" height="108" alt="Framer Motion" />
+  <img src="https://user-images.githubusercontent.com/22095598/123793419-f5528800-d8e1-11eb-8c5f-e2dad45a9c81.png" width="108" height="108" alt="Motion" />
 </p>
-<h1 align="center">Framer Motion 3D</h1>
+<h1 align="center">Motion 3D</h1>
 <h3 align="center">
   An open source motion library for React Three Fiber.
 </h3>
@@ -29,7 +29,7 @@
   <a href="https://www.npmjs.com/package/framer-motion-3d" target="_blank">
   <img src="https://img.shields.io/npm/dm/framer-motion-3d.svg?style=flat-square" />
   </a>
-  <a href="https://twitter.com/framer" target="_blank">
+  <a href="https://twitter.com/motiondotdev" target="_blank">
   <img src="https://img.shields.io/twitter/follow/framer.svg?style=social&label=Follow"  />
   </a>
   <a href="https://discord.gg/DfkSpYe" target="_blank">
@@ -63,11 +63,11 @@ Or checkout [our examples](https://www.framer.com/docs/three-introduction/#examp
 
 ### 🛠 Contribute
 
-Want to contribute to Framer Motion 3D? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
+Want to contribute to Motion 3D? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
 
 ### 👩🏻‍⚖️ License
 
-Framer Motion 3D is MIT licensed.
+Motion 3D is MIT licensed.
 
 ## Framer
 

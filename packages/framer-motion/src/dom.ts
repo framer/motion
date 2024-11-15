@@ -17,6 +17,7 @@ export * from "./easing/cubic-bezier"
 export * from "./easing/steps"
 export * from "./easing/modifiers/mirror"
 export * from "./easing/modifiers/reverse"
+export * from "./easing/types"
 
 /**
  * Animation generators

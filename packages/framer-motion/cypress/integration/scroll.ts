@@ -105,12 +105,20 @@ describe("scroll() animation", () => {
             .wait(200)
             .get("#color")
             .should(([$element]: any) => {
+                // This is animated by animate and thus uses linear RGB mixing
                 expect(getComputedStyle($element).backgroundColor).to.equal(
                     "rgb(180, 180, 180)"
                 )
+
+                // This is animated by animate mini and thus doesn't use linear RGB mixing
                 expect(getComputedStyle($element).color).to.equal(
-                    "rgb(180, 180, 180)"
+                    "rgb(128, 128, 128)"
                 )
+
+                expect(getComputedStyle($element).opacity).to.equal("0.5")
+                expect($element.style.transform).to.equal("translateX(50px)")
+
+                expect($element.innerText).to.equal("50")
             })
         cy.viewport(100, 800)
             .wait(200)
@@ -120,7 +128,7 @@ describe("scroll() animation", () => {
                     "rgb(221, 221, 221)"
                 )
                 expect(getComputedStyle($element).color).to.equal(
-                    "rgb(128, 128, 128)"
+                    "rgb(64, 64, 64)"
                 )
             })
     })

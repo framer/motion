@@ -27,7 +27,7 @@ export function updateMotionValuesFromProps(
             if (process.env.NODE_ENV === "development") {
                 warnOnce(
                     nextValue.version === "__VERSION__",
-                    `Attempting to mix Framer Motion versions ${nextValue.version} with __VERSION__ may not work as expected.`
+                    `Attempting to mix Motion versions ${nextValue.version} with __VERSION__ may not work as expected.`
                 )
             }
         } else if (isMotionValue(prevValue)) {
