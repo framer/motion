@@ -38,14 +38,14 @@ It does all this:
 
 -   [Springs](https://motion.dev/docs/react-transitions#spring)
 -   [Keyframes](https://motion.dev/docs/react-animation#keyframes)
--   [Layout animations](https://motion/dev/docs/react-layout-animations)
+-   [Layout animations](https://motion.dev/docs/react-layout-animations)
 -   [Shared layout animations](https://motion.dev/docs/react-layout-animations#shared-layout-animations)
 -   [Gestures (drag/tap/hover)](https://motion.dev/docs/react-gestures)
 -   [Scroll animations](https://motion.dev/docs/react-scroll-animations)
 -   [SVG paths](https://motion.dev/docs/react-animation#svg-line-drawing)
 -   [Exit animations](https://motion.dev/docs/react-animation#exit-animations)
--   [Server-side rendering](https://motion.dev//docs/react-motion-component#server-side-rendering)
--   [Independent transforms](https://motion.dev/docs/react-motion-component#independent-transforms)
+-   [Server-side rendering](https://motion.dev/docs/react-motion-component#server-side-rendering)
+-   [Independent transforms](https://motion.dev/docs/react-motion-component#style)
 -   [Orchestrate animations across components](https://motion.dev/docs/react-animation#orchestration)
 -   [CSS variables](https://motion.dev/docs/react-animation#css-variables)
 
