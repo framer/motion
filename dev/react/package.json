@@ -16,8 +16,8 @@
         "react-dom": "^19.0.0-rc.1"
     },
     "devDependencies": {
-        "@types/react": "^rc",
-        "@types/react-dom": "^rc",
+        "@types/react": "rc",
+        "@types/react-dom": "rc",
         "@typescript-eslint/eslint-plugin": "^7.2.0",
         "@typescript-eslint/parser": "^7.2.0",
         "@vitejs/plugin-react-swc": "^3.5.0",
