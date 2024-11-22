@@ -134,5 +134,6 @@
             "path": "./dist/size-rollup-waapi-animate.js",
             "maxSize": "2.54 kB"
         }
-    ]
+    ],
+    "gitHead": "392c2f605755f218e938eaa1c4ccd2c556d84ab1"
 }

@@ -58,5 +58,6 @@
         "@react-three/fiber": "9.0.0-beta.0",
         "@react-three/test-renderer": "^9.0.0",
         "three": "^0.141.0"
-    }
+    },
+    "gitHead": "392c2f605755f218e938eaa1c4ccd2c556d84ab1"
 }
