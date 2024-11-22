@@ -84,8 +84,12 @@ Motion powers Framer animations, the web builder for creative pros. Design and s
 
 <a href="https://buildui.com"><img alt="Build UI" src="https://github.com/user-attachments/assets/024bfcd5-50e8-4b3d-a115-d5c6d6030d1c" width="150px" height="100px"></a>
 
+<a href="https://hover.dev"><img alt="Hover" src="https://github.com/user-attachments/assets/4715b555-d2ac-4cb7-9f35-d36d708827b3" width="150px" height="100px"></a>
+
 ### Personal
 
 -   [Nusu](https://x.com/nusualabuga)
 -   [OlegWock](https://sinja.io)
 -   [Lambert Weller](https://github.com/l-mbert)
+-   [Jake LeBoeuf](https://jklb.wf)
+-   [Han Lee](https://github.com/hahnlee)
