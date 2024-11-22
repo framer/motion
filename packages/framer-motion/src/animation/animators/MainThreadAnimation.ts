@@ -497,12 +497,12 @@ export class MainThreadAnimation<
      * animation.stop is returned as a reference from a useEffect.
      */
     stop = () => {
+        const { onStop } = this.options
+        onStop && onStop()
         this.resolver.cancel()
         this.isStopped = true
         if (this.state === "idle") return
         this.teardown()
-        const { onStop } = this.options
-        onStop && onStop()
     }
 
     complete() {

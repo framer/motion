@@ -6,10 +6,11 @@ const height = 400
 
 export const App = () => {
     const [progress, setProgress] = useState(0)
-    const ref = useRef(null)
+    const ref = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        return scroll(setProgress, { source: ref.current })
+        if (!ref.current) return
+        return scroll(setProgress, { container: ref.current })
     }, [])
 
     return (
