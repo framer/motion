@@ -10605,12 +10605,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"motionui@workspace:packages/motionui":
-  version: 0.0.0-use.local
-  resolution: "motionui@workspace:packages/motionui"
-  languageName: unknown
-  linkType: soft
-
 "ms@npm:2.0.0":
   version: 2.0.0
   resolution: "ms@npm:2.0.0"
