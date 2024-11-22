@@ -6827,7 +6827,7 @@ __metadata:
   dependencies:
     "@react-three/fiber": 9.0.0-beta.0
     "@react-three/test-renderer": ^9.0.0
-    framer-motion: ^12.0.0-alpha.1
+    framer-motion: ^12.0.0-alpha.2
     react-merge-refs: ^2.0.1
     three: ^0.141.0
   peerDependencies:
@@ -6838,7 +6838,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion@^12.0.0-alpha.1, framer-motion@workspace:packages/framer-motion":
+"framer-motion@^12.0.0-alpha.2, framer-motion@workspace:packages/framer-motion":
   version: 0.0.0-use.local
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
@@ -10113,7 +10113,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "motion@workspace:packages/motion"
   dependencies:
-    framer-motion: ^12.0.0-alpha.1
+    framer-motion: ^12.0.0-alpha.2
     tslib: ^2.4.0
   peerDependencies:
     "@emotion/is-prop-valid": "*"
@@ -10206,7 +10206,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "next-env@workspace:dev/next"
   dependencies:
-    framer-motion: ^12.0.0-alpha.1
+    framer-motion: ^12.0.0-alpha.2
     next: 15.0.3
     react: 19.0.0-rc-66855b96-20241106
     react-dom: 19.0.0-rc-66855b96-20241106
@@ -11631,13 +11631,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-env@workspace:dev/react"
   dependencies:
-    "@types/react": ^rc
-    "@types/react-dom": ^rc
+    "@types/react": rc
+    "@types/react-dom": rc
     "@typescript-eslint/eslint-plugin": ^7.2.0
     "@typescript-eslint/parser": ^7.2.0
     "@vitejs/plugin-react-swc": ^3.5.0
     eslint-plugin-react-refresh: ^0.4.6
-    framer-motion: ^12.0.0-alpha.1
+    framer-motion: ^12.0.0-alpha.2
     react: ^19.0.0-rc.1
     react-dom: ^19.0.0-rc.1
     styled-components: ^6.1.11
