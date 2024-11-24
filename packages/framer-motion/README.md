@@ -101,6 +101,10 @@ Motion powers Framer animations, the web builder for creative pros. Design and s
 
 <a href="https://linear.app"><img alt="Linear" src="https://github.com/user-attachments/assets/a93710bb-d8ed-40e3-b0fb-1c5b3e2b16bb" width="300px" height="200px"></a>
 
+### Gold
+
+<a href="https://liveblocks.io"><img alt="Liveblocks" src="https://github.com/user-attachments/assets/31436a47-951e-4eab-9a68-bdd54ccf9444" width="225px" height="150px"></a>
+
 ### Silver
 
 <a href="https://www.frontend.fyi/?utm_source=motion"><img alt="Frontend.fyi" src="https://github.com/user-attachments/assets/07d23aa5-69db-44a0-849d-90177e6fc817" width="150px" height="100px"></a>
@@ -113,8 +117,12 @@ Motion powers Framer animations, the web builder for creative pros. Design and s
 
 <a href="https://buildui.com"><img alt="Build UI" src="https://github.com/user-attachments/assets/024bfcd5-50e8-4b3d-a115-d5c6d6030d1c" width="150px" height="100px"></a>
 
+<a href="https://hover.dev"><img alt="Hover" src="https://github.com/user-attachments/assets/4715b555-d2ac-4cb7-9f35-d36d708827b3" width="150px" height="100px"></a>
+
 ### Personal
 
 -   [Nusu](https://x.com/nusualabuga)
 -   [OlegWock](https://sinja.io)
 -   [Lambert Weller](https://github.com/l-mbert)
+-   [Jake LeBoeuf](https://jklb.wf)
+-   [Han Lee](https://github.com/hahnlee)
