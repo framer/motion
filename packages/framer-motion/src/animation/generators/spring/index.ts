@@ -172,5 +172,8 @@ export function spring({
 
             return state
         },
+        toString: () => {
+            const calculatedGenerator = gen
+        },
     }
 }
