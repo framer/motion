@@ -498,6 +498,13 @@ export interface Spring extends Repeat {
     duration?: number
 
     /**
+     * If true, the duration will be interpreted as perceptual duration.
+     *
+     * @public
+     */
+    perceptual?: boolean
+
+    /**
      * `bounce` determines the "bounciness" of a spring animation.
      *
      * `0` is no bounce, and `1` is extremely bouncy.

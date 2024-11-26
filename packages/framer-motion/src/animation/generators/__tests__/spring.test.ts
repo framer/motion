@@ -166,3 +166,9 @@ describe("spring", () => {
         expect(duration).toBe(600)
     })
 })
+
+describe("toString", () => {
+    test("returns correct string", () => {
+        expect(`${spring()}`).toEqual("300ms linear()")
+    })
+})

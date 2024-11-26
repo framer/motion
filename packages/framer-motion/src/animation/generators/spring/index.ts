@@ -1,3 +1,4 @@
+import { generateLinearEasing } from "../../animators/waapi/utils/linear"
 import {
     millisecondsToSeconds,
     secondsToMilliseconds,
@@ -6,6 +7,9 @@ import { ValueAnimationOptions, SpringOptions } from "../../types"
 import { AnimationState, KeyframeGenerator } from "../types"
 import { calcGeneratorVelocity } from "../utils/velocity"
 import { calcAngularFreq, findSpring } from "./find"
+import { calcGeneratorDuration } from "../utils/calc-duration"
+import { maxGeneratorDuration } from "../utils/calc-duration"
+import { clamp } from "../../../utils/clamp"
 
 const durationKeys = ["duration", "bounce"]
 const physicsKeys = ["stiffness", "damping", "mass"]
@@ -28,27 +32,53 @@ function getSpringOptions(options: SpringOptions) {
         !isSpringType(options, physicsKeys) &&
         isSpringType(options, durationKeys)
     ) {
-        const derived = findSpring(options)
+        if (options.perceptual) {
+            const perceptualDuration = options.duration!
+            const omega_0 =
+                (2 * Math.PI) / millisecondsToSeconds(perceptualDuration)
+            const stiffness = omega_0 * omega_0
+            const damping =
+                2 * clamp(0.05, 1, 1 - options.bounce!) * Math.sqrt(stiffness)
 
-        springOptions = {
-            ...springOptions,
-            ...derived,
-            mass: 1.0,
+            springOptions = {
+                ...springOptions,
+                mass: 1.0,
+                stiffness,
+                damping,
+            }
+        } else {
+            const derived = findSpring(options)
+
+            springOptions = {
+                ...springOptions,
+                ...derived,
+                mass: 1.0,
+            }
+            springOptions.isResolvedFromDuration = true
         }
-        springOptions.isResolvedFromDuration = true
     }
 
     return springOptions
 }
 
-export function spring({
-    keyframes,
-    restDelta,
-    restSpeed,
-    ...options
-}: ValueAnimationOptions<number>): KeyframeGenerator<number> {
-    const origin = keyframes[0]
-    const target = keyframes[keyframes.length - 1]
+export function spring(
+    optionsOrPerceptualDuration: ValueAnimationOptions<number> | number = 0.2,
+    bounce = 0.2
+): KeyframeGenerator<number> {
+    const options =
+        typeof optionsOrPerceptualDuration === "number"
+            ? ({
+                  perceptual: true,
+                  duration: secondsToMilliseconds(optionsOrPerceptualDuration),
+                  keyframes: [0, 100],
+                  bounce,
+              } as ValueAnimationOptions<number>)
+            : optionsOrPerceptualDuration
+
+    let { restSpeed, restDelta } = options
+
+    const origin = options.keyframes[0]
+    const target = options.keyframes[options.keyframes.length - 1]
 
     /**
      * This is the Iterator-spec return value. We ensure it's mutable rather than using a generator
@@ -137,7 +167,7 @@ export function spring({
         }
     }
 
-    return {
+    const generator = {
         calculatedDuration: isResolvedFromDuration ? duration || null : null,
         next: (t: number) => {
             const current = resolveSpring(t)
@@ -173,7 +203,20 @@ export function spring({
             return state
         },
         toString: () => {
-            const calculatedGenerator = gen
+            const calculatedDuration = Math.min(
+                calcGeneratorDuration(generator),
+                maxGeneratorDuration
+            )
+
+            const easing = generateLinearEasing(
+                (progress: number) =>
+                    generator.next(calculatedDuration * progress).value / 100,
+                calculatedDuration
+            )
+
+            return calculatedDuration + "ms " + easing
         },
     }
+
+    return generator
 }
