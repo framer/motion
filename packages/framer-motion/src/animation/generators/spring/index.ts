@@ -10,6 +10,7 @@ import { calcAngularFreq, findSpring } from "./find"
 import { calcGeneratorDuration } from "../utils/calc-duration"
 import { maxGeneratorDuration } from "../utils/calc-duration"
 import { clamp } from "../../../utils/clamp"
+import { springDefaults } from "./defaults"
 
 const durationKeys = ["duration", "bounce"]
 const physicsKeys = ["stiffness", "damping", "mass"]
@@ -20,10 +21,10 @@ function isSpringType(options: SpringOptions, keys: string[]) {
 
 function getSpringOptions(options: SpringOptions) {
     let springOptions = {
-        velocity: 0.0,
-        stiffness: 100,
-        damping: 10,
-        mass: 1.0,
+        velocity: springDefaults.velocity,
+        stiffness: springDefaults.stiffness,
+        damping: springDefaults.damping,
+        mass: springDefaults.mass,
         isResolvedFromDuration: false,
         ...options,
     }
@@ -32,17 +33,16 @@ function getSpringOptions(options: SpringOptions) {
         !isSpringType(options, physicsKeys) &&
         isSpringType(options, durationKeys)
     ) {
-        if (options.perceptual) {
-            const perceptualDuration = options.duration!
-            const omega_0 =
-                (2 * Math.PI) / millisecondsToSeconds(perceptualDuration)
-            const stiffness = omega_0 * omega_0
+        if (options.visualDuration) {
+            const visualDuration = options.visualDuration
+            const root = (2 * Math.PI) / (visualDuration * 1.2)
+            const stiffness = root * root
             const damping =
                 2 * clamp(0.05, 1, 1 - options.bounce!) * Math.sqrt(stiffness)
 
             springOptions = {
                 ...springOptions,
-                mass: 1.0,
+                mass: springDefaults.mass,
                 stiffness,
                 damping,
             }
@@ -52,7 +52,7 @@ function getSpringOptions(options: SpringOptions) {
             springOptions = {
                 ...springOptions,
                 ...derived,
-                mass: 1.0,
+                mass: springDefaults.mass,
             }
             springOptions.isResolvedFromDuration = true
         }
@@ -62,18 +62,19 @@ function getSpringOptions(options: SpringOptions) {
 }
 
 export function spring(
-    optionsOrPerceptualDuration: ValueAnimationOptions<number> | number = 0.2,
-    bounce = 0.2
+    optionsOrVisualDuration:
+        | ValueAnimationOptions<number>
+        | number = springDefaults.visualDuration,
+    bounce = springDefaults.bounce
 ): KeyframeGenerator<number> {
     const options =
-        typeof optionsOrPerceptualDuration === "number"
+        typeof optionsOrVisualDuration !== "object"
             ? ({
-                  perceptual: true,
-                  duration: secondsToMilliseconds(optionsOrPerceptualDuration),
-                  keyframes: [0, 100],
+                  visualDuration: optionsOrVisualDuration,
+                  keyframes: [0, 1],
                   bounce,
               } as ValueAnimationOptions<number>)
-            : optionsOrPerceptualDuration
+            : optionsOrVisualDuration
 
     let { restSpeed, restDelta } = options
 
@@ -114,8 +115,12 @@ export function spring(
      * ratio between feeling good and finishing as soon as changes are imperceptible.
      */
     const isGranularScale = Math.abs(initialDelta) < 5
-    restSpeed ||= isGranularScale ? 0.01 : 2
-    restDelta ||= isGranularScale ? 0.005 : 0.5
+    restSpeed ||= isGranularScale
+        ? springDefaults.restSpeed.granular
+        : springDefaults.restSpeed.default
+    restDelta ||= isGranularScale
+        ? springDefaults.restDelta.granular
+        : springDefaults.restDelta.default
 
     let resolveSpring: (v: number) => number
     if (dampingRatio < 1) {
@@ -210,8 +215,9 @@ export function spring(
 
             const easing = generateLinearEasing(
                 (progress: number) =>
-                    generator.next(calculatedDuration * progress).value / 100,
-                calculatedDuration
+                    generator.next(calculatedDuration * progress).value,
+                calculatedDuration,
+                30
             )
 
             return calculatedDuration + "ms " + easing

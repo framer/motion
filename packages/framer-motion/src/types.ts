@@ -498,11 +498,24 @@ export interface Spring extends Repeat {
     duration?: number
 
     /**
-     * If true, the duration will be interpreted as perceptual duration.
+     * If visualDuration is set, this will override duration.
+     *
+     * The visual duration is a time, set in seconds, that the animation will take to visually appear to reach its target.
+     *
+     * In other words, the bulk of the transition will occur before this time, and the "bouncy bit" will mostly happen after.
+     *
+     * This makes it easier to edit a spring, as well as visually coordinate it with other time-based animations.
+     *
+     * ```jsx
+     * <motion.div
+     *   animate={{ x: 100 }}
+     *   transition={{ type: "spring", visualDuration: 0.5 }}
+     * />
+     * ```
      *
      * @public
      */
-    perceptual?: boolean
+    visualDuration?: number
 
     /**
      * `bounce` determines the "bounciness" of a spring animation.
