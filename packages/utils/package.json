@@ -17,5 +17,5 @@
         "build": "yarn clean && tsc -p . && rollup -c",
         "dev": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\""
     },
-    "gitHead": "e8e019c360b12047bb662a72588ca7ee68638e50"
+    "gitHead": "9c70b0208d6492d195ce5fdb60ded6cae1a3245c"
 }

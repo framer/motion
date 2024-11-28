@@ -2,7 +2,6 @@ import resolve from "@rollup/plugin-node-resolve"
 import { terser } from "rollup-plugin-terser"
 import { visualizer } from "rollup-plugin-visualizer"
 import { replaceSettings, es } from "./rollup.config.mjs"
-import pkg from "./package.json" with { type: "json"}
 
 const sizePlugins = [
     resolve(),
@@ -10,12 +9,7 @@ const sizePlugins = [
     terser({ output: { comments: false } }),
 ]
 
-const external = [
-    ...Object.keys(pkg.dependencies || {}),
-    ...Object.keys(pkg.peerDependencies || {}),
-    ...Object.keys(pkg.optionalDependencies || {}),
-    "react/jsx-runtime",
-]
+const external = ["react", "react-dom", "react/jsx-runtime"]
 
 function createSizeBundle(input, output) {
     return Object.assign({}, es, {
