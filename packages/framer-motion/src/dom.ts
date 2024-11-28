@@ -43,6 +43,11 @@ export { wrap } from "./utils/wrap"
 export * from "./frameloop"
 
 /**
+ * Gestures
+ */
+export { hover } from "./gestures/hover"
+
+/**
  * Deprecated
  */
 export { sync, cancelSync } from "./frameloop/index-legacy"

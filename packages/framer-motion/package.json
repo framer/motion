@@ -83,6 +83,7 @@
         "measure": "rollup -c ./rollup.size.config.mjs && bundlesize"
     },
     "dependencies": {
+        "@motionone/dom": "^11.12.0",
         "tslib": "^2.4.0"
     },
     "devDependencies": {

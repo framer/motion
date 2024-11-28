@@ -105,12 +105,6 @@ export interface DynamicAnimationOptions
     delay?: number | DynamicOption<number>
 }
 
-export type ElementOrSelector =
-    | Element
-    | Element[]
-    | NodeListOf<Element>
-    | string
-
 /**
  * @public
  */

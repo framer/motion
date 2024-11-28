@@ -1,0 +1,26 @@
+{
+    "name": "@motionone/dom",
+    "version": "11.12.0",
+    "main": "./lib/index.js",
+    "types": "./types/index.d.ts",
+    "module": "./lib/index.js",
+    "exports": {
+        ".": {
+            "types": "./types/index.d.ts",
+            "require": "./dist/cjs/index.js",
+            "import": "./dist/es/index.mjs",
+            "default": "./lib/index.js"
+        },
+        "./hover": {
+            "types": "./types/gestures/hover.d.ts",
+            "require": "./dist/cjs/gestures/hover.js",
+            "import": "./dist/es/gestures/hover.mjs",
+            "default": "./lib/gestures/hover.js"
+        }
+    },
+    "scripts": {
+        "clean": "rm -rf types dist lib",
+        "build": "yarn clean && tsc -p . && rollup -c",
+        "dev": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\""
+    }
+}

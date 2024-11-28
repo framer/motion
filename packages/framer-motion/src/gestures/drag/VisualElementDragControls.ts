@@ -101,7 +101,7 @@ export class VisualElementDragControls {
             dragSnapToOrigin ? this.pauseAnimation() : this.stopAnimation()
 
             if (snapToCursor) {
-                this.snapToCursor(extractEventInfo(event, "page").point)
+                this.snapToCursor(extractEventInfo(event).point)
             }
         }
 

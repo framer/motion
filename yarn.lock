@@ -1904,6 +1904,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@motionone/dom@^11.12.0, @motionone/dom@workspace:packages/dom":
+  version: 0.0.0-use.local
+  resolution: "@motionone/dom@workspace:packages/dom"
+  languageName: unknown
+  linkType: soft
+
 "@next/env@npm:14.2.13":
   version: 14.2.13
   resolution: "@next/env@npm:14.2.13"
@@ -7004,6 +7010,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
+    "@motionone/dom": ^11.12.0
     "@types/three": 0.137.0
     three: 0.137.0
     tslib: ^2.4.0
