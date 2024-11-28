@@ -1,4 +1,4 @@
-import { invariant } from "../../utils/errors"
+import { invariant } from "motion-utils"
 import { PanSession, PanInfo } from "../pan/PanSession"
 import { ResolvedConstraints } from "./types"
 import { Lock, getGlobalLock } from "./utils/lock"

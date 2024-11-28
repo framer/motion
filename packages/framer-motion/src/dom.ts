@@ -1,3 +1,6 @@
+export * from "motion-utils"
+export * from "motion-dom"
+
 export { motionValue, MotionValue } from "./value"
 export type { PassiveEffect, Subscriber } from "./value"
 export { animate, createScopedAnimate } from "./animation/animate"
@@ -34,18 +37,12 @@ export { transform } from "./utils/transform"
 export { clamp } from "./utils/clamp"
 export { delayInSeconds as delay, DelayedFunction } from "./utils/delay"
 export * from "./utils/distance"
-export * from "./utils/errors"
 export * from "./utils/interpolate"
 export { mix } from "./utils/mix"
 export { pipe } from "./utils/pipe"
 export { progress } from "./utils/progress"
 export { wrap } from "./utils/wrap"
 export * from "./frameloop"
-
-/**
- * Gestures
- */
-export { hover } from "./gestures/hover"
 
 /**
  * Deprecated

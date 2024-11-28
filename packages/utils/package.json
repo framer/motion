@@ -1,5 +1,5 @@
 {
-    "name": "motion-dom",
+    "name": "motion-utils",
     "version": "11.12.0",
     "main": "./lib/index.js",
     "types": "./types/index.d.ts",
@@ -10,12 +10,6 @@
             "require": "./dist/cjs/index.js",
             "import": "./dist/es/index.mjs",
             "default": "./lib/index.js"
-        },
-        "./hover": {
-            "types": "./types/gestures/hover.d.ts",
-            "require": "./dist/cjs/gestures/hover.js",
-            "import": "./dist/es/gestures/hover.mjs",
-            "default": "./lib/gestures/hover.js"
         }
     },
     "scripts": {

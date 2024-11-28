@@ -1,4 +1,4 @@
-import { invariant } from "../../../utils/errors"
+import { invariant } from "motion-utils"
 import { isNumericalString } from "../../../utils/is-numerical-string"
 import { isCSSVariableToken, CSSVariableToken } from "./is-css-variable"
 

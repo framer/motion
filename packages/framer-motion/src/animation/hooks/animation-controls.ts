@@ -1,4 +1,4 @@
-import { invariant } from "../../utils/errors"
+import { invariant } from "motion-utils"
 import { setTarget } from "../../render/utils/setters"
 import type { VisualElement } from "../../render/VisualElement"
 import { AnimationControls, AnimationDefinition } from "../types"

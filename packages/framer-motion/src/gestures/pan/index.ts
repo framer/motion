@@ -1,7 +1,7 @@
 import { PanInfo, PanSession } from "./PanSession"
 import { addPointerEvent } from "../../events/add-pointer-event"
 import { Feature } from "../../motion/features/Feature"
-import { noop } from "../../utils/noop"
+import { noop } from "motion-utils"
 import { getContextWindow } from "../../utils/get-context-window"
 import { frame } from "../../frameloop"
 

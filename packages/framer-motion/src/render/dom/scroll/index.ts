@@ -3,7 +3,7 @@ import { scrollInfo } from "./track"
 import { ProgressTimeline, observeTimeline } from "./observe"
 import { supportsScrollTimeline } from "./supports"
 import { AnimationPlaybackControls } from "../../../animation/types"
-import { noop } from "../../../utils/noop"
+import { noop } from "motion-utils"
 
 declare class ScrollTimeline implements ProgressTimeline {
     constructor(options: ScrollOptions)

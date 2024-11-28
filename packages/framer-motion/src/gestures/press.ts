@@ -9,7 +9,7 @@ import { Feature } from "../motion/features/Feature"
 import { pipe } from "../utils/pipe"
 import { isDragActive } from "./drag/utils/lock"
 import { isNodeOrChild } from "./utils/is-node-or-child"
-import { noop } from "../utils/noop"
+import { noop } from "motion-utils"
 import { frame } from "../frameloop"
 
 function fireSyntheticPointerEvent(

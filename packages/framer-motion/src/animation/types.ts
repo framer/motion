@@ -73,11 +73,6 @@ export interface ValueAnimationOptionsWithRenderContext<
     element?: VisualElement
 }
 
-export interface AnimationScope<T = any> {
-    readonly current: T
-    animations: AnimationPlaybackControls[]
-}
-
 export type StyleTransitions = {
     [K in keyof CSSStyleDeclarationWithTransform]?: Transition
 }

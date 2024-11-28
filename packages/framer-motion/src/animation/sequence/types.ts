@@ -1,10 +1,10 @@
+import { ElementOrSelector } from "motion-dom"
 import { Easing } from "../../easing/types"
 import { GenericKeyframesTarget } from "../../types"
 import type { MotionValue } from "../../value"
 import { DynamicAnimationOptions } from "../types"
 import {
     DOMKeyframesDefinition,
-    ElementOrSelector,
     Transition,
     AnimationPlaybackOptions,
     UnresolvedValueKeyframe,

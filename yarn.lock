@@ -1904,12 +1904,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@motionone/dom@^11.12.0, @motionone/dom@workspace:packages/dom":
-  version: 0.0.0-use.local
-  resolution: "@motionone/dom@workspace:packages/dom"
-  languageName: unknown
-  linkType: soft
-
 "@next/env@npm:14.2.13":
   version: 14.2.13
   resolution: "@next/env@npm:14.2.13"
@@ -7010,8 +7004,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
-    "@motionone/dom": ^11.12.0
     "@types/three": 0.137.0
+    motion-dom: ^11.12.0
+    motion-utils: ^11.12.0
     three: 0.137.0
     tslib: ^2.4.0
   peerDependencies:
@@ -10532,6 +10527,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"motion-dom@^11.12.0, motion-dom@workspace:packages/dom":
+  version: 0.0.0-use.local
+  resolution: "motion-dom@workspace:packages/dom"
+  languageName: unknown
+  linkType: soft
+
 "motion-one@workspace:.":
   version: 0.0.0-use.local
   resolution: "motion-one@workspace:."
@@ -10589,6 +10590,12 @@ __metadata:
     type-fest: ^1.0.1
     typescript: 5.4.3
     yarn-deduplicate: ^1.1.1
+  languageName: unknown
+  linkType: soft
+
+"motion-utils@^11.12.0, motion-utils@workspace:packages/utils":
+  version: 0.0.0-use.local
+  resolution: "motion-utils@workspace:packages/utils"
   languageName: unknown
   linkType: soft
 
