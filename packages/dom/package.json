@@ -22,5 +22,6 @@
         "clean": "rm -rf types dist lib",
         "build": "yarn clean && tsc -p . && rollup -c",
         "dev": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\""
-    }
+    },
+    "gitHead": "e8e019c360b12047bb662a72588ca7ee68638e50"
 }
