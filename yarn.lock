@@ -10527,9 +10527,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"motion-dom@^11.13.0-beta.0, motion-dom@workspace:packages/dom":
+"motion-dom@^11.13.0-beta.0, motion-dom@workspace:packages/motion-dom":
   version: 0.0.0-use.local
-  resolution: "motion-dom@workspace:packages/dom"
+  resolution: "motion-dom@workspace:packages/motion-dom"
   languageName: unknown
   linkType: soft
 
@@ -10593,9 +10593,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"motion-utils@^11.13.0-beta.0, motion-utils@workspace:packages/utils":
+"motion-utils@^11.13.0-beta.0, motion-utils@workspace:packages/motion-utils":
   version: 0.0.0-use.local
-  resolution: "motion-utils@workspace:packages/utils"
+  resolution: "motion-utils@workspace:packages/motion-utils"
   languageName: unknown
   linkType: soft
 
