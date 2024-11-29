@@ -46,8 +46,7 @@ SOURCE_FILES := $(shell find packages/framer-motion/src packages/framer-motion-3
 TEST_REPORT_PATH := $(if $(CIRCLE_TEST_REPORTS),$(CIRCLE_TEST_REPORTS),$(CURDIR)/test_reports)
 
 build: bootstrap
-	cd packages/framer-motion && yarn build
-	cd packages/framer-motion-3d && yarn build
+	yarn build
 
 watch: bootstrap
 	cd packages/framer-motion && yarn watch
