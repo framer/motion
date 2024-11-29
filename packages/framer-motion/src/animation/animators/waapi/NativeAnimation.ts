@@ -2,8 +2,7 @@ import { startWaapiAnimation } from "."
 import { createGeneratorEasing } from "../../../easing/utils/create-generator-easing"
 import { ProgressTimeline } from "../../../render/dom/scroll/observe"
 import { browserNumberValueTypes } from "../../../render/dom/value-types/number-browser"
-import { invariant } from "motion-utils"
-import { noop } from "motion-utils"
+import { noop, invariant } from "motion-utils"
 import {
     millisecondsToSeconds,
     secondsToMilliseconds,
