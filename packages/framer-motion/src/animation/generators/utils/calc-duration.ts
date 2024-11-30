@@ -5,7 +5,9 @@ import { KeyframeGenerator } from "../types"
  * to prevent infinite loops
  */
 export const maxGeneratorDuration = 20_000
-export function calcGeneratorDuration(generator: KeyframeGenerator<unknown>) {
+export function calcGeneratorDuration(
+    generator: KeyframeGenerator<unknown>
+): number {
     let duration = 0
     const timeStep = 50
     let state = generator.next(duration)

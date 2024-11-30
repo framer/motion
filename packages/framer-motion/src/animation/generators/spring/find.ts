@@ -5,6 +5,7 @@ import {
     millisecondsToSeconds,
     secondsToMilliseconds,
 } from "../../../utils/time-conversion"
+import { springDefaults } from "./defaults"
 
 /**
  * This is ported from the Framer implementation of duration-based spring resolution.
@@ -13,22 +14,18 @@ import {
 type Resolver = (num: number) => number
 
 const safeMin = 0.001
-export const minDuration = 0.01
-export const maxDuration = 10.0
-export const minDamping = 0.05
-export const maxDamping = 1
 
 export function findSpring({
-    duration = 800,
-    bounce = 0.25,
-    velocity = 0,
-    mass = 1,
+    duration = springDefaults.duration,
+    bounce = springDefaults.bounce,
+    velocity = springDefaults.velocity,
+    mass = springDefaults.mass,
 }: SpringOptions) {
     let envelope: Resolver
     let derivative: Resolver
 
     warning(
-        duration <= secondsToMilliseconds(maxDuration),
+        duration <= secondsToMilliseconds(springDefaults.maxDuration),
         "Spring duration must be 10 seconds or less"
     )
 
@@ -37,8 +34,16 @@ export function findSpring({
     /**
      * Restrict dampingRatio and duration to within acceptable ranges.
      */
-    dampingRatio = clamp(minDamping, maxDamping, dampingRatio)
-    duration = clamp(minDuration, maxDuration, millisecondsToSeconds(duration))
+    dampingRatio = clamp(
+        springDefaults.minDamping,
+        springDefaults.maxDamping,
+        dampingRatio
+    )
+    duration = clamp(
+        springDefaults.minDuration,
+        springDefaults.maxDuration,
+        millisecondsToSeconds(duration)
+    )
 
     if (dampingRatio < 1) {
         /**
@@ -87,8 +92,8 @@ export function findSpring({
     duration = secondsToMilliseconds(duration)
     if (isNaN(undampedFreq)) {
         return {
-            stiffness: 100,
-            damping: 10,
+            stiffness: springDefaults.stiffness,
+            damping: springDefaults.damping,
             duration,
         }
     } else {

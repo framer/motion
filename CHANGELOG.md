@@ -4,6 +4,13 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.12.0] 2024-11-27
+
+### Added
+
+-   New `visualDuration` option for `spring` animations.
+-   New `spring(visualDuration, bounce)` syntax.
+
 ## [11.11.16] 2024-11-14
 
 ### Fixed

@@ -206,6 +206,7 @@ export interface AnimationPlaybackOptions {
 
 export interface DurationSpringOptions {
     duration?: number
+    visualDuration?: number
     bounce?: number
 }
 

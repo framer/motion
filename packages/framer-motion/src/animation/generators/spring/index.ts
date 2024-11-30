@@ -1,3 +1,4 @@
+import { generateLinearEasing } from "../../animators/waapi/utils/linear"
 import {
     millisecondsToSeconds,
     secondsToMilliseconds,
@@ -6,6 +7,10 @@ import { ValueAnimationOptions, SpringOptions } from "../../types"
 import { AnimationState, KeyframeGenerator } from "../types"
 import { calcGeneratorVelocity } from "../utils/velocity"
 import { calcAngularFreq, findSpring } from "./find"
+import { calcGeneratorDuration } from "../utils/calc-duration"
+import { maxGeneratorDuration } from "../utils/calc-duration"
+import { clamp } from "../../../utils/clamp"
+import { springDefaults } from "./defaults"
 
 const durationKeys = ["duration", "bounce"]
 const physicsKeys = ["stiffness", "damping", "mass"]
@@ -16,10 +21,10 @@ function isSpringType(options: SpringOptions, keys: string[]) {
 
 function getSpringOptions(options: SpringOptions) {
     let springOptions = {
-        velocity: 0.0,
-        stiffness: 100,
-        damping: 10,
-        mass: 1.0,
+        velocity: springDefaults.velocity,
+        stiffness: springDefaults.stiffness,
+        damping: springDefaults.damping,
+        mass: springDefaults.mass,
         isResolvedFromDuration: false,
         ...options,
     }
@@ -28,27 +33,53 @@ function getSpringOptions(options: SpringOptions) {
         !isSpringType(options, physicsKeys) &&
         isSpringType(options, durationKeys)
     ) {
-        const derived = findSpring(options)
+        if (options.visualDuration) {
+            const visualDuration = options.visualDuration
+            const root = (2 * Math.PI) / (visualDuration * 1.2)
+            const stiffness = root * root
+            const damping =
+                2 * clamp(0.05, 1, 1 - options.bounce!) * Math.sqrt(stiffness)
 
-        springOptions = {
-            ...springOptions,
-            ...derived,
-            mass: 1.0,
+            springOptions = {
+                ...springOptions,
+                mass: springDefaults.mass,
+                stiffness,
+                damping,
+            }
+        } else {
+            const derived = findSpring(options)
+
+            springOptions = {
+                ...springOptions,
+                ...derived,
+                mass: springDefaults.mass,
+            }
+            springOptions.isResolvedFromDuration = true
         }
-        springOptions.isResolvedFromDuration = true
     }
 
     return springOptions
 }
 
-export function spring({
-    keyframes,
-    restDelta,
-    restSpeed,
-    ...options
-}: ValueAnimationOptions<number>): KeyframeGenerator<number> {
-    const origin = keyframes[0]
-    const target = keyframes[keyframes.length - 1]
+export function spring(
+    optionsOrVisualDuration:
+        | ValueAnimationOptions<number>
+        | number = springDefaults.visualDuration,
+    bounce = springDefaults.bounce
+): KeyframeGenerator<number> {
+    const options =
+        typeof optionsOrVisualDuration !== "object"
+            ? ({
+                  visualDuration: optionsOrVisualDuration,
+                  keyframes: [0, 1],
+                  bounce,
+              } as ValueAnimationOptions<number>)
+            : optionsOrVisualDuration
+
+    let { restSpeed, restDelta } = options
+
+    const origin = options.keyframes[0]
+    const target = options.keyframes[options.keyframes.length - 1]
 
     /**
      * This is the Iterator-spec return value. We ensure it's mutable rather than using a generator
@@ -84,8 +115,12 @@ export function spring({
      * ratio between feeling good and finishing as soon as changes are imperceptible.
      */
     const isGranularScale = Math.abs(initialDelta) < 5
-    restSpeed ||= isGranularScale ? 0.01 : 2
-    restDelta ||= isGranularScale ? 0.005 : 0.5
+    restSpeed ||= isGranularScale
+        ? springDefaults.restSpeed.granular
+        : springDefaults.restSpeed.default
+    restDelta ||= isGranularScale
+        ? springDefaults.restDelta.granular
+        : springDefaults.restDelta.default
 
     let resolveSpring: (v: number) => number
     if (dampingRatio < 1) {
@@ -137,7 +172,7 @@ export function spring({
         }
     }
 
-    return {
+    const generator = {
         calculatedDuration: isResolvedFromDuration ? duration || null : null,
         next: (t: number) => {
             const current = resolveSpring(t)
@@ -172,5 +207,22 @@ export function spring({
 
             return state
         },
+        toString: () => {
+            const calculatedDuration = Math.min(
+                calcGeneratorDuration(generator),
+                maxGeneratorDuration
+            )
+
+            const easing = generateLinearEasing(
+                (progress: number) =>
+                    generator.next(calculatedDuration * progress).value,
+                calculatedDuration,
+                30
+            )
+
+            return calculatedDuration + "ms " + easing
+        },
     }
+
+    return generator
 }

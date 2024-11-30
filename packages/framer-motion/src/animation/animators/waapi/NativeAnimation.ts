@@ -112,6 +112,7 @@ export class NativeAnimation implements AnimationPlaybackControls {
 
         hydrateKeyframes(valueName, valueKeyframes, readInitialKeyframe)
 
+        // TODO: Replace this with toString()?
         if (isGenerator(options.type)) {
             const generatorOptions = createGeneratorEasing(
                 options,
