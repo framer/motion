@@ -8,7 +8,8 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
-- SVG elements (like `motion.text`) now update when given a `MotionValue` as children, matching HTML element behavior.
+-   SVG elements (like `motion.text`) now update when given a `MotionValue` as children, matching HTML element behavior.
+-   Exporting `DynamicAnimationOptions` type.
 
 ## [11.13.0] 2024-12-03
 
