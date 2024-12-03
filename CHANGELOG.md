@@ -4,12 +4,6 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [11.13.1] 2024-12-03
-
-### Updated
-
--   Updating `three` and `@react-three/fiber` to latest versions.
-
 ## [11.13.0] 2024-12-03
 
 ### Added
