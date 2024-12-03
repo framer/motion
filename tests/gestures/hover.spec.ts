@@ -5,6 +5,7 @@ test.beforeEach(async ({ page }) => {
 })
 
 test.describe("hover", () => {
+    // CI doesn't support hover pointer types
     if (process.env.CI) {
         test.skip()
     }
