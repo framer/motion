@@ -112,7 +112,7 @@ jobs:
 
             - run:
                   name: Playwright tests
-                  command: yarn test-playwright
+                  command: yarn && yarn test-playwright
                   environment:
                       JEST_JUNIT_OUTPUT: test_reports/framer-motion-playwright.xml
 
