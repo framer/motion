@@ -111,8 +111,18 @@ jobs:
                       - v1-dependencies-
 
             - run:
+                  name: Install make
+                  command: |
+                      sudo apt-get update
+                      sudo apt-get install -y make
+
+            - run:
+                  name: Run make command
+                  command: make
+
+            - run:
                   name: Playwright tests
-                  command: make build && yarn test-playwright
+                  command: yarn test-playwright
                   environment:
                       JEST_JUNIT_OUTPUT: test_reports/framer-motion-playwright.xml
 
