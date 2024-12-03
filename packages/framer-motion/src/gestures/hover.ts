@@ -9,14 +9,13 @@ function handleHoverEvent(
     event: PointerEvent,
     isActive: boolean
 ) {
-    const callbackName = isActive ? "onHoverStart" : "onHoverEnd"
-    const props = node.getProps()
+    const { props } = node
 
     if (node.animationState && props.whileHover) {
         node.animationState.setActive("whileHover", isActive)
     }
 
-    const callback = props[callbackName]
+    const callback = props[isActive ? "onHoverStart" : "onHoverEnd"]
     if (callback) {
         frame.postRender(() => callback(event, extractEventInfo(event)))
     }
@@ -24,15 +23,19 @@ function handleHoverEvent(
 
 export class HoverGesture extends Feature<Element> {
     mount() {
-        const { current } = this.node
-        if (current) {
-            this.unmount = hover(current, (startEvent) => {
+        const { current, props } = this.node
+        if (!current) return
+
+        this.unmount = hover(
+            current,
+            (startEvent) => {
                 handleHoverEvent(this.node, startEvent, true)
 
                 return (endEvent) =>
                     handleHoverEvent(this.node, endEvent, false)
-            })
-        }
+            },
+            { passive: !props.onHoverStart && !props.onHoverEnd }
+        )
     }
 
     unmount() {}

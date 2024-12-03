@@ -1,5 +1,5 @@
 export { noop, invariant } from "motion-utils"
-export { hover, isDragActive } from "motion-dom"
+export { isDragActive } from "motion-dom"
 
 export { motionValue, MotionValue } from "./value"
 export type { PassiveEffect, Subscriber } from "./value"
