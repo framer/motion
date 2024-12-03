@@ -3,6 +3,7 @@ export { isDragActive } from "motion-dom"
 
 export { motionValue, MotionValue } from "./value"
 export type { PassiveEffect, Subscriber } from "./value"
+export type { DynamicAnimationOptions, DOMKeyframesDefinition } from './animation/types'
 export { animate, createScopedAnimate } from "./animation/animate"
 export { animateMini } from "./animation/animators/waapi/animate-style"
 export { scroll } from "./render/dom/scroll"
