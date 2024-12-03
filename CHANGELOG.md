@@ -4,6 +4,12 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.13.0] 2024-12-03
+
+### Added
+
+-   Vanilla `hover` gesture in Motion+ early access.
+
 ## [11.12.0] 2024-11-27
 
 ### Added
