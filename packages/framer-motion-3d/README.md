@@ -59,7 +59,7 @@ It does all this:
 
 Check out [our documentation](https://www.framer.com/docs/three-introduction/?utm_source=motion-readme-docs) for guides and a full API reference.
 
-Or checkout [our examples](https://www.framer.com/docs/three-introduction/#examples?utm_source=motion-readme-docs) for inspiration.
+Or check out [our examples](https://www.framer.com/docs/three-introduction/#examples?utm_source=motion-readme-docs) for inspiration.
 
 ### 🛠 Contribute
 

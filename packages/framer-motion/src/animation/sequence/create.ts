@@ -1,3 +1,4 @@
+import { AnimationScope } from "motion-dom"
 import { Easing } from "../../easing/types"
 import { createGeneratorEasing } from "../../easing/utils/create-generator-easing"
 import { defaultOffset } from "../../utils/offsets/default"
@@ -10,7 +11,6 @@ import { resolveSubjects } from "../animate/resolve-subjects"
 import { isGenerator } from "../generators/utils/is-generator"
 import { DynamicAnimationOptions, GeneratorFactory } from "../types"
 import {
-    AnimationScope,
     DOMKeyframesDefinition,
     Transition,
     UnresolvedValueKeyframe,

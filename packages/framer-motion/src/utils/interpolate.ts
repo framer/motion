@@ -1,9 +1,8 @@
-import { invariant } from "../utils/errors"
 import { EasingFunction } from "../easing/types"
 import { clamp } from "./clamp"
 import { pipe } from "./pipe"
 import { progress } from "./progress"
-import { noop } from "./noop"
+import { noop, invariant } from "motion-utils"
 import { mix } from "./mix"
 
 type Mix<T> = (v: number) => T

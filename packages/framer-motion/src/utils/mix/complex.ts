@@ -1,7 +1,7 @@
 import { mixNumber as mixNumberImmediate } from "./number"
 import { mixColor } from "./color"
 import { pipe } from "../pipe"
-import { warning } from "../errors"
+import { warning } from "motion-utils"
 import { HSLA, RGBA } from "../../value/types/types"
 import { color } from "../../value/types/color"
 import {

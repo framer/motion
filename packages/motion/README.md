@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="100" height="100" alt="Motion logo" src="https://user-images.githubusercontent.com/7850794/164965523-3eced4c4-6020-467e-acde-f11b7900ad62.png" alt="Motion Icon" />
+  <img width="100" height="100" alt="Motion logo" src="https://user-images.githubusercontent.com/7850794/164965523-3eced4c4-6020-467e-acde-f11b7900ad62.png" />
 </p>
 <h1 align="center">Motion for React</h1>
 
@@ -26,7 +26,7 @@
 
 Motion for React is an open source, production-ready library that’s designed for all creative developers.
 
-It's the only animation library with a hybrid engine, combining the power of JavaScript animations combined with the performance of native browser APIs.
+It's the only animation library with a hybrid engine, combining the power of JavaScript animations with the performance of native browser APIs.
 
 It looks like this:
 
@@ -55,7 +55,7 @@ It does all this:
 
 ### 🐇 Quick start
 
-Install `motion` with via your package manager:
+Install `motion` via your package manager:
 
 ```
 npm install motion
@@ -109,7 +109,7 @@ Motion powers Framer animations, the web builder for creative pros. Design and s
 
 <a href="https://www.frontend.fyi/?utm_source=motion"><img alt="Frontend.fyi" src="https://github.com/user-attachments/assets/07d23aa5-69db-44a0-849d-90177e6fc817" width="150px" height="100px"></a>
 
-<a href="https://www.frontend.fyi/?utm_source=motion"><img alt="Statamic" src="https://github.com/user-attachments/assets/5d28f090-bdd9-4b31-b134-fb2b94ca636f" width="150px" height="100px"></a>
+<a href="https://statamic.com"><img alt="Statamic" src="https://github.com/user-attachments/assets/5d28f090-bdd9-4b31-b134-fb2b94ca636f" width="150px" height="100px"></a>
 
 <a href="https://firecrawl.dev"><img alt="Firecrawl" src="https://github.com/user-attachments/assets/cba90e54-1329-4353-8fba-85beef4d2ee9" width="150px" height="100px"></a>
 

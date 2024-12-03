@@ -1,12 +1,10 @@
 import { EasingFunction } from "../../../../easing/types"
 import { progress } from "../../../../utils/progress"
 
-// Create a linear easing point for every 10 ms
-const resolution = 10
-
 export const generateLinearEasing = (
     easing: EasingFunction,
-    duration: number // as milliseconds
+    duration: number, // as milliseconds
+    resolution: number = 10 // as milliseconds
 ): string => {
     let points = ""
     const numPoints = Math.max(Math.round(duration / resolution), 2)

@@ -10,11 +10,11 @@
 
 Motion is the only animation library with first-class APIs for both JavaScript and React.
 
-It also sports a unique hybrid engine, with all the power of JavaScript animations combined with the performance of native browser APIs.
+It's the only animation library with a hybrid engine, combining the power of JavaScript animations with the performance of native browser APIs.
 
 ## 🏎️ Quick start
 
-Install `motion` with via your package manager:
+Install `motion` via your package manager:
 
 ```
 npm install motion
