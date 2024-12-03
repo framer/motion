@@ -7602,8 +7602,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "html-env@workspace:dev/html"
   dependencies:
-    motion: "workspace:*"
-    motion-dom: "workspace:*"
+    motion: ^11.13.0
+    motion-dom: ^11.13.0
     vite: ^5.2.0
   languageName: unknown
   linkType: soft
@@ -10345,7 +10345,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"motion-dom@^11.13.0, motion-dom@workspace:*, motion-dom@workspace:packages/motion-dom":
+"motion-dom@^11.13.0, motion-dom@workspace:packages/motion-dom":
   version: 0.0.0-use.local
   resolution: "motion-dom@workspace:packages/motion-dom"
   languageName: unknown
@@ -10418,7 +10418,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"motion@workspace:*, motion@workspace:packages/motion":
+"motion@^11.13.0, motion@workspace:packages/motion":
   version: 0.0.0-use.local
   resolution: "motion@workspace:packages/motion"
   dependencies:

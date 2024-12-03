@@ -10,8 +10,8 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "motion": "workspace:*",
-        "motion-dom": "workspace:*"
+        "motion": "^11.13.0",
+        "motion-dom": "^11.13.0"
     },
     "devDependencies": {
         "vite": "^5.2.0"
