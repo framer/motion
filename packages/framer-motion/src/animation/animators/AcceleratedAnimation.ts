@@ -4,7 +4,7 @@ import { circInOut } from "../../easing/circ"
 import { EasingDefinition } from "../../easing/types"
 import { DOMKeyframesResolver } from "../../render/dom/DOMKeyframesResolver"
 import { ResolvedKeyframes } from "../../render/utils/KeyframesResolver"
-import { noop } from "../../utils/noop"
+import { noop } from "motion-utils"
 import {
     millisecondsToSeconds,
     secondsToMilliseconds,

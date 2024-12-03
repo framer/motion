@@ -1,3 +1,4 @@
+import { AnimationScope, ElementOrSelector } from "motion-dom"
 import { GenericKeyframesTarget } from "../../types"
 import type { MotionValue } from "../../value"
 import { GroupPlaybackControls } from "../GroupPlaybackControls"
@@ -8,10 +9,8 @@ import {
 } from "../sequence/types"
 import {
     AnimationPlaybackControls,
-    AnimationScope,
     DOMKeyframesDefinition,
     DynamicAnimationOptions,
-    ElementOrSelector,
     ValueAnimationTransition,
 } from "../types"
 import { animateSequence } from "./sequence"
