@@ -10,6 +10,13 @@ Undocumented APIs should be considered internal and may change without warning.
 
 -   Allowing custom DOM element for injecting styles when using AnimatePresence with mode === `popLayout`. Fixes shadow DOM issue [#2508](https://github.com/framer/motion/issues/2508) by passing the shadow root into the new `parentDOM` prop.
 
+## [11.13.1] 2024-12-03
+
+### Fixed
+
+-   SVG elements (like `motion.text`) now update when given a `MotionValue` as children, matching HTML element behavior.
+-   Exporting `DynamicAnimationOptions` type.
+
 ## [11.13.0] 2024-12-03
 
 ### Added
