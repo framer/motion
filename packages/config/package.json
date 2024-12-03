@@ -1,6 +1,6 @@
 {
     "name": "config",
-    "version": "11.13.0-beta.0",
+    "version": "11.13.0",
     "main": "index.js",
     "private": true,
     "license": "MIT",
