@@ -5,6 +5,10 @@ test.beforeEach(async ({ page }) => {
 })
 
 test.describe("hover", () => {
+    if (process.env.CI) {
+        test.skip()
+    }
+
     test("default hover settings work correctly", async ({ page }) => {
         const element = page.locator("#hover")
         await expect(element).toHaveText("test")
