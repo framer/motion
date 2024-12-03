@@ -10623,6 +10623,9 @@ __metadata:
     type-fest: ^1.0.1
     typescript: 5.4.3
     yarn-deduplicate: ^1.1.1
+  dependenciesMeta:
+    bundlesize:
+      optional: true
   languageName: unknown
   linkType: soft
 

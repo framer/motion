@@ -111,16 +111,6 @@ jobs:
                       - v1-dependencies-
 
             - run:
-                  name: Install make
-                  command: |
-                      apt-get update
-                      apt-get install -y make
-
-            - run:
-                  name: Run make command
-                  command: make
-
-            - run:
                   name: Playwright tests
                   command: yarn test-playwright
                   environment:
