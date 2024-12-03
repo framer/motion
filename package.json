@@ -17,7 +17,7 @@
         "test": "turbo run test",
         "test-playwright": "yarn playwright test",
         "test-ci": "turbo run test-ci --no-cache",
-        "measure": "turbo run measure",
+        "measure": "turbo run measure && node dev/inc/bundlesize.mjs",
         "version": "yarn install && git stage yarn.lock",
         "prepare": "make check-status &&turbo run build measure",
         "new": "lerna publish from-package",
@@ -76,10 +76,8 @@
         "turbo": "1.x",
         "type-fest": "^1.0.1",
         "typescript": "5.4.3",
-        "yarn-deduplicate": "^1.1.1"
-    },
-    "optionalDependencies": {
-        "bundlesize": "^0.18.1"
+        "yarn-deduplicate": "^1.1.1",
+        "zlib": "^1.0.5"
     },
     "packageManager": "yarn@3.1.0"
 }
