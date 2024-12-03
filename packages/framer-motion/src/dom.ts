@@ -1,3 +1,6 @@
+export { noop, invariant } from "motion-utils"
+export { isDragActive } from "motion-dom"
+
 export { motionValue, MotionValue } from "./value"
 export type { PassiveEffect, Subscriber } from "./value"
 export { animate, createScopedAnimate } from "./animation/animate"
@@ -17,6 +20,7 @@ export * from "./easing/cubic-bezier"
 export * from "./easing/steps"
 export * from "./easing/modifiers/mirror"
 export * from "./easing/modifiers/reverse"
+export * from "./easing/types"
 
 /**
  * Animation generators
@@ -33,7 +37,6 @@ export { transform } from "./utils/transform"
 export { clamp } from "./utils/clamp"
 export { delayInSeconds as delay, DelayedFunction } from "./utils/delay"
 export * from "./utils/distance"
-export * from "./utils/errors"
 export * from "./utils/interpolate"
 export { mix } from "./utils/mix"
 export { pipe } from "./utils/pipe"

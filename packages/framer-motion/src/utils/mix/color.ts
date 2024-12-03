@@ -1,5 +1,5 @@
 import { mixNumber } from "./number"
-import { warning } from "../errors"
+import { warning } from "motion-utils"
 import { hslaToRgba } from "../hsla-to-rgba"
 import { hex } from "../../value/types/color/hex"
 import { rgba } from "../../value/types/color/rgba"
@@ -33,7 +33,7 @@ function asRGBA(color: Color | string) {
     let model = type!.parse(color)
 
     if (type === hsla) {
-        // TODO Remove this cast - needed since Framer Motion's stricter typing
+        // TODO Remove this cast - needed since Motion's stricter typing
         model = hslaToRgba(model as HSLA)
     }
 

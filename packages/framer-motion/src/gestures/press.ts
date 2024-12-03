@@ -7,9 +7,9 @@ import { addDomEvent } from "../events/add-dom-event"
 import { addPointerEvent } from "../events/add-pointer-event"
 import { Feature } from "../motion/features/Feature"
 import { pipe } from "../utils/pipe"
-import { isDragActive } from "./drag/utils/lock"
+import { isDragActive } from "motion-dom"
 import { isNodeOrChild } from "./utils/is-node-or-child"
-import { noop } from "../utils/noop"
+import { noop } from "motion-utils"
 import { frame } from "../frameloop"
 
 function fireSyntheticPointerEvent(

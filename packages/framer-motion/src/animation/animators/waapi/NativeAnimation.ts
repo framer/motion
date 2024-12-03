@@ -2,8 +2,7 @@ import { startWaapiAnimation } from "."
 import { createGeneratorEasing } from "../../../easing/utils/create-generator-easing"
 import { ProgressTimeline } from "../../../render/dom/scroll/observe"
 import { browserNumberValueTypes } from "../../../render/dom/value-types/number-browser"
-import { invariant } from "../../../utils/errors"
-import { noop } from "../../../utils/noop"
+import { noop, invariant } from "motion-utils"
 import {
     millisecondsToSeconds,
     secondsToMilliseconds,
@@ -112,6 +111,7 @@ export class NativeAnimation implements AnimationPlaybackControls {
 
         hydrateKeyframes(valueName, valueKeyframes, readInitialKeyframe)
 
+        // TODO: Replace this with toString()?
         if (isGenerator(options.type)) {
             const generatorOptions = createGeneratorEasing(
                 options,
@@ -199,6 +199,12 @@ export class NativeAnimation implements AnimationPlaybackControls {
 
     get startTime() {
         return this.animation ? (this.animation.startTime as number) : null
+    }
+
+    flatten() {
+        if (!this.animation) return
+
+        this.animation.effect?.updateTiming({ easing: "linear" })
     }
 
     play() {

@@ -20,7 +20,7 @@ import {
     secondsToMilliseconds,
 } from "../../utils/time-conversion"
 import { clamp } from "../../utils/clamp"
-import { invariant } from "../../utils/errors"
+import { invariant } from "motion-utils"
 import { frameloopDriver } from "./drivers/driver-frameloop"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
 import { isGenerator } from "../generators/utils/is-generator"
@@ -128,6 +128,18 @@ export class MainThreadAnimation<
         )
 
         this.resolver.scheduleResolve()
+    }
+
+    flatten() {
+        super.flatten()
+
+        // If we've already resolved the animation, re-initialise it
+        if (this._resolved) {
+            Object.assign(
+                this._resolved,
+                this.initPlayback(this._resolved.keyframes)
+            )
+        }
     }
 
     protected initPlayback(keyframes: ResolvedKeyframes<T>) {

@@ -1,6 +1,6 @@
 "use client"
 
-import { invariant } from "../../utils/errors"
+import { invariant } from "motion-utils"
 import * as React from "react"
 import {
     forwardRef,

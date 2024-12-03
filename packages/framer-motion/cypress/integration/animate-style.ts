@@ -77,4 +77,13 @@ describe("animateMini()", () => {
                 expect($element.style.backgroundColor).to.equal("green")
             })
     })
+
+    it("works correctly with stagger", () => {
+        cy.visit("?test=animate-style-stagger")
+            .wait(500)
+            .get("#box")
+            .should(([$element]: any) => {
+                expect($element.style.opacity).to.equal("1")
+            })
+    })
 })

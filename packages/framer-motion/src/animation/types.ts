@@ -73,11 +73,6 @@ export interface ValueAnimationOptionsWithRenderContext<
     element?: VisualElement
 }
 
-export interface AnimationScope<T = any> {
-    readonly current: T
-    animations: AnimationPlaybackControls[]
-}
-
 export type StyleTransitions = {
     [K in keyof CSSStyleDeclarationWithTransform]?: Transition
 }
@@ -105,12 +100,6 @@ export interface DynamicAnimationOptions
     delay?: number | DynamicOption<number>
 }
 
-export type ElementOrSelector =
-    | Element
-    | Element[]
-    | NodeListOf<Element>
-    | string
-
 /**
  * @public
  */
@@ -137,6 +126,7 @@ export interface AnimationPlaybackControls {
         timeline: ProgressTimeline,
         fallback?: (animation: AnimationPlaybackControls) => VoidFunction
     ) => VoidFunction
+    flatten: () => void
 }
 
 export type DynamicOption<T> = (i: number, total: number) => T
@@ -205,6 +195,7 @@ export interface AnimationPlaybackOptions {
 
 export interface DurationSpringOptions {
     duration?: number
+    visualDuration?: number
     bounce?: number
 }
 

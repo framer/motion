@@ -150,7 +150,6 @@ export {
     Variant,
     Variants,
 } from "./types"
-export * from "./easing/types"
 export { EventInfo } from "./events/types"
 export * from "./motion/features/types"
 export {

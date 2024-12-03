@@ -1,14 +1,66 @@
 # Changelog
 
-Framer Motion adheres to [Semantic Versioning](http://semver.org/).
+Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [11.11.12] 2024-11-1
+## [11.13.2] 2024-12-04
 
 ### Fixed
 
 -   Allowing custom DOM element for injecting styles when using AnimatePresence with mode === `popLayout`. Fixes shadow DOM issue [#2508](https://github.com/framer/motion/issues/2508) by passing the shadow root into the new `parentDOM` prop.
+
+## [11.13.0] 2024-12-03
+
+### Added
+
+-   Vanilla `hover` gesture in Motion+ early access.
+
+## [11.12.0] 2024-11-27
+
+### Added
+
+-   New `visualDuration` option for `spring` animations.
+-   New `spring(visualDuration, bounce)` syntax.
+
+## [11.11.16] 2024-11-14
+
+### Fixed
+
+-   Fixing `stagger` with mini `animate`.
+
+## [11.11.16] 2024-11-14
+
+### Fixed
+
+-   Ensuring animations passed to `scroll` are scrubbed linearly.
+-   Fixing `mini` types entrypoint.
+-   Exporting easing types from `"motion"`.
+
+## [11.11.15] 2024-11-13
+
+### Fixed
+
+-   Fixing `mini` and `react-mini` entrypoints.
+
+## [11.11.14] 2024-11-12
+
+### Fixed
+
+-   Fixing fallback entry points for `"motion/react"` etc.
+
+## [11.11.13] 2024-11-12
+
+### Fixed
+
+-   Fixing build and entry points for `"motion"`.
+
+## [11.11.12] 2024-11-12
+
+### Changed
+
+-   Adding `"motion"` package.
+-   Replaced Motion One (see [upgrade guide](https://motion.dev/docs/upgrade-guide)).
 
 ## [11.11.11] 2024-10-31
 
@@ -718,7 +770,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Fixed `layout` prop crashing Framer Motion 3D.
+-   Fixed `layout` prop crashing Motion 3D.
 
 ## [10.17.10] 2024-01-05
 
@@ -1599,7 +1651,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Variant `transition` fixed in Framer Motion 3D.
+-   Variant `transition` fixed in Motion 3D.
 
 ## [8.2.0] 2023-01-06
 
@@ -1734,7 +1786,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Fixing mapping Framer Motion easing names to WAAPI.
+-   Fixing mapping Motion easing names to WAAPI.
 
 ## [7.9.0] 2022-12-14
 
@@ -2178,7 +2230,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Will display a warning if different versions of Framer Motion are mixed.
+-   Will display a warning if different versions of Motion are mixed.
 
 ## [6.3.6] 2022-05-31
 
@@ -2190,7 +2242,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Added `initial` prop to Framer Motion 3D types.
+-   Added `initial` prop to Motion 3D types.
 
 ## [6.3.4] 2022-05-25
 
@@ -2390,7 +2442,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Sharing `MotionContext` across Framer Motion and Framer Motion 3D environments in CommonJS environments.
+-   Sharing `MotionContext` across Motion and Motion 3D environments in CommonJS environments.
 
 ## [5.4.1] 2021-12-06
 
@@ -3954,7 +4006,7 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Fixed
 
 -   Filtering pointer events not from the primary pointer (ie non-left clicks for mouse).
--   Fixing drag in Android devices by adding aggressive viewport scroll blocking. This will need dialling back down when it comes to open sourcing Framer Motion so, for instance, a horizontal carousel doesn't block vertical scrolling.
+-   Fixing drag in Android devices by adding aggressive viewport scroll blocking. This will need dialling back down when it comes to open sourcing Motion so, for instance, a horizontal carousel doesn't block vertical scrolling.
 
 ## [0.16.0] 2019-04-19
 

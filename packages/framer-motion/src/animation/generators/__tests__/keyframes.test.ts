@@ -1,4 +1,4 @@
-import { noop } from "../../../utils/noop"
+import { noop } from "motion-utils"
 import { easeInOut } from "../../../easing/ease"
 import { defaultOffset } from "../../../utils/offsets/default"
 import { convertOffsetToTimes } from "../../../utils/offsets/time"
