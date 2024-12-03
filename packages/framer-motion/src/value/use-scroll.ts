@@ -3,7 +3,7 @@ import { motionValue } from "."
 import { useConstant } from "../utils/use-constant"
 import { useEffect } from "react"
 import { useIsomorphicLayoutEffect } from "../three-entry"
-import { warning } from "../utils/errors"
+import { warning } from "motion-utils"
 import { scroll } from "../render/dom/scroll"
 import { ScrollInfoOptions } from "../render/dom/scroll/types"
 

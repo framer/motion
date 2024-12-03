@@ -1,4 +1,4 @@
-import { noop } from "../../../../../utils/noop"
+import { noop } from "motion-utils"
 import { generateLinearEasing } from "../linear"
 
 describe("generateLinearEasing", () => {

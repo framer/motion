@@ -73,11 +73,6 @@ export interface ValueAnimationOptionsWithRenderContext<
     element?: VisualElement
 }
 
-export interface AnimationScope<T = any> {
-    readonly current: T
-    animations: AnimationPlaybackControls[]
-}
-
 export type StyleTransitions = {
     [K in keyof CSSStyleDeclarationWithTransform]?: Transition
 }
@@ -104,12 +99,6 @@ export interface DynamicAnimationOptions
     extends Omit<AnimationOptionsWithValueOverrides, "delay"> {
     delay?: number | DynamicOption<number>
 }
-
-export type ElementOrSelector =
-    | Element
-    | Element[]
-    | NodeListOf<Element>
-    | string
 
 /**
  * @public
@@ -206,6 +195,7 @@ export interface AnimationPlaybackOptions {
 
 export interface DurationSpringOptions {
     duration?: number
+    visualDuration?: number
     bounce?: number
 }
 

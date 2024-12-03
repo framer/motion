@@ -1,10 +1,9 @@
+import { AnimationScope, ElementOrSelector } from "motion-dom"
 import { GroupPlaybackControls } from "../../GroupPlaybackControls"
 import {
     AnimationPlaybackControls,
-    AnimationScope,
     DOMKeyframesDefinition,
     DynamicAnimationOptions,
-    ElementOrSelector,
 } from "../../types"
 import { animateElements } from "./animate-elements"
 

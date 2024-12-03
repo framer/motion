@@ -16,7 +16,7 @@ import { LayoutGroupContext } from "../context/LayoutGroupContext"
 import { LazyContext } from "../context/LazyContext"
 import { motionComponentSymbol } from "./utils/symbol"
 import { CreateVisualElement } from "../render/types"
-import { invariant, warning } from "../utils/errors"
+import { invariant, warning } from "motion-utils"
 import { featureDefinitions } from "./features/definitions"
 
 export interface MotionComponentConfig<Instance, RenderState> {
