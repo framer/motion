@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "11.12.0",
+    "version": "11.13.0-beta.0",
     "description": "A simple and powerful JavaScript animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -80,9 +80,11 @@
         "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
         "prepack": "yarn build",
         "postpublish": "git push --tags",
-        "measure": "rollup -c ./rollup.size.config.mjs && bundlesize"
+        "measure": "rollup -c ./rollup.size.config.mjs"
     },
     "dependencies": {
+        "motion-dom": "^11.13.0-beta.0",
+        "motion-utils": "^11.13.0-beta.0",
         "tslib": "^2.4.0"
     },
     "devDependencies": {
@@ -108,7 +110,7 @@
     "bundlesize": [
         {
             "path": "./dist/size-rollup-motion.js",
-            "maxSize": "34.15 kB"
+            "maxSize": "34.4 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
@@ -116,11 +118,11 @@
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
-            "maxSize": "17.3 kB"
+            "maxSize": "17.35 kB"
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
-            "maxSize": "29.4 kB"
+            "maxSize": "29.6 kB"
         },
         {
             "path": "./dist/size-rollup-animate.js",
@@ -134,5 +136,6 @@
             "path": "./dist/size-rollup-waapi-animate.js",
             "maxSize": "2.54 kB"
         }
-    ]
+    ],
+    "gitHead": "9c70b0208d6492d195ce5fdb60ded6cae1a3245c"
 }

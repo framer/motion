@@ -1,16 +1,15 @@
+import { AnimationScope, ElementOrSelector } from "motion-dom"
+import { invariant } from "motion-utils"
 import { visualElementStore } from "../../render/store"
 import { GenericKeyframesTarget, TargetAndTransition } from "../../types"
-import { invariant } from "../../utils/errors"
 import type { MotionValue } from "../../value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 import { animateTarget } from "../interfaces/visual-element-target"
 import { ObjectTarget } from "../sequence/types"
 import {
     AnimationPlaybackControls,
-    AnimationScope,
     DOMKeyframesDefinition,
     DynamicAnimationOptions,
-    ElementOrSelector,
     ValueAnimationTransition,
 } from "../types"
 import {

@@ -1,9 +1,8 @@
 {
-    "version": "11.12.0",
-    "packages": [
-        "packages/*",
-        "dev/*"
-    ],
-    "npmClient": "yarn",
-    "useWorkspaces": true
+  "version": "11.13.0-beta.0",
+  "packages": [
+    "packages/*",
+    "dev/*"
+  ],
+  "npmClient": "yarn"
 }

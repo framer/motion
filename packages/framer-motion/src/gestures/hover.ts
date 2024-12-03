@@ -1,41 +1,41 @@
-import { addPointerEvent } from "../events/add-pointer-event"
-import { pipe } from "../utils/pipe"
-import { isDragActive } from "./drag/utils/lock"
-import { EventInfo } from "../events/types"
 import type { VisualElement } from "../render/VisualElement"
 import { Feature } from "../motion/features/Feature"
 import { frame } from "../frameloop"
+import { hover } from "motion-dom"
+import { extractEventInfo } from "../events/event-info"
 
-function addHoverEvent(node: VisualElement<Element>, isActive: boolean) {
-    const eventName = isActive ? "pointerenter" : "pointerleave"
-    const callbackName = isActive ? "onHoverStart" : "onHoverEnd"
+function handleHoverEvent(
+    node: VisualElement<Element>,
+    event: PointerEvent,
+    isActive: boolean
+) {
+    const { props } = node
 
-    const handleEvent = (event: PointerEvent, info: EventInfo) => {
-        if (event.pointerType === "touch" || isDragActive()) return
-
-        const props = node.getProps()
-
-        if (node.animationState && props.whileHover) {
-            node.animationState.setActive("whileHover", isActive)
-        }
-
-        const callback = props[callbackName]
-        if (callback) {
-            frame.postRender(() => callback(event, info))
-        }
+    if (node.animationState && props.whileHover) {
+        node.animationState.setActive("whileHover", isActive)
     }
 
-    return addPointerEvent(node.current!, eventName, handleEvent, {
-        passive: !node.getProps()[callbackName],
-    })
+    const callback = props[isActive ? "onHoverStart" : "onHoverEnd"]
+    if (callback) {
+        frame.postRender(() => callback(event, extractEventInfo(event)))
+    }
 }
 
 export class HoverGesture extends Feature<Element> {
     mount() {
-        this.unmount = pipe(
-            addHoverEvent(this.node, true),
-            addHoverEvent(this.node, false)
-        ) as VoidFunction
+        const { current, props } = this.node
+        if (!current) return
+
+        this.unmount = hover(
+            current,
+            (startEvent) => {
+                handleHoverEvent(this.node, startEvent, true)
+
+                return (endEvent) =>
+                    handleHoverEvent(this.node, endEvent, false)
+            },
+            { passive: !props.onHoverStart && !props.onHoverEnd }
+        )
     }
 
     unmount() {}

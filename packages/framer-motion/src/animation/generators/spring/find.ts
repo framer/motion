@@ -1,4 +1,4 @@
-import { warning } from "../../../utils/errors"
+import { warning } from "motion-utils"
 import { clamp } from "../../../utils/clamp"
 import { SpringOptions } from "../../types"
 import {
