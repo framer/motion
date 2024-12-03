@@ -14,5 +14,15 @@
     "watchPlugins": [
         "jest-watch-typeahead/filename",
         "jest-watch-typeahead/testname"
+    ],
+    "reporters": [
+        "default",
+        [
+            "jest-junit",
+            {
+                "outputDirectory": "../../test_reports",
+                "outputName": "framer-motion.xml"
+            }
+        ]
     ]
 }

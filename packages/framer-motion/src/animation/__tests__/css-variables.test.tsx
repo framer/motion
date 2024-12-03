@@ -1,6 +1,5 @@
 import { render } from "../../../jest.setup"
-import { motion } from "../.."
-import * as React from "react"
+import { motion, animate, animateMini } from "../.."
 import { parseCSSVariable } from "../../render/dom/utils/css-variables-conversion"
 
 const fromName = "--from"
@@ -53,6 +52,35 @@ describe("css variables", () => {
     beforeAll(stubGetComputedStyles)
     afterAll(resetComputedStyles)
 
+    test("types work", () => {
+        ;() => (
+            <motion.div
+                initial={{ x: 0, "--from": "#f00", "--to": 0 }}
+                transition={{ "--from": { duration: 1 } }}
+                whileHover={{ x: 100, "--from": "#f00", "--to": 0 }}
+                style={
+                    {
+                        "--from": "#f00",
+                        "--to": 0,
+                        x: 100,
+                    } as React.CSSProperties
+                }
+            />
+        )
+
+        animate(document.createElement("div"), { x: 0, "--color": "#f00" })
+        animateMini(document.createElement("div"), {
+            transform: "none",
+            "--color": "#f00",
+        })
+    })
+
+    test("motion component still accetps React.CSSProperties", () => {
+        ;() => (
+            <motion.div style={{ transform: "none" } as React.CSSProperties} />
+        )
+    })
+
     test("should animate css color variables", async () => {
         const promise = new Promise((resolve) => {
             let frameCount = 0
@@ -89,8 +117,8 @@ describe("css variables", () => {
             const output: string[] = []
             const Component = () => (
                 <motion.div
-                    style={{ "--color": " #fff " } as any}
-                    animate={{ "--a": "20px", "--color": "#000" } as any}
+                    style={{ "--color": " #fff " } as React.CSSProperties}
+                    animate={{ "--a": "20px", "--color": "#000" }}
                     transition={{ duration: 0.001 }}
                     onUpdate={(latest: any) => output.push(latest)}
                     onAnimationComplete={() => resolve(output)}
@@ -105,7 +133,6 @@ describe("css variables", () => {
             {
                 "--a": "20px",
                 "--color": "rgba(0, 0, 0, 1)",
-                willChange: "auto",
             },
         ])
     })
@@ -120,7 +147,7 @@ describe("css variables", () => {
             const Component = () => {
                 return (
                     <motion.div
-                        style={style}
+                        style={style as React.CSSProperties}
                         initial={{ background: fromVariable }}
                         animate={{ background: toVariable }}
                         // transition={{ duration: 0.01 }}

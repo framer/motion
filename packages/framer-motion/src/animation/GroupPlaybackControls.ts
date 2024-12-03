@@ -1,4 +1,3 @@
-import { observeTimeline } from "../render/dom/scroll/observe"
 import { supportsScrollTimeline } from "../render/dom/scroll/supports"
 import { AnimationPlaybackControls } from "./types"
 
@@ -30,23 +29,21 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
         }
     }
 
-    attachTimeline(timeline: any) {
-        const cancelAll = this.animations.map((animation) => {
+    attachTimeline(
+        timeline: any,
+        fallback: (animation: AnimationPlaybackControls) => VoidFunction
+    ) {
+        const subscriptions = this.animations.map((animation) => {
             if (supportsScrollTimeline() && animation.attachTimeline) {
-                animation.attachTimeline(timeline)
+                return animation.attachTimeline(timeline)
             } else {
-                animation.pause()
-
-                return observeTimeline((progress) => {
-                    animation.time = animation.duration * progress
-                }, timeline)
+                return fallback(animation)
             }
         })
 
         return () => {
-            cancelAll.forEach((cancelTimeline, i) => {
-                if (cancelTimeline) cancelTimeline()
-
+            subscriptions.forEach((cancel, i) => {
+                cancel && cancel()
                 this.animations[i].stop()
             })
         }
@@ -87,6 +84,10 @@ export class GroupPlaybackControls implements AnimationPlaybackControls {
         >
     ) {
         this.animations.forEach((controls) => controls[methodName]())
+    }
+
+    flatten() {
+        this.runAll("flatten")
     }
 
     play() {

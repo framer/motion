@@ -3,7 +3,7 @@ import { EasingFunction } from "../../easing/types"
 import { ResolvedValues } from "../../render/types"
 import { progress as calcProgress } from "../../utils/progress"
 import { mixNumber } from "../../utils/mix/number"
-import { noop } from "../../utils/noop"
+import { noop } from "motion-utils"
 import { percent, px } from "../../value/types/numbers/units"
 
 const borders = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"]
@@ -121,8 +121,8 @@ function getRadius(values: ResolvedValues, radiusName: string) {
 //     )(p)
 // }
 
-const easeCrossfadeIn = compress(0, 0.5, circOut)
-const easeCrossfadeOut = compress(0.5, 0.95, noop)
+const easeCrossfadeIn = /*@__PURE__*/ compress(0, 0.5, circOut)
+const easeCrossfadeOut = /*@__PURE__*/ compress(0.5, 0.95, noop)
 
 function compress(
     min: number,

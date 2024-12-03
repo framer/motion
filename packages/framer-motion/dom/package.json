@@ -1,6 +1,6 @@
 {
     "private": true,
-    "types": "../dist/dom-entry.d.ts",
-    "main": "../dist/cjs/dom-entry.js",
-    "module": "../dist/es/dom-entry.mjs"
+    "types": "../dist/dom.d.ts",
+    "main": "../dist/cjs/dom.js",
+    "module": "../dist/es/dom.mjs"
 }

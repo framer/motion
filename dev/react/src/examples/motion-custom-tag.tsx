@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
  */
 
 export const App = () => {
-    const CustomComponent = motion("global")
+    const CustomComponent = motion.create("global")
 
     return (
         <CustomComponent

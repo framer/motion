@@ -12,6 +12,7 @@ import { VisualElementAnimationOptions } from "../../animation/interfaces/types"
 import { AnimationDefinition } from "../../animation/types"
 import { animateVisualElement } from "../../animation/interfaces/visual-element"
 import { ResolvedValues } from "../types"
+import { getVariantContext } from "./get-variant-context"
 
 export interface AnimationState {
     animateChanges: (type?: AnimationType) => Promise<any>
@@ -96,8 +97,8 @@ export function createAnimationState(
      *    what to animate those to.
      */
     function animateChanges(changedActiveType?: AnimationType) {
-        const props = visualElement.getProps()
-        const context = visualElement.getVariantContext(true) || {}
+        const { props } = visualElement
+        const context = getVariantContext(visualElement.parent) || {}
 
         /**
          * A list of animations that we'll build into as we iterate through the animation
@@ -314,9 +315,12 @@ export function createAnimationState(
             }
 
             /**
-             * If this is an inherited prop we want to hard-block animations
+             * If this is an inherited prop we want to skip this animation
+             * unless the inherited variants haven't changed on this render.
              */
-            if (shouldAnimateType && (!isInherited || handledRemovedValues)) {
+            const willAnimateViaParent = isInherited && variantDidChange
+            const needsAnimating = !willAnimateViaParent || handledRemovedValues
+            if (shouldAnimateType && needsAnimating) {
                 animations.push(
                     ...definitionList.map((animation) => ({
                         animation: animation as AnimationDefinition,

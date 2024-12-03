@@ -18,8 +18,6 @@ import {
     SwitchLayoutGroupContext,
 } from "../../context/SwitchLayoutGroupContext"
 
-let scheduleHandoffComplete = false
-
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
     visualState: VisualState<Instance, RenderState>,
@@ -74,8 +72,15 @@ export function useVisualElement<Instance, RenderState>(
         )
     }
 
+    const isMounted = useRef(false)
     useInsertionEffect(() => {
-        visualElement && visualElement.update(props, presenceContext)
+        /**
+         * Check the component has already mounted before calling
+         * `update` unnecessarily. This ensures we skip the initial update.
+         */
+        if (visualElement && isMounted.current) {
+            visualElement.update(props, presenceContext)
+        }
     })
 
     /**
@@ -86,12 +91,15 @@ export function useVisualElement<Instance, RenderState>(
         props[optimizedAppearDataAttribute as keyof typeof props]
     const wantsHandoff = useRef(
         Boolean(optimisedAppearId) &&
-            !window.MotionHandoffIsComplete &&
+            !window.MotionHandoffIsComplete?.(optimisedAppearId) &&
             window.MotionHasOptimisedAnimation?.(optimisedAppearId)
     )
 
     useIsomorphicLayoutEffect(() => {
         if (!visualElement) return
+
+        isMounted.current = true
+        window.MotionIsMounted = true
 
         visualElement.updateFeatures()
 
@@ -119,19 +127,17 @@ export function useVisualElement<Instance, RenderState>(
             visualElement.animationState.animateChanges()
         }
 
-        wantsHandoff.current = false
-        // This ensures all future calls to animateChanges() will run in useEffect
-        if (!scheduleHandoffComplete) {
-            scheduleHandoffComplete = true
-            queueMicrotask(completeHandoff)
+        if (wantsHandoff.current) {
+            // This ensures all future calls to animateChanges() in this component will run in useEffect
+            queueMicrotask(() => {
+                window.MotionHandoffMarkAsComplete?.(optimisedAppearId)
+            })
+
+            wantsHandoff.current = false
         }
     })
 
     return visualElement
-}
-
-function completeHandoff() {
-    window.MotionHandoffIsComplete = true
 }
 
 function createProjectionNode(

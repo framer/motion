@@ -1,13 +1,17 @@
 {
-    "name": "html",
+    "name": "html-env",
     "private": true,
-    "version": "11.3.31",
+    "version": "11.13.0",
     "type": "module",
     "scripts": {
         "dev": "vite",
         "dev-server": "yarn dev",
         "build": "vite build",
         "preview": "vite preview"
+    },
+    "dependencies": {
+        "motion": "^11.13.0",
+        "motion-dom": "^11.13.0"
     },
     "devDependencies": {
         "vite": "^5.2.0"

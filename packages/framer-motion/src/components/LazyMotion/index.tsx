@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useRef, useState } from "react"
 import { LazyContext } from "../../context/LazyContext"
 import { loadFeatures } from "../../motion/features/load-features"

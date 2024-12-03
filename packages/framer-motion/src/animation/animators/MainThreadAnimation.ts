@@ -5,7 +5,10 @@ import {
 import { spring } from "../generators/spring/index"
 import { inertia } from "../generators/inertia"
 import { keyframes as keyframesGeneratorFactory } from "../generators/keyframes"
-import { ValueAnimationOptions } from "../types"
+import {
+    ValueAnimationOptions,
+    ValueAnimationOptionsWithRenderContext,
+} from "../types"
 import { BaseAnimation } from "./BaseAnimation"
 import { AnimationState, KeyframeGenerator } from "../generators/types"
 import { pipe } from "../../utils/pipe"
@@ -17,9 +20,10 @@ import {
     secondsToMilliseconds,
 } from "../../utils/time-conversion"
 import { clamp } from "../../utils/clamp"
-import { invariant } from "../../utils/errors"
+import { invariant } from "motion-utils"
 import { frameloopDriver } from "./drivers/driver-frameloop"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
+import { isGenerator } from "../generators/utils/is-generator"
 
 type GeneratorFactory = (
     options: ValueAnimationOptions<any>
@@ -126,6 +130,18 @@ export class MainThreadAnimation<
         this.resolver.scheduleResolve()
     }
 
+    flatten() {
+        super.flatten()
+
+        // If we've already resolved the animation, re-initialise it
+        if (this._resolved) {
+            Object.assign(
+                this._resolved,
+                this.initPlayback(this._resolved.keyframes)
+            )
+        }
+    }
+
     protected initPlayback(keyframes: ResolvedKeyframes<T>) {
         const {
             type = "keyframes",
@@ -135,7 +151,9 @@ export class MainThreadAnimation<
             velocity = 0,
         } = this.options
 
-        const generatorFactory = generators[type] || keyframesGeneratorFactory
+        const generatorFactory = isGenerator(type)
+            ? type
+            : generators[type] || keyframesGeneratorFactory
 
         /**
          * If our generator doesn't support mixing numbers, we need to replace keyframes with
@@ -535,7 +553,7 @@ export class MainThreadAnimation<
 
 // Legacy interface
 export function animateValue(
-    options: ValueAnimationOptions<any>
+    options: ValueAnimationOptionsWithRenderContext<any>
 ): MainThreadAnimation<any> {
     return new MainThreadAnimation(options)
 }

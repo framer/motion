@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { MutableRefObject, useContext, useMemo, useRef } from "react"
 import {
@@ -5,7 +7,7 @@ import {
     LayoutGroupContextProps,
 } from "../../context/LayoutGroupContext"
 import { DeprecatedLayoutGroupContext } from "../../context/DeprecatedLayoutGroupContext"
-import { nodeGroup } from "../../projection-entry"
+import { nodeGroup } from "../../projection"
 import { useForceUpdate } from "../../utils/use-force-update"
 
 type InheritOption = boolean | "id"

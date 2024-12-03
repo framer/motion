@@ -1,7 +1,7 @@
 import { backIn } from "../../../easing/back"
 import { cubicBezier } from "../../../easing/cubic-bezier"
 import { easeInOut } from "../../../easing/ease"
-import { noop } from "../../../utils/noop"
+import { noop } from "motion-utils"
 import { easingDefinitionToFunction } from "../map"
 
 describe("easingDefinitionToFunction", () => {

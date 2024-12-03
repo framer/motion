@@ -38,7 +38,9 @@ export type SVGAttributesAsMotionValues<T> = MakeMotion<
     SVGAttributesWithoutMotionProps<T>
 >
 
-type UnwrapSVGFactoryElement<F> = F extends React.SVGProps<infer P> ? P : never
+export type UnwrapSVGFactoryElement<F> = F extends React.SVGProps<infer P>
+    ? P
+    : never
 
 /**
  * @public

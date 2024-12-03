@@ -1,5 +1,4 @@
-import { ElementOrSelector } from "../../../animation/types"
-import { resolveElements } from "../utils/resolve-element"
+import { ElementOrSelector, resolveElements } from "motion-dom"
 import { ResizeHandler } from "./types"
 
 const resizeHandlers = new WeakMap<Element, Set<ResizeHandler<Element>>>()

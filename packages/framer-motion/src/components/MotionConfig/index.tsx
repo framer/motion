@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { useContext, useMemo } from "react"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
@@ -53,7 +55,11 @@ export function MotionConfig({
      */
     const context = useMemo(
         () => config,
-        [JSON.stringify(config.transition), config.transformPagePoint, config.reducedMotion]
+        [
+            JSON.stringify(config.transition),
+            config.transformPagePoint,
+            config.reducedMotion,
+        ]
     )
 
     return (

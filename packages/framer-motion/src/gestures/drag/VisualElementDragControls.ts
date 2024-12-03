@@ -1,7 +1,7 @@
-import { invariant } from "../../utils/errors"
+import { invariant } from "motion-utils"
+import { setDragLock } from "motion-dom"
 import { PanSession, PanInfo } from "../pan/PanSession"
 import { ResolvedConstraints } from "./types"
-import { Lock, getGlobalLock } from "./utils/lock"
 import { isRefObject } from "../../utils/is-ref-object"
 import { addPointerEvent } from "../../events/add-pointer-event"
 import {
@@ -57,10 +57,7 @@ export class VisualElementDragControls {
 
     private panSession?: PanSession
 
-    // This is a reference to the global drag gesture lock, ensuring only one component
-    // can "capture" the drag of one or both axes.
-    // TODO: Look into moving this into pansession?
-    private openGlobalLock: Lock | null = null
+    private openDragLock: VoidFunction | null = null
 
     isDragging = false
     private currentDirection: DragDirection | null = null
@@ -78,8 +75,6 @@ export class VisualElementDragControls {
      * The per-axis resolved elastic values.
      */
     private elastic = createBox()
-
-    private removeWillChange: VoidFunction | undefined
 
     constructor(visualElement: VisualElement<HTMLElement>) {
         this.visualElement = visualElement
@@ -105,7 +100,7 @@ export class VisualElementDragControls {
             }
 
             if (snapToCursor) {
-                this.snapToCursor(extractEventInfo(event, "page").point)
+                this.snapToCursor(extractEventInfo(event).point)
             }
         }
 
@@ -114,11 +109,12 @@ export class VisualElementDragControls {
             const { drag, dragPropagation, onDragStart } = this.getProps()
 
             if (drag && !dragPropagation) {
-                if (this.openGlobalLock) this.openGlobalLock()
-                this.openGlobalLock = getGlobalLock(drag)
+                if (this.openDragLock) this.openDragLock()
+
+                this.openDragLock = setDragLock(drag)
 
                 // If we don 't have the lock, don't start dragging
-                if (!this.openGlobalLock) return
+                if (!this.openDragLock) return
             }
 
             this.isDragging = true
@@ -162,11 +158,7 @@ export class VisualElementDragControls {
                 frame.postRender(() => onDragStart(event, info))
             }
 
-            this.removeWillChange?.()
-            this.removeWillChange = addValueToWillChange(
-                this.visualElement,
-                "transform"
-            )
+            addValueToWillChange(this.visualElement, "transform")
 
             const { animationState } = this.visualElement
             animationState && animationState.setActive("whileDrag", true)
@@ -183,7 +175,7 @@ export class VisualElementDragControls {
             } = this.getProps()
 
             // If we didn't successfully receive the gesture lock, early return.
-            if (!dragPropagation && !this.openGlobalLock) return
+            if (!dragPropagation && !this.openDragLock) return
 
             const { offset } = info
             // Attempt to detect drag direction if directionLock is true
@@ -246,8 +238,6 @@ export class VisualElementDragControls {
     }
 
     private stop(event: PointerEvent, info: PanInfo) {
-        this.removeWillChange?.()
-
         const isDragging = this.isDragging
         this.cancel()
         if (!isDragging) return
@@ -271,9 +261,9 @@ export class VisualElementDragControls {
         this.panSession = undefined
 
         const { dragPropagation } = this.getProps()
-        if (!dragPropagation && this.openGlobalLock) {
-            this.openGlobalLock()
-            this.openGlobalLock = null
+        if (!dragPropagation && this.openDragLock) {
+            this.openDragLock()
+            this.openDragLock = null
         }
 
         animationState && animationState.setActive("whileDrag", false)
@@ -457,6 +447,8 @@ export class VisualElementDragControls {
     ) {
         const axisValue = this.getAxisMotionValue(axis)
 
+        addValueToWillChange(this.visualElement, axis)
+
         return axisValue.start(
             animateMotionValue(
                 axis,
@@ -464,8 +456,7 @@ export class VisualElementDragControls {
                 0,
                 transition,
                 this.visualElement,
-                false,
-                addValueToWillChange(this.visualElement, axis)
+                false
             )
         )
     }

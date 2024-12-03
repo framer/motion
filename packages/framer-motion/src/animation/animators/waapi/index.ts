@@ -1,23 +1,23 @@
 import { mapEasingToNativeEasing } from "./easing"
 import { NativeAnimationOptions } from "./types"
 
-export function animateStyle(
+export function startWaapiAnimation(
     element: Element,
     valueName: string,
-    keyframes: string[] | number[],
+    keyframes: string | number | string[] | number[],
     {
         delay = 0,
         duration = 300,
         repeat = 0,
         repeatType = "loop",
-        ease,
+        ease = "easeInOut",
         times,
     }: NativeAnimationOptions = {}
 ) {
     const keyframeOptions: PropertyIndexedKeyframes = { [valueName]: keyframes }
     if (times) keyframeOptions.offset = times
 
-    const easing = mapEasingToNativeEasing(ease)
+    const easing = mapEasingToNativeEasing(ease, duration)
 
     /**
      * If this is an easing array, apply to keyframes, not animation as a whole

@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import { motion } from "../../render/dom/motion"
+import { motion } from "../../render/components/motion"
 import { motionValue } from "../../value"
 import { frame } from "../../frameloop"
 

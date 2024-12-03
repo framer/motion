@@ -16,8 +16,6 @@ yarn-error.log
 /packages/*/coverage
 /packages/*/cypress/screenshots
 /packages/*/cypress/videos
-/packages/*/cypress/fixtures/appear-tests.json
-/packages/*/cypress/fixtures/projection-tests.json
 .cache-loader
 
 .yarn/*
@@ -28,6 +26,11 @@ yarn-error.log
 !.yarn/sdks
 !.yarn/versions
 .turbo
+.next
 stats.html
 
 lerna-debug.log
+
+playwright-report
+test-results
+test_results

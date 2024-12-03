@@ -1,8 +1,224 @@
 # Changelog
 
-Framer Motion adheres to [Semantic Versioning](http://semver.org/).
+Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
+
+## [11.13.0] 2024-12-03
+
+### Added
+
+-   Vanilla `hover` gesture in Motion+ early access.
+
+## [11.12.0] 2024-11-27
+
+### Added
+
+-   New `visualDuration` option for `spring` animations.
+-   New `spring(visualDuration, bounce)` syntax.
+
+## [11.11.16] 2024-11-14
+
+### Fixed
+
+-   Fixing `stagger` with mini `animate`.
+
+## [11.11.16] 2024-11-14
+
+### Fixed
+
+-   Ensuring animations passed to `scroll` are scrubbed linearly.
+-   Fixing `mini` types entrypoint.
+-   Exporting easing types from `"motion"`.
+
+## [11.11.15] 2024-11-13
+
+### Fixed
+
+-   Fixing `mini` and `react-mini` entrypoints.
+
+## [11.11.14] 2024-11-12
+
+### Fixed
+
+-   Fixing fallback entry points for `"motion/react"` etc.
+
+## [11.11.13] 2024-11-12
+
+### Fixed
+
+-   Fixing build and entry points for `"motion"`.
+
+## [11.11.12] 2024-11-12
+
+### Changed
+
+-   Adding `"motion"` package.
+-   Replaced Motion One (see [upgrade guide](https://motion.dev/docs/upgrade-guide)).
+
+## [11.11.11] 2024-10-31
+
+### Fixed
+
+-   Fixing double `update()` call on mount.
+
+## [11.11.10] 2024-10-25
+
+### Fixed
+
+-   Removing `will-change` from SSR.
+
+## [11.11.9] 2024-10-15
+
+### Changed
+
+-   `will-change` is now no longer automatically managed without `useWillChange`.
+
+## [11.11.8] 2024-10-11
+
+### Fixed
+
+-   Fixing fallback `package.json` for entrypoints in older versions of Node.
+
+## [11.11.7] 2024-10-09
+
+### Fixed
+
+-   Improving generic value signature for `animate`.
+
+## [11.11.6] 2024-10-09
+
+### Fixed
+
+-   Allowing generic motion value types in `animate`.
+
+## [11.11.5] 2024-10-09
+
+### Fixed
+
+-   Removed ability to define CSS variables on `style` without casting, as this was conflicting with React `CSSProperties`.
+
+## [11.11.4] 2024-10-08
+
+### Fixed
+
+-   Memoize `AnimatePresence` `safeToRemove`.
+-   Remove duplicate `layout="size"` annotation.
+
+## [11.11.3] 2024-10-08
+
+### Fixed
+
+-   Remove `as any` requirement for CSS variables.
+
+## [11.11.2] 2024-10-08
+
+### Fixed
+
+-   Make `BezierDefinition` `readonly` for easier definition outside a `Transition`.
+
+## [11.11.1] 2024-10-04
+
+### Fix
+
+-   Fixed optimised appear effects in granular Suspense environments.
+
+## [11.11.0] 2024-10-03
+
+### Added
+
+-   `animate` can now animate any object.
+
+## [11.10.0] 2024-10-02
+
+### Added
+
+-   `delay` with seconds now exported from `"framer-motion/dom"`.
+
+### Fixed
+
+-   Only `transform` is added to `will-change` when a potentially layerising value is animated as `opacity` and `filter` will prematurely flatten `preserve-3d`.
+
+## [11.9.0] 2024-09-27
+
+### Added
+
+-   Mini `animate` and `useAnimate` functions.
+
+## [11.8.0] 2024-09-25
+
+### Added
+
+-   Easing functions now get compiled into `linear()` easings when animating via WAAPI.
+
+## [11.7.0] 2024-09-25
+
+### Added
+
+-   Added support for custom animation generators via `type`.
+
+## [11.6.0] 2024-09-24
+
+### Added
+
+-   Added `info` and element tracking to `scroll`.
+-   Added `steps` easing.
+
+### Changed
+
+-   Values added to `will-change` now stay there for their lifespan to prevent GPU thrashing and weird Safari subpixel jitters.
+
+## [11.5.6] 2024-09-20
+
+### Fixed
+
+-   Ensuring updating motion values during `render` doesn't lock rendering for an element.
+
+## [11.5.5] 2024-09-19
+
+### Fixed
+
+-   Changed values of child variants now animate even when the parent variant name hasn't changed.
+
+## [11.5.4] 2024-09-05
+
+### Fixed
+
+-   Improving tree-shakability.
+
+## [11.5.3] 2024-09-05
+
+### Fixed
+
+-   `Reorder` components now import `motion` proxy.
+
+## [11.5.2] 2024-09-04
+
+### Added
+
+-   Changing `motion()` deprecation warning to `warnOnce`.
+
+## [11.5.1] 2024-09-04
+
+### Added
+
+-   Exporting `findSpring` for internal use.
+
+## [11.5.0] 2024-09-04
+
+### Added
+
+-   `motion.create()` and `m.create()`.
+
+### Deprecrated
+
+-   `motion()` and `m()`.
+
+## [11.4.0] 2024-09-03
+
+### Added
+
+-   Support for React Server Components, including new entrypoints for `motion` and `m` components.
 
 ## [11.3.31] 2024-08-29
 
@@ -548,7 +764,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Fixed `layout` prop crashing Framer Motion 3D.
+-   Fixed `layout` prop crashing Motion 3D.
 
 ## [10.17.10] 2024-01-05
 
@@ -1429,7 +1645,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Variant `transition` fixed in Framer Motion 3D.
+-   Variant `transition` fixed in Motion 3D.
 
 ## [8.2.0] 2023-01-06
 
@@ -1564,7 +1780,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Fixing mapping Framer Motion easing names to WAAPI.
+-   Fixing mapping Motion easing names to WAAPI.
 
 ## [7.9.0] 2022-12-14
 
@@ -2008,7 +2224,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Will display a warning if different versions of Framer Motion are mixed.
+-   Will display a warning if different versions of Motion are mixed.
 
 ## [6.3.6] 2022-05-31
 
@@ -2020,7 +2236,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Added `initial` prop to Framer Motion 3D types.
+-   Added `initial` prop to Motion 3D types.
 
 ## [6.3.4] 2022-05-25
 
@@ -2220,7 +2436,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
--   Sharing `MotionContext` across Framer Motion and Framer Motion 3D environments in CommonJS environments.
+-   Sharing `MotionContext` across Motion and Motion 3D environments in CommonJS environments.
 
 ## [5.4.1] 2021-12-06
 
@@ -3784,7 +4000,7 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Fixed
 
 -   Filtering pointer events not from the primary pointer (ie non-left clicks for mouse).
--   Fixing drag in Android devices by adding aggressive viewport scroll blocking. This will need dialling back down when it comes to open sourcing Framer Motion so, for instance, a horizontal carousel doesn't block vertical scrolling.
+-   Fixing drag in Android devices by adding aggressive viewport scroll blocking. This will need dialling back down when it comes to open sourcing Motion so, for instance, a horizontal carousel doesn't block vertical scrolling.
 
 ## [0.16.0] 2019-04-19
 

@@ -1,27 +1,32 @@
+import { anticipate } from "../../easing/anticipate"
+import { backInOut } from "../../easing/back"
+import { circInOut } from "../../easing/circ"
 import { EasingDefinition } from "../../easing/types"
 import { DOMKeyframesResolver } from "../../render/dom/DOMKeyframesResolver"
 import { ResolvedKeyframes } from "../../render/utils/KeyframesResolver"
-import { memo } from "../../utils/memo"
-import { noop } from "../../utils/noop"
+import { noop } from "motion-utils"
 import {
     millisecondsToSeconds,
     secondsToMilliseconds,
 } from "../../utils/time-conversion"
 import { MotionValue } from "../../value"
-import { ValueAnimationOptions } from "../types"
+import { isGenerator } from "../generators/utils/is-generator"
+import {
+    ValueAnimationOptions,
+    ValueAnimationOptionsWithRenderContext,
+} from "../types"
 import {
     BaseAnimation,
     ValueAnimationOptionsWithDefaults,
 } from "./BaseAnimation"
 import { MainThreadAnimation } from "./MainThreadAnimation"
 import { acceleratedValues } from "./utils/accelerated-values"
-import { animateStyle } from "./waapi"
+import { startWaapiAnimation } from "./waapi"
 import { isWaapiSupportedEasing } from "./waapi/easing"
+import { attachTimeline } from "./waapi/utils/attach-timeline"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
-
-const supportsWaapi = memo(() =>
-    Object.hasOwnProperty.call(Element.prototype, "animate")
-)
+import { supportsLinearEasing } from "./waapi/utils/supports-linear-easing"
+import { supportsWaapi } from "./waapi/utils/supports-waapi"
 
 /**
  * 10ms is chosen here as it strikes a balance between smooth
@@ -44,7 +49,11 @@ const maxDuration = 20_000
 function requiresPregeneratedKeyframes<T extends string | number>(
     options: ValueAnimationOptions<T>
 ) {
-    return options.type === "spring" || !isWaapiSupportedEasing(options.ease)
+    return (
+        isGenerator(options.type) ||
+        options.type === "spring" ||
+        !isWaapiSupportedEasing(options.ease)
+    )
 }
 
 function pregenerateKeyframes<T extends string | number>(
@@ -102,6 +111,18 @@ interface ResolvedAcceleratedAnimation {
     keyframes: string[] | number[]
 }
 
+const unsupportedEasingFunctions = {
+    anticipate,
+    backInOut,
+    circInOut,
+}
+
+function isUnsupportedEase(
+    key: string
+): key is keyof typeof unsupportedEasingFunctions {
+    return key in unsupportedEasingFunctions
+}
+
 export class AcceleratedAnimation<
     T extends string | number
 > extends BaseAnimation<T, ResolvedAcceleratedAnimation> {
@@ -110,7 +131,7 @@ export class AcceleratedAnimation<
         motionValue: MotionValue<T>
     }
 
-    constructor(options: ValueAnimationOptions<T>) {
+    constructor(options: ValueAnimationOptionsWithRenderContext<T>) {
         super(options)
 
         const { name, motionValue, element, keyframes } = this.options
@@ -152,6 +173,19 @@ export class AcceleratedAnimation<
         }
 
         /**
+         * If the user has provided an easing function name that isn't supported
+         * by WAAPI (like "anticipate"), we need to provide the corressponding
+         * function. This will later get converted to a linear() easing function.
+         */
+        if (
+            typeof ease === "string" &&
+            supportsLinearEasing() &&
+            isUnsupportedEase(ease)
+        ) {
+            ease = unsupportedEasingFunctions[ease]
+        }
+
+        /**
          * If this animation needs pre-generated keyframes then generate.
          */
         if (requiresPregeneratedKeyframes(this.options)) {
@@ -177,7 +211,7 @@ export class AcceleratedAnimation<
             type = "keyframes"
         }
 
-        const animation = animateStyle(
+        const animation = startWaapiAnimation(
             motionValue.owner!.current as unknown as HTMLElement,
             name,
             keyframes as string[],
@@ -189,7 +223,7 @@ export class AcceleratedAnimation<
         animation.startTime = startTime ?? this.calcStartTime()
 
         if (this.pendingTimeline) {
-            animation.timeline = this.pendingTimeline
+            attachTimeline(animation, this.pendingTimeline)
             this.pendingTimeline = undefined
         } else {
             /**
@@ -290,9 +324,7 @@ export class AcceleratedAnimation<
             if (!resolved) return noop<void>
 
             const { animation } = resolved
-
-            animation.timeline = timeline
-            animation.onfinish = null
+            attachTimeline(animation, timeline)
         }
 
         return noop<void>
@@ -390,7 +422,7 @@ export class AcceleratedAnimation<
     }
 
     static supports(
-        options: ValueAnimationOptions
+        options: ValueAnimationOptionsWithRenderContext
     ): options is AcceleratedValueAnimationOptions {
         const { motionValue, name, repeatDelay, repeatType, damping, type } =
             options

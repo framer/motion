@@ -2,5 +2,9 @@
     "baseUrl": "http://localhost:9990",
     "video": true,
     "screenshots": false,
-    "retries": 2
+    "retries": 2,
+    "reporter": "junit",
+    "reporterOptions": {
+        "mochaFile": "../../test_reports/framer-motion-[hash].xml"
+    }
 }

@@ -10,7 +10,7 @@ import { Variants } from "../../types"
 import { motionValue } from "../../value"
 import { nextFrame } from "../../gestures/__tests__/utils"
 
-const MotionFragment = motion(Fragment)
+const MotionFragment = motion.create(Fragment)
 
 describe("animate prop as variant", () => {
     test("animates to set variant", async () => {
@@ -472,7 +472,7 @@ describe("animate prop as variant", () => {
 
     /**
      * This test enshrines the behaviour that when a value is removed from an element as the result of a parent variant,
-     * it should fallback to the style prop. This is a bug in Framer Motion - the desired behaviour is that it falls
+     * it should fallback to the style prop. This is a bug in Motion - the desired behaviour is that it falls
      * back to the defined variant in initial. However, changing this behaviour would break generated code in Framer
      * so we can't fix it until we find a migration path out of that.
      */
@@ -817,11 +817,7 @@ describe("animate prop as variant", () => {
         const promise = new Promise((resolve) => {
             let latest = {}
 
-            let frameCount = 0
-
             const onUpdate = (l: { [key: string]: number | string }) => {
-                frameCount++
-                if (frameCount === 2) expect(l.willChange).toBe("transform")
                 latest = l
             }
 
@@ -842,7 +838,6 @@ describe("animate prop as variant", () => {
         })
 
         return expect(promise).resolves.toEqual({
-            willChange: "auto",
             x: 100,
             y: 100,
         })
@@ -1294,5 +1289,33 @@ describe("animate prop as variant", () => {
         })
 
         return expect(promise).resolves.toBe("visible")
+    })
+
+    test("changing values within an inherited variant triggers an animation", async () => {
+        const Component = ({ x }: { x: number }) => {
+            return (
+                <motion.div initial={false} animate="variant">
+                    <motion.div
+                        data-testid="element"
+                        variants={{ variant: { x } }}
+                        transition={{ type: false }}
+                    />
+                </motion.div>
+            )
+        }
+
+        const { rerender, getByTestId } = render(<Component x={0} />)
+
+        await nextFrame()
+
+        const element = getByTestId("element")
+
+        expect(element).toHaveStyle("transform: none")
+
+        rerender(<Component x={100} />)
+
+        await nextFrame()
+
+        expect(element).toHaveStyle("transform: translateX(100px)")
     })
 })

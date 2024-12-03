@@ -3,6 +3,10 @@ export interface AppearStoreEntry {
     startTime: number | null
 }
 
-export const appearAnimationStore = new Map<string, AppearStoreEntry>()
+export type AppearElementId = string
 
-export const elementsWithAppearAnimations = new Set<string>()
+export type IsComplete = boolean
+
+export const appearAnimationStore = new Map<AppearElementId, AppearStoreEntry>()
+
+export const appearComplete = new Map<AppearElementId, IsComplete>()

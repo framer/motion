@@ -7,9 +7,11 @@ const checkStringStartsWith =
     (key?: string | number | null): key is T =>
         typeof key === "string" && key.startsWith(token)
 
-export const isCSSVariableName = checkStringStartsWith<CSSVariableName>("--")
+export const isCSSVariableName =
+    /*@__PURE__*/ checkStringStartsWith<CSSVariableName>("--")
 
-const startsAsVariableToken = checkStringStartsWith<CSSVariableToken>("var(--")
+const startsAsVariableToken =
+    /*@__PURE__*/ checkStringStartsWith<CSSVariableToken>("var(--")
 export const isCSSVariableToken = (
     value?: string
 ): value is CSSVariableToken => {

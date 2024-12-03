@@ -1,6 +1,5 @@
 import { render } from "../../../../jest.setup"
-import { createRef } from "react"
-import { act } from "react-dom/test-utils"
+import { act, createRef } from "react"
 import {
     AnimatePresence,
     motion,
@@ -12,6 +11,7 @@ import {
 import { motionValue } from "../../../value"
 import { ResolvedValues } from "../../../render/types"
 import { nextFrame } from "../../../gestures/__tests__/utils"
+import { waitFor } from "@testing-library/dom"
 
 describe("AnimatePresence", () => {
     test("Allows initial animation if no `initial` prop defined", async () => {
@@ -446,7 +446,7 @@ describe("AnimatePresence", () => {
     })
 
     test("Fast animations with wait render the child content correctly (strict mode disabled)", async () => {
-        const promise = new Promise<boolean>((resolve) => {
+        await new Promise<boolean>((resolve) => {
             const Component = ({ i }: { i: number }) => {
                 return (
                     <AnimatePresence mode="wait">
@@ -471,13 +471,16 @@ describe("AnimatePresence", () => {
             setTimeout(() => {
                 rerender(<Component i={2} />)
                 // wait for the exit animation to check the DOM again
-                setTimeout(() => {
-                    resolve(getByTestId("2").textContent === "2")
-                }, 150)
+                async function checkElement() {
+                    await waitFor(() =>
+                        expect(getByTestId("2").textContent === "2")
+                    )
+                    resolve(true)
+                }
+
+                checkElement()
             }, 200)
         })
-
-        return await expect(promise).resolves.toBeTruthy()
     })
 
     test("Elements exit in sequence during fast renders", async () => {

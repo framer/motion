@@ -1,9 +1,11 @@
+"use client"
+
 import { useContext, useState, useMemo, useRef } from "react"
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
 import { PresenceChild } from "./PresenceChild"
 import { LayoutGroupContext } from "../../context/LayoutGroupContext"
-import { invariant } from "../../utils/errors"
+import { invariant } from "motion-utils"
 import { useIsomorphicLayoutEffect } from "../../three-entry"
 import { useConstant } from "../../utils/use-constant"
 import { ComponentKey, getChildKey, onlyElements } from "./utils"

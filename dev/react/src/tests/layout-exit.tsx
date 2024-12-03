@@ -19,6 +19,7 @@ export const App = () => {
                         id="box"
                         layout
                         style={{ width: 100, height: 100, background: "blue" }}
+                        transition={{ duration: 0.1 }}
                         exit={animation}
                     />
                 )}

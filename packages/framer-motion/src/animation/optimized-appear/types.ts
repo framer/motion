@@ -23,12 +23,13 @@ export type HandoffFunction = (
 
 /**
  * The window global object acts as a bridge between our inline script
- * triggering the optimized appear animations, and Framer Motion.
+ * triggering the optimized appear animations, and Motion.
  */
 declare global {
     interface Window {
         MotionHandoffAnimation?: HandoffFunction
-        MotionHandoffIsComplete?: boolean
+        MotionHandoffMarkAsComplete?: (elementId: string) => void
+        MotionHandoffIsComplete?: (elementId: string) => boolean
         MotionHasOptimisedAnimation?: (
             elementId?: string,
             valueName?: string
@@ -44,5 +45,6 @@ declare global {
             valueName: string,
             value: MotionValue
         ) => VoidFunction | void
+        MotionIsMounted?: boolean
     }
 }

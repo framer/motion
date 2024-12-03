@@ -5,8 +5,9 @@ import {
     CustomStyles,
     SVGPathProperties,
 } from "./motion/types"
+import { VariableKeyframesDefinition } from "./animation/types"
 
-export type GenericKeyframesTarget<V> = [null, ...V[]] | V[]
+export type GenericKeyframesTarget<V> = V[] | Array<null | V>
 
 /**
  * @public
@@ -497,6 +498,26 @@ export interface Spring extends Repeat {
     duration?: number
 
     /**
+     * If visualDuration is set, this will override duration.
+     *
+     * The visual duration is a time, set in seconds, that the animation will take to visually appear to reach its target.
+     *
+     * In other words, the bulk of the transition will occur before this time, and the "bouncy bit" will mostly happen after.
+     *
+     * This makes it easier to edit a spring, as well as visually coordinate it with other time-based animations.
+     *
+     * ```jsx
+     * <motion.div
+     *   animate={{ x: 100 }}
+     *   transition={{ type: "spring", visualDuration: 0.5 }}
+     * />
+     * ```
+     *
+     * @public
+     */
+    visualDuration?: number
+
+    /**
      * `bounce` determines the "bounciness" of a spring animation.
      *
      * `0` is no bounce, and `1` is extremely bouncy.
@@ -897,36 +918,6 @@ export interface Keyframes {
 /**
  * @public
  */
-export interface Just {
-    /**
-     * @public
-     */
-    type: "just"
-
-    /**
-     * @internal
-     */
-    to?: number | string | ValueTarget
-
-    /**
-     * @internal
-     */
-    from?: number | string
-
-    /**
-     * @internal
-     */
-    delay?: number
-
-    /**
-     * @internal
-     */
-    velocity?: number
-}
-
-/**
- * @public
- */
 export interface None {
     /**
      * Set `type` to `false` for an instant transition.
@@ -954,12 +945,7 @@ export interface None {
 /**
  * @public
  */
-export type PopmotionTransitionProps =
-    | Tween
-    | Spring
-    | Keyframes
-    | Inertia
-    | Just
+export type PopmotionTransitionProps = Tween | Spring | Keyframes | Inertia
 
 /**
  * @public
@@ -976,7 +962,6 @@ export type TransitionDefinition =
     | Spring
     | Keyframes
     | Inertia
-    | Just
     | None
     | PermissiveTransitionDefinition
 
@@ -1011,7 +996,8 @@ type TargetProperties = CSSPropertiesWithoutTransitionOrSingleTransforms &
     SVGTransformAttributes &
     TransformProperties &
     CustomStyles &
-    SVGPathProperties
+    SVGPathProperties &
+    VariableKeyframesDefinition
 
 /**
  * @public

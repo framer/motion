@@ -1,5 +1,5 @@
 import { motion, useMotionValue } from "framer-motion"
-import { useState } from "react";
+import { useState } from "react"
 
 export const App = () => {
     const params = new URLSearchParams(window.location.search)
@@ -14,7 +14,7 @@ export const App = () => {
             layout={type}
             style={{ ...(state ? a : b), backgroundColor }}
             onClick={() => setState(!state)}
-            transition={{ duration: 0.1, ease: () => 0.5 }}
+            transition={{ duration: 0.2, ease: () => 0.5 }}
             onLayoutAnimationStart={() => backgroundColor.set("green")}
             onLayoutAnimationComplete={() => backgroundColor.set("blue")}
         />

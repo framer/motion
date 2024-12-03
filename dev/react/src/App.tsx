@@ -25,7 +25,7 @@ function App() {
 const ExampleList = () => {
     return (
         <div>
-            <h2>Framer Motion Playground</h2>
+            <h2>Motion Playground</h2>
             <p>
                 You can edit any of these in the{" "}
                 <code>dev/react/src/examples</code>

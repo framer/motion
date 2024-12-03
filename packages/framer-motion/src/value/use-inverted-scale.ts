@@ -1,6 +1,6 @@
 import { useTransform } from "../value/use-transform"
 import { MotionValue } from "./"
-import { invariant, warning } from "../utils/errors"
+import { invariant, warning } from "motion-utils"
 import { useMotionValue } from "./use-motion-value"
 import { MotionContext } from "../context/MotionContext"
 import { useContext } from "react"

@@ -26,7 +26,6 @@
         <script type="module">
             const {
                 motion,
-                animateStyle,
                 startOptimizedAppearAnimation,
                 optimizedAppearDataAttribute,
                 motionValue,
@@ -71,7 +70,7 @@
                 (animation) => {
                     // Hydrate root mid-way through delay
                     setTimeout(() => {
-                        ReactDOM.hydrateRoot(root, Component)
+                        ReactDOMClient.hydrateRoot(root, Component)
 
                         const { opacity: initialOpacity } =
                             window.getComputedStyle(box)

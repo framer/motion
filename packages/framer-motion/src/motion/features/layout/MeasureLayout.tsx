@@ -1,3 +1,5 @@
+"use client"
+
 import { frame } from "../../../frameloop"
 import { Component, useContext } from "react"
 import { usePresence } from "../../../components/AnimatePresence/use-presence"

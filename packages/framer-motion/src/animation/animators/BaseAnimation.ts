@@ -9,6 +9,7 @@ import {
     AnimationPlaybackControls,
     RepeatType,
     ValueAnimationOptions,
+    ValueAnimationOptionsWithRenderContext,
 } from "../types"
 import { canAnimate } from "./utils/can-animate"
 import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
@@ -24,7 +25,7 @@ import { getFinalKeyframe } from "./waapi/utils/get-final-keyframe"
 const MAX_RESOLVE_DELAY = 40
 
 export interface ValueAnimationOptionsWithDefaults<T extends string | number>
-    extends ValueAnimationOptions<T> {
+    extends ValueAnimationOptionsWithRenderContext<T> {
     autoplay: boolean
     delay: number
     repeat: number
@@ -201,6 +202,11 @@ export abstract class BaseAnimation<T extends string | number, Resolved>
      */
     then(resolve: VoidFunction, reject?: VoidFunction) {
         return this.currentFinishedPromise.then(resolve, reject)
+    }
+
+    flatten() {
+        this.options.type = "keyframes"
+        this.options.ease = "linear"
     }
 
     protected updateFinishedPromise() {

@@ -1,5 +1,7 @@
+"use client"
+
 import {
-    createMotionComponent,
+    createRendererMotionComponent,
     FeatureBundle,
     animations,
     makeUseVisualState,
@@ -19,7 +21,7 @@ const preloadedFeatures: Partial<FeatureBundle> = {
 }
 
 function custom<Props extends {}>(Component: string) {
-    return createMotionComponent<Props, any, ThreeRenderState>({
+    return createRendererMotionComponent<Props, any, ThreeRenderState>({
         Component,
         preloadedFeatures,
         useRender,

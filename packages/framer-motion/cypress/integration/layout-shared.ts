@@ -50,6 +50,7 @@ describe("Shared layout: A -> B transition", () => {
                 expect(getComputedStyle($box).opacity).to.equal("0.4")
             })
             .trigger("click")
+            .wait(50)
             .get("#b")
             /**
              * Test that onLayoutAnimationStart fires
@@ -57,7 +58,7 @@ describe("Shared layout: A -> B transition", () => {
             .should(([$box]: any) => {
                 expect($box.style.backgroundColor).to.equal("rgb(0, 255, 0)")
             })
-            .wait(50)
+            .wait(100)
             .should(([$box]: any) => {
                 expect(window.getComputedStyle($box).borderRadius).to.equal(
                     "5% / 4%"
@@ -468,7 +469,7 @@ describe("Shared layout: A -> B crossfade transition", () => {
                 })
             })
             .trigger("click")
-            .wait(10)
+            .wait(100)
             .get("#b")
             .should(([$box]: any) => {
                 expectBbox($box, {
@@ -480,7 +481,7 @@ describe("Shared layout: A -> B crossfade transition", () => {
             })
             // interrupt the animation
             .trigger("click")
-            .wait(10)
+            .wait(100)
             .get("#a")
             .should(([$box]: any) => {
                 expectBbox($box, {
@@ -917,7 +918,7 @@ describe("Shared layout: nested crossfade transition", () => {
             .wait(50)
             .get("#a")
             .trigger("click")
-            .wait(100)
+            .wait(250)
             .get("#a")
             .should(([$box]: any) => {
                 expectBbox($box, {
@@ -938,8 +939,7 @@ describe("Shared layout: nested crossfade transition", () => {
             })
             .get("#b")
             .trigger("click")
-            .wait(100)
-            .get("#b")
+            .wait(250)
             .should(([$box]: any) => {
                 expectBbox($box, {
                     top: 150,

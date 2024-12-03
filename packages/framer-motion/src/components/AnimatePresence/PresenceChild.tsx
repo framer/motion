@@ -1,5 +1,7 @@
+"use client"
+
 import * as React from "react"
-import { useId, useMemo } from "react"
+import { useId, useMemo, useCallback } from "react"
 import {
     PresenceContext,
     PresenceContextProps,
@@ -30,21 +32,26 @@ export const PresenceChild = ({
     const presenceChildren = useConstant(newChildrenMap)
     const id = useId()
 
+    const memoizedOnExitComplete = useCallback(
+        (childId: string) => {
+            presenceChildren.set(childId, true)
+
+            for (const isComplete of presenceChildren.values()) {
+                if (!isComplete) return // can stop searching when any is incomplete
+            }
+
+            onExitComplete && onExitComplete()
+        },
+        [presenceChildren, onExitComplete]
+    )
+
     const context = useMemo(
         (): PresenceContextProps => ({
             id,
             initial,
             isPresent,
             custom,
-            onExitComplete: (childId: string) => {
-                presenceChildren.set(childId, true)
-
-                for (const isComplete of presenceChildren.values()) {
-                    if (!isComplete) return // can stop searching when any is incomplete
-                }
-
-                onExitComplete && onExitComplete()
-            },
+            onExitComplete: memoizedOnExitComplete,
             register: (childId: string) => {
                 presenceChildren.set(childId, false)
                 return () => presenceChildren.delete(childId)
@@ -55,7 +62,9 @@ export const PresenceChild = ({
          * we want to make a new context value to ensure they get re-rendered
          * so they can detect that layout change.
          */
-        presenceAffectsLayout ? [Math.random()] : [isPresent]
+        presenceAffectsLayout
+            ? [Math.random(), memoizedOnExitComplete]
+            : [isPresent, memoizedOnExitComplete]
     )
 
     useMemo(() => {

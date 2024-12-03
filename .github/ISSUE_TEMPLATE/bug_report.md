@@ -39,22 +39,22 @@ If applicable, let us know which OS, browser, browser version etc you're using.
 
 ## FAQs
 
-### `"use client"` error
+### React Server Components `"use client"` error
 
-We would accept a PR implementing `"use client"` (see [previous discussion](https://github.com/framer/motion/issues/2054)). In the meantime a workaround is:
+If you're importing `motion` or `m` into a React Server Component environment, ensure you're importing from `motion/react-client` instead of `motion/react`.
 
 ```javascript
-// motion.js
-"use client"
-export * from "framer-motion"
-
-// other.js
-import { motion } from "./motion"
+import * as motion from "motion/react-client"
+import * as m from "framer-motion/react-m"
 ```
 
-### Framer Motion won't install
+### Motion for React won't install
 
-Framer Motion 7+ uses React 18 as a minimum. If you can't upgrade React, install the latest version of Framer Motion 6.
+Different versions of Motion for React are compatible with different versions of React.
+
+React 19: `framer-motion@12.0.0-alpha.0` or higher
+React 18: `framer-motion@7.0.0` to `framer-motion@11.x`, or `motion`
+React 17: `framer-motion@6.x` or lower
 
 ### `height: "auto"` is jumping
 
@@ -64,7 +64,7 @@ The recommended solution is to move padding to a child element. See [this issue]
 
 ### Preact isn't working
 
-Framer Motion isn't compatible with Preact.
+Motion for React isn't compatible with Preact.
 
 ### `AnimatePresence` isn't working
 

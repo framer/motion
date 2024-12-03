@@ -6,7 +6,8 @@ import alias from "@rollup/plugin-alias"
 import path from "node:path"
 import { fileURLToPath } from 'url'
 import pkg from "./package.json" with { type: "json"}
-import tsconfig from "./tsconfig.json" with {type: "json"}
+import tsconfig from "./tsconfig.json" with { type: "json" }
+import preserveDirectives from "rollup-plugin-preserve-directives";
 
 const config = {
     input: "lib/index.js",
@@ -59,7 +60,35 @@ const umd = Object.assign({}, config, {
     },
     external: ["react", "react-dom"],
     plugins: [resolve(), replaceSettings("development"), shimReactJSXRuntimePlugin],
+    onwarn(warning, warn) {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+            return
+        }
+        warn(warning)
+    }
 })
+
+function createUmd(input, file) {
+    return Object.assign({}, umd, {
+        input,
+        output: Object.assign({}, umd.output, {
+            file
+        }),
+        plugins: [
+            resolve(),
+            replaceSettings("production"),
+            pureClass,
+            shimReactJSXRuntimePlugin,
+            terser({ output: { comments: false } }),
+        ],
+        onwarn(warning, warn) {
+            if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+                return
+            }
+            warn(warning)
+        }
+    })
+}
 
 const umdProd = Object.assign({}, umd, {
     output: Object.assign({}, umd.output, {
@@ -72,21 +101,17 @@ const umdProd = Object.assign({}, umd, {
         shimReactJSXRuntimePlugin,
         terser({ output: { comments: false } }),
     ],
+    onwarn(warning, warn) {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+            return
+        }
+        warn(warning)
+    }
 })
 
-const umdDomProd = Object.assign({}, umd, {
-    input: "lib/dom-entry.js",
-    output: Object.assign({}, umd.output, {
-        file: `dist/dom.js`,
-    }),
-    plugins: [
-        resolve(),
-        replaceSettings("production"),
-        pureClass,
-        shimReactJSXRuntimePlugin,
-        terser({ output: { comments: false } }),
-    ],
-})
+const umdMiniProd = createUmd("lib/mini.js", `dist/mini.js`)
+const umdDomProd = createUmd("lib/dom.js", `dist/dom.js`)
+const umdDomMiniProd = createUmd("lib/dom-mini.js", `dist/dom-mini.js`)
 
 const cjs = Object.assign({}, config, {
     input: "lib/index.js",
@@ -99,15 +124,25 @@ const cjs = Object.assign({}, config, {
     },
     plugins: [resolve(), replaceSettings()],
     external,
+    onwarn(warning, warn) {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+            return
+        }
+        warn(warning)
+    }
 })
 
 /**
  * Bundle seperately so bundles don't share common modules
  */
-const cjsDom = Object.assign({}, cjs, { input : "lib/dom-entry.js" })
+const cjsDom = Object.assign({}, cjs, { input : "lib/dom.js" })
+const cjsMini = Object.assign({}, cjs, { input : "lib/mini.js" })
+const cjsDomMini = Object.assign({}, cjs, { input : "lib/dom-mini.js" })
+const cjsClient = Object.assign({}, cjs, { input : "lib/client.js" })
+const cjsM = Object.assign({}, cjs, { input : "lib/m.js" })
 
 export const es = Object.assign({}, config, {
-    input: ["lib/index.js", "lib/dom-entry.js", "lib/projection-entry.js"],
+    input: ["lib/index.js", "lib/mini.js", "lib/dom.js", "lib/dom-mini.js", "lib/client.js", "lib/m.js","lib/projection.js"],
     output: {
         entryFileNames: "[name].mjs",
         format: "es",
@@ -115,48 +150,57 @@ export const es = Object.assign({}, config, {
         preserveModules: true,
         dir: "dist/es",
     },
-    plugins: [resolve(), replaceSettings()],
+    plugins: [resolve(), replaceSettings(), preserveDirectives()],
     external,
+    onwarn(warning, warn) {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+            return
+        }
+        warn(warning)
+    }
 })
 
 const typePlugins = [dts({compilerOptions: {...tsconfig, baseUrl:"types"}})]
 
-const types = {
-    input: "types/index.d.ts",
-    output: {
-        format: "es",
-        file: "dist/index.d.ts",
-    },
-    plugins: typePlugins,
+function createTypes(input, file) {   
+    return {
+        input,
+        output: {
+            format: "es",
+            file: file,
+        },
+        plugins: typePlugins,
+    }
 }
 
-const animateTypes = {
-    input: "types/dom-entry.d.ts",
-    output: {
-        format: "es",
-        file: "dist/dom-entry.d.ts",
-    },
-    plugins: typePlugins,
-}
 
-const threeTypes = {
-    input: "types/three-entry.d.ts",
-    output: {
-        format: "es",
-        file: "dist/three-entry.d.ts",
-    },
-    plugins: typePlugins,
-}
+const types = createTypes("types/index.d.ts", "dist/index.d.ts")
+const miniTypes = createTypes("types/mini.d.ts", "dist/mini.d.ts")
+const animateTypes = createTypes("types/dom.d.ts", "dist/dom.d.ts")
+const animateMiniTypes = createTypes("types/dom-mini.d.ts", "dist/dom-mini.d.ts")
+const mTypes = createTypes("types/m.d.ts", "dist/m.d.ts")
+const clientTypes = createTypes("types/client.d.ts", "dist/client.d.ts")
+const threeTypes = createTypes("types/three-entry.d.ts", "dist/three.d.ts")
 
 // eslint-disable-next-line import/no-default-export
 export default [
     umd,
     umdProd,
+    umdMiniProd,
     umdDomProd,
+    umdDomMiniProd,
     cjs,
+    cjsMini,
     cjsDom,
+    cjsDomMini,
+    cjsClient,
+    cjsM,
     es,
     types,
+    mTypes,
+    miniTypes,
+    clientTypes,
     animateTypes,
+    animateMiniTypes,
     threeTypes,
 ]

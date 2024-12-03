@@ -36,7 +36,7 @@ function parseHex(v: string): RGBA {
 }
 
 export const hex = {
-    test: isColorString("#"),
+    test: /*@__PURE__*/ isColorString("#"),
     parse: parseHex,
     transform: rgba.transform,
 }

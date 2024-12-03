@@ -10,6 +10,7 @@ import {
     KeyframeResolver,
     OnKeyframesResolved,
 } from "../render/utils/KeyframesResolver"
+import { KeyframeGenerator } from "./generators/types"
 
 export interface AnimationPlaybackLifecycles<V> {
     onUpdate?: (latest: V) => void
@@ -19,6 +20,18 @@ export interface AnimationPlaybackLifecycles<V> {
     onStop?: () => void
 }
 
+export type GeneratorFactory = (
+    options: ValueAnimationOptions<any>
+) => KeyframeGenerator<any>
+
+export type AnimationGeneratorType =
+    | GeneratorFactory
+    | "decay"
+    | "spring"
+    | "keyframes"
+    | "tween"
+    | "inertia"
+
 export interface Transition
     extends AnimationPlaybackOptions,
         Omit<SpringOptions, "keyframes">,
@@ -27,7 +40,7 @@ export interface Transition
     delay?: number
     elapsed?: number
     driver?: Driver
-    type?: "decay" | "spring" | "keyframes" | "tween" | "inertia"
+    type?: AnimationGeneratorType
     duration?: number
     autoplay?: boolean
     startTime?: number
@@ -47,17 +60,17 @@ export type ResolveKeyframes<V extends string | number> = (
 export interface ValueAnimationOptions<V extends string | number = number>
     extends ValueAnimationTransition {
     keyframes: V[]
-    KeyframeResolver?: typeof KeyframeResolver
     name?: string
-    motionValue?: MotionValue<V>
-    element?: VisualElement
     from?: V
     isGenerator?: boolean
 }
 
-export interface AnimationScope<T = any> {
-    readonly current: T
-    animations: AnimationPlaybackControls[]
+export interface ValueAnimationOptionsWithRenderContext<
+    V extends string | number = number
+> extends ValueAnimationOptions<V> {
+    KeyframeResolver?: typeof KeyframeResolver
+    motionValue?: MotionValue<V>
+    element?: VisualElement
 }
 
 export type StyleTransitions = {
@@ -87,12 +100,6 @@ export interface DynamicAnimationOptions
     delay?: number | DynamicOption<number>
 }
 
-export type ElementOrSelector =
-    | Element
-    | Element[]
-    | NodeListOf<Element>
-    | string
-
 /**
  * @public
  */
@@ -115,7 +122,11 @@ export interface AnimationPlaybackControls {
     complete: () => void
     cancel: () => void
     then: (onResolve: VoidFunction, onReject?: VoidFunction) => Promise<void>
-    attachTimeline?: (timeline: ProgressTimeline) => VoidFunction
+    attachTimeline?: (
+        timeline: ProgressTimeline,
+        fallback?: (animation: AnimationPlaybackControls) => VoidFunction
+    ) => VoidFunction
+    flatten: () => void
 }
 
 export type DynamicOption<T> = (i: number, total: number) => T
@@ -184,6 +195,7 @@ export interface AnimationPlaybackOptions {
 
 export interface DurationSpringOptions {
     duration?: number
+    visualDuration?: number
     bounce?: number
 }
 

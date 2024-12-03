@@ -1,15 +1,17 @@
+"use client"
+
 /**
  * Components
  */
-export { motion, createDomMotionComponent } from "./render/dom/motion"
-export { m } from "./render/dom/motion-minimal"
+export { motion } from "./render/components/motion/proxy"
+export { m } from "./render/components/m/proxy"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { MotionConfig } from "./components/MotionConfig"
 export { LazyMotion } from "./components/LazyMotion"
 export { LayoutGroup } from "./components/LayoutGroup"
 export { Reorder } from "./components/Reorder"
 
-export * from "./dom-entry"
+export * from "./dom"
 export * from "./three-entry"
 
 /**
@@ -46,6 +48,7 @@ export { useReducedMotionConfig } from "./utils/reduced-motion/use-reduced-motio
  */
 export { animationControls } from "./animation/hooks/animation-controls"
 export { useAnimate } from "./animation/hooks/use-animate"
+export { useAnimateMini } from "./animation/hooks/use-animate-style"
 export {
     useAnimation,
     useAnimationControls,
@@ -72,7 +75,7 @@ export {
     DragControls,
 } from "./gestures/drag/use-drag-controls"
 export { useDomEvent } from "./events/use-dom-event"
-export { createMotionComponent } from "./motion"
+export { createRendererMotionComponent } from "./motion"
 export { isMotionComponent } from "./motion/utils/is-motion-component"
 export { unwrapMotionComponent } from "./motion/utils/unwrap-motion-component"
 export { VisualElement } from "./render/VisualElement"
@@ -99,6 +102,7 @@ export { AcceleratedAnimation } from "./animation/animators/AcceleratedAnimation
 export { startOptimizedAppearAnimation } from "./animation/optimized-appear/start"
 export { optimizedAppearDataAttribute } from "./animation/optimized-appear/data-id"
 export { spring } from "./animation/generators/spring"
+export { findSpring } from "./animation/generators/spring/find"
 
 /**
  * Contexts
@@ -116,7 +120,6 @@ export { HTMLMotionProps, ForwardRefComponent } from "./render/html/types"
 export { DOMMotionComponents } from "./render/dom/types"
 export { SVGMotionProps, SVGAttributesAsMotionValues } from "./render/svg/types"
 export { AnimationLifecycles } from "./render/types"
-export { CustomDomComponent } from "./render/dom/motion-proxy"
 export { ScrollMotionValues } from "./value/scroll/utils"
 export {
     AnimationProps,
@@ -125,8 +128,6 @@ export {
     MotionStyle,
     MotionTransform,
     VariantLabels,
-    RelayoutInfo,
-    ResolveLayoutTransition,
 } from "./motion/types"
 export {
     Orchestration,
@@ -149,7 +150,6 @@ export {
     Variant,
     Variants,
 } from "./types"
-export * from "./easing/types"
 export { EventInfo } from "./events/types"
 export * from "./motion/features/types"
 export {
@@ -175,3 +175,6 @@ export { DeprecatedLayoutGroupContext } from "./context/DeprecatedLayoutGroupCon
 export { useAnimatedState as useDeprecatedAnimatedState } from "./animation/hooks/use-animated-state"
 export { useInvertedScale as useDeprecatedInvertedScale } from "./value/use-inverted-scale"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
+
+// Keep explict delay in milliseconds export for BC with Framer
+export { delay, DelayedFunction } from "./utils/delay"

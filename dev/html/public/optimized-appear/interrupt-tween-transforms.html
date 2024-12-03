@@ -26,7 +26,6 @@
         <script type="module">
             const {
                 motion,
-                animateStyle,
                 startOptimizedAppearAnimation,
                 optimizedAppearDataAttribute,
                 motionValue,
@@ -80,7 +79,7 @@
             // Emulate server rendering of element
             root.innerHTML = ReactDOMServer.renderToString(Component)
 
-            // Start Motion One animation
+            // Start Motion animation
             const animation = startOptimizedAppearAnimation(
                 document.getElementById("box"),
                 "transform",
@@ -92,7 +91,7 @@
                 (animation) => {
                     // Hydrate root mid-way through animation
                     setTimeout(() => {
-                        ReactDOM.hydrateRoot(root, Component)
+                        ReactDOMClient.hydrateRoot(root, Component)
                     }, (duration * 1000) / 2)
                 }
             )

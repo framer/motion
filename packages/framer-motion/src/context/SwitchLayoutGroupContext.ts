@@ -1,3 +1,5 @@
+"use client"
+
 import { IProjectionNode } from "../projection/node/types"
 import { createContext } from "react"
 import { Transition } from "../types"

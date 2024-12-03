@@ -35,7 +35,6 @@
         <script type="module">
             const {
                 motion,
-                animateStyle,
                 animate,
                 startOptimizedAppearAnimation,
                 optimizedAppearDataAttribute,
@@ -157,7 +156,7 @@
                 },
                 (animation) => {
                     setTimeout(() => {
-                        ReactDOM.hydrateRoot(
+                        ReactDOMClient.hydrateRoot(
                             root,
                             React.createElement(Component)
                         )

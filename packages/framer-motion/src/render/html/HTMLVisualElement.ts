@@ -26,8 +26,6 @@ export class HTMLVisualElement extends DOMVisualElement<
 > {
     type = "html"
 
-    applyWillChange = true
-
     readValueFromInstance(
         instance: HTMLElement,
         key: string
