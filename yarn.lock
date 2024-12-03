@@ -2251,6 +2251,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@playwright/test@npm:^1.48.0":
+  version: 1.49.0
+  resolution: "@playwright/test@npm:1.49.0"
+  dependencies:
+    playwright: 1.49.0
+  bin:
+    playwright: cli.js
+  checksum: f8477aa61d59fd22c6161c48221ab246340dc37bbe2804e1a7d1be8cbd0fd861747fcb7ca559f4bc7328226ff2c90ccb7efa588a7d7d7829f3e57902b28fe39a
+  languageName: node
+  linkType: hard
+
 "@react-three/fiber@npm:8.2.2":
   version: 8.2.2
   resolution: "@react-three/fiber@npm:8.2.2"
@@ -7101,12 +7112,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fsevents@npm:2.3.2":
+  version: 2.3.2
+  resolution: "fsevents@npm:2.3.2"
+  dependencies:
+    node-gyp: latest
+  checksum: 97ade64e75091afee5265e6956cb72ba34db7819b4c3e94c431d4be2b19b8bb7a2d4116da417950c3425f17c8fe693d25e20212cac583ac1521ad066b77ae31f
+  conditions: os=darwin
+  languageName: node
+  linkType: hard
+
 "fsevents@npm:^2.3.2, fsevents@npm:~2.3.2, fsevents@npm:~2.3.3":
   version: 2.3.3
   resolution: "fsevents@npm:2.3.3"
   dependencies:
     node-gyp: latest
   checksum: 11e6ea6fea15e42461fc55b4b0e4a0a3c654faa567f1877dbd353f39156f69def97a69936d1746619d656c4b93de2238bf731f6085a03a50cabf287c9d024317
+  conditions: os=darwin
+  languageName: node
+  linkType: hard
+
+"fsevents@patch:fsevents@2.3.2#~builtin<compat/fsevents>":
+  version: 2.3.2
+  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"
+  dependencies:
+    node-gyp: latest
   conditions: os=darwin
   languageName: node
   linkType: hard
@@ -7751,6 +7781,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "html-env@workspace:dev/html"
   dependencies:
+    motion: "workspace:*"
+    motion-dom: "workspace:*"
     vite: ^5.2.0
   languageName: unknown
   linkType: soft
@@ -10527,7 +10559,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"motion-dom@^11.13.0-beta.0, motion-dom@workspace:packages/motion-dom":
+"motion-dom@^11.13.0-beta.0, motion-dom@workspace:*, motion-dom@workspace:packages/motion-dom":
   version: 0.0.0-use.local
   resolution: "motion-dom@workspace:packages/motion-dom"
   languageName: unknown
@@ -10539,6 +10571,7 @@ __metadata:
   dependencies:
     "@cypress/webpack-preprocessor": ^6.0.1
     "@gsap/react": ^2.1.0
+    "@playwright/test": ^1.48.0
     "@rollup/plugin-alias": ^5.1.0
     "@rollup/plugin-node-resolve": ^15.2.3
     "@rollup/plugin-replace": ^5.0.5
@@ -10599,7 +10632,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"motion@workspace:packages/motion":
+"motion@workspace:*, motion@workspace:packages/motion":
   version: 0.0.0-use.local
   resolution: "motion@workspace:packages/motion"
   dependencies:
@@ -11831,6 +11864,30 @@ __metadata:
   dependencies:
     find-up: ^3.0.0
   checksum: 5bac346b7c7c903613c057ae3ab722f320716199d753f4a7d053d38f2b5955460f3e6ab73b4762c62fd3e947f58e04f1343e92089e7bb6091c90877406fcd8c8
+  languageName: node
+  linkType: hard
+
+"playwright-core@npm:1.49.0":
+  version: 1.49.0
+  resolution: "playwright-core@npm:1.49.0"
+  bin:
+    playwright-core: cli.js
+  checksum: d8423ad0cab2e672856529bf6b98b406e7e605da098b847b9b54ee8ebd8d716ed8880a9afff4b38f0a2e3f59b95661c74589116ce3ff2b5e0ae3561507086c94
+  languageName: node
+  linkType: hard
+
+"playwright@npm:1.49.0":
+  version: 1.49.0
+  resolution: "playwright@npm:1.49.0"
+  dependencies:
+    fsevents: 2.3.2
+    playwright-core: 1.49.0
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    playwright: cli.js
+  checksum: f1bfb2fff65cad2ce996edab74ec231dfd21aeb5961554b765ce1eaec27efb87eaba37b00e91ecd27727b82861e5d8c230abe4960e93f6ada8be5ad1020df306
   languageName: node
   linkType: hard
 

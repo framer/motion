@@ -15,6 +15,7 @@
         "dev-server": "turbo run dev-server",
         "lint": "turbo run lint",
         "test": "turbo run test",
+        "test-playwright": "yarn playwright test",
         "test-ci": "turbo run test-ci --no-cache",
         "measure": "turbo run measure",
         "version": "yarn install && git stage yarn.lock",
@@ -25,6 +26,7 @@
     "devDependencies": {
         "@cypress/webpack-preprocessor": "^6.0.1",
         "@gsap/react": "^2.1.0",
+        "@playwright/test": "^1.48.0",
         "@rollup/plugin-alias": "^5.1.0",
         "@rollup/plugin-node-resolve": "^15.2.3",
         "@rollup/plugin-replace": "^5.0.5",

@@ -91,6 +91,7 @@ test-nextjs: build test-mkdir
 	yarn start-server-and-test "yarn dev-server || true" http://localhost:3000 "cd packages/framer-motion && cypress run --headless --config-file=cypress.rsc.json $(if $(CI), --config video=false, --reporter spec)"
 
 test-e2e: test-nextjs test-html test-react
+	yarn test-playwright
 
 test-single: build test-mkdir
 	yarn start-server-and-test "yarn dev-server" http://localhost:9990 "cd packages/framer-motion && cypress run --headless --spec cypress/integration/scroll.ts"

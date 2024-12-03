@@ -9,6 +9,10 @@
         "build": "vite build",
         "preview": "vite preview"
     },
+    "dependencies": {
+        "motion": "workspace:*",
+        "motion-dom": "workspace:*"
+    },
     "devDependencies": {
         "vite": "^5.2.0"
     }
