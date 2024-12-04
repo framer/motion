@@ -3,7 +3,6 @@ import { Feature } from "../motion/features/Feature"
 import { frame } from "../frameloop"
 import { hover } from "motion-dom"
 import { extractEventInfo } from "../events/event-info"
-import { MotionProps } from "../motion/types"
 
 function handleHoverEvent(
     node: VisualElement<Element>,
@@ -16,7 +15,8 @@ function handleHoverEvent(
         node.animationState.setActive("whileHover", lifecycle === "Start")
     }
 
-    const callback = props[("onHover" + lifecycle) as keyof MotionProps]
+    const eventName = ("onHover" + lifecycle) as "onHoverStart" | "onHoverEnd"
+    const callback = props[eventName]
     if (callback) {
         frame.postRender(() => callback(event, extractEventInfo(event)))
     }
