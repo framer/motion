@@ -4,6 +4,12 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.13.2] 2024-12-04
+
+### Fixed
+
+-   Hover gesture now always `passive: true`.
+
 ## [11.13.1] 2024-12-03
 
 ### Fixed
