@@ -7,7 +7,7 @@ export type ViewportEventHandler = (
 ) => void
 
 export interface ViewportOptions {
-    root?: RefObject<Element>
+    root?: RefObject<Element | null>
     once?: boolean
     margin?: string
     amount?: "some" | "all" | number

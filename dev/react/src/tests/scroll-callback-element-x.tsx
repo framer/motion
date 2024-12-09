@@ -6,7 +6,7 @@ const width = 400
 
 export const App = () => {
     const [progress, setProgress] = useState(0)
-    const ref = useRef<Element>(null)
+    const ref = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         if (!ref.current) return
