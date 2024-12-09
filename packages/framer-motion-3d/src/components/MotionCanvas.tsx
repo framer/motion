@@ -127,7 +127,7 @@ function CanvasComponent(
     // Throw exception outwards if anything within canvas throws
     if (error) throw error
 
-    const root = useRef<ReconcilerRoot<HTMLCanvasElement>>()
+    const root = useRef<ReconcilerRoot<HTMLCanvasElement>>(null)
     if (size.width > 0 && size.height > 0) {
         if (!root.current) {
             root.current = createRoot(canvasRef.current)
