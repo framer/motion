@@ -103,7 +103,7 @@ describe("motion component rendering and styles", () => {
 
     it("renders custom component", async () => {
         const Component = React.forwardRef(
-            (_props, ref: React.RefObject<HTMLButtonElement | null>) => (
+            (_props, ref: React.RefObject<HTMLButtonElement>) => (
                 <button type="submit" disabled ref={ref} />
             )
         )
