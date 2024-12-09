@@ -17,7 +17,7 @@ export interface Props<V> {
      *
      * @public
      */
-    as?: HTMLElements
+    as?: keyof HTMLElements
 
     /**
      * The axis to reorder along. By default, items will be draggable on this axis.

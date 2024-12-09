@@ -18,7 +18,7 @@ export interface Props<V> {
      *
      * @public
      */
-    as?: HTMLElements
+    as?: keyof HTMLElements
 
     /**
      * The value in the list that this component represents.
