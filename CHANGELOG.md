@@ -4,6 +4,18 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.13.5] 2024-12-10
+
+### Fixed
+
+-   Adding React 19 to optional peer dependencies.
+
+## [11.13.4] 2024-12-10
+
+### Fixed
+
+-   Fixing types for React 19.
+
 ## [11.13.3] 2024-12-09
 
 ### Fixed
