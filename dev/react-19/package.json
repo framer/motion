@@ -11,7 +11,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "framer-motion": "^11.13.3",
+        "motion": "^11.13.3",
         "react": "^19.0.0",
         "react-dom": "^19.0.0"
     },
