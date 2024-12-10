@@ -1,5 +1,5 @@
 import { ResolvedValues } from "../types"
-import { PropsWithoutRef, RefAttributes } from "react"
+import { PropsWithoutRef, RefAttributes, JSX } from "react"
 import { MotionProps } from "../../motion/types"
 import { HTMLElements } from "./supported-elements"
 
