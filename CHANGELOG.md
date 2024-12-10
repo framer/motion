@@ -4,11 +4,17 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.13.6] 2024-12-10
+
+### Fixed
+
+-   Adding React 19 to optional peer dependencies in `"motion"` package also.
+
 ## [11.13.5] 2024-12-10
 
 ### Fixed
 
--   Adding React 19 to optional peer dependencies.
+-   Adding React 19 to optional peer dependencies in `"framer-motion"` packages.
 
 ## [11.13.4] 2024-12-10
 
