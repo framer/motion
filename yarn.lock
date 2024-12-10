@@ -12335,7 +12335,6 @@ __metadata:
     motion: ^11.13.3
     react: ^19.0.0
     react-dom: ^19.0.0
-    styled-components: ^6.1.11
     vite: ^5.2.0
   languageName: unknown
   linkType: soft
