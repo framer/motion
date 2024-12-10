@@ -7935,7 +7935,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "html-env@workspace:dev/html"
   dependencies:
-    motion: ^11.13.5
+    motion: ^11.13.6
     motion-dom: ^11.13.0
     vite: ^5.2.0
   languageName: unknown
@@ -10761,7 +10761,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"motion@^11.13.5, motion@workspace:packages/motion":
+"motion@^11.13.6, motion@workspace:packages/motion":
   version: 0.0.0-use.local
   resolution: "motion@workspace:packages/motion"
   dependencies:
@@ -10769,8 +10769,8 @@ __metadata:
     tslib: ^2.4.0
   peerDependencies:
     "@emotion/is-prop-valid": "*"
-    react: ^18.0.0
-    react-dom: ^18.0.0
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
     "@emotion/is-prop-valid":
       optional: true
@@ -12332,7 +12332,7 @@ __metadata:
     "@typescript-eslint/parser": ^7.2.0
     "@vitejs/plugin-react-swc": ^3.5.0
     eslint-plugin-react-refresh: ^0.4.6
-    motion: ^11.13.5
+    motion: ^11.13.6
     react: ^19.0.0
     react-dom: ^19.0.0
     vite: ^5.2.0
