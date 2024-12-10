@@ -3,6 +3,7 @@ import type {
     ForwardRefExoticComponent,
     PropsWithoutRef,
     RefAttributes,
+    JSX,
 } from "react"
 import type {
     HoverHandlers,

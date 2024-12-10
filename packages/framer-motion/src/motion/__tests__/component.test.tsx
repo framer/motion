@@ -32,9 +32,18 @@ describe("motion component rendering and styles", () => {
                     <motion.button title="test" type="button" />
                     <motion.button ref={ref} />
                     <motion.button
+                        className="test"
                         animate={{ rotate: 90 }}
                         transition={{ velocity: 0 }}
                         style={{ overflow: "hidden" }}
+                        onClick={(event) => event.stopPropagation()}
+                    />
+                    <motion.div
+                        className="test"
+                        animate={{ rotate: 90 }}
+                        transition={{ velocity: 0 }}
+                        style={{ overflow: "hidden" }}
+                        onClick={(event) => event.stopPropagation()}
                     />
                     <motion.img
                         src="https://framer.com"
