@@ -1,0 +1,106 @@
+import { ElementOrSelector } from "../../utils/resolve-elements"
+import { isDragActive } from "../drag/state/is-active"
+import { EventOptions } from "../types"
+import { isPrimaryPointer } from "../utils/is-primary-pointer"
+import { setupGesture } from "../utils/setup"
+import { enableKeyboardPress } from "./utils/keyboard"
+import { OnPressStartEvent } from "./types"
+import { isElementKeyboardAccessible } from "./utils/is-keyboard-accessible"
+import { isPressing, setPressing } from "./utils/state"
+import { isNodeOrChild } from "../utils/is-node-or-child"
+
+/**
+ * Filter out events that are not primary pointer events, or are triggering
+ * while a Motion gesture is active.
+ */
+function isValidPressEvent(event: PointerEvent) {
+    return isPrimaryPointer(event) && !isDragActive()
+}
+
+export interface PointerEventOptions extends EventOptions {
+    globalTapTarget?: boolean
+}
+
+/**
+ * Create a press gesture.
+ *
+ * Press is different to `"pointerdown"`, `"pointerup"` in that it
+ * automatically filters out secondary pointer events like right
+ * click and multitouch.
+ *
+ * It also adds accessibility support for keyboards, where
+ * an element with a press gesture will receive focus and
+ *  trigger on Enter `"keydown"` and `"keyup"` events.
+ *
+ * This is different to a browser's `"click"` event, which does
+ * respond to keyboards but only for the `"click"` itself, rather
+ * than the press start and end/cancel. The element also needs
+ * to be focusable for this to work, whereas a press gesture will
+ * make an element focusable by default.
+ *
+ * @public
+ */
+export function press(
+    elementOrSelector: ElementOrSelector,
+    onPressStart: OnPressStartEvent,
+    options: PointerEventOptions = {}
+): VoidFunction {
+    const [elements, eventOptions, cancelEvents] = setupGesture(
+        elementOrSelector,
+        options
+    )
+
+    const startPress = (startEvent: PointerEvent) => {
+        const element = startEvent.currentTarget as Element
+        if (!isValidPressEvent(startEvent) || isPressing(element)) return
+
+        setPressing(element)
+
+        const onPressEnd = onPressStart(startEvent)
+
+        const onPointerEnd = (endEvent: PointerEvent, success: boolean) => {
+            window.removeEventListener("pointerup", onPointerUp)
+            window.removeEventListener("pointercancel", onPointerCancel)
+
+            if (!isValidPressEvent(endEvent) || !isPressing(element)) {
+                return
+            }
+
+            setPressing(null)
+
+            if (onPressEnd) {
+                onPressEnd(endEvent, { success })
+            }
+        }
+
+        const onPointerUp = (upEvent: PointerEvent) => {
+            onPointerEnd(
+                upEvent,
+                options.globalTapTarget ||
+                    isNodeOrChild(element, upEvent.target as Element)
+            )
+        }
+
+        const onPointerCancel = (cancelEvent: PointerEvent) => {
+            onPointerEnd(cancelEvent, false)
+        }
+
+        window.addEventListener("pointerup", onPointerUp, eventOptions)
+        window.addEventListener("pointercancel", onPointerCancel, eventOptions)
+    }
+
+    elements.forEach((element: HTMLElement) => {
+        if (!isElementKeyboardAccessible(element)) {
+            element.tabIndex = 0
+        }
+
+        element.addEventListener("pointerdown", startPress, eventOptions)
+        element.addEventListener(
+            "focus",
+            (event) => enableKeyboardPress(event, eventOptions),
+            eventOptions
+        )
+    })
+
+    return cancelEvents
+}

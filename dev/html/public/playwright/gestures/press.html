@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <style>
+            body {
+                margin: 0;
+            }
+
+            .box {
+                width: 100px;
+                height: 100px;
+                background-color: #0077ff;
+            }
+
+            .box:focus {
+                background-color: #ff0000;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="box" id="press-div">press</div>
+        <div class="box" id="press-div-cancel">press</div>
+        <button class="box" id="press-button">press</button>
+        <script type="module" src="/src/inc.js"></script>
+        <script type="module">
+            const { press } = window.MotionDOM
+
+            press("#press-div", ({ target }, info, originalEvent) => {
+                console.log("pointer down")
+                target.innerHTML = "start"
+
+                return () => {
+                    console.log("end")
+                    target.innerHTML = "end"
+                }
+            })
+
+            press("#press-div-cancel", ({ target }, info) => {
+                console.log(target, info)
+                target.innerHTML = "start"
+
+                return (event, { success }) => {
+                    console.log(event, success)
+                    target.innerHTML = success ? "end" : "cancel"
+                }
+            })
+
+            press("#press-button", () => {})
+        </script>
+    </body>
+</html>

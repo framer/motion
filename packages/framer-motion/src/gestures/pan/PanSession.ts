@@ -10,7 +10,7 @@ import { Point, TransformPoint } from "../../projection/geometry/types"
 import { pipe } from "../../utils/pipe"
 import { distance2D } from "../../utils/distance"
 import { frameData } from "../../frameloop"
-import { isPrimaryPointer } from "../../events/utils/is-primary-pointer"
+import { isPrimaryPointer } from "motion-dom"
 
 /**
  * Passed in to pan event handlers like `onPan` the `PanInfo` object contains
@@ -93,12 +93,12 @@ interface PanSessionHandlers {
     onStart: PanHandler
     onMove: PanHandler
     onEnd: PanHandler
-    onSessionEnd: PanHandler,
+    onSessionEnd: PanHandler
     resumeAnimation: () => void
 }
 
 interface PanSessionOptions {
-    transformPagePoint?: TransformPoint,
+    transformPagePoint?: TransformPoint
     contextWindow?: (Window & typeof globalThis) | null
     dragSnapToOrigin?: boolean
 }
@@ -148,11 +148,11 @@ export class PanSession {
 
     /**
      * For determining if an animation should resume after it is interupted
-     * 
+     *
      * @internal
      */
     private dragSnapToOrigin: boolean
-    
+
     /**
      * @internal
      */
@@ -161,7 +161,11 @@ export class PanSession {
     constructor(
         event: PointerEvent,
         handlers: Partial<PanSessionHandlers>,
-        { transformPagePoint, contextWindow, dragSnapToOrigin = false }: PanSessionOptions = {}
+        {
+            transformPagePoint,
+            contextWindow,
+            dragSnapToOrigin = false,
+        }: PanSessionOptions = {}
     ) {
         // If we have more than one touch, don't start detecting this gesture
         if (!isPrimaryPointer(event)) return
@@ -242,8 +246,8 @@ export class PanSession {
         this.end()
 
         const { onEnd, onSessionEnd, resumeAnimation } = this.handlers
-        
-        if(this.dragSnapToOrigin) resumeAnimation && resumeAnimation()
+
+        if (this.dragSnapToOrigin) resumeAnimation && resumeAnimation()
         if (!(this.lastMoveEvent && this.lastMoveEventInfo)) return
 
         const panInfo = getPanInfo(
