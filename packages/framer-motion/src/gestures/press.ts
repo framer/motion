@@ -31,16 +31,20 @@ export class PressGesture extends Feature<Element> {
         const { current } = this.node
         if (!current) return
 
-        this.unmount = press(current, (startEvent) => {
-            handlePressEvent(this.node, startEvent, "Start")
+        this.unmount = press(
+            current,
+            (startEvent) => {
+                handlePressEvent(this.node, startEvent, "Start")
 
-            return (endEvent, { success }) =>
-                handlePressEvent(
-                    this.node,
-                    endEvent,
-                    success ? "End" : "Cancel"
-                )
-        })
+                return (endEvent, { success }) =>
+                    handlePressEvent(
+                        this.node,
+                        endEvent,
+                        success ? "End" : "Cancel"
+                    )
+            },
+            { useGlobalTarget: this.node.props.globalTapTarget }
+        )
     }
 
     unmount() {}

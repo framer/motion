@@ -6,8 +6,8 @@ import { setupGesture } from "../utils/setup"
 import { enableKeyboardPress } from "./utils/keyboard"
 import { OnPressStartEvent } from "./types"
 import { isElementKeyboardAccessible } from "./utils/is-keyboard-accessible"
-import { isPressing, setPressing } from "./utils/state"
 import { isNodeOrChild } from "../utils/is-node-or-child"
+import { isPressing } from "./utils/state"
 
 /**
  * Filter out events that are not primary pointer events, or are triggering
@@ -18,7 +18,7 @@ function isValidPressEvent(event: PointerEvent) {
 }
 
 export interface PointerEventOptions extends EventOptions {
-    globalTapTarget?: boolean
+    useGlobalTarget?: boolean
 }
 
 /**
@@ -53,9 +53,9 @@ export function press(
     const startPress = (startEvent: PointerEvent) => {
         const element = startEvent.currentTarget as Element
 
-        if (!isValidPressEvent(startEvent) || isPressing(element)) return
+        if (!isValidPressEvent(startEvent) || isPressing.has(element)) return
 
-        setPressing(element)
+        isPressing.add(element)
 
         const onPressEnd = onPressStart(startEvent)
 
@@ -63,11 +63,11 @@ export function press(
             window.removeEventListener("pointerup", onPointerUp)
             window.removeEventListener("pointercancel", onPointerCancel)
 
-            if (!isValidPressEvent(endEvent) || !isPressing(element)) {
+            if (!isValidPressEvent(endEvent) || !isPressing.has(element)) {
                 return
             }
 
-            setPressing(null)
+            isPressing.delete(element)
 
             if (onPressEnd) {
                 onPressEnd(endEvent, { success })
@@ -77,7 +77,7 @@ export function press(
         const onPointerUp = (upEvent: PointerEvent) => {
             onPointerEnd(
                 upEvent,
-                options.globalTapTarget ||
+                options.useGlobalTarget ||
                     isNodeOrChild(element, upEvent.target as Element)
             )
         }
@@ -95,7 +95,9 @@ export function press(
             element.tabIndex = 0
         }
 
-        element.addEventListener("pointerdown", startPress, eventOptions)
+        const target = options.useGlobalTarget ? window : element
+        target.addEventListener("pointerdown", startPress, eventOptions)
+
         element.addEventListener(
             "focus",
             (event) => enableKeyboardPress(event, eventOptions),

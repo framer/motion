@@ -24,7 +24,7 @@ export const enableKeyboardPress = (
     if (!element) return
 
     const handleKeydown = filterEvents(() => {
-        if (isPressing(element)) return
+        if (isPressing.has(element)) return
 
         firePointerEvent(element, "down")
 
