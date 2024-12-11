@@ -122,4 +122,26 @@ test.describe("press", () => {
         await page.dispatchEvent("body", "pointerup", { isPrimary: true })
         await expect(pressDivCancel).toHaveText("cancel")
     })
+
+    test("press doesn't respond to right click", async ({ page }) => {
+        const pressDiv = page.locator("#press-div")
+
+        // Right click (button: 2)
+        await pressDiv.dispatchEvent("pointerdown", {
+            button: 2,
+            isPrimary: false,
+        })
+
+        // Text should not change to "start" since right click shouldn't trigger press
+        await expect(pressDiv).not.toHaveText("start")
+
+        // Release right click
+        await page.dispatchEvent("body", "pointerup", {
+            button: 2,
+            isPrimary: false,
+        })
+
+        // Text should still not have changed
+        await expect(pressDiv).not.toHaveText("end")
+    })
 })
