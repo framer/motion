@@ -15,10 +15,11 @@ function handlePressEvent(
         node.animationState.setActive("whileTap", lifecycle === "Start")
     }
 
-    const eventName = ("onTap" + lifecycle === "End" ? "" : lifecycle) as
+    const eventName = ("onTap" + (lifecycle === "End" ? "" : lifecycle)) as
         | "onTapStart"
         | "onTap"
         | "onTapCancel"
+
     const callback = props[eventName]
     if (callback) {
         frame.postRender(() => callback(event, extractEventInfo(event)))
