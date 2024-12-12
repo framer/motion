@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import { isNodeOrChild } from "../utils/is-node-or-child"
+import { isNodeOrChild } from "motion-dom"
 
 describe("isNodeOrChild", () => {
     test("tap event listeners fire", () => {

@@ -10,6 +10,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "framer-motion": "^11.13.5",
         "motion": "^11.13.6",
         "motion-dom": "^11.13.0"
     },

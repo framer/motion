@@ -1,27 +1,7 @@
-import { ElementOrSelector, resolveElements } from "../utils/resolve-elements"
+import { ElementOrSelector } from "../utils/resolve-elements"
 import { isDragActive } from "./drag/state/is-active"
-
-/**
- * Options for the hover gesture.
- *
- * @public
- */
-export interface HoverOptions {
-    /**
-     * Use passive event listeners. Doing so allows the browser to optimize
-     * scrolling performance by not allowing the use of `preventDefault()`.
-     *
-     * @default true
-     */
-    passive?: boolean
-
-    /**
-     * Remove the event listener after the first event.
-     *
-     * @default false
-     */
-    once?: boolean
-}
+import { EventOptions } from "./types"
+import { setupGesture } from "./utils/setup"
 
 /**
  * A function to be called when a hover gesture starts.
@@ -61,15 +41,12 @@ function filterEvents(callback: OnHoverStartEvent) {
 export function hover(
     elementOrSelector: ElementOrSelector,
     onHoverStart: OnHoverStartEvent,
-    options: HoverOptions = {}
-) {
-    const gestureAbortController = new AbortController()
-
-    const eventOptions = {
-        passive: true,
-        ...options,
-        signal: gestureAbortController.signal,
-    }
+    options: EventOptions = {}
+): VoidFunction {
+    const [elements, eventOptions, cancel] = setupGesture(
+        elementOrSelector,
+        options
+    )
 
     const onPointerEnter = filterEvents((enterEvent: PointerEvent) => {
         const { target } = enterEvent
@@ -85,9 +62,9 @@ export function hover(
         target.addEventListener("pointerleave", onPointerLeave, eventOptions)
     })
 
-    resolveElements(elementOrSelector).forEach((element) => {
+    elements.forEach((element) => {
         element.addEventListener("pointerenter", onPointerEnter, eventOptions)
     })
 
-    return () => gestureAbortController.abort()
+    return cancel
 }
