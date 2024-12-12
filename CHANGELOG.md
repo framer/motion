@@ -4,6 +4,12 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.14.1] 2024-12-12
+
+### Fixed
+
+-   Fixing missing license in `motion-dom` package.
+
 ## [11.14.0] 2024-12-12
 
 ### Added
