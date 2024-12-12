@@ -32,9 +32,6 @@
   <a href="https://twitter.com/motiondotdev" target="_blank">
   <img src="https://img.shields.io/twitter/follow/framer.svg?style=social&label=Follow"  />
   </a>
-  <a href="https://discord.gg/DfkSpYe" target="_blank">
-  <img src="https://img.shields.io/discord/308323056592486420.svg?logo=discord&logoColor=white" alt="Chat on Discord">
-  </a>
 </p>
 
 <br>
