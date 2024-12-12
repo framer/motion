@@ -1,6 +1,7 @@
 {
     "name": "motion-dom",
     "version": "11.14.0",
+    "license": "MIT",
     "main": "./lib/index.js",
     "types": "./types/index.d.ts",
     "module": "./lib/index.js",

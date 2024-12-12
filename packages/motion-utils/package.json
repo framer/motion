@@ -1,6 +1,7 @@
 {
     "name": "motion-utils",
     "version": "11.13.0",
+    "license": "MIT",
     "main": "./lib/index.js",
     "types": "./types/index.d.ts",
     "module": "./lib/index.js",
