@@ -44,7 +44,7 @@ Read the full [React docs](https://motion.dev/docs/react-quick-start).
 
 ## 💎 Contribute
 
--   Want to contribute to Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
+-   Want to contribute to Motion? Our [contributing guide](https://github.com/motiondivision/motion/blob/master/CONTRIBUTING.md) has you covered.
 
 ## 👩🏻‍⚖️ License
 

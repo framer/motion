@@ -63,7 +63,7 @@ Or check out [our examples](https://www.framer.com/docs/three-introduction/#exam
 
 ### 🛠 Contribute
 
-Want to contribute to Motion 3D? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
+Want to contribute to Motion 3D? Our [contributing guide](https://github.com/motiondivision/motion/blob/master/CONTRIBUTING.md) has you covered.
 
 ### 👩🏻‍⚖️ License
 

@@ -1,6 +1,9 @@
 {
     "name": "motion-utils",
     "version": "11.13.0",
+    "author": "Matt Perry",
+    "license": "MIT",
+    "repository": "https://github.com/motiondivision/motion",
     "main": "./lib/index.js",
     "types": "./types/index.d.ts",
     "module": "./lib/index.js",
