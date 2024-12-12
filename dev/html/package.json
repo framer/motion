@@ -1,7 +1,7 @@
 {
     "name": "html-env",
     "private": true,
-    "version": "11.13.6",
+    "version": "11.14.0",
     "type": "module",
     "scripts": {
         "dev": "vite",
@@ -10,9 +10,9 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "framer-motion": "^11.13.5",
-        "motion": "^11.13.6",
-        "motion-dom": "^11.13.0"
+        "framer-motion": "^11.14.0",
+        "motion": "^11.14.0",
+        "motion-dom": "^11.14.0"
     },
     "devDependencies": {
         "vite": "^5.2.0"
