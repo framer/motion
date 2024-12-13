@@ -9,6 +9,7 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Fixed
 
 -   Exporting `AnimationSequence` via `"motion"` entrypoint.
+-   Adding support for passing normal components to `motion.create()` in React 19.
 
 ## [11.14.3] 2024-12-13
 
