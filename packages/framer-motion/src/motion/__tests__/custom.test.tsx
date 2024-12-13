@@ -8,7 +8,7 @@ interface Props {
     foo: boolean
 }
 
-function runTests(name: string, motionFactory: any) {
+function runTests(name: string, motionFactory: typeof motion.create) {
     describe(name, () => {
         test("accepts custom types", () => {
             const BaseComponent = React.forwardRef(
@@ -18,6 +18,16 @@ function runTests(name: string, motionFactory: any) {
             )
 
             const MotionComponent = motionFactory(BaseComponent)
+
+            const Component = () => <MotionComponent foo />
+
+            render(<Component />)
+        })
+
+        test("accepts normal component", () => {
+            const MotionComponent = motionFactory((props: Props) =>
+                props.foo ? <div /> : null
+            )
 
             const Component = () => <MotionComponent foo />
 
