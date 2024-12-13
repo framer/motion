@@ -618,16 +618,45 @@ describe("createAnimationsFromSequence", () => {
 
     test("It correctly repeats keyframes once", () => {
         const animations = createAnimationsFromSequence(
-            [[a, { x: [0, 100] }, { duration: 1, repeat: 1 }]],
+            [[a, { x: [0, 100] }, { duration: 1, repeat: 1, ease: "linear" }]],
             undefined,
             undefined,
             { spring }
         )
 
         expect(animations.get(a)!.keyframes.x).toEqual([0, 100, 0, 100])
-        const { duration, times } = animations.get(a)!.transition.x
+        const { duration, times, ease } = animations.get(a)!.transition.x
         expect(duration).toEqual(2)
         expect(times).toEqual([0, 0.5, 0.5, 1])
+        expect(ease).toEqual(["linear", "linear", "linear", "linear"])
+    })
+
+    test("It correctly repeats easing", () => {
+        const animations = createAnimationsFromSequence(
+            [
+                [
+                    a,
+                    { x: [0, 50, 100] },
+                    { duration: 1, repeat: 1, ease: ["easeIn", "easeOut"] },
+                ],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
+
+        expect(animations.get(a)!.keyframes.x).toEqual([0, 50, 100, 0, 50, 100])
+        const { duration, times, ease } = animations.get(a)!.transition.x
+        expect(duration).toEqual(2)
+        expect(times).toEqual([0, 0.25, 0.5, 0.5, 0.75, 1])
+        expect(ease).toEqual([
+            "easeIn",
+            "easeOut",
+            "linear",
+            "easeIn",
+            "easeOut",
+            "easeIn",
+        ])
     })
 
     test("Repeating a segment correctly places the next segment at the end", () => {

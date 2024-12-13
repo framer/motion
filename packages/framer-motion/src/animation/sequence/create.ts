@@ -29,6 +29,7 @@ import { compareByTime } from "./utils/sort"
 import { invariant } from "motion-utils"
 import { normalizeTimes } from "./utils/normalize-times"
 import { calculateRepeatDuration } from "./utils/calc-repeat-duration"
+import { getEasingForSegment } from "../../easing/utils/get-easing-for-segment"
 
 const defaultSegmentEasing = "easeInOut"
 
@@ -203,17 +204,27 @@ export function createAnimationsFromSequence(
 
                 const originalKeyframes = [...valueKeyframesAsList]
                 const originalTimes = [...times]
+                ease = Array.isArray(ease) ? [...ease] : [ease]
+                const originalEase = [...ease]
 
                 for (let repeatIndex = 0; repeatIndex < repeat; repeatIndex++) {
                     valueKeyframesAsList.push(...originalKeyframes)
 
                     for (
                         let keyframeIndex = 0;
-                        keyframeIndex < originalTimes.length;
+                        keyframeIndex < originalKeyframes.length;
                         keyframeIndex++
                     ) {
                         times.push(
                             originalTimes[keyframeIndex] + (repeatIndex + 1)
+                        )
+                        ease.push(
+                            keyframeIndex === 0
+                                ? "linear"
+                                : getEasingForSegment(
+                                      originalEase,
+                                      keyframeIndex - 1
+                                  )
                         )
                     }
                 }
