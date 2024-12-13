@@ -4,6 +4,13 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.14.2] 2024-12-13
+
+### Fixed
+
+-   Exporting `time` for internal use.
+-   Making `MotionValue.updatedAt` public for internal use.
+
 ## [11.14.1] 2024-12-12
 
 ### Fixed

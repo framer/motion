@@ -92,12 +92,12 @@ export class MotionValue<V = any> {
     /**
      * The last time the `MotionValue` was updated.
      */
-    private updatedAt: number
+    updatedAt: number
 
     /**
      * The time `prevFrameValue` was updated.
      */
-    private prevUpdatedAt: number | undefined
+    prevUpdatedAt: number | undefined
 
     /**
      * Add a passive effect to this `MotionValue`.

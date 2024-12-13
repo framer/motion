@@ -3,7 +3,10 @@ export { isDragActive } from "motion-dom"
 
 export { motionValue, MotionValue } from "./value"
 export type { PassiveEffect, Subscriber } from "./value"
-export type { DynamicAnimationOptions, DOMKeyframesDefinition } from './animation/types'
+export type {
+    DynamicAnimationOptions,
+    DOMKeyframesDefinition,
+} from "./animation/types"
 export { animate, createScopedAnimate } from "./animation/animate"
 export { animateMini } from "./animation/animators/waapi/animate-style"
 export { scroll } from "./render/dom/scroll"
@@ -44,6 +47,7 @@ export { pipe } from "./utils/pipe"
 export { progress } from "./utils/progress"
 export { wrap } from "./utils/wrap"
 export * from "./frameloop"
+export { time } from "./frameloop/sync-time"
 
 /**
  * Deprecated
