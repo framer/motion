@@ -86,6 +86,10 @@ export function createRenderStep(runNextFrame: () => void): Step {
             // Execute this frame
             thisFrame.forEach(triggerCallback)
 
+            // Clear the just processed frame, so we don't retain anything the callbacks retain,
+            // incase this step will not run for a while.
+            thisFrame.clear()
+
             isProcessing = false
 
             if (flushNextFrame) {
