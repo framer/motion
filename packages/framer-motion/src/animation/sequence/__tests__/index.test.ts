@@ -630,6 +630,27 @@ describe("createAnimationsFromSequence", () => {
         expect(times).toEqual([0, 0.5, 0.5, 1])
     })
 
+    test("Repeating a segment correctly places the next segment at the end", () => {
+        const animations = createAnimationsFromSequence(
+            [
+                [a, { x: [0, 100] }, { duration: 1, repeat: 1 }],
+                [a, { y: [0, 100] }, { duration: 2 }],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
+
+        const { keyframes, transition } = animations.get(a)!
+        expect(keyframes.x).toEqual([0, 100, 0, 100, null])
+        expect(keyframes.y).toEqual([0, 0, 100])
+
+        expect(transition.x.duration).toEqual(4)
+        expect(transition.x.times).toEqual([0, 0.25, 0.25, 0.5, 1])
+        expect(transition.y.duration).toEqual(4)
+        expect(transition.y.times).toEqual([0, 0.5, 1])
+    })
+
     test.skip("It correctly adds repeatDelay between repeated keyframes", () => {
         const animations = createAnimationsFromSequence(
             [
