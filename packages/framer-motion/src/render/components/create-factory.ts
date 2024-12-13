@@ -12,13 +12,7 @@ import { createUseRender } from "../dom/use-render"
 
 type MotionComponent<T, P> = T extends keyof DOMMotionComponents
     ? DOMMotionComponents[T]
-    :
-          | React.ExoticComponent<
-                MotionComponentProps<React.PropsWithChildren<P>>
-            >
-          | React.ForwardRefExoticComponent<
-                MotionComponentProps<React.PropsWithChildren<P>>
-            >
+    : React.ComponentType<MotionComponentProps<React.PropsWithChildren<P>>>
 
 export function createMotionComponentFactory(
     preloadedFeatures?: FeaturePackages,
@@ -28,7 +22,7 @@ export function createMotionComponentFactory(
         Props,
         TagName extends keyof DOMMotionComponents | string = "div"
     >(
-        Component: TagName | string | React.ForwardRefExoticComponent<Props>,
+        Component: TagName | string | React.ComponentType<Props>,
         { forwardMotionProps } = { forwardMotionProps: false }
     ) {
         const baseConfig = isSVGComponent(Component)

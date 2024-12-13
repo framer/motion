@@ -10,9 +10,9 @@ import type { createMotionComponent } from "./motion/create"
  */
 type ComponentProps<Props> = React.PropsWithoutRef<Props & MotionProps> &
     React.RefAttributes<SVGElement | HTMLElement>
-export type CustomDomComponent<Props> =
-    | React.ExoticComponent<ComponentProps<Props>>
-    | React.ForwardRefExoticComponent<ComponentProps<Props>>
+export type CustomDomComponent<Props> = React.ComponentType<
+    ComponentProps<Props>
+>
 
 export function createDOMMotionComponentProxy(
     componentFactory: typeof createMotionComponent
