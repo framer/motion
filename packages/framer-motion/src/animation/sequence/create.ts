@@ -26,8 +26,13 @@ import {
 import { calcNextTime } from "./utils/calc-time"
 import { addKeyframes } from "./utils/edit"
 import { compareByTime } from "./utils/sort"
+import { invariant } from "motion-utils"
+import { normalizeTimes } from "./utils/normalize-times"
+import { calculateRepeatDuration } from "./utils/calc-repeat-duration"
 
 const defaultSegmentEasing = "easeInOut"
+
+const MAX_REPEAT = 20
 
 export function createAnimationsFromSequence(
     sequence: AnimationSequence,
@@ -100,6 +105,9 @@ export function createAnimationsFromSequence(
                 delay = 0,
                 times = defaultOffset(valueKeyframesAsList),
                 type = "keyframes",
+                repeat,
+                repeatType,
+                repeatDelay = 0,
                 ...remainingTransition
             } = valueTransition
             let { ease = defaultTransition.ease || "easeOut", duration } =
@@ -156,7 +164,6 @@ export function createAnimationsFromSequence(
             duration ??= defaultDuration
 
             const startTime = currentTime + calculatedDelay
-            const targetTime = startTime + duration
 
             /**
              * If there's only one time offset of 0, fill in a second with length 1
@@ -178,6 +185,43 @@ export function createAnimationsFromSequence(
              */
             valueKeyframesAsList.length === 1 &&
                 valueKeyframesAsList.unshift(null)
+
+            /**
+             * Handle repeat options
+             */
+            if (repeat) {
+                invariant(
+                    repeat < MAX_REPEAT,
+                    "Repeat count too high, must be less than 20"
+                )
+
+                duration = calculateRepeatDuration(
+                    duration,
+                    repeat,
+                    repeatDelay
+                )
+
+                const originalKeyframes = [...valueKeyframesAsList]
+                const originalTimes = [...times]
+
+                for (let repeatIndex = 0; repeatIndex < repeat; repeatIndex++) {
+                    valueKeyframesAsList.push(...originalKeyframes)
+
+                    for (
+                        let keyframeIndex = 0;
+                        keyframeIndex < originalTimes.length;
+                        keyframeIndex++
+                    ) {
+                        times.push(
+                            originalTimes[keyframeIndex] + (repeatIndex + 1)
+                        )
+                    }
+                }
+
+                normalizeTimes(times, repeat)
+            }
+
+            const targetTime = startTime + duration
 
             /**
              * Add keyframes, mapping offsets to absolute time.
