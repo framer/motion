@@ -560,7 +560,7 @@ describe("press", () => {
                         getByTestId("a") as Element,
                         getByTestId("b") as Element,
                     ]),
-                100
+                200
             )
         })
 
