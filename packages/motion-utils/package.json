@@ -4,15 +4,15 @@
     "author": "Matt Perry",
     "license": "MIT",
     "repository": "https://github.com/motiondivision/motion",
-    "main": "./lib/index.js",
-    "types": "./types/index.d.ts",
-    "module": "./lib/index.js",
+    "main": "./dist/cjs/index.js",
+    "types": "./dist/index.d.ts",
+    "module": "./dist/es/index.mjs",
     "exports": {
         ".": {
-            "types": "./types/index.d.ts",
+            "types": "./dist/index.d.ts",
             "require": "./dist/cjs/index.js",
             "import": "./dist/es/index.mjs",
-            "default": "./lib/index.js"
+            "default": "./dist/cjs/index.js"
         }
     },
     "scripts": {
