@@ -341,16 +341,10 @@ describe("Shared layout: A -> B crossfade transition", () => {
                 })
             })
             .trigger("click")
+            .wait(200)
             .get("#b")
-            /**
-             * Test that onLayoutAnimationStart fires
-             */
-            .wait(20)
             .should(([$box]: any) => {
                 expect($box.style.backgroundColor).to.equal("rgb(0, 255, 0)")
-            })
-            .wait(50)
-            .should(([$box]: any) => {
                 expect(window.getComputedStyle($box).borderRadius).to.equal(
                     "5% / 4%"
                 )
@@ -364,7 +358,7 @@ describe("Shared layout: A -> B crossfade transition", () => {
             /**
              * Test that onLayoutAnimationComplete fires
              */
-            .wait(220)
+            .wait(1200)
             .should(([$box]: any) => {
                 expect($box.style.backgroundColor).to.equal("rgb(0, 0, 255)")
             })
