@@ -14,6 +14,11 @@ export { scrollInfo } from "./render/dom/scroll/track"
 export { inView } from "./render/dom/viewport"
 
 /**
+ * Types
+ */
+export * from "./animation/sequence/types"
+
+/**
  * Easing
  */
 export * from "./easing/anticipate"
