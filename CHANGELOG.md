@@ -4,6 +4,12 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [11.14.4] 2024-12-13
+
+### Fixed
+
+-   Exporting `AnimationSequence` via `"motion"` entrypoint.
+
 ## [11.14.3] 2024-12-13
 
 ### Fixed
