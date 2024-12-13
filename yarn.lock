@@ -7178,7 +7178,7 @@ __metadata:
     "@react-three/fiber": 8.2.2
     "@react-three/test-renderer": ^9.0.0
     "@rollup/plugin-commonjs": ^22.0.1
-    framer-motion: ^11.14.1
+    framer-motion: ^11.14.2
     react-merge-refs: ^2.0.1
     three: ^0.137.0
   peerDependencies:
@@ -7189,7 +7189,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion@^11.14.1, framer-motion@workspace:packages/framer-motion":
+"framer-motion@^11.14.2, framer-motion@workspace:packages/framer-motion":
   version: 0.0.0-use.local
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
@@ -7935,8 +7935,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "html-env@workspace:dev/html"
   dependencies:
-    framer-motion: ^11.14.1
-    motion: ^11.14.1
+    framer-motion: ^11.14.2
+    motion: ^11.14.2
     motion-dom: ^11.14.1
     vite: ^5.2.0
   languageName: unknown
@@ -10762,11 +10762,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"motion@^11.14.1, motion@workspace:packages/motion":
+"motion@^11.14.2, motion@workspace:packages/motion":
   version: 0.0.0-use.local
   resolution: "motion@workspace:packages/motion"
   dependencies:
-    framer-motion: ^11.14.1
+    framer-motion: ^11.14.2
     tslib: ^2.4.0
   peerDependencies:
     "@emotion/is-prop-valid": "*"
@@ -10876,7 +10876,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "next-env@workspace:dev/next"
   dependencies:
-    framer-motion: ^11.14.1
+    framer-motion: ^11.14.2
     next: 14.x
     react: ^18.3.1
     react-dom: ^18.3.1
@@ -12333,7 +12333,7 @@ __metadata:
     "@typescript-eslint/parser": ^7.2.0
     "@vitejs/plugin-react-swc": ^3.5.0
     eslint-plugin-react-refresh: ^0.4.6
-    motion: ^11.14.1
+    motion: ^11.14.2
     react: ^19.0.0
     react-dom: ^19.0.0
     vite: ^5.2.0
@@ -12405,7 +12405,7 @@ __metadata:
     "@typescript-eslint/parser": ^7.2.0
     "@vitejs/plugin-react-swc": ^3.5.0
     eslint-plugin-react-refresh: ^0.4.6
-    framer-motion: ^11.14.1
+    framer-motion: ^11.14.2
     react: ^18.3.1
     react-dom: ^18.3.1
     styled-components: ^6.1.11
