@@ -12,9 +12,13 @@ import { createUseRender } from "../dom/use-render"
 
 type MotionComponent<T, P> = T extends keyof DOMMotionComponents
     ? DOMMotionComponents[T]
-    : React.ForwardRefExoticComponent<
-          MotionComponentProps<React.PropsWithChildren<P>>
-      >
+    :
+          | React.ExoticComponent<
+                MotionComponentProps<React.PropsWithChildren<P>>
+            >
+          | React.ForwardRefExoticComponent<
+                MotionComponentProps<React.PropsWithChildren<P>>
+            >
 
 export function createMotionComponentFactory(
     preloadedFeatures?: FeaturePackages,

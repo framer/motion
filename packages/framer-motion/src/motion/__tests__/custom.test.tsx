@@ -24,6 +24,16 @@ function runTests(name: string, motionFactory: any) {
             render(<Component />)
         })
 
+        test("accepts normal component", () => {
+            const BaseComponent = () => null
+
+            const MotionComponent = motionFactory(BaseComponent)
+
+            const Component = () => <MotionComponent foo />
+
+            render(<Component />)
+        })
+
         test("doesn't forward motion props but does forward custom props", () => {
             let animate: any
             let foo: boolean = false
