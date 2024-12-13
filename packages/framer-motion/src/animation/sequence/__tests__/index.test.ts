@@ -615,4 +615,82 @@ describe("createAnimationsFromSequence", () => {
         expect(typeof (ease as Easing[])[2]).toEqual("function")
         expect(times).toEqual([0, 0.45454545454545453, 0.45454545454545453, 1])
     })
+
+    test("It correctly repeats keyframes once", () => {
+        const animations = createAnimationsFromSequence(
+            [[a, { x: [0, 100] }, { duration: 1, repeat: 1 }]],
+            undefined,
+            undefined,
+            { spring }
+        )
+
+        expect(animations.get(a)!.keyframes.x).toEqual([0, 100, 0, 100])
+        const { duration, times } = animations.get(a)!.transition.x
+        expect(duration).toEqual(2)
+        expect(times).toEqual([0, 0.5, 0.5, 1])
+    })
+
+    test("It correctly adds repeatDelay between repeated keyframes", () => {
+        const animations = createAnimationsFromSequence(
+            [
+                [
+                    a,
+                    { x: [0, 100] },
+                    { duration: 1, repeat: 1, repeatDelay: 0.5 },
+                ],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
+
+        expect(animations.get(a)!.keyframes.x).toEqual([0, 100, 100, 0, 100])
+        const { duration, times } = animations.get(a)!.transition.x
+        expect(duration).toEqual(2.5)
+        expect(times).toEqual([0, 0.4, 0.6, 0.6, 1])
+    })
+
+    test("It correctly mirrors repeated keyframes", () => {
+        const animations = createAnimationsFromSequence(
+            [
+                [
+                    a,
+                    { x: [0, 100] },
+                    { duration: 1, repeat: 3, repeatType: "mirror" },
+                ],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
+
+        expect(animations.get(a)!.keyframes.x).toEqual([
+            0, 100, 100, 0, 0, 100, 100, 0,
+        ])
+        const { duration, times } = animations.get(a)!.transition.x
+        expect(duration).toEqual(4)
+        expect(times).toEqual([0, 0.25, 0.25, 0.5, 0.5, 0.75, 0.75, 1])
+    })
+
+    test("It correctly reverses repeated keyframes", () => {
+        const animations = createAnimationsFromSequence(
+            [
+                [
+                    a,
+                    { x: [0, 100] },
+                    { duration: 1, repeat: 3, repeatType: "reverse" },
+                ],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
+
+        expect(animations.get(a)!.keyframes.x).toEqual([
+            0, 100, 100, 0, 0, 100, 100, 0,
+        ])
+        const { duration, times } = animations.get(a)!.transition.x
+        expect(duration).toEqual(4)
+        expect(times).toEqual([0, 0.25, 0.25, 0.5, 0.5, 0.75, 0.75, 1])
+    })
 })
