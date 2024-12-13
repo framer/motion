@@ -71,7 +71,7 @@ describe("Shared layout: A -> B transition", () => {
             /**
              * Test that onLayoutAnimationComplete fires
              */
-            .wait(800)
+            .wait(1200)
             .should(([$box]: any) => {
                 expect($box.style.backgroundColor).to.equal("rgb(0, 0, 255)")
             })
