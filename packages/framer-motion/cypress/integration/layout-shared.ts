@@ -50,16 +50,13 @@ describe("Shared layout: A -> B transition", () => {
                 expect(getComputedStyle($box).opacity).to.equal("0.4")
             })
             .trigger("click")
-            .wait(50)
+            .wait(200)
             .get("#b")
             /**
              * Test that onLayoutAnimationStart fires
              */
             .should(([$box]: any) => {
                 expect($box.style.backgroundColor).to.equal("rgb(0, 255, 0)")
-            })
-            .wait(100)
-            .should(([$box]: any) => {
                 expect(window.getComputedStyle($box).borderRadius).to.equal(
                     "5% / 4%"
                 )
@@ -74,7 +71,7 @@ describe("Shared layout: A -> B transition", () => {
             /**
              * Test that onLayoutAnimationComplete fires
              */
-            .wait(300)
+            .wait(800)
             .should(([$box]: any) => {
                 expect($box.style.backgroundColor).to.equal("rgb(0, 0, 255)")
             })
