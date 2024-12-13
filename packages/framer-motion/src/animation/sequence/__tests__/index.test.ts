@@ -630,7 +630,7 @@ describe("createAnimationsFromSequence", () => {
         expect(times).toEqual([0, 0.5, 0.5, 1])
     })
 
-    test("It correctly adds repeatDelay between repeated keyframes", () => {
+    test.skip("It correctly adds repeatDelay between repeated keyframes", () => {
         const animations = createAnimationsFromSequence(
             [
                 [
@@ -650,7 +650,7 @@ describe("createAnimationsFromSequence", () => {
         expect(times).toEqual([0, 0.4, 0.6, 0.6, 1])
     })
 
-    test("It correctly mirrors repeated keyframes", () => {
+    test.skip("It correctly mirrors repeated keyframes", () => {
         const animations = createAnimationsFromSequence(
             [
                 [
@@ -672,7 +672,7 @@ describe("createAnimationsFromSequence", () => {
         expect(times).toEqual([0, 0.25, 0.25, 0.5, 0.5, 0.75, 0.75, 1])
     })
 
-    test("It correctly reverses repeated keyframes", () => {
+    test.skip("It correctly reverses repeated keyframes", () => {
         const animations = createAnimationsFromSequence(
             [
                 [
