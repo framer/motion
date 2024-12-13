@@ -100,6 +100,9 @@ export function createAnimationsFromSequence(
                 delay = 0,
                 times = defaultOffset(valueKeyframesAsList),
                 type = "keyframes",
+                repeat,
+                repeatType,
+                repeatDelay,
                 ...remainingTransition
             } = valueTransition
             let { ease = defaultTransition.ease || "easeOut", duration } =
