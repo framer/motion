@@ -10,6 +10,10 @@ Undocumented APIs should be considered internal and may change without warning.
 
 -   Add support for `repeat` in animation sequences.
 
+### Fixed
+
+-   Clearing scheduled jobs at the end of an animation frame to ensure memory is released should the animation loop settle.
+
 ## [11.14.4] 2024-12-13
 
 ### Fixed
