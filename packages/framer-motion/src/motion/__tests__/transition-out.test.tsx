@@ -1,47 +1,56 @@
-import { render } from "../../../jest.setup"
-import { motion } from "framer-motion"
-import { fireEvent } from "@testing-library/react"
+import {
+    render,
+    pointerDown,
+    pointerEnter,
+    pointerLeave,
+    pointerUp,
+} from "../../../jest.setup"
+import { motion, motionValue } from "../../"
 import { nextFrame } from "../../gestures/__tests__/utils"
 
 describe("transition.out", () => {
     it("uses whileHover transition when exiting hover state", async () => {
-        const onComplete = jest.fn()
+        const opacity = motionValue(0)
 
         const { container } = render(
             <motion.div
                 animate={{ opacity: 0, transition: { duration: 1 } }}
                 transition={{ duration: 1 }}
-                onAnimationComplete={onComplete}
                 whileHover={{
                     opacity: 1,
                     transition: {
                         type: false,
                         out: true,
-                        onComplete,
                     },
                 }}
+                style={{ opacity }}
             />
         )
 
         // Enter hover
-        fireEvent.mouseEnter(container.firstChild!)
+        pointerEnter(container.firstChild as Element)
 
         await nextFrame()
+        await nextFrame()
+
+        expect(opacity.get()).toBe(1)
 
         // Exit hover - should use whileHover transition with type: false
-        fireEvent.mouseLeave(container.firstChild!)
+        pointerLeave(container.firstChild as Element)
 
         // Wait for animation to complete
-        await new Promise((resolve) => setTimeout(resolve, 100))
+        await nextFrame()
+        await nextFrame()
 
-        expect(onComplete).toHaveBeenCalled()
+        expect(opacity.get()).toBe(0)
     })
 
     it("uses whileTap out transition when tap ends before hover", async () => {
-        const onComplete = jest.fn()
+        const scale = motionValue(1)
 
         const { container } = render(
             <motion.div
+                animate={{ scale: 1, transition: { duration: 1 } }}
                 whileHover={{
                     scale: 1.1,
                     transition: { duration: 1 },
@@ -51,25 +60,27 @@ describe("transition.out", () => {
                     transition: {
                         type: false,
                         out: true,
-                        onComplete,
                     },
                 }}
-                onAnimationComplete={onComplete}
+                style={{ scale }}
             />
         )
 
         // Enter hover
-        fireEvent.mouseEnter(container.firstChild!)
+        pointerEnter(container.firstChild as Element)
 
         await nextFrame()
 
         // Start tap
-        fireEvent.mouseDown(container.firstChild!)
+        pointerDown(container.firstChild as Element)
 
         await nextFrame()
+        await nextFrame()
+
+        expect(scale.get()).toBe(0.9)
 
         // End tap before ending hover
-        fireEvent.mouseUp(container.firstChild!)
+        pointerUp(container.firstChild as Element)
 
         await nextFrame()
 
@@ -77,9 +88,13 @@ describe("transition.out", () => {
         await new Promise((resolve) => setTimeout(resolve, 100))
 
         // Should use whileTap out transition which is instant
-        expect(onComplete).toHaveBeenCalled()
+        expect(scale.get()).toBe(1.1)
 
-        // End hover
-        fireEvent.mouseLeave(container.firstChild!)
+        // Leave hover
+        pointerLeave(container.firstChild as Element)
+
+        await new Promise((resolve) => setTimeout(resolve, 100))
+
+        expect(scale.get()).not.toBe(1)
     })
 })
