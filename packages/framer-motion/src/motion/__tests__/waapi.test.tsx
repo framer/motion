@@ -739,7 +739,7 @@ describe("WAAPI animations", () => {
                 delay: -0,
                 direction: "normal",
                 duration: 50,
-                easing: "linear(0, -0.0336, 0.5, 0.9844, 1)",
+                easing: "linear(0, -0.0337, 0.5, 0.9844, 1)",
                 fill: "both",
                 iterations: 1,
             }
@@ -774,7 +774,7 @@ describe("WAAPI animations", () => {
                 delay: -0,
                 direction: "normal",
                 duration: 50,
-                easing: "linear(0, -0.0336, 0.5, 1.0336, 1)",
+                easing: "linear(0, -0.0337, 0.5, 1.0337, 1)",
                 fill: "both",
                 iterations: 1,
             }
