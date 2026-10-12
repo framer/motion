@@ -340,9 +340,7 @@ describe("as output map", () => {
 
         const { container } = render(<Component />)
         expect(container.firstChild).toHaveStyle("opacity: 0.5")
-        expect(container.firstChild).toHaveStyle(
-            "transform: translateX(100px)"
-        )
+        expect(container.firstChild).toHaveStyle("transform: translateX(100px)")
 
         x.set(200)
 
@@ -364,9 +362,7 @@ describe("as output map", () => {
                     borderColor: ["#000000", "#ffffff"],
                 }
             )
-            return (
-                <motion.div style={{ backgroundColor, borderColor }} />
-            )
+            return <motion.div style={{ backgroundColor, borderColor }} />
         }
 
         const { container } = render(<Component />)
