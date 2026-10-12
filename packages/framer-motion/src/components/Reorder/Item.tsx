@@ -90,7 +90,7 @@ export function ReorderItemComponent<
         "reorder-item-child"
     )
 
-    const { axis, registerItem, updateOrder, groupRef } = context!
+    const { axis, registerItem, updateOrder, groupRef, hasReordered } = context!
     const dragAxis = axis === "xy" ? true : axis
 
     return (
@@ -122,6 +122,8 @@ export function ReorderItemComponent<
                 onDrag && onDrag(event, gesturePoint)
             }}
             onDragEnd={(event, gesturePoint) => {
+                // Runs a frame after release, so after the release's click
+                hasReordered.current = false
                 resetAutoScrollState()
                 onDragEnd && onDragEnd(event, gesturePoint)
             }}
