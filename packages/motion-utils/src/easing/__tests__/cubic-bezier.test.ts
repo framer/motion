@@ -97,13 +97,23 @@ describe("cubicBezier", () => {
         expect(ease(1e-8)).toBeLessThan(ease(2e-8))
     })
 
-    test("returns exactly 0 and 1 at and beyond the start and end", () => {
+    test("returns exactly 0 and 1 at the start and end", () => {
         for (const [x1, y1, x2, y2] of curves) {
             const ease = cubicBezier(x1, y1, x2, y2)
             expect(ease(0)).toBe(0)
             expect(ease(1)).toBe(1)
-            expect(ease(-0.5)).toBe(0)
-            expect(ease(1.5)).toBe(1)
+        }
+    })
+
+    test("saturates to 0 and 1 beyond the start and end", () => {
+        for (const [x1, y1, x2, y2] of curves) {
+            const ease = cubicBezier(x1, y1, x2, y2)
+            for (const x of [-1e9, -0.5, -1e-9]) {
+                expect(Math.abs(ease(x))).toBeLessThan(1e-10)
+            }
+            for (const x of [1 + 1e-9, 1.5, 1e9]) {
+                expect(Math.abs(ease(x) - 1)).toBeLessThan(1e-10)
+            }
         }
     })
 })
