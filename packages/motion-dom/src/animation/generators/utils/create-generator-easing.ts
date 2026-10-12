@@ -13,21 +13,16 @@ export function createGeneratorEasing(
     /**
      * The easing is generated over 0 - scale, but velocity is in the
      * value's own units, so scale it to match. Otherwise an interrupted
-     * spring hands off the wrong speed, or direction. Only numbers are
-     * known to share a unit.
+     * spring hands off the wrong speed, or direction. Keyframes with
+     * units (colours, filters, mixed units) give NaN, which is falsy,
+     * so their velocity passes through unscaled.
      */
-    const { keyframes: k, velocity } = options as {
-        keyframes?: unknown[]
-        velocity?: number
-    }
-    const from = k?.[0]
-    const to = k?.[k.length - 1]
-    const delta =
-        typeof from === "number" && typeof to === "number" && to - from
+    const { keyframes: k, velocity: v } = options as any
+    const delta = k && k[k.length - 1] - k[0]
 
     const generator = createGenerator({
         ...options,
-        velocity: delta && velocity ? (velocity * scale) / delta : velocity,
+        velocity: v && delta ? (v * scale) / delta : v,
         keyframes: [0, scale],
     })
     const duration = Math.min(
