@@ -3,6 +3,7 @@ import {
     clamp,
     isBezierDefinition,
     millisecondsToSeconds,
+    progress,
 } from "motion-utils"
 import { frame } from "../../../frameloop/frame"
 import { frameData } from "../../../frameloop/frame-data"
@@ -13,6 +14,7 @@ import {
 } from "../../../render/html/utils/build-transform"
 import type { ResolvedValues } from "../../../render/types"
 import { transformPropOrder } from "../../../render/utils/keys-transform"
+import { mixNumber } from "../../../utils/mix/number"
 import type { MotionValue, Owner } from "../../../value"
 import { numberValueTypes } from "../../../value/types/maps/number"
 import { getValueAsType } from "../../../value/types/utils/get-as-type"
@@ -20,7 +22,8 @@ import { frameloopDriver } from "../../drivers/frame"
 import { DriverControls } from "../../drivers/types"
 import { keyframes as keyframesGenerator } from "../../generators/keyframes"
 import { defaultOffset } from "../../keyframes/offsets/default"
-import { JSAnimation } from "../../JSAnimation"
+import { JSAnimation, round } from "../../JSAnimation"
+import { sampleDelta } from "../../NativeAnimationExtended"
 import {
     AnyResolvedKeyframe,
     TimelineWithFallback,
@@ -30,7 +33,7 @@ import { cubicBezierAsString } from "../easing/cubic-bezier"
 import { supportedWaapiEasing } from "../easing/supported"
 import { supportsWaapi } from "../supports/waapi"
 import { supportsLinearEasing } from "../../../utils/supports/linear-easing"
-import { transformGroups } from "./groups"
+import { TransformGroupHooks, transformGroups } from "./groups"
 
 /**
  * Independent transforms (x, y, scale, rotate etc) all write to the one
@@ -64,7 +67,7 @@ interface TransformDriverControls extends DriverControls {
     js: DriverControls
 }
 
-interface TransformGroup {
+interface TransformGroup extends TransformGroupHooks {
     tracks: Set<TransformAnimation<any>>
 
     /**
@@ -78,20 +81,19 @@ interface TransformGroup {
      */
     isFinishing: boolean
 
-    schedule(needsBuild: boolean): void
-    seek(): void
-    check(): void
+    /**
+     * Rebuild or retime the WAAPI animation. A churn is a change it may
+     * not be able to follow, like a seek or an outside write.
+     */
+    schedule(needsBuild: boolean, isChurn?: boolean): void
     demote(canReturn?: boolean): void
 }
 
 /**
- * Where each animation was when the WAAPI animation was built.
+ * Where each animation was when the WAAPI animation was built: its time,
+ * speed and whether it was held.
  */
-interface BuiltState {
-    time: number
-    speed: number
-    isHeld: boolean
-}
+type BuiltState = [number, number, boolean]
 
 interface Segment {
     animation: Animation
@@ -104,10 +106,9 @@ interface Segment {
 }
 
 /**
- * Sample every 10ms, matching the interruption sampling in
- * NativeAnimationExtended, up to a cap for long animations.
+ * Sample at the interruption sampling rate, up to a cap for long
+ * animations.
  */
-const sampleDelta = 10
 const maxSamples = 200
 
 /**
@@ -130,15 +131,19 @@ const churnWindow = 100
 /**
  * Named easings that are the same cubic-bezier in JS and CSS.
  */
-const { linear, easeIn, easeOut, easeInOut } = supportedWaapiEasing
-const nativeEasings: Record<string, string> = {
-    linear,
-    easeIn,
-    easeOut,
-    easeInOut,
-}
+const isNativeEasing = (ease: unknown): ease is "linear" =>
+    /^(linear|ease(In|Out|InOut))$/.test(ease as string)
 
-const round = (value: number) => Math.round(value * 10000) / 10000
+const byTime = (a: number, b: number) => a - b
+
+/**
+ * n + 1 evenly spaced timestamps, from one timestamp to another.
+ */
+const spread = (from: number, to: number, n: number) => {
+    const result: number[] = []
+    for (let i = 0; i <= n; i++) result.push(mixNumber(from, to, i / n))
+    return result
+}
 
 const getOwner = (options: ValueAnimationOptions<any>) =>
     options.motionValue!.owner as TransformOwner
@@ -159,22 +164,23 @@ export const canGroupTransform = ({
     name,
     motionValue,
 }: ValueAnimationOptions<any>) =>
-    Boolean(
-        name &&
-            transformPropOrder.includes(name) &&
-            motionValue?.owner?.current instanceof HTMLElement &&
-            supportsWaapi() &&
-            supportsLinearEasing()
-    )
+    name &&
+    transformPropOrder.includes(name) &&
+    motionValue?.owner?.current instanceof HTMLElement &&
+    supportsWaapi() &&
+    supportsLinearEasing()
 
-export function canAccelerateTransform(options: ValueAnimationOptions<any>) {
+function canAccelerateTransform(options: ValueAnimationOptions<any>) {
     const owner = getOwner(options)
     const { onUpdate, transformTemplate } = owner.getProps()
 
     return (
         /**
-         * onUpdate needs every value, every frame.
+         * A handoff from an optimised appear animation is already running
+         * on its own WAAPI animation. onUpdate needs every value, every
+         * frame.
          */
+        !options.isHandoff &&
         !onUpdate &&
         !options.hasOnUpdate &&
         /**
@@ -200,9 +206,14 @@ export class TransformAnimation<
 > extends JSAnimation<T> {
     canAccelerate: boolean
 
-    constructor(options: ValueAnimationOptions<T>, canAccelerate: boolean) {
+    constructor(options: ValueAnimationOptions<T>) {
         const element = getOwner(options).current
         const { driver = frameloopDriver } = options
+
+        /**
+         * Before JSAnimation replaces the type with its generator.
+         */
+        const canAccelerate = canAccelerateTransform(options)
 
         /**
          * The driver ticks on the main thread only once the group has
@@ -220,13 +231,13 @@ export class TransformAnimation<
                     const isJS = !group || group.isJS
 
                     /**
-                     * keepAlive is false when seeking.
+                     * keepAlive is false when seeking. Seeking the WAAPI
+                     * animation is free, but if a seek needs a rebuild and
+                     * keeps happening, the group moves to the main thread.
                      */
                     isJS
                         ? js.start(keepAlive)
-                        : keepAlive
-                        ? group.schedule(false)
-                        : group.seek()
+                        : group.schedule(false, !keepAlive)
                 },
                 stop: () => {
                     js.stop()
@@ -290,11 +301,11 @@ export class TransformAnimation<
      */
     isAccelerated() {
         const { group, state } = this
-        return Boolean(
+        return (
             group?.tracks.has(this) &&
-                !group.isJS &&
-                this.canAccelerate &&
-                (state === "running" || state === "paused")
+            !group.isJS &&
+            this.canAccelerate &&
+            (state === "running" || state === "paused")
         )
     }
 
@@ -314,7 +325,7 @@ export class TransformAnimation<
         const { keyframes, type, ease, times, repeat, delay = 0 } = this.options
         const easing = isBezierDefinition(ease!)
             ? cubicBezierAsString(ease as BezierDefinition)
-            : nativeEasings[ease as string]
+            : isNativeEasing(ease) && supportedWaapiEasing[ease]
 
         if (
             easing &&
@@ -404,15 +415,7 @@ export class TransformAnimation<
          * so it mustn't join the group.
          */
         if (this.isStopped) return
-
-        const owner = getOwner(this.options)
-        let { group } = this
-
-        if (!group) {
-            group = createGroup(owner)
-            transformGroups.set(owner.current, group)
-        }
-        group.tracks.add(this)
+        ;(this.group || createGroup(getOwner(this.options))).tracks.add(this)
 
         super.play()
     }
@@ -499,7 +502,7 @@ function createGroup(owner: TransformOwner): TransformGroup {
      * earlier than settled, so a loop that starts from an earlier cycle
      * boundary holds them at their end.
      */
-    const valuesAt = (timestamp?: number, settled = -Infinity) => {
+    const valuesAt = (timestamp?: number, settled?: number) => {
         const values: ResolvedValues = {}
         for (const key of timestamp === undefined ? transformPropOrder : keys) {
             const track = byKey.get(key)
@@ -508,9 +511,9 @@ function createGroup(owner: TransformOwner): TransformGroup {
                     ? read(owner, key)
                     : track
                     ? track.sampleAt(
-                          track.timing()[1]
-                              ? timestamp
-                              : Math.max(timestamp, settled)
+                          settled! > timestamp && !track.timing()[1]
+                              ? settled!
+                              : timestamp
                       )
                     : statics[key]
 
@@ -603,27 +606,22 @@ function createGroup(owner: TransformOwner): TransformGroup {
     const getEasing = (
         moving: TransformAnimation<any>[],
         from: number,
-        to: number
+        to: number,
+        bounds: number[]
     ) => {
         const samples = Math.min(
             maxSamples,
             Math.max(2, Math.ceil((to - from) / sampleDelta))
         )
-        const bounds = moving.flatMap((track) => track.boundaries(from, to))
 
         /**
          * Too many keyframes or repeats to follow with this many samples.
          */
         if (bounds.length * 4 > samples) return
 
-        const at: number[] = []
-        for (let i = 0; i <= samples; i++) {
-            at.push(from + ((to - from) * i) / samples)
-        }
-        at.push(...bounds)
-        at.sort((a, b) => a - b)
+        const at = spread(from, to, samples).concat(bounds).sort(byTime)
 
-        const position = (t: number) => (t - from) / (to - from)
+        const position = (t: number) => progress(from, to, t)
         let shared: number[] | undefined
         let progressAt: (t: number) => number
 
@@ -689,7 +687,8 @@ function createGroup(owner: TransformOwner): TransformGroup {
     const sample = (
         moving: TransformAnimation<any>[],
         from: number,
-        to: number
+        to: number,
+        bounds: number[]
     ) => {
         const times = [from]
 
@@ -733,24 +732,16 @@ function createGroup(owner: TransformOwner): TransformGroup {
          * Split at least every 100ms, and at every keyframe and repeat,
          * either side of where a value can jump.
          */
-        const ends: number[] = []
-        const steps = Math.ceil((to - from) / 100)
-        for (let i = 1; i <= steps; i++) {
-            ends.push(from + ((to - from) * i) / steps)
-        }
-        for (const track of moving) {
-            for (const t of track.boundaries(from, to)) {
-                ends.push(t, Math.min(t + 0.01, to))
-            }
-        }
+        const ends = spread(from, to, Math.ceil((to - from) / 100))
+        for (const t of bounds) ends.push(t, Math.min(t + 0.01, to))
 
         let start = from
-        for (const end of ends.sort((a, b) => a - b)) {
+        for (const end of ends.sort(byTime)) {
             end > start && split(start, end, 0)
             start = end
         }
 
-        return times.sort((a, b) => a - b)
+        return times.sort(byTime)
     }
 
     /**
@@ -765,10 +756,11 @@ function createGroup(owner: TransformOwner): TransformGroup {
             const tween = track.tween()
             if (
                 !tween ||
-                (shared &&
-                    (Math.abs(tween[0] - shared[0]) > 1 ||
-                        Math.abs(tween[1] - shared[1]) > 1 ||
-                        tween[2] !== shared[2]))
+                shared?.some((v: any, i) =>
+                    i < 2
+                        ? Math.abs((tween[i] as number) - v) > 1
+                        : tween[i] !== v
+                )
             ) {
                 return
             }
@@ -785,16 +777,17 @@ function createGroup(owner: TransformOwner): TransformGroup {
         moving: TransformAnimation<any>[],
         from: number,
         to: number,
-        options: KeyframeAnimationOptions,
+        options: KeyframeAnimationOptions = { fill: "both" },
         settled?: number,
         nativeEasing?: string
     ) => {
-        const easing = nativeEasing || getEasing(moving, from, to)
-        const times = easing ? [from, to] : sample(moving, from, to)
+        const bounds = moving.flatMap((track) => track.boundaries(from, to))
+        const easing = nativeEasing || getEasing(moving, from, to, bounds)
+        const times = easing ? [from, to] : sample(moving, from, to, bounds)
         const transform = times.map((t) => compose(t, settled))
         let keyframes: PropertyIndexedKeyframes | null = { transform }
         if (!easing) {
-            keyframes.offset = times.map((t) => (t - from) / (to - from))
+            keyframes.offset = times.map((t) => progress(from, to, t))
         }
 
         /**
@@ -841,11 +834,7 @@ function createGroup(owner: TransformOwner): TransformGroup {
             const [trackEnd, trackCycle] = track.timing()
             const isHeld = trackEnd === Infinity
 
-            built.set(track, {
-                time: track.at(now),
-                speed: track.speed,
-                isHeld,
-            })
+            built.set(track, [track.at(now), track.speed, isHeld])
 
             /**
              * Held animations don't move, so keep their motion values up
@@ -906,12 +895,12 @@ function createGroup(owner: TransformOwner): TransformGroup {
             if (tween && tween[1] > now) {
                 const [from, to, easing] = tween
                 add(
-                    run(moving, from, to, { fill: "both" }, undefined, easing),
+                    run(moving, from, to, undefined, undefined, easing),
                     from - now,
                     to - from
                 )
             } else if (end > now) {
-                add(run(moving, now, end, { fill: "both" }), 0, end - now)
+                add(run(moving, now, end), 0, end - now)
 
                 /**
                  * Animations that end sooner finish on the events of
@@ -982,16 +971,17 @@ function createGroup(owner: TransformOwner): TransformGroup {
             const state = built.get(track)
             if (!state) return false
 
+            const [builtTime, builtSpeed, wasHeld] = state
             const trackTime = track.at(now)
             const isHeld = track.timing()[0] === Infinity
 
-            if (state.isHeld) {
-                if (isHeld && trackTime === state.time) continue
+            if (wasHeld) {
+                if (isHeld && trackTime === builtTime) continue
                 return false
             }
 
-            const trackElapsed = (trackTime - state.time) / state.speed
-            const trackRate = isHeld ? 0 : track.speed / state.speed
+            const trackElapsed = (trackTime - builtTime) / builtSpeed
+            const trackRate = isHeld ? 0 : track.speed / builtSpeed
 
             if (elapsed === undefined) {
                 elapsed = trackElapsed
@@ -1109,8 +1099,9 @@ function createGroup(owner: TransformOwner): TransformGroup {
         isJS: false,
         isFinishing: false,
 
-        schedule(build_: boolean) {
+        schedule(build_: boolean, isChurn?: boolean) {
             needsBuild ||= build_
+            hasChurned ||= !!isChurn
 
             /**
              * Build in this frame's render step, so it's in place before
@@ -1126,15 +1117,6 @@ function createGroup(owner: TransformOwner): TransformGroup {
         },
 
         /**
-         * Seeking the WAAPI animation is free, but if a seek needs a
-         * rebuild and keeps happening, move to the main thread.
-         */
-        seek() {
-            hasChurned = true
-            group.schedule(false)
-        },
-
-        /**
          * An outside write. Rebuild once, but if it keeps happening, move
          * to the main thread.
          */
@@ -1143,8 +1125,7 @@ function createGroup(owner: TransformOwner): TransformGroup {
 
             for (const key in statics) {
                 if (read(owner, key) !== statics[key] && !has(key)) {
-                    hasChurned = true
-                    return group.schedule(true)
+                    return group.schedule(true, true)
                 }
             }
         },
@@ -1171,6 +1152,8 @@ function createGroup(owner: TransformOwner): TransformGroup {
             )
         },
     }
+
+    transformGroups.set(element, group)
 
     return group
 }

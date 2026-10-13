@@ -30,6 +30,8 @@ import { WithPromise } from "./utils/WithPromise"
 
 const percentToProgress = (percent: number) => percent / 100
 
+export const round = (value: number) => Math.round(value * 10000) / 10000
+
 export class JSAnimation<T extends number | string>
     extends WithPromise
     implements AnimationPlaybackControlsWithThen
@@ -294,9 +296,7 @@ export class JSAnimation<T extends number | string>
     at(timestamp: number) {
         return (
             this.holdTime ??
-            Math.round(
-                (timestamp - this.startTime!) * this.playbackSpeed * 1e4
-            ) / 1e4
+            round((timestamp - this.startTime!) * this.playbackSpeed)
         )
     }
 

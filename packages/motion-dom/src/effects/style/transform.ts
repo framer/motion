@@ -1,13 +1,7 @@
+import { translateAlias } from "../../render/html/utils/build-transform"
 import { transformValueTypes } from "../../value/types/maps/transform"
 import { getValueAsType } from "../../value/types/utils/get-as-type"
 import { MotionValueState } from "../MotionValueState"
-
-const translateAlias: Record<string, string> = {
-    x: "translateX",
-    y: "translateY",
-    z: "translateZ",
-    transformPerspective: "perspective",
-}
 
 /**
  * Cache of `translateX(`-style openers so each render is a few string

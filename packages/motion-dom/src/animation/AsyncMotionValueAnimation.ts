@@ -20,7 +20,6 @@ import { resolveStartTime } from "./utils/resolve-start-time"
 import { WithPromise } from "./utils/WithPromise"
 import { supportsBrowserAnimation } from "./waapi/supports/waapi"
 import {
-    canAccelerateTransform,
     canGroupTransform,
     TransformAnimation,
 } from "./waapi/transforms/TransformAnimation"
@@ -189,10 +188,7 @@ export class AsyncMotionValueAnimation<T extends AnyResolvedKeyframe>
                 animation = new JSAnimation(options)
             }
         } else if (isGroupedTransform) {
-            animation = new TransformAnimation(
-                options,
-                !isHandoff && canAccelerateTransform(options)
-            )
+            animation = new TransformAnimation(options)
         } else {
             animation = new JSAnimation(options)
         }

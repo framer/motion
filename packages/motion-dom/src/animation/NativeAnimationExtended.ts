@@ -15,7 +15,7 @@ export type NativeAnimationOptionsExtended<T extends AnyResolvedKeyframe> =
  * results (more than one keyframe per frame at 60fps) and
  * keyframe quantity.
  */
-const sampleDelta = 10 //ms
+export const sampleDelta = 10 //ms
 
 export class NativeAnimationExtended<
     T extends AnyResolvedKeyframe
