@@ -4,6 +4,15 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [14.1.1] 2026-10-13
+
+### Fixed
+
+-   Fix velocity hand-off for hardware-accelerated springs.
+-   `cubicBezier`: More accurate, 2x faster.
+-   `Reorder`: Fix click events on reoredered items.
+-   `useTransform`: Fix desync when source is set in an effect under Strict Mode.
+
 ## [14.1.0] 2026-10-09
 
 ### Added
