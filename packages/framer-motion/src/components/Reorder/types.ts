@@ -9,6 +9,7 @@ export interface ReorderContextProps<T> {
     registerItem: (item: T, layout: Box) => void
     updateOrder: (item: T, offset: Point, velocity: Point) => void
     groupRef: RefObject<Element | null>
+    hasReordered: { current: boolean }
 }
 
 export interface ItemData<T> {
