@@ -1,13 +1,7 @@
+import { translateAlias } from "../../render/html/utils/build-transform"
 import { transformValueTypes } from "../../value/types/maps/transform"
 import { getValueAsType } from "../../value/types/utils/get-as-type"
 import { MotionValueState } from "../MotionValueState"
-
-const translateAlias: Record<string, string> = {
-    x: "translateX",
-    y: "translateY",
-    z: "translateZ",
-    transformPerspective: "perspective",
-}
 
 /**
  * Cache of `translateX(`-style openers so each render is a few string
@@ -25,7 +19,7 @@ export function buildTransform(state: MotionValueState) {
      */
     for (let i = 0; i < keys.length; i++) {
         const key = keys[i]
-        const value = values[key].get()
+        const value = values[key].getCurrent()
 
         if (value === undefined) continue
 
