@@ -4,6 +4,12 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [14.2.0] 2026-10-13
+
+### Added
+
+-   Hardware accelerated independent transforms like `x`, `y`, `scaleX` etc.
+
 ## [14.1.1] 2026-10-13
 
 ### Fixed
