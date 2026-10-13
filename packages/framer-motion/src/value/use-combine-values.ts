@@ -35,6 +35,14 @@ export function useCombineMotionValues<R>(
         const scheduleUpdate = () => frame.preRender(updateValue, false, true)
         const subscriptions = values.map((v) => v.on("change", scheduleUpdate))
 
+        /**
+         * Catch up on changes made while unsubscribed. A source can change
+         * between render and this subscription (e.g. in a child's layout
+         * effect), and Strict Mode or <Activity> can re-run this effect
+         * without a render after the cleanup cancelled a scheduled update.
+         */
+        updateValue()
+
         return () => {
             subscriptions.forEach((unsubscribe) => unsubscribe())
             cancelFrame(updateValue)

@@ -1,9 +1,10 @@
 import { motionValue, MotionValue } from "motion-dom"
-import { useEffect } from "react"
+import { useEffect, useLayoutEffect } from "react"
 import { cancelFrame, frame, motion } from "../../"
 import { nextFrame, nextMicrotask } from "../../gestures/__tests__/utils"
 import { render } from "../../jest.setup"
 import { useMotionValue } from "../use-motion-value"
+import { useMotionTemplate } from "../use-motion-template"
 import { useTransform } from "../use-transform"
 
 describe("as function", () => {
@@ -339,9 +340,7 @@ describe("as output map", () => {
 
         const { container } = render(<Component />)
         expect(container.firstChild).toHaveStyle("opacity: 0.5")
-        expect(container.firstChild).toHaveStyle(
-            "transform: translateX(100px)"
-        )
+        expect(container.firstChild).toHaveStyle("transform: translateX(100px)")
 
         x.set(200)
 
@@ -363,9 +362,7 @@ describe("as output map", () => {
                     borderColor: ["#000000", "#ffffff"],
                 }
             )
-            return (
-                <motion.div style={{ backgroundColor, borderColor }} />
-            )
+            return <motion.div style={{ backgroundColor, borderColor }} />
         }
 
         const { container } = render(<Component />)
@@ -483,5 +480,68 @@ describe("as output map", () => {
         expect(container.firstChild).toHaveStyle("filter: blur(10px)")
         expect(container.firstChild).toHaveStyle("opacity: 0.5")
         expect(container.firstChild).toHaveStyle("transform: scale(0.5)")
+    })
+})
+
+/**
+ * #3769: under Strict Mode, setting a source in an effect schedules an
+ * update that the Strict Mode cleanup cancels. The effect then re-runs
+ * without a render and sets the same value, so no change is emitted and
+ * the derived value would be stuck at its initial value.
+ */
+describe("source set in an effect under Strict Mode", () => {
+    const check = async (
+        useDerived: (x: MotionValue<number>) => MotionValue<any>,
+        expected: any
+    ) => {
+        let x: MotionValue<number> | undefined
+        let derived: MotionValue<any> | undefined
+
+        const Component = () => {
+            x = useMotionValue(0)
+            derived = useDerived(x)
+            useEffect(() => x!.set(10), [])
+            return null
+        }
+
+        render(<Component />)
+        await nextFrame()
+        await nextFrame()
+
+        expect(x!.get()).toBe(10)
+        expect(derived!.get()).toBe(expected)
+    }
+
+    test("useTransform(fn)", () =>
+        check((x) => useTransform(() => x.get() * 2), 20))
+
+    test("useTransform(value, fn)", () =>
+        check((x) => useTransform(x, (v) => v * 2), 20))
+
+    test("useTransform([values], fn)", () =>
+        check((x) => useTransform([x], ([v]: number[]) => v * 2), 20))
+
+    test("useMotionTemplate", () =>
+        check((x) => useMotionTemplate`${x}px`, "10px"))
+
+    test("source set in a child's layout effect, before parent subscribes", async () => {
+        let derived: MotionValue<number> | undefined
+
+        const Child = ({ x }: { x: MotionValue<number> }) => {
+            useLayoutEffect(() => x.set(10), [])
+            return null
+        }
+
+        const Component = () => {
+            const x = useMotionValue(0)
+            derived = useTransform(() => x.get() * 2)
+            return <Child x={x} />
+        }
+
+        render(<Component />, false)
+        await nextFrame()
+        await nextFrame()
+
+        expect(derived!.get()).toBe(20)
     })
 })

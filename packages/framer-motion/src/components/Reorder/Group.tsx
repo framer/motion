@@ -88,6 +88,8 @@ export function ReorderGroupComponent<
         axis: axisOverride,
         onReorder,
         values,
+        onPointerDownCapture,
+        onClickCapture,
         ...props
     }: ReorderGroupProps<V, TagName>,
     externalRef?: React.ForwardedRef<any>
@@ -101,6 +103,7 @@ export function ReorderGroupComponent<
     const itemLayouts = useRef(new Map<V, ItemData<V>["layout"]>())
     const [detectedAxis, setDetectedAxis] = useState<ReorderAxis>("y")
     const isReordering = useRef(false)
+    const hasReordered = useRef(false)
     const groupRef = useRef<Element>(null)
     const axis = axisOverride || detectedAxis
 
@@ -118,6 +121,7 @@ export function ReorderGroupComponent<
     const context: ReorderContextProps<V> = {
         axis,
         groupRef,
+        hasReordered,
         registerItem: (value, layout) => {
             itemLayouts.current.set(value, layout)
 
@@ -156,6 +160,7 @@ export function ReorderGroupComponent<
 
             if (order !== newOrder) {
                 isReordering.current = true
+                hasReordered.current = true
 
                 const newValues = [...values]
                 const measuredIndexes = order.map(({ value }) =>
@@ -201,7 +206,36 @@ export function ReorderGroupComponent<
     }
 
     return (
-        <Component {...props} style={groupStyle} ref={setRef} ignoreStrict>
+        <Component
+            {...props}
+            style={groupStyle}
+            ref={setRef}
+            /**
+             * A release that ends a reordering drag isn't a click. Browsers
+             * only click an element holding both the press and release
+             * targets, so whether it was clicked depended on which nodes
+             * React moved, and so on drag direction (#2682): Chrome drops
+             * the click if the dragged item's node moved, others may click
+             * an ancestor. Swallow it here, above every item, either way.
+             * The flag is cleared when the drag ends, a frame after the
+             * release's click, or on the next press. Clicks with no
+             * pointer press behind them (detail 0, e.g. keyboard) are left
+             * alone.
+             */
+            onPointerDownCapture={(event: React.PointerEvent<any>) => {
+                hasReordered.current = false
+                onPointerDownCapture?.(event)
+            }}
+            onClickCapture={(event: React.MouseEvent<any>) => {
+                if (hasReordered.current && event.detail) {
+                    hasReordered.current = false
+                    event.stopPropagation()
+                    event.preventDefault()
+                }
+                onClickCapture?.(event)
+            }}
+            ignoreStrict
+        >
             <ReorderContext.Provider value={context}>
                 {children}
             </ReorderContext.Provider>
