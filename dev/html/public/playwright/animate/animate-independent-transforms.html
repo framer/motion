@@ -28,8 +28,16 @@
                     requestAnimationFrame(next)
                 })
 
+            /**
+             * Resolve on a frame after the timeout. WebKit only advances
+             * document.timeline on a rendering update, and compositor
+             * animations don't request any, so without a frame
+             * getComputedStyle reads them at a stale time.
+             */
             window.wait = (ms) =>
-                new Promise((resolve) => setTimeout(resolve, ms))
+                new Promise((resolve) =>
+                    setTimeout(() => requestAnimationFrame(() => resolve()), ms)
+                )
 
             window.readTransform = (element) => {
                 const matrix = new DOMMatrixReadOnly(
