@@ -35,6 +35,14 @@ describe("stagger", () => {
     })
 })
 
+describe("stagger with from outside the element range", () => {
+    test("Keeps measuring along one line", () => {
+        expect(stagger(0.1, { from: 15 })(0, 10)).toEqual(1.5)
+        expect(stagger(0.1, { from: 2 })(0, 2)).toEqual(0.2)
+        expect(stagger(0.1, { from: -2 })(0, 5)).toEqual(0.2)
+    })
+})
+
 describe("stagger from edges", () => {
     test("Starts at both ends and works inward", () => {
         const delay = stagger(0.1, { from: "edges" })
@@ -65,6 +73,17 @@ describe("stagger from random", () => {
         const first = Array.from({ length: 10 }, (_, i) => delay(i, 10))
         const second = Array.from({ length: 10 }, (_, i) => delay(i, 10))
         expect(second).toEqual(first)
+    })
+
+    test("Keeps each element count's order when counts interleave", () => {
+        const delay = stagger(0.1, { from: "random" })
+        const six: number[] = []
+        for (let i = 0; i < 6; i++) {
+            six.push(Math.round(delay(i, 6) * 10))
+            delay(i % 4, 4)
+        }
+        expect(six.sort()).toEqual([0, 1, 2, 3, 4, 5])
+        expect(delay(2, 6)).toEqual(delay(2, 6))
     })
 
     test("Uses a new order when the number of elements changes", () => {
@@ -119,6 +138,23 @@ describe("stagger grid", () => {
         expect(delay(2, 25)).toEqual(0)
         expect(round(delay(6, 25))).toEqual(0.1)
         expect(round(delay(12, 25))).toEqual(0.2)
+    })
+
+    test("Works inward along a single column with from: edges", () => {
+        const delay = stagger(0.1, { grid: [1, 5], from: "edges" })
+        expect([0, 1, 2, 3, 4].map((i) => round(delay(i, 5)))).toEqual([
+            0, 0.1, 0.2, 0.1, 0,
+        ])
+    })
+
+    test("Adds rows when there are more elements than cells", () => {
+        const delay = stagger(0.1, { grid: [2, 2], from: "edges" })
+        const delays = Array.from({ length: 6 }, (_, i) => delay(i, 6))
+        expect(Math.min(...delays)).toEqual(0)
+        expect(round(delay(2, 6))).toEqual(0)
+
+        const fromLast = stagger(0.1, { grid: [3, 3], from: "last" })
+        expect(fromLast(11, 12)).toEqual(0)
     })
 
     test("Accepts from: random", () => {
