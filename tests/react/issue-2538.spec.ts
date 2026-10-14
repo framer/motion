@@ -11,6 +11,9 @@ test.describe("Issue #2538", () => {
         await page.goto("?test=issue-2538")
         await expect(page.locator("#child")).toBeVisible()
 
+        // Discard StrictMode's mount-time effect cleanup
+        await page.evaluate(() => ((window as any).__log.length = 0))
+
         await page.click("#toggle")
         await expect(page.locator("#child")).toHaveCount(0)
         await page.waitForFunction(() => (window as any).__log.length >= 2)
