@@ -4,6 +4,17 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [14.3.0] 2026-10-14
+
+### Added
+
+-   `stagger`: New `grid`, `from: "edges" | "random"` options.
+
+### Fixed
+
+-   Fix matrix3d and other digit-named transform functions being tokenised as numbers.
+-   `useSpring`: Ensure when switching targets we animate to the new target on switch.
+
 ## [14.2.0] 2026-10-13
 
 ### Added
