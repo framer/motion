@@ -33,3 +33,45 @@ test("still doesn't forward Motion's own drag props", () => {
     expect(received.drag).toBeUndefined()
     expect(received.dragElastic).toBeUndefined()
 })
+
+const motionDragProps = {
+    drag: true,
+    dragDirectionLock: true,
+    dragPropagation: true,
+    dragConstraints: { left: 0, right: 100 },
+    dragElastic: 0.5,
+    dragMomentum: false,
+    dragTransition: { power: 0.2 },
+    dragSnapToOrigin: true,
+    dragListener: true,
+}
+
+test("doesn't forward any of Motion's own drag props to wrapped components", () => {
+    const { received, MotionComponent } = createSpy()
+
+    render(<MotionComponent {...motionDragProps} />)
+
+    for (const key in motionDragProps) {
+        expect(received[key]).toBeUndefined()
+    }
+})
+
+test("doesn't render Motion's own drag props as DOM attributes", () => {
+    const { container } = render(
+        <motion.div data-testid="el" {...motionDragProps} />
+    )
+    const el = container.firstChild as Element
+
+    for (const key in motionDragProps) {
+        expect(el.hasAttribute(key)).toBe(false)
+        expect(el.hasAttribute(key.toLowerCase())).toBe(false)
+    }
+})
+
+test("still forwards the native draggable attribute", () => {
+    const { container } = render(<motion.div draggable />)
+
+    expect((container.firstChild as Element).getAttribute("draggable")).toBe(
+        "true"
+    )
+})
