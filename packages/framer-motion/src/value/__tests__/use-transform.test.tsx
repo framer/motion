@@ -1,5 +1,5 @@
 import { motionValue, MotionValue } from "motion-dom"
-import { useEffect, useLayoutEffect } from "react"
+import { useEffect, useInsertionEffect, useLayoutEffect } from "react"
 import { cancelFrame, frame, motion } from "../../"
 import { nextFrame, nextMicrotask } from "../../gestures/__tests__/utils"
 import { render } from "../../jest.setup"
@@ -544,4 +544,35 @@ describe("source set in an effect under Strict Mode", () => {
 
         expect(derived!.get()).toBe(20)
     })
+})
+
+/**
+ * #3913: a source changed between render and subscription (here from a
+ * child's insertion effect, which runs before the parent's effects) must
+ * still reach the derived value and the element, without Strict Mode.
+ */
+test("useTransform(fn) sees a source change made before it subscribes", async () => {
+    let source!: MotionValue<number>
+    let t!: MotionValue<number>
+
+    const SetSource = ({ v }: { v: MotionValue<number> }) => {
+        useInsertionEffect(() => v.set(100), [])
+        return null
+    }
+
+    const C = () => {
+        source = useMotionValue(0)
+        t = useTransform(() => source.get() + 1)
+        return (
+            <motion.div data-testid="el" style={{ x: t }}>
+                <SetSource v={source} />
+            </motion.div>
+        )
+    }
+
+    const { getByTestId } = render(<C />, false)
+    for (let i = 0; i < 5; i++) await nextFrame()
+
+    expect(t.get()).toBe(101)
+    expect(getByTestId("el").style.transform).toContain("101px")
 })
