@@ -1,5 +1,6 @@
 import * as React from "react"
 import { motion } from "../.."
+import { DragControls } from "../../gestures/drag/use-drag-controls"
 import { render } from "../../jest.setup"
 
 function createSpy() {
@@ -44,6 +45,7 @@ const motionDragProps = {
     dragTransition: { power: 0.2 },
     dragSnapToOrigin: true,
     dragListener: true,
+    dragControls: new DragControls(),
 }
 
 test("doesn't forward any of Motion's own drag props to wrapped components", () => {
