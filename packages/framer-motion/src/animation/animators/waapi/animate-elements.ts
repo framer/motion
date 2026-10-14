@@ -79,7 +79,11 @@ export function animateElements(
          * Resolve stagger function if provided.
          */
         if (typeof elementTransition.delay === "function") {
-            elementTransition.delay = elementTransition.delay(i, numElements)
+            elementTransition.delay = elementTransition.delay(
+                i,
+                numElements,
+                elements
+            )
         }
 
         for (const valueName in keyframes) {

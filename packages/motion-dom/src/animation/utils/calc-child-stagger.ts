@@ -8,15 +8,18 @@ export function calcChildStagger(
     staggerChildren: number = 0,
     staggerDirection: number = 1
 ): number {
-    const index = Array.from(children)
-        .sort((a, b) => a.sortNodePosition(b))
-        .indexOf(child)
+    const sorted = Array.from(children).sort((a, b) => a.sortNodePosition(b))
+    const index = sorted.indexOf(child)
     const numChildren = children.size
     const maxStaggerDuration = (numChildren - 1) * staggerChildren
     const delayIsFunction = typeof delayChildren === "function"
 
     return delayIsFunction
-        ? delayChildren(index, numChildren)
+        ? delayChildren(
+              index,
+              numChildren,
+              sorted.map((c) => c.current)
+          )
         : staggerDirection === 1
         ? index * staggerChildren
         : maxStaggerDuration - index * staggerChildren

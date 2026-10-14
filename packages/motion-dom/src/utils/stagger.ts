@@ -16,8 +16,11 @@ export type StaggerOptions = {
     /**
      * Treat elements as a grid of `[columns, rows]`, in reading order.
      * Delays are then based on the 2D distance from `from`.
+     *
+     * `"auto"` reads the grid from the elements' layout. All elements are
+     * measured in one batch, the first time the stagger runs for them.
      */
-    grid?: [number, number]
+    grid?: [number, number] | "auto"
 }
 
 export function getOriginIndex(from: StaggerOrigin, total: number) {
@@ -27,6 +30,55 @@ export function getOriginIndex(from: StaggerOrigin, total: number) {
         const lastIndex = total - 1
         return from === "last" ? lastIndex : lastIndex / 2
     }
+}
+
+/**
+ * Read the column and row of each element from its layout position.
+ * A new row starts when an element sits lower than, and not to the right
+ * of, the element before it (so a wrap in left-to-right reading order).
+ * Checking both keeps rows of mixed-height, centred items together.
+ *
+ * offsetTop/offsetLeft ignore transforms, so elements that are mid-animation
+ * are placed by their layout position. All reads happen in one loop with
+ * no writes in between, so this triggers at most one layout.
+ */
+function measureGrid(subjects: ArrayLike<unknown>, xs: number[], ys: number[]) {
+    let x = 0
+    let y = 0
+    let prevTop = 0
+    let prevLeft = 0
+
+    for (let j = 0; j < subjects.length; j++) {
+        const element = subjects[j] as HTMLElement | null
+        let top = element?.offsetTop
+        let left = element?.offsetLeft
+
+        if (top === undefined) {
+            const box = (element as Element | null)?.getBoundingClientRect?.()
+            top = box ? box.top : 0
+            left = box ? box.left : 0
+        }
+
+        if (j) {
+            if (top > prevTop && left! <= prevLeft) {
+                y++
+                x = 0
+            } else {
+                x++
+            }
+        }
+
+        prevTop = top
+        prevLeft = left!
+        xs[j] = x
+        ys[j] = y
+    }
+}
+
+const isSameSubjects = (a?: ArrayLike<unknown>, b?: ArrayLike<unknown>) => {
+    if (!a || !b || a.length !== b.length) return false
+    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false
+    return true
 }
 
 export function stagger(
@@ -39,23 +91,60 @@ export function stagger(
      */
     const cache: { [total: number]: number[] } = {}
 
-    return (i: number, total: number) => {
-        let distances = cache[total]
+    /**
+     * With grid: "auto", distances depend on the elements, not only their
+     * count, so they're cached against the last set of elements measured.
+     */
+    let measuredSubjects: ArrayLike<unknown> | undefined
+    let measuredDistances: number[] | undefined
+
+    return (i: number, total: number, subjects?: ArrayLike<unknown>) => {
+        const isAuto = grid === "auto" && !!subjects
+
+        let distances = isAuto
+            ? isSameSubjects(subjects, measuredSubjects)
+                ? measuredDistances
+                : undefined
+            : cache[total]
 
         if (!distances) {
-            const [columns, rows] = grid || [Infinity, 1]
-            const lastX = Math.min(columns, total) - 1
-            const lastY = Math.max(rows, Math.ceil(total / columns)) - 1
-            const isIndex = typeof from === "number"
-            const scale = from === "first" ? 0 : from === "last" ? 1 : 0.5
-            const originX = isIndex ? from % columns : lastX * scale
-            const originY = isIndex ? Math.floor(from / columns) : lastY * scale
+            const xs: number[] = []
+            const ys: number[] = []
 
-            distances = cache[total] = []
+            if (isAuto) {
+                measureGrid(subjects!, xs, ys)
+            } else {
+                const columns = Array.isArray(grid) ? grid[0] : Infinity
+                for (let j = 0; j < total; j++) {
+                    xs[j] = j % columns
+                    ys[j] = Math.floor(j / columns)
+                }
+            }
+
+            const rows = Array.isArray(grid) ? grid[1] : 1
+            const lastX = Math.max(...xs)
+            const lastY = Math.max(rows - 1, ...ys)
+            /**
+             * "first" and "last" are the first and last elements, so in a
+             * partly filled grid "last" is the last element, not the
+             * bottom-right cell.
+             */
+            const index =
+                from === "first" ? 0 : from === "last" ? total - 1 : from
+            let originX = lastX / 2
+            let originY = lastY / 2
+
+            if (typeof index === "number") {
+                const columns = Array.isArray(grid) ? grid[0] : Infinity
+                originX = isAuto ? xs[index] ?? 0 : index % columns
+                originY = isAuto ? ys[index] ?? 0 : Math.floor(index / columns)
+            }
+
+            distances = []
 
             for (let j = 0; j < total; j++) {
-                const x = j % columns
-                const y = Math.floor(j / columns)
+                const x = xs[j]
+                const y = ys[j]
                 const edgeX = Math.min(x, lastX - x)
                 const edgeY = Math.min(y, lastY - y)
 
@@ -75,7 +164,16 @@ export function stagger(
                 }
             }
 
-            distances.push(grid ? Math.max(...distances) : total)
+            distances.push(
+                isAuto || Array.isArray(grid) ? Math.max(...distances) : total
+            )
+
+            if (isAuto) {
+                measuredSubjects = Array.from(subjects!)
+                measuredDistances = distances
+            } else {
+                cache[total] = distances
+            }
         }
 
         let delay = duration * distances[i]

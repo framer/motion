@@ -104,7 +104,8 @@ export function createAnimationsFromSequence(
             valueTransition: Transition | DynamicAnimationOptions,
             valueSequence: ValueSequence,
             elementIndex = 0,
-            numSubjects = 0
+            numSubjects = 0,
+            subjects?: ArrayLike<unknown>
         ) => {
             const valueKeyframesAsList = keyframesAsList(valueKeyframes)
             const {
@@ -124,7 +125,7 @@ export function createAnimationsFromSequence(
              */
             const calculatedDelay =
                 typeof delay === "function"
-                    ? delay(elementIndex, numSubjects)
+                    ? delay(elementIndex, numSubjects, subjects)
                     : delay
 
             /**
@@ -246,18 +247,12 @@ export function createAnimationsFromSequence(
                         flippedEases = [...originalEase]
                             .reverse()
                             .map((e) =>
-                                typeof e === "function"
-                                    ? reverseEasing(e)
-                                    : e
+                                typeof e === "function" ? reverseEasing(e) : e
                             )
                     }
                 }
 
-                for (
-                    let repeatIndex = 0;
-                    repeatIndex < repeat;
-                    repeatIndex++
-                ) {
+                for (let repeatIndex = 0; repeatIndex < repeat; repeatIndex++) {
                     const isFlipped = isFlipping && repeatIndex % 2 === 0
                     const iterKeyframes = isFlipped
                         ? flippedKeyframes
@@ -368,7 +363,8 @@ export function createAnimationsFromSequence(
                         getValueTransition(transition, key),
                         getValueSequence(key, subjectSequence),
                         subjectIndex,
-                        numSubjects
+                        numSubjects,
+                        subjects
                     )
                 }
             }

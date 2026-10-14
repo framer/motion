@@ -1,0 +1,89 @@
+<html>
+    <head>
+        <style>
+            body {
+                margin: 0;
+            }
+
+            #grid {
+                display: grid;
+                grid-template-columns: repeat(4, 50px);
+                gap: 10px;
+            }
+
+            #wrap {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                width: 180px;
+            }
+
+            .cell {
+                width: 50px;
+                height: 50px;
+                background-color: #0077ff;
+            }
+
+            #wrap .cell:nth-child(odd) {
+                height: 30px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="grid"></div>
+        <div id="wrap"></div>
+        <script type="module" src="/src/inc.js"></script>
+        <script type="module">
+            /**
+             * Helpers for tests/animate/stagger-grid-auto.spec.ts.
+             * #grid is 4 columns x 3 rows. #wrap wraps 7 items of mixed
+             * height into rows of 3, 3 and 1.
+             */
+            const fill = (id, count) => {
+                const parent = document.getElementById(id)
+                for (let i = 0; i < count; i++) {
+                    const cell = document.createElement("div")
+                    cell.className = "cell"
+                    parent.appendChild(cell)
+                }
+            }
+            fill("grid", 12)
+            fill("wrap", 7)
+
+            window.delays = (selector) =>
+                [...document.querySelectorAll(selector)].map(
+                    (element) =>
+                        element.getAnimations()[0].effect.getTiming().delay
+                )
+
+            /**
+             * Record layout reads and style writes, in order.
+             */
+            window.log = []
+            const record = (proto, name, type) => {
+                const descriptor = Object.getOwnPropertyDescriptor(proto, name)
+                if (descriptor.get) {
+                    Object.defineProperty(proto, name, {
+                        ...descriptor,
+                        get() {
+                            window.log.push(type)
+                            return descriptor.get.call(this)
+                        },
+                    })
+                } else {
+                    proto[name] = function (...args) {
+                        window.log.push(type)
+                        return descriptor.value.apply(this, args)
+                    }
+                }
+            }
+            record(HTMLElement.prototype, "offsetTop", "read")
+            record(HTMLElement.prototype, "offsetLeft", "read")
+            record(Element.prototype, "animate", "write")
+            record(Animation.prototype, "commitStyles", "write")
+            record(Animation.prototype, "cancel", "write")
+
+            window.ready = true
+        </script>
+    </body>
+</html>

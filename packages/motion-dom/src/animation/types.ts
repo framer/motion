@@ -692,7 +692,14 @@ export interface MotionPath {
     interpolateProjection(delta: Delta): PathInterpolator | undefined
 }
 
-export type DynamicOption<T> = (i: number, total: number) => T
+export type DynamicOption<T> = (
+    i: number,
+    total: number,
+    /**
+     * The elements (or other subjects) being staggered, in order, when known.
+     */
+    subjects?: ArrayLike<unknown>
+) => T
 
 export type ValueAnimationWithDynamicDelay = Omit<
     ValueAnimationTransition<any>,

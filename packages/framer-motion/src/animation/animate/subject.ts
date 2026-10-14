@@ -137,7 +137,7 @@ export function animateSubject<O extends Object>(
                 "delay" in transition &&
                 typeof transition.delay === "function"
             ) {
-                transition.delay = transition.delay(i, numSubjects)
+                transition.delay = transition.delay(i, numSubjects, subjects)
             }
 
             if (thisSubject instanceof Element) {
