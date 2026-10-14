@@ -31,6 +31,15 @@
             window.wait = (ms) =>
                 new Promise((resolve) => setTimeout(resolve, ms))
 
+            /**
+             * Wait, then resolve on a frame. WebKit only advances
+             * document.timeline on a rendering update, and compositor
+             * animations don't request any, so after a plain wait
+             * getComputedStyle reads them at a stale time.
+             */
+            window.waitFrame = (ms) =>
+                window.wait(ms).then(() => window.nextFrames(1))
+
             window.readTransform = (element) => {
                 const matrix = new DOMMatrixReadOnly(
                     getComputedStyle(element).transform

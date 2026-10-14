@@ -97,20 +97,38 @@ export function follow<T extends AnyResolvedKeyframe>(
     if (isMotionValue(source)) {
         let skipNextAnimation = options.skipInitialAnimation === true
 
-        const removeSourceOnChange = source.on("change", (v) => {
+        const onSourceChange = (v: T) => {
             if (skipNextAnimation) {
                 skipNextAnimation = false
                 value.jump(parseValue(v, unit) as T, false)
             } else {
                 value.set(parseValue(v, unit) as T)
             }
-        })
+        }
+
+        const removeSourceOnChange = source.on("change", onSourceChange)
+
+        /**
+         * Catch up on a change made before we subscribed, for instance
+         * between a React render reading the source and the effect
+         * attaching to it. Subtracting is falsy for equal or non-numeric
+         * (NaN) values.
+         */
+        const latest = source.get()
+        if (asNumber(latest) - asNumber(value.get())) onSourceChange(latest)
 
         const removeValueOnDestroy = value.on("destroy", removeSourceOnChange)
 
+        /**
+         * Stop our animation on detach, otherwise a re-attach (new
+         * options, Strict Mode) starts a second animation that fights
+         * this orphaned one. The catch-up above resumes from the
+         * current value and velocity.
+         */
         return () => {
             removeSourceOnChange()
             removeValueOnDestroy()
+            stopAnimation()
         }
     }
 

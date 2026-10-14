@@ -1,4 +1,5 @@
 import { syncDriver } from "../../animation/__tests__/utils"
+import { frame } from "../../frameloop"
 import { followValue } from "../follow-value"
 import { motionValue } from "../index"
 import { attachSpring, springValue } from "../spring-value"
@@ -348,5 +349,57 @@ describe("spring isAnimating and animationComplete", () => {
         })
 
         expect(spring.isAnimating()).toBe(false)
+    })
+})
+
+/**
+ * #3913: attaching catches up with a source that changed beforehand, and
+ * detaching stops the follow animation so a re-attach doesn't leave an
+ * orphaned one fighting the new one.
+ */
+describe("attachSpring to a MotionValue source", () => {
+    const nextFrame = () =>
+        new Promise<void>((resolve) => frame.postRender(() => resolve()))
+
+    test("follows a source that already differs", async () => {
+        const source = motionValue(100)
+        const value = motionValue(0)
+        attachSpring(value, source, { duration: 0.01 } as any)
+
+        expect(value.isAnimating()).toBe(true)
+        await new Promise((resolve) => setTimeout(resolve, 200))
+        for (let i = 0; i < 3; i++) await nextFrame()
+        expect(value.get()).toBe(100)
+    })
+
+    test("doesn't animate when already at the source", () => {
+        const source = motionValue(100)
+        const value = motionValue(100)
+        attachSpring(value, source)
+        expect(value.isAnimating()).toBe(false)
+    })
+
+    test("re-attaching mid-animation runs a single animation", async () => {
+        const source = motionValue(0)
+        const value = motionValue(0)
+        let detach = attachSpring(value, source)
+
+        source.set(100)
+        await nextFrame()
+        await nextFrame()
+        detach()
+        expect(value.isAnimating()).toBe(false)
+
+        detach = attachSpring(value, source, { stiffness: 50 })
+        expect(value.isAnimating()).toBe(true)
+        source.set(-100)
+
+        let updates = 0
+        value.on("change", () => updates++)
+        for (let i = 0; i < 5; i++) await nextFrame()
+
+        // One update per frame: no orphaned animation writing too
+        expect(updates).toBe(5)
+        detach()
     })
 })

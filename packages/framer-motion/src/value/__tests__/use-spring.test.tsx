@@ -1,5 +1,5 @@
-import { motionValue, MotionValue } from "motion-dom"
-import { useEffect } from "react"
+import { frame, motionValue, MotionValue } from "motion-dom"
+import { useEffect, useInsertionEffect } from "react"
 import { motion, useMotionValueEvent } from "../../"
 import { syncDriver } from "../../animation/animators/__tests__/utils"
 import { render } from "../../jest.setup"
@@ -306,7 +306,7 @@ describe("useSpring animation events", () => {
                 const x = useMotionValue(0)
                 const springX = useSpring(x, {
                     stiffness: 1000,
-                    damping: 50,     
+                    damping: 50,
                 })
 
                 useMotionValueEvent(springX, "animationComplete", () => {
@@ -324,5 +324,57 @@ describe("useSpring animation events", () => {
         })
 
         await expect(promise).resolves.toBe(true)
+    })
+})
+
+/**
+ * #3913: a source changed between render and the spring attaching (here
+ * from a child's insertion effect, which runs before the parent's) must
+ * still be followed, without Strict Mode.
+ */
+describe("source changed before useSpring attaches", () => {
+    const SetSource = ({ v }: { v: MotionValue<number> }) => {
+        useInsertionEffect(() => v.set(100), [])
+        return null
+    }
+
+    const nextFrame = () =>
+        new Promise<void>((resolve) => frame.postRender(() => resolve()))
+
+    test("follows the change", async () => {
+        let source!: MotionValue<number>
+        let spring!: MotionValue<number>
+
+        const C = () => {
+            source = useMotionValue(0)
+            spring = useSpring(source, { duration: 0.01 } as any)
+            return (
+                <motion.div style={{ x: spring }}>
+                    <SetSource v={source} />
+                </motion.div>
+            )
+        }
+
+        render(<C />, false)
+        await new Promise((resolve) => setTimeout(resolve, 200))
+        for (let i = 0; i < 5; i++) await nextFrame()
+
+        expect(spring.get()).toBe(100)
+    })
+
+    test("jumps to the change with skipInitialAnimation", async () => {
+        let spring!: MotionValue<number>
+
+        const C = () => {
+            const source = useMotionValue(0)
+            spring = useSpring(source, { skipInitialAnimation: true })
+            return <SetSource v={source} />
+        }
+
+        render(<C />, false)
+        await nextFrame()
+
+        expect(spring.get()).toBe(100)
+        expect(spring.isAnimating()).toBe(false)
     })
 })

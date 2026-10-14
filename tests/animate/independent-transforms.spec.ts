@@ -10,7 +10,7 @@ declare global {
     interface Window {
         Motion: any
         nextFrames: (count?: number) => Promise<void>
-        wait: (ms: number) => Promise<void>
+        waitFrame: (ms: number) => Promise<void>
         readTransform: (element: Element) => {
             x: number
             y: number
@@ -43,7 +43,7 @@ test.describe("animate() independent transforms", () => {
             )
             await window.nextFrames(2)
             const count = window.transformAnimations(element).length
-            await window.wait(500)
+            await window.waitFrame(500)
             return { count, ...window.readTransform(element) }
         })
 
@@ -110,11 +110,11 @@ test.describe("animate() independent transforms", () => {
             const element = document.getElementById("a")!
             const { animate } = window.Motion
             animate(element, { x: 100 }, { duration: 1, ease: "linear" })
-            await window.wait(100)
+            await window.waitFrame(100)
             animate(element, { scale: 2 }, { duration: 1, ease: "linear" })
             await window.nextFrames(2)
             const count = window.transformAnimations(element).length
-            await window.wait(200)
+            await window.waitFrame(200)
             return { count, ...window.readTransform(element) }
         })
 
@@ -134,7 +134,7 @@ test.describe("animate() independent transforms", () => {
                 { x: 100, y: 100 },
                 { duration: 1, ease: "linear" }
             )
-            await window.wait(400)
+            await window.waitFrame(400)
             const finished = animate(
                 element,
                 { x: 0 },
@@ -142,10 +142,10 @@ test.describe("animate() independent transforms", () => {
             )
             await window.nextFrames(2)
             const count = window.transformAnimations(element).length
-            await window.wait(200)
+            await window.waitFrame(200)
             const mid = window.readTransform(element)
             await finished
-            await window.wait(500)
+            await window.waitFrame(500)
             return {
                 count,
                 mid,
@@ -172,7 +172,7 @@ test.describe("animate() independent transforms", () => {
             const { animate } = window.Motion
             const transition = { type: "spring", stiffness: 100, damping: 20 }
             animate(element, { x: 400 }, transition)
-            await window.wait(150)
+            await window.waitFrame(150)
             animate(element, { x: 0 }, transition)
             await window.nextFrames(1)
             const before = window.readTransform(element).x
@@ -197,7 +197,7 @@ test.describe("animate() independent transforms", () => {
                 { x: 100 },
                 { duration: 1, ease: "linear" }
             )
-            await window.wait(500)
+            await window.waitFrame(500)
             animation.stop()
             const stoppedAt = window.readTransform(element).x
             await window.nextFrames(3)
@@ -223,13 +223,13 @@ test.describe("animate() independent transforms", () => {
                 { x: 100 },
                 { duration: 1, ease: "linear" }
             )
-            await window.wait(300)
+            await window.waitFrame(300)
             animation.pause()
             const paused = window.readTransform(element).x
-            await window.wait(300)
+            await window.waitFrame(300)
             const held = window.readTransform(element).x
             animation.play()
-            await window.wait(300)
+            await window.waitFrame(300)
             return {
                 paused,
                 held,
@@ -257,7 +257,7 @@ test.describe("animate() independent transforms", () => {
             const [animation] = window.transformAnimations(element)
             const style = element.style.transform
             const before = window.readTransform(element).rotate
-            await window.wait(150)
+            await window.waitFrame(150)
             return {
                 iterations: animation?.effect!.getComputedTiming().iterations,
                 styleUnchanged: element.style.transform === style,
@@ -284,9 +284,9 @@ test.describe("animate() independent transforms", () => {
             await window.nextFrames(2)
             const count = window.transformAnimations(element).length
             await finished
-            await window.wait(100)
+            await window.waitFrame(100)
             const a = window.readTransform(element)
-            await window.wait(100)
+            await window.waitFrame(100)
             const b = window.readTransform(element)
             return { count, a, b }
         })
@@ -305,7 +305,7 @@ test.describe("animate() independent transforms", () => {
             const element = document.getElementById("a")!
             const { animate } = window.Motion
             animate(element, { x: 100 }, { duration: 1, ease: "linear" })
-            await window.wait(200)
+            await window.waitFrame(200)
             animate(
                 element,
                 { y: [0, 100] },
@@ -313,7 +313,7 @@ test.describe("animate() independent transforms", () => {
             )
             await window.nextFrames(2)
             const count = window.transformAnimations(element).length
-            await window.wait(300)
+            await window.waitFrame(300)
             return { count, ...window.readTransform(element) }
         })
 
@@ -356,7 +356,7 @@ test.describe("animate() independent transforms", () => {
             const element = document.getElementById("a")!
             const { animate } = window.Motion
             animate(element, { x: 100 }, { duration: 1, ease: "linear" })
-            await window.wait(200)
+            await window.waitFrame(200)
             animate(element, { y: 50 }, { duration: 0 })
             animate(element, { scale: [2, 2] }, { duration: 1 })
             await window.nextFrames(2)
@@ -384,9 +384,9 @@ test.describe("animate() independent transforms", () => {
                 { x: 100 },
                 { duration: 1, ease: "linear" }
             )
-            await window.wait(100)
+            await window.waitFrame(100)
             animate(element, { x: 50 }, { duration: 0.3, ease: "linear" })
-            await window.wait(50)
+            await window.waitFrame(50)
             const recording = (window as any).recordFrames(element, 400)
             first.pause()
             first.play()
@@ -444,7 +444,7 @@ test.describe("animate() independent transforms", () => {
                 { x: 100 },
                 { duration: 1, delay: 1, ease: "linear" }
             )
-            await window.wait(1500)
+            await window.waitFrame(1500)
             animation.pause()
             await window.nextFrames(3)
             const paused = animation.time
@@ -476,11 +476,11 @@ test.describe("animate() independent transforms", () => {
                 { x: 100 },
                 { duration: 0.5, ease: "linear" }
             ).then(() => (finished = true))
-            await window.wait(200)
+            await window.waitFrame(200)
             element.getAnimations().forEach((animation) => animation.cancel())
             await window.nextFrames(1)
             const x = window.readTransform(element).x
-            await window.wait(500)
+            await window.waitFrame(500)
             return { x, finished, end: window.readTransform(element).x }
         })
 
@@ -502,7 +502,7 @@ test.describe("animate() independent transforms", () => {
                 { duration: 0.4, repeat: Infinity, repeatType: "reverse" }
             )
             animate(element, { x: 100 }, { duration: 0.3 })
-            await window.wait(700)
+            await window.waitFrame(700)
             return window.transformAnimations(element).length
         })
 
