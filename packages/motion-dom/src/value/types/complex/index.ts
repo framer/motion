@@ -44,9 +44,10 @@ export interface ComplexValueInfo {
     types: Array<keyof ValueIndexes>
 }
 
-// this regex consists of the `singleCssVariableRegex|rgbHSLValueRegex|digitRegex`
+// this regex consists of the `singleCssVariableRegex|rgbHSLValueRegex|digitRegex`.
+// The lookahead skips digits in function names, like the 3 in matrix3d(.
 const complexRegex =
-    /var\s*\(\s*--(?:[\w-]+\s*|[\w-]+\s*,(?:\s*[^)(\s]|\s*\((?:[^)(]|\([^)(]*\))*\))+\s*)\)|#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\)|-?(?:\d+(?:\.\d+)?|\.\d+)/giu
+    /var\s*\(\s*--(?:[\w-]+\s*|[\w-]+\s*,(?:\s*[^)(\s]|\s*\((?:[^)(]|\([^)(]*\))*\))+\s*)\)|#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\)|-?(?:\d+(?:\.\d+)?|\.\d+)(?![\w-]*\()/giu
 
 /**
  * Whether analyseComplexValue(value) would find any values, without
