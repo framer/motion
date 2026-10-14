@@ -172,6 +172,17 @@ describe("parseValueFromTransform", () => {
             )
         })
 
+        it("should parse scaleZ", () => {
+            expect(parseValueFromTransform("none", "scaleZ")).toBe(1)
+            expect(
+                parseValueFromTransform("matrix(2, 0, 0, 3, 0, 0)", "scaleZ")
+            ).toBe(1)
+            let matrix = new CSSMatrix()
+            matrix = matrix.scale(2, 3, 4)
+            expect(parseValueFromTransform(matrix.toString(), "scaleZ")).toBe(4)
+            expect(parseValueFromTransform(matrix.toString(), "scaleX")).toBe(2)
+        })
+
         it("should parse individual rotations", () => {
             let matrix = new CSSMatrix()
             matrix = matrix.rotate(30, 0, 0)

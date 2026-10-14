@@ -21,6 +21,7 @@ const matrix2dParsers: MatrixParsers = {
     translateY: 5,
     scaleX: 0,
     scaleY: 3,
+    scaleZ: () => 1,
     scale: (v) => (Math.abs(v[0]) + Math.abs(v[3])) / 2,
     rotate,
     rotateZ: rotate,
@@ -37,8 +38,8 @@ const rebaseAngle = (angle: number) => {
 
 const rotateZ = rotate
 
-const scaleX = (v: number[]) => Math.sqrt(v[0] * v[0] + v[1] * v[1])
-const scaleY = (v: number[]) => Math.sqrt(v[4] * v[4] + v[5] * v[5])
+const scaleX = (v: number[]) => Math.hypot(v[0], v[1])
+const scaleY = (v: number[]) => Math.hypot(v[4], v[5])
 
 const matrix3dParsers: MatrixParsers = {
     x: 12,
@@ -49,6 +50,7 @@ const matrix3dParsers: MatrixParsers = {
     translateZ: 14,
     scaleX,
     scaleY,
+    scaleZ: (v) => Math.hypot(v[8], v[9], v[10]),
     scale: (v) => (scaleX(v) + scaleY(v)) / 2,
     rotateX: (v) => rebaseAngle(radToDeg(Math.atan2(v[6], v[5]))),
     rotateY: (v) => rebaseAngle(radToDeg(Math.atan2(-v[2], v[0]))),

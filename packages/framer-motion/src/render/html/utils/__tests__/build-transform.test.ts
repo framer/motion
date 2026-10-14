@@ -10,6 +10,9 @@ describe("transformProps.has", () => {
         expect(transformProps.has("x")).toBe(true)
         expect(transformProps.has("translateX")).toBe(true)
     })
+    it("Correctly identifies scaleZ as a transform prop", () => {
+        expect(transformProps.has("scaleZ")).toBe(true)
+    })
 })
 
 describe("buildTransform", () => {
@@ -107,5 +110,16 @@ describe("buildTransform", () => {
         expect(buildTransform({ scale: "0" }, {})).toBe("scale(0)")
         expect(buildTransform({ scaleX: "0" }, {})).toBe("scaleX(0)")
         expect(buildTransform({ scaleY: "0" }, {})).toBe("scaleY(0)")
+    })
+
+    it("Outputs scaleZ after scaleY and before rotations", () => {
+        expect(buildTransform({ scaleZ: 1 }, {})).toBe("none")
+        expect(buildTransform({ scaleZ: "0" }, {})).toBe("scaleZ(0)")
+        expect(
+            buildTransform(
+                { rotateX: "45deg", scaleZ: 2, scaleY: 3, scaleX: 4 },
+                {}
+            )
+        ).toBe("scaleX(4) scaleY(3) scaleZ(2) rotateX(45deg)")
     })
 })
