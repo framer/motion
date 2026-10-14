@@ -7,7 +7,7 @@ import { useEffect, useState } from "react"
  * run after it.
  */
 const log: string[] = []
-;(window as any).__log = log
+;(window as any).__exitLog = log
 
 function Child() {
     useEffect(() => () => void log.push("cleanup"), [])

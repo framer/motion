@@ -104,4 +104,42 @@ describe("AnimatePresence onExitComplete timing", () => {
         expect(onInnerExitComplete).toHaveBeenCalledTimes(1)
         expect(container.childNodes.length).toBe(0)
     })
+    test("mode=wait: fires before the entering child's effects", async () => {
+        const log: string[] = []
+
+        const Page = ({ id }: { id: string }) => {
+            useEffect(() => {
+                log.push("mount " + id)
+                return () => void log.push("cleanup " + id)
+            }, [])
+            return (
+                <motion.div
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.05 }}
+                />
+            )
+        }
+
+        const Component = ({ id }: { id: string }) => (
+            <AnimatePresence
+                mode="wait"
+                onExitComplete={() => log.push("exitComplete")}
+            >
+                <Page key={id} id={id} />
+            </AnimatePresence>
+        )
+
+        const { rerender } = render(<Component id="a" />)
+        log.length = 0
+
+        await act(async () => rerender(<Component id="b" />))
+        await waitFor(() => expect(log).toContain("mount b"))
+
+        // StrictMode can repeat b's effects after this, so check the start
+        expect(log.slice(0, 3)).toEqual([
+            "cleanup a",
+            "exitComplete",
+            "mount b",
+        ])
+    })
 })

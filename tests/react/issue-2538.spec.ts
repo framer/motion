@@ -12,13 +12,13 @@ test.describe("Issue #2538", () => {
         await expect(page.locator("#child")).toBeVisible()
 
         // Discard StrictMode's mount-time effect cleanup
-        await page.evaluate(() => ((window as any).__log.length = 0))
+        await page.evaluate(() => ((window as any).__exitLog.length = 0))
 
         await page.click("#toggle")
         await expect(page.locator("#child")).toHaveCount(0)
-        await page.waitForFunction(() => (window as any).__log.length >= 2)
+        await page.waitForFunction(() => (window as any).__exitLog.length >= 2)
 
-        const log = await page.evaluate(() => (window as any).__log)
+        const log = await page.evaluate(() => (window as any).__exitLog)
         expect(log).toEqual(["cleanup", "exitComplete:unmounted"])
     })
 })
