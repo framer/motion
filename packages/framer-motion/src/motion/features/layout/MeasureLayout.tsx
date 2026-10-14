@@ -30,6 +30,16 @@ type MeasureProps = MotionProps &
  */
 let hasTakenAnySnapshot = false
 
+/**
+ * The projection node is created with the props from the component's first
+ * render, so keep these in sync as `layout` can change (or be enabled) later.
+ */
+const layoutOptions = ({ layout, layoutDependency }: MeasureProps) => ({
+    layout,
+    layoutDependency,
+    animationType: typeof layout === "string" ? layout : "both",
+})
+
 class MeasureLayoutWithContext extends Component<MeasureProps> {
     /**
      * This only mounts projection nodes for components that
@@ -57,7 +67,7 @@ class MeasureLayoutWithContext extends Component<MeasureProps> {
             })
             projection.setOptions({
                 ...projection.options,
-                layoutDependency: this.props.layoutDependency,
+                ...layoutOptions(this.props),
                 onExitComplete: () => this.safeToRemove(),
             })
         }
@@ -66,7 +76,8 @@ class MeasureLayoutWithContext extends Component<MeasureProps> {
     }
 
     getSnapshotBeforeUpdate(prevProps: MeasureProps) {
-        const { layoutDependency, visualElement, drag, isPresent } = this.props
+        const { layout, layoutDependency, visualElement, drag, isPresent } =
+            this.props
         const { projection } = visualElement
 
         if (!projection) return null
@@ -80,10 +91,13 @@ class MeasureLayoutWithContext extends Component<MeasureProps> {
          */
         projection.isPresent = isPresent
 
-        if (prevProps.layoutDependency !== layoutDependency) {
+        if (
+            prevProps.layoutDependency !== layoutDependency ||
+            prevProps.layout !== layout
+        ) {
             projection.setOptions({
                 ...projection.options,
-                layoutDependency,
+                ...layoutOptions(this.props),
             })
         }
 
