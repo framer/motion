@@ -125,7 +125,13 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
         this.newFinished()
         this.clock.on("change", (t) => this.onClock(t))
         items.forEach((item) => this.add(item))
+
+        /**
+         * Build now, like animate(), so selectors resolve while a scope
+         * is attached. Later changes are batched.
+         */
         this.invalidate()
+        this.flush()
 
         /**
          * Register with the scope (for instance from useAnimate()) so it
@@ -371,7 +377,7 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
         let time = 0
 
         if (prev) {
-            time = prev.time
+            time = prev.animations.length ? prev.time : 0
             this.isRebuilding = true
             rewind(prev)
             this.isRebuilding = false

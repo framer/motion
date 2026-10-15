@@ -349,4 +349,21 @@ describe("timeline", () => {
         expect(v.get()).toBe(100)
         expect(tl.time).toBe(0)
     })
+
+    test("resolves selectors while created, before the scope can detach", () => {
+        const container = document.createElement("div")
+        container.innerHTML = `<div class="box"></div>`
+        const scope = { current: container, animations: [] } as any
+        const tl = timeline([[".box", { opacity: 0 }, { duration: 1 }]], {
+            ...paused,
+            scope,
+        })
+
+        /**
+         * React 19 Strict Mode detaches refs between its simulated
+         * unmount and remount.
+         */
+        scope.current = null
+        expect(tl.duration).toBe(1)
+    })
 })
