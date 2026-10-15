@@ -9,11 +9,13 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Added
 
 -   `stagger`: New `grid`, `from: "edges" | "random"` options.
+-   Support for `scaleZ`.
 
 ### Fixed
 
 -   Fix matrix3d and other digit-named transform functions being tokenised as numbers.
 -   `useSpring`: Ensure when switching targets we animate to the new target on switch.
+-   Fix SVG MotionValue children being written as a children attribute.
 
 ## [14.2.0] 2026-10-13
 
