@@ -7,6 +7,7 @@ import { expect, test } from "@playwright/test"
  */
 for (const [name, query] of [
     ["CSS variable", ""],
+    ["CSS variable in px", "&px=true"],
     ["hardcoded percentage (control)", "&hardcoded=true"],
 ]) {
     test(`drag after animating y to a ${name} doesn't jump`, async ({

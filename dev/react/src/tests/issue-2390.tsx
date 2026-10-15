@@ -6,10 +6,11 @@ import { useEffect, useRef } from "react"
  * then dragging via dragControls should not jump or become unresponsive.
  */
 export const App = () => {
+    const params = new URLSearchParams(window.location.search)
     // ?hardcoded=true uses the resolved values instead of CSS variables (control)
-    const hardcoded = new URLSearchParams(window.location.search).get(
-        "hardcoded"
-    )
+    const hardcoded = params.get("hardcoded")
+    // ?px=true defines the CSS variables in px rather than %
+    const usePx = params.get("px")
     const slideTo = hardcoded ? "20%" : "var(--slide-to)"
     const slideFrom = hardcoded ? "120%" : "var(--slide-from)"
     const animationControls = useAnimation()
@@ -54,8 +55,8 @@ export const App = () => {
                     height: 400,
                     width: 300,
                     background: "lightblue",
-                    "--slide-from": "120%",
-                    "--slide-to": "20%",
+                    "--slide-from": usePx ? "480px" : "120%",
+                    "--slide-to": usePx ? "80px" : "20%",
                 } as any
             }
         >
