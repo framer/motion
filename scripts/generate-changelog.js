@@ -52,8 +52,14 @@ function getVersionType(version) {
  * Compare two x.y.z versions. Negative when a is older than b.
  */
 function compareVersions(a, b) {
-    const left = a.replace(/[\[\]]/g, "").split(".").map(Number)
-    const right = b.replace(/[\[\]]/g, "").split(".").map(Number)
+    const left = a
+        .replace(/[\[\]]/g, "")
+        .split(".")
+        .map(Number)
+    const right = b
+        .replace(/[\[\]]/g, "")
+        .split(".")
+        .map(Number)
     for (let i = 0; i < 3; i++) {
         if (left[i] !== right[i]) return left[i] - right[i]
     }
