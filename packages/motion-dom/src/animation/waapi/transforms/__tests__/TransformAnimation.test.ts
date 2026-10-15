@@ -170,7 +170,11 @@ describe("independent transform acceleration", () => {
         }
         expect(options.easing).toBe("linear")
         expect(options.duration).toBeGreaterThan(900)
-        expect(options.duration).toBeLessThanOrEqual(1000)
+        /**
+         * A slow first frame starts the animation from then, so it lasts
+         * the full 1000ms, give or take floating point error.
+         */
+        expect(options.duration).toBeLessThan(1000.001)
         expect(startTime).not.toBe(null)
     })
 
