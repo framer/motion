@@ -311,4 +311,27 @@ describe("timeline", () => {
         tl.clear()
         expect(tl.duration).toBe(0)
     })
+
+    test("the duration option stretches segments, labels and callbacks", async () => {
+        const v = motionValue(0)
+        const tl = timeline(
+            [[v, 100, { duration: 1 }], "end", [v, 200, { duration: 1 }]],
+            { ...paused, duration: 4 }
+        )
+
+        expect(tl.duration).toBe(4)
+        expect(tl.getLabelTime("end")).toBe(2)
+
+        tl.time = 1
+        await nextFrame()
+        expect(v.get()).toBe(50)
+    })
+
+    test("registers with a scope so it stops with it", () => {
+        const v = motionValue(0)
+        const scope = { current: undefined, animations: [] } as any
+        const tl = timeline([[v, 100, { duration: 1 }]], { ...paused, scope })
+
+        expect(scope.animations).toContain(tl)
+    })
 })

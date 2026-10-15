@@ -7,6 +7,7 @@ import {
     motionValue,
     TimelineWithFallback,
 } from "motion-dom"
+import { removeItem } from "motion-utils"
 import { animateSequence } from "../animate/sequence"
 import {
     AnimationSequence,
@@ -18,13 +19,14 @@ import {
 
 export type TimelineItem = Segment | Timeline
 
-export interface TimelineOptions extends Omit<SequenceOptions, "duration"> {
+export interface TimelineOptions extends SequenceOptions {
     /**
      * Start paused. Defaults to `true` (plays as soon as it's built).
      */
     autoplay?: boolean
     /**
-     * Resolve selectors within this scope.
+     * Resolve selectors within this scope, and stop when it's torn
+     * down. Pass the scope from useAnimate() in React.
      */
     scope?: AnimationScope
 }
@@ -124,6 +126,16 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
         this.clock.on("change", (t) => this.onClock(t))
         items.forEach((item) => this.add(item))
         this.invalidate()
+
+        /**
+         * Register with the scope (for instance from useAnimate()) so it
+         * stops when the scope is torn down.
+         */
+        const { scope } = options
+        if (scope) {
+            scope.animations.push(this)
+            this.finished.then(() => removeItem(scope.animations, this))
+        }
     }
 
     /**
@@ -371,7 +383,14 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
         )
 
         const labels = info.labels!
-        let duration = info.duration!
+        let duration = playback.duration ?? info.duration!
+
+        /**
+         * A `duration` option stretches every animation to fit, so scale
+         * label and marker times to match.
+         */
+        const scale = info.duration ? duration / info.duration : 1
+        labels.forEach((time, name) => labels.set(name, time * scale))
 
         /**
          * Markers are resolved as labels. Move them out of the label map
