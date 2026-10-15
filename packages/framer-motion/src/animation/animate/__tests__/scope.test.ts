@@ -1,4 +1,7 @@
 import {
+    addBuilderToScope,
+    animateLayout,
+    delayInSeconds as delay,
     frame,
     hover,
     motionValue,
@@ -298,6 +301,87 @@ describe("scopeMotion", () => {
 
         scope.stop()
         expect(await isAnimating(x)).toBe(false)
+    })
+
+    test("stop() cancels delays and collects their callbacks", async () => {
+        const fired = jest.fn()
+        const x = motionValue(0)
+
+        const scope = scopeMotion(() => {
+            delay(fired, 1)
+            delay(() => animate(x, 100, { duration: 10 }), 0)
+        })
+
+        await nextFrame()
+        await nextFrame()
+        expect(await isAnimating(x)).toBe(true)
+
+        scope.stop()
+        expect(await isAnimating(x)).toBe(false)
+        await new Promise((resolve) => setTimeout(resolve, 100))
+        expect(fired).not.toBeCalled()
+    })
+
+    test("stops builder animations, including ones not started yet", async () => {
+        const makeBuilder = () => {
+            const animation = {
+                stop: jest.fn(),
+                finished: new Promise<void>(() => {}),
+            }
+            let resolve: (a: typeof animation) => void = () => {}
+            const ready = new Promise<typeof animation>((r) => (resolve = r))
+            return {
+                animation,
+                start: () => resolve(animation),
+                then: (r: any, reject?: any) => ready.then(r, reject),
+            }
+        }
+        const started = makeBuilder()
+        const pending = makeBuilder()
+
+        const scope = scopeMotion(() => {
+            addBuilderToScope(started)
+            addBuilderToScope(pending)
+        })
+
+        started.start()
+        await flushMicrotasks()
+        scope.stop()
+        expect(started.animation.stop).toBeCalledTimes(1)
+
+        pending.start()
+        await flushMicrotasks()
+        expect(pending.animation.stop).toBeCalledTimes(1)
+    })
+
+    test("animateLayout() inside a scope uses its root and transition", async () => {
+        document.body.innerHTML = `<div class="root"></div>`
+        const root = document.querySelector(".root")!
+        let builder: any
+
+        scopeMotion(
+            root,
+            () => {
+                builder = animateLayout(() => {})
+            },
+            { transition: { duration: 3 } }
+        )
+
+        expect(builder.scope).toBe(root)
+        expect(builder.defaultOptions).toEqual({ duration: 3 })
+    })
+
+    test("state reports active, stopped and cancelled", () => {
+        const a = scopeMotion()
+        expect(a.state).toBe("active")
+        a.stop()
+        expect(a.state).toBe("stopped")
+
+        const b = scopeMotion()
+        b.cancel()
+        expect(b.state).toBe("cancelled")
+        b.refresh()
+        expect(b.state).toBe("active")
     })
 
     test("calls the cleanup returned from setup", async () => {

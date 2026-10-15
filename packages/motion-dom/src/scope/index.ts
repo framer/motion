@@ -25,7 +25,15 @@ export interface ScopeOptions {
     matchMedia?: MediaConditions
 }
 
+export type ScopeState = "active" | "stopped" | "cancelled"
+
 export interface MotionScope {
+    /**
+     * `"active"` until `stop()` or `cancel()` is called. Lets async work
+     * check whether its scope has gone before it starts animating.
+     */
+    state: ScopeState
+
     /**
      * Whether each named `matchMedia` condition matched when setup last ran.
      */
@@ -145,6 +153,7 @@ export function scopeMotion(...args: [any?, any?, any?]): MotionScope {
     }
 
     const start = () => {
+        scope.state = "active"
         let matches = !queries.length
         scope.media = {}
 
@@ -173,6 +182,7 @@ export function scopeMotion(...args: [any?, any?, any?]): MotionScope {
     }
 
     const kill = (restore?: boolean) => {
+        scope.state = restore ? "cancelled" : "stopped"
         for (const [, query] of queries) {
             query.removeEventListener("change", onChange)
         }
@@ -191,6 +201,7 @@ export function scopeMotion(...args: [any?, any?, any?]): MotionScope {
     }
 
     const scope: MotionScope = {
+        state: "active",
         media: {},
         run: (callback) => runIn(active, callback),
         ignore: (callback) => runIn(undefined, callback),
