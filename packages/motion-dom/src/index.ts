@@ -102,6 +102,10 @@ export * from "./render/utils/keys-transform"
 
 export * from "./resize"
 
+export * from "./scope"
+export { activeScope, addToScope, bindToScope } from "./scope/active"
+export { toMediaQuery } from "./scope/media"
+
 export * from "./stats"
 export * from "./stats/buffer"
 export * from "./stats/types"
