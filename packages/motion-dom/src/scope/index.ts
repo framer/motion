@@ -44,6 +44,12 @@ export interface MotionScope {
     bind<F extends (...args: any[]) => any>(callback: F): F
 
     /**
+     * Run `callback` outside of any scope, so what it starts is not
+     * collected and survives this scope being stopped or reverted.
+     */
+    ignore<R>(callback: () => R): R
+
+    /**
      * Stop everything in this scope and remove its media listeners.
      * Styles are left as they are.
      */
@@ -63,23 +69,20 @@ export interface MotionScope {
 
 export type ScopeSetup = (scope: MotionScope) => void | VoidFunction
 
-const isOptions = (value: unknown): value is ScopeOptions =>
-    !!value &&
-    typeof value === "object" &&
-    !(value instanceof EventTarget) &&
-    !("length" in value)
-
 /**
  * Create a scope that collects the animations, scroll and view
  * listeners, gestures and resize observers started inside it, so they
  * can be stopped or reverted together.
  *
+ * An optional root element or selector comes first. Selectors used
+ * inside the scope resolve within it.
+ *
  * ```js
  * const scope = scopeMotion(
+ *     ".list",
  *     ({ conditions }) => {
  *         animate("li", { x: conditions.desktop ? 100 : 0 })
  *     },
- *     ".list",
  *     { transition: { duration: 0.5 }, matchMedia: { desktop: ">=800" } }
  * )
  * ```
@@ -88,13 +91,17 @@ const isOptions = (value: unknown): value is ScopeOptions =>
  */
 export function scopeMotion(
     setup?: ScopeSetup,
-    rootOrOptions?: ElementOrSelector | ScopeOptions,
-    options: ScopeOptions = {}
-): MotionScope {
-    if (isOptions(rootOrOptions)) {
-        options = rootOrOptions
-        rootOrOptions = undefined
-    }
+    options?: ScopeOptions
+): MotionScope
+export function scopeMotion(
+    root: ElementOrSelector,
+    setup?: ScopeSetup,
+    options?: ScopeOptions
+): MotionScope
+export function scopeMotion(...args: [any?, any?, any?]): MotionScope {
+    const root: ElementOrSelector =
+        typeof args[0] === "function" ? undefined : args.shift()
+    const [setup, options = {}] = args as [ScopeSetup?, ScopeOptions?]
 
     const { transition, matchMedia } = options
     const queries: [string, MediaQueryList][] = []
@@ -103,7 +110,7 @@ export function scopeMotion(
     let isPending = false
 
     const active: ActiveScope = {
-        root: resolveElements(rootOrOptions as ElementOrSelector)[0],
+        root: resolveElements(root)[0],
         transition,
         add(cleanup) {
             cleanups.push(cleanup)
@@ -173,17 +180,20 @@ export function scopeMotion(
         clear(restore)
     }
 
+    const runIn = <R>(target: ActiveScope | undefined, callback: () => R) => {
+        const prev = activeScope.current
+        activeScope.current = target
+        try {
+            return callback()
+        } finally {
+            activeScope.current = prev
+        }
+    }
+
     const scope: MotionScope = {
         conditions: {},
-        run(callback) {
-            const prev = activeScope.current
-            activeScope.current = active
-            try {
-                return callback()
-            } finally {
-                activeScope.current = prev
-            }
-        },
+        run: (callback) => runIn(active, callback),
+        ignore: (callback) => runIn(undefined, callback),
         bind: active.bind,
         stop: () => kill(),
         revert: () => kill(true),

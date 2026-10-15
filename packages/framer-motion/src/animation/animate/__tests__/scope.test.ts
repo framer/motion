@@ -3,6 +3,7 @@ import {
     hover,
     motionValue,
     MotionValue,
+    resolveElements,
     scopeMotion,
     styleEffect,
     toMediaQuery,
@@ -112,6 +113,21 @@ describe("scopeMotion", () => {
         expect(await isAnimating(b)).toBe(false)
     })
 
+    test("ignore() runs without collecting", async () => {
+        const a = motionValue(0)
+        const b = motionValue(0)
+
+        const scope = scopeMotion(({ ignore }) => {
+            animate(a, 100, { duration: 10 })
+            ignore(() => animate(b, 100, { duration: 10 }))
+        })
+
+        scope.stop()
+        expect(await isAnimating(a)).toBe(false)
+        expect(await isAnimating(b)).toBe(true)
+        b.stop()
+    })
+
     test("bind() passes arguments and returns the result", async () => {
         const scope = scopeMotion()
         const add = scope.bind((a: number, b: number) => a + b)
@@ -158,15 +174,40 @@ describe("scopeMotion", () => {
             document.querySelectorAll<HTMLElement>(".item")
         )
 
-        const scope = scopeMotion(() => {
+        const scope = scopeMotion(".b", () => {
             animate(".item", { opacity: 0.5 }, { duration: 10 })
-        }, ".b")
+        })
 
         return nextFrame().then(() => {
             expect(inA.style.opacity).toBe("")
             expect(inB.style.opacity).not.toBe("")
             scope.stop()
         })
+    })
+
+    test("accepts a root element with options, or a root that's missing", () => {
+        document.body.innerHTML = `<div><span></span></div><span></span>`
+        const root = document.body.firstElementChild!
+        let duration = 0
+        let found = 0
+
+        scopeMotion(
+            root,
+            () => {
+                duration = animate(motionValue(0), 1).duration
+                found = resolveElements("span").length
+            },
+            { transition: { duration: 3 } }
+        ).stop()
+
+        expect(duration).toBe(3)
+        expect(found).toBe(1)
+
+        // querySelector() returning null falls back to the document
+        scopeMotion(document.querySelector(".missing"), () => {
+            found = resolveElements("span").length
+        })
+        expect(found).toBe(2)
     })
 
     test("revert() restores inline styles and later animations read the DOM", async () => {
