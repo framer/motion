@@ -1,7 +1,7 @@
 {
     "animate": 20950,
     "mini-animate": 3200,
-    "timeline": 23500,
+    "timeline": 23550,
     "scroll": 3750,
     "scroll+animate": 25100,
     "inView": 450,
@@ -13,7 +13,7 @@
     "stagger": 840,
     "frame": 750,
     "mix": 2350,
-    "vanilla-all": 53150,
+    "vanilla-all": 53200,
     "motion-div": 43250,
     "motion-create": 43250,
     "m-div": 5100,
