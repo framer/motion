@@ -334,4 +334,19 @@ describe("timeline", () => {
 
         expect(scope.animations).toContain(tl)
     })
+
+    test("inherits skipAnimations from a useAnimate() scope", async () => {
+        const v = motionValue(0)
+        const scope = {
+            current: undefined,
+            animations: [],
+            skipAnimations: true,
+        } as any
+        const tl = timeline([[v, 100, { duration: 10 }]], { ...linear, scope })
+
+        await tl
+        await nextFrame()
+        expect(v.get()).toBe(100)
+        expect(tl.time).toBe(0)
+    })
 })

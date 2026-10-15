@@ -238,8 +238,7 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
     }
 
     get time() {
-        this.flush()
-        return this.group ? this.group.time : 0
+        return this.active()?.time ?? 0
     }
 
     set time(time: number) {
@@ -267,13 +266,11 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
     }
 
     get state() {
-        this.flush()
-        return this.group ? this.group.state : "idle"
+        return this.active()?.state ?? "idle"
     }
 
     get startTime() {
-        this.flush()
-        return this.group ? this.group.startTime : null
+        return this.active()?.startTime ?? null
     }
 
     play() {
@@ -320,6 +317,15 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
 
     then(onResolve: VoidFunction, onReject?: VoidFunction) {
         return this.finished.then(onResolve, onReject)
+    }
+
+    /**
+     * The current animations, if any are running. Skipped animations
+     * (skipAnimations, reduced motion) can leave the group empty.
+     */
+    private active() {
+        this.flush()
+        return this.group?.animations.length ? this.group : undefined
     }
 
     private push(entry: Entry) {
@@ -371,8 +377,20 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
             this.isRebuilding = false
         }
 
-        const { defaultTransition, onComplete, autoplay, scope, ...playback } =
+        const { defaultTransition, onComplete, autoplay, scope, ...options } =
             this.options
+
+        /**
+         * Inherit MotionConfig settings from a useAnimate() scope.
+         */
+        const playback: SequenceOptions = {}
+        if (scope?.reduceMotion !== undefined) {
+            playback.reduceMotion = scope.reduceMotion
+        }
+        if (scope?.skipAnimations !== undefined) {
+            playback.skipAnimations = scope.skipAnimations
+        }
+        Object.assign(playback, options)
         const markers = new Map<string, Marker>()
         const info: SequenceInfo = {}
         const animations = animateSequence(
@@ -421,7 +439,7 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
 
         group.speed = this.playbackSpeed
         if (this.isPaused) group.pause()
-        group.time = time
+        if (time) group.time = time
         /**
          * Treat a start from 0 as coming from just before it, so markers
          * at 0 fire.
