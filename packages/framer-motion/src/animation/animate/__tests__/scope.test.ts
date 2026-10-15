@@ -210,7 +210,7 @@ describe("scopeMotion", () => {
         expect(found).toBe(2)
     })
 
-    test("revert() restores inline styles and later animations read the DOM", async () => {
+    test("cancel() restores inline styles and later animations read the DOM", async () => {
         document.body.innerHTML = `<div style="opacity: 0.8"></div>`
         const element = document.body.firstElementChild as HTMLElement
 
@@ -221,7 +221,7 @@ describe("scopeMotion", () => {
         await nextFrame()
         expect(element.style.opacity).toBe("0.2")
 
-        scope.revert()
+        scope.cancel()
         expect(element.getAttribute("style")).toBe("opacity: 0.8")
 
         // The element's values are released, so the next animation
@@ -238,7 +238,7 @@ describe("scopeMotion", () => {
         })
 
         await nextFrame()
-        scope.revert()
+        scope.cancel()
         expect(element.hasAttribute("style")).toBe(false)
     })
 
@@ -309,7 +309,7 @@ describe("scopeMotion", () => {
         expect(cleanup).toBeCalledTimes(1)
     })
 
-    test("a scope created inside another is reverted with it", async () => {
+    test("a scope created inside another is cancelled with it", async () => {
         const x = motionValue(0)
         const outer = scopeMotion(() => {
             scopeMotion(() => {
@@ -334,7 +334,7 @@ describe("scopeMotion", () => {
             expect(setup).toBeCalledTimes(1)
         })
 
-        test("reverts and reruns setup when conditions change", async () => {
+        test("cancels and reruns setup when media conditions change", async () => {
             const desktop = "(width >= 800px)"
             const reduce = "(prefers-reduced-motion: reduce)"
             setMedia(desktop, true)
@@ -344,8 +344,8 @@ describe("scopeMotion", () => {
             const seen: Array<Record<string, boolean>> = []
 
             const scope = scopeMotion(
-                ({ conditions }) => {
-                    seen.push({ ...conditions })
+                ({ media }) => {
+                    seen.push({ ...media })
                     animate(x, 100, { duration: 10 })
                     return cleanup
                 },
@@ -353,7 +353,7 @@ describe("scopeMotion", () => {
             )
 
             expect(seen).toEqual([{ desktop: true, reduce: false }])
-            expect(scope.conditions).toEqual({ desktop: true, reduce: false })
+            expect(scope.media).toEqual({ desktop: true, reduce: false })
 
             // Two conditions change together, setup reruns once
             setMedia(desktop, false)
@@ -387,7 +387,7 @@ describe("scopeMotion", () => {
             expect(getMedia(query).listeners.size).toBe(0)
         })
 
-        test("refresh() reverts and reruns setup", async () => {
+        test("refresh() cancels and reruns setup", async () => {
             const setup = jest.fn()
             const scope = scopeMotion(setup)
             scope.refresh()
@@ -420,5 +420,13 @@ describe("toMediaQuery", () => {
             "(width >= 800px) and (hover: hover) and (pointer: fine)"
         )
         expect(toMediaQuery("print")).toBe("print")
+    })
+
+    test("negates tokens prefixed with !", () => {
+        expect(toMediaQuery("!touch")).toBe("(not ((pointer: coarse)))")
+        expect(toMediaQuery(">=800 !hover")).toBe(
+            "(width >= 800px) and (not ((hover: hover) and (pointer: fine)))"
+        )
+        expect(toMediaQuery("! <800")).toBe("(not ((width < 800px)))")
     })
 })

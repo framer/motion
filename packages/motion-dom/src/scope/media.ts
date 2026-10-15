@@ -17,21 +17,25 @@ const keywords: Record<string, string> = {
  * - A keyword: `reducedMotion`, `motion`, `dark`, `light`, `hover`,
  *   `touch`, `portrait`, `landscape`
  *
- * For instance `">=800 <1200 hover"`.
+ * Prefix a token with `!` to negate it, for instance `">=800 !touch"`.
  */
 export function toMediaQuery(condition: string) {
     if (condition.includes("(")) return condition
 
     return condition
-        .replace(/([<>]=?)\s+/g, "$1")
+        .replace(/([<>!]=?)\s+/g, "$1")
         .trim()
         .split(/\s+/)
         .map((token) => {
-            const width = /^([<>]=?)([\d.]+)([a-z]*)$/.exec(token)
+            const isNot = token[0] === "!"
+            if (isNot) token = token.slice(1)
 
-            return width
+            const width = /^([<>]=?)([\d.]+)([a-z]*)$/.exec(token)
+            const query = width
                 ? `(width ${width[1]} ${width[2]}${width[3] || "px"})`
                 : keywords[token] || token
+
+            return isNot ? `(not (${query}))` : query
         })
         .join(" and ")
 }

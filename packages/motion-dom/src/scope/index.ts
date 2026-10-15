@@ -8,7 +8,7 @@ import { toMediaQuery } from "./media"
 /**
  * A media query or shorthand (see `toMediaQuery`), or named conditions.
  * With named conditions, setup runs when any of them match, and their
- * state is available as `scope.conditions`.
+ * state is available as `scope.media`.
  */
 export type MediaConditions = string | Record<string, string>
 
@@ -20,7 +20,7 @@ export interface ScopeOptions {
 
     /**
      * Only run setup while these conditions match. When they change, the
-     * scope is reverted and setup runs again.
+     * scope is cancelled and setup runs again.
      */
     matchMedia?: MediaConditions
 }
@@ -29,7 +29,7 @@ export interface MotionScope {
     /**
      * Whether each named `matchMedia` condition matched when setup last ran.
      */
-    conditions: Record<string, boolean>
+    media: Record<string, boolean>
 
     /**
      * Run `callback` in this scope, so animations, scroll and view
@@ -45,7 +45,7 @@ export interface MotionScope {
 
     /**
      * Run `callback` outside of any scope, so what it starts is not
-     * collected and survives this scope being stopped or reverted.
+     * collected and survives this scope being stopped or cancelled.
      */
     ignore<R>(callback: () => R): R
 
@@ -59,10 +59,10 @@ export interface MotionScope {
      * As `stop()`, and restore the inline styles of every element
      * animated in this scope to what they were before.
      */
-    revert(): void
+    cancel(): void
 
     /**
-     * Revert, then run setup again if the media conditions match.
+     * Cancel, then run setup again if the media conditions match.
      */
     refresh(): void
 }
@@ -72,7 +72,7 @@ export type ScopeSetup = (scope: MotionScope) => void | VoidFunction
 /**
  * Create a scope that collects the animations, scroll and view
  * listeners, gestures and resize observers started inside it, so they
- * can be stopped or reverted together.
+ * can be stopped or cancelled together.
  *
  * An optional root element or selector comes first. Selectors used
  * inside the scope resolve within it.
@@ -80,8 +80,8 @@ export type ScopeSetup = (scope: MotionScope) => void | VoidFunction
  * ```js
  * const scope = scopeMotion(
  *     ".list",
- *     ({ conditions }) => {
- *         animate("li", { x: conditions.desktop ? 100 : 0 })
+ *     ({ media }) => {
+ *         animate("li", { x: media.desktop ? 100 : 0 })
  *     },
  *     { transition: { duration: 0.5 }, matchMedia: { desktop: ">=800" } }
  * )
@@ -146,10 +146,10 @@ export function scopeMotion(...args: [any?, any?, any?]): MotionScope {
 
     const start = () => {
         let matches = !queries.length
-        scope.conditions = {}
+        scope.media = {}
 
         for (const [name, query] of queries) {
-            matches = (scope.conditions[name] = query.matches) || matches
+            matches = (scope.media[name] = query.matches) || matches
         }
 
         if (matches && setup) {
@@ -191,12 +191,12 @@ export function scopeMotion(...args: [any?, any?, any?]): MotionScope {
     }
 
     const scope: MotionScope = {
-        conditions: {},
+        media: {},
         run: (callback) => runIn(active, callback),
         ignore: (callback) => runIn(undefined, callback),
         bind: active.bind,
         stop: () => kill(),
-        revert: () => kill(true),
+        cancel: () => kill(true),
         refresh() {
             clear(true)
             start()
@@ -217,9 +217,9 @@ export function scopeMotion(...args: [any?, any?, any?]): MotionScope {
     }
 
     /**
-     * A scope created inside another is reverted with it.
+     * A scope created inside another is cancelled with it.
      */
-    addToScope(scope.revert)
+    addToScope(scope.cancel)
 
     start()
 
