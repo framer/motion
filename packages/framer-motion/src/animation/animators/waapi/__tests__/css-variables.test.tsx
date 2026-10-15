@@ -129,13 +129,15 @@ describe("css variables", () => {
             rerender(<Component />)
         })
 
+        /**
+         * Usually there's one update, but a slow first frame starts the
+         * animation from then, adding an update at its start.
+         */
         const results = await promise
-        expect(results).toEqual([
-            {
-                "--a": "20px",
-                "--color": "#000",
-            },
-        ])
+        expect(results[results.length - 1]).toEqual({
+            "--a": "20px",
+            "--color": "#000",
+        })
     })
 
     // Skipping because this test always succeeds, no matter what style values you check for ¯\\_(ツ)_/¯
