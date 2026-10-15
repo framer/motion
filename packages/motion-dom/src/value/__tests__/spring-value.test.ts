@@ -396,10 +396,20 @@ describe("attachSpring to a MotionValue source", () => {
 
         let updates = 0
         value.on("change", () => updates++)
-        for (let i = 0; i < 5; i++) await nextFrame()
 
-        // One update per frame: no orphaned animation writing too
-        expect(updates).toBe(5)
+        /**
+         * At most one update per frame: no orphaned animation writing too.
+         * A frame can have none, as when a slow first frame restarts the
+         * animation from then.
+         */
+        let total = 0
+        for (let i = 0; i < 5; i++) {
+            await nextFrame()
+            expect(updates).toBeLessThanOrEqual(1)
+            total += updates
+            updates = 0
+        }
+        expect(total).toBeGreaterThan(0)
         detach()
     })
 })

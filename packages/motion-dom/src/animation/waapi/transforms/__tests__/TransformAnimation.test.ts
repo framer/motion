@@ -558,16 +558,21 @@ describe("independent transform acceleration", () => {
     it("keeps every repeat of a short animation that repeats many times", async () => {
         const element = document.createElement("div")
 
-        animateElement(
+        const [x] = animateElement(
             element,
             { x: [0, 100] },
             { duration: 0.1, ease: "linear", repeat: 199 }
         )
         await nextFrame()
 
+        /**
+         * The WAAPI animation is built from when it's committed, which can
+         * be later than the animation started if the first frame is slow.
+         */
         const [animation] = running(element)
-        expect(xAt(animation, 150)).toBeCloseTo(50, -1)
-        expect(xAt(animation, 10_050)).toBeCloseTo(50, -1)
+        const built = animation.startTime! - x.startTime!
+        expect(xAt(animation, 150 - built)).toBeCloseTo(50, -1)
+        expect(xAt(animation, 10_050 - built)).toBeCloseTo(50, -1)
     })
 
     it("keeps keyframes that return to where they started", async () => {
