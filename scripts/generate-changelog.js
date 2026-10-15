@@ -49,6 +49,33 @@ function getVersionType(version) {
 }
 
 /**
+ * Compare two x.y.z versions. Negative when a is older than b.
+ */
+function compareVersions(a, b) {
+    const left = a.replace(/[\[\]]/g, "").split(".").map(Number)
+    const right = b.replace(/[\[\]]/g, "").split(".").map(Number)
+    for (let i = 0; i < 3; i++) {
+        if (left[i] !== right[i]) return left[i] - right[i]
+    }
+    return 0
+}
+
+/**
+ * The version this repo publishes. Changelog entries newer than this
+ * are written ahead of a release and must not reach the site.
+ */
+function getReleaseVersion() {
+    const packagePath = path.join(
+        __dirname,
+        "..",
+        "packages",
+        "motion",
+        "package.json"
+    )
+    return JSON.parse(fs.readFileSync(packagePath, "utf8")).version
+}
+
+/**
  * Escape CSV field - handle quotes and commas
  */
 function escapeCsvField(field) {
@@ -126,9 +153,21 @@ function parseChangelog() {
             entries.push(currentEntry)
         }
 
+        // Drop entries for versions that haven't been released yet
+        const releaseVersion = getReleaseVersion()
+        const released = entries.filter(
+            (entry) => compareVersions(entry.version, releaseVersion) <= 0
+        )
+        const skipped = entries.length - released.length
+        if (skipped) {
+            console.log(
+                `⏭️  Skipped ${skipped} entries newer than ${releaseVersion}`
+            )
+        }
+
         // Generate CSV
         const csvHeaders = "version,date,content,type,slug\n"
-        const csvRows = entries
+        const csvRows = released
             .map((entry) => {
                 return [
                     escapeCsvField(entry.version),
@@ -147,7 +186,7 @@ function parseChangelog() {
 
         console.log(`✅ Successfully converted changelog to CSV`)
         console.log(`📁 Output: ${csvPath}`)
-        console.log(`📊 Processed ${entries.length} changelog entries`)
+        console.log(`📊 Processed ${released.length} changelog entries`)
     } catch (error) {
         console.error("❌ Error processing changelog:", error.message)
         process.exit(1)
