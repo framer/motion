@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion"
-import { forwardRef, useState, version } from "react"
+import { forwardRef, useEffect, useState, version } from "react"
 
 /**
  * Repro for #2503 — "AnimatePresence popLayout does not overlay the component
@@ -14,6 +14,8 @@ import { forwardRef, useState, version } from "react"
  * ?variant=spread      — non-forwardRef function component that spreads its
  *                        props onto the motion element (React 19 passes refs
  *                        via props, so this may behave differently to `plain`)
+ * ?variant=nested      — non-forwardRef function component whose motion
+ *                        element contains another exiting motion element
  * ?variant=forwardref  — same component wrapped in forwardRef (suggested fix)
  * ?variant=wrapped     — child wrapped in a motion.div (suggested fix)
  */
@@ -63,6 +65,37 @@ const SpreadRoutes = ({ id, color, ...rest }: RouteProps) => (
     />
 )
 
+/**
+ * Function component whose outermost motion element contains another motion
+ * element with an exit animation. The outer one should be popped. The inner
+ * one mounts after the outer, so it isn't simply the first to register.
+ */
+const NestedRoutes = ({ id, color }: RouteProps) => {
+    const [showInner, setShowInner] = useState(false)
+    useEffect(() => setShowInner(true), [])
+
+    return (
+        <motion.div
+            id={id}
+            className="route"
+            initial={{ x: 100 }}
+            animate={{ x: 0 }}
+            exit={{ x: -100 }}
+            transition={{ duration: 10, ease: "linear" }}
+            style={{ ...boxStyles, backgroundColor: color }}
+        >
+            {showInner && (
+                <motion.div
+                    id={`${id}-inner`}
+                    exit={{ opacity: 0.5 }}
+                    transition={{ duration: 10, ease: "linear" }}
+                    style={{ width: 50, height: 50 }}
+                />
+            )}
+        </motion.div>
+    )
+}
+
 const ForwardRefRoutes = forwardRef<HTMLDivElement, RouteProps>(
     function ForwardRefRoutes({ id, color }, ref) {
         return (
@@ -91,6 +124,8 @@ export const App = () => {
     let child: React.ReactElement
     if (variant === "spread") {
         child = <SpreadRoutes key={path} id={id} color={color} />
+    } else if (variant === "nested") {
+        child = <NestedRoutes key={path} id={id} color={color} />
     } else if (variant === "forwardref") {
         child = <ForwardRefRoutes key={path} id={id} color={color} />
     } else if (variant === "wrapped") {

@@ -70,12 +70,20 @@ test.describe("Issue #2503", () => {
         // ...so the entering child takes the exiting child's place.
         expect(Math.abs(entering!.top - firstBefore!.top)).toBeLessThan(2)
 
-        // ...and no ref warning is logged.
+        /**
+         * ...and React 19 logs no ref warning. React 18 still logs its own
+         * dev-only "Function components cannot be given refs", as PopChild
+         * still offers the ref, which forwardRef components need.
+         */
+        const reactMajor = Number(
+            (await page.locator("#react-version").textContent())!.split(".")[0]
+        )
         expect(
             warnings.filter((text) =>
-                /Function components cannot be given refs|Cannot assign to read only|Accessing element\.ref/.test(
-                    text
-                )
+                (reactMajor >= 19
+                    ? /Function components cannot be given refs|Cannot assign to read only|Accessing element\.ref/
+                    : /Cannot assign to read only|Accessing element\.ref/
+                ).test(text)
             )
         ).toEqual([])
     })
@@ -83,21 +91,14 @@ test.describe("Issue #2503", () => {
     /**
      * In React 19 refs are passed via props, so a function component that
      * spreads its props onto a host element receives PopChild's ref even
-     * without forwardRef. In React 18 it does not.
+     * without forwardRef. In React 18 it does not, so this falls back to the
+     * outermost motion element.
      */
     test("spread-props function component child", async ({ page }) => {
         const warnings = collectWarnings(page)
 
         await page.goto("?test=issue-2503&variant=spread")
         await expect(page.locator("#first")).toBeVisible()
-
-        const reactMajor = Number(
-            (await page.locator("#react-version").textContent())!.split(".")[0]
-        )
-        test.skip(
-            reactMajor < 19,
-            "React 18 doesn't pass refs via props, so this variant can't work"
-        )
 
         const firstBefore = await measure(page, "first")
 
@@ -120,6 +121,28 @@ test.describe("Issue #2503", () => {
 
         expect(exiting!.hasPopId).toBe(true)
         expect(exiting!.position).toBe("absolute")
+        expect(Math.abs(entering!.top - firstBefore!.top)).toBeLessThan(2)
+    })
+
+    test("pops the outermost motion element of a non-forwardRef child", async ({
+        page,
+    }) => {
+        await page.goto("?test=issue-2503&variant=nested")
+        await expect(page.locator("#first-inner")).toBeVisible()
+
+        const firstBefore = await measure(page, "first")
+
+        await page.click("#toggle")
+        await expect(page.locator("#second")).toBeVisible()
+
+        const exiting = await measure(page, "first")
+        const exitingInner = await measure(page, "first-inner")
+        const entering = await measure(page, "second")
+
+        expect(exiting!.hasPopId).toBe(true)
+        expect(exiting!.position).toBe("absolute")
+        expect(exitingInner!.hasPopId).toBe(false)
+        expect(exitingInner!.position).toBe("static")
         expect(Math.abs(entering!.top - firstBefore!.top)).toBeLessThan(2)
     })
 
