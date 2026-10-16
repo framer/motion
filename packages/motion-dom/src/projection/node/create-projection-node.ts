@@ -866,7 +866,19 @@ export function createProjectionNode<I>({
 
         clearAllSnapshots() {
             this.nodes!.forEach(clearSnapshot)
-            this.sharedNodes.forEach(removeLeadSnapshots)
+
+            /**
+             * A stack's last member can unmount while a replacement with the
+             * same layoutId mounts in the same commit, so the stack (and its
+             * lead) must outlive the unmount for the replacement to resume
+             * from it. By now that handoff has happened, so stacks that are
+             * still empty only retain unmounted nodes and can be released.
+             */
+            this.sharedNodes.forEach((stack, layoutId) =>
+                stack.members.length
+                    ? stack.removeLeadSnapshot()
+                    : this.sharedNodes.delete(layoutId)
+            )
         }
 
         projectionUpdateScheduled = false
@@ -2475,10 +2487,6 @@ function calcProjection(node: IProjectionNode) {
 
 function resetSkewAndRotation(node: IProjectionNode) {
     node.resetSkewAndRotation()
-}
-
-function removeLeadSnapshots(stack: NodeStack) {
-    stack.removeLeadSnapshot()
 }
 
 function mixAxisDeltaLinear(output: AxisDelta, delta: AxisDelta, p: number) {
