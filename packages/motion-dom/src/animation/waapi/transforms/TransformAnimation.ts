@@ -86,6 +86,12 @@ interface TransformGroup extends TransformGroupHooks {
      * not be able to follow, like a seek or an outside write.
      */
     schedule(needsBuild: boolean, isChurn?: boolean): void
+
+    /**
+     * An animation was stopped. Rebuild without it or, if it was the last,
+     * end the group.
+     */
+    release(): void
     demote(canReturn?: boolean): void
 }
 
@@ -242,7 +248,7 @@ export class TransformAnimation<
                 stop: () => {
                     js.stop()
                     const group = getGroup(element)
-                    group?.schedule(!group.isFinishing)
+                    group && !group.isFinishing && group.release()
                 },
             } as TransformDriverControls
         }
@@ -457,8 +463,13 @@ export class TransformAnimation<
         return super.time
     }
 
+    /**
+     * A JS animation sets its motion value on a seek, so do the same,
+     * rather than leave it to be set when this next stops.
+     */
     set time(newTime: number) {
         super.time = newTime
+        this.isAccelerated() && this.sync()
     }
 
     /**
@@ -489,6 +500,7 @@ function createGroup(owner: TransformOwner): TransformGroup {
     let segments: Segment[] = []
     let needsBuild = false
     let isScheduled = false
+    let isEnded = false
     let hasChurned = false
     let lastChurn = -Infinity
 
@@ -1038,6 +1050,23 @@ function createGroup(owner: TransformOwner): TransformGroup {
         return true
     }
 
+    /**
+     * If no animations are left, write where they got to and cancel the
+     * WAAPI animations. Returns whether the group ended.
+     */
+    const end = () => {
+        tracks.forEach(({ state }, track) => {
+            if (state === "idle" || state === "finished") tracks.delete(track)
+        })
+
+        if (tracks.size) return false
+
+        isEnded = true
+        transformGroups.delete(element)
+        group.isJS || stop()
+        return true
+    }
+
     const build = () => {
         const now = time.now()
 
@@ -1072,15 +1101,7 @@ function createGroup(owner: TransformOwner): TransformGroup {
 
         isScheduled = false
 
-        tracks.forEach(({ state }, track) => {
-            if (state === "idle" || state === "finished") tracks.delete(track)
-        })
-
-        if (!tracks.size) {
-            transformGroups.delete(element)
-            group.isJS || stop()
-            return
-        }
+        if (isEnded || end()) return
 
         for (const track of tracks) {
             if (!track.canAccelerate) return group.demote(true)
@@ -1129,6 +1150,15 @@ function createGroup(owner: TransformOwner): TransformGroup {
                     ? frame.render(build, false, true)
                     : queueMicrotask(build)
             }
+        },
+
+        /**
+         * End the group now, rather than when it next builds, so the
+         * element's transform is the caller's again as soon as its last
+         * animation is stopped.
+         */
+        release() {
+            end() || group.schedule(true)
         },
 
         /**

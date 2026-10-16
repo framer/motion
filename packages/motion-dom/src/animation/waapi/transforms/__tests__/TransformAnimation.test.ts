@@ -727,4 +727,35 @@ describe("independent transform acceleration", () => {
 
         expect(animations.filter((a) => a.element === element)).toHaveLength(0)
     })
+
+    it("leaves the element's transform to its caller once stopped", async () => {
+        const element = document.createElement("div")
+
+        const animations = animateElement(
+            element,
+            { x: [0, 100], scale: [1, 2] },
+            { duration: 1, ease: "linear" }
+        )
+        await nextFrame()
+        for (const animation of animations) {
+            animation.pause()
+            animation.time = 0.5
+        }
+        await nextFrame()
+
+        for (const animation of animations) animation.stop()
+
+        /**
+         * It stops where it was, without waiting for a frame.
+         */
+        expect(running(element)).toHaveLength(0)
+        expect(element.style.transform).toBe("translateX(50px) scale(1.5)")
+
+        element.style.transform = "translateX(-40px)"
+        await nextFrame()
+        await nextFrame()
+
+        expect(element.style.transform).toBe("translateX(-40px)")
+    })
 })
+
