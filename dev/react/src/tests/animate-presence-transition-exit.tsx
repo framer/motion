@@ -89,6 +89,9 @@ export const App = () => {
                         id={`item-${id}`}
                         className="item"
                         exit={{ opacity: 0 }}
+                        onAnimationComplete={() =>
+                            id === "B" && mark("exitAnimationComplete")
+                        }
                         transition={{ duration: 0.3, ease: "linear" }}
                         style={{ width: 100, height: 100, background: "red" }}
                     />

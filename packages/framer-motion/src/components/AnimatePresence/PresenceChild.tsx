@@ -6,6 +6,7 @@ import {
     PresenceContext,
     type PresenceContextProps,
 } from "../../context/PresenceContext"
+import type { VisualElement } from "motion-dom"
 import { VariantLabels } from "../../motion/types"
 import { useConstant } from "../../utils/use-constant"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
@@ -39,6 +40,13 @@ export const PresenceChild = ({
     const presenceChildren = useConstant(newChildrenMap)
     const id = useId()
 
+    /**
+     * The outermost motion component within this child. popLayout falls
+     * back to its element when the child can't be given a ref, for instance
+     * a function component that doesn't forward refs (#2503).
+     */
+    const popNode = useRef<VisualElement>()
+
     // Written in a layout effect (not render) so discarded concurrent
     // renders can't leave the refs pointing at uncommitted state.
     const isPresentRef = useRef(isPresent)
@@ -65,8 +73,11 @@ export const PresenceChild = ({
 
                 onExitComplete && onExitComplete()
             },
-            register: (childId: string) => {
+            register: (childId: string, node?: VisualElement) => {
                 presenceChildren.set(childId, false)
+                if (node && node.parent?.presenceContext?.id !== id) {
+                    popNode.current = node
+                }
                 return () => {
                     presenceChildren.delete(childId)
                     !isPresentRef.current &&
@@ -102,7 +113,7 @@ export const PresenceChild = ({
     }, [isPresent])
 
     children = (
-        <PopChild pop={mode === "popLayout"} isPresent={isPresent} anchorX={anchorX} anchorY={anchorY} root={root}>
+        <PopChild pop={mode === "popLayout"} isPresent={isPresent} anchorX={anchorX} anchorY={anchorY} root={root} popNode={popNode}>
             {children}
         </PopChild>
     )

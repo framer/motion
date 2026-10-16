@@ -97,6 +97,24 @@ describe("keyframe arc", () => {
             })
     })
 
+    it("deflects y perpendicular when driven by useAnimate()", () => {
+        cy.visit("?test=transition-arc&variant=use-animate&freeze")
+            .wait(50)
+            .get("#toggle")
+            .click()
+            .wait(100)
+            .get("#indicator")
+            .should(([$el]: any) => {
+                // Same geometry as the motion.div keyframe arc above.
+                const r = $el.getBoundingClientRect()
+                expect(r.left, "x is roughly midway").to.be.closeTo(50 + 200, 25)
+                expect(
+                    Math.abs(r.top - 200),
+                    "y has deflected ~200px from baseline"
+                ).to.be.greaterThan(150)
+            })
+    })
+
     it("rotate option rotates the element along the curve", () => {
         // freezeAt=0.25: at t=0.25 the bezier tangent has clearly diverged
         // from the baseline tangent so rotation is non-zero. (At t=0.5 it

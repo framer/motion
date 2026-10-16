@@ -35,4 +35,23 @@ describe("animateTarget in a non-browser environment", () => {
             animateTarget(createVisualElement(), { opacity: 1 })
         ).not.toThrow()
     })
+
+    it("still calls a path's deprecated animateVisualElement hook", () => {
+        const visualElement = createVisualElement()
+        const animateVisualElement = jest.fn((_ve, target) => {
+            delete target.x
+        })
+        const path = {
+            animateVisualElement,
+            interpolateProjection: () => undefined,
+        } as any
+
+        animateTarget(visualElement, {
+            x: 100,
+            transition: { path },
+        } as any)
+
+        expect(animateVisualElement).toHaveBeenCalledTimes(1)
+        expect(animateVisualElement.mock.calls[0][0]).toBe(visualElement)
+    })
 })

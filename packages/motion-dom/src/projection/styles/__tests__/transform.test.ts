@@ -61,6 +61,16 @@ describe("buildProjectionTransform", () => {
         )
     })
 
+    it("Applies rotateZ (#2611)", () => {
+        expect(
+            buildProjectionTransform(
+                createDelta(),
+                { x: 1, y: 1 },
+                { rotateX: 10, rotateY: 20, rotateZ: 45 }
+            )
+        ).toEqual("rotateX(10deg) rotateY(20deg) rotateZ(45deg) ")
+    })
+
     it("Doesn't apply unneccessary translation", () => {
         const delta = {
             x: {
