@@ -3,6 +3,7 @@ import { svgEffect } from "../../../effects/svg"
 import { frame } from "../../../frameloop"
 import { HTMLVisualElement } from "../../../render/html/HTMLVisualElement"
 import { motionValue } from "../../../value"
+import { arc } from "../../utils/arc"
 import { animateElement, handOffElementState } from "../element"
 
 async function nextFrame() {
@@ -276,6 +277,118 @@ describe("animateElement", () => {
 
         expect(() => handOffElementState(element, visualElement)).not.toThrow()
         expect(styleEffect.state(element)).toBeUndefined()
+    })
+
+    describe("with transition.path", () => {
+        /**
+         * Frozen at t=0.5 of a 0 -> 400 horizontal chord. arc({ strength: 1 })
+         * puts the control point 400px off the chord, so the curve passes
+         * 200px off it at the midpoint. A straight-line animation would
+         * leave y at 0.
+         */
+        const frozen = { duration: 10, ease: () => 0.5 }
+
+        it("moves x and y along the arc", async () => {
+            const element = document.createElement("div")
+            const keyframes = { x: 400, y: 0 }
+
+            const animations = animateElement(element, keyframes, {
+                ...frozen,
+                path: arc({ strength: 1 }),
+            })
+
+            await nextFrame()
+            await nextFrame()
+
+            expect(styleEffect.get(element, "x")!.get()).toBeCloseTo(200)
+            expect(styleEffect.get(element, "y")!.get()).toBeCloseTo(200)
+            expect(element.style.transform).toBe(
+                "translateX(200px) translateY(200px)"
+            )
+            // The caller's keyframes are left as they were
+            expect(keyframes).toEqual({ x: 400, y: 0 })
+
+            animations.forEach((animation) => animation.stop())
+        })
+
+        it("rotates the element along the arc", async () => {
+            const element = document.createElement("div")
+
+            const animations = animateElement(
+                element,
+                { x: 400, y: 0 },
+                { duration: 10, ease: () => 0.25, path: arc({ rotate: true }) }
+            )
+
+            await nextFrame()
+            await nextFrame()
+
+            expect(element.style.transform).toMatch(/rotate\(-?[1-9]/)
+
+            animations.forEach((animation) => animation.stop())
+        })
+
+        it("lands on the target", async () => {
+            const element = document.createElement("div")
+
+            const animations = animateElement(
+                element,
+                { x: 400, y: 100 },
+                { duration: 0.05, path: arc({ rotate: true }) }
+            )
+
+            await Promise.all(animations.map((animation) => animation.finished))
+            await nextFrame()
+
+            expect(element.style.transform).toBe(
+                "translateX(400px) translateY(100px)"
+            )
+        })
+
+        it("rotates SVG elements without touching their stroke", async () => {
+            const rect = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "rect"
+            ) as SVGElement
+            rect.setAttribute("stroke-dasharray", "4 2")
+
+            const animations = animateElement(
+                rect,
+                { x: 400, y: 0 },
+                { duration: 10, ease: () => 0.25, path: arc({ rotate: true }) }
+            )
+
+            await nextFrame()
+            await nextFrame()
+
+            expect(rect.style.transform).toMatch(/rotate\(-?[1-9]/)
+            expect(rect.getAttribute("stroke-dasharray")).toBe("4 2")
+            expect(rect.hasAttribute("pathLength")).toBe(false)
+
+            animations.forEach((animation) => animation.stop())
+        })
+
+        it("moves a VisualElement's x and y along the arc", async () => {
+            const element = document.createElement("div")
+            const visualElement = createVisualElement()
+            visualElement.mount(element)
+
+            const animations = animateElement(
+                element,
+                { x: 400, y: 0 },
+                { ...frozen, path: arc({ strength: 1 }) },
+                visualElement
+            )
+
+            await nextFrame()
+            await nextFrame()
+
+            expect(visualElement.getValue("x")!.get()).toBeCloseTo(200)
+            expect(visualElement.getValue("y")!.get()).toBeCloseTo(200)
+
+            animations.forEach((animation) => animation.stop())
+            visualElement.unmount()
+        })
     })
 
     describe("on SVG elements", () => {
