@@ -508,4 +508,42 @@ test.describe("animate() independent transforms", () => {
 
         expect(count).toBe(1)
     })
+
+    /**
+     * A round trip built from where it started, give or take a float
+     * residue, can't share one easing. Stretching it over that residue
+     * gives an easing the compositor can't render, and the element stops
+     * painting, although getComputedStyle reads right.
+     */
+    test("a round trip from a float residue keeps painting", async ({
+        page,
+    }) => {
+        await page.evaluate(async () => {
+            const element = document.getElementById("a")!
+            element.style.marginTop = "50px"
+            window.Motion.animate(
+                element,
+                { y: [-1e-30, -18, 0] },
+                { duration: 1.2, ease: "easeInOut", repeat: Infinity }
+            )
+            await window.waitFrame(300)
+        })
+
+        const screenshot = await page.screenshot()
+        const color = await page.evaluate(async (src) => {
+            const image = new Image()
+            image.src = src
+            await image.decode()
+            const canvas = document.createElement("canvas")
+            canvas.width = image.width
+            canvas.height = image.height
+            const context = canvas.getContext("2d")!
+            context.drawImage(image, 0, 0)
+            return Array.from(context.getImageData(50, 100, 1, 1).data)
+        }, "data:image/png;base64," + screenshot.toString("base64"))
+
+        // The box's colour, #0077ff, not the white page behind it.
+        expect(color[0]).toBeLessThan(50)
+        expect(color[2]).toBeGreaterThan(200)
+    })
 })

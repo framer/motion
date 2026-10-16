@@ -599,6 +599,64 @@ describe("independent transform acceleration", () => {
         expect(xAt(animation, 75)).toBeCloseTo(100, -1)
     })
 
+    /**
+     * A value that ends where it started can't follow a shared easing, as
+     * its progress has no range to be a fraction of. Built a little after
+     * it starts, or from a float residue like -1e-30, it ends a tiny way
+     * from where it started. Dividing by that would stretch the easing to
+     * huge values (like linear(0, -5e+27, ...)), and Chromium's compositor
+     * stops painting the element. The round trip must be in the keyframes
+     * instead.
+     */
+    describe("keeps a round trip in the keyframes", () => {
+        const readY = (transform: string) =>
+            parseFloat(transform.match(/translateY\((.+?)px\)/)![1])
+
+        const expectRoundTrip = (element: Element) => {
+            const [{ keyframes, options }] = running(element)
+            const ys = keyframes.transform.map(readY)
+            const easing = options.easing as string
+
+            expect(Math.min(...ys)).toBeCloseTo(-18, 0)
+            if (easing.startsWith("linear(")) {
+                for (const item of easing.slice(7, -1).split(",")) {
+                    expect(Math.abs(parseFloat(item))).toBeLessThan(2)
+                }
+            }
+        }
+
+        it.each([
+            ["built just after it starts", [0, -18, 0]],
+            ["from a float residue", [-1e-30, -18, 0]],
+        ])("%s", async (_, y) => {
+            const element = document.createElement("div")
+
+            animateElement(element, { y }, { duration: 1.2, ease: "easeInOut" })
+            await nextFrame()
+
+            expectRoundTrip(element)
+        })
+
+        it("from a float residue when it repeats forever", async () => {
+            const element = document.createElement("div")
+
+            animateElement(
+                element,
+                { y: [-1e-30, -18, 0] },
+                {
+                    duration: 1.2,
+                    ease: "easeInOut",
+                    repeat: Infinity,
+                    repeatDelay: 0.9,
+                    delay: 0.66,
+                }
+            )
+            await nextFrame()
+
+            expectRoundTrip(element)
+        })
+    })
+
     it("doesn't hide a transform bound with styleEffect", async () => {
         const element = document.createElement("div")
         styleEffect(element, { transform: motionValue("rotate(45deg)") })

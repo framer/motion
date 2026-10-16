@@ -628,9 +628,24 @@ function createGroup(owner: TransformOwner): TransformGroup {
         for (const track of moving) {
             const values = at.map((t) => track.numberAt(t))
             const [first] = values
-            const range = values[values.length - 1] - first
-            const progress = values.map((value) =>
-                range ? (value - first) / range : value - first
+            const changes = values.map((value) => value - first)
+            const end = changes[changes.length - 1]
+
+            /**
+             * A value that ends only a tiny way from where it started, as
+             * a round trip does if it's built just after it starts, or
+             * from a float residue, ends where it started. Dividing by
+             * that tiny range would stretch the easing to values the
+             * compositor can't render.
+             */
+            const range = changes.some(
+                (change) => Math.abs(change) * easingTolerance > Math.abs(end)
+            )
+                ? 0
+                : end
+
+            const progress = changes.map((change) =>
+                range ? change / range : change
             )
 
             /**
