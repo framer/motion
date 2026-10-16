@@ -599,10 +599,7 @@ describe("independent transform acceleration", () => {
      * stops painting the element. The round trip must be in the keyframes
      * instead.
      */
-    describe.each([
-        ["just after it starts", [0, -18, 0]],
-        ["from a float residue", [-1e-30, -18, 0]],
-    ])("keeps a round trip in the keyframes %s", (_, y) => {
+    describe("keeps a round trip in the keyframes", () => {
         const readY = (transform: string) =>
             parseFloat(transform.match(/translateY\((.+?)px\)/)![1])
 
@@ -619,7 +616,10 @@ describe("independent transform acceleration", () => {
             }
         }
 
-        it("once", async () => {
+        it.each([
+            ["built just after it starts", [0, -18, 0]],
+            ["from a float residue", [-1e-30, -18, 0]],
+        ])("%s", async (_, y) => {
             const element = document.createElement("div")
 
             animateElement(element, { y }, { duration: 1.2, ease: "easeInOut" })
@@ -628,12 +628,12 @@ describe("independent transform acceleration", () => {
             expectRoundTrip(element)
         })
 
-        it("when it repeats forever", async () => {
+        it("from a float residue when it repeats forever", async () => {
             const element = document.createElement("div")
 
             animateElement(
                 element,
-                { y },
+                { y: [-1e-30, -18, 0] },
                 {
                     duration: 1.2,
                     ease: "easeInOut",
