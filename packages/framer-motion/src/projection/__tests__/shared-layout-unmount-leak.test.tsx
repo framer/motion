@@ -134,7 +134,7 @@ describe("shared layout stacks are released on unmount (#3940)", () => {
         const ref = createRef<HTMLDivElement>()
 
         const App = ({ show }: { show: boolean }) =>
-            show ? <motion.div ref={ref} layoutId="box" /> : null
+            show ? <motion.div ref={ref} layoutId="remounted" /> : null
 
         const anchor = createRef<HTMLDivElement>()
         const { rerender } = render(
@@ -153,7 +153,7 @@ describe("shared layout stacks are released on unmount (#3940)", () => {
             </>
         )
         await settle()
-        expect(root.sharedNodes.has("box")).toBe(false)
+        expect(root.sharedNodes.has("remounted")).toBe(false)
 
         rerender(
             <>
@@ -163,7 +163,7 @@ describe("shared layout stacks are released on unmount (#3940)", () => {
         )
         const node = visualElementStore.get(ref.current!)!
             .projection as IProjectionNode
-        const stack = root.sharedNodes.get("box")!
+        const stack = root.sharedNodes.get("remounted")!
         expect(stack.members).toEqual([node])
         expect(stack.lead).toBe(node)
         expect(stack.prevLead).toBeUndefined()
