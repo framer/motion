@@ -1,8 +1,6 @@
 import { Easing } from "motion-utils"
 import type { Delta } from "motion-utils"
-import type { TargetAndTransition } from "../node/types"
 import { SVGAttributes } from "../render/svg/types"
-import type { VisualElement } from "../render/VisualElement"
 import { MotionValue } from "../value"
 import { Driver } from "./drivers/types"
 import { KeyframeResolver } from "./keyframes/KeyframesResolver"
@@ -678,13 +676,18 @@ export interface PathInterpolator {
 
 /**
  * Returned by a path factory such as `arc()` and passed to `transition.path`.
- * Implements both the keyframe-animation hook (`animateVisualElement`) and
- * the layout-projection hook (`interpolateProjection`).
+ * Implements both the keyframe-animation hook (`animateValues`) and the
+ * layout-projection hook (`interpolateProjection`).
  */
 export interface MotionPath {
-    animateVisualElement(
-        visualElement: VisualElement,
-        target: TargetAndTransition,
+    /**
+     * Claim `x`/`y` from `target` (deleting them) and animate them, via
+     * the motion values `getValue` returns, along the path. Called for
+     * both VisualElements and elements animated by `animate()`.
+     */
+    animateValues(
+        getValue: (key: string) => MotionValue | undefined,
+        target: { [key: string]: unknown },
         transition: Transition | undefined,
         delay: number,
         animations: AnimationPlaybackControlsWithThen[]

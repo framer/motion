@@ -60,8 +60,12 @@ export function animateTarget(
     const path = (transition as { path?: MotionPath } | undefined)?.path
     if (path) {
         // path mutates `target` to claim x/y; loop below skips them.
-        path.animateVisualElement(
-            visualElement,
+        path.animateValues(
+            (key) =>
+                visualElement.getValue(
+                    key,
+                    visualElement.latestValues[key] ?? 0
+                ),
             target,
             transition,
             delay,

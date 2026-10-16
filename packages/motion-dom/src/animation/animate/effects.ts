@@ -67,8 +67,14 @@ export function animateValues(
     element?: AnimationElement
 ): AnimationPlaybackControlsWithThen[] {
     const animations: AnimationPlaybackControlsWithThen[] = []
-    const { velocity } = transition
+    const { velocity, path } = transition
     const reduceMotion = transition.reduceMotion ?? element?.shouldReduceMotion
+
+    if (path) {
+        // path claims x/y by deleting them, so hand it a copy.
+        keyframes = { ...keyframes }
+        path.animateValues(getValue, keyframes, transition, 0, animations)
+    }
 
     for (const key in keyframes) {
         if (key === "transition" || key === "transitionEnd") continue
