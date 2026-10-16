@@ -757,5 +757,26 @@ describe("independent transform acceleration", () => {
 
         expect(element.style.transform).toBe("translateX(-40px)")
     })
-})
 
+    it("keeps an animation that starts as another is stopped from its onPlay", async () => {
+        const element = document.createElement("div")
+
+        const [x] = animateElement(
+            element,
+            { x: [0, 100], scale: [1, 2] },
+            { duration: 1 }
+        )
+        await nextFrame()
+
+        const [y] = animateElement(
+            element,
+            { y: [0, 100] },
+            { duration: 0.1, onPlay: () => x.stop() }
+        )
+        await nextFrame()
+
+        const transform = running(element)[0].keyframes.transform
+        expect(transform[transform.length - 1]).toContain("translateY(100px)")
+        await y.finished
+    })
+})
