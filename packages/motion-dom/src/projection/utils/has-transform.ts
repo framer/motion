@@ -21,6 +21,7 @@ export function hasTransform(values: ResolvedValues) {
         values.rotate ||
         values.rotateX ||
         values.rotateY ||
+        values.rotateZ ||
         values.skewX ||
         values.skewY
     )
