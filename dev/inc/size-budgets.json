@@ -23,7 +23,7 @@
     "LazyMotion-only": 650,
     "domAnimation-only": 26550,
     "domMax-only": 40600,
-    "AnimatePresence": 2250,
+    "AnimatePresence": 2280,
     "MotionConfig": 400,
     "LayoutGroup": 1200,
     "Reorder": 45200,

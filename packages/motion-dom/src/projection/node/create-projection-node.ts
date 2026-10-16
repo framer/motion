@@ -422,6 +422,11 @@ export function createProjectionNode<I>({
 
         hasTreeAnimated = false
 
+        /**
+         * Whether the layout animation "didUpdate" handler has been registered.
+         */
+        hasLayoutListener?: boolean
+
         constructor(
             latestValues: ResolvedValues = {},
             parent: IProjectionNode | undefined = defaultParent?.()
@@ -513,119 +518,129 @@ export function createProjectionNode<I>({
                 this.root.registerSharedNode(layoutId, this)
             }
 
-            // Only register the handler if it requires layout animation
+            this.addLayoutListener()
+        }
+
+        /**
+         * Only register the layout animation handler if this node requires
+         * layout animation. This is called on mount, and again whenever options
+         * change, as `layout` or `layoutId` may be enabled after mount.
+         */
+        addLayoutListener() {
+            const { layoutId, layout, visualElement, animate } = this.options
+
             if (
-                this.options.animate !== false &&
-                visualElement &&
-                (layoutId || layout)
-            ) {
-                this.addEventListener(
-                    "didUpdate",
-                    ({
-                        delta,
-                        hasLayoutChanged,
-                        hasRelativeLayoutChanged,
-                        layout: newLayout,
-                    }: LayoutUpdateData) => {
-                        if (this.isAnimationBlocked) {
-                            this.target = undefined
-                            this.relativeTarget = undefined
-                            return
+                !this.instance ||
+                this.hasLayoutListener ||
+                animate === false ||
+                !visualElement ||
+                !(layoutId || layout)
+            )
+                return
+
+            this.hasLayoutListener = true
+            this.addEventListener(
+                "didUpdate",
+                ({
+                    delta,
+                    hasLayoutChanged,
+                    hasRelativeLayoutChanged,
+                    layout: newLayout,
+                }: LayoutUpdateData) => {
+                    if (this.isAnimationBlocked) {
+                        this.target = undefined
+                        this.relativeTarget = undefined
+                        return
+                    }
+
+                    // TODO: Check here if an animation exists
+                    const layoutTransition =
+                        this.options.transition ||
+                        visualElement.getDefaultTransition() ||
+                        defaultLayoutTransition
+
+                    const {
+                        onLayoutAnimationStart,
+                        onLayoutAnimationComplete,
+                    } = visualElement.getProps()
+
+                    /**
+                     * The target layout of the element might stay the same,
+                     * but its position relative to its parent has changed.
+                     */
+                    const hasTargetChanged =
+                        !this.targetLayout ||
+                        !boxEqualsRounded(this.targetLayout, newLayout)
+                    /*
+                     * Note: Disabled to fix relative animations always triggering new
+                     * layout animations. If this causes further issues, we can try
+                     * a different approach to detecting relative target changes.
+                     */
+                    // || hasRelativeLayoutChanged
+
+                    /**
+                     * If the layout hasn't seemed to have changed, it might be that the
+                     * element is visually in the same place in the document but its position
+                     * relative to its parent has indeed changed. So here we check for that.
+                     */
+                    const hasOnlyRelativeTargetChanged =
+                        !hasLayoutChanged && hasRelativeLayoutChanged
+
+                    if (
+                        this.options.layoutRoot ||
+                        this.resumeFrom ||
+                        hasOnlyRelativeTargetChanged ||
+                        (hasLayoutChanged &&
+                            (hasTargetChanged || !this.currentAnimation))
+                    ) {
+                        if (this.resumeFrom) {
+                            this.resumingFrom = this.resumeFrom
+                            this.resumingFrom.resumingFrom = undefined
                         }
 
-                        // TODO: Check here if an animation exists
-                        const layoutTransition =
-                            this.options.transition ||
-                            visualElement.getDefaultTransition() ||
-                            defaultLayoutTransition
-
-                        const {
-                            onLayoutAnimationStart,
-                            onLayoutAnimationComplete,
-                        } = visualElement.getProps()
-
-                        /**
-                         * The target layout of the element might stay the same,
-                         * but its position relative to its parent has changed.
-                         */
-                        const hasTargetChanged =
-                            !this.targetLayout ||
-                            !boxEqualsRounded(this.targetLayout, newLayout)
-                        /*
-                         * Note: Disabled to fix relative animations always triggering new
-                         * layout animations. If this causes further issues, we can try
-                         * a different approach to detecting relative target changes.
-                         */
-                        // || hasRelativeLayoutChanged
-
-                        /**
-                         * If the layout hasn't seemed to have changed, it might be that the
-                         * element is visually in the same place in the document but its position
-                         * relative to its parent has indeed changed. So here we check for that.
-                         */
-                        const hasOnlyRelativeTargetChanged =
-                            !hasLayoutChanged && hasRelativeLayoutChanged
+                        const animationOptions = {
+                            ...getValueTransition(layoutTransition, "layout"),
+                            onPlay: onLayoutAnimationStart,
+                            onComplete: onLayoutAnimationComplete,
+                        }
 
                         if (
-                            this.options.layoutRoot ||
-                            this.resumeFrom ||
-                            hasOnlyRelativeTargetChanged ||
-                            (hasLayoutChanged &&
-                                (hasTargetChanged || !this.currentAnimation))
+                            visualElement.shouldReduceMotion ||
+                            this.options.layoutRoot
                         ) {
-                            if (this.resumeFrom) {
-                                this.resumingFrom = this.resumeFrom
-                                this.resumingFrom.resumingFrom = undefined
-                            }
-
-                            const animationOptions = {
-                                ...getValueTransition(
-                                    layoutTransition,
-                                    "layout"
-                                ),
-                                onPlay: onLayoutAnimationStart,
-                                onComplete: onLayoutAnimationComplete,
-                            }
-
-                            if (
-                                visualElement.shouldReduceMotion ||
-                                this.options.layoutRoot
-                            ) {
-                                animationOptions.delay = 0
-                                animationOptions.type = false
-                            }
-
-                            this.startAnimation(animationOptions)
-                            /**
-                             * Set animation origin after starting animation to avoid layout jump
-                             * caused by stopping previous layout animation
-                             */
-                            this.setAnimationOrigin(
-                                delta,
-                                hasOnlyRelativeTargetChanged,
-                                (animationOptions as { path?: MotionPath })
-                                    .path
-                            )
-                        } else {
-                            /**
-                             * If the layout hasn't changed and we have an animation that hasn't started yet,
-                             * finish it immediately. Otherwise it will be animating from a location
-                             * that was probably never committed to screen and look like a jumpy box.
-                             */
-
-                            if (!hasLayoutChanged) {
-                                finishAnimation(this)
-                            }
-
-                            if (this.isLead() && this.options.onExitComplete) {
-                                this.options.onExitComplete()
-                            }
+                            animationOptions.delay = 0
+                            animationOptions.type = false
                         }
 
-                        this.targetLayout = newLayout
+                        this.startAnimation(animationOptions)
+                        /**
+                         * Set animation origin after starting animation to avoid layout jump
+                         * caused by stopping previous layout animation
+                         */
+                        this.setAnimationOrigin(
+                            delta,
+                            hasOnlyRelativeTargetChanged,
+                            (animationOptions as { path?: MotionPath }).path
+                        )
+                    } else {
+                        /**
+                         * If the layout hasn't changed and we have an animation that hasn't started yet,
+                         * finish it immediately. Otherwise it will be animating from a location
+                         * that was probably never committed to screen and look like a jumpy box.
+                         */
+
+                        if (!hasLayoutChanged) {
+                            finishAnimation(this)
+                        }
+
+                        if (this.isLead() && this.options.onExitComplete) {
+                            this.options.onExitComplete()
+                        }
                     }
-                )
-            }
+
+                    this.targetLayout = newLayout
+                }
+            )
         }
 
         unmount() {
@@ -636,6 +651,7 @@ export function createProjectionNode<I>({
             this.parent && this.parent.children.delete(this)
             this.instance = undefined
             this.eventHandlers.clear()
+            this.hasLayoutListener = false
 
             cancelFrame(this.updateProjection)
         }
@@ -1200,6 +1216,7 @@ export function createProjectionNode<I>({
                 crossfade:
                     options.crossfade !== undefined ? options.crossfade : true,
             }
+            this.addLayoutListener()
         }
 
         clearMeasurements() {

@@ -78,7 +78,7 @@ export class ExitAnimationFeature extends Feature<unknown> {
         }
 
         if (register) {
-            this.unmount = register(this.id)
+            this.unmount = register(this.id, this.node)
         }
     }
 

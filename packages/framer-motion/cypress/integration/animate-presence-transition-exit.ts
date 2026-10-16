@@ -17,10 +17,16 @@ describe("AnimatePresence: exit completes during a transition render", () => {
                     .window()
                     .then((win: any) => {
                         const log = win.__log
-                        expect(log.exitComplete).to.be.greaterThan(
+                        // B's exit animation finishes mid-transition render
+                        expect(log.exitAnimationComplete).to.be.greaterThan(
                             log.transitionRender
                         )
-                        expect(log.exitComplete).to.be.lessThan(
+                        expect(log.exitAnimationComplete).to.be.lessThan(
+                            log.transitionCommit
+                        )
+                        // onExitComplete waits until B has been removed,
+                        // which happens with the transition commit (#2538)
+                        expect(log.exitComplete).to.be.greaterThan(
                             log.transitionCommit
                         )
                     })
