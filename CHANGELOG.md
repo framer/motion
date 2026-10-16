@@ -16,6 +16,14 @@ Undocumented APIs should be considered internal and may change without warning.
 -   Fix matrix3d and other digit-named transform functions being tokenised as numbers.
 -   `useSpring`: Ensure when switching targets we animate to the new target on switch.
 -   Fix SVG MotionValue children being written as a children attribute.
+-   `AnimatePresence`: Fire `onExitComplete` after exiting children unmount.
+-   `AnimatePresence`: `popLayout` children that don't accept `ref` are now popped when root component is `<motion>` element.
+-   Fix interpolation of axis `rotate` and `skew` transforms during shared layout animation.
+-   Fix layout animations when `layout` is enabled after mount.
+-   Fix `drag` jumping to `0` after animate `x`/`y` to CSS variable.
+-   `arc`: Fix path animations with `animate`.
+-   Ensure shared elements are freed from memory when unmounted.
+-   Fix accelerated independent transform animations vanishing when they start from a float residue.
 
 ## [14.2.0] 2026-10-13
 
