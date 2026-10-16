@@ -345,6 +345,29 @@ describe("animateElement", () => {
             )
         })
 
+        it("rotates SVG elements without touching their stroke", async () => {
+            const rect = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "rect"
+            ) as SVGElement
+            rect.setAttribute("stroke-dasharray", "4 2")
+
+            const animations = animateElement(
+                rect,
+                { x: 400, y: 0 },
+                { duration: 10, ease: () => 0.25, path: arc({ rotate: true }) }
+            )
+
+            await nextFrame()
+            await nextFrame()
+
+            expect(rect.style.transform).toMatch(/rotate\(-?[1-9]/)
+            expect(rect.getAttribute("stroke-dasharray")).toBe("4 2")
+            expect(rect.hasAttribute("pathLength")).toBe(false)
+
+            animations.forEach((animation) => animation.stop())
+        })
+
         it("moves a VisualElement's x and y along the arc", async () => {
             const element = document.createElement("div")
             const visualElement = createVisualElement()
