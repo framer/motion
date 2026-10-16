@@ -16,9 +16,14 @@ export function scrapeMotionValuesFromProps(
     )
 
     for (const key in props) {
+        /**
+         * A MotionValue child is rendered as text content by
+         * DOMVisualElement, so it mustn't also be written as an attribute.
+         */
         if (
-            isMotionValue(props[key as keyof typeof props]) ||
-            isMotionValue(prevProps[key as keyof typeof prevProps])
+            key !== "children" &&
+            (isMotionValue(props[key as keyof typeof props]) ||
+                isMotionValue(prevProps[key as keyof typeof prevProps]))
         ) {
             const targetKey =
                 transformPropOrder.indexOf(key) !== -1
