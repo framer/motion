@@ -261,4 +261,42 @@ describe("node", () => {
                 d.isSharedProjectionDirty
         ).toEqual(false)
     })
+
+    test("Releases a layoutId's stack once its last member unmounts", async () => {
+        const node = createTestNode(undefined, { layoutId: "released" })
+        node.mount({})
+        const { root } = node
+
+        expect(root.sharedNodes.get("released")!.lead).toBe(node)
+
+        node.unmount()
+        node.scheduleCheckAfterUnmount()
+
+        await nextFrame()
+        await nextMicrotask()
+
+        expect(root.sharedNodes.has("released")).toBe(false)
+    })
+
+    test("Keeps a layoutId's stack for a replacement mounted in the same commit", async () => {
+        const prev = createTestNode(undefined, { layoutId: "swapped" })
+        prev.mount({})
+        const { root } = prev
+
+        prev.unmount()
+        prev.scheduleCheckAfterUnmount()
+
+        const next = createTestNode(undefined, { layoutId: "swapped" })
+        next.mount({})
+
+        const stack = root.sharedNodes.get("swapped")!
+        expect(stack.lead).toBe(next)
+        expect(next.resumeFrom).toBe(prev)
+
+        await nextFrame()
+        await nextMicrotask()
+
+        expect(root.sharedNodes.get("swapped")).toBe(stack)
+        expect(stack.members).toEqual([next])
+    })
 })
