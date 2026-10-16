@@ -237,23 +237,11 @@ export function arc(options: ArcOptions = {}): MotionPath {
             return sample({ x: tx, y: ty }, { x: 0, y: 0 })
         },
 
-        animateVisualElement(
-            visualElement,
-            target,
-            transition,
-            delay,
-            animations
-        ) {
+        animateValues(getValue, target, transition, delay, animations) {
             if (!("x" in target || "y" in target)) return
 
-            const xValue = visualElement.getValue(
-                "x",
-                visualElement.latestValues["x"] ?? 0
-            )
-            const yValue = visualElement.getValue(
-                "y",
-                visualElement.latestValues["y"] ?? 0
-            )
+            const xValue = getValue("x")
+            const yValue = getValue("y")
 
             const xRaw = target.x as number | number[] | undefined
             const yRaw = target.y as number | number[] | undefined
@@ -284,7 +272,7 @@ export function arc(options: ArcOptions = {}): MotionPath {
             // on interrupt.
             const pathRotationValue =
                 interpolate(0).rotate !== undefined
-                    ? visualElement.getValue("pathRotation", 0)
+                    ? getValue("pathRotation")
                     : undefined
 
             const pathTransition = {

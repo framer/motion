@@ -394,21 +394,22 @@ describe("attachSpring to a MotionValue source", () => {
         expect(value.isAnimating()).toBe(true)
         source.set(-100)
 
-        /**
-         * Count updates per frame rather than in total: a slow frame can
-         * produce no change, but an orphaned animation writing alongside
-         * this one would produce two in the same frame.
-         */
         let updates = 0
-        let maxUpdatesPerFrame = 0
         value.on("change", () => updates++)
+
+        /**
+         * At most one update per frame: no orphaned animation writing too.
+         * A frame can have none, as when a slow first frame restarts the
+         * animation from then.
+         */
+        let total = 0
         for (let i = 0; i < 5; i++) {
             await nextFrame()
-            maxUpdatesPerFrame = Math.max(maxUpdatesPerFrame, updates)
+            expect(updates).toBeLessThanOrEqual(1)
+            total += updates
             updates = 0
         }
-
-        expect(maxUpdatesPerFrame).toBe(1)
+        expect(total).toBeGreaterThan(0)
         detach()
     })
 })

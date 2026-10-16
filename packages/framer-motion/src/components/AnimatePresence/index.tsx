@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useContext, useMemo, useRef, useState } from "react"
+import { useContext, useEffect, useMemo, useRef, useState } from "react"
 import { LayoutGroupContext } from "../../context/LayoutGroupContext"
 import { useConstant } from "../../utils/use-constant"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
@@ -97,6 +97,23 @@ export const AnimatePresence = ({
             safeToRemove?.()
         }
     }, [isParentPresent, propagate, renderedChildren.length, safeToRemove])
+
+    /**
+     * When every exit completes, we re-render to remove the exited children
+     * and store onExitComplete here. It fires from the cleanup of an effect
+     * keyed on the rendered children, so it runs in the commit that removes
+     * them (or when we unmount), after their own effect cleanups.
+     */
+    const pendingExitComplete = useRef<VoidFunction>()
+
+    useEffect(
+        () => () => {
+            const callback = pendingExitComplete.current
+            pendingExitComplete.current = undefined
+            callback?.()
+        },
+        [renderedChildren]
+    )
 
     useIsomorphicLayoutEffect(() => {
         isInitialRender.current = false
@@ -228,7 +245,7 @@ export const AnimatePresence = ({
 
                         propagate && safeToRemove?.()
 
-                        onExitComplete && onExitComplete()
+                        pendingExitComplete.current = onExitComplete
                     }
                 }
 

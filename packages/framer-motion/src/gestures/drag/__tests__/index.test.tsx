@@ -1036,6 +1036,34 @@ describe("dragging", () => {
         // x should still be the same since component unmounted
         expect(x.get()).toBe(xBefore)
     })
+
+    test("drag starts from the resolved value of a CSS variable (#2390)", async () => {
+        const y = motionValue("var(--y)")
+        const Component = () => (
+            <MockDrag>
+                <motion.div
+                    data-testid="draggable"
+                    drag="y"
+                    dragMomentum={false}
+                    style={{ y, "--y": "80px" } as any}
+                />
+            </MockDrag>
+        )
+
+        const { getByTestId, rerender } = render(<Component />)
+        rerender(<Component />)
+
+        const pointer = await drag(getByTestId("draggable")).to(0, 10)
+
+        // Dragging down 10px should continue from --y (80px), not
+        // concatenate onto the "var(--y)" string.
+        expect(y.get()).toBe(90)
+        expect(getByTestId("draggable")).toHaveStyle(
+            "transform: translateY(90px)"
+        )
+
+        pointer.end()
+    })
 })
 
 describe("keyboard accessible elements", () => {

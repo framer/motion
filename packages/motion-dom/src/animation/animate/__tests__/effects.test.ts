@@ -1,6 +1,8 @@
 import { createEffect } from "../../../effects/utils/create-effect"
 import { frame } from "../../../frameloop"
+import { propEffect } from "../../../effects/prop"
 import { motionValue } from "../../../value"
+import { arc } from "../../utils/arc"
 import {
     addEffect,
     animateEffectSubject,
@@ -172,5 +174,23 @@ describe("animateEffectSubject", () => {
 
         expect(animations[0].duration).toBe(0.1)
         expect(animations[1].duration).toBe(0.2)
+    })
+})
+
+describe("animateEffectSubject with transition.path", () => {
+    it("ignores the path for subjects that aren't elements", async () => {
+        const subject = { y: 0 }
+
+        const [animation] = animateEffectSubject(
+            propEffect,
+            subject,
+            { y: 100 },
+            { duration: 0.05, path: arc({ rotate: true }) }
+        )
+
+        await animation.finished
+        await nextFrame()
+
+        expect(subject).toEqual({ y: 100 })
     })
 })
