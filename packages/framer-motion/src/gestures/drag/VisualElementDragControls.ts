@@ -7,11 +7,14 @@ import {
     createBox,
     eachAxis,
     frame,
+    getVariableValue,
+    isCSSVariableToken,
     isElementTextInput,
     measurePageBox,
     mixNumber,
     PanInfo,
     percent,
+    px,
     ResolvedConstraints,
     resize,
     setDragLock,
@@ -144,9 +147,23 @@ export class VisualElementDragControls {
                 let current = this.getAxisMotionValue(axis).get() || 0
 
                 /**
-                 * If the MotionValue is a percentage value convert to px
+                 * If the MotionValue is a CSS variable, like "var(--y)",
+                 * resolve it so it can be converted to px below.
                  */
-                if (percent.test(current)) {
+                if (isCSSVariableToken(current)) {
+                    current =
+                        getVariableValue(
+                            current,
+                            this.visualElement.current!
+                        ) || 0
+                }
+
+                /**
+                 * If the MotionValue is a px or percentage value convert to px
+                 */
+                if (px.test(current)) {
+                    current = parseFloat(current)
+                } else if (percent.test(current)) {
                     const { projection } = this.visualElement
 
                     if (projection && projection.layout) {
