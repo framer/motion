@@ -50,7 +50,7 @@ export const addSVGValue = (
     key: string,
     value: MotionValue
 ) => {
-    if (key.startsWith("path")) {
+    if (key.startsWith("path") && !transformProps.has(key)) {
         return addSVGPathValue(element, state, key, value)
     } else if (key.startsWith("attr")) {
         return addAttrValue(element, state, key, value, convertAttrKey(key))

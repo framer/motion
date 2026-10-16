@@ -1,6 +1,8 @@
 import { Easing } from "motion-utils"
 import type { Delta } from "motion-utils"
+import type { TargetAndTransition } from "../node/types"
 import { SVGAttributes } from "../render/svg/types"
+import type { VisualElement } from "../render/VisualElement"
 import { MotionValue } from "../value"
 import { Driver } from "./drivers/types"
 import { KeyframeResolver } from "./keyframes/KeyframesResolver"
@@ -685,9 +687,21 @@ export interface MotionPath {
      * the motion values `getValue` returns, along the path. Called for
      * both VisualElements and elements animated by `animate()`.
      */
-    animateValues(
+    animateValues?(
         getValue: (key: string) => MotionValue | undefined,
         target: { [key: string]: unknown },
+        transition: Transition | undefined,
+        delay: number,
+        animations: AnimationPlaybackControlsWithThen[]
+    ): void
+    /**
+     * @deprecated Implement `animateValues`, which also runs for elements
+     * animated by `animate()`. Only called for VisualElements, and only
+     * when `animateValues` isn't implemented.
+     */
+    animateVisualElement?(
+        visualElement: VisualElement,
+        target: TargetAndTransition,
         transition: Transition | undefined,
         delay: number,
         animations: AnimationPlaybackControlsWithThen[]

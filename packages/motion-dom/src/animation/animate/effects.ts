@@ -70,8 +70,11 @@ export function animateValues(
     const { velocity, path } = transition
     const reduceMotion = transition.reduceMotion ?? element?.shouldReduceMotion
 
-    if (path) {
-        // path claims x/y by deleting them, so hand it a copy.
+    /**
+     * Only elements have x/y to move along a path. path claims them by
+     * deleting them, so hand it a copy.
+     */
+    if (path?.animateValues && element) {
         keyframes = { ...keyframes }
         path.animateValues(getValue, keyframes, transition, 0, animations)
     }
