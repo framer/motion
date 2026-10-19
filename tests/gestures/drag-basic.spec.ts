@@ -346,11 +346,22 @@ test.describe("drag: touch", () => {
         await open(page, "?axis=y")
         expect((await read()).touchAction).toBe("pan-x")
 
-        // Cleanup restores the element
+        /**
+         * Cleanup restores the element. Browsers compute the default
+         * user-select differently (WebKit reports "text"), so compare with
+         * an element drag() never touched.
+         */
         await page.evaluate(() => (window as any).stopDrag())
+        const defaultUserSelect = await page.evaluate(() => {
+            const div = document.body.appendChild(document.createElement("div"))
+            const style = getComputedStyle(div)
+            const value = style.userSelect ?? style.webkitUserSelect
+            div.remove()
+            return value
+        })
         expect(await read()).toEqual({
             touchAction: "auto",
-            userSelect: "auto",
+            userSelect: defaultUserSelect,
             draggable: false,
         })
     })
