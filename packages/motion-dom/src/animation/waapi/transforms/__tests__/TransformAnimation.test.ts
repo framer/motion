@@ -625,13 +625,25 @@ describe("independent transform acceleration", () => {
             }
         }
 
+        /**
+         * Start in a frame, so the build uses the same timestamp as the
+         * start. A slow first frame would otherwise build it far enough in
+         * that it's no longer a round trip. A negative delay builds it a
+         * fixed time after it starts.
+         */
         it.each([
-            ["built just after it starts", [0, -18, 0]],
-            ["from a float residue", [-1e-30, -18, 0]],
-        ])("%s", async (_, y) => {
+            ["built just after it starts", [0, -18, 0], -0.005],
+            ["from a float residue", [-1e-30, -18, 0], 0],
+        ])("%s", async (_, y, delay) => {
             const element = document.createElement("div")
 
-            animateElement(element, { y }, { duration: 1.2, ease: "easeInOut" })
+            frame.update(() => {
+                animateElement(
+                    element,
+                    { y },
+                    { duration: 1.2, ease: "easeInOut", delay }
+                )
+            })
             await nextFrame()
 
             expectRoundTrip(element)
@@ -640,17 +652,19 @@ describe("independent transform acceleration", () => {
         it("from a float residue when it repeats forever", async () => {
             const element = document.createElement("div")
 
-            animateElement(
-                element,
-                { y: [-1e-30, -18, 0] },
-                {
-                    duration: 1.2,
-                    ease: "easeInOut",
-                    repeat: Infinity,
-                    repeatDelay: 0.9,
-                    delay: 0.66,
-                }
-            )
+            frame.update(() => {
+                animateElement(
+                    element,
+                    { y: [-1e-30, -18, 0] },
+                    {
+                        duration: 1.2,
+                        ease: "easeInOut",
+                        repeat: Infinity,
+                        repeatDelay: 0.9,
+                        delay: 0.66,
+                    }
+                )
+            })
             await nextFrame()
 
             expectRoundTrip(element)
