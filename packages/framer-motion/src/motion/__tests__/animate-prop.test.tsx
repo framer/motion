@@ -1449,15 +1449,25 @@ describe("animate prop as object", () => {
             triggerSuspense!()
         })
 
+        /**
+         * Record what the values are set to from the remount on. The replayed
+         * animation can tick before act() returns on a loaded machine, so
+         * reading the values afterwards isn't reliable.
+         */
+        const opacityChanges: number[] = []
+        const scaleChanges: number[] = []
+
         // Resolve suspension to remount
         await act(async () => {
+            opacity.on("change", (v) => opacityChanges.push(v))
+            scale.on("change", (v) => scaleChanges.push(v))
             resolveSuspense!()
         })
 
         // After remount, values should be reset to initial (not stuck at
         // intermediate animation values)
-        expect(opacity.get()).toBe(0)
-        expect(scale.get()).toBe(0)
+        expect(opacityChanges[0]).toBe(0)
+        expect(scaleChanges[0]).toBe(0)
     })
 })
 
