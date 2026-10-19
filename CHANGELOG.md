@@ -4,6 +4,12 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [14.4.0] 2026-10-18
+
+### Added
+
+-   `drag`: Drag gesture added to JavaScript API.
+
 ## [14.3.1] 2026-10-18
 
 ### Fixed
