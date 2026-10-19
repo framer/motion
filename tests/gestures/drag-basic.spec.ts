@@ -127,6 +127,49 @@ test.describe("drag: basic", () => {
         expect(await events(page)).toEqual(["start", "lock-x", "end"])
     })
 
+    /**
+     * When the browser coalesces a fast gesture into one move per frame,
+     * the move that sets the direction lock can be the last one before
+     * release, as in WebKit.
+     */
+    test("applies the move that sets the direction lock", async ({ page }) => {
+        await open(page, "?lock=true")
+
+        await page.locator("#box").evaluate(
+            (el) =>
+                new Promise<void>((resolve) => {
+                    const pointer = (type: string, clientY: number) =>
+                        el.dispatchEvent(
+                            new PointerEvent(type, {
+                                clientX: 5,
+                                clientY,
+                                pointerId: 1,
+                                pointerType: "mouse",
+                                isPrimary: true,
+                                button: 0,
+                                bubbles: true,
+                            })
+                        )
+                    pointer("pointerdown", 5)
+                    pointer("pointermove", 205)
+
+                    // Release in the frame that sets the lock
+                    const release = () => {
+                        if (!(window as any).events.includes("lock-y")) {
+                            return requestAnimationFrame(release)
+                        }
+                        pointer("pointerup", 205)
+                        resolve()
+                    }
+                    requestAnimationFrame(release)
+                })
+        )
+        await frames(page, 2)
+
+        expect(await rect(page, "#box")).toMatchObject({ left: 0, top: 200 })
+        expect(await events(page)).toEqual(["lock-y", "start", "end"])
+    })
+
     test("constraints as object: bottom right", async ({ page }) => {
         await open(page, "?right=100&bottom=100")
         await dragFromTo(page, { x: 5, y: 5 }, { x: 305, y: 305 })
@@ -263,7 +306,14 @@ test.describe("drag: touch", () => {
         await frames(page, 2)
     }
 
-    test("drags with touch without scrolling the page", async ({ page }) => {
+    test("drags with touch without scrolling the page", async ({
+        page,
+        browserName,
+    }) => {
+        test.skip(
+            browserName !== "chromium",
+            "Touch input is dispatched through CDP, which only Chromium has"
+        )
         await open(page)
         await touchDrag(page, 100, 150)
         expect(await rect(page, "#box")).toMatchObject({ left: 100, top: 150 })
@@ -277,7 +327,8 @@ test.describe("drag: touch", () => {
                 const style = getComputedStyle(el)
                 return {
                     touchAction: style.touchAction,
-                    userSelect: style.userSelect,
+                    // WebKit only supports the prefixed property
+                    userSelect: style.userSelect ?? style.webkitUserSelect,
                     draggable: (el as HTMLElement).draggable,
                 }
             })

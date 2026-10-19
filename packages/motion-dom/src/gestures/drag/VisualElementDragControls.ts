@@ -218,12 +218,14 @@ export class VisualElementDragControls {
             if (dragDirectionLock && this.currentDirection === null) {
                 this.currentDirection = getCurrentDirection(offset)
 
-                // If we've successfully set a direction, notify listener
-                if (this.currentDirection !== null) {
-                    onDirectionLock && onDirectionLock(this.currentDirection)
-                }
+                /**
+                 * Wait for more movement until a direction is set. Once
+                 * it is, apply this move too: it can be the last before
+                 * release when the browser coalesces a fast gesture.
+                 */
+                if (this.currentDirection === null) return
 
-                return
+                onDirectionLock && onDirectionLock(this.currentDirection)
             }
 
             // Update each point with the latest position
