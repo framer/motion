@@ -108,13 +108,14 @@ export function useVisualElement<
         )
     }
 
-    const isMounted = useRef(false)
     useInsertionEffect(() => {
         /**
-         * Check the component has already mounted before calling
-         * `update` unnecessarily. This ensures we skip the initial update.
+         * Skip the update if the visual element was created with these props.
+         * This isn't gated on the layout effect below having run, as a hidden
+         * <Activity> runs insertion effects but not layout effects, and
+         * props from renders made while hidden must still reach the element.
          */
-        if (visualElement && isMounted.current) {
+        if (visualElement && visualElement.props !== props) {
             visualElement.update(props, presenceContext)
         }
     })
@@ -154,7 +155,6 @@ export function useVisualElement<
 
         if (!visualElement) return
 
-        isMounted.current = true
         window.MotionIsMounted = true
 
         visualElement.updateFeatures()
