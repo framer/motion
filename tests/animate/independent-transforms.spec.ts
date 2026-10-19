@@ -170,23 +170,43 @@ test.describe("animate() independent transforms", () => {
         const result = await page.evaluate(async () => {
             const element = document.getElementById("a")!
             const { animate } = window.Motion
-            const transition = { type: "spring", stiffness: 100, damping: 20 }
-            animate(element, { x: 400 }, transition)
+            animate(
+                element,
+                { x: 400 },
+                { type: "spring", stiffness: 100, damping: 20 }
+            )
             await window.waitFrame(150)
-            animate(element, { x: 0 }, transition)
-            await window.nextFrames(1)
             const before = window.readTransform(element).x
-            await window.nextFrames(3)
+
+            /**
+             * A soft spring keeps the inherited momentum carrying the
+             * element right for several frames, so the check doesn't
+             * depend on when the browser renders each frame.
+             */
+            animate(
+                element,
+                { x: 0 },
+                { type: "spring", stiffness: 50, damping: 5 }
+            )
+            const samples: number[] = []
+            for (let i = 0; i < 4; i++) {
+                await window.nextFrames(1)
+                samples.push(window.readTransform(element).x)
+            }
             return {
                 count: window.transformAnimations(element).length,
                 before,
-                after: window.readTransform(element).x,
+                peak: Math.max(...samples),
             }
         })
 
         expect(result.count).toBe(1)
-        // Still moving right from the first spring's momentum.
-        expect(result.after).toBeGreaterThan(result.before)
+        /**
+         * Still moving right from the first spring's momentum. Without it
+         * the element moves left at once (at most ~1px right of before, as
+         * the interrupt lands mid-frame).
+         */
+        expect(result.peak - result.before).toBeGreaterThan(20)
     })
 
     test("stop() leaves the element where it was", async ({ page }) => {
