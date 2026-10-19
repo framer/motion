@@ -96,6 +96,53 @@ for (const target of ["overflow ancestor", "window"] as const) {
     })
 }
 
+/**
+ * #3944: browsers update scrollY synchronously but dispatch the scroll
+ * event in the next frame. A pointermove handled in between already
+ * includes the new scroll in pageY, so the scroll must not be added again.
+ */
+test("drag: doesn't count a window scroll twice when a pointermove arrives before its scroll event", async ({
+    page,
+}) => {
+    await open(page, "?window=true")
+    await grab(page)
+
+    const scrolledBeforeEvent = await page.evaluate(() => {
+        let scrollEventFired = false
+        window.addEventListener("scroll", () => (scrollEventFired = true), {
+            once: true,
+        })
+        window.scrollTo(0, 100)
+
+        // The pointer is held still at (145, 145). Like a real event,
+        // its pageX/pageY include the scroll that has already happened.
+        const event = new PointerEvent("pointermove", {
+            clientX: 145,
+            clientY: 145,
+            pointerId: 1,
+            pointerType: "mouse",
+            isPrimary: true,
+            bubbles: true,
+        })
+        Object.defineProperties(event, {
+            pageX: { value: 145 + window.scrollX },
+            pageY: { value: 145 + window.scrollY },
+        })
+        window.dispatchEvent(event)
+
+        return !scrollEventFired
+    })
+    expect(scrolledBeforeEvent).toBe(true)
+
+    await frames(page, 3)
+    expect(await page.evaluate(() => window.scrollY)).toBe(100)
+    const { left, top } = await rect(page, "#draggable")
+    expect(left).toBeCloseTo(95, 0)
+    expect(top).toBeCloseTo(95, 0)
+
+    await page.mouse.up()
+})
+
 test("drag: moves correctly without scrolling", async ({ page }) => {
     await open(page)
     await grab(page)
