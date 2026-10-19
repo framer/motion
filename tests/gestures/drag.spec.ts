@@ -26,10 +26,10 @@ test.describe("drag", () => {
     test("moves the element with the pointer", async ({ page }) => {
         await dragBy(page, "#free", 120, 40)
         expect(await offset(page, "#free")).toEqual({ x: 120, y: 40 })
-        expect(await page.evaluate(() => (window as any).events)).toEqual([
-            "start",
-            "end",
-        ])
+        // onEnd fires in the frame after release
+        await expect
+            .poll(() => page.evaluate(() => (window as any).events))
+            .toEqual(["start", "end"])
     })
 
     test("locks to an axis", async ({ page }) => {

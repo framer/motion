@@ -4,6 +4,12 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [Unreleased]
+
+### Fixed
+
+-   `drag`: With direction lock, apply the move that sets the lock. Before, a fast drag released in that frame didn't move.
+
 ## [14.4.0] 2026-10-18
 
 ### Added
