@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { useState } from "react"
+import { memo, useState } from "react"
 
 /**
  * Reproduction for #2514 — a `layoutId` indicator is mispositioned when the
@@ -22,6 +22,9 @@ import { useState } from "react"
  * - `mode` — `below` (default): the resizing content precedes the nav, so the
  *   nav is displaced. `flow`: nav first, content after — control case, the nav
  *   doesn't move.
+ * - `mode=crossfade`: the outgoing element stays mounted (memoized, so it
+ *   doesn't re-render) and a new element with the same `layoutId` mounts
+ *   below content that grows in the same render.
  * - `indicator` — `bar` (default) for a thin underline, `full` to fill the item.
  * - `originY` — `1` to apply the `style={{ originY: 0 }}` workaround.
  * - `axis` — `y` or `x` to use the `layout="y"`/`layout="x"` axis constraint
@@ -45,11 +48,49 @@ const items = [
     { id: "c", label: "Three", content: 400 },
 ]
 
-export const App = () => {
+const linear = { type: "tween" as const, ease: "linear" as const, duration }
+
+const Card = memo(() => (
+    <motion.div
+        id="card"
+        layoutId="box"
+        transition={linear}
+        style={{ width: 100, height: 100, background: "#00f" }}
+    />
+))
+
+const Crossfade = () => {
+    const [open, setOpen] = useState(false)
+
+    return (
+        <div>
+            <button id="toggle" onClick={() => setOpen(!open)}>
+                Toggle
+            </button>
+            <div id="content" style={{ height: open ? 300 : 100 }} />
+            <Card />
+            {open && (
+                <motion.div
+                    id="overlay"
+                    layoutId="box"
+                    transition={linear}
+                    style={{
+                        width: 200,
+                        height: 200,
+                        marginLeft: 300,
+                        background: "#0f0",
+                    }}
+                />
+            )}
+        </div>
+    )
+}
+
+const Tabs = () => {
     const [selected, setSelected] = useState("a")
     const active = items.find((item) => item.id === selected)!
 
-    const transition = { type: "tween" as const, ease: "linear" as const, duration }
+    const transition = linear
 
     const nav = (
         <motion.div
@@ -125,3 +166,5 @@ export const App = () => {
         </div>
     )
 }
+
+export const App = () => (mode === "crossfade" ? <Crossfade /> : <Tabs />)

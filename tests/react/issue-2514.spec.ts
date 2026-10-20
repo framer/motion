@@ -147,3 +147,35 @@ test(`#2514: layout="x" still snaps the y axis`, async ({ page }) => {
     expectNear(mid.indicator.y, end.indicator.y, 1)
     expectNear(mid.indicator.x, halfway(start.indicator.x, end.indicator.x), 20)
 })
+
+/**
+ * The outgoing element can also stay mounted, as in a card that opens into
+ * a modal. If it doesn't re-render (here it's memoized), nothing snapshots
+ * it before React commits, so content growing above it in the same render
+ * shifted the new element's origin too.
+ */
+test("#2514: crossfade from a lead that stays mounted", async ({ page }) => {
+    await page.goto(`?test=issue-2514&mode=crossfade&duration=${DURATION}`)
+    await expect(page.locator("#card")).toBeVisible()
+
+    const rect = (id: string) =>
+        page.evaluate((id) => {
+            const { x, y, width, height } = document
+                .getElementById(id)!
+                .getBoundingClientRect()
+            return { x, y, width, height }
+        }, id)
+
+    const card = await rect("card")
+
+    await page.click("#toggle")
+    await page.waitForTimeout((DURATION * 1000) / 2)
+    const mid = await rect("overlay")
+
+    await page.waitForTimeout(DURATION * 1000 + 300)
+    const end = await rect("overlay")
+
+    expectNear(mid.y, halfway(card.y, end.y), 20)
+    expectNear(mid.x, halfway(card.x, end.x), 20)
+    expectNear(mid.width, halfway(card.width, end.width), 20)
+})
