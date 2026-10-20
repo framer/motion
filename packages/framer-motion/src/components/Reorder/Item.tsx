@@ -104,7 +104,7 @@ export function ReorderItemComponent<
     return (
         <Component
             drag={dragAxis}
-            tabIndex={moveItem && 0}
+            tabIndex={0}
             {...props}
             dragSnapToOrigin
             style={{ ...style, x: point.x, y: point.y, zIndex }}
@@ -139,7 +139,6 @@ export function ReorderItemComponent<
             onKeyDown={(event: React.KeyboardEvent<HTMLElement>) => {
                 onKeyDown?.(event as any)
                 if (
-                    moveItem &&
                     !event.defaultPrevented &&
                     event.target === event.currentTarget &&
                     // Leave browser and assistive tech shortcuts (Alt+Left)

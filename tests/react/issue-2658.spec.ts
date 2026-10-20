@@ -1,7 +1,7 @@
 import { expect, Page, test } from "@playwright/test"
 
 /**
- * #2658: Reorder.Group's `keyboard` prop lets arrow keys move the focused
+ * #2658: arrow keys move the focused
  * Reorder.Item. Focus has to survive React moving the node, which only a
  * real browser checks: JSDOM doesn't blur an element when it's moved.
  */

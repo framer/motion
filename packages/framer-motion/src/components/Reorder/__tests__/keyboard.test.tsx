@@ -7,14 +7,12 @@ import { ReorderAxis } from "../types"
 const List = ({
     initial = ["a", "b", "c"],
     axis = "y",
-    keyboard = true,
     onReorder,
     onKeyDown,
     dir,
 }: {
     initial?: string[]
     axis?: ReorderAxis
-    keyboard?: boolean
     onReorder?: (values: string[]) => void
     onKeyDown?: (event: React.KeyboardEvent) => void
     dir?: "rtl"
@@ -24,7 +22,6 @@ const List = ({
     return (
         <Reorder.Group
             axis={axis}
-            keyboard={keyboard}
             values={items}
             style={dir ? { direction: dir } : undefined}
             onReorder={(newOrder) => {
@@ -48,8 +45,8 @@ const List = ({
 }
 
 const order = (container: HTMLElement) =>
-    Array.from(container.querySelectorAll("li")).map(
-        (li) => li.getAttribute("data-testid")
+    Array.from(container.querySelectorAll("li")).map((li) =>
+        li.getAttribute("data-testid")
     )
 
 const press = (element: Element, key: string) => {
@@ -59,32 +56,18 @@ const press = (element: Element, key: string) => {
 }
 
 describe("Reorder keyboard", () => {
-    it("makes items focusable when keyboard is set", () => {
+    it("makes items focusable", () => {
         const { getByTestId } = render(<List />)
         expect(getByTestId("a").tabIndex).toBe(0)
     })
 
     it("lets items override tabIndex", () => {
         const { container } = render(
-            <Reorder.Group keyboard values={["a"]} onReorder={() => {}}>
+            <Reorder.Group values={["a"]} onReorder={() => {}}>
                 <Reorder.Item value="a" tabIndex={-1} />
             </Reorder.Group>
         )
         expect(container.querySelector("li")!.tabIndex).toBe(-1)
-    })
-
-    it("doesn't change items without keyboard", () => {
-        const onReorder = jest.fn()
-        const { getByTestId } = render(
-            <List keyboard={false} onReorder={onReorder} />
-        )
-        const a = getByTestId("a")
-        expect(a.hasAttribute("tabindex")).toBe(false)
-
-        a.tabIndex = 0
-        a.focus()
-        press(a, "ArrowDown")
-        expect(onReorder).not.toBeCalled()
     })
 
     it("moves the focused item with the arrow keys on the y axis", () => {
@@ -143,9 +126,9 @@ describe("Reorder keyboard", () => {
     it("prevents the arrow's default scroll only when it reorders", () => {
         const { getByTestId } = render(<List />)
 
-        expect(
-            fireEvent.keyDown(getByTestId("a"), { key: "ArrowDown" })
-        ).toBe(false)
+        expect(fireEvent.keyDown(getByTestId("a"), { key: "ArrowDown" })).toBe(
+            false
+        )
         expect(fireEvent.keyDown(getByTestId("c"), { key: "ArrowLeft" })).toBe(
             true
         )
@@ -222,11 +205,7 @@ describe("Reorder keyboard", () => {
     it("skips and keeps unrendered values in place", () => {
         const onReorder = jest.fn()
         const { getByTestId } = render(
-            <Reorder.Group
-                keyboard
-                values={["a", "hidden", "b"]}
-                onReorder={onReorder}
-            >
+            <Reorder.Group values={["a", "hidden", "b"]} onReorder={onReorder}>
                 <Reorder.Item value="a" data-testid="a" />
                 <Reorder.Item value="b" data-testid="b" />
             </Reorder.Group>

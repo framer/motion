@@ -15,7 +15,6 @@ export const App = () => {
             <button id="before">before</button>
             <div id="order">{items.join(",")}</div>
             <Reorder.Group
-                keyboard
                 axis={axis}
                 values={items}
                 onReorder={setItems}

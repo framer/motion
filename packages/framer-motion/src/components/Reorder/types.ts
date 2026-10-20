@@ -11,10 +11,10 @@ export interface ReorderContextProps<T> {
     groupRef: RefObject<Element | null>
     hasReordered: { current: boolean }
     /**
-     * Set when the group's `keyboard` prop is. Moves `item` for an arrow
-     * `key`, returning whether the key belongs to the group's axis.
+     * Moves `item` for an arrow `key`, returning whether the key belongs to
+     * the group's axis.
      */
-    moveItem?: (item: T, key: string) => boolean
+    moveItem: (item: T, key: string) => boolean
 }
 
 export interface ItemData<T> {

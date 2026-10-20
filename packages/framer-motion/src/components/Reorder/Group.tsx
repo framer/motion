@@ -44,16 +44,6 @@ export interface Props<
     axis?: ReorderAxis
 
     /**
-     * Make each item focusable and let the arrow keys along `axis` move the
-     * focused item one place (Left and Right are swapped in RTL). Keys
-     * pressed inside an item's children are ignored, and an item's
-     * `onKeyDown` can call `preventDefault()` to opt out.
-     *
-     * @public
-     */
-    keyboard?: boolean
-
-    /**
      * A callback to fire with the new value order. For instance, if the values
      * are provided as a state from `useState`, this could be the set state function.
      *
@@ -96,7 +86,6 @@ export function ReorderGroupComponent<
         children,
         as = "ul" as TagName,
         axis: axisOverride,
-        keyboard,
         onReorder,
         values,
         onPointerDownCapture,
@@ -157,33 +146,32 @@ export function ReorderGroupComponent<
         axis,
         groupRef,
         hasReordered,
-        moveItem: keyboard
-            ? (item, key) => {
-                  const keyIndex = [
-                      "ArrowUp",
-                      "ArrowLeft",
-                      "ArrowDown",
-                      "ArrowRight",
-                  ].indexOf(key)
-                  const isX = keyIndex % 2
-                  if (
-                      keyIndex < 0 ||
-                      (axis !== "xy" && axis !== (isX ? "x" : "y"))
-                  ) {
-                      return false
-                  }
+        /**
+         * Arrow keys along `axis` move the focused item one place (Left and
+         * Right are swapped in RTL).
+         */
+        moveItem: (item, key) => {
+            const keyIndex = [
+                "ArrowUp",
+                "ArrowLeft",
+                "ArrowDown",
+                "ArrowRight",
+            ].indexOf(key)
+            const isX = keyIndex % 2
+            if (keyIndex < 0 || (axis !== "xy" && axis !== (isX ? "x" : "y"))) {
+                return false
+            }
 
-                  const order = getOrder()
-                  const index = order.findIndex(({ value }) => value === item)
-                  const target =
-                      index + (keyIndex > 1 !== !!(isX && isRTL()) ? 1 : -1)
+            const order = getOrder()
+            const index = order.findIndex(({ value }) => value === item)
+            const target =
+                index + (keyIndex > 1 !== !!(isX && isRTL()) ? 1 : -1)
 
-                  if (index > -1 && order[target]) {
-                      commit(order, moveItem(order, index, target))
-                  }
-                  return true
-              }
-            : undefined,
+            if (index > -1 && order[target]) {
+                commit(order, moveItem(order, index, target))
+            }
+            return true
+        },
         registerItem: (value, layout) => {
             itemLayouts.current.set(value, layout)
 
