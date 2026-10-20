@@ -1,11 +1,12 @@
-import type { EventInfo, PanHandler } from "motion-dom"
-import {
-    cancelFrame,
-    frame,
-    frameData,
-    isPrimaryPointer,
-    time,
-} from "motion-dom"
+import { addPointerEvent } from "../../events/add-pointer-event"
+import { extractEventInfo } from "../../events/event-info"
+import { cancelFrame, frame } from "../../frameloop/frame"
+import { frameData } from "../../frameloop/frame-data"
+import { time } from "../../frameloop/sync-time"
+import type { EventInfo } from "../../node/types"
+import { distance2D } from "../../utils/distance"
+import { isPrimaryPointer } from "../utils/is-primary-pointer"
+import type { PanHandler } from "./types"
 import {
     millisecondsToSeconds,
     pipe,
@@ -13,9 +14,6 @@ import {
     secondsToMilliseconds,
     TransformPoint,
 } from "motion-utils"
-import { addPointerEvent } from "../../events/add-pointer-event"
-import { extractEventInfo } from "../../events/event-info"
-import { distance2D } from "../../utils/distance"
 
 interface PanSessionHandlers {
     onSessionStart: PanHandler
@@ -45,86 +43,51 @@ interface TimestampedPoint extends Point {
 
 const overflowStyles = /*#__PURE__*/ new Set(["auto", "scroll"])
 
-/**
- * @internal
- */
 export class PanSession {
-    /**
-     * @internal
-     */
     private history: TimestampedPoint[]
 
-    /**
-     * @internal
-     */
     private startEvent: PointerEvent | null = null
 
-    /**
-     * @internal
-     */
     private lastMoveEvent: PointerEvent | null = null
 
-    /**
-     * @internal
-     */
     private lastMoveEventInfo: EventInfo | null = null
 
     /**
      * Raw (untransformed) event info, re-transformed each frame
      * so transformPagePoint sees the current parent matrix.
-     * @internal
      */
     private lastRawMoveEventInfo: EventInfo | null = null
 
     /**
      * Whether a pointermove has arrived since the last updatePoint.
-     * @internal
      */
     private hasPendingMove?: boolean
 
-    /**
-     * @internal
-     */
     private transformPagePoint?: TransformPoint
 
-    /**
-     * @internal
-     */
     private handlers: Partial<PanSessionHandlers> = {}
 
-    /**
-     * @internal
-     */
     private removeListeners: Function
 
     /**
      * For determining if an animation should resume after it is interrupted
-     *
-     * @internal
      */
     private dragSnapToOrigin: boolean | "x" | "y"
 
     /**
      * The distance after which panning should start.
-     *
-     * @internal
      */
     private distanceThreshold: number
 
-    /**
-     * @internal
-     */
     private contextWindow: PanSessionOptions["contextWindow"] = window
 
     /**
      * Scroll positions of scrollable ancestors and window.
-     * @internal
      */
     private scrollPositions: Map<Element | Window, Point> = new Map()
 
     /**
      * Cleanup function for scroll listeners.
-     * @internal
      */
     private removeScrollListeners: (() => void) | null = null
 
@@ -318,6 +281,13 @@ export class PanSession {
     }
 
     private handlePointerMove = (event: PointerEvent, info: EventInfo) => {
+        /**
+         * This event's pageX/pageY already include any window scroll that
+         * hasn't fired its scroll event yet. Settle it now, so that scroll
+         * event doesn't add it to the new point a second time.
+         */
+        this.handleScroll(window)
+
         this.lastMoveEvent = event
         this.lastRawMoveEventInfo = info
         this.lastMoveEventInfo = transformPoint(info, this.transformPagePoint)

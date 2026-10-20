@@ -135,8 +135,10 @@ export function press(
         )
 
         if (isHTMLElement(target)) {
-            target.addEventListener("focus", (event) =>
-                enableKeyboardPress(event as FocusEvent, eventOptions)
+            target.addEventListener(
+                "focus",
+                () => enableKeyboardPress(target, eventOptions),
+                eventOptions
             )
 
             if (

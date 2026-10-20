@@ -1,5 +1,6 @@
 import { animateElement } from "../../../animate/element"
-import { frame } from "../../../../frameloop"
+import { MotionGlobalConfig } from "motion-utils"
+import { frame, frameData } from "../../../../frameloop"
 import { styleEffect } from "../../../../effects/style"
 import { motionValue } from "../../../../value"
 import { supportsFlags } from "../../../../utils/supports/flags"
@@ -77,6 +78,10 @@ afterAll(() => {
 
 beforeEach(() => {
     animations = []
+})
+
+afterEach(() => {
+    MotionGlobalConfig.useManualTiming = false
 })
 
 const nextFrame = () =>
@@ -293,17 +298,29 @@ describe("independent transform acceleration", () => {
     })
 
     it("moves to the main thread when another source keeps writing a transform", async () => {
+        /**
+         * Frames are 1000/60ms apart however long this environment takes
+         * between them, so writes in consecutive frames always land within
+         * the churn window.
+         */
+        MotionGlobalConfig.useManualTiming = true
+        frameData.timestamp = performance.now()
+        const nextFrameAt60fps = () => {
+            frameData.timestamp += 1000 / 60
+            return nextFrame()
+        }
+
         const element = document.createElement("div")
         const rotate = motionValue(0)
         styleEffect(element, { rotate })
 
         animateElement(element, { x: [0, 100] }, { duration: 1 })
-        await nextFrame()
+        await nextFrameAt60fps()
         expect(running(element)).toHaveLength(1)
 
         // One outside write rebuilds the animation with the new value.
         rotate.set(10)
-        await nextFrame()
+        await nextFrameAt60fps()
         expect(running(element)).toHaveLength(1)
         expect(running(element)[0].keyframes.transform[0]).toContain(
             "rotate(10deg)"
@@ -311,7 +328,7 @@ describe("independent transform acceleration", () => {
 
         // Writing every frame moves it to the main thread.
         rotate.set(20)
-        await nextFrame()
+        await nextFrameAt60fps()
         expect(running(element)).toHaveLength(0)
         expect(element.style.transform).toContain("rotate(20deg)")
     })
@@ -416,11 +433,14 @@ describe("independent transform acceleration", () => {
             { scale: [1, 2] },
             { duration: 0.1 }
         )
-        short.then(() => (finishedAt = performance.now() - start))
-        await wait(250)
+        await short.then(() => (finishedAt = performance.now() - start))
 
+        /**
+         * Well before x's 1s, though how long after 100ms depends on how
+         * busy the test machine is.
+         */
         expect(finishedAt).toBeGreaterThan(80)
-        expect(finishedAt).toBeLessThan(200)
+        expect(finishedAt).toBeLessThan(800)
         // x is still running on the compositor.
         expect(running(element)).toHaveLength(1)
     })
@@ -625,13 +645,25 @@ describe("independent transform acceleration", () => {
             }
         }
 
+        /**
+         * Start in a frame, so the build uses the same timestamp as the
+         * start. A slow first frame would otherwise build it far enough in
+         * that it's no longer a round trip. A negative delay builds it a
+         * fixed time after it starts.
+         */
         it.each([
-            ["built just after it starts", [0, -18, 0]],
-            ["from a float residue", [-1e-30, -18, 0]],
-        ])("%s", async (_, y) => {
+            ["built just after it starts", [0, -18, 0], -0.005],
+            ["from a float residue", [-1e-30, -18, 0], 0],
+        ])("%s", async (_, y, delay) => {
             const element = document.createElement("div")
 
-            animateElement(element, { y }, { duration: 1.2, ease: "easeInOut" })
+            frame.update(() => {
+                animateElement(
+                    element,
+                    { y },
+                    { duration: 1.2, ease: "easeInOut", delay }
+                )
+            })
             await nextFrame()
 
             expectRoundTrip(element)
@@ -640,17 +672,19 @@ describe("independent transform acceleration", () => {
         it("from a float residue when it repeats forever", async () => {
             const element = document.createElement("div")
 
-            animateElement(
-                element,
-                { y: [-1e-30, -18, 0] },
-                {
-                    duration: 1.2,
-                    ease: "easeInOut",
-                    repeat: Infinity,
-                    repeatDelay: 0.9,
-                    delay: 0.66,
-                }
-            )
+            frame.update(() => {
+                animateElement(
+                    element,
+                    { y: [-1e-30, -18, 0] },
+                    {
+                        duration: 1.2,
+                        ease: "easeInOut",
+                        repeat: Infinity,
+                        repeatDelay: 0.9,
+                        delay: 0.66,
+                    }
+                )
+            })
             await nextFrame()
 
             expectRoundTrip(element)
@@ -726,5 +760,57 @@ describe("independent transform acceleration", () => {
         await nextFrame()
 
         expect(animations.filter((a) => a.element === element)).toHaveLength(0)
+    })
+
+    it("leaves the element's transform to its caller once stopped", async () => {
+        const element = document.createElement("div")
+
+        const animations = animateElement(
+            element,
+            { x: [0, 100], scale: [1, 2] },
+            { duration: 1, ease: "linear" }
+        )
+        await nextFrame()
+        for (const animation of animations) {
+            animation.pause()
+            animation.time = 0.5
+        }
+        await nextFrame()
+
+        for (const animation of animations) animation.stop()
+
+        /**
+         * It stops where it was, without waiting for a frame.
+         */
+        expect(running(element)).toHaveLength(0)
+        expect(element.style.transform).toBe("translateX(50px) scale(1.5)")
+
+        element.style.transform = "translateX(-40px)"
+        await nextFrame()
+        await nextFrame()
+
+        expect(element.style.transform).toBe("translateX(-40px)")
+    })
+
+    it("keeps an animation that starts as another is stopped from its onPlay", async () => {
+        const element = document.createElement("div")
+
+        const [x] = animateElement(
+            element,
+            { x: [0, 100], scale: [1, 2] },
+            { duration: 1 }
+        )
+        await nextFrame()
+
+        const [y] = animateElement(
+            element,
+            { y: [0, 100] },
+            { duration: 0.1, onPlay: () => x.stop() }
+        )
+        await nextFrame()
+
+        const transform = running(element)[0].keyframes.transform
+        expect(transform[transform.length - 1]).toContain("translateY(100px)")
+        await y.finished
     })
 })

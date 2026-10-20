@@ -391,13 +391,15 @@ describe("dragging", () => {
         await pointer.to(50, 50)
         pointer.end()
 
-        const endValue = await new Promise<number>((resolve) => {
-            setTimeout(() => {
-                resolve(x.get())
-            }, 40)
-        })
+        /**
+         * Wait on frames, not wall-clock time: on a loaded machine 40ms can
+         * pass with only the animation's first frame (where it's still at
+         * the release point) having run.
+         */
+        await nextFrame()
+        await nextFrame()
 
-        return expect(endValue).toBeGreaterThan(50)
+        expect(x.get()).toBeGreaterThan(50)
     })
 
     test.skip("outputs to external values if provided", async () => {
