@@ -124,6 +124,26 @@ test.describe("Issue #2658: keyboard reordering", () => {
         expect(await order(page)).toBe("c,a,b,d")
     })
 
+    test("a reorder in a transition keeps focus and the grab", async ({
+        page,
+    }) => {
+        await page.goto("?test=issue-2658&transition")
+        await page.focus("#b")
+        await press(page, "Space")
+        await press(page, "ArrowDown")
+        await expect.poll(() => order(page)).toBe("a,c,b,d")
+        await press(page, "ArrowUp")
+        await expect.poll(() => order(page)).toBe("a,b,c,d")
+        await press(page, "ArrowUp")
+        await expect.poll(() => order(page)).toBe("b,a,c,d")
+        expect(await focused(page)).toBe("b")
+        expect(await grabbed(page)).toBe("b")
+
+        await press(page, "Escape")
+        await expect.poll(() => order(page)).toBe("a,b,c,d")
+        expect(await grabbed(page)).toBe("")
+    })
+
     test("Tab away drops, keeping the order", async ({ page }) => {
         await page.goto("?test=issue-2658")
         await page.focus("#a")

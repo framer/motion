@@ -131,28 +131,39 @@ export function ReorderGroupComponent<
 
     /**
      * Write the new order of the measured items back into the slots they
-     * held in `values`, leaving unmeasured (e.g. virtualized) values in place.
+     * hold in `values`, leaving unmeasured (e.g. virtualized) values in place.
      */
-    const commit = (order: ItemData<V>[], newOrder: ItemData<V>[]) => {
-        const newValues = [...values]
-        const measuredIndexes = order.map(({ value }) => values.indexOf(value))
-        newOrder.forEach(({ value }, index) => {
-            newValues[measuredIndexes[index]] = value
-        })
-        onReorder(newValues)
+    const commit = (newOrder: ItemData<V>[]) => {
+        let i = 0
+        const newValues = values.map((value) =>
+            itemLayouts.current.has(value) ? newOrder[i++].value : value
+        )
+        newValues.some((value, j) => value !== values[j]) &&
+            onReorder(newValues)
     }
 
     const context: ReorderContextProps<V> = {
         axis,
         groupRef,
         hasReordered,
-        values,
         /**
-         * Escape restores the rendered items to their order in `from`, the
-         * values when the item was grabbed. Arrow keys along `axis` move the
-         * item one place (Left and Right are swapped in RTL).
+         * Space or Enter grabs and drops the item, arrows along `axis` move
+         * the grabbed item one place (Left and Right swap in RTL) and Escape
+         * restores the order in `from`, the values when it was grabbed. Keys
+         * from children or with modifiers (Alt+Left etc.) are left alone.
          */
-        moveItem: (item, key, from) => {
+        onKeyDown: (event, item, from, grab) => {
+            const { key, currentTarget } = event
+            if (
+                event.defaultPrevented ||
+                event.target !== currentTarget ||
+                event.altKey ||
+                event.ctrlKey ||
+                event.metaKey
+            ) {
+                return
+            }
+
             const order = getOrder()
             const keyIndex = [
                 "ArrowUp",
@@ -161,27 +172,37 @@ export function ReorderGroupComponent<
                 "ArrowRight",
             ].indexOf(key)
             const isX = keyIndex % 2
-
-            if (key === "Escape") {
-                const newOrder = [...order].sort(
-                    (a, b) => from.indexOf(a.value) - from.indexOf(b.value)
+            if (key === " " || key === "Enter") {
+                event.repeat || grab(currentTarget, from ? undefined : values)
+            } else if (!from) {
+                return
+            } else if (key === "Escape") {
+                /**
+                 * Values added since the grab keep their slots.
+                 */
+                const kept = from.flatMap((value) =>
+                    order.filter((data) => data.value === value)
                 )
-                newOrder.some((data, i) => data !== order[i]) &&
-                    commit(order, newOrder)
-                return true
+                commit(
+                    order.map((data) =>
+                        from.includes(data.value) ? kept.shift()! : data
+                    )
+                )
+                grab(currentTarget)
+            } else if (
+                keyIndex < 0 ||
+                (axis !== "xy" && axis !== (isX ? "x" : "y"))
+            ) {
+                return
+            } else {
+                const index = order.findIndex(({ value }) => value === item)
+                const target =
+                    index + (keyIndex > 1 !== !!(isX && isRTL()) ? 1 : -1)
+                index > -1 &&
+                    order[target] &&
+                    commit(moveItem(order, index, target))
             }
-            if (keyIndex < 0 || (axis !== "xy" && axis !== (isX ? "x" : "y"))) {
-                return false
-            }
-
-            const index = order.findIndex(({ value }) => value === item)
-            const target =
-                index + (keyIndex > 1 !== !!(isX && isRTL()) ? 1 : -1)
-
-            if (index > -1 && order[target]) {
-                commit(order, moveItem(order, index, target))
-            }
-            return true
+            event.preventDefault()
         },
         registerItem: (value, layout) => {
             itemLayouts.current.set(value, layout)
@@ -213,7 +234,7 @@ export function ReorderGroupComponent<
             if (order !== newOrder) {
                 isReordering.current = true
                 hasReordered.current = true
-                commit(order, newOrder)
+                commit(newOrder)
             }
         },
     }

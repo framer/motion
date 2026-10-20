@@ -388,6 +388,45 @@ describe("Reorder keyboard", () => {
         expect(onReorder).toHaveBeenLastCalledWith(["hidden", "a", "b"])
     })
 
+    it("cancelling keeps values added since the grab in their slots", () => {
+        const onReorder = jest.fn()
+        const Group = ({ values }: { values: string[] }) => (
+            <Reorder.Group values={values} onReorder={onReorder}>
+                {values.map((value) => (
+                    <Reorder.Item
+                        key={value}
+                        value={value}
+                        data-testid={value}
+                    />
+                ))}
+            </Reorder.Group>
+        )
+        const { getByTestId, rerender } = render(
+            <Group values={["a", "b", "c"]} />
+        )
+
+        press(getByTestId("b"), " ")
+        rerender(<Group values={["new", "a", "b", "c", "end"]} />)
+        press(getByTestId("b"), "ArrowDown")
+        expect(onReorder).toHaveBeenLastCalledWith([
+            "new",
+            "a",
+            "c",
+            "b",
+            "end",
+        ])
+
+        rerender(<Group values={["new", "a", "c", "b", "end"]} />)
+        press(getByTestId("b"), "Escape")
+        expect(onReorder).toHaveBeenLastCalledWith([
+            "new",
+            "a",
+            "b",
+            "c",
+            "end",
+        ])
+    })
+
     it("applies whileDrag while grabbed", async () => {
         const opacity = motionValue(1)
         const { getByTestId } = render(

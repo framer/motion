@@ -103,8 +103,7 @@ export function ReorderItemComponent<
         updateOrder,
         groupRef,
         hasReordered,
-        moveItem,
-        values,
+        onKeyDown: handleKeyDown,
     } = context!
     const dragAxis = axis === "xy" ? true : axis
 
@@ -154,32 +153,9 @@ export function ReorderItemComponent<
                 resetAutoScrollState()
                 onDragEnd && onDragEnd(event, gesturePoint)
             }}
-            /**
-             * Space or Enter grabs and drops, arrows along the axis move the
-             * grabbed item and Escape cancels. Keys from children and with
-             * modifiers (Alt+Left etc.) are left alone.
-             */
             onKeyDown={(event: React.KeyboardEvent<HTMLElement>) => {
                 onKeyDown?.(event as any)
-                const { key, currentTarget } = event
-                if (
-                    event.defaultPrevented ||
-                    event.target !== currentTarget ||
-                    event.altKey ||
-                    event.ctrlKey ||
-                    event.metaKey
-                ) {
-                    return
-                }
-                if (key === " " || key === "Enter") {
-                    event.repeat ||
-                        grab(currentTarget, grabbedFrom ? undefined : values)
-                } else if (!grabbedFrom || !moveItem(value, key, grabbedFrom)) {
-                    return
-                } else if (key === "Escape") {
-                    grab(currentTarget)
-                }
-                event.preventDefault()
+                handleKeyDown(event, value, grabbedFrom, grab)
             }}
             /**
              * A move blurs the item, but that blur is never dispatched:

@@ -1,10 +1,10 @@
 import { Reorder } from "framer-motion"
-import { useState } from "react"
+import { startTransition, useState } from "react"
 
 /**
  * #2658: keyboard accessible reordering. `?axis=x` lays the items out in a
- * row, `?rtl` flips it, `?layout` animates the reorder. The page is tall
- * enough to scroll.
+ * row, `?rtl` flips it, `?layout` animates the reorder and `?transition`
+ * applies it in a transition. The page is tall enough to scroll.
  */
 export const App = () => {
     const params = new URL(window.location.href).searchParams
@@ -18,7 +18,11 @@ export const App = () => {
             <Reorder.Group
                 axis={axis}
                 values={items}
-                onReorder={setItems}
+                onReorder={(newItems) =>
+                    params.has("transition")
+                        ? startTransition(() => setItems(newItems))
+                        : setItems(newItems)
+                }
                 style={{
                     display: "flex",
                     flexDirection: axis === "x" ? "row" : "column",
