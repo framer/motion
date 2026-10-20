@@ -4,11 +4,18 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [Unreleased]
+## [14.5.0] 2026-10-20
+
+### Added
+
+-   `scopeMotion`/`useScopeMotion`: Scope animations and gestures to set default transitions, specify root elements, match media, and easy cleanup.
 
 ### Fixed
 
 -   `drag`: With direction lock, apply the move that sets the lock. Before, a fast drag released in that frame didn't move.
+-   `press`: Improve cleanup of keyboard accessibility events.
+-   `Reorder`: Stop double-counting `window` scroll during drag.
+-   `motion`: Ensure we animate from the latest props when parent `Activity` is made visible.
 
 ## [14.4.0] 2026-10-18
 
