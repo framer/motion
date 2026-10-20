@@ -1,4 +1,6 @@
 import { MotionGlobalConfig } from "motion-utils"
+import { scopeMotion } from "../../../scope"
+import { delay } from "../../../utils/delay"
 import { drag, DragOptions } from ".."
 import { animateElement } from "../../../animation/animate/element"
 import { visualElementStore } from "../../../render/store"
@@ -676,5 +678,101 @@ describe("dragging", () => {
 
         expect(values(a)).toEqual({ x: 10, y: 0 })
         expect(values(b)).toEqual({ x: 0, y: 20 })
+    })
+})
+
+describe("drag in scopeMotion", () => {
+    let element: HTMLElement
+
+    beforeEach(() => {
+        element = createElement()
+    })
+
+    afterEach(() => {
+        document.body.innerHTML = ""
+    })
+
+    test("stop() removes the gesture", async () => {
+        const scope = scopeMotion(() => {
+            drag(element, { momentum: false })
+        })
+        scope.stop()
+
+        await dragTo(element, 100, 50)
+        await release(element)
+
+        expect(values(element)).toEqual({ x: 0, y: 0 })
+        expect(element.style.getPropertyValue("touch-action")).toBe("")
+    })
+
+    test("stop() stops the momentum animation", async () => {
+        const scope = scopeMotion(() => {
+            drag(element, { axis: "x" })
+        })
+
+        const pointer = await gesture(element).to(1, 1)
+        await pointer.to(50, 50)
+        pointer.end()
+        await nextFrame()
+        await nextFrame()
+
+        scope.stop()
+        const x = values(element).x
+        await nextFrame()
+        await nextFrame()
+
+        expect(values(element).x).toBe(x)
+    })
+
+    test("collects work started in drag callbacks", async () => {
+        const delayed = jest.fn()
+        const scope = scopeMotion(() => {
+            drag(element, {
+                momentum: false,
+                onStart: () => delay(delayed, 50),
+            })
+        })
+
+        await dragTo(element, 100, 50)
+        await release(element)
+        scope.stop()
+        await sleep(100)
+        await nextFrame()
+
+        expect(delayed).not.toHaveBeenCalled()
+    })
+
+    test("cancel() restores the element's style attribute", async () => {
+        element.setAttribute("style", "color: red")
+        const scope = scopeMotion(() => {
+            drag(element, { momentum: false })
+        })
+
+        await dragTo(element, 100, 50)
+        await release(element)
+        expect(element.style.transform).not.toBe("")
+
+        scope.cancel()
+
+        expect(element.getAttribute("style")).toBe("color: red")
+    })
+
+    test("resolves selectors inside the root", async () => {
+        element.className = "box"
+        const outside = createElement()
+        outside.className = "box"
+        const root = document.createElement("div")
+        document.body.appendChild(root)
+        root.appendChild(element)
+
+        const scope = scopeMotion(root, () => {
+            drag(".box", { momentum: false })
+        })
+
+        await dragTo(outside, 100, 50)
+        await release(outside)
+        expect(values(outside)).toEqual({ x: 0, y: 0 })
+
+        scope.stop()
     })
 })

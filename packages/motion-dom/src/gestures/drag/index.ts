@@ -3,6 +3,7 @@ import type { InertiaOptions } from "../../animation/types"
 import { acquireProjectionNode } from "../../layout/LayoutAnimationBuilder"
 import type { MotionNodeOptions } from "../../node/types"
 import type { VisualElement } from "../../render/VisualElement"
+import { activeScope, addToScope } from "../../scope/active"
 import {
     resolveElements,
     type ElementOrSelector,
@@ -154,8 +155,22 @@ export function drag(
     options: DragOptions = {}
 ): VoidFunction {
     const props = toProps(options)
+    const scope = activeScope.current
+
+    /**
+     * Run callbacks in the active scope, so work they start is collected.
+     */
+    if (scope) {
+        for (const key in props) {
+            const value = props[key as keyof MotionNodeOptions]
+            if (typeof value === "function") {
+                ;(props as any)[key] = scope.bind(value)
+            }
+        }
+    }
 
     const cleanups = resolveElements(elementOrSelector).map((element) => {
+        scope?.track(element)
         const [node, release] = acquireProjectionNode(element as HTMLElement)
 
         /**
@@ -178,9 +193,10 @@ export function drag(
             removeStyles()
             removeListeners?.()
             controls.cancel()
+            controls.stopAnimation()
             release()
         }
     })
 
-    return () => cleanups.forEach((cleanup) => cleanup())
+    return addToScope(() => cleanups.forEach((cleanup) => cleanup()))
 }
