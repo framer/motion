@@ -218,14 +218,15 @@ function createProjectionNode(
         layoutCrossfade,
     } = props
 
-    visualElement.projection = new ProjectionNodeConstructor(
-        visualElement.latestValues,
-        props["data-framer-portal-id"]
-            ? undefined
-            : getClosestProjectingNode(visualElement.parent)
-    ) as IProjectionNode
+    const projection = (visualElement.projection =
+        new ProjectionNodeConstructor(
+            visualElement.latestValues,
+            props["data-framer-portal-id"]
+                ? undefined
+                : getClosestProjectingNode(visualElement.parent)
+        ) as IProjectionNode)
 
-    visualElement.projection.setOptions({
+    projection.setOptions({
         layoutId,
         layout,
         alwaysMeasureLayout:
@@ -245,6 +246,23 @@ function createProjectionNode(
         layoutRoot,
         layoutAnchor,
     })
+
+    /**
+     * This node will take over from its layoutId's current lead, so snapshot
+     * the lead now, while rendering. By the time the lead unmounts (or this
+     * node mounts) React may already have committed DOM changes that come
+     * before it in the tree, like a sibling changing height, and a snapshot
+     * taken then starts the animation from a position never seen on screen.
+     *
+     * If React discards this render (e.g. it suspends), nothing else
+     * completes the update, so check it after the next frame as an
+     * unmounting node does.
+     */
+    const lead = projection.getStack()?.lead
+    if (lead && !projection.root!.isUpdateBlocked()) {
+        lead.willUpdate()
+        lead.scheduleCheckAfterUnmount()
+    }
 }
 
 function getClosestProjectingNode(
