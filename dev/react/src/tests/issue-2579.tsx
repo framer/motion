@@ -16,6 +16,9 @@ export const App = () => {
             <button id="show" onClick={() => setHidden(false)}>
                 Show
             </button>
+            <button id="hide" onClick={() => setHidden(true)}>
+                Hide
+            </button>
             <div id="in-view">{String(isInView)}</div>
             {isHidden ? null : (
                 <div

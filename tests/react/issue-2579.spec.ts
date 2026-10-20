@@ -18,4 +18,20 @@ test.describe("Issue #2579", () => {
             timeout: 2000,
         })
     })
+
+    test("useInView returns false once the observed element is removed", async ({
+        page,
+    }) => {
+        await page.goto("?test=issue-2579")
+        await page.click("#show")
+        await expect(page.locator("#in-view")).toHaveText("true", {
+            timeout: 2000,
+        })
+
+        await page.click("#hide")
+        await expect(page.locator("#box")).toHaveCount(0)
+        await expect(page.locator("#in-view")).toHaveText("false", {
+            timeout: 2000,
+        })
+    })
 })

@@ -33,7 +33,7 @@
     "useMotionTemplate": 2200,
     "useSpring": 8600,
     "useScroll": 5350,
-    "useInView": 634,
+    "useInView": 620,
     "useAnimate": 22850,
     "useAnimate(mini)": 3300,
     "useMotionValueEvent": 150,
