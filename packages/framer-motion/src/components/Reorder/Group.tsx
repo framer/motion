@@ -49,6 +49,8 @@ export interface Props<
      *
      * The second argument is the value of the item that moved. Its old and
      * new positions are `values.indexOf(moved)` and `newOrder.indexOf(moved)`.
+     * This fires for each step of a drag, not once when it ends, so these
+     * describe that step's move.
      *
      * @public
      */
