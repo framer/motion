@@ -281,6 +281,13 @@ export class PanSession {
     }
 
     private handlePointerMove = (event: PointerEvent, info: EventInfo) => {
+        /**
+         * This event's pageX/pageY already include any window scroll that
+         * hasn't fired its scroll event yet. Settle it now, so that scroll
+         * event doesn't add it to the new point a second time.
+         */
+        this.handleScroll(window)
+
         this.lastMoveEvent = event
         this.lastRawMoveEventInfo = info
         this.lastMoveEventInfo = transformPoint(info, this.transformPagePoint)

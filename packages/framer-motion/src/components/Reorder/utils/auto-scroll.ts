@@ -61,6 +61,15 @@ function findScrollableAncestor(
     return null
 }
 
+/**
+ * Speed ramps up towards the edge and is capped at maxSpeed once the
+ * pointer reaches or passes it.
+ */
+function scrollSpeed(distanceFromEdge: number): number {
+    const intensity = Math.min(1, 1 - distanceFromEdge / threshold)
+    return maxSpeed * intensity * intensity
+}
+
 function getScrollAmount(
     pointerPosition: number,
     scrollElement: HTMLElement,
@@ -75,11 +84,9 @@ function getScrollAmount(
     const distanceFromEnd = end - pointerPosition
 
     if (distanceFromStart < threshold) {
-        const intensity = 1 - distanceFromStart / threshold
-        return { amount: -maxSpeed * intensity * intensity, edge: "start" }
+        return { amount: -scrollSpeed(distanceFromStart), edge: "start" }
     } else if (distanceFromEnd < threshold) {
-        const intensity = 1 - distanceFromEnd / threshold
-        return { amount: maxSpeed * intensity * intensity, edge: "end" }
+        return { amount: scrollSpeed(distanceFromEnd), edge: "end" }
     }
 
     return { amount: 0, edge: null }
