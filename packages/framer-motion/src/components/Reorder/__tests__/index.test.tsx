@@ -108,7 +108,7 @@ describe("Reorder", () => {
         capturedContext.updateOrder(2, { x: 0, y: 30 }, { x: 0, y: 1 })
 
         // Should swap 2 and 3 in the FULL values array, not just measured items
-        expect(onReorder).toHaveBeenCalledWith([1, 3, 2, 4, 5])
+        expect(onReorder).toHaveBeenCalledWith([1, 3, 2, 4, 5], 2)
     })
 
     it.each([["xy"], [undefined]])(
@@ -153,9 +153,112 @@ describe("Reorder", () => {
 
             capturedContext.updateOrder("a", { x: 100, y: 100 }, { x: 1, y: 1 })
 
-            expect(onReorder).toHaveBeenCalledWith(["b", "c", "d", "a"])
+            expect(onReorder).toHaveBeenCalledWith(["b", "c", "d", "a"], "a")
         }
     )
+})
+
+describe("Reorder onReorder moved item", () => {
+    let context: any = null
+    const ContextCapture = () => {
+        context = useContext(ReorderContext)
+        return null
+    }
+
+    const box = (x: number, y: number) => ({
+        x: { min: x, max: x + 100 },
+        y: { min: y, max: y + 50 },
+    })
+
+    it("Passes the moved value to onReorder on a single-axis reorder", () => {
+        const onReorder = jest.fn()
+
+        render(
+            <Reorder.Group
+                axis="y"
+                values={["a", "b", "c"]}
+                onReorder={(order, moved) => {
+                    // Typed as the values' element type
+                    const typed: string = moved
+                    onReorder(order, typed)
+                }}
+            >
+                <ContextCapture />
+            </Reorder.Group>
+        )
+
+        act(() => {
+            context.registerItem("a", box(0, 0))
+            context.registerItem("b", box(0, 50))
+            context.registerItem("c", box(0, 100))
+        })
+
+        // Drag "c" up past "b"'s center
+        context.updateOrder("c", { x: 0, y: -30 }, { x: 0, y: -1 })
+
+        expect(onReorder).toHaveBeenCalledTimes(1)
+        expect(onReorder).toHaveBeenCalledWith(["a", "c", "b"], "c")
+    })
+
+    it("Passes the moved value when moving between grid lines", () => {
+        const onReorder = jest.fn()
+
+        render(
+            <Reorder.Group
+                axis="xy"
+                values={["a", "b", "c", "d"]}
+                onReorder={onReorder}
+            >
+                <ContextCapture />
+            </Reorder.Group>
+        )
+
+        act(() => {
+            context.registerItem("a", box(0, 0))
+            context.registerItem("b", box(100, 0))
+            context.registerItem("c", box(0, 50))
+            context.registerItem("d", box(100, 50))
+        })
+
+        context.updateOrder("a", { x: 100, y: 50 }, { x: 1, y: 1 })
+
+        expect(onReorder).toHaveBeenCalledWith(["b", "c", "d", "a"], "a")
+    })
+
+    it("Lets the moved index be read from the new order", () => {
+        const moves: Array<[from: number, to: number]> = []
+
+        const Component = () => {
+            const [items, setItems] = useState(["a", "b", "c"])
+
+            return (
+                <Reorder.Group
+                    axis="y"
+                    values={items}
+                    onReorder={(order, moved) => {
+                        moves.push([items.indexOf(moved), order.indexOf(moved)])
+                        setItems(order)
+                    }}
+                >
+                    <ContextCapture />
+                </Reorder.Group>
+            )
+        }
+
+        render(<Component />)
+
+        act(() => {
+            context.registerItem("a", box(0, 0))
+            context.registerItem("b", box(0, 50))
+            context.registerItem("c", box(0, 100))
+        })
+
+        act(() => {
+            context.updateOrder("a", { x: 0, y: 30 }, { x: 0, y: 1 })
+        })
+
+        expect(moves).toEqual([[0, 1]])
+    })
 })
 
 describe("Reorder click after drag", () => {
@@ -179,8 +282,8 @@ describe("Reorder click after drag", () => {
             <MockDrag>
                 <Reorder.Group
                     values={items}
-                    onReorder={(newOrder) => {
-                        handlers.onReorder(newOrder)
+                    onReorder={(newOrder, moved) => {
+                        handlers.onReorder(newOrder, moved)
                         setItems(newOrder)
                     }}
                     axis="y"
@@ -247,7 +350,7 @@ describe("Reorder click after drag", () => {
             // Press where the click will land, so it's a child of the press
             const trigger = target === "group" ? undefined : getByTestId(target)
             await reorderDrag(getByTestId("a"), trigger)
-            expect(onReorder).toBeCalledWith(["b", "a"])
+            expect(onReorder).toBeCalledWith(["b", "a"], "a")
 
             click(getByTestId(target))
             expect(clicks.onItemClick).not.toBeCalled()

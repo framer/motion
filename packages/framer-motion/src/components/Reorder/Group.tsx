@@ -47,9 +47,12 @@ export interface Props<
      * A callback to fire with the new value order. For instance, if the values
      * are provided as a state from `useState`, this could be the set state function.
      *
+     * The second argument is the value of the item that moved. Its old and
+     * new positions are `values.indexOf(moved)` and `newOrder.indexOf(moved)`.
+     *
      * @public
      */
-    onReorder: (newOrder: V[]) => void
+    onReorder: (newOrder: V[], moved: V) => void
 
     /**
      * The latest values state.
@@ -169,7 +172,7 @@ export function ReorderGroupComponent<
                 newOrder.forEach(({ value }, index) => {
                     newValues[measuredIndexes[index]] = value
                 })
-                onReorder(newValues)
+                onReorder(newValues, item)
             }
         },
     }
@@ -252,6 +255,6 @@ export const ReorderGroup = /*@__PURE__*/ forwardRef(ReorderGroupComponent) as <
         "values" | "onReorder"
     > & {
         values: Values
-        onReorder: (newOrder: Values) => void
+        onReorder: (newOrder: Values, moved: Values[number]) => void
     } & { ref?: React.ForwardedRef<any> }
 ) => ReturnType<typeof ReorderGroupComponent>
