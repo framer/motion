@@ -1,6 +1,6 @@
 "use client"
 
-import { invariant } from "motion-utils"
+import { invariant, moveItem } from "motion-utils"
 import * as React from "react"
 import {
     forwardRef,
@@ -42,6 +42,16 @@ export interface Props<
      * @public
      */
     axis?: ReorderAxis
+
+    /**
+     * Make each item focusable and let the arrow keys along `axis` move the
+     * focused item one place (Left and Right are swapped in RTL). Keys
+     * pressed inside an item's children are ignored, and an item's
+     * `onKeyDown` can call `preventDefault()` to opt out.
+     *
+     * @public
+     */
+    keyboard?: boolean
 
     /**
      * A callback to fire with the new value order. For instance, if the values
@@ -86,6 +96,7 @@ export function ReorderGroupComponent<
         children,
         as = "ul" as TagName,
         axis: axisOverride,
+        keyboard,
         onReorder,
         values,
         onPointerDownCapture,
@@ -118,10 +129,61 @@ export function ReorderGroupComponent<
         if (!valuesSet.has(value)) itemLayouts.current.delete(value)
     })
 
+    const getOrder = () =>
+        values.flatMap((value) => {
+            const layout = itemLayouts.current.get(value)
+            return layout ? [{ value, layout }] : []
+        })
+
+    const isRTL = () =>
+        groupRef.current?.ownerDocument.defaultView?.getComputedStyle(
+            groupRef.current
+        ).direction === "rtl"
+
+    /**
+     * Write the new order of the measured items back into the slots they
+     * held in `values`, leaving unmeasured (e.g. virtualized) values in place.
+     */
+    const commit = (order: ItemData<V>[], newOrder: ItemData<V>[]) => {
+        const newValues = [...values]
+        const measuredIndexes = order.map(({ value }) => values.indexOf(value))
+        newOrder.forEach(({ value }, index) => {
+            newValues[measuredIndexes[index]] = value
+        })
+        onReorder(newValues)
+    }
+
     const context: ReorderContextProps<V> = {
         axis,
         groupRef,
         hasReordered,
+        moveItem: keyboard
+            ? (item, key) => {
+                  const keyIndex = [
+                      "ArrowUp",
+                      "ArrowLeft",
+                      "ArrowDown",
+                      "ArrowRight",
+                  ].indexOf(key)
+                  const isX = keyIndex % 2
+                  if (
+                      keyIndex < 0 ||
+                      (axis !== "xy" && axis !== (isX ? "x" : "y"))
+                  ) {
+                      return false
+                  }
+
+                  const order = getOrder()
+                  const index = order.findIndex(({ value }) => value === item)
+                  const target =
+                      index + (keyIndex > 1 !== !!(isX && isRTL()) ? 1 : -1)
+
+                  if (index > -1 && order[target]) {
+                      commit(order, moveItem(order, index, target))
+                  }
+                  return true
+              }
+            : undefined,
         registerItem: (value, layout) => {
             itemLayouts.current.set(value, layout)
 
@@ -139,37 +201,20 @@ export function ReorderGroupComponent<
         updateOrder: (item, offset, velocity) => {
             if (isReordering.current) return
 
-            const order = values.flatMap((value) => {
-                const layout = itemLayouts.current.get(value)
-                return layout ? [{ value, layout }] : []
-            })
-            const direction =
-                groupRef.current?.ownerDocument.defaultView?.getComputedStyle(
-                    groupRef.current
-                ).direction === "rtl"
-                    ? "rtl"
-                    : "ltr"
+            const order = getOrder()
             const newOrder = checkReorder(
                 order,
                 item,
                 offset,
                 velocity,
                 axis,
-                direction
+                isRTL() ? "rtl" : "ltr"
             )
 
             if (order !== newOrder) {
                 isReordering.current = true
                 hasReordered.current = true
-
-                const newValues = [...values]
-                const measuredIndexes = order.map(({ value }) =>
-                    values.indexOf(value)
-                )
-                newOrder.forEach(({ value }, index) => {
-                    newValues[measuredIndexes[index]] = value
-                })
-                onReorder(newValues)
+                commit(order, newOrder)
             }
         },
     }

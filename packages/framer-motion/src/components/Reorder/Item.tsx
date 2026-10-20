@@ -63,6 +63,7 @@ export function ReorderItemComponent<
         as = "li" as TagName,
         onDrag,
         onDragEnd,
+        onKeyDown,
         layout = true,
         ...props
     }: ReorderItemProps<V, TagName>,
@@ -90,12 +91,20 @@ export function ReorderItemComponent<
         "reorder-item-child"
     )
 
-    const { axis, registerItem, updateOrder, groupRef, hasReordered } = context!
+    const {
+        axis,
+        registerItem,
+        updateOrder,
+        groupRef,
+        hasReordered,
+        moveItem,
+    } = context!
     const dragAxis = axis === "xy" ? true : axis
 
     return (
         <Component
             drag={dragAxis}
+            tabIndex={moveItem && 0}
             {...props}
             dragSnapToOrigin
             style={{ ...style, x: point.x, y: point.y, zIndex }}
@@ -126,6 +135,21 @@ export function ReorderItemComponent<
                 hasReordered.current = false
                 resetAutoScrollState()
                 onDragEnd && onDragEnd(event, gesturePoint)
+            }}
+            onKeyDown={(event: React.KeyboardEvent<HTMLElement>) => {
+                onKeyDown?.(event as any)
+                if (
+                    moveItem &&
+                    !event.defaultPrevented &&
+                    event.target === event.currentTarget &&
+                    moveItem(value, event.key)
+                ) {
+                    /**
+                     * The move blurs the item, but React DOM restores focus
+                     * to it after the commit (restoreSelection).
+                     */
+                    event.preventDefault()
+                }
             }}
             onLayoutMeasure={(measured) => {
                 registerItem(value, measured)
