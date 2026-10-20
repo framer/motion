@@ -17,35 +17,41 @@ function firePointerEvent(target: EventTarget, type: "down" | "up" | "cancel") {
 }
 
 export const enableKeyboardPress = (
-    focusEvent: FocusEvent,
+    element: HTMLElement,
     eventOptions: AddEventListenerOptions
 ) => {
-    const element = focusEvent.currentTarget as HTMLElement
-    if (!element) return
+    /**
+     * Listeners are scoped to this focus and all released on blur, rather
+     * than added per Enter press, so they can't accumulate and fire
+     * duplicate pointerup/pointercancel events. See #3935.
+     */
+    let isKeyPressing = false
 
     const handleKeydown = filterEvents(() => {
         if (isPressing.has(element)) return
-
+        isKeyPressing = true
         firePointerEvent(element, "down")
+    })
 
-        const handleKeyup = filterEvents(() => {
-            firePointerEvent(element, "up")
-        })
-
-        const handleBlur = () => firePointerEvent(element, "cancel")
-
-        element.addEventListener("keyup", handleKeyup, eventOptions)
-        element.addEventListener("blur", handleBlur, eventOptions)
+    const handleKeyup = filterEvents(() => {
+        if (!isKeyPressing) return
+        isKeyPressing = false
+        firePointerEvent(element, "up")
     })
 
     element.addEventListener("keydown", handleKeydown, eventOptions)
+    element.addEventListener("keyup", handleKeyup, eventOptions)
 
     /**
-     * Add an event listener that fires on blur to remove the keydown events.
+     * On blur, remove the key listeners and cancel any keyboard press.
      */
     element.addEventListener(
         "blur",
-        () => element.removeEventListener("keydown", handleKeydown),
-        eventOptions
+        () => {
+            element.removeEventListener("keydown", handleKeydown)
+            element.removeEventListener("keyup", handleKeyup)
+            if (isKeyPressing) firePointerEvent(element, "cancel")
+        },
+        { ...eventOptions, once: true }
     )
 }
