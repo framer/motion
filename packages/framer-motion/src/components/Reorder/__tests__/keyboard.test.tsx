@@ -115,6 +115,22 @@ describe("Reorder keyboard", () => {
         expect(onReorder).not.toBeCalled()
     })
 
+    it("ignores arrows with Alt, Ctrl or Meta held", () => {
+        const onReorder = jest.fn()
+        const { getByTestId } = render(<List onReorder={onReorder} />)
+        const a = getByTestId("a")
+
+        for (const modifier of ["altKey", "ctrlKey", "metaKey"]) {
+            expect(
+                fireEvent.keyDown(a, { key: "ArrowDown", [modifier]: true })
+            ).toBe(true)
+        }
+        expect(onReorder).not.toBeCalled()
+
+        press(a, "ArrowDown")
+        expect(onReorder).toBeCalledWith(["b", "a", "c"])
+    })
+
     it("does nothing past either end", () => {
         const onReorder = jest.fn()
         const { getByTestId } = render(<List onReorder={onReorder} />)

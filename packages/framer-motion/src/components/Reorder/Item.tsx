@@ -142,6 +142,8 @@ export function ReorderItemComponent<
                     moveItem &&
                     !event.defaultPrevented &&
                     event.target === event.currentTarget &&
+                    // Leave browser and assistive tech shortcuts (Alt+Left)
+                    !(event.altKey || event.ctrlKey || event.metaKey) &&
                     moveItem(value, event.key)
                 ) {
                     /**
