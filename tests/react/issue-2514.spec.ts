@@ -139,10 +139,7 @@ for (const [name, query] of [
  * `layout="x"` (PR #3627) still opts out of animating the y displacement.
  */
 test(`#2514: layout="x" still snaps the y axis`, async ({ page }) => {
-    const { start, mid, end } = await run(
-        page,
-        "&vertical=0&mode=below&axis=x"
-    )
+    const { start, mid, end } = await run(page, "&vertical=0&mode=below&axis=x")
 
     expectNear(mid.indicator.y, end.indicator.y, 1)
     expectNear(mid.indicator.x, halfway(start.indicator.x, end.indicator.x), 20)
