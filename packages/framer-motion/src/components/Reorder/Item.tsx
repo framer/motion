@@ -1,9 +1,9 @@
 "use client"
 
-import { isMotionValue } from "motion-dom"
+import { isMotionValue, visualElementStore } from "motion-dom"
 import { invariant } from "motion-utils"
 import * as React from "react"
-import { forwardRef, FunctionComponent, useContext } from "react"
+import { forwardRef, FunctionComponent, useContext, useState } from "react"
 import { ReorderContext } from "../../context/ReorderContext"
 import { motion } from "../../render/components/motion/proxy"
 import { HTMLMotionProps } from "../../render/html/types"
@@ -64,6 +64,7 @@ export function ReorderItemComponent<
         onDrag,
         onDragEnd,
         onKeyDown,
+        onBlur,
         layout = true,
         ...props
     }: ReorderItemProps<V, TagName>,
@@ -76,6 +77,11 @@ export function ReorderItemComponent<
     >
 
     const context = useContext(ReorderContext)
+    /**
+     * The group's values when this item was grabbed with the keyboard, for
+     * Escape to restore. Set only while grabbed.
+     */
+    const [grabbedFrom, setGrabbedFrom] = useState<V[]>()
     const point = {
         x: useDefaultMotionValue(style.x),
         y: useDefaultMotionValue(style.y),
@@ -98,8 +104,20 @@ export function ReorderItemComponent<
         groupRef,
         hasReordered,
         moveItem,
+        values,
     } = context!
     const dragAxis = axis === "xy" ? true : axis
+
+    /**
+     * A keyboard grab is a drag without a pointer, so it shares whileDrag
+     * (but not the drag callbacks, which need a pointer and PanInfo).
+     */
+    const grab = (element: Element, from?: V[]) => {
+        setGrabbedFrom(from)
+        visualElementStore
+            .get(element)
+            ?.animationState?.setActive("whileDrag", !!from)
+    }
 
     return (
         <Component
@@ -136,22 +154,44 @@ export function ReorderItemComponent<
                 resetAutoScrollState()
                 onDragEnd && onDragEnd(event, gesturePoint)
             }}
+            /**
+             * Space or Enter grabs and drops, arrows along the axis move the
+             * grabbed item and Escape cancels. Keys from children and with
+             * modifiers (Alt+Left etc.) are left alone.
+             */
             onKeyDown={(event: React.KeyboardEvent<HTMLElement>) => {
                 onKeyDown?.(event as any)
+                const { key, currentTarget } = event
                 if (
-                    !event.defaultPrevented &&
-                    event.target === event.currentTarget &&
-                    // Leave browser and assistive tech shortcuts (Alt+Left)
-                    !(event.altKey || event.ctrlKey || event.metaKey) &&
-                    moveItem(value, event.key)
+                    event.defaultPrevented ||
+                    event.target !== currentTarget ||
+                    event.altKey ||
+                    event.ctrlKey ||
+                    event.metaKey
                 ) {
-                    /**
-                     * The move blurs the item, but React DOM restores focus
-                     * to it after the commit (restoreSelection).
-                     */
-                    event.preventDefault()
+                    return
                 }
+                if (key === " " || key === "Enter") {
+                    event.repeat ||
+                        grab(currentTarget, grabbedFrom ? undefined : values)
+                } else if (!grabbedFrom || !moveItem(value, key, grabbedFrom)) {
+                    return
+                } else if (key === "Escape") {
+                    grab(currentTarget)
+                }
+                event.preventDefault()
             }}
+            /**
+             * A move blurs the item, but that blur is never dispatched:
+             * React DOM disables its events while it commits, and restores
+             * focus to the item before re-enabling them. So any blur that
+             * reaches here is focus really leaving, which drops the item.
+             */
+            onBlur={(event: React.FocusEvent<HTMLElement>) => {
+                onBlur?.(event as any)
+                grabbedFrom && grab(event.currentTarget)
+            }}
+            data-grabbed={grabbedFrom && ""}
             onLayoutMeasure={(measured) => {
                 registerItem(value, measured)
             }}

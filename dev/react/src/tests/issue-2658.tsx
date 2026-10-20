@@ -3,7 +3,8 @@ import { useState } from "react"
 
 /**
  * #2658: keyboard accessible reordering. `?axis=x` lays the items out in a
- * row, `?rtl` flips it, `?layout` animates the reorder.
+ * row, `?rtl` flips it, `?layout` animates the reorder. The page is tall
+ * enough to scroll.
  */
 export const App = () => {
     const params = new URL(window.location.href).searchParams
@@ -32,6 +33,7 @@ export const App = () => {
                         key={item}
                         value={item}
                         id={item}
+                        whileDrag={{ opacity: 0.5 }}
                         transition={
                             params.has("layout")
                                 ? { duration: 1, ease: "linear" }
@@ -48,6 +50,8 @@ export const App = () => {
                     </Reorder.Item>
                 ))}
             </Reorder.Group>
+            <button id="after">after</button>
+            <div style={{ height: 3000 }} />
         </>
     )
 }

@@ -146,11 +146,14 @@ export function ReorderGroupComponent<
         axis,
         groupRef,
         hasReordered,
+        values,
         /**
-         * Arrow keys along `axis` move the focused item one place (Left and
-         * Right are swapped in RTL).
+         * Escape restores the rendered items to their order in `from`, the
+         * values when the item was grabbed. Arrow keys along `axis` move the
+         * item one place (Left and Right are swapped in RTL).
          */
-        moveItem: (item, key) => {
+        moveItem: (item, key, from) => {
+            const order = getOrder()
             const keyIndex = [
                 "ArrowUp",
                 "ArrowLeft",
@@ -158,11 +161,19 @@ export function ReorderGroupComponent<
                 "ArrowRight",
             ].indexOf(key)
             const isX = keyIndex % 2
+
+            if (key === "Escape") {
+                const newOrder = [...order].sort(
+                    (a, b) => from.indexOf(a.value) - from.indexOf(b.value)
+                )
+                newOrder.some((data, i) => data !== order[i]) &&
+                    commit(order, newOrder)
+                return true
+            }
             if (keyIndex < 0 || (axis !== "xy" && axis !== (isX ? "x" : "y"))) {
                 return false
             }
 
-            const order = getOrder()
             const index = order.findIndex(({ value }) => value === item)
             const target =
                 index + (keyIndex > 1 !== !!(isX && isRTL()) ? 1 : -1)

@@ -1,6 +1,8 @@
 import { fireEvent } from "@testing-library/react"
+import { motionValue } from "motion-dom"
 import { act, useState } from "react"
 import { Reorder } from ".."
+import { nextFrame } from "../../../gestures/__tests__/utils"
 import { render } from "../../../jest.setup"
 import { ReorderAxis } from "../types"
 
@@ -8,14 +10,14 @@ const List = ({
     initial = ["a", "b", "c"],
     axis = "y",
     onReorder,
-    onKeyDown,
     dir,
+    ...itemProps
 }: {
     initial?: string[]
     axis?: ReorderAxis
     onReorder?: (values: string[]) => void
-    onKeyDown?: (event: React.KeyboardEvent) => void
     dir?: "rtl"
+    [key: string]: any
 }) => {
     const [items, setItems] = useState(initial)
 
@@ -34,7 +36,7 @@ const List = ({
                     key={item}
                     value={item}
                     data-testid={item}
-                    onKeyDown={onKeyDown}
+                    {...itemProps}
                 >
                     {item}
                     <input data-testid={`${item}-input`} />
@@ -49,11 +51,18 @@ const order = (container: HTMLElement) =>
         li.getAttribute("data-testid")
     )
 
-const press = (element: Element, key: string) => {
+/**
+ * Returns whether the key was left to the browser (not prevented).
+ */
+const press = (element: Element, key: string, init: object = {}) => {
+    let result = true
     act(() => {
-        fireEvent.keyDown(element, { key })
+        result = fireEvent.keyDown(element, { key, ...init })
     })
+    return result
 }
+
+const isGrabbed = (element: Element) => element.hasAttribute("data-grabbed")
 
 describe("Reorder keyboard", () => {
     it("makes items focusable", () => {
@@ -70,45 +79,179 @@ describe("Reorder keyboard", () => {
         expect(container.querySelector("li")!.tabIndex).toBe(-1)
     })
 
-    it("moves the focused item with the arrow keys on the y axis", () => {
+    it("leaves arrows to the browser until an item is grabbed", () => {
+        const onReorder = jest.fn()
+        const { getByTestId } = render(<List onReorder={onReorder} />)
+
+        expect(press(getByTestId("a"), "ArrowDown")).toBe(true)
+        expect(press(getByTestId("b"), "ArrowUp")).toBe(true)
+        expect(onReorder).not.toBeCalled()
+    })
+
+    it("grabs with Space, moves with arrows and drops with Space", () => {
         const onReorder = jest.fn()
         const { container, getByTestId } = render(
             <List onReorder={onReorder} />
         )
+        const a = getByTestId("a")
 
-        press(getByTestId("a"), "ArrowDown")
+        expect(isGrabbed(a)).toBe(false)
+        expect(press(a, " ")).toBe(false)
+        expect(isGrabbed(a)).toBe(true)
+        expect(onReorder).not.toBeCalled()
+
+        expect(press(a, "ArrowDown")).toBe(false)
         expect(onReorder).toHaveBeenLastCalledWith(["b", "a", "c"])
         expect(order(container)).toEqual(["b", "a", "c"])
+        expect(isGrabbed(a)).toBe(true)
 
-        press(getByTestId("a"), "ArrowDown")
+        press(a, "ArrowDown")
         expect(order(container)).toEqual(["b", "c", "a"])
 
-        press(getByTestId("a"), "ArrowUp")
+        press(a, "ArrowUp")
+        expect(order(container)).toEqual(["b", "a", "c"])
+
+        expect(press(a, " ")).toBe(false)
+        expect(isGrabbed(a)).toBe(false)
+        expect(order(container)).toEqual(["b", "a", "c"])
+
+        // Dropped: arrows are the browser's again
+        expect(press(a, "ArrowDown")).toBe(true)
+        expect(order(container)).toEqual(["b", "a", "c"])
+        expect(onReorder).toBeCalledTimes(3)
+    })
+
+    it("grabs and drops with Enter", () => {
+        const { container, getByTestId } = render(<List />)
+        const b = getByTestId("b")
+
+        expect(press(b, "Enter")).toBe(false)
+        expect(isGrabbed(b)).toBe(true)
+        press(b, "ArrowUp")
+        expect(order(container)).toEqual(["b", "a", "c"])
+
+        expect(press(b, "Enter")).toBe(false)
+        expect(isGrabbed(b)).toBe(false)
+        press(b, "ArrowDown")
         expect(order(container)).toEqual(["b", "a", "c"])
     })
 
-    it("ignores arrows across the axis and other keys", () => {
+    it("ignores a held Space or Enter", () => {
+        const { getByTestId } = render(<List />)
+        const a = getByTestId("a")
+
+        press(a, " ")
+        press(a, " ", { repeat: true })
+        press(a, "Enter", { repeat: true })
+        expect(isGrabbed(a)).toBe(true)
+    })
+
+    it("cancels with Escape, restoring the order from the grab", () => {
+        const onReorder = jest.fn()
+        const { container, getByTestId } = render(
+            <List onReorder={onReorder} />
+        )
+        const a = getByTestId("a")
+
+        press(a, " ")
+        press(a, "ArrowDown")
+        press(a, "ArrowDown")
+        expect(order(container)).toEqual(["b", "c", "a"])
+
+        expect(press(a, "Escape")).toBe(false)
+        expect(onReorder).toHaveBeenLastCalledWith(["a", "b", "c"])
+        expect(order(container)).toEqual(["a", "b", "c"])
+        expect(isGrabbed(a)).toBe(false)
+
+        expect(press(a, "ArrowDown")).toBe(true)
+        expect(order(container)).toEqual(["a", "b", "c"])
+    })
+
+    it("restores the order from the latest grab", () => {
+        const { container, getByTestId } = render(<List />)
+        const a = getByTestId("a")
+
+        press(a, " ")
+        press(a, "ArrowDown")
+        press(a, " ")
+        press(a, " ")
+        press(a, "ArrowDown")
+        expect(order(container)).toEqual(["b", "c", "a"])
+
+        press(a, "Escape")
+        expect(order(container)).toEqual(["b", "a", "c"])
+    })
+
+    it("cancelling without a move doesn't reorder", () => {
+        const onReorder = jest.fn()
+        const { getByTestId } = render(<List onReorder={onReorder} />)
+        const a = getByTestId("a")
+
+        press(a, " ")
+        expect(press(a, "Escape")).toBe(false)
+        expect(isGrabbed(a)).toBe(false)
+        expect(onReorder).not.toBeCalled()
+    })
+
+    it("leaves Escape to the browser when nothing is grabbed", () => {
+        const { getByTestId } = render(<List />)
+        expect(press(getByTestId("a"), "Escape")).toBe(true)
+    })
+
+    it("drops, keeping the order, when focus leaves the item", () => {
+        const onReorder = jest.fn()
+        const { container, getByTestId } = render(
+            <List onReorder={onReorder} />
+        )
+        const a = getByTestId("a")
+
+        act(() => a.focus())
+        press(a, " ")
+        press(a, "ArrowDown")
+        expect(document.activeElement).toBe(a)
+        expect(isGrabbed(a)).toBe(true)
+
+        act(() => getByTestId("c").focus())
+        expect(isGrabbed(a)).toBe(false)
+        expect(order(container)).toEqual(["b", "a", "c"])
+
+        act(() => a.focus())
+        expect(press(a, "ArrowDown")).toBe(true)
+        expect(order(container)).toEqual(["b", "a", "c"])
+        expect(onReorder).toBeCalledTimes(1)
+    })
+
+    it("ignores arrows across the axis and other keys while grabbed", () => {
         const onReorder = jest.fn()
         const { getByTestId } = render(<List onReorder={onReorder} />)
         const b = getByTestId("b")
 
-        for (const key of ["ArrowLeft", "ArrowRight", "Enter", " ", "a"]) {
-            press(b, key)
+        press(b, " ")
+        for (const key of ["ArrowLeft", "ArrowRight", "Tab", "a"]) {
+            expect(press(b, key)).toBe(true)
         }
         expect(onReorder).not.toBeCalled()
+        expect(isGrabbed(b)).toBe(true)
     })
 
-    it("ignores arrows with Alt, Ctrl or Meta held", () => {
+    it("ignores keys with Alt, Ctrl or Meta held", () => {
         const onReorder = jest.fn()
         const { getByTestId } = render(<List onReorder={onReorder} />)
         const a = getByTestId("a")
 
         for (const modifier of ["altKey", "ctrlKey", "metaKey"]) {
-            expect(
-                fireEvent.keyDown(a, { key: "ArrowDown", [modifier]: true })
-            ).toBe(true)
+            expect(press(a, " ", { [modifier]: true })).toBe(true)
+            expect(press(a, "Enter", { [modifier]: true })).toBe(true)
+        }
+        expect(isGrabbed(a)).toBe(false)
+
+        press(a, " ")
+        for (const modifier of ["altKey", "ctrlKey", "metaKey"]) {
+            expect(press(a, "ArrowDown", { [modifier]: true })).toBe(true)
+            expect(press(a, "Escape", { [modifier]: true })).toBe(true)
         }
         expect(onReorder).not.toBeCalled()
+        expect(isGrabbed(a)).toBe(true)
 
         press(a, "ArrowDown")
         expect(onReorder).toBeCalledWith(["b", "a", "c"])
@@ -118,101 +261,175 @@ describe("Reorder keyboard", () => {
         const onReorder = jest.fn()
         const { getByTestId } = render(<List onReorder={onReorder} />)
 
+        press(getByTestId("a"), " ")
         press(getByTestId("a"), "ArrowUp")
+        press(getByTestId("c"), " ")
         press(getByTestId("c"), "ArrowDown")
         expect(onReorder).not.toBeCalled()
     })
 
-    it("prevents the arrow's default scroll only when it reorders", () => {
-        const { getByTestId } = render(<List />)
-
-        expect(fireEvent.keyDown(getByTestId("a"), { key: "ArrowDown" })).toBe(
-            false
-        )
-        expect(fireEvent.keyDown(getByTestId("c"), { key: "ArrowLeft" })).toBe(
-            true
-        )
-    })
-
-    it("moves the focused item with left and right on the x axis", () => {
+    it("moves with left and right on the x axis", () => {
         const { container, getByTestId } = render(<List axis="x" />)
+        const a = getByTestId("a")
 
-        press(getByTestId("a"), "ArrowRight")
+        press(a, " ")
+        press(a, "ArrowRight")
         expect(order(container)).toEqual(["b", "a", "c"])
 
-        press(getByTestId("a"), "ArrowDown")
+        expect(press(a, "ArrowDown")).toBe(true)
         expect(order(container)).toEqual(["b", "a", "c"])
 
-        press(getByTestId("a"), "ArrowLeft")
+        press(a, "ArrowLeft")
         expect(order(container)).toEqual(["a", "b", "c"])
     })
 
     it("flips left and right in RTL", () => {
         const { container, getByTestId } = render(<List axis="x" dir="rtl" />)
 
+        press(getByTestId("a"), " ")
         press(getByTestId("a"), "ArrowLeft")
         expect(order(container)).toEqual(["b", "a", "c"])
     })
 
     it("accepts every arrow on the xy axis", () => {
         const { container, getByTestId } = render(<List axis="xy" />)
+        const a = getByTestId("a")
 
-        press(getByTestId("a"), "ArrowRight")
+        press(a, " ")
+        press(a, "ArrowRight")
         expect(order(container)).toEqual(["b", "a", "c"])
-        press(getByTestId("a"), "ArrowDown")
+        press(a, "ArrowDown")
         expect(order(container)).toEqual(["b", "c", "a"])
-        press(getByTestId("a"), "ArrowUp")
+        press(a, "ArrowUp")
         expect(order(container)).toEqual(["b", "a", "c"])
-        press(getByTestId("a"), "ArrowLeft")
+        press(a, "ArrowLeft")
         expect(order(container)).toEqual(["a", "b", "c"])
     })
 
     it("ignores keys from inside the item", () => {
         const onReorder = jest.fn()
         const { getByTestId } = render(<List onReorder={onReorder} />)
+        const input = getByTestId("a-input")
 
-        press(getByTestId("a-input"), "ArrowDown")
+        expect(press(input, " ")).toBe(true)
+        expect(press(input, "Enter")).toBe(true)
+        expect(isGrabbed(getByTestId("a"))).toBe(false)
+
+        press(getByTestId("a"), " ")
+        expect(press(input, "ArrowDown")).toBe(true)
+        expect(press(input, "Escape")).toBe(true)
         expect(onReorder).not.toBeCalled()
+        expect(isGrabbed(getByTestId("a"))).toBe(true)
     })
 
-    it("lets the item's onKeyDown prevent reordering", () => {
+    it("lets the item's onKeyDown prevent grabbing and moving", () => {
         const onReorder = jest.fn()
-        const onKeyDown = jest.fn((event: React.KeyboardEvent) =>
-            event.preventDefault()
+        let prevent = true
+        const onKeyDown = jest.fn(
+            (event: React.KeyboardEvent) => prevent && event.preventDefault()
         )
         const { getByTestId } = render(
             <List onReorder={onReorder} onKeyDown={onKeyDown} />
         )
+        const a = getByTestId("a")
 
-        press(getByTestId("a"), "ArrowDown")
+        press(a, " ")
         expect(onKeyDown).toBeCalledTimes(1)
+        expect(isGrabbed(a)).toBe(false)
+
+        prevent = false
+        press(a, " ")
+        expect(isGrabbed(a)).toBe(true)
+
+        prevent = true
+        press(a, "ArrowDown")
+        press(a, "Escape")
         expect(onReorder).not.toBeCalled()
+        expect(isGrabbed(a)).toBe(true)
     })
 
-    it("keeps focus on the moved item", () => {
+    it("keeps focus and the grab on the moved item", () => {
         const { getByTestId } = render(<List />)
         const b = getByTestId("b")
 
         act(() => b.focus())
+        press(b, " ")
         press(b, "ArrowUp")
         expect(document.activeElement).toBe(b)
+        expect(isGrabbed(b)).toBe(true)
 
         press(b, "ArrowDown")
         press(b, "ArrowDown")
         expect(document.activeElement).toBe(b)
+        expect(isGrabbed(b)).toBe(true)
     })
 
     it("skips and keeps unrendered values in place", () => {
         const onReorder = jest.fn()
-        const { getByTestId } = render(
-            <Reorder.Group values={["a", "hidden", "b"]} onReorder={onReorder}>
+        const Group = ({ values }: { values: string[] }) => (
+            <Reorder.Group values={values} onReorder={onReorder}>
                 <Reorder.Item value="a" data-testid="a" />
                 <Reorder.Item value="b" data-testid="b" />
             </Reorder.Group>
         )
+        const { getByTestId, rerender } = render(
+            <Group values={["a", "hidden", "b"]} />
+        )
 
+        press(getByTestId("a"), " ")
         press(getByTestId("a"), "ArrowDown")
         // As with drag, "a" and "b" swap slots and "hidden" keeps its own
-        expect(onReorder).toBeCalledWith(["b", "hidden", "a"])
+        expect(onReorder).toHaveBeenLastCalledWith(["b", "hidden", "a"])
+
+        // The app has since moved "hidden" too: cancelling only restores
+        // the rendered items, into the slots they now hold
+        rerender(<Group values={["hidden", "b", "a"]} />)
+        press(getByTestId("a"), "Escape")
+        expect(onReorder).toHaveBeenLastCalledWith(["hidden", "a", "b"])
+    })
+
+    it("applies whileDrag while grabbed", async () => {
+        const opacity = motionValue(1)
+        const { getByTestId } = render(
+            <List
+                whileDrag={{ opacity: 0.5 }}
+                transition={{ type: false }}
+                style={{ opacity }}
+                initial={["a"]}
+            />
+        )
+        const a = getByTestId("a")
+
+        press(a, " ")
+        await nextFrame()
+        expect(opacity.get()).toBe(0.5)
+
+        press(a, " ")
+        await nextFrame()
+        expect(opacity.get()).toBe(1)
+
+        press(a, " ")
+        await nextFrame()
+        expect(opacity.get()).toBe(0.5)
+
+        act(() => a.focus())
+        act(() => a.blur())
+        await nextFrame()
+        expect(opacity.get()).toBe(1)
+    })
+
+    it("doesn't fire drag callbacks for keyboard grabs", () => {
+        const onDragStart = jest.fn()
+        const onDragEnd = jest.fn()
+        const { getByTestId } = render(
+            <List onDragStart={onDragStart} onDragEnd={onDragEnd} />
+        )
+        const a = getByTestId("a")
+
+        press(a, " ")
+        press(a, "ArrowDown")
+        press(a, " ")
+        expect(onDragStart).not.toBeCalled()
+        expect(onDragEnd).not.toBeCalled()
     })
 })

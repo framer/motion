@@ -1,83 +1,207 @@
 import { expect, Page, test } from "@playwright/test"
 
 /**
- * #2658: arrow keys move the focused
- * Reorder.Item. Focus has to survive React moving the node, which only a
- * real browser checks: JSDOM doesn't blur an element when it's moved.
+ * #2658: Space or Enter grabs the focused Reorder.Item, arrows move it,
+ * Space or Enter drops it and Escape cancels. The grab has to survive React
+ * moving the node, which blurs it before React refocuses it, and has to end
+ * when focus really leaves. Only a real browser checks either: JSDOM doesn't
+ * blur an element when it's moved.
  */
 const order = (page: Page) => page.locator("#order").textContent()
-const focused = (page: Page) =>
-    page.evaluate(() => document.activeElement?.id)
+const focused = (page: Page) => page.evaluate(() => document.activeElement?.id)
+const grabbed = (page: Page) =>
+    page.evaluate(() =>
+        Array.from(document.querySelectorAll("[data-grabbed]"))
+            .map((element) => element.id)
+            .join(",")
+    )
+const scrollY = (page: Page) => page.evaluate(() => window.scrollY)
+const press = (page: Page, key: string) => page.keyboard.press(key)
 
 test.describe("Issue #2658: keyboard reordering", () => {
-    test("Tab reaches items and arrows move the focused one", async ({
+    test("arrows scroll until Space grabs, then move until Space drops", async ({
         page,
     }) => {
         await page.goto("?test=issue-2658")
         await page.focus("#before")
-        await page.keyboard.press("Tab")
+        await press(page, "Tab")
         expect(await focused(page)).toBe("a")
 
-        await page.keyboard.press("ArrowDown")
+        // Not grabbed: the arrow is the page's
+        await press(page, "ArrowDown")
+        expect(await order(page)).toBe("a,b,c,d")
+        await expect.poll(() => scrollY(page)).toBeGreaterThan(0)
+        await page.evaluate(() => window.scrollTo(0, 0))
+
+        await press(page, "Space")
+        expect(await grabbed(page)).toBe("a")
+
+        await press(page, "ArrowDown")
         expect(await order(page)).toBe("b,a,c,d")
         expect(await focused(page)).toBe("a")
+        expect(await grabbed(page)).toBe("a")
 
-        await page.keyboard.press("ArrowDown")
-        await page.keyboard.press("ArrowDown")
+        await press(page, "ArrowDown")
+        await press(page, "ArrowDown")
         expect(await order(page)).toBe("b,c,d,a")
         expect(await focused(page)).toBe("a")
+        expect(await grabbed(page)).toBe("a")
 
         // Past the end
-        await page.keyboard.press("ArrowDown")
+        await press(page, "ArrowDown")
         expect(await order(page)).toBe("b,c,d,a")
 
-        await page.keyboard.press("ArrowUp")
+        await press(page, "ArrowUp")
         expect(await order(page)).toBe("b,c,a,d")
         expect(await focused(page)).toBe("a")
 
         // Across the axis
-        await page.keyboard.press("ArrowRight")
+        await press(page, "ArrowRight")
         expect(await order(page)).toBe("b,c,a,d")
+
+        await press(page, "Space")
+        expect(await grabbed(page)).toBe("")
+        await press(page, "ArrowUp")
+        expect(await order(page)).toBe("b,c,a,d")
+
+        // Neither Space nor the moving arrows scrolled the page
+        await page.waitForTimeout(200)
+        expect(await scrollY(page)).toBe(0)
     })
 
-    test("focus survives a held key", async ({ page }) => {
+    test("Enter grabs and drops", async ({ page }) => {
+        await page.goto("?test=issue-2658")
+        await page.focus("#b")
+        await press(page, "Enter")
+        await press(page, "ArrowUp")
+        expect(await order(page)).toBe("b,a,c,d")
+        await press(page, "Enter")
+        expect(await grabbed(page)).toBe("")
+        await press(page, "ArrowDown")
+        expect(await order(page)).toBe("b,a,c,d")
+    })
+
+    test("Escape restores the order from the grab", async ({ page }) => {
+        await page.goto("?test=issue-2658")
+        await page.focus("#b")
+        await press(page, "Space")
+        await press(page, "ArrowDown")
+        await press(page, "ArrowDown")
+        expect(await order(page)).toBe("a,c,d,b")
+
+        await press(page, "Escape")
+        expect(await order(page)).toBe("a,b,c,d")
+        expect(await grabbed(page)).toBe("")
+        expect(await focused(page)).toBe("b")
+
+        await press(page, "ArrowDown")
+        expect(await order(page)).toBe("a,b,c,d")
+    })
+
+    test("the grab and focus survive a held key", async ({ page }) => {
         await page.goto("?test=issue-2658")
         await page.focus("#d")
+        await press(page, "Space")
         for (let i = 0; i < 3; i++) {
             await page.keyboard.down("ArrowUp")
         }
         await page.keyboard.up("ArrowUp")
         expect(await order(page)).toBe("d,a,b,c")
         expect(await focused(page)).toBe("d")
+        expect(await grabbed(page)).toBe("d")
     })
 
-    test("moving an item up keeps focus", async ({ page }) => {
+    test("moving an item up keeps focus and the grab", async ({ page }) => {
         // React moves a different node depending on direction
         await page.goto("?test=issue-2658")
         await page.focus("#c")
-        await page.keyboard.press("ArrowUp")
+        await press(page, "Space")
+        await press(page, "ArrowUp")
         expect(await order(page)).toBe("a,c,b,d")
         expect(await focused(page)).toBe("c")
+        expect(await grabbed(page)).toBe("c")
+        await press(page, "ArrowUp")
+        expect(await order(page)).toBe("c,a,b,d")
     })
 
-    test("keys inside an item don't reorder", async ({ page }) => {
+    test("Tab away drops, keeping the order", async ({ page }) => {
+        await page.goto("?test=issue-2658")
+        await page.focus("#a")
+        await press(page, "Space")
+        await press(page, "ArrowDown")
+        await press(page, "Tab")
+        expect(await focused(page)).toBe("a-input")
+        expect(await grabbed(page)).toBe("")
+        expect(await order(page)).toBe("b,a,c,d")
+
+        await press(page, "Shift+Tab")
+        expect(await focused(page)).toBe("a")
+        await press(page, "ArrowDown")
+        expect(await order(page)).toBe("b,a,c,d")
+    })
+
+    test("clicking elsewhere drops, keeping the order", async ({ page }) => {
+        await page.goto("?test=issue-2658")
+        await page.focus("#a")
+        await press(page, "Space")
+        await press(page, "ArrowDown")
+        await page.mouse.click(400, 600)
+        expect(await focused(page)).not.toBe("a")
+        expect(await grabbed(page)).toBe("")
+        expect(await order(page)).toBe("b,a,c,d")
+    })
+
+    test("whileDrag applies while grabbed", async ({ page }) => {
+        await page.goto("?test=issue-2658")
+        const opacity = () =>
+            page.$eval("#a", (element) => getComputedStyle(element).opacity)
+        await page.focus("#a")
+        expect(await opacity()).toBe("1")
+
+        await press(page, "Space")
+        await expect.poll(opacity).toBe("0.5")
+        await press(page, "ArrowDown")
+        await page.waitForTimeout(100)
+        expect(await opacity()).toBe("0.5")
+
+        await press(page, "Space")
+        await expect.poll(opacity).toBe("1")
+
+        await press(page, "Space")
+        await expect.poll(opacity).toBe("0.5")
+        await page.focus("#before")
+        await expect.poll(opacity).toBe("1")
+    })
+
+    test("keys inside an item don't grab or reorder", async ({ page }) => {
         await page.goto("?test=issue-2658")
         await page.focus("#a-input")
-        await page.keyboard.press("ArrowDown")
-        await page.keyboard.press("ArrowRight")
+        await press(page, "Space")
+        await press(page, "Enter")
+        await press(page, "ArrowDown")
+        await press(page, "ArrowRight")
+        expect(await grabbed(page)).toBe("")
         expect(await order(page)).toBe("a,b,c,d")
+        expect(
+            await page.$eval(
+                "#a-input",
+                (input: HTMLInputElement) => input.value
+            )
+        ).toBe(" ")
     })
 
     test("x axis and RTL", async ({ page }) => {
         await page.goto("?test=issue-2658&axis=x")
         await page.focus("#a")
-        await page.keyboard.press("ArrowRight")
+        await press(page, "Space")
+        await press(page, "ArrowRight")
         expect(await order(page)).toBe("b,a,c,d")
         expect(await focused(page)).toBe("a")
 
         await page.goto("?test=issue-2658&axis=x&rtl")
         await page.focus("#a")
-        await page.keyboard.press("ArrowLeft")
+        await press(page, "Space")
+        await press(page, "ArrowLeft")
         expect(await order(page)).toBe("b,a,c,d")
         expect(await focused(page)).toBe("a")
     })
@@ -85,13 +209,15 @@ test.describe("Issue #2658: keyboard reordering", () => {
     test("the reorder layout-animates", async ({ page }) => {
         await page.goto("?test=issue-2658&layout")
         await page.focus("#a")
+        await press(page, "Space")
         const before = await page.locator("#a").boundingBox()
-        await page.keyboard.press("ArrowDown")
+        await press(page, "ArrowDown")
         await page.waitForTimeout(500)
         const mid = await page.locator("#a").boundingBox()
         // 50px per slot (40px + 10px gap); halfway through a 1s linear move
         expect(mid!.y - before!.y).toBeGreaterThan(10)
         expect(mid!.y - before!.y).toBeLessThan(40)
         expect(await focused(page)).toBe("a")
+        expect(await grabbed(page)).toBe("a")
     })
 })
