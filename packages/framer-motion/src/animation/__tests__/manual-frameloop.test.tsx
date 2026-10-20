@@ -68,7 +68,11 @@ describe("driving the frameloop manually", () => {
         )
         const element = container.firstChild as HTMLElement
 
-        // Several frames in one synchronous block, as a video renderer might
+        /**
+         * Several frames in one synchronous block. JSDOM has no WAAPI, so
+         * opacity animates in JS here. In a browser it would run as WAAPI,
+         * which processFrame doesn't drive.
+         */
         processFrame(500)
         expect(parseFloat(element.style.opacity)).toBeCloseTo(0.5)
 

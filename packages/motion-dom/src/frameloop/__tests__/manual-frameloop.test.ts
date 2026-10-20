@@ -6,10 +6,16 @@
  */
 
 // Stand in for an immersive WebXR session: window.requestAnimationFrame
-// exists but never fires. The frameloop captures it when it's first
-// imported, so stub it before requiring Motion.
-const raf = jest.fn(() => 0)
+// exists but doesn't fire, unless a test flushes it. The frameloop captures
+// it when it's first imported, so stub it before requiring Motion.
+let rafQueue: Function[] = []
+const raf = jest.fn((callback: Function) => rafQueue.push(callback))
 ;(window as any).requestAnimationFrame = raf
+const flushRaf = () => {
+    const queue = rafQueue
+    rafQueue = []
+    queue.forEach((callback) => callback(performance.now()))
+}
 
 const { MotionGlobalConfig } = require("motion-utils")
 const {
@@ -125,6 +131,51 @@ describe("driving the frameloop manually", () => {
         processFrame(16)
         expect(frameData.timestamp).toBe(16)
         expect(frameData.isProcessing).toBe(false)
+    })
+
+    test("processFrame leaves a working requestAnimationFrame loop intact", async () => {
+        let now = 20000
+        jest.spyOn(performance, "now").mockImplementation(() => now)
+        const advance = async () => {
+            now += 16
+            await nextMicrotask()
+        }
+
+        // Let whatever earlier tests left running finish
+        for (let i = 0; i < 5; i++) {
+            await advance()
+            flushRaf()
+        }
+        expect(rafQueue.length).toBe(0)
+
+        const opacity = motionValue(0)
+        const animation = animateSingleValue(opacity, 1, {
+            duration: 0.1,
+            ease: "linear",
+        })
+        expect(rafQueue.length).toBe(1)
+
+        // Interleave both loops until the animation finishes
+        for (let i = 0; i < 10; i++) {
+            await advance()
+            i % 2 ? flushRaf() : processFrame()
+        }
+        await advance()
+        flushRaf()
+        expect(opacity.get()).toBe(1)
+        expect(animation.state).toBe("finished")
+
+        // The loop stops once idle...
+        expect(rafQueue.length).toBe(0)
+
+        // ...and wakes for new work, which runs from requestAnimationFrame
+        const callback = jest.fn()
+        frame.update(callback)
+        expect(rafQueue.length).toBe(1)
+        await advance()
+        flushRaf()
+        expect(callback).toHaveBeenCalledTimes(1)
+        expect(rafQueue.length).toBe(0)
     })
 })
 export {}

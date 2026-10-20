@@ -4,11 +4,18 @@ import { time } from "./sync-time"
 
 /**
  * Process a frame now, for driving Motion from a loop other than
- * requestAnimationFrame, like an XRSession's.
+ * window.requestAnimationFrame, like an XRSession's during an immersive
+ * WebXR session. Wherever window.requestAnimationFrame does fire, Motion
+ * keeps processing frames from it too.
  *
- * `timestamp` defaults to now. For a timeline you control, like a video
- * render, set `MotionGlobalConfig.useManualTiming = true` and pass each
- * frame's time in milliseconds.
+ * `timestamp` defaults to now. For a timeline you control, set
+ * `MotionGlobalConfig.useManualTiming = true` and pass each frame's time in
+ * milliseconds.
+ *
+ * Animations Motion hands to the browser (WAAPI), like `opacity` or
+ * `transform` on an HTML or SVG element, follow the browser's clock instead.
+ *
+ * Ignored when called inside a frame.
  */
 export const processFrame = (timestamp = time.now()) => {
     if (frameData.isProcessing) return
