@@ -19,7 +19,7 @@ export const App = () => {
             const [options] = args
             const top =
                 typeof options === "object" ? options.top ?? 0 : args[1]
-            calls.push(top / frameData.delta)
+            frameData.delta && calls.push(top / frameData.delta)
             return (scrollBy as any).apply(this, args)
         } as typeof window.scrollBy
         return () => {
