@@ -331,7 +331,13 @@ describe("dragging", () => {
         await pointer.to(50, 50)
         pointer.end()
 
-        await sleep(40)
+        /**
+         * Wait on frames, not wall-clock time: on a loaded machine 40ms can
+         * pass with only the animation's first frame (where it's still at
+         * the release point) having run.
+         */
+        await nextFrame()
+        await nextFrame()
 
         expect(values(element).x).toBeGreaterThan(50)
     })
@@ -343,7 +349,8 @@ describe("dragging", () => {
         await pointer.to(50, 50)
         pointer.end()
 
-        await sleep(40)
+        await nextFrame()
+        await nextFrame()
 
         expect(values(element).x).toBe(50)
     })
