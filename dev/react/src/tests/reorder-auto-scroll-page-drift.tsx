@@ -1,9 +1,11 @@
-import { Reorder } from "framer-motion"
+import { frameData, Reorder } from "framer-motion"
 import { useEffect, useState } from "react"
 
 /**
  * A page-scrolling Reorder.Group (no overflow container), from #3944.
- * Records every window.scrollBy() auto-scroll makes in window.scrollCalls.
+ * Records the speed, in pixels per millisecond, of every window.scrollBy()
+ * auto-scroll makes in window.scrollCalls. Auto-scroll runs inside a frame
+ * and scales by its delta (#3955).
  */
 const initialItems = Array.from({ length: 40 }, (_, i) => i)
 
@@ -15,7 +17,9 @@ export const App = () => {
         const scrollBy = window.scrollBy
         window.scrollBy = function (this: Window, ...args: any[]) {
             const [options] = args
-            calls.push(typeof options === "object" ? options.top ?? 0 : args[1])
+            const top =
+                typeof options === "object" ? options.top ?? 0 : args[1]
+            calls.push(top / frameData.delta)
             return (scrollBy as any).apply(this, args)
         } as typeof window.scrollBy
         return () => {
