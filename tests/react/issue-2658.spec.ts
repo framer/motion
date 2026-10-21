@@ -1,8 +1,8 @@
 import { expect, Page, test } from "@playwright/test"
 
 /**
- * #2658: Space or Enter grabs the focused Reorder.Item, arrows move it,
- * Space or Enter drops it and Escape cancels. The grab has to survive React
+ * #2658: Space grabs the focused Reorder.Item, arrows move it, Space
+ * drops it and Escape cancels. The grab has to survive React
  * moving the node, which blurs it before React refocuses it, and has to end
  * when focus really leaves. Only a real browser checks either: JSDOM doesn't
  * blur an element when it's moved.
@@ -69,16 +69,13 @@ test.describe("Issue #2658: keyboard reordering", () => {
         expect(await scrollY(page)).toBe(0)
     })
 
-    test("Enter grabs and drops", async ({ page }) => {
+    test("Enter doesn't grab", async ({ page }) => {
         await page.goto("?test=issue-2658")
         await page.focus("#b")
         await press(page, "Enter")
-        await press(page, "ArrowUp")
-        expect(await order(page)).toBe("b,a,c,d")
-        await press(page, "Enter")
         expect(await grabbed(page)).toBe("")
-        await press(page, "ArrowDown")
-        expect(await order(page)).toBe("b,a,c,d")
+        await press(page, "ArrowUp")
+        expect(await order(page)).toBe("a,b,c,d")
     })
 
     test("Escape restores the order from the grab", async ({ page }) => {

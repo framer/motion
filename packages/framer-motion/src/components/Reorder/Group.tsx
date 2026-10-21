@@ -147,7 +147,7 @@ export function ReorderGroupComponent<
         groupRef,
         hasReordered,
         /**
-         * Space or Enter grabs and drops the item, arrows along `axis` move
+         * Space grabs and drops the item, arrows along `axis` move
          * the grabbed item one place (Left and Right swap in RTL) and Escape
          * restores the order in `from`, the values when it was grabbed. Keys
          * from children or with modifiers (Alt+Left etc.) are left alone.
@@ -172,7 +172,7 @@ export function ReorderGroupComponent<
                 "ArrowRight",
             ].indexOf(key)
             const isX = keyIndex % 2
-            if (key === " " || key === "Enter") {
+            if (key === " ") {
                 event.repeat || grab(currentTarget, from ? undefined : values)
             } else if (!from) {
                 return

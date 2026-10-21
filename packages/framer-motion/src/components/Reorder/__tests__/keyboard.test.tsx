@@ -121,28 +121,23 @@ describe("Reorder keyboard", () => {
         expect(onReorder).toBeCalledTimes(3)
     })
 
-    it("grabs and drops with Enter", () => {
-        const { container, getByTestId } = render(<List />)
+    it("leaves Enter alone so it keeps its tap meaning", () => {
+        const onReorder = jest.fn()
+        const { getByTestId } = render(<List onReorder={onReorder} />)
         const b = getByTestId("b")
 
-        expect(press(b, "Enter")).toBe(false)
-        expect(isGrabbed(b)).toBe(true)
-        press(b, "ArrowUp")
-        expect(order(container)).toEqual(["b", "a", "c"])
-
-        expect(press(b, "Enter")).toBe(false)
+        expect(press(b, "Enter")).toBe(true)
         expect(isGrabbed(b)).toBe(false)
-        press(b, "ArrowDown")
-        expect(order(container)).toEqual(["b", "a", "c"])
+        press(b, "ArrowUp")
+        expect(onReorder).not.toBeCalled()
     })
 
-    it("ignores a held Space or Enter", () => {
+    it("ignores a held Space", () => {
         const { getByTestId } = render(<List />)
         const a = getByTestId("a")
 
         press(a, " ")
         press(a, " ", { repeat: true })
-        press(a, "Enter", { repeat: true })
         expect(isGrabbed(a)).toBe(true)
     })
 
@@ -241,7 +236,6 @@ describe("Reorder keyboard", () => {
 
         for (const modifier of ["altKey", "ctrlKey", "metaKey"]) {
             expect(press(a, " ", { [modifier]: true })).toBe(true)
-            expect(press(a, "Enter", { [modifier]: true })).toBe(true)
         }
         expect(isGrabbed(a)).toBe(false)
 
