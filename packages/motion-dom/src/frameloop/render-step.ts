@@ -31,6 +31,14 @@ export function createRenderStep(runNextFrame: () => void): Step {
     }
 
     function triggerCallback(callback: Process) {
+        /**
+         * Remove the callback before running it, so if it's scheduled with
+         * `immediate` again later in this step (for instance, a value it
+         * reads changes after it ran), it's re-added and runs again rather
+         * than being deduplicated against the run that's already happened.
+         */
+        thisFrame.delete(callback)
+
         if (toKeepAlive.has(callback)) {
             nextFrame.add(callback)
             runNextFrame()
@@ -85,12 +93,11 @@ export function createRenderStep(runNextFrame: () => void): Step {
             thisFrame = nextFrame
             nextFrame = prevFrame
 
-            // Execute this frame
+            /**
+             * Execute this frame. Each callback removes itself as it runs,
+             * so no callbacks remain once this finishes.
+             */
             thisFrame.forEach(triggerCallback)
-
-            // Clear the frame so no callbacks remain. This is to avoid
-            // memory leaks should this render step not run for a while.
-            thisFrame.clear()
 
             isProcessing = false
 

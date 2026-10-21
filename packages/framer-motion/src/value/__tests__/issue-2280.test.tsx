@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { frame } from "../../"
+import { frame, MotionValue } from "../../"
 import { render } from "../../jest.setup"
 import { useMotionValue } from "../use-motion-value"
 import { useTransform } from "../use-transform"
@@ -9,25 +9,32 @@ async function nextFrame() {
 }
 
 test("#2280 combined useTransform reflects chained transform updates", async () => {
-    let result: any, quarter: any
-    const Component = ({ onReady }: { onReady: (a: any) => void }) => {
-        const a = useMotionValue(0)
+    let a!: MotionValue<number>
+    let aQuarter!: MotionValue<number>
+    let result!: MotionValue<number>
+    const seen: number[][] = []
+
+    const Component = ({ onReady }: { onReady: () => void }) => {
+        a = useMotionValue(0)
         const aHalf = useTransform(a, (v: number) => v / 2)
-        const aQuarter = useTransform(aHalf, (h: number) => h / 2)
-        const r = useTransform(
-            [a, aQuarter],
-            ([av, q]: number[]) => av + q
-        )
-        result = r
-        quarter = aQuarter
-        useEffect(() => { onReady(a) }, [])
+        aQuarter = useTransform(aHalf, (h: number) => h / 2)
+        result = useTransform([a, aQuarter], ([av, q]: number[]) => {
+            seen.push([av, q])
+            return av + q
+        })
+        useEffect(onReady, [])
         return null
     }
-    let a: any
-    render(<Component onReady={(v) => (a = v)} />)
+
+    await new Promise<void>((resolve) => {
+        render(<Component onReady={resolve} />)
+    })
     await nextFrame()
+
     a.set(100)
-    for (let i = 0; i < 5; i++) await nextFrame()
-    expect(quarter.get()).toBe(25)
+    await nextFrame()
+
+    expect(aQuarter.get()).toBe(25)
     expect(result.get()).toBe(125)
+    expect(seen[seen.length - 1]).toEqual([100, 25])
 })

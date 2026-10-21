@@ -60,6 +60,27 @@ describe("frame", () => {
         })
     })
 
+    it("re-runs a callback scheduled with `true` after it already ran in the same step", () => {
+        return new Promise<void>((resolve, reject) => {
+            const order: string[] = []
+
+            const a = () => order.push("a")
+            frame.preRender(() => {
+                order.push("first")
+            })
+            frame.preRender(a)
+            frame.preRender(() => {
+                order.push("last")
+                frame.preRender(a, false, true)
+            })
+
+            frame.render(() => {
+                const result = order.join(",")
+                result === "first,a,last,a" ? resolve() : reject(result)
+            })
+        })
+    })
+
     it("fires callback on next frame if scheduled with `true` outside the same step", () => {
         return new Promise((resolve: Function, reject: Function) => {
             let v = 0
