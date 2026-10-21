@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/dom"
 import { motionValue, Variants } from "motion-dom"
+import { MotionGlobalConfig } from "motion-utils"
 import * as React from "react"
 import { act, createRef } from "react"
 import {
@@ -10,11 +11,15 @@ import {
     MotionConfig,
     useAnimation,
 } from "../../.."
-import { nextFrame } from "../../../gestures/__tests__/utils"
+import { nextFrame, stepFrames } from "../../../gestures/__tests__/utils"
 import { render } from "../../../jest.setup"
 import { ResolvedValues } from "../../../render/types"
 
 describe("AnimatePresence", () => {
+    afterEach(() => {
+        MotionGlobalConfig.useManualTiming = false
+    })
+
     test("Allows initial animation if no `initial` prop defined", async () => {
         const promise = new Promise((resolve) => {
             const x = motionValue(0)
@@ -1359,7 +1364,7 @@ describe("AnimatePresence with custom components", () => {
         })
 
         // Wait for all exit animations to complete
-        await new Promise((resolve) => setTimeout(resolve, 500))
+        await stepFrames(500)
         await act(async () => {
             await nextFrame()
             await nextFrame()
@@ -1435,7 +1440,7 @@ describe("AnimatePresence with custom components", () => {
         })
 
         // Wait for all exit animations to complete
-        await new Promise((resolve) => setTimeout(resolve, 500))
+        await stepFrames(500)
         await act(async () => {
             await nextFrame()
             await nextFrame()
@@ -1683,9 +1688,7 @@ describe("AnimatePresence with custom components", () => {
         const { getByTestId } = render(<Component />)
 
         // Wait for all state changes and exit animations to settle
-        await act(async () => {
-            await new Promise((resolve) => setTimeout(resolve, 1000))
-        })
+        await stepFrames(1000)
         await act(async () => {
             await nextFrame()
             await nextFrame()
@@ -1732,9 +1735,7 @@ describe("AnimatePresence with custom components", () => {
         rerender(<Component i={3} />)
 
         // Wait for exit animations to complete
-        await act(async () => {
-            await new Promise((resolve) => setTimeout(resolve, 500))
-        })
+        await stepFrames(500)
         await act(async () => {
             await nextFrame()
             await nextFrame()
@@ -1828,9 +1829,7 @@ describe("AnimatePresence with custom components", () => {
         // Wait for enter animations to complete (type: "tween", duration: 100s
         // applies to enter too, but the enter target values use variants
         // which have their own transition, not the component's transition prop)
-        await act(async () => {
-            await new Promise((resolve) => setTimeout(resolve, 200))
-        })
+        await stepFrames(200)
 
         expect(container.childElementCount).toBe(1)
 
@@ -1842,9 +1841,7 @@ describe("AnimatePresence with custom components", () => {
             rerender(<Component isVisible={false} />)
         })
 
-        await act(async () => {
-            await new Promise((resolve) => setTimeout(resolve, 500))
-        })
+        await stepFrames(500)
         await act(async () => {
             await nextFrame()
             await nextFrame()
