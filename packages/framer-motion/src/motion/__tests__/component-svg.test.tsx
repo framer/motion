@@ -332,4 +332,19 @@ describe("SVG", () => {
         rerender(<Component show={false} />)
         expect(getByTestId("svg").style.backgroundColor).toBe("")
     })
+
+    test("removes style prop values when style is unset", () => {
+        const Component = ({ show }: { show: boolean }) => (
+            <motion.svg
+                data-testid="svg"
+                style={show ? { backgroundColor: "red" } : undefined}
+            />
+        )
+
+        const { getByTestId, rerender } = render(<Component show />)
+        expect(getByTestId("svg").style.backgroundColor).toBe("red")
+
+        rerender(<Component show={false} />)
+        expect(getByTestId("svg").style.backgroundColor).toBe("")
+    })
 })
