@@ -106,12 +106,16 @@ export function createMotionComponent<
          * rendered takes over from it with a shared layout animation, so
          * visually it has already entered. Mount it as if initial={false}
          * rather than replaying its entrance.
+         *
+         * Only when it has an initial: without one there's no entrance to
+         * skip, and initial={false} would make its animate values its base
+         * values, so removing them later wouldn't return it to its defaults.
          */
         if (
             useConstant(
                 () =>
                     !!rootProjectionNode.current?.sharedNodes.get(layoutId!)
-                        ?.lead
+                        ?.lead && props.initial
             )
         ) {
             props = { ...props, initial: false }

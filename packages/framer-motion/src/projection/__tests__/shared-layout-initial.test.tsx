@@ -136,4 +136,26 @@ describe("layoutId takeover and initial (#2362)", () => {
 
         expect(child.current!.style.opacity).toBe("1")
     })
+    test("element taking over a layoutId without initial keeps its default values", async () => {
+        const App = ({ step }: { step: number }) => (
+            <motion.div
+                id="box"
+                key={step === 0 ? "a" : "b"}
+                layoutId="box"
+                animate={step === 1 ? { scale: 2 } : {}}
+                transition={{ type: false }}
+            />
+        )
+
+        const { rerender } = render(<App step={0} />)
+        await settle()
+
+        rerender(<App step={1} />)
+        await settle()
+
+        rerender(<App step={2} />)
+        await settle()
+
+        expect(document.getElementById("box")!.style.transform).toBe("none")
+    })
 })
