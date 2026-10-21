@@ -9,4 +9,5 @@ export interface LayoutGroupContextProps {
     forceRender?: VoidFunction
 }
 
-export const LayoutGroupContext = createContext<LayoutGroupContextProps>({})
+export const LayoutGroupContext =
+    /* @__PURE__ */ createContext<LayoutGroupContextProps>({})

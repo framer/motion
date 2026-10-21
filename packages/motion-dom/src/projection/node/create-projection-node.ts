@@ -77,15 +77,6 @@ import {
     ScrollMeasurements,
 } from "./types"
 
-/**
- * Correctors registered via addScaleCorrector before projection loaded
- * (e.g. with an async LazyMotion bundle) take precedence over the defaults.
- */
-Object.assign(scaleCorrectors, {
-    ...defaultScaleCorrectors,
-    ...scaleCorrectors,
-})
-
 const metrics = {
     nodes: 0,
     calculatedTargetDeltas: 0,
@@ -158,6 +149,17 @@ export function createProjectionNode<I>({
     checkIsScrollRoot,
     resetTransform,
 }: ProjectionNodeConfig<I>) {
+    /**
+     * Correctors registered via addScaleCorrector before projection loaded
+     * (e.g. with an async LazyMotion bundle) take precedence over the defaults.
+     * Applied here rather than at module scope so bundlers can drop projection
+     * when it's unused.
+     */
+    Object.assign(scaleCorrectors, {
+        ...defaultScaleCorrectors,
+        ...scaleCorrectors,
+    })
+
     return class ProjectionNode implements IProjectionNode<I> {
         /**
          * A unique ID generated for every projection node.
@@ -2299,8 +2301,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                     relativeParent
 
                 if (parentSnapshot && parentLayout) {
-                    const anchor =
-                        node.options.layoutAnchor || undefined
+                    const anchor = node.options.layoutAnchor || undefined
 
                     const relativeSnapshot = createBox()
                     calcRelativePosition(
@@ -2527,10 +2528,10 @@ const userAgentContains = (string: string) =>
  * left untouched in Chrome, otherwise non-integer layouts within scaled-up elements
  * can appear to jump.
  */
-const roundPoint =
+const roundPoint = /* @__PURE__ */ (() =>
     userAgentContains("applewebkit/") && !userAgentContains("chrome/")
         ? Math.round
-        : noop
+        : noop)()
 
 function roundAxis(axis: Axis): void {
     // Round to the nearest .5 pixels to support subpixel layouts

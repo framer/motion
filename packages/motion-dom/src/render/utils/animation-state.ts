@@ -39,9 +39,13 @@ export type AnimationList = string[] | TargetAndTransition[]
  * Type for the animate function that can be injected.
  * This allows the animation implementation to be provided by the framework layer.
  */
-export type AnimateFunction = (animations: DefinitionAndOptions[]) => Promise<any>
+export type AnimateFunction = (
+    animations: DefinitionAndOptions[]
+) => Promise<any>
 
-const reversePriorityOrder = [...variantPriorityOrder].reverse()
+const reversePriorityOrder = /* @__PURE__ */ variantPriorityOrder
+    .slice()
+    .reverse()
 
 /**
  * Diffs the element's animation props (one layer per AnimationType, highest
@@ -193,10 +197,7 @@ export function createAnimationState(visualElement: any): AnimationState {
                         ? !shallowCompare(next, prev) || variantDidChange
                         : next !== prev
 
-                if (
-                    valueHasChanged &&
-                    (next === undefined || next === null)
-                ) {
+                if (valueHasChanged && (next === undefined || next === null)) {
                     removedKeys.add(key)
                 } else if (
                     valueHasChanged ||
