@@ -46,6 +46,11 @@ function Card({ id }: { id: number }) {
                 onDragEnd={id === 0 ? handleDrag : undefined}
                 onDrag={id === 1 ? handleDrag : undefined}
             >
+                <motion.div
+                    id={`child-${id}`}
+                    layout
+                    style={{ width: 40, height: 40, background: "blue" }}
+                />
                 <p>{id === 0 ? "onDragEnd" : "onDrag"}</p>
             </motion.div>
         </div>

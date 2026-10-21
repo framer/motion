@@ -29,8 +29,8 @@ export class DragGesture extends Feature<HTMLElement> {
     }
 
     update() {
-        const { drag, dragControls } = this.node.getProps()
-        const { drag: prevDrag, dragControls: prevDragControls } =
+        const { dragControls, drag } = this.node.getProps()
+        const { dragControls: prevDragControls, drag: prevDrag } =
             this.node.prevProps || {}
 
         if (dragControls !== prevDragControls) {

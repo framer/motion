@@ -78,6 +78,14 @@ test("card closed from onDrag animates back to its slot while the pointer is dow
     const box = await getBox(page, "#card-1")
     expect(Math.abs(box.width - slot.width)).toBeGreaterThan(40)
 
+    /**
+     * Its layout child animates with it, rather than jumping ahead with
+     * its new layout as it would if the card were still being dragged.
+     */
+    const child = await getBox(page, "#child-1")
+    expect(Math.abs(child.x - box.x)).toBeLessThan(20)
+    expect(Math.abs(child.y - box.y)).toBeLessThan(20)
+
     // It returns to its slot without the pointer being released...
     await page.mouse.move(x, y + 300, { steps: 5 })
     await expectBoxToSettle(page, 1)
