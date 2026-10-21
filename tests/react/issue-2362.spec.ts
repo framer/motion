@@ -15,6 +15,13 @@ test("layoutId element doesn't re-run its initial animation when it moves", asyn
 
     const underline = page.locator("#underline")
 
+    // The first mount has nothing to take over from, so it still fades in.
+    await expect(underline).toBeAttached()
+    const firstMountOpacity = await underline.evaluate((element) =>
+        Number(getComputedStyle(element).opacity)
+    )
+    expect(firstMountOpacity).toBeLessThan(0.9)
+
     // Let the first mount's initial -> animate fade finish.
     await expect(underline).toHaveCSS("opacity", "1", { timeout: 5000 })
     const before = await underline.boundingBox()
