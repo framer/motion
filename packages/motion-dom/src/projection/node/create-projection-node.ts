@@ -2528,10 +2528,10 @@ const userAgentContains = (string: string) =>
  * left untouched in Chrome, otherwise non-integer layouts within scaled-up elements
  * can appear to jump.
  */
-const roundPoint = /* @__PURE__ */ (() =>
+const roundPoint =
     userAgentContains("applewebkit/") && !userAgentContains("chrome/")
         ? Math.round
-        : noop)()
+        : noop
 
 function roundAxis(axis: Axis): void {
     // Round to the nearest .5 pixels to support subpixel layouts

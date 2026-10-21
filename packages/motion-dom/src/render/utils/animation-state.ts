@@ -43,9 +43,7 @@ export type AnimateFunction = (
     animations: DefinitionAndOptions[]
 ) => Promise<any>
 
-const reversePriorityOrder = /* @__PURE__ */ variantPriorityOrder
-    .slice()
-    .reverse()
+const reversePriorityOrder = [...variantPriorityOrder].reverse()
 
 /**
  * Diffs the element's animation props (one layer per AnimationType, highest
