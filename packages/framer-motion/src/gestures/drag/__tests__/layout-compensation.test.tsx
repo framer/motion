@@ -1,6 +1,6 @@
 import { createDelta, visualElementStore } from "motion-dom"
 import { motion, motionValue } from "../../../"
-import { render } from "../../../jest.setup"
+import { pointerUp, render } from "../../../jest.setup"
 import { drag, MockDrag } from "./utils"
 
 /**
@@ -19,6 +19,9 @@ function shiftLayout(element: Element, x: number, y: number) {
 }
 
 describe("drag layout compensation", () => {
+    // Release the global drag lock even if a test fails mid-gesture
+    afterEach(() => pointerUp(document.body))
+
     test("only compensates layout changes on the drag axis (#2255)", async () => {
         const x = motionValue(0)
         const y = motionValue(0)
@@ -43,6 +46,31 @@ describe("drag layout compensation", () => {
 
         await pointer.to(110, 0)
         expect(x.get()).toBe(60)
+        expect(y.get()).toBe(0)
+
+        pointer.end()
+    })
+
+    test("only compensates the locked axis with dragDirectionLock", async () => {
+        const x = motionValue(0)
+        const y = motionValue(0)
+        const Component = () => (
+            <MockDrag>
+                <motion.div drag dragDirectionLock layout style={{ x, y }} />
+            </MockDrag>
+        )
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+        const element = container.firstChild as Element
+
+        const pointer = await drag(element).to(100, 0)
+        expect(x.get()).toBe(100)
+
+        shiftLayout(element, -50, 50)
+
+        // Locked to x, so y isn't dragged and won't snap back on release
+        expect(x.get()).toBe(50)
         expect(y.get()).toBe(0)
 
         pointer.end()

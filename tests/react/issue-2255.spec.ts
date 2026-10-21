@@ -22,16 +22,13 @@ test.describe('issue 2255: Reorder.Item in a wrapping axis="x" group', () => {
         const box = (await apple.boundingBox())!
         const x = box.x + 10
         const y = box.y + box.height / 2
+        const dragTransforms: string[] = []
         await page.mouse.move(x, y)
         await page.mouse.down()
         for (let i = 1; i <= 20; i++) {
             await page.mouse.move(x + (220 * i) / 20, y)
             await page.waitForTimeout(30)
-
-            // An axis="x" drag never moves the item on y
-            expect((await readApple(page)).transform).not.toMatch(
-                /translateY|translate3d/
-            )
+            dragTransforms.push((await readApple(page)).transform)
         }
         await page.mouse.up()
 
@@ -47,5 +44,10 @@ test.describe('issue 2255: Reorder.Item in a wrapping axis="x" group', () => {
         const { transform, offsetY } = await readApple(page)
         expect(transform).not.toMatch(/translateY|translate3d/)
         expect(offsetY).toBeCloseTo(0, 0)
+
+        // An axis="x" drag never moves the item on y, during the drag either
+        for (const dragTransform of dragTransforms) {
+            expect(dragTransform).not.toMatch(/translateY|translate3d/)
+        }
     })
 })
