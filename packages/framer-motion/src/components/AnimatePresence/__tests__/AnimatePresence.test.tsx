@@ -15,11 +15,11 @@ import { nextFrame, stepFrames } from "../../../gestures/__tests__/utils"
 import { render } from "../../../jest.setup"
 import { ResolvedValues } from "../../../render/types"
 
-describe("AnimatePresence", () => {
-    afterEach(() => {
-        MotionGlobalConfig.useManualTiming = false
-    })
+afterEach(() => {
+    MotionGlobalConfig.useManualTiming = false
+})
 
+describe("AnimatePresence", () => {
     test("Allows initial animation if no `initial` prop defined", async () => {
         const promise = new Promise((resolve) => {
             const x = motionValue(0)

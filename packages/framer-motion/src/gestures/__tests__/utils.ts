@@ -30,16 +30,18 @@ export const withManualFrames = () => {
 
 /**
  * Switch to a manual clock, then advance it by `duration` ms, processing a
- * frame every `frameDuration` ms inside act() so React commits between
- * frames. Reset MotionGlobalConfig.useManualTiming after the test.
+ * frame every `frameDuration` ms, each in its own act() so React commits
+ * between frames. Reset MotionGlobalConfig.useManualTiming after the test.
  */
-export const stepFrames = (duration: number, frameDuration = 1000 / 60) =>
-    act(async () => {
-        MotionGlobalConfig.useManualTiming = true
-        const end = frameData.timestamp + duration
-        let timestamp = frameData.timestamp
-        while (timestamp < end) {
-            processFrame((timestamp = Math.min(timestamp + frameDuration, end)))
-            await Promise.resolve()
-        }
-    })
+export const stepFrames = async (
+    duration: number,
+    frameDuration = 1000 / 60
+) => {
+    MotionGlobalConfig.useManualTiming = true
+    const end = frameData.timestamp + duration
+    let timestamp = frameData.timestamp
+    while (timestamp < end) {
+        timestamp = Math.min(timestamp + frameDuration, end)
+        await act(async () => processFrame(timestamp))
+    }
+}

@@ -1,4 +1,4 @@
-import { memo, MotionGlobalConfig } from "motion-utils"
+import { MotionGlobalConfig } from "motion-utils"
 import {
     AnyResolvedKeyframe,
     ValueAnimationOptionsWithRenderContext,
@@ -19,16 +19,14 @@ const colorProperties = new Set([
     "borderLeftColor",
 ])
 
-const supportsElementAnimate = /*@__PURE__*/ memo(() =>
-    Object.hasOwnProperty.call(Element.prototype, "animate")
-)
-
 /**
  * WAAPI runs on the browser's clock, so on a manual clock every animation
- * runs in JS where processFrame can drive it.
+ * runs in JS where processFrame can drive it. Set the flag before starting
+ * animations: running WAAPI animations stay on the browser's clock.
  */
 export const supportsWaapi = () =>
-    !MotionGlobalConfig.useManualTiming && supportsElementAnimate()
+    !MotionGlobalConfig.useManualTiming &&
+    Object.hasOwnProperty.call(Element.prototype, "animate")
 
 export function supportsBrowserAnimation<T extends AnyResolvedKeyframe>(
     options: ValueAnimationOptionsWithRenderContext<T>

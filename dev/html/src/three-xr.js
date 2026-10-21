@@ -51,19 +51,23 @@ function resize() {
 }
 
 /**
- * Motion renders the scene once per frame, after it's written this frame's
- * values.
+ * Outside a session, Motion's own loop renders the scene once per frame,
+ * after it's written this frame's values.
  */
 const render = () => renderer.render(scene, camera)
-frame.render(render, true)
+const renderOutsideXR = () => renderer.xr.isPresenting || render()
+frame.render(renderOutsideXR, true)
 
 /**
- * In an immersive session window.requestAnimationFrame stops firing, so
- * process Motion's frames from the session's own loop instead. Three.js
- * hands the loop to XRSession.requestAnimationFrame when a session starts.
+ * In an immersive session, window.requestAnimationFrame may stop firing
+ * (e.g. on Meta Quest), and an XR frame can only be drawn from the session's
+ * own loop. Three.js hands its loop to XRSession.requestAnimationFrame when
+ * a session starts, so process Motion's frame there and render after it.
  */
 renderer.setAnimationLoop((timestamp) => {
-    if (renderer.xr.isPresenting) processFrame(timestamp)
+    if (!renderer.xr.isPresenting) return
+    processFrame(timestamp)
+    render()
 })
 
 resize()
@@ -74,7 +78,7 @@ if (navigator.xr) {
 }
 
 window.addEventListener("pagehide", () => {
-    cancelFrame(render)
+    cancelFrame(renderOutsideXR)
     renderer.setAnimationLoop(null)
     mesh.geometry.dispose()
     material.dispose()
