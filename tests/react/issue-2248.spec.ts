@@ -2,47 +2,87 @@ import { expect, Page, test } from "@playwright/test"
 
 /**
  * #2248: a layout change triggered from onDrag (while the pointer is still
- * down) should animate the card back into its slot, exactly like the same
- * change triggered from onDragEnd.
+ * down) should end the drag and animate the card back into its slot, exactly
+ * like the same change triggered from onDragEnd.
  */
-async function dragOpenCardDown(page: Page, id: number) {
-    await page.click(`#card-${id}`)
-    await page.waitForTimeout(1500)
+const getBox = (page: Page, selector: string) =>
+    page.evaluate(
+        (s) => document.querySelector(s)!.getBoundingClientRect().toJSON(),
+        selector
+    )
 
-    const box = (await page.locator(`#card-${id}`).boundingBox())!
-    const x = box.x + box.width / 2
-    const y = box.y + 50
+async function expectBoxToSettle(page: Page, id: number) {
+    const slot = await getBox(page, `#slot-${id}`)
 
+    await expect(async () => {
+        const box = await getBox(page, `#card-${id}`)
+        expect(box.x).toBeCloseTo(slot.x, 0)
+        expect(box.y).toBeCloseTo(slot.y, 0)
+        expect(box.width).toBeCloseTo(slot.width, 0)
+        expect(box.height).toBeCloseTo(slot.height, 0)
+    }).toPass({ timeout: 5000 })
+}
+
+async function openAndGrab(page: Page, id: number) {
+    await page.goto("/?test=issue-2248")
+    const card = page.locator(`#card-${id}`)
+    await card.click()
+    await expect(card).toHaveAttribute("data-selected", "true")
+
+    // Wait for the open layout animation to finish
+    let prev = await getBox(page, `#card-${id}`)
+    await expect(async () => {
+        const box = await getBox(page, `#card-${id}`)
+        const isStill = box.y === prev.y && box.width === prev.width
+        prev = box
+        expect(isStill).toBe(true)
+    }).toPass({ timeout: 5000, intervals: [100] })
+
+    const x = prev.x + prev.width / 2
+    const y = prev.y + 50
     await page.mouse.move(x, y)
     await page.mouse.down()
-    for (let i = 1; i <= 15; i++) {
-        await page.mouse.move(x, y + i * 10)
-        await page.waitForTimeout(16)
-    }
-    await page.waitForTimeout(200)
+
+    return { x, y }
+}
+
+test("card closed from onDragEnd returns to its slot", async ({ page }) => {
+    const { x, y } = await openAndGrab(page, 0)
+    await page.mouse.move(x, y + 150, { steps: 15 })
     await page.mouse.up()
-    await page.waitForTimeout(2000)
-}
 
-for (const [id, handler] of [
-    [0, "onDragEnd"],
-    [1, "onDrag"],
-] as const) {
-    test(`card closed from ${handler} returns to its slot`, async ({
-        page,
-    }) => {
-        await page.goto("/?test=issue-2248")
-        const slot = (await page.locator(`#slot-${id}`).boundingBox())!
+    await expect(page.locator("#card-0")).toHaveAttribute(
+        "data-selected",
+        "false"
+    )
+    await expectBoxToSettle(page, 0)
+})
 
-        await dragOpenCardDown(page, id)
+test("card closed from onDrag animates back to its slot while the pointer is down", async ({
+    page,
+}) => {
+    const { x, y } = await openAndGrab(page, 1)
+    const card = page.locator("#card-1")
 
-        const card = page.locator(`#card-${id}`)
-        await expect(card).toHaveAttribute("data-selected", "false")
+    let i = 0
+    while ((await card.getAttribute("data-selected")) === "true") {
+        expect(++i).toBeLessThan(30)
+        await page.mouse.move(x, y + i * 10)
+    }
 
-        const box = (await card.boundingBox())!
-        expect(Math.round(box.x)).toBe(Math.round(slot.x))
-        expect(Math.round(box.y)).toBe(Math.round(slot.y))
-        expect(Math.round(box.width)).toBe(Math.round(slot.width))
-        expect(Math.round(box.height)).toBe(Math.round(slot.height))
-    })
-}
+    /**
+     * The card should layout animate from its open size rather than jump
+     * straight to its slot's size.
+     */
+    const slot = await getBox(page, "#slot-1")
+    const box = await getBox(page, "#card-1")
+    expect(Math.abs(box.width - slot.width)).toBeGreaterThan(40)
+
+    // It returns to its slot without the pointer being released...
+    await page.mouse.move(x, y + 300, { steps: 5 })
+    await expectBoxToSettle(page, 1)
+
+    // ...and stays there once it is.
+    await page.mouse.up()
+    await expectBoxToSettle(page, 1)
+})

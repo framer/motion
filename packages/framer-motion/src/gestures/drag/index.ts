@@ -29,8 +29,9 @@ export class DragGesture extends Feature<HTMLElement> {
     }
 
     update() {
-        const { dragControls } = this.node.getProps()
-        const { dragControls: prevDragControls } = this.node.prevProps || {}
+        const { drag, dragControls } = this.node.getProps()
+        const { drag: prevDrag, dragControls: prevDragControls } =
+            this.node.prevProps || {}
 
         if (dragControls !== prevDragControls) {
             this.removeGroupControls()
@@ -38,6 +39,17 @@ export class DragGesture extends Feature<HTMLElement> {
                 this.removeGroupControls = dragControls.subscribe(this.controls)
             }
         }
+
+        /**
+         * If drag is disabled mid-gesture, for instance from onDrag, end the
+         * gesture as if released. This must happen before this render's
+         * layout change is processed, otherwise the element is still
+         * animation-blocked, so it jumps to its new layout and keeps that
+         * jump as a drag offset, which release wouldn't animate away as
+         * drag is now disabled.
+         */
+        if (prevDrag && !drag)
+            this.controls.stop(undefined, undefined, prevDrag)
     }
 
     unmount() {

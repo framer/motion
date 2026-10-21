@@ -287,7 +287,15 @@ export class VisualElementDragControls {
         )
     }
 
-    stop(event?: PointerEvent, panInfo?: PanInfo) {
+    /**
+     * @param dragAxes - The axes to animate on release, if not the `drag`
+     * prop's, e.g. when drag was disabled mid-gesture.
+     */
+    stop(
+        event?: PointerEvent,
+        panInfo?: PanInfo,
+        dragAxes?: MotionNodeOptions["drag"]
+    ) {
         const finalEvent = event || this.latestPointerEvent
         const finalPanInfo = panInfo || this.latestPanInfo
 
@@ -296,7 +304,7 @@ export class VisualElementDragControls {
         if (!isDragging || !finalPanInfo || !finalEvent) return
 
         const { velocity } = finalPanInfo
-        this.startAnimation(velocity)
+        this.startAnimation(velocity, dragAxes)
 
         const { onDragEnd } = this.getProps()
         if (onDragEnd) {
@@ -474,7 +482,10 @@ export class VisualElementDragControls {
         return measuredConstraints
     }
 
-    private startAnimation(velocity: Point) {
+    private startAnimation(
+        velocity: Point,
+        dragAxes?: MotionNodeOptions["drag"]
+    ) {
         const {
             drag,
             dragMomentum,
@@ -487,7 +498,7 @@ export class VisualElementDragControls {
         const constraints: Partial<ResolvedConstraints> = this.constraints || {}
 
         const momentumAnimations = eachAxis((axis) => {
-            if (!shouldDrag(axis, drag, this.currentDirection)) {
+            if (!shouldDrag(axis, dragAxes || drag, this.currentDirection)) {
                 return
             }
 
