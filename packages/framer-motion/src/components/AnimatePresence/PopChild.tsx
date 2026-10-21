@@ -6,6 +6,7 @@ import { useContext, useId, useInsertionEffect, useRef } from "react"
 
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { useComposedRefs } from "../../utils/use-composed-ref"
+import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 
 interface Size {
     width: number
@@ -15,6 +16,7 @@ interface Size {
     right: number
     bottom: number
     direction: string
+    page?: number[]
 }
 
 interface Props {
@@ -30,6 +32,16 @@ interface Props {
 interface MeasureProps extends Props {
     getElement: () => unknown
     sizeRef: React.RefObject<Size>
+}
+
+/**
+ * The element's position on the page, so a scroll position clamped by
+ * the document shrinking doesn't read as the element moving.
+ */
+const getPagePoint = (element: HTMLElement) => {
+    const box = element.getBoundingClientRect()
+    const page = element.ownerDocument.documentElement.getBoundingClientRect()
+    return [box.left - page.left, box.top - page.top]
 }
 
 /**
@@ -57,6 +69,7 @@ class PopChildMeasure extends React.Component<MeasureProps> {
             size.right = parentWidth - size.width - size.left
             size.bottom = parentHeight - size.height - size.top
             size.direction = computedStyle.direction
+            size.page = getPagePoint(element)
         }
 
         return null
@@ -84,6 +97,7 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop, pop
         bottom: 0,
         direction: "ltr",
     })
+    const sheet = useRef<CSSStyleSheet | null>(null)
     const { nonce } = useContext(MotionConfigContext)
     /**
      * In React 19, refs are passed via props.ref instead of element.ref.
@@ -108,6 +122,19 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop, pop
     const getElement = () =>
         ref.current || (popNode?.current?.current as HTMLElement | undefined)
 
+    const insertPopRule = () => {
+        const { width, height, top, left, right, bottom, direction } = size.current
+        const isRTL = direction === "rtl"
+        const x = anchorX === "left"
+            ? (isRTL ? `right:${right}` : `left:${left}`)
+            : (isRTL ? `left:${left}` : `right:${right}`)
+        const y = anchorY === "bottom" ? `bottom:${bottom}` : `top:${top}`
+
+        sheet.current?.insertRule(
+            `[data-motion-pop-id="${id}"]{position:absolute!important;width:${width}px!important;height:${height}px!important;${x}px!important;${y}px!important}`
+        )
+    }
+
     /**
      * We create and inject a style block so we can apply this explicit
      * sizing in a non-destructive manner by just deleting the style block.
@@ -118,15 +145,9 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop, pop
      * styles set via the style prop.
      */
     useInsertionEffect(() => {
-        const { width, height, top, left, right, bottom, direction } = size.current
+        const { width, height } = size.current
         const element = getElement()
         if (isPresent || pop === false || !element || !width || !height) return
-
-        const isRTL = direction === "rtl"
-        const x = anchorX === "left"
-            ? (isRTL ? `right: ${right}` : `left: ${left}`)
-            : (isRTL ? `left: ${left}` : `right: ${right}`)
-        const y = anchorY === "bottom" ? `bottom: ${bottom}` : `top: ${top}`
 
         element.dataset.motionPopId = id
 
@@ -141,24 +162,40 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop, pop
         const parent = root ?? doc.head
         parent.appendChild(style)
 
-        if (style.sheet) {
-            style.sheet.insertRule(`
-          [data-motion-pop-id="${id}"] {
-            position: absolute !important;
-            width: ${width}px !important;
-            height: ${height}px !important;
-            ${x}px !important;
-            ${y}px !important;
-          }
-        `)
-        }
+        sheet.current = style.sheet
+        insertPopRule()
 
         return () => {
+            sheet.current = null
             element.removeAttribute("data-motion-pop-id")
             if (parent.contains(style)) {
                 parent.removeChild(style)
             }
         }
+    }, [isPresent])
+
+    /**
+     * Popping the element out of the layout can move its offsetParent,
+     * which we've pinned it to. For instance, a bottom-anchored or centred
+     * container shrinks around its remaining children (#2348). So once the
+     * whole commit is in the DOM (insertion effects run before later
+     * siblings are added), offset the element by however far it moved,
+     * so it stays where it was.
+     */
+    useIsomorphicLayoutEffect(() => {
+        if (isPresent || !sheet.current) return
+
+        const s = size.current
+        const [x, y] = getPagePoint(getElement()!)
+        const dx = s.page![0] - x
+        const dy = s.page![1] - y
+
+        s.left += dx
+        s.right -= dx
+        s.top += dy
+        s.bottom -= dy
+        sheet.current.deleteRule(0)
+        insertPopRule()
     }, [isPresent])
 
     return (

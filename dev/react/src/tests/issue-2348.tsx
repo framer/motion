@@ -10,7 +10,10 @@ import { useRef, useState } from "react"
  *
  * The issue says the bug is invisible when the fixed container's top is
  * aligned with the window's top, so `?anchor=` positions the fixed `ul`
- * either offset from the top or in the bottom-right corner (toast list).
+ * offset from the top, in the bottom-right corner (toast list) or centred
+ * with a percentage transform. The `?fixed` and `?popLayout` params preset
+ * the checkboxes. `?scroll` puts a tall spacer above the list, so removing
+ * an item from the bottom of a scrolled page shrinks the document.
  */
 const params = new URLSearchParams(
     typeof window !== "undefined" ? window.location.search : ""
@@ -26,10 +29,11 @@ const anchorY = (params.get("anchorY") || undefined) as
     | "bottom"
     | undefined
 
-const fixedStyle =
-    anchor === "bottom"
-        ? "position: fixed; bottom: 20px; right: 20px;"
-        : "position: fixed; top: 200px; left: 200px;"
+const fixedStyle = {
+    top: "position: fixed; top: 200px; left: 200px;",
+    bottom: "position: fixed; bottom: 20px; right: 20px;",
+    center: "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);",
+}[anchor]
 
 function removeItem<T>(arr: T[], item: T) {
     const index = arr.indexOf(item)
@@ -39,8 +43,8 @@ function removeItem<T>(arr: T[], item: T) {
 export const App = () => {
     const count = useRef(0)
     const [items, setItems] = useState([0])
-    const [popLayout, setPopLayout] = useState(false)
-    const [isFixed, setIsFixed] = useState(false)
+    const [popLayout, setPopLayout] = useState(params.has("popLayout"))
+    const [isFixed, setIsFixed] = useState(params.has("fixed"))
 
     return (
         <div className="example">
@@ -92,7 +96,17 @@ export const App = () => {
                 >
                     Add item
                 </motion.button>
+                <button
+                    id="cycle"
+                    onClick={() => {
+                        count.current++
+                        setItems([...items.slice(1), count.current])
+                    }}
+                >
+                    Remove first, add item
+                </button>
             </div>
+            {params.has("scroll") && <div style={{ height: 2000 }} />}
             <ul className={isFixed ? "fixed" : ""}>
                 <AnimatePresence
                     mode={popLayout ? "popLayout" : "sync"}

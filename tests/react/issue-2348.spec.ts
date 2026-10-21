@@ -8,15 +8,13 @@ import { expect, Page, test } from "@playwright/test"
  * In a fixed bottom-right container (a toast list), exiting items drop
  * downwards instead of shrinking towards their own centre.
  *
- * A scale exit keeps the box centre fixed, so an exiting item's centre must
- * not move.
+ * PopChild pins the popped item to its offsetParent's edges, but popping it
+ * out of the flow shrinks the `ul`. A bottom-anchored (or centred) `ul` then
+ * moves, carrying the popped item with it, and the item's `layout` animation
+ * slides it there.
  *
- * The bottom-anchored case fails on main (and identically on 10.16.4):
- * PopChild pins the popped item with `top: offsetTop`, but popping it out
- * shrinks the bottom-anchored `ul`, so the `ul`'s top edge (and the item with
- * it) moves down by the item's height + gap, and the `layout` animation then
- * carries the exiting item down there. `anchorY="bottom"` (`?anchorY=bottom`
- * on the test page) holds it in place; the default does not.
+ * A scale exit keeps the box centre fixed, so an exiting item's centre must
+ * not move. The clock is mocked so the mid-exit read is deterministic.
  */
 interface Centre {
     x: number
@@ -30,47 +28,111 @@ function readCentre(page: Page, id: string): Promise<Centre> {
     }, id)
 }
 
-async function exitItem(page: Page, anchor: string, fixed: boolean) {
-    await page.goto(`?test=issue-2348&anchor=${anchor}`)
+async function setup(page: Page, query: string) {
+    await page.clock.install({ time: 0 })
+    await page.clock.pauseAt(1000)
+
+    await page.goto(`?test=issue-2348&popLayout${query}`)
     await expect(page.locator("#item-0")).toBeVisible()
 
-    await page.locator("#pop-layout").check()
-    if (fixed) await page.locator("#fixed").check()
-
-    for (let i = 0; i < 3; i++) await page.locator("#add").click()
-    await expect(page.locator("#item-3")).toBeVisible()
+    for (let i = 1; i <= 3; i++) {
+        await page.evaluate(() => document.getElementById("add")!.click())
+        await expect(page.locator(`#item-${i}`)).toBeVisible()
+    }
 
     /**
-     * Let the spring layout animations from toggling `fixed` and adding items
-     * settle before measuring.
+     * Let the spring layout animations from adding items settle.
      */
-    await page.waitForTimeout(2000)
+    await page.clock.runFor(3000)
+}
+
+async function exitItem(page: Page, query: string) {
+    await setup(page, query)
 
     const before = await readCentre(page, "item-1")
 
     await page.evaluate(() => document.getElementById("item-1")!.click())
+    await expect(page.locator("#item-1")).toHaveAttribute("data-motion-pop-id")
 
     /**
-     * Single read early in the spring exit, while the item is still popped
-     * out and mid-scale.
+     * Early in the spring exit, while the item is still popped out and
+     * mid-scale.
      */
-    await page.waitForTimeout(100)
+    await page.clock.runFor(100)
     const after = await readCentre(page, "item-1")
 
     return { before, after }
 }
 
-for (const { anchor, fixed } of [
-    { anchor: "top", fixed: false },
-    { anchor: "top", fixed: true },
-    { anchor: "bottom", fixed: true },
+for (const [name, query] of [
+    ["static container", ""],
+    ["fixed, top-anchored container", "&fixed&anchor=top"],
+    ["fixed, bottom-anchored container", "&fixed&anchor=bottom"],
+    [
+        "fixed, bottom-anchored container, anchorY: bottom",
+        "&fixed&anchor=bottom&anchorY=bottom",
+    ],
+    ["fixed, transform-centred container", "&fixed&anchor=center"],
+    ["static container, anchorY: bottom", "&anchorY=bottom"],
 ]) {
-    test(`popLayout exiting item shrinks towards its centre (${
-        fixed ? `fixed, ${anchor}-anchored` : "static"
-    } container)`, async ({ page }) => {
-        const { before, after } = await exitItem(page, anchor, fixed)
+    test(`popLayout exiting item shrinks towards its centre (${name})`, async ({
+        page,
+    }) => {
+        const { before, after } = await exitItem(page, query)
 
-        expect(Math.abs(after.x - before.x)).toBeLessThan(3)
-        expect(Math.abs(after.y - before.y)).toBeLessThan(3)
+        expect(Math.abs(after.x - before.x)).toBeLessThan(1)
+        expect(Math.abs(after.y - before.y)).toBeLessThan(1)
     })
 }
+
+/**
+ * Toast list: the oldest item exits as a new one arrives, in the same commit.
+ * The container's size, and so its position, ends up unchanged, so the
+ * exiting item mustn't be offset for the container's state part-way through
+ * the commit.
+ */
+test("popLayout exiting item stays put when an item is added in the same render", async ({
+    page,
+}) => {
+    await setup(page, "&fixed&anchor=bottom")
+
+    const before = await readCentre(page, "item-0")
+
+    await page.evaluate(() => document.getElementById("cycle")!.click())
+    await expect(page.locator("#item-0")).toHaveAttribute("data-motion-pop-id")
+    await page.clock.runFor(100)
+    const after = await readCentre(page, "item-0")
+
+    expect(Math.abs(after.x - before.x)).toBeLessThan(1)
+    expect(Math.abs(after.y - before.y)).toBeLessThan(1)
+})
+
+/**
+ * Removing an item at the bottom of a scrolled page shrinks the document,
+ * which clamps the scroll position and moves everything on screen. The
+ * exiting item should move with the page rather than stay put on screen.
+ */
+test("popLayout exiting item moves with the page when the scroll position is clamped", async ({
+    page,
+}) => {
+    await setup(page, "&scroll")
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+
+    const readOffset = async () =>
+        (await readCentre(page, "item-1")).y -
+        (await readCentre(page, "item-0")).y
+
+    const scrollBefore = await page.evaluate(() => window.scrollY)
+    const before = await readOffset()
+
+    await page.evaluate(() => document.getElementById("item-1")!.click())
+    await expect(page.locator("#item-1")).toHaveAttribute("data-motion-pop-id")
+    await page.clock.runFor(100)
+
+    // The scroll position was clamped...
+    expect(await page.evaluate(() => window.scrollY)).toBeLessThan(
+        scrollBefore - 50
+    )
+    // ...and the exiting item kept its place relative to the item above it.
+    expect(Math.abs((await readOffset()) - before)).toBeLessThan(1)
+})
