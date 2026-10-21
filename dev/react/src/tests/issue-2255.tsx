@@ -5,21 +5,28 @@ import { Reorder } from "framer-motion"
 /**
  * Issue #2255: Reorder.Group with axis="x" whose items wrap onto multiple
  * rows. Dragging an item into another row changes its layout on the y axis,
- * which the drag gesture compensates for by writing to the item's y value,
- * even though y isn't a drag axis. After release only x snaps back to the
- * origin, leaving a stale translateY on the item.
+ * which the drag gesture used to compensate for by writing to the item's y
+ * value, even though y isn't a drag axis. After release only x snapped back
+ * to the origin, leaving a stale translateY on the item.
  */
-const initial = ["apple", "banana", "kiwi", "watermelon", "fig", "grape", "pear"]
+const initial = [
+    "apple",
+    "banana",
+    "kiwi",
+    "watermelon",
+    "fig",
+    "grape",
+    "pear",
+]
 
 export const App = () => {
     const [items, setItems] = useState(initial)
-    const axis = new URL(window.location.href).searchParams.get("axis")
 
     return (
         <>
             <div data-testid="order">{items.join(",")}</div>
             <Reorder.Group
-                axis={axis === "auto" ? undefined : "x"}
+                axis="x"
                 values={items}
                 onReorder={setItems}
                 data-testid="group"
