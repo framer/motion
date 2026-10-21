@@ -28,22 +28,15 @@ test("style prop changes apply to motion.svg", async ({ page }) => {
     }
 
     for (const id of ids) {
-        expect
-            .soft(
-                await page
-                    .locator(`#${id}`)
-                    .evaluate((e) => getComputedStyle(e).backgroundColor),
-                `${id} background-color`
-            )
-            .toBe("rgb(0, 0, 255)")
+        await expect
+            .soft(page.locator(`#${id}`), `${id} background-color`)
+            .toHaveCSS("background-color", "rgb(0, 0, 255)")
     }
 
-    expect
+    await expect
         .soft(
-            await page
-                .locator("#motion-svg-fill-rect")
-                .evaluate((e) => getComputedStyle(e).fill),
+            page.locator("#motion-svg-fill-rect"),
             "motion.svg inherited fill"
         )
-        .toBe("rgb(0, 0, 255)")
+        .toHaveCSS("fill", "rgb(0, 0, 255)")
 })
