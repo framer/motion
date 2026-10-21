@@ -124,6 +124,21 @@ describe("driving the frameloop manually", () => {
         expect(opacity.get()).toBeCloseTo(0.75)
     })
 
+    test("processFrame clamps delta like the requestAnimationFrame loop", async () => {
+        const now = jest.spyOn(performance, "now").mockReturnValue(30000)
+        await nextMicrotask()
+        processFrame()
+
+        // After idling, e.g. while an XR session was paused
+        await nextMicrotask()
+        now.mockReturnValue(35000)
+        processFrame()
+        expect(frameData.delta).toBe(40)
+
+        processFrame(35000)
+        expect(frameData.delta).toBe(1)
+    })
+
     test("processFrame is ignored inside a frame", () => {
         MotionGlobalConfig.useManualTiming = true
         processFrame(0)

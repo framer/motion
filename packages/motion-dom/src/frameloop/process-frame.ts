@@ -1,3 +1,4 @@
+import { MotionGlobalConfig } from "motion-utils"
 import { frameSteps } from "./frame"
 import { frameData } from "./frame-data"
 import { time } from "./sync-time"
@@ -20,7 +21,11 @@ import { time } from "./sync-time"
 export const processFrame = (timestamp = time.now()) => {
     if (frameData.isProcessing) return
 
-    frameData.delta = timestamp - frameData.timestamp
+    const delta = timestamp - frameData.timestamp
+    // Clamp like the requestAnimationFrame loop, unless the timeline is ours
+    frameData.delta = MotionGlobalConfig.useManualTiming
+        ? delta
+        : Math.max(Math.min(delta, 40), 1)
     time.set((frameData.timestamp = timestamp))
     frameData.isProcessing = true
     // frameSteps' keys are in stepsOrder
