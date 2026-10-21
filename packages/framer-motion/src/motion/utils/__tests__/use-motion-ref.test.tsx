@@ -1,6 +1,6 @@
 import * as React from "react"
-import { useRef } from "react"
-import { motion, visualElementStore } from "../../.."
+import { createRef, useRef } from "react"
+import { motion, MotionConfig, visualElementStore } from "../../.."
 import { render } from "../../../jest.setup"
 
 describe("useMotionRef", () => {
@@ -126,5 +126,141 @@ describe("useMotionRef", () => {
 
         expect(cleanup).toHaveBeenCalledTimes(1)
         expect(refCallback).not.toHaveBeenCalledWith(null)
+    })
+    it("should hydrate a new RefObject when the ref changes (#2263)", () => {
+        const refA = createRef<HTMLDivElement>()
+        const refB = createRef<HTMLDivElement>()
+
+        const Component = ({ r }: { r: React.RefObject<HTMLDivElement> }) => (
+            <motion.div ref={r} />
+        )
+
+        const { container, rerender } = render(<Component r={refA} />)
+        const element = container.firstChild as HTMLDivElement
+
+        expect(refA.current).toBe(element)
+
+        rerender(<Component r={refB} />)
+
+        expect(refB.current).toBe(element)
+        expect(refA.current).toBe(null)
+
+        rerender(<Component r={refA} />)
+
+        expect(refA.current).toBe(element)
+        expect(refB.current).toBe(null)
+    })
+
+    it("should call a new callback ref and detach the old one when the ref changes", () => {
+        const refA = jest.fn()
+        const refB = jest.fn()
+
+        const Component = ({ r }: { r: React.Ref<HTMLDivElement> }) => (
+            <motion.div ref={r} />
+        )
+
+        const { container, rerender } = render(<Component r={refA} />)
+        const element = container.firstChild as HTMLDivElement
+
+        expect(refA).toHaveBeenCalledTimes(1)
+        expect(refA).toHaveBeenLastCalledWith(element)
+
+        rerender(<Component r={refB} />)
+
+        expect(refA).toHaveBeenCalledTimes(2)
+        expect(refA).toHaveBeenLastCalledWith(null)
+        expect(refB).toHaveBeenCalledTimes(1)
+        expect(refB).toHaveBeenLastCalledWith(element)
+
+        // Re-rendering with the same ref doesn't call it again
+        rerender(<Component r={refB} />)
+        expect(refB).toHaveBeenCalledTimes(1)
+    })
+
+    it("should call a changed callback ref's cleanup instead of null (React 19)", () => {
+        const cleanupA = jest.fn()
+        const refA = jest.fn(() => cleanupA)
+        const refB = jest.fn()
+
+        const Component = ({ r }: { r: React.Ref<HTMLDivElement> }) => (
+            <motion.div ref={r} />
+        )
+
+        const { container, rerender, unmount } = render(
+            <Component r={refA} />
+        )
+        const element = container.firstChild as HTMLDivElement
+
+        rerender(<Component r={refB} />)
+
+        expect(cleanupA).toHaveBeenCalledTimes(1)
+        expect(refA).not.toHaveBeenCalledWith(null)
+        expect(refB).toHaveBeenLastCalledWith(element)
+
+        unmount()
+
+        expect(cleanupA).toHaveBeenCalledTimes(1)
+        expect(refB).toHaveBeenLastCalledWith(null)
+    })
+
+    it("should attach and detach a ref added or removed after mount", () => {
+        const ref = createRef<HTMLDivElement>()
+
+        const Component = ({ r }: { r?: React.Ref<HTMLDivElement> }) => (
+            <motion.div ref={r} />
+        )
+
+        const { container, rerender } = render(<Component />)
+        const element = container.firstChild as HTMLDivElement
+
+        rerender(<Component r={ref} />)
+        expect(ref.current).toBe(element)
+
+        rerender(<Component />)
+        expect(ref.current).toBe(null)
+    })
+
+    it("should not remount the VisualElement when the ref changes", () => {
+        const refs: HTMLDivElement[] = []
+
+        const Component = ({ r }: { r: React.Ref<HTMLDivElement> }) => (
+            <motion.div ref={r} />
+        )
+
+        const { container, rerender } = render(
+            <Component r={(el) => el && refs.push(el)} />
+        )
+        const element = container.firstChild as HTMLDivElement
+        const visualElement = visualElementStore.get(element)!
+        const unmount = jest.spyOn(visualElement, "unmount")
+
+        // A new inline callback ref on every render, like Radix UI's asChild
+        rerender(<Component r={(el) => el && refs.push(el)} />)
+        rerender(<Component r={(el) => el && refs.push(el)} />)
+
+        expect(unmount).not.toHaveBeenCalled()
+        expect(visualElementStore.get(element)).toBe(visualElement)
+        expect(visualElement.current).toBe(element)
+        expect(refs).toEqual([element, element, element])
+    })
+    it("should hydrate a changed ref in static mode", () => {
+        const refA = createRef<HTMLDivElement>()
+        const refB = createRef<HTMLDivElement>()
+
+        const Component = ({ r }: { r: React.RefObject<HTMLDivElement> }) => (
+            <MotionConfig isStatic>
+                <motion.div ref={r} />
+            </MotionConfig>
+        )
+
+        const { container, rerender } = render(<Component r={refA} />)
+        const element = container.firstChild as HTMLDivElement
+
+        expect(refA.current).toBe(element)
+
+        rerender(<Component r={refB} />)
+
+        expect(refB.current).toBe(element)
+        expect(refA.current).toBe(null)
     })
 })

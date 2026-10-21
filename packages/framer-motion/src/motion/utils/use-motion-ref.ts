@@ -3,6 +3,7 @@
 import type { VisualElement } from "motion-dom"
 import * as React from "react"
 import { useCallback, useInsertionEffect, useRef } from "react"
+import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { VisualState } from "./use-visual-state"
 
 /**
@@ -26,8 +27,47 @@ export function useMotionRef<Instance, RenderState>(
         externalRefContainer.current = externalRef
     })
 
-    // Store cleanup function returned by callback refs (React 19 feature)
-    const refCleanup = useRef<(() => void) | null>(null)
+    const instanceRef = useRef<Instance | null>(null)
+
+    // The external ref currently holding the instance, and how to detach it
+    const attachedRef = useRef<React.Ref<Instance>>()
+    const detachRef = useRef<() => void>()
+
+    /**
+     * Hand the mounted instance to the latest externalRef, detaching
+     * it from the previous one.
+     */
+    const syncExternalRef = () => {
+        const instance = instanceRef.current
+        const ref = instance && externalRefContainer.current
+
+        if (ref !== attachedRef.current) {
+            detachRef.current?.()
+            attachedRef.current = ref
+
+            const setRef =
+                typeof ref === "function"
+                    ? ref
+                    : (value: Instance | null) => {
+                          if (ref) {
+                              ;(ref as React.MutableRefObject<Instance | null>)
+                                  .current = value
+                          }
+                      }
+
+            // Callback refs can return a cleanup function (React 19)
+            const cleanup = setRef(instance)
+            detachRef.current =
+                typeof cleanup === "function" ? cleanup : () => setRef(null)
+        }
+    }
+
+    /**
+     * As the ref callback is stable, React won't hand a changed externalRef
+     * the instance, so it's synced here instead, without remounting the
+     * VisualElement.
+     */
+    useIsomorphicLayoutEffect(syncExternalRef)
 
     return useCallback(
         (instance: Instance) => {
@@ -39,22 +79,8 @@ export function useMotionRef<Instance, RenderState>(
                 instance ? visualElement.mount(instance) : visualElement.unmount()
             }
 
-            const ref = externalRefContainer.current
-            if (typeof ref === "function") {
-                if (instance) {
-                    const cleanup = ref(instance)
-                    if (typeof cleanup === "function") {
-                        refCleanup.current = cleanup
-                    }
-                } else if (refCleanup.current) {
-                    refCleanup.current()
-                    refCleanup.current = null
-                } else {
-                    ref(instance)
-                }
-            } else if (ref) {
-                ;(ref as React.MutableRefObject<Instance>).current = instance
-            }
+            instanceRef.current = instance
+            syncExternalRef()
         },
         [visualElement]
     )
