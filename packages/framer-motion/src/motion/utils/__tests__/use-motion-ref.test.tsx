@@ -186,9 +186,7 @@ describe("useMotionRef", () => {
             <motion.div ref={r} />
         )
 
-        const { container, rerender, unmount } = render(
-            <Component r={refA} />
-        )
+        const { container, rerender, unmount } = render(<Component r={refA} />)
         const element = container.firstChild as HTMLDivElement
 
         rerender(<Component r={refB} />)
@@ -262,5 +260,67 @@ describe("useMotionRef", () => {
 
         expect(refB.current).toBe(element)
         expect(refA.current).toBe(null)
+    })
+
+    it("should hand a new element to a new ref without giving it to the old one", () => {
+        const refA = jest.fn()
+        const refB = jest.fn()
+
+        const Switch = React.forwardRef<HTMLElement, { span?: boolean }>(
+            ({ span }, ref) =>
+                span ? (
+                    <span ref={ref as React.Ref<HTMLSpanElement>} />
+                ) : (
+                    <div ref={ref as React.Ref<HTMLDivElement>} />
+                )
+        )
+        const MotionSwitch = motion.create(Switch)
+
+        const { container, rerender } = render(<MotionSwitch ref={refA} />)
+        const div = container.firstChild
+
+        rerender(<MotionSwitch ref={refB} span />)
+        const span = container.firstChild
+
+        expect(span).toBeInstanceOf(HTMLSpanElement)
+        expect(refA.mock.calls).toEqual([[div], [null]])
+        expect(refB.mock.calls).toEqual([[span]])
+    })
+
+    it("should support a state setter as a changing callback ref", () => {
+        let node: HTMLElement | null = null
+
+        const Component = () => {
+            const [el, setEl] = React.useState<HTMLElement | null>(null)
+            node = el
+            // A new inline callback ref every render
+            return <motion.div ref={(instance) => setEl(instance)} />
+        }
+
+        const { container } = render(<Component />)
+
+        expect(node).toBe(container.firstChild)
+    })
+
+    it("should hydrate a changed ref before the parent's layout effects run", () => {
+        const seen: Array<HTMLDivElement | null> = []
+
+        const Component = ({ count }: { count: number }) => {
+            const ref = React.useMemo(
+                () => createRef<HTMLDivElement>(),
+                [count]
+            )
+            React.useLayoutEffect(() => {
+                seen.push(ref.current)
+            }, [ref])
+            return <motion.div ref={ref} />
+        }
+
+        const { container, rerender } = render(<Component count={0} />)
+        rerender(<Component count={1} />)
+
+        const element = container.firstChild
+        expect(seen.length).toBeGreaterThanOrEqual(2)
+        expect(seen.every((current) => current === element)).toBe(true)
     })
 })

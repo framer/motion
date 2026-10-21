@@ -65,9 +65,10 @@ export function useMotionRef<Instance, RenderState>(
     /**
      * As the ref callback is stable, React won't hand a changed externalRef
      * the instance, so it's synced here instead, without remounting the
-     * VisualElement.
+     * VisualElement. Instance changes are synced by the ref callback, so this
+     * only needs to run when externalRef changes.
      */
-    useIsomorphicLayoutEffect(syncExternalRef)
+    useIsomorphicLayoutEffect(syncExternalRef, [externalRef])
 
     return useCallback(
         (instance: Instance) => {
