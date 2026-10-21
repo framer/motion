@@ -105,7 +105,12 @@ export interface IProjectionNode<I = unknown> {
     setTargetDelta(delta: Delta): void
     resetTransform(): void
     resetSkewAndRotation(): void
-    applyTransform(box: Box, transformOnly?: boolean, output?: Box): Box
+    applyTransform(
+        box: Box,
+        transformOnly?: boolean,
+        output?: Box,
+        skipOwnTransform?: boolean
+    ): Box
     resolveTargetDelta(force?: boolean): void
     removeRelativeTarget(): void
     calcProjection(): void

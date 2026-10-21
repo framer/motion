@@ -10,9 +10,13 @@ import { createPortal } from "react-dom"
 export const App = () => {
     const params = new URLSearchParams(window.location.search)
     const linear = params.get("linear") !== null
-    const transition = linear
-        ? { duration: 2, ease: "linear" as const }
-        : undefined
+    // Both elements share a static scale instead of animating it
+    const isStatic = params.get("static") !== null
+    const transition =
+        linear || isStatic
+            ? { duration: 2, ease: "linear" as const }
+            : undefined
+    const scale = isStatic ? 0.5 : undefined
     const [isOpen, setIsOpen] = useState(false)
 
     return (
@@ -24,7 +28,12 @@ export const App = () => {
                         layoutId="card"
                         transition={transition}
                         onClick={() => setIsOpen(true)}
-                        style={{ width: 100, height: 150, background: "red" }}
+                        style={{
+                            width: 100,
+                            height: 150,
+                            background: "red",
+                            scale,
+                        }}
                     />
                 </li>
             </ul>
@@ -44,11 +53,12 @@ export const App = () => {
                             id="modal"
                             layoutId="card"
                             transition={transition}
-                            animate={{ scale: 1.5 }}
+                            animate={isStatic ? undefined : { scale: 1.5 }}
                             style={{
                                 width: 100,
                                 height: 150,
                                 background: "blue",
+                                scale,
                             }}
                         />
                     </div>,

@@ -299,4 +299,42 @@ describe("node", () => {
         expect(root.sharedNodes.get("swapped")).toBe(stack)
         expect(stack.members).toEqual([next])
     })
+
+    /**
+     * #2284: a shared layout animation must apply the lead's own transforms
+     * (here `scale`) once, not twice.
+     */
+    test("Shared layout animation applies the node's own scale once", () => {
+        const box = () => ({
+            x: { min: 0, max: 100 },
+            y: { min: 0, max: 100 },
+        })
+        const node = createTestNode(undefined, { layout: true }, { scale: 1.5 })
+        node.mount({})
+
+        const prev = createTestNode(undefined, { layout: true })
+        prev.mount({})
+
+        node.layout = {
+            animationId: 0,
+            measuredBox: box(),
+            layoutBox: box(),
+            latestValues: {},
+            source: node.id,
+        }
+        node.layoutCorrected = box()
+        node.resumingFrom = prev
+        node.setTargetDelta({
+            x: { translate: 0, scale: 1, origin: 0.5, originPoint: 50 },
+            y: { translate: 0, scale: 1, origin: 0.5, originPoint: 50 },
+        })
+
+        node.resolveTargetDelta(true)
+        node.calcProjection()
+        node.applyTransformsToTarget()
+
+        expect(node.projectionDeltaWithTransform!.x.scale).toBeCloseTo(1.5)
+        expect(node.projectionDeltaWithTransform!.y.scale).toBeCloseTo(1.5)
+        expect(node.target).toEqual(box())
+    })
 })
