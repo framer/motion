@@ -1,5 +1,8 @@
+import { frameData } from "motion-dom"
+
 const threshold = 50
-const maxSpeed = 25
+// Pixels per millisecond (25px per frame at 60fps)
+const maxSpeed = 1.5
 
 const overflowStyles = new Set(["auto", "scroll"])
 
@@ -63,11 +66,13 @@ function findScrollableAncestor(
 
 /**
  * Speed ramps up towards the edge and is capped at maxSpeed once the
- * pointer reaches or passes it.
+ * pointer reaches or passes it. This runs from onDrag, within a frame, so
+ * scale by the frame's elapsed time to scroll at the same speed whatever
+ * the display's refresh rate.
  */
 function scrollSpeed(distanceFromEdge: number): number {
     const intensity = Math.min(1, 1 - distanceFromEdge / threshold)
-    return maxSpeed * intensity * intensity
+    return maxSpeed * intensity * intensity * frameData.delta
 }
 
 function getScrollAmount(

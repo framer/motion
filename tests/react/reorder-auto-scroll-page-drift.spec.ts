@@ -9,10 +9,10 @@ import { expect, test } from "@playwright/test"
 import { frames } from "../gestures/drag-helpers"
 
 /**
- * The expected auto-scroll per call for a pointer `distance` px from the
- * edge: maxSpeed * (1 - distance / threshold)^2.
+ * The expected auto-scroll speed, in pixels per millisecond, for a pointer
+ * `distance` px from the edge: maxSpeed * (1 - distance / threshold)^2.
  */
-const expectedAmount = (distance: number) => 25 * (1 - distance / 50) ** 2
+const expectedSpeed = (distance: number) => 1.5 * (1 - distance / 50) ** 2
 
 test("auto-scroll tracks the real pointer on a page-scrolling Reorder.Group", async ({
     page,
@@ -65,10 +65,10 @@ test("auto-scroll tracks the real pointer on a page-scrolling Reorder.Group", as
     expect(calls.length).toBeGreaterThan(5)
     expect(scrollY).toBeGreaterThan(0)
 
-    // The pointer never left the viewport, so no single call may exceed
-    // what its distance from the edge allows. The closest it gets is 2px.
+    // The pointer never left the viewport, so no call may scroll faster than
+    // its distance from the edge allows. The closest it gets is 2px.
     const max = Math.max(...calls)
-    expect(max).toBeLessThanOrEqual(expectedAmount(2) + 0.1)
+    expect(max).toBeLessThanOrEqual(expectedSpeed(2) + 0.005)
 
     // The dragged item stays under the pointer. A window scroll is only
     // compensated when its scroll event fires, a frame later, so while

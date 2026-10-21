@@ -1,3 +1,4 @@
+import { frameData } from "motion-dom"
 import { autoScrollIfNeeded, resetAutoScrollState } from "../auto-scroll"
 
 /**
@@ -19,6 +20,8 @@ describe("autoScrollIfNeeded", () => {
         })
         scrollBy = jest.fn()
         window.scrollBy = scrollBy
+        // autoScrollIfNeeded runs from onDrag, inside a frame. Default to 60fps.
+        frameData.delta = 1000 / 60
     })
 
     afterEach(() => {
@@ -56,5 +59,42 @@ describe("autoScrollIfNeeded", () => {
                 configurable: true,
             })
         }
+    })
+
+    /**
+     * Simulate holding the pointer 10px above the bottom edge for one second
+     * at the given frame rate, returning the total distance scrolled.
+     */
+    const scrollForOneSecond = (fps: number) => {
+        resetAutoScrollState()
+        scrollBy.mockClear()
+        frameData.delta = 1000 / fps
+        for (let i = 0; i < fps; i++) {
+            autoScrollIfNeeded(group, window.innerHeight - 10, "y", 1)
+        }
+        return scrollBy.mock.calls.reduce((sum, [{ top }]) => sum + top, 0)
+    }
+
+    test("scroll speed is independent of the display's refresh rate", () => {
+        const at60 = scrollForOneSecond(60)
+        expect(at60).toBeCloseTo(960)
+        expect(scrollForOneSecond(120)).toBeCloseTo(at60)
+        expect(scrollForOneSecond(30)).toBeCloseTo(at60)
+        expect(scrollForOneSecond(240)).toBeCloseTo(at60)
+    })
+
+    test("an extra mid-frame update doesn't scroll the frame's distance twice", () => {
+        // A synchronous projection flush runs onDrag again a few ms into the
+        // frame, and the following frame's delta is the remainder.
+        frameData.delta = 4
+        autoScrollIfNeeded(group, window.innerHeight + 100, "y", 1)
+        frameData.delta = 1000 / 60 - 4
+        autoScrollIfNeeded(group, window.innerHeight + 100, "y", 1)
+
+        const total = scrollBy.mock.calls.reduce(
+            (sum, [{ top }]) => sum + top,
+            0
+        )
+        expect(total).toBeCloseTo(25)
     })
 })
