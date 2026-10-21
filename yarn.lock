@@ -6806,12 +6806,12 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.14.9":
-  version: 1.16.0
-  resolution: "follow-redirects@npm:1.16.0"
+  version: 1.16.1
+  resolution: "follow-redirects@npm:1.16.1"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: e90dce4607b1f6b8b9883287f912585573c19088209ad82341d550a795b4ba514522b73b1b340cf618279df27975cd46504d09149be60291ba6767384c1fd8f8
+  checksum: d42ff9158fe6c66692567b712fd4bba25ef8736253c1436439642884f9c218df05fe946928d1944367b1b72f7ca5e5d277c26608159e2adf1bad9e42b12d2c30
   languageName: node
   linkType: hard
 
@@ -14144,8 +14144,8 @@ __metadata:
   linkType: hard
 
 "vite@npm:^6.4.2":
-  version: 6.4.3
-  resolution: "vite@npm:6.4.3"
+  version: 6.4.4
+  resolution: "vite@npm:6.4.4"
   dependencies:
     esbuild: ^0.25.0
     fdir: ^6.4.4
@@ -14194,7 +14194,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 349e2cc44efa3fad3f89f415f45c5a94ee08d710b87b3e8b3f2556494c34b0f56af9f92c42316ff2117e442bbda617aa2ee502772f2301fcb687020b6be96f7e
+  checksum: 1b14d9f99e925bb77dddc2ad6586060bf93aea67f827cf8859bcd9cb75ca030beaaf9311dc8dce2ec0b8b9150c3bea28ce177af34732ed639ccd52388ffb7afa
   languageName: node
   linkType: hard
 
