@@ -1,5 +1,6 @@
 "use client"
 
+import { rootProjectionNode } from "motion-dom"
 import { invariant, warning } from "motion-utils"
 import * as React from "react"
 import { forwardRef, useContext } from "react"
@@ -16,6 +17,7 @@ import { useHTMLVisualState } from "../render/html/use-html-visual-state"
 import { SVGRenderState } from "../render/svg/types"
 import { useSVGVisualState } from "../render/svg/use-svg-visual-state"
 import { CreateVisualElement } from "../render/types"
+import { useConstant } from "../utils/use-constant"
 import { getInitializedFeatureDefinitions } from "./features/definitions"
 import { loadFeatures } from "./features/load-features"
 import { FeatureBundle, FeaturePackages } from "./features/types"
@@ -97,10 +99,28 @@ export function createMotionComponent<
          */
         let MeasureLayout: undefined | React.ComponentType<MotionProps>
 
+        const layoutId = useLayoutId(props)
+
+        /**
+         * An element that mounts with the layoutId of one that's already
+         * rendered takes over from it with a shared layout animation, so
+         * visually it has already entered. Mount it as if initial={false}
+         * rather than replaying its entrance.
+         */
+        if (
+            useConstant(
+                () =>
+                    !!rootProjectionNode.current?.sharedNodes.get(layoutId!)
+                        ?.lead
+            )
+        ) {
+            props = { ...props, initial: false }
+        }
+
         const configAndProps = {
             ...useContext(MotionConfigContext),
             ...props,
-            layoutId: useLayoutId(props),
+            layoutId,
         }
 
         const { isStatic, isValidProp } = configAndProps
