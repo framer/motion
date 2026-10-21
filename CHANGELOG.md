@@ -4,6 +4,16 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [14.6.0]
+
+### Added
+
+-   `Reorder`: Pass `moved` to `onReorder` as second argument.
+
+### Fixed
+
+-   `useInView`: Observe `ref` if contents change after mount.
+
 ## [14.5.0] 2026-10-20
 
 ### Added
