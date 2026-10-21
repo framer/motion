@@ -1,6 +1,5 @@
 import { animateElement } from "../../../animate/element"
-import { MotionGlobalConfig } from "motion-utils"
-import { frame, frameData } from "../../../../frameloop"
+import { frame } from "../../../../frameloop"
 import { styleEffect } from "../../../../effects/style"
 import { motionValue } from "../../../../value"
 import { supportsFlags } from "../../../../utils/supports/flags"
@@ -81,7 +80,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-    MotionGlobalConfig.useManualTiming = false
+    jest.restoreAllMocks()
 })
 
 const nextFrame = () =>
@@ -301,12 +300,12 @@ describe("independent transform acceleration", () => {
         /**
          * Frames are 1000/60ms apart however long this environment takes
          * between them, so writes in consecutive frames always land within
-         * the churn window.
+         * the churn window. Not useManualTiming, which turns WAAPI off.
          */
-        MotionGlobalConfig.useManualTiming = true
-        frameData.timestamp = performance.now()
+        let now = performance.now()
+        jest.spyOn(performance, "now").mockImplementation(() => now)
         const nextFrameAt60fps = () => {
-            frameData.timestamp += 1000 / 60
+            now += 1000 / 60
             return nextFrame()
         }
 
