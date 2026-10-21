@@ -83,4 +83,56 @@ describe("AnimatePresence popLayout when popping moves the container", () => {
         const rule = await popWithDrop(0)
         expect(rule.getPropertyValue("top")).toBe("0px")
     })
+
+    test("measures every popped element before correcting any", async () => {
+        const log: string[] = []
+        const { deleteRule } = CSSStyleSheet.prototype
+
+        HTMLElement.prototype.getBoundingClientRect = function () {
+            if (this.dataset?.testid !== "item")
+                return { left: 0, top: 0 } as DOMRect
+            log.push("read")
+            return {
+                left: 20,
+                top: this.dataset.motionPopId ? 170 : 100,
+            } as DOMRect
+        }
+        CSSStyleSheet.prototype.deleteRule = function (index: number) {
+            log.push("write")
+            return deleteRule.call(this, index)
+        }
+
+        const Component = ({ isVisible }: { isVisible: boolean }) => (
+            <AnimatePresence mode="popLayout">
+                {isVisible &&
+                    [0, 1, 2].map((i) => (
+                        <motion.div
+                            key={i}
+                            data-testid="item"
+                            style={{ width: "50px", height: "50px" }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5 }}
+                        />
+                    ))}
+            </AnimatePresence>
+        )
+
+        const { rerender, unmount } = render(<Component isVisible />)
+        await nextFrame()
+        log.length = 0
+
+        await act(async () => {
+            rerender(<Component isVisible={false} />)
+        })
+
+        CSSStyleSheet.prototype.deleteRule = deleteRule
+        unmount()
+
+        // Each popped element is measured before and after popping, then
+        // all three are corrected: no write sits between two reads.
+        expect(log).toEqual([
+            ...Array(6).fill("read"),
+            ...Array(3).fill("write"),
+        ])
+    })
 })

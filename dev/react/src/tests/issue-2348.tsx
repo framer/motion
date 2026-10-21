@@ -14,6 +14,7 @@ import { useRef, useState } from "react"
  * with a percentage transform. The `?fixed` and `?popLayout` params preset
  * the checkboxes. `?scroll` puts a tall spacer above the list, so removing
  * an item from the bottom of a scrolled page shrinks the document.
+ * `?scroller` does the same inside a scrollable element.
  */
 const params = new URLSearchParams(
     typeof window !== "undefined" ? window.location.search : ""
@@ -106,29 +107,40 @@ export const App = () => {
                     Remove first, add item
                 </button>
             </div>
-            {params.has("scroll") && <div style={{ height: 2000 }} />}
-            <ul className={isFixed ? "fixed" : ""}>
-                <AnimatePresence
-                    mode={popLayout ? "popLayout" : "sync"}
-                    anchorY={anchorY}
-                >
-                    {items.map((id) => (
-                        <motion.li
-                            id={`item-${id}`}
-                            layout
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.8, opacity: 0 }}
-                            transition={{ type: "spring" }}
-                            key={id}
-                            onClick={() => {
-                                const newItems = [...items]
-                                removeItem(newItems, id)
-                                setItems(newItems)
-                            }}
-                        />
-                    ))}
-                </AnimatePresence>
-            </ul>
+            <div
+                id="scroller"
+                style={
+                    params.has("scroller")
+                        ? { height: 300, overflow: "auto" }
+                        : undefined
+                }
+            >
+                {(params.has("scroll") || params.has("scroller")) && (
+                    <div style={{ height: 2000 }} />
+                )}
+                <ul className={isFixed ? "fixed" : ""}>
+                    <AnimatePresence
+                        mode={popLayout ? "popLayout" : "sync"}
+                        anchorY={anchorY}
+                    >
+                        {items.map((id) => (
+                            <motion.li
+                                id={`item-${id}`}
+                                layout
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.8, opacity: 0 }}
+                                transition={{ type: "spring" }}
+                                key={id}
+                                onClick={() => {
+                                    const newItems = [...items]
+                                    removeItem(newItems, id)
+                                    setItems(newItems)
+                                }}
+                            />
+                        ))}
+                    </AnimatePresence>
+                </ul>
+            </div>
         </div>
     )
 }

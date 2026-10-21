@@ -5,6 +5,7 @@ import { useContext, useEffect, useMemo, useRef, useState } from "react"
 import { LayoutGroupContext } from "../../context/LayoutGroupContext"
 import { useConstant } from "../../utils/use-constant"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
+import { popCorrections } from "./PopChild"
 import { PresenceChild } from "./PresenceChild"
 import { AnimatePresenceProps } from "./types"
 import { usePresence } from "./use-presence"
@@ -91,6 +92,14 @@ export const AnimatePresence = ({
      */
     const [diffedChildren, setDiffedChildren] = useState(presentChildren)
     const [renderedChildren, setRenderedChildren] = useState(presentChildren)
+
+    /**
+     * Popped children measure where they ended up in their own layout
+     * effects, which run before ours. Write their corrections together.
+     */
+    useIsomorphicLayoutEffect(() => {
+        while (popCorrections.length) popCorrections.pop()!()
+    })
 
     useIsomorphicLayoutEffect(() => {
         if (propagate && !isParentPresent && !renderedChildren.length) {

@@ -108,31 +108,51 @@ test("popLayout exiting item stays put when an item is added in the same render"
 })
 
 /**
- * Removing an item at the bottom of a scrolled page shrinks the document,
- * which clamps the scroll position and moves everything on screen. The
- * exiting item should move with the page rather than stay put on screen.
+ * Removing an item at the bottom of a scrolled page, or scrollable element,
+ * shrinks its content, which clamps the scroll position and moves everything
+ * in it. The exiting item should move with the content rather than stay put
+ * on screen, where the items above it now are.
  */
-test("popLayout exiting item moves with the page when the scroll position is clamped", async ({
-    page,
-}) => {
-    await setup(page, "&scroll")
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+for (const [name, query] of [
+    ["page", "&scroll"],
+    ["scrollable element", "&scroller"],
+]) {
+    test(`popLayout exiting item moves with the content when the ${name}'s scroll position is clamped`, async ({
+        page,
+    }) => {
+        await setup(page, query)
 
-    const readOffset = async () =>
-        (await readCentre(page, "item-1")).y -
-        (await readCentre(page, "item-0")).y
+        const readScroll = () =>
+            page.evaluate(
+                (isElement) =>
+                    isElement
+                        ? document.getElementById("scroller")!.scrollTop
+                        : window.scrollY,
+                query === "&scroller"
+            )
 
-    const scrollBefore = await page.evaluate(() => window.scrollY)
-    const before = await readOffset()
+        await page.evaluate(() => {
+            window.scrollTo(0, document.body.scrollHeight)
+            const scroller = document.getElementById("scroller")!
+            scroller.scrollTop = scroller.scrollHeight
+        })
 
-    await page.evaluate(() => document.getElementById("item-1")!.click())
-    await expect(page.locator("#item-1")).toHaveAttribute("data-motion-pop-id")
-    await page.clock.runFor(100)
+        const readOffset = async () =>
+            (await readCentre(page, "item-1")).y -
+            (await readCentre(page, "item-0")).y
 
-    // The scroll position was clamped...
-    expect(await page.evaluate(() => window.scrollY)).toBeLessThan(
-        scrollBefore - 50
-    )
-    // ...and the exiting item kept its place relative to the item above it.
-    expect(Math.abs((await readOffset()) - before)).toBeLessThan(1)
-})
+        const scrollBefore = await readScroll()
+        const before = await readOffset()
+
+        await page.evaluate(() => document.getElementById("item-1")!.click())
+        await expect(page.locator("#item-1")).toHaveAttribute(
+            "data-motion-pop-id"
+        )
+        await page.clock.runFor(100)
+
+        // The scroll position was clamped...
+        expect(await readScroll()).toBeLessThan(scrollBefore - 50)
+        // ...and the exiting item kept its place relative to the item above it.
+        expect(Math.abs((await readOffset()) - before)).toBeLessThan(1)
+    })
+}

@@ -35,14 +35,27 @@ interface MeasureProps extends Props {
 }
 
 /**
- * The element's position on the page, so a scroll position clamped by
- * the document shrinking doesn't read as the element moving.
+ * The element's position, plus its ancestors' scroll (across shadow roots),
+ * so a scroll position clamped by content shrinking, in the page or a
+ * scrollable element, doesn't read as the element moving.
  */
-const getPagePoint = (element: HTMLElement) => {
-    const box = element.getBoundingClientRect()
-    const page = element.ownerDocument.documentElement.getBoundingClientRect()
-    return [box.left - page.left, box.top - page.top]
+const getPagePoint = (element: Element) => {
+    let { left, top } = element.getBoundingClientRect()
+    let node: Element | null | undefined = element
+    while (
+        (node = node.parentElement || (node.parentNode as ShadowRoot)?.host)
+    ) {
+        left += node.scrollLeft
+        top += node.scrollTop
+    }
+    return [left, top]
 }
+
+/**
+ * Pop rule corrections, written by AnimatePresence once every exiting child
+ * has measured, so many children exiting at once don't each force a layout.
+ */
+export const popCorrections: VoidFunction[] = []
 
 /**
  * Measurement functionality has to be within a separate component
@@ -179,8 +192,8 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop, pop
      * which we've pinned it to. For instance, a bottom-anchored or centred
      * container shrinks around its remaining children (#2348). So once the
      * whole commit is in the DOM (insertion effects run before later
-     * siblings are added), offset the element by however far it moved,
-     * so it stays where it was.
+     * siblings are added), measure how far it moved. AnimatePresence then
+     * offsets it back, once every popped sibling has measured.
      */
     useIsomorphicLayoutEffect(() => {
         if (isPresent || !sheet.current) return
@@ -190,12 +203,16 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop, pop
         const dx = s.page![0] - x
         const dy = s.page![1] - y
 
-        s.left += dx
-        s.right -= dx
-        s.top += dy
-        s.bottom -= dy
-        sheet.current.deleteRule(0)
-        insertPopRule()
+        if (dx || dy) {
+            popCorrections.push(() => {
+                s.left += dx
+                s.right -= dx
+                s.top += dy
+                s.bottom -= dy
+                sheet.current!.deleteRule(0)
+                insertPopRule()
+            })
+        }
     }, [isPresent])
 
     return (
