@@ -22,9 +22,15 @@ export function useInView(
     }: UseInViewOptions = {}
 ) {
     const [isInView, setInView] = useState(initial)
+    /**
+     * Holds the element the observer was last set up with. Replacing the
+     * object (rather than using a ref) re-runs the observer effect.
+     */
+    const [observed, observe] = useState<{ current?: Element | null }>({})
 
     useEffect(() => {
-        if (!ref.current || (once && isInView)) return
+        const element = (observed.current = ref.current)
+        if (!element || (once && isInView)) return
 
         const onEnter = () => {
             setInView(true)
@@ -38,8 +44,21 @@ export function useInView(
             amount,
         }
 
-        return inView(ref.current, onEnter, options)
-    }, [root, ref, margin, once, amount])
+        return inView(element, onEnter, options)
+    }, [root, ref, margin, once, amount, observed])
+
+    /**
+     * The ref object never changes, so if the element is attached, swapped
+     * or removed after mount (e.g. conditional rendering) the effect above
+     * won't re-run by itself. Check after every commit and re-observe,
+     * resetting to false as the new element (if any) hasn't been seen yet.
+     */
+    useEffect(() => {
+        if (ref.current !== observed.current) {
+            once || setInView(false)
+            observe({})
+        }
+    })
 
     return isInView
 }

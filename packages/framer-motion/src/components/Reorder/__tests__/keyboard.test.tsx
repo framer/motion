@@ -373,13 +373,13 @@ describe("Reorder keyboard", () => {
         press(getByTestId("a"), " ")
         press(getByTestId("a"), "ArrowDown")
         // As with drag, "a" and "b" swap slots and "hidden" keeps its own
-        expect(onReorder).toHaveBeenLastCalledWith(["b", "hidden", "a"])
+        expect(onReorder).toHaveBeenLastCalledWith(["b", "hidden", "a"], "a")
 
         // The app has since moved "hidden" too: cancelling only restores
         // the rendered items, into the slots they now hold
         rerender(<Group values={["hidden", "b", "a"]} />)
         press(getByTestId("a"), "Escape")
-        expect(onReorder).toHaveBeenLastCalledWith(["hidden", "a", "b"])
+        expect(onReorder).toHaveBeenLastCalledWith(["hidden", "a", "b"], "a")
     })
 
     it("cancelling keeps values added since the grab in their slots", () => {
@@ -402,23 +402,17 @@ describe("Reorder keyboard", () => {
         press(getByTestId("b"), " ")
         rerender(<Group values={["new", "a", "b", "c", "end"]} />)
         press(getByTestId("b"), "ArrowDown")
-        expect(onReorder).toHaveBeenLastCalledWith([
-            "new",
-            "a",
-            "c",
-            "b",
-            "end",
-        ])
+        expect(onReorder).toHaveBeenLastCalledWith(
+            ["new", "a", "c", "b", "end"],
+            "b"
+        )
 
         rerender(<Group values={["new", "a", "c", "b", "end"]} />)
         press(getByTestId("b"), "Escape")
-        expect(onReorder).toHaveBeenLastCalledWith([
-            "new",
-            "a",
-            "b",
-            "c",
-            "end",
-        ])
+        expect(onReorder).toHaveBeenLastCalledWith(
+            ["new", "a", "b", "c", "end"],
+            "b"
+        )
     })
 
     it("applies whileDrag while grabbed", async () => {

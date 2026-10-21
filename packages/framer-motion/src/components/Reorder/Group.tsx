@@ -47,9 +47,14 @@ export interface Props<
      * A callback to fire with the new value order. For instance, if the values
      * are provided as a state from `useState`, this could be the set state function.
      *
+     * The second argument is the value of the item that moved. Its old and
+     * new positions are `values.indexOf(moved)` and `newOrder.indexOf(moved)`.
+     * This fires for each step of a drag, not once when it ends, so these
+     * describe that step's move.
+     *
      * @public
      */
-    onReorder: (newOrder: V[]) => void
+    onReorder: (newOrder: V[], moved: V) => void
 
     /**
      * The latest values state.
@@ -133,13 +138,13 @@ export function ReorderGroupComponent<
      * Write the new order of the measured items back into the slots they
      * hold in `values`, leaving unmeasured (e.g. virtualized) values in place.
      */
-    const commit = (newOrder: ItemData<V>[]) => {
+    const commit = (newOrder: ItemData<V>[], moved: V) => {
         let i = 0
         const newValues = values.map((value) =>
             itemLayouts.current.has(value) ? newOrder[i++].value : value
         )
         newValues.some((value, j) => value !== values[j]) &&
-            onReorder(newValues)
+            onReorder(newValues, moved)
     }
 
     const context: ReorderContextProps<V> = {
@@ -186,7 +191,8 @@ export function ReorderGroupComponent<
                 commit(
                     order.map((data) =>
                         from.includes(data.value) ? kept.shift()! : data
-                    )
+                    ),
+                    item
                 )
                 grab(currentTarget)
             } else if (
@@ -200,7 +206,7 @@ export function ReorderGroupComponent<
                     index + (keyIndex > 1 !== !!(isX && isRTL()) ? 1 : -1)
                 index > -1 &&
                     order[target] &&
-                    commit(moveItem(order, index, target))
+                    commit(moveItem(order, index, target), item)
             }
             event.preventDefault()
         },
@@ -234,7 +240,7 @@ export function ReorderGroupComponent<
             if (order !== newOrder) {
                 isReordering.current = true
                 hasReordered.current = true
-                commit(newOrder)
+                commit(newOrder, item)
             }
         },
     }
@@ -317,6 +323,6 @@ export const ReorderGroup = /*@__PURE__*/ forwardRef(ReorderGroupComponent) as <
         "values" | "onReorder"
     > & {
         values: Values
-        onReorder: (newOrder: Values) => void
+        onReorder: (newOrder: Values, moved: Values[number]) => void
     } & { ref?: React.ForwardedRef<any> }
 ) => ReturnType<typeof ReorderGroupComponent>
