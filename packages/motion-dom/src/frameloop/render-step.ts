@@ -31,20 +31,24 @@ export function createRenderStep(runNextFrame: () => void): Step {
     }
 
     function triggerCallback(callback: Process) {
-        /**
-         * Remove the callback before running it, so if it's scheduled with
-         * `immediate` again later in this step (for instance, a value it
-         * reads changes after it ran), it's re-added and runs again rather
-         * than being deduplicated against the run that's already happened.
-         */
-        thisFrame.delete(callback)
-
         if (toKeepAlive.has(callback)) {
             nextFrame.add(callback)
             runNextFrame()
         }
 
         callback(latestFrameData)
+
+        /**
+         * Remove the callback once it's run, so if it's scheduled with
+         * `immediate` again later in this step (for instance, a value it
+         * reads is changed by a later callback), it's re-added and runs
+         * again rather than being deduplicated against the run that's
+         * already happened. Removing it after rather than before it runs
+         * means a callback that re-schedules itself while running (like a
+         * transform whose change listener writes to one of its inputs)
+         * is still deduplicated, so it can't loop forever.
+         */
+        thisFrame.delete(callback)
     }
 
     const step: Step = {
