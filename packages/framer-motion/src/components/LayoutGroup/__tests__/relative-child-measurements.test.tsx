@@ -1,5 +1,6 @@
-import { frame, Transition } from "motion-dom"
+import { Transition } from "motion-dom"
 import { act, useState } from "react"
+import { stepFrames, withManualFrames } from "../../../gestures/__tests__/utils"
 import { render } from "../../../jest.setup"
 import { motion } from "../../../render/components/motion"
 import { LayoutGroup } from "../index"
@@ -102,22 +103,20 @@ function App({
     )
 }
 
-async function nextFrame() {
-    return new Promise<void>((resolve) => {
-        frame.postRender(() => resolve())
-    })
-}
-
-async function frames(count: number) {
-    for (let i = 0; i < count; i++) await nextFrame()
-}
+/**
+ * Frames run on Motion's clock, a 60fps frame at a time. With jsdom's own
+ * frames, wall-clock time passes between them, so under load the 10s
+ * animations move more than a pixel while a test waits on a frame, and the
+ * 50ms ones can still be running after wait(300).
+ */
+const frames = (count: number) => stepFrames((count * 1000) / 60)
 
 async function update(callback: VoidFunction) {
     await act(async () => callback())
     await frames(2)
 }
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+const wait = stepFrames
 
 /**
  * Children are DOM descendants of #parent, so their visual offset from
@@ -144,6 +143,8 @@ function childReads() {
 }
 
 describe("relative children when their relative parent re-lays out", () => {
+    withManualFrames()
+
     beforeEach(() => {
         resetReads()
         jest.spyOn(
