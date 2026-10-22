@@ -66,3 +66,16 @@ test.describe("issue #1411: changing layoutId after mount", () => {
         expect(left).toBe(400)
     })
 })
+
+test("layoutId moved to a sibling keeps the previous element visible", async ({
+    page,
+}) => {
+    await page.goto("?test=issue-1411-crossfade")
+    await expect(page.locator("#a")).toBeVisible()
+    await page.click("#select-b")
+    await page.waitForTimeout(300)
+    await expect(page.locator("#a")).toHaveCSS("visibility", "visible")
+    await page.click("#select-a")
+    await page.waitForTimeout(300)
+    await expect(page.locator("#b")).toHaveCSS("visibility", "visible")
+})

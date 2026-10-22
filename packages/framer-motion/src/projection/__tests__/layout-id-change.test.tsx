@@ -6,8 +6,9 @@
  * Nodes are compared by identity, as Jest crashes trying to print one.
  */
 
-import { createRef } from "react"
+import { createRef, StrictMode } from "react"
 import { visualElementStore } from "motion-dom"
+import { LayoutGroup } from "../../components/LayoutGroup"
 import { motion } from "../../render/components/motion"
 import { render } from "../../jest.setup"
 import { nextFrame } from "../../gestures/__tests__/utils"
@@ -73,4 +74,98 @@ describe("changing layoutId after mount (#1411)", () => {
         expect(stack.prevLead === nodeB).toBe(true)
         expect(nodeA.resumeFrom === nodeB).toBe(true)
     })
+
+    test("namespaces the new layoutId by its LayoutGroup", async () => {
+        const ref = createRef<HTMLDivElement>()
+        const App = ({ id }: { id: string }) => (
+            <LayoutGroup id="group">
+                <motion.div ref={ref} layoutId={id} />
+            </LayoutGroup>
+        )
+        const { rerender } = render(<App id="a" />)
+        const node = getNode(ref.current!)
+        const { sharedNodes } = node.root!
+
+        rerender(<App id="b" />)
+        await nextFrame()
+
+        expect(sharedNodes.get("group-b")?.lead === node).toBe(true)
+        expect((sharedNodes.get("group-a")?.members ?? []).includes(node)).toBe(
+            false
+        )
+    })
+
+    test("joins the new stack once in StrictMode", async () => {
+        const ref = createRef<HTMLDivElement>()
+        const { rerender } = render(
+            <StrictMode>
+                <motion.div ref={ref} layoutId="a" />
+            </StrictMode>
+        )
+        const node = getNode(ref.current!)
+
+        rerender(
+            <StrictMode>
+                <motion.div ref={ref} layoutId="b" />
+            </StrictMode>
+        )
+        await nextFrame()
+
+        const { members } = node.root!.sharedNodes.get("b")!
+        expect(
+            members.filter((member: unknown) => member === node).length
+        ).toBe(1)
+    })
+
+    /**
+     * With layoutCrossfade={false}, a new lead hides the previous one, as it
+     * would usually be unmounting. One that keeps rendering without the
+     * layoutId, or moves to another layoutId, must stay visible, whichever
+     * order the two update in.
+     */
+    test.each([
+        ["a", "b"],
+        ["b", "a"],
+    ])(
+        "keeps an element visible after its layoutId moves to another (%s to %s)",
+        async (from, to) => {
+            const refs = {
+                a: createRef<HTMLDivElement>(),
+                b: createRef<HTMLDivElement>(),
+            }
+            const App = ({
+                selected,
+                other,
+            }: {
+                selected: string
+                other?: string
+            }) => (
+                <>
+                    {(["a", "b"] as const).map((id) => (
+                        <motion.div
+                            key={id}
+                            ref={refs[id]}
+                            layout
+                            layoutCrossfade={false}
+                            layoutId={selected === id ? "selected" : other}
+                        />
+                    ))}
+                </>
+            )
+            const { rerender } = render(<App selected={from} />)
+            const prev = refs[from as "a"].current!
+
+            rerender(<App selected={to} />)
+            await nextFrame()
+            const visible = [prev.style.visibility]
+
+            rerender(<App selected={from} />)
+            await nextFrame()
+            rerender(<App selected={to} other="other" />)
+            await nextFrame()
+            visible.push(prev.style.visibility)
+
+            expect(visible).not.toContain("hidden")
+        }
+    )
 })
