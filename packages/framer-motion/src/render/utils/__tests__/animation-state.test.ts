@@ -659,4 +659,26 @@ describe("Animation state - Set active", () => {
         expect(state.getState()["animate"].protectedKeys).toEqual({})
         expect(state.getState()["whileHover"].protectedKeys).toEqual({})
     })
+
+    test("Deactivating a type with no prop doesn't re-animate variants", () => {
+        /**
+         * Releasing a drag deactivates whileDrag. With no whileDrag prop
+         * there's nothing to animate back from, so animate's labels
+         * shouldn't re-run (and fire onAnimationComplete) #1831.
+         */
+        const { state } = createTest()
+
+        state.update({
+            animate: ["a", "b"],
+            variants: { a: { x: 1 }, b: { opacity: 1 } },
+        })
+
+        let animate = mockAnimate(state)
+        state.setActive("whileDrag", true)
+        expect(animate).not.toBeCalled()
+
+        animate = mockAnimate(state)
+        state.setActive("whileDrag", false)
+        expect(animate).not.toBeCalled()
+    })
 })

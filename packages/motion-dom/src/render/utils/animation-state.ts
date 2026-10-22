@@ -115,8 +115,6 @@ export function createAnimationState(visualElement: any): AnimationState {
             const activeDelta =
                 type === changedActiveType ? typeState.isActive : null
 
-            if (activeDelta === false) removedVariantIndex = i
-
             /**
              * Inherited labels are animated by the parent through
              * variantChildren, unless this element mounted after its parent.
@@ -136,6 +134,12 @@ export function createAnimationState(visualElement: any): AnimationState {
             ) {
                 return
             }
+
+            /**
+             * Only a type with something to animate back from re-animates
+             * the labels below it (#1831).
+             */
+            if (activeDelta === false) removedVariantIndex = i
 
             /**
              * Don't re-resolve a running exit: a changed custom would start
