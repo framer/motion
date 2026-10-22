@@ -150,6 +150,34 @@ describe("spring", () => {
         expect(generator.next(100)).toEqual({ done: true, value: 0 })
     })
 
+    /**
+     * https://github.com/motiondivision/motion/issues/1207
+     *
+     * A slow overdamped spring should approach its target smoothly rather
+     * than snap to it once the drag springs' limit above kicks in (~8.6s).
+     */
+    test("Slow overdamped spring isn't cut off", () => {
+        const generator = spring({
+            keyframes: [0, 1000],
+            stiffness: 4,
+            damping: 35,
+            mass: 0.5,
+        })
+
+        let prev = generator.next(0).value
+        let maxStep = 0
+        for (let t = 16; t <= 12000; t += 16) {
+            const { value } = generator.next(t)
+            maxStep = Math.max(maxStep, value - prev)
+            prev = value
+        }
+
+        // Its peak speed is ~1px per frame, in the initial fast phase
+        expect(maxStep).toBeLessThan(5)
+        // Its slow mode decays at 0.115/s, so 10s in it still has ~1/3 to go
+        expect(generator.next(10000).value).toBeCloseTo(682, -1)
+    })
+
     test("Velocity passed to overdamped spring", () => {
         const settings = {
             keyframes: [100, 1000],

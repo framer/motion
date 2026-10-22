@@ -5,7 +5,7 @@ import { invariant } from "motion-utils"
 import * as React from "react"
 import { forwardRef, FunctionComponent, useContext, useState } from "react"
 import { ReorderContext } from "../../context/ReorderContext"
-import { motion } from "../../render/components/motion/proxy"
+import type { MotionProxy } from "../../render/components/create-proxy"
 import { HTMLMotionProps } from "../../render/html/types"
 import { useConstant } from "../../utils/use-constant"
 import { useMotionValue } from "../../value/use-motion-value"
@@ -70,13 +70,23 @@ export function ReorderItemComponent<
     }: ReorderItemProps<V, TagName>,
     externalRef?: React.ForwardedRef<any>
 ): React.JSX.Element {
+    const context = useContext(ReorderContext)
+
+    invariant(
+        Boolean(context),
+        "Reorder.Item must be a child of Reorder.Group",
+        "reorder-item-child"
+    )
+
+    /**
+     * Render the group's kind of component, `motion` or `m`.
+     */
     const Component = useConstant(
-        () => motion[as as keyof typeof motion]
+        () => context!.proxy[as as keyof MotionProxy]
     ) as FunctionComponent<
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
     >
 
-    const context = useContext(ReorderContext)
     /**
      * The group's values when this item was grabbed with the keyboard, for
      * Escape to restore. Set only while grabbed.
@@ -89,12 +99,6 @@ export function ReorderItemComponent<
 
     const zIndex = useTransform([point.x, point.y], ([latestX, latestY]) =>
         latestX || latestY ? 1 : "unset"
-    )
-
-    invariant(
-        Boolean(context),
-        "Reorder.Item must be a child of Reorder.Group",
-        "reorder-item-child"
     )
 
     const {
