@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>timeline() playground</title>
+        <style>
+            :root {
+                --bg: #f4f4f1;
+                --surface: #ffffff;
+                --sunken: #ecece7;
+                --fg: #16171a;
+                --muted: #686b73;
+                --line: #dcdcd5;
+                --accent: #4b47e0;
+                --accent-fg: #ffffff;
+                --a: #ff5a5f;
+                --b: #3d8bfd;
+                --c: #22b07d;
+                --d: #f2a516;
+                --pause: #d12f3a;
+                --call: #8a5cf6;
+                --nested: #686b73;
+            }
+            @media (prefers-color-scheme: dark) {
+                :root:not([data-theme="light"]) {
+                    --bg: #111214;
+                    --surface: #1a1b1f;
+                    --sunken: #141518;
+                    --fg: #ececee;
+                    --muted: #9a9da6;
+                    --line: #2c2e34;
+                    --accent: #8c8aff;
+                    --accent-fg: #111214;
+                    --pause: #ff5c66;
+                    --call: #b69cff;
+                    --nested: #9a9da6;
+                    color-scheme: dark;
+                }
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                background: var(--bg);
+                color: var(--fg);
+                font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, Helvetica, Arial, sans-serif;
+            }
+            main {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 24px 16px 48px;
+                display: grid;
+                gap: 16px;
+            }
+            h1 {
+                font-size: 20px;
+                margin: 0;
+            }
+            p.intro {
+                margin: 4px 0 0;
+                color: var(--muted);
+            }
+            code,
+            .mono {
+                font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                font-size: 12px;
+            }
+            .panel {
+                background: var(--surface);
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                padding: 16px;
+            }
+
+            /* Stage */
+            .stage {
+                display: grid;
+                gap: 8px;
+            }
+            .lane {
+                position: relative;
+                height: 56px;
+                background: var(--sunken);
+                border-radius: 10px;
+                padding: 8px;
+            }
+            .puck {
+                width: 40px;
+                height: 40px;
+                border-radius: 30%;
+            }
+            #a {
+                background: var(--a);
+            }
+            #b {
+                background: var(--b);
+            }
+            #c {
+                background: var(--c);
+            }
+            #d {
+                background: var(--d);
+            }
+
+            /* Toolbar */
+            .toolbar {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                align-items: center;
+            }
+            .toolbar .sep {
+                width: 1px;
+                height: 24px;
+                background: var(--line);
+            }
+            button,
+            select,
+            input[type="text"],
+            input[type="number"] {
+                font: inherit;
+                color: inherit;
+                background: var(--sunken);
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                padding: 6px 10px;
+            }
+            button {
+                cursor: pointer;
+            }
+            button:hover {
+                border-color: var(--muted);
+            }
+            button.primary {
+                background: var(--accent);
+                color: var(--accent-fg);
+                border-color: var(--accent);
+                min-width: 72px;
+            }
+            label.check {
+                display: flex;
+                gap: 6px;
+                align-items: center;
+            }
+            .readout {
+                margin-left: auto;
+                color: var(--muted);
+            }
+
+            /* Editor */
+            .editor {
+                position: relative;
+                user-select: none;
+                margin-top: 12px;
+            }
+            .ruler {
+                position: relative;
+                height: 38px;
+                border-bottom: 1px solid var(--line);
+                cursor: ew-resize;
+            }
+            .tick {
+                position: absolute;
+                bottom: 0;
+                height: 8px;
+                border-left: 1px solid var(--line);
+            }
+            .tick span {
+                position: absolute;
+                bottom: 10px;
+                left: 4px;
+                color: var(--muted);
+                font-size: 11px;
+            }
+            .marker {
+                position: absolute;
+                top: 2px;
+                cursor: grab;
+                font-size: 11px;
+                white-space: nowrap;
+                padding: 1px 6px;
+                border-radius: 6px;
+                background: var(--fg);
+                color: var(--bg);
+                z-index: 2;
+            }
+            .marker.pause {
+                background: var(--pause);
+                color: #fff;
+            }
+            .marker.call {
+                background: var(--call);
+                color: #fff;
+            }
+            .marker.selected,
+            .bar.selected {
+                outline: 2px solid var(--accent);
+                outline-offset: 1px;
+            }
+            .track {
+                position: relative;
+                height: 30px;
+                transition: height 0.15s;
+                border-bottom: 1px dashed var(--line);
+                cursor: copy;
+            }
+            .track .name {
+                position: absolute;
+                left: -22px;
+                top: 6px;
+                color: var(--muted);
+                font-size: 11px;
+            }
+            .bar {
+                position: absolute;
+                top: 4px;
+                height: 22px;
+                border-radius: 6px;
+                color: #fff;
+                font-size: 11px;
+                line-height: 22px;
+                padding: 0 6px;
+                overflow: hidden;
+                white-space: nowrap;
+                cursor: grab;
+            }
+            .bar.child {
+                opacity: 0.7;
+                box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+            }
+            .bar .grip {
+                position: absolute;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: 8px;
+                cursor: ew-resize;
+            }
+            .bar.nested {
+                background: repeating-linear-gradient(
+                    -45deg,
+                    var(--nested) 0 6px,
+                    transparent 6px 12px
+                );
+                color: var(--fg);
+                border: 1px solid var(--nested);
+            }
+            .playhead {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 2px;
+                margin-left: -1px;
+                background: var(--accent);
+                pointer-events: none;
+                z-index: 3;
+            }
+            .rows {
+                position: relative;
+                margin-left: 22px;
+            }
+
+            /* Bottom */
+            .bottom {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+            @media (max-width: 760px) {
+                .bottom {
+                    grid-template-columns: 1fr;
+                }
+            }
+            .panel h2 {
+                font-size: 13px;
+                margin: 0 0 10px;
+                color: var(--muted);
+                font-weight: 600;
+            }
+            .fields {
+                display: grid;
+                grid-template-columns: 90px 1fr;
+                gap: 8px;
+                align-items: center;
+            }
+            .fields input,
+            .fields select {
+                width: 100%;
+            }
+            .hint {
+                color: var(--muted);
+                font-size: 12px;
+                margin: 10px 0 0;
+            }
+            .log {
+                height: 220px;
+                overflow: auto;
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+            .log li {
+                padding: 2px 0;
+                border-bottom: 1px solid var(--line);
+            }
+            .log li.event {
+                color: var(--call);
+            }
+        </style>
+    </head>
+    <body>
+        <main>
+            <header>
+                <h1><code>timeline()</code> playground</h1>
+                <p class="intro">
+                    Every change below calls the live timeline: drag a bar to
+                    <code>move()</code> it, click an empty track to
+                    <code>add()</code>, drag a bar's right edge to change its
+                    duration. Changes apply while it plays, without a jump.
+                </p>
+            </header>
+
+            <section class="panel stage">
+                <div class="lane"><div class="puck" id="a"></div></div>
+                <div class="lane"><div class="puck" id="b"></div></div>
+                <div class="lane"><div class="puck" id="c"></div></div>
+                <div class="lane"><div class="puck" id="d"></div></div>
+            </section>
+
+            <section class="panel">
+                <div class="toolbar">
+                    <button class="primary" id="play">Pause</button>
+                    <button id="reverse">Reverse</button>
+                    <button id="restart">Restart</button>
+                    <select id="speed" title="speed">
+                        <option value="0.25">0.25×</option>
+                        <option value="0.5">0.5×</option>
+                        <option value="1" selected>1×</option>
+                        <option value="2">2×</option>
+                    </select>
+                    <label class="check"
+                        ><input type="checkbox" id="loop" checked /> Loop</label
+                    >
+                    <span class="sep"></span>
+                    <select id="labels" title="labels"></select>
+                    <button id="seek">seek()</button>
+                    <button id="playTo">playTo()</button>
+                    <span class="readout mono" id="readout"></span>
+                </div>
+                <div class="toolbar" style="margin-top: 8px">
+                    <button id="addLabel">+ Label</button>
+                    <button id="addPause">+ Pause</button>
+                    <button id="addCall">+ Callback</button>
+                    <button id="addNested">+ Nested timeline</button>
+                    <span class="sep"></span>
+                    <button id="clear">clear()</button>
+                    <button id="reset">Reset demo</button>
+                </div>
+
+                <div class="editor" id="editor">
+                    <div class="rows" id="rows">
+                        <div class="ruler" id="ruler"></div>
+                        <div class="track" data-lane="a">
+                            <span class="name">A</span>
+                        </div>
+                        <div class="track" data-lane="b">
+                            <span class="name">B</span>
+                        </div>
+                        <div class="track" data-lane="c">
+                            <span class="name">C</span>
+                        </div>
+                        <div class="track" data-lane="d">
+                            <span class="name">D</span>
+                        </div>
+                        <div class="track" data-lane="nested">
+                            <span class="name">⧉</span>
+                        </div>
+                        <div class="playhead" id="playhead"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bottom">
+                <div class="panel">
+                    <h2>Selected</h2>
+                    <div id="inspector"></div>
+                </div>
+                <div class="panel">
+                    <h2>Calls and events</h2>
+                    <ul class="log mono" id="log"></ul>
+                </div>
+            </section>
+        </main>
+
+        <script type="module" src="/src/inc.js"></script>
+        <script type="module">
+            const { timeline, Timeline } = window.Motion || {}
+            if (!timeline) {
+                document.body.innerHTML =
+                    '<p style="padding:40px">Couldn\'t load <code>timeline</code> from ' +
+                    "<code>framer-motion/dom</code>. Run <code>yarn build</code> " +
+                    "from the repo root, then reload.</p>"
+                throw new Error("timeline() failed to load")
+            }
+
+            const $ = (id) => document.getElementById(id)
+            const rows = $("rows")
+            const ruler = $("ruler")
+            const playhead = $("playhead")
+            const inspector = $("inspector")
+            const logEl = $("log")
+
+            const COLORS = {
+                a: "var(--a)",
+                b: "var(--b)",
+                c: "var(--c)",
+                d: "var(--d)",
+            }
+            const PROPS = {
+                x: { label: "x", unit: "%", def: 100 },
+                rotate: { label: "rotate", unit: "°", def: 180 },
+                scale: { label: "scale", unit: "", def: 1.4 },
+                opacity: { label: "opacity", unit: "", def: 0.3 },
+                borderRadius: { label: "borderRadius", unit: "%", def: 50 },
+            }
+            const EASES = [
+                "easeInOut",
+                "easeOut",
+                "easeIn",
+                "linear",
+                "backOut",
+            ]
+
+            /**
+             * The pucks travel across their lane. x values are stored as a
+             * percentage of that travel and converted to px when a
+             * segment is built.
+             */
+            const travel = () =>
+                document.querySelector(".lane").clientWidth - 16 - 40
+
+            function keyframes(prop, value) {
+                if (prop === "x") return { x: (value / 100) * travel() }
+                if (prop === "borderRadius")
+                    return { borderRadius: value + "%" }
+                return { [prop]: value }
+            }
+
+            /**
+             * Model. Each entry mirrors one entry in the timeline, in the
+             * same order, so the editor can draw it. `handle` is what we
+             * passed to add(), and so what move() and remove() take.
+             */
+            let tl
+            let entries = []
+            let selected
+            let nextId = 0
+            let labelCount = 0
+            let lastTime = 0
+
+            function log(text, isEvent) {
+                const li = document.createElement("li")
+                li.textContent = text
+                if (isEvent) li.className = "event"
+                logEl.prepend(li)
+                while (logEl.children.length > 80) logEl.lastChild.remove()
+            }
+
+            const fmtAt = (at) =>
+                at === undefined
+                    ? ""
+                    : typeof at === "number"
+                    ? String(round(at))
+                    : JSON.stringify(at)
+            const round = (n) => Math.round(n * 100) / 100
+
+            function makeSegment(lane, prop, value, duration, ease) {
+                const handle = [
+                    "#" + lane,
+                    keyframes(prop, value),
+                    { duration, ease },
+                ]
+                return {
+                    id: nextId++,
+                    kind: "segment",
+                    lane,
+                    prop,
+                    value,
+                    duration,
+                    ease,
+                    handle,
+                }
+            }
+
+            const segmentCode = (e) =>
+                `["#${e.lane}", { ${e.prop}: ${
+                    e.prop === "x" ? `"${e.value}% of lane"` : e.value
+                } }, { duration: ${e.duration}, ease: "${e.ease}" }]`
+
+            /**
+             * Apply a segment's fields to its handle in place, then tell
+             * the timeline it changed. move() with the same `at` is enough
+             * to schedule a rebuild.
+             */
+            function syncSegment(e) {
+                e.handle[1] = keyframes(e.prop, e.value)
+                e.handle[2] = { duration: e.duration, ease: e.ease }
+                owner(e).move(e.handle, e.at)
+            }
+
+            const owner = (e) => (e.parent ? e.parent.tl : tl)
+
+            /**
+             * Work out where every entry starts, using the same rules as
+             * the sequence compiler. Only used to draw the editor.
+             */
+            function layout(list, base, state) {
+                let end = base
+                const resolve = (at) => {
+                    if (typeof at === "number") return base + at
+                    if (at[0] === "+" || at[0] === "-")
+                        return Math.max(0, state.cur + parseFloat(at))
+                    if (at === "<") return state.prev
+                    if (at[0] === "<")
+                        return Math.max(0, state.prev + parseFloat(at.slice(1)))
+                    return state.labels.get(at) ?? state.cur
+                }
+                for (const e of list) {
+                    if (
+                        e.kind === "label" ||
+                        e.kind === "pause" ||
+                        e.kind === "call"
+                    ) {
+                        e.start = e.at === undefined ? state.cur : resolve(e.at)
+                        if (e.kind === "label")
+                            state.labels.set(e.name, e.start)
+                        state.markers.push(e)
+                    } else if (e.kind === "nested") {
+                        const start =
+                            e.at === undefined ? state.cur : resolve(e.at)
+                        state.prev = state.cur = start
+                        state.cur = layout(e.children, start, state)
+                        state.prev = start
+                        e.start = start
+                        e.end = state.cur
+                        end = Math.max(end, state.cur)
+                    } else {
+                        if (e.at !== undefined) state.cur = resolve(e.at)
+                        e.start = state.cur
+                        state.prev = state.cur
+                        state.cur += e.duration
+                        end = Math.max(end, state.cur)
+                    }
+                }
+                return end
+            }
+
+            let pxPerSecond = 200
+
+            /**
+             * Give overlapping items their own row.
+             */
+            function stack(items, end) {
+                const rowEnds = []
+                for (const item of items.sort((a, b) => a.start - b.start)) {
+                    let row = rowEnds.findIndex((e) => e <= item.start + 1e-6)
+                    if (row === -1) row = rowEnds.length
+                    rowEnds[row] = end(item)
+                    item.row = row
+                }
+                return Math.max(1, rowEnds.length)
+            }
+
+            function render() {
+                const state = {
+                    cur: 0,
+                    prev: 0,
+                    labels: new Map(),
+                    markers: [],
+                }
+                let duration = layout(entries, 0, state)
+                for (const m of state.markers)
+                    duration = Math.max(duration, m.start)
+
+                const width = rows.clientWidth
+                const span = Math.max(3, Math.ceil(duration + 0.5))
+                pxPerSecond = width / span
+
+                rows.querySelectorAll(".bar, .marker").forEach((n) =>
+                    n.remove()
+                )
+                ruler.innerHTML = ""
+                for (let s = 0; s <= span; s += 0.5) {
+                    const tick = document.createElement("div")
+                    tick.className = "tick"
+                    tick.style.left = s * pxPerSecond + "px"
+                    if (s % 1 === 0) tick.innerHTML = `<span>${s}s</span>`
+                    else tick.style.height = "4px"
+                    ruler.appendChild(tick)
+                }
+
+                const byLane = { a: [], b: [], c: [], d: [], nested: [] }
+                const collect = (list) =>
+                    list.forEach((e) => {
+                        if (e.kind === "segment") byLane[e.lane].push(e)
+                        if (e.kind === "nested") {
+                            byLane.nested.push(e)
+                            collect(e.children)
+                        }
+                    })
+                collect(entries)
+                for (const lane in byLane) {
+                    const count = stack(byLane[lane], (e) =>
+                        e.kind === "nested" ? e.end : e.start + e.duration
+                    )
+                    rows.querySelector(`[data-lane="${lane}"]`).style.height =
+                        count * 26 + 4 + "px"
+                }
+
+                const drawBar = (e) => {
+                    const lane = e.kind === "nested" ? "nested" : e.lane
+                    const track = rows.querySelector(`[data-lane="${lane}"]`)
+                    const bar = document.createElement("div")
+                    bar.className =
+                        "bar" + (e.kind === "nested" ? " nested" : "")
+                    if (e === selected) bar.classList.add("selected")
+                    if (e.parent) bar.classList.add("child")
+                    bar.style.left = e.start * pxPerSecond + "px"
+                    bar.style.top = 4 + e.row * 26 + "px"
+                    const dur =
+                        e.kind === "nested" ? e.end - e.start : e.duration
+                    bar.style.width = Math.max(10, dur * pxPerSecond) + "px"
+                    if (e.kind === "nested") {
+                        bar.textContent = `nested (${e.children.length})`
+                    } else {
+                        bar.style.background = COLORS[e.lane]
+                        bar.textContent = `${e.prop} ${e.value}${
+                            PROPS[e.prop].unit
+                        }`
+                        const grip = document.createElement("div")
+                        grip.className = "grip"
+                        grip.addEventListener("pointerdown", (ev) =>
+                            startResize(ev, e)
+                        )
+                        bar.appendChild(grip)
+                    }
+                    bar.addEventListener("pointerdown", (ev) =>
+                        startDrag(ev, e)
+                    )
+                    track.appendChild(bar)
+                    if (e.kind === "nested") e.children.forEach(drawBar)
+                }
+
+                const drawAll = (list) =>
+                    list.forEach((e) => {
+                        if (e.kind === "segment" || e.kind === "nested")
+                            drawBar(e)
+                    })
+                drawAll(entries)
+
+                const markerRows = stack(
+                    state.markers,
+                    (e) => e.start + 60 / pxPerSecond
+                )
+                ruler.style.height = markerRows * 20 + 26 + "px"
+                for (const e of state.markers) {
+                    const m = document.createElement("div")
+                    m.className = "marker " + e.kind
+                    if (e === selected) m.classList.add("selected")
+                    m.style.left = e.start * pxPerSecond + "px"
+                    m.style.top = 2 + e.row * 20 + "px"
+                    m.textContent =
+                        e.kind === "label"
+                            ? e.name
+                            : e.kind === "pause"
+                            ? "❚❚"
+                            : "ƒ"
+                    m.addEventListener("pointerdown", (ev) => startDrag(ev, e))
+                    ruler.appendChild(m)
+                }
+
+                renderLabels(state.labels)
+                renderInspector()
+
+                /**
+                 * Check the editor agrees with the engine.
+                 */
+                if (Math.abs(tl.duration - duration) > 0.001) {
+                    console.warn(
+                        `Editor duration ${duration} differs from tl.duration ${tl.duration}`
+                    )
+                }
+            }
+
+            function renderLabels(labels) {
+                const select = $("labels")
+                const prev = select.value
+                select.innerHTML = ""
+                for (const name of labels.keys()) {
+                    const o = document.createElement("option")
+                    o.value = o.textContent = name
+                    select.appendChild(o)
+                }
+                if (labels.has(prev)) select.value = prev
+                $("seek").disabled = $("playTo").disabled = !labels.size
+            }
+
+            function field(label, input) {
+                return `<label>${label}</label>${input}`
+            }
+
+            function renderInspector() {
+                const e = selected
+                if (!e) {
+                    inspector.innerHTML =
+                        '<p class="hint" style="margin:0">Click a bar or marker to edit it. ' +
+                        "Click an empty track to add a segment at that time.</p>"
+                    return
+                }
+                let html = '<div class="fields">'
+                if (e.kind === "segment") {
+                    html += field(
+                        "property",
+                        `<select data-k="prop">${Object.keys(PROPS)
+                            .map(
+                                (p) =>
+                                    `<option ${
+                                        p === e.prop ? "selected" : ""
+                                    }>${p}</option>`
+                            )
+                            .join("")}</select>`
+                    )
+                    html += field(
+                        "value",
+                        `<input type="number" step="any" data-k="value" value="${e.value}">`
+                    )
+                    html += field(
+                        "duration",
+                        `<input type="number" step="0.1" min="0.05" data-k="duration" value="${e.duration}">`
+                    )
+                    html += field(
+                        "ease",
+                        `<select data-k="ease">${EASES.map(
+                            (x) =>
+                                `<option ${
+                                    x === e.ease ? "selected" : ""
+                                }>${x}</option>`
+                        ).join("")}</select>`
+                    )
+                }
+                if (e.kind === "label") {
+                    html += field("name", `<code>${e.name}</code>`)
+                }
+                html += field(
+                    "at",
+                    `<input type="text" data-k="at" placeholder="after previous" value="${
+                        e.at === undefined
+                            ? ""
+                            : typeof e.at === "number"
+                            ? round(e.at)
+                            : e.at
+                    }">`
+                )
+                html += "</div>"
+                html +=
+                    '<p class="hint">at: seconds (<code>1.2</code>), relative (<code>+0.5</code>, <code>-0.2</code>), ' +
+                    "<code>&lt;</code> (with previous), <code>&lt;0.3</code>, or a label name. Empty = after the previous segment.</p>"
+                html += '<div class="toolbar" style="margin-top:10px">'
+                if (e.kind === "nested") {
+                    html += '<button data-act="child">+ Child segment</button>'
+                }
+                html += '<button data-act="remove">remove()</button></div>'
+                inspector.innerHTML = html
+
+                inspector.querySelectorAll("[data-k]").forEach((input) => {
+                    input.addEventListener("change", () => {
+                        const k = input.dataset.k
+                        if (k === "at") {
+                            const raw = input.value.trim()
+                            const n = Number(raw)
+                            e.at = raw === "" ? undefined : isNaN(n) ? raw : n
+                            owner(e).move(e.handle, e.at)
+                            log(
+                                `tl.move(${describe(e)}, ${
+                                    fmtAt(e.at) || "undefined"
+                                })`
+                            )
+                        } else {
+                            if (k === "prop") {
+                                e.prop = input.value
+                                e.value = PROPS[e.prop].def
+                            } else if (k === "ease") e.ease = input.value
+                            else e[k] = Number(input.value)
+                            syncSegment(e)
+                            log(
+                                `// edited ${describe(
+                                    e
+                                )} in place, then tl.move() to rebuild`
+                            )
+                        }
+                        render()
+                    })
+                })
+                inspector.querySelector('[data-act="remove"]').onclick = () => {
+                    removeEntry(e)
+                }
+                const child = inspector.querySelector('[data-act="child"]')
+                if (child) child.onclick = () => addChild(e)
+            }
+
+            const describe = (e) =>
+                e.kind === "segment"
+                    ? `seg${e.id}`
+                    : e.kind === "label"
+                    ? JSON.stringify(e.name)
+                    : e.kind === "nested"
+                    ? `child${e.id}`
+                    : `${e.kind}${e.id}`
+
+            function removeEntry(e) {
+                const list = e.parent ? e.parent.children : entries
+                list.splice(list.indexOf(e), 1)
+                owner(e).remove(e.handle)
+                log(
+                    `${
+                        e.parent ? "child" + e.parent.id : "tl"
+                    }.remove(${describe(e)})`
+                )
+                selected = undefined
+                render()
+            }
+
+            /**
+             * Dragging. A bar or marker drag converts its `at` to an
+             * absolute time and calls move() on every pointer move.
+             */
+            function startDrag(ev, e) {
+                ev.stopPropagation()
+                selected = e
+                const startX = ev.clientX
+                const base = e.parent ? e.parent.start : 0
+                const from = e.start - base
+                let moved = false
+                const onMove = (m) => {
+                    const dt = (m.clientX - startX) / pxPerSecond
+                    if (!moved && Math.abs(m.clientX - startX) < 3) return
+                    moved = true
+                    e.at = Math.max(0, round(from + dt))
+                    owner(e).move(e.handle, e.at)
+                    render()
+                }
+                const onUp = () => {
+                    window.removeEventListener("pointermove", onMove)
+                    window.removeEventListener("pointerup", onUp)
+                    if (moved) log(`tl.move(${describe(e)}, ${fmtAt(e.at)})`)
+                    render()
+                }
+                window.addEventListener("pointermove", onMove)
+                window.addEventListener("pointerup", onUp)
+                render()
+            }
+
+            function startResize(ev, e) {
+                ev.stopPropagation()
+                selected = e
+                const startX = ev.clientX
+                const from = e.duration
+                const onMove = (m) => {
+                    e.duration = Math.max(
+                        0.05,
+                        round(from + (m.clientX - startX) / pxPerSecond)
+                    )
+                    syncSegment(e)
+                    render()
+                }
+                const onUp = () => {
+                    window.removeEventListener("pointermove", onMove)
+                    window.removeEventListener("pointerup", onUp)
+                    log(
+                        `// seg${e.id} duration → ${e.duration}, then tl.move() to rebuild`
+                    )
+                }
+                window.addEventListener("pointermove", onMove)
+                window.addEventListener("pointerup", onUp)
+            }
+
+            /**
+             * Click an empty track: add a segment there.
+             */
+            rows.querySelectorAll(".track").forEach((track) => {
+                track.addEventListener("pointerdown", (ev) => {
+                    if (ev.target !== track) return
+                    const at = round(
+                        Math.max(
+                            0,
+                            (ev.clientX - track.getBoundingClientRect().left) /
+                                pxPerSecond
+                        )
+                    )
+                    const lane = track.dataset.lane
+                    if (lane === "nested") return addNested(at)
+                    const props = Object.keys(PROPS)
+                    const prop = props[Math.floor(Math.random() * props.length)]
+                    const e = makeSegment(
+                        lane,
+                        prop,
+                        PROPS[prop].def,
+                        0.6,
+                        "easeInOut"
+                    )
+                    e.at = at
+                    entries.push(e)
+                    tl.add(e.handle, at)
+                    log(`const seg${e.id} = ${segmentCode(e)}`)
+                    log(`tl.add(seg${e.id}, ${at})`)
+                    selected = e
+                    render()
+                })
+            })
+
+            /**
+             * Scrub on the ruler.
+             */
+            ruler.addEventListener("pointerdown", (ev) => {
+                if (
+                    ev.target !== ruler &&
+                    !ev.target.classList.contains("tick")
+                )
+                    return
+                const scrub = (m) => {
+                    const t =
+                        (m.clientX - ruler.getBoundingClientRect().left) /
+                        pxPerSecond
+                    tl.pause()
+                    tl.time = Math.max(0, Math.min(tl.duration, t))
+                }
+                scrub(ev)
+                const onUp = () => {
+                    window.removeEventListener("pointermove", scrub)
+                    window.removeEventListener("pointerup", onUp)
+                    log(`tl.time = ${round(tl.time)}`)
+                }
+                window.addEventListener("pointermove", scrub)
+                window.addEventListener("pointerup", onUp)
+            })
+
+            /**
+             * Markers at the playhead.
+             */
+            const playheadTime = () => round(tl.time)
+
+            $("addLabel").onclick = () => {
+                const name = "label" + ++labelCount
+                const e = {
+                    id: nextId++,
+                    kind: "label",
+                    name,
+                    at: playheadTime(),
+                    handle: name,
+                }
+                entries.push(e)
+                tl.add(name, e.at)
+                log(`tl.add("${name}", ${e.at})`)
+                selected = e
+                render()
+            }
+
+            $("addPause").onclick = () => {
+                const e = {
+                    id: nextId++,
+                    kind: "pause",
+                    at: playheadTime() + 0.01,
+                }
+                e.handle = () => log(`pause${e.id} reached`, true)
+                entries.push(e)
+                tl.addPause(e.at, e.handle)
+                log(`tl.addPause(${round(e.at)}, onPause)`)
+                selected = e
+                render()
+            }
+
+            $("addCall").onclick = () => {
+                const e = {
+                    id: nextId++,
+                    kind: "call",
+                    at: playheadTime() + 0.01,
+                }
+                e.handle = () =>
+                    log(
+                        `call${e.id} fired (${
+                            tl.speed < 0 ? "backwards" : "forwards"
+                        })`,
+                        true
+                    )
+                entries.push(e)
+                tl.call(e.handle, e.at)
+                log(`tl.call(fn, ${round(e.at)})`)
+                selected = e
+                render()
+            }
+
+            function addNested(at = playheadTime()) {
+                const e = { id: nextId++, kind: "nested", at, children: [] }
+                e.tl = timeline([], { autoplay: false })
+                e.handle = e.tl
+                for (const lane of ["a", "b", "c", "d"]) {
+                    const c = makeSegment(lane, "scale", 0.6, 0.3, "easeInOut")
+                    c.parent = e
+                    c.at = lane === "a" ? undefined : "<0.08"
+                    e.children.push(c)
+                    e.tl.add(c.handle, c.at)
+                }
+                const back = makeSegment("a", "scale", 1, 0.3, "backOut")
+                back.parent = e
+                back.handle[0] = ".puck"
+                e.children.push(back)
+                e.tl.add(back.handle)
+                entries.push(e)
+                tl.add(e.tl, at)
+                log(`const child${e.id} = timeline([...5 segments])`)
+                log(`tl.add(child${e.id}, ${at})`)
+                selected = e
+                render()
+            }
+            $("addNested").onclick = () => addNested()
+
+            function addChild(nested) {
+                const lanes = ["a", "b", "c", "d"]
+                const c = makeSegment(
+                    lanes[nested.children.length % 4],
+                    "rotate",
+                    nested.children.length % 2 ? 0 : 90,
+                    0.3,
+                    "easeInOut"
+                )
+                c.parent = nested
+                nested.children.push(c)
+                nested.tl.add(c.handle)
+                log(
+                    `child${nested.id}.add(${segmentCode(
+                        c
+                    )})  // parent rebuilds`
+                )
+                render()
+            }
+
+            /**
+             * Transport.
+             */
+            $("play").onclick = () => {
+                if (tl.state === "running") {
+                    tl.pause()
+                    log("tl.pause()")
+                } else {
+                    if (
+                        tl.state === "finished" ||
+                        (tl.speed > 0 && tl.time >= tl.duration)
+                    ) {
+                        tl.time = 0
+                    }
+                    tl.play()
+                    log("tl.play()")
+                }
+            }
+            $("reverse").onclick = () => {
+                tl.reverse()
+                log("tl.reverse()")
+            }
+            $("restart").onclick = () => {
+                tl.speed = Math.abs(tl.speed)
+                tl.seek(0)
+                tl.play()
+                log("tl.seek(0); tl.play()")
+            }
+            $("speed").onchange = (ev) => {
+                const s = Number(ev.target.value)
+                tl.speed = tl.speed < 0 ? -s : s
+                log(`tl.speed = ${tl.speed}`)
+            }
+            $("seek").onclick = () => {
+                const name = $("labels").value
+                tl.seek(name)
+                log(`tl.seek("${name}")`)
+            }
+            $("playTo").onclick = () => {
+                const name = $("labels").value
+                tl.playTo(name)
+                log(`tl.playTo("${name}")`)
+            }
+            $("clear").onclick = () => {
+                tl.clear()
+                entries = []
+                selected = undefined
+                log("tl.clear()")
+                render()
+            }
+            $("reset").onclick = () => build()
+
+            /**
+             * Playhead, readout and loop.
+             */
+            function tick() {
+                const time = tl.time
+                const duration = tl.duration
+                playhead.style.left = time * pxPerSecond + "px"
+                const state = tl.state
+                $("play").textContent = state === "running" ? "Pause" : "Play"
+                $("readout").textContent = `time ${time.toFixed(
+                    2
+                )} / ${duration.toFixed(2)}s · progress ${tl.progress.toFixed(
+                    2
+                )} · speed ${tl.speed} · ${state}`
+
+                if ($("loop").checked && state === "finished" && duration) {
+                    tl.time = tl.speed < 0 ? duration : 0
+                    tl.play()
+                }
+                lastTime = time
+                requestAnimationFrame(tick)
+            }
+
+            /**
+             * The starting timeline.
+             */
+            function build() {
+                if (tl) tl.cancel()
+                nextId = 0
+                labelCount = 0
+                selected = undefined
+                logEl.innerHTML = ""
+
+                const s1 = makeSegment("a", "x", 100, 0.8, "easeInOut")
+                const s2 = makeSegment("b", "x", 100, 0.8, "easeInOut")
+                s2.at = "-0.4"
+                const spin = {
+                    id: nextId++,
+                    kind: "label",
+                    name: "spin",
+                    handle: "spin",
+                }
+                const s3 = makeSegment("c", "x", 100, 0.8, "backOut")
+                const s4 = makeSegment("c", "rotate", 180, 0.8, "easeInOut")
+                s4.at = "<"
+                const s5 = makeSegment("d", "x", 100, 0.6, "easeOut")
+                s5.at = "spin"
+                const s6 = makeSegment(
+                    "a",
+                    "borderRadius",
+                    50,
+                    0.5,
+                    "easeInOut"
+                )
+                const call = { id: nextId++, kind: "call", at: 1 }
+                call.handle = () =>
+                    log(
+                        `call${call.id} fired (${
+                            tl.speed < 0 ? "backwards" : "forwards"
+                        })`,
+                        true
+                    )
+
+                entries = [s1, s2, spin, s3, s4, s5, s6]
+                for (const e of entries) {
+                    if (e.kind === "segment" && e.at !== undefined)
+                        e.handle[2].at = e.at
+                }
+                /**
+                 * The arrays passed in are the handles for move() and
+                 * remove() later.
+                 */
+                tl = timeline(entries.map((e) => e.handle))
+                entries.push(call)
+                tl.call(call.handle, call.at)
+                window.tl = tl
+
+                for (const e of entries) {
+                    if (e.kind === "segment") {
+                        const at =
+                            e.at === undefined ? "" : `, at: ${fmtAt(e.at)}`
+                        log(
+                            `const seg${e.id} = ${segmentCode(e).replace(
+                                / }]$/,
+                                at + " }]"
+                            )}`
+                        )
+                    }
+                }
+                log(
+                    'const tl = timeline([seg0, seg1, "spin", seg3, seg4, seg5, seg6])'
+                )
+                log("tl.call(fn, 1)")
+                render()
+            }
+
+            build()
+            window.addEventListener("resize", render)
+            requestAnimationFrame(tick)
+        </script>
+    </body>
+</html>
