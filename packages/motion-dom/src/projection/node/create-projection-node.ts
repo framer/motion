@@ -1139,7 +1139,12 @@ export function createProjectionNode<I>({
             return boxWithoutScroll
         }
 
-        applyTransform(box: Box, transformOnly = false, output?: Box): Box {
+        applyTransform(
+            box: Box,
+            transformOnly = false,
+            output?: Box,
+            skipOwnTransform?: boolean
+        ): Box {
             const withTransforms = output || createBox()
             copyBoxInto(withTransforms, box)
             for (let i = 0; i < this.path.length; i++) {
@@ -1163,7 +1168,7 @@ export function createProjectionNode<I>({
                 )
             }
 
-            if (hasTransform(this.latestValues)) {
+            if (!skipOwnTransform && hasTransform(this.latestValues)) {
                 transformBox(
                     withTransforms,
                     this.latestValues,
@@ -1349,10 +1354,15 @@ export function createProjectionNode<I>({
                  */
             } else if (this.targetDelta) {
                 if (Boolean(this.resumingFrom)) {
+                    /**
+                     * Own transforms are applied later, in applyTransformsToTarget,
+                     * so only apply ancestor transforms here or they'd be doubled.
+                     */
                     this.applyTransform(
                         this.layout.layoutBox,
                         false,
-                        this.target
+                        this.target,
+                        true
                     )
                 } else {
                     copyBoxInto(this.target, this.layout.layoutBox)
