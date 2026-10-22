@@ -260,12 +260,15 @@ export class JSAnimation<T extends number | string>
 
         /**
          * A generator that takes longer than maxGeneratorDuration to finish
-         * has an Infinity duration, so it finishes when it says it's done.
+         * has an Infinity duration, so played forwards it finishes when it
+         * says it's done.
          */
-        if (!isInDelayPhase && calculatedDuration < Infinity) {
+        if (!isInDelayPhase) {
             done =
                 this.playbackSpeed >= 0
-                    ? this.currentTime >= totalDuration
+                    ? calculatedDuration < Infinity
+                        ? this.currentTime >= totalDuration
+                        : done
                     : this.currentTime <= 0
         }
 

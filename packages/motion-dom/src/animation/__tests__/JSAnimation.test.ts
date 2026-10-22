@@ -530,6 +530,34 @@ describe("JSAnimation", () => {
         }
     )
 
+    test("Completes a reversed spring that settles after maxGeneratorDuration", async () => {
+        const output: number[] = []
+        let completed = false
+
+        await new Promise<void>((resolve) => {
+            const animation = animateValue({
+                keyframes: [0, 1000],
+                type: "spring",
+                stiffness: 1,
+                damping: 0.2,
+                driver: syncDriver(50, 60000),
+                onUpdate: (v) => {
+                    output.push(v)
+                    if (output.length === 20) animation.speed = -1
+                },
+                onComplete: () => {
+                    completed = true
+                    resolve()
+                },
+            })
+            setTimeout(resolve, 0)
+        })
+
+        expect(completed).toBe(true)
+        expect(output[output.length - 1]).toBe(0)
+        expect(output.length).toBeLessThan(50)
+    })
+
     test("Runs spring animations on strings", async () => {
         return new Promise<void>((resolve) => {
             const output: string[] = []
