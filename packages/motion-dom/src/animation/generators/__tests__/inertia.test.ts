@@ -24,6 +24,20 @@ describe("inertia", () => {
         expect(generator.next(0).value).toBe(100)
     })
 
+    test("Starts exactly at its origin", () => {
+        /**
+         * Stopping an animation ticks it at the current time, so stopping
+         * momentum the moment it starts (a drag's pointerdown) must leave
+         * the value where it was.
+         */
+        for (let speed = 10; speed < 5000; speed += 7.3) {
+            for (const velocity of [speed, -speed]) {
+                const generator = inertia({ keyframes: [100], velocity })
+                expect(generator.next(0).value).toBe(100)
+            }
+        }
+    })
+
     test("Continues animation when time is 0", () => {
         const generator = inertia({
             keyframes: [100],
