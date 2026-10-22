@@ -75,6 +75,7 @@ export * from "./effects/utils/create-effect"
 export * from "./frameloop"
 export * from "./frameloop/batcher"
 export * from "./frameloop/microtask"
+export * from "./frameloop/process-frame"
 export * from "./frameloop/sync-time"
 export * from "./frameloop/types"
 
@@ -289,10 +290,8 @@ export {
 export { DocumentProjectionNode } from "./projection/node/DocumentProjectionNode"
 export { nodeGroup } from "./projection/node/group"
 export type { NodeGroup } from "./projection/node/group"
-export {
-    HTMLProjectionNode,
-    rootProjectionNode,
-} from "./projection/node/HTMLProjectionNode"
+export { HTMLProjectionNode } from "./projection/node/HTMLProjectionNode"
+export { rootProjectionNode } from "./projection/node/root"
 export { globalProjectionState } from "./projection/node/state"
 export type {
     InitialPromotionConfig,

@@ -22,7 +22,7 @@ type GetActualMeasurementInPixels = (
 ) => number
 
 const transformKeys = new Set(["x", "y", "z"])
-const nonTranslationalTransformKeys = transformPropOrder.filter(
+const nonTranslationalTransformKeys = /* @__PURE__ */ transformPropOrder.filter(
     (key) => !transformKeys.has(key)
 )
 
@@ -83,6 +83,11 @@ function measureDimension(
         : size - parseFloat(paddingStart) - parseFloat(paddingEnd)
 }
 
+const transformX: GetActualMeasurementInPixels = ({ transform }) =>
+    parseValueFromTransform(transform, "x")
+const transformY: GetActualMeasurementInPixels = ({ transform }) =>
+    parseValueFromTransform(transform, "y")
+
 export const positionalValues: { [key: string]: GetActualMeasurementInPixels } =
     {
         // Dimensions
@@ -122,11 +127,9 @@ export const positionalValues: { [key: string]: GetActualMeasurementInPixels } =
             return parseFloat(left as string) + (x.max - x.min)
         },
 
-        // Transform
-        x: ({ transform }) => parseValueFromTransform(transform, "x"),
-        y: ({ transform }) => parseValueFromTransform(transform, "y"),
+        // Transform, including translate longform names
+        x: transformX,
+        y: transformY,
+        translateX: transformX,
+        translateY: transformY,
     }
-
-// Alias translate longform names
-positionalValues.translateX = positionalValues.x
-positionalValues.translateY = positionalValues.y

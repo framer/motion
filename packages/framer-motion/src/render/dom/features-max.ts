@@ -8,8 +8,9 @@ import { domAnimation } from "./features-animation"
 /**
  * @public
  */
-export const domMax: FeatureBundle = {
-    ...domAnimation,
-    ...drag,
-    ...layout,
-}
+export const domMax: FeatureBundle = /* @__PURE__ */ Object.assign(
+    {},
+    domAnimation,
+    drag,
+    layout
+)

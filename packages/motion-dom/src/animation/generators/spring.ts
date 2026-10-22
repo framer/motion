@@ -278,7 +278,7 @@ function getSpringOptions(options: SpringOptions) {
     return springOptions
 }
 
-function spring(
+function springGenerator(
     optionsOrVisualDuration:
         | ValueAnimationOptions<number>
         | number = springDefaults.visualDuration,
@@ -523,13 +523,19 @@ function spring(
     return generator
 }
 
-spring.applyToOptions = (options: Transition) => {
-    const generatorOptions = createGeneratorEasing(options as any, 100, spring)
+const spring = /* @__PURE__ */ Object.assign(springGenerator, {
+    applyToOptions: (options: Transition) => {
+        const generatorOptions = createGeneratorEasing(
+            options as any,
+            100,
+            springGenerator
+        )
 
-    options.ease = generatorOptions.ease
-    options.duration = secondsToMilliseconds(generatorOptions.duration)
-    options.type = "keyframes"
-    return options
-}
+        options.ease = generatorOptions.ease
+        options.duration = secondsToMilliseconds(generatorOptions.duration)
+        options.type = "keyframes"
+        return options
+    },
+})
 
 export { spring }

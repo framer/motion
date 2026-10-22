@@ -124,4 +124,29 @@ describe("SVG useProps", () => {
             },
         })
     })
+
+    test("reflects style prop changes between renders", () => {
+        const visualState = { x: 8 }
+        const { result, rerender } = renderHook(
+            ({ style }) =>
+                useSVGProps({ style } as any, visualState, false, "rect"),
+            { initialProps: { style: { fill: "red", x: 8 } as any } }
+        )
+
+        expect(result.current.style).toEqual({
+            fill: "red",
+            transform: "translateX(8px)",
+            transformBox: "fill-box",
+            transformOrigin: "50% 50%",
+        })
+
+        rerender({ style: { fill: "blue", x: 8 } })
+
+        expect(result.current.style).toEqual({
+            fill: "blue",
+            transform: "translateX(8px)",
+            transformBox: "fill-box",
+            transformOrigin: "50% 50%",
+        })
+    })
 })

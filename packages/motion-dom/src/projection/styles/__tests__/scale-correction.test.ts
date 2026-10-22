@@ -122,7 +122,7 @@ describe("scaleCorrectors registry", () => {
     test("loading the projection node registers the default correctors", () => {
         jest.isolateModules(() => {
             const { scaleCorrectors } = require("../scale-correction")
-            require("../../node/create-projection-node")
+            require("../../node/HTMLProjectionNode")
             const radius = require("../scale-border-radius").correctBorderRadius
             const shadow = require("../scale-box-shadow").correctBoxShadow
 
@@ -155,7 +155,7 @@ describe("scaleCorrectors registry", () => {
             const customProperty = { correct: (v: string) => v }
             addScaleCorrector({ boxShadow, "--custom": customProperty })
 
-            require("../../node/create-projection-node")
+            require("../../node/HTMLProjectionNode")
 
             expect(scaleCorrectors.boxShadow).toBe(boxShadow)
             expect(scaleCorrectors["--custom"]).toBe(customProperty)

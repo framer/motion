@@ -77,15 +77,6 @@ import {
     ScrollMeasurements,
 } from "./types"
 
-/**
- * Correctors registered via addScaleCorrector before projection loaded
- * (e.g. with an async LazyMotion bundle) take precedence over the defaults.
- */
-Object.assign(scaleCorrectors, {
-    ...defaultScaleCorrectors,
-    ...scaleCorrectors,
-})
-
 const metrics = {
     nodes: 0,
     calculatedTargetDeltas: 0,
@@ -158,6 +149,17 @@ export function createProjectionNode<I>({
     checkIsScrollRoot,
     resetTransform,
 }: ProjectionNodeConfig<I>) {
+    /**
+     * Correctors registered via addScaleCorrector before projection loaded
+     * (e.g. with an async LazyMotion bundle) take precedence over the defaults.
+     * Applied here rather than at module scope so bundlers can drop projection
+     * when it's unused.
+     */
+    Object.assign(scaleCorrectors, {
+        ...defaultScaleCorrectors,
+        ...scaleCorrectors,
+    })
+
     return class ProjectionNode implements IProjectionNode<I> {
         /**
          * A unique ID generated for every projection node.
@@ -1137,7 +1139,12 @@ export function createProjectionNode<I>({
             return boxWithoutScroll
         }
 
-        applyTransform(box: Box, transformOnly = false, output?: Box): Box {
+        applyTransform(
+            box: Box,
+            transformOnly = false,
+            output?: Box,
+            skipOwnTransform?: boolean
+        ): Box {
             const withTransforms = output || createBox()
             copyBoxInto(withTransforms, box)
             for (let i = 0; i < this.path.length; i++) {
@@ -1161,7 +1168,7 @@ export function createProjectionNode<I>({
                 )
             }
 
-            if (hasTransform(this.latestValues)) {
+            if (!skipOwnTransform && hasTransform(this.latestValues)) {
                 transformBox(
                     withTransforms,
                     this.latestValues,
@@ -1347,10 +1354,15 @@ export function createProjectionNode<I>({
                  */
             } else if (this.targetDelta) {
                 if (Boolean(this.resumingFrom)) {
+                    /**
+                     * Own transforms are applied later, in applyTransformsToTarget,
+                     * so only apply ancestor transforms here or they'd be doubled.
+                     */
                     this.applyTransform(
                         this.layout.layoutBox,
                         false,
-                        this.target
+                        this.target,
+                        true
                     )
                 } else {
                     copyBoxInto(this.target, this.layout.layoutBox)
@@ -2299,8 +2311,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                     relativeParent
 
                 if (parentSnapshot && parentLayout) {
-                    const anchor =
-                        node.options.layoutAnchor || undefined
+                    const anchor = node.options.layoutAnchor || undefined
 
                     const relativeSnapshot = createBox()
                     calcRelativePosition(
@@ -2414,10 +2425,13 @@ function clearIsLayoutDirty(node: IProjectionNode) {
  * A dragged node doesn't layout animate, so it jumps to its new layout. Shift
  * its descendants' snapshots by the same amount, so they only animate layout
  * changes relative to it, rather than lagging behind.
+ *
+ * If its drag ended since the snapshot (e.g. drag disabled from onDrag), it
+ * layout animates again, so its descendants mustn't follow its jump.
  */
 function followDraggedAncestor(node: IProjectionNode) {
     const { snapshot, dragAncestor } = node
-    const to = dragAncestor?.layout
+    const to = dragAncestor?.isAnimationBlocked && dragAncestor.layout
     if (!snapshot || !to || node.resumeFrom || node.isAnimationBlocked) return
 
     const from = dragAncestor!.dragSnapshot!

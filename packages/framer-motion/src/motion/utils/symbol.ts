@@ -1,1 +1,3 @@
-export const motionComponentSymbol = Symbol.for("motionComponentSymbol")
+export const motionComponentSymbol = /* @__PURE__ */ Symbol.for(
+    "motionComponentSymbol"
+)
