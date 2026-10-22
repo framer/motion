@@ -1,11 +1,9 @@
-import { waitFor } from "@testing-library/dom"
 import { motionValue, Variants } from "motion-dom"
 import { MotionGlobalConfig } from "motion-utils"
 import * as React from "react"
 import { act, createRef } from "react"
 import {
     AnimatePresence,
-    frame,
     LayoutGroup,
     motion,
     MotionConfig,
