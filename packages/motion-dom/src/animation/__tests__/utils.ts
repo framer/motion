@@ -1,7 +1,11 @@
 import { frameData, time } from "../../"
 import { KeyframeGenerator } from "../types"
 
-export const syncDriver = (interval = 10) => {
+/**
+ * Runs an animation synchronously, `interval` ms per frame. `maxTime` stops it
+ * there, so an animation that never finishes fails its test instead of hanging.
+ */
+export const syncDriver = (interval = 10, maxTime = Infinity) => {
     time.set(0)
 
     const driver = (update: (v: number) => void) => {
@@ -18,7 +22,7 @@ export const syncDriver = (interval = 10) => {
                 setTimeout(() => {
                     time.set(elapsed)
                     update(elapsed)
-                    while (isRunning) {
+                    while (isRunning && elapsed < maxTime) {
                         elapsed += interval
                         time.set(elapsed)
                         update(elapsed)

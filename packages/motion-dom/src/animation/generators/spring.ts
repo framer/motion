@@ -438,14 +438,18 @@ function springGenerator(
          * dampedAngularFreq * t passes 300, both terms decay at the damping
          * rate. Heavily overdamped drag springs (dragElastic: 0,
          * dragTransition) rely on this to settle almost at once rather than
-         * creep at stiffness / damping. Negative bounce needs the exact
-         * curve, so time-defined springs are exempt.
+         * creep at stiffness / damping. It only applies when reached within
+         * 300ms (a dampedAngularFreq of 1 rad/ms), so it reads as a stiff
+         * spring snapping into place: any later and it cuts off a slow spring
+         * that's visibly still moving (#1207). Negative bounce needs the
+         * exact curve, so time-defined springs are exempt.
          */
-        const limit = isTimeDefined ? Infinity : 300 / dampedAngularFreq
+        const limit =
+            dampedAngularFreq < 1 || isTimeDefined
+                ? Infinity
+                : 300 / dampedAngularFreq
         const decayAt = (rate: number, t: number) =>
-            Math.exp(
-                t > limit ? -rate * limit - decay * (t - limit) : -rate * t
-            )
+            Math.exp(t > limit ? (decay - rate) * limit - decay * t : -rate * t)
 
         const c = { S: 0, F: 0 }
         update = () => {
