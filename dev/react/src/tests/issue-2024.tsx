@@ -1,4 +1,4 @@
-import { Reorder, useMotionValue } from "framer-motion"
+import { motion, Reorder, useMotionValue } from "framer-motion"
 import { useRef, useState } from "react"
 
 /**
@@ -12,6 +12,7 @@ import { useRef, useState } from "react"
  * ?constraints=object — dragConstraints={{ top: 0, bottom: 0 }}
  * ?constraints=none   — no dragConstraints (control)
  * &layoutScroll       — mark the group as a layoutScroll container
+ * &outer              — wrap the group in a scrollable layoutScroll container
  */
 const initialItems = Array.from({ length: 12 }, (_, i) => i)
 
@@ -50,6 +51,7 @@ export const App = () => {
     const params = new URLSearchParams(window.location.search)
     const mode = params.get("constraints") || "ref"
     const layoutScroll = params.has("layoutScroll")
+    const outer = params.has("outer")
     const groupRef = useRef<HTMLUListElement>(null)
     const [items, setItems] = useState(initialItems)
 
@@ -60,7 +62,7 @@ export const App = () => {
             ? { top: 0, bottom: 0 }
             : undefined
 
-    return (
+    const group = (
         <Reorder.Group
             ref={groupRef}
             id="group"
@@ -82,5 +84,19 @@ export const App = () => {
                 <Item key={item} item={item} constraints={constraints} />
             ))}
         </Reorder.Group>
+    )
+
+    return outer ? (
+        <motion.div
+            id="outer"
+            layoutScroll
+            style={{ height: 400, overflowY: "auto" }}
+        >
+            <div style={{ height: 200 }} />
+            {group}
+            <div style={{ height: 300 }} />
+        </motion.div>
+    ) : (
+        group
     )
 }

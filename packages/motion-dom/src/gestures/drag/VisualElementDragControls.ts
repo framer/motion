@@ -14,7 +14,10 @@ import {
 import { translateAxis } from "../../projection/geometry/delta-apply"
 import { calcLength } from "../../projection/geometry/delta-calc"
 import { createBox } from "../../projection/geometry/models"
-import type { LayoutUpdateData } from "../../projection/node/types"
+import type {
+    IProjectionNode,
+    LayoutUpdateData,
+} from "../../projection/node/types"
 import { eachAxis } from "../../projection/utils/each-axis"
 import { measurePageBox } from "../../projection/utils/measure"
 import type { VisualElement } from "../../render/VisualElement"
@@ -38,19 +41,27 @@ import {
 } from "./utils/constraints"
 
 /**
- * The summed scroll of the element's ancestors that move it relative to its
- * constraints element: those outside the constraints element, and the
- * constraints element itself.
+ * The summed scroll of the element's `layoutScroll` ancestors that move it
+ * relative to its constraints element: the constraints element itself, and
+ * those that don't contain it.
  */
-function measureScrollWithin(element: Element, constraints: Element): Point {
+function measureScrollWithin(
+    { path, root }: IProjectionNode,
+    constraints: Element
+): Point {
     const scroll = { x: 0, y: 0 }
 
-    while (
-        (element = element.parentElement!) &&
-        (element === constraints || !element.contains(constraints))
-    ) {
-        scroll.x += element.scrollLeft
-        scroll.y += element.scrollTop
+    for (const node of path) {
+        const element = node.instance as Element
+
+        if (
+            node !== root &&
+            node.options.layoutScroll &&
+            (element === constraints || !element.contains(constraints))
+        ) {
+            scroll.x += element.scrollLeft
+            scroll.y += element.scrollTop
+        }
     }
 
     return scroll
@@ -102,7 +113,7 @@ export class VisualElementDragControls {
      * The scroll (see measureScrollWithin) when ref constraints were last
      * measured. Scrolling moves the element relative to its constraints
      * without a layout measurement, so on drag start the constraints are
-     * shifted by how far it has changed rather than re-measured (#2024).
+     * shifted by how far it has changed (#2024).
      */
     private scroll?: Point
 
@@ -406,12 +417,8 @@ export class VisualElementDragControls {
         if (isElementConstraints(dragConstraints)) {
             const { constraints, scroll: prevScroll } = this
             if (constraints && prevScroll) {
-                /**
-                 * Scrolling by delta moved the element by -delta relative
-                 * to its constraints, so shift them by delta.
-                 */
                 const scroll = (this.scroll = measureScrollWithin(
-                    this.visualElement.current!,
+                    this.visualElement.projection!,
                     resolveConstraintsElement(dragConstraints)!
                 ))
                 eachAxis((axis) =>
@@ -502,15 +509,11 @@ export class VisualElementDragControls {
             this.visualElement.getTransformPagePoint()
         )
 
-        this.scroll = measureScrollWithin(
-            this.visualElement.current!,
-            constraintsElement!
-        )
+        this.scroll = measureScrollWithin(projection, constraintsElement!)
 
         /**
-         * Measure from the layout's measuredBox, which like constraintsBox
-         * is where it is on the page (layoutBox removes the scroll of
-         * `layoutScroll` ancestors).
+         * Compare the layout's measuredBox, which like constraintsBox is
+         * where it is on the page (layoutBox removes `layoutScroll` scroll).
          */
         let measuredConstraints = calcViewportConstraints(
             projection.layout.measuredBox,
