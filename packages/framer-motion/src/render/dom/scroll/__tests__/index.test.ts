@@ -567,11 +567,21 @@ describe("scrollInfo", () => {
         let latest: ScrollInfo
         const stop = scrollInfo((info) => (latest = info))
 
+        /**
+         * Velocity reads as 0 when frames are over 50ms apart, so pin the
+         * frame clock rather than depend on how fast this machine runs.
+         */
+        let now = performance.now()
+        const nowSpy = jest
+            .spyOn(performance, "now")
+            .mockImplementation(() => now)
+
         try {
             await fireScroll(100)
             expect(latest!.y.current).toBe(100)
 
             // Safari rubber-band at the top reports a negative scrollY
+            now += 16
             await fireScroll(-25)
             expect(latest!.y.current).toBe(-25)
             expect(latest!.y.progress).toBe(0)
@@ -582,6 +592,7 @@ describe("scrollInfo", () => {
             expect(latest!.y.current).toBe(2025)
             expect(latest!.y.progress).toBe(1)
         } finally {
+            nowSpy.mockRestore()
             stop()
             await fireScroll(0)
         }
