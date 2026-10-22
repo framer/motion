@@ -27,7 +27,7 @@
     "AnimatePresence": 2350,
     "MotionConfig": 400,
     "LayoutGroup": 1200,
-    "Reorder": 45700,
+    "Reorder": 46050,
     "useMotionValue": 2050,
     "useTransform": 4950,
     "useMotionTemplate": 2200,
@@ -41,7 +41,7 @@
     "useAnimationFrame": 900,
     "useVelocity": 2100,
     "useAnimationControls": 18150,
-    "react-all": 70200,
+    "react-all": 70550,
     "motion-div+AnimatePresence": 45050,
     "motion-div+useAnimate": 47500,
     "motion-div+animate": 47400,
@@ -49,6 +49,6 @@
     "motion-div+useScroll": 45950,
     "motion-div+useTransform+useMotionTemplate": 43900,
     "motion-div+useScroll+useTransform+useSpring": 47350,
-    "motion-div+Reorder": 45700,
+    "motion-div+Reorder": 46050,
     "domMax+useScroll": 43400
 }

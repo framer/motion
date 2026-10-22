@@ -156,11 +156,14 @@ export class NativeAnimation<T extends AnyResolvedKeyframe>
     stop() {
         if (this.isStopped) return
         this.isStopped = true
-        const { state } = this
 
-        if (state === "idle" || state === "finished") {
-            return
-        }
+        /**
+         * Before its finish event, a finished animation (an instant one is
+         * as soon as it starts) is still showing its end, so it's stopped
+         * like a running one. Otherwise that event would apply its end
+         * over whatever animates the value next.
+         */
+        if (this.state === "idle" || this.finishedTime !== null) return
 
         if (this.updateMotionValue) {
             this.updateMotionValue()
@@ -168,7 +171,10 @@ export class NativeAnimation<T extends AnyResolvedKeyframe>
             this.commitStyles()
         }
 
-        if (!this.isPseudoElement) this.cancel()
+        if (!this.isPseudoElement) {
+            this.animation.onfinish = null
+            this.cancel()
+        }
     }
 
     /**

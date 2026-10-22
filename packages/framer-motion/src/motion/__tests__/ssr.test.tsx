@@ -342,7 +342,7 @@ function runTests(render: (components: any) => string) {
         const div = render(<Component />)
 
         expect(div).toBe(
-            `<ul style="overflow-anchor:none"><li draggable="false" style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x"></li></ul>`
+            `<ul style="overflow-anchor:none"><li tabindex="0" draggable="false" style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x"></li></ul>`
         )
     })
 
@@ -358,7 +358,7 @@ function runTests(render: (components: any) => string) {
         const div = render(<Component />)
 
         expect(div).toBe(
-            `<ul style="overflow-anchor:none"><li style="z-index:unset;transform:none"></li></ul>`
+            `<ul style="overflow-anchor:none"><li tabindex="0" style="z-index:unset;transform:none"></li></ul>`
         )
     })
 
@@ -374,7 +374,7 @@ function runTests(render: (components: any) => string) {
         const div = render(<Component />)
 
         expect(div).toBe(
-            `<div style="overflow-anchor:none"><div draggable="false" style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x"></div></div>`
+            `<div style="overflow-anchor:none"><div tabindex="0" draggable="false" style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x"></div></div>`
         )
     })
 
