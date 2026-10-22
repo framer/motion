@@ -301,4 +301,50 @@ describe("SVG", () => {
 
         expect(getByTestId("rect").style.transform).toBe("translateX(20px)")
     })
+
+    test("applies style prop changes between renders", () => {
+        const Component = ({ color }: { color: string }) => (
+            <motion.svg data-testid="svg" style={{ backgroundColor: color }}>
+                <motion.rect data-testid="rect" style={{ fill: color }} />
+            </motion.svg>
+        )
+
+        const { getByTestId, rerender } = render(<Component color="red" />)
+        expect(getByTestId("svg").style.backgroundColor).toBe("red")
+        expect(getByTestId("rect").style.fill).toBe("red")
+
+        rerender(<Component color="blue" />)
+        expect(getByTestId("svg").style.backgroundColor).toBe("blue")
+        expect(getByTestId("rect").style.fill).toBe("blue")
+    })
+
+    test("removes style prop values that are no longer set", () => {
+        const Component = ({ show }: { show: boolean }) => (
+            <motion.svg
+                data-testid="svg"
+                style={show ? { backgroundColor: "red" } : {}}
+            />
+        )
+
+        const { getByTestId, rerender } = render(<Component show />)
+        expect(getByTestId("svg").style.backgroundColor).toBe("red")
+
+        rerender(<Component show={false} />)
+        expect(getByTestId("svg").style.backgroundColor).toBe("")
+    })
+
+    test("removes style prop values when style is unset", () => {
+        const Component = ({ show }: { show: boolean }) => (
+            <motion.svg
+                data-testid="svg"
+                style={show ? { backgroundColor: "red" } : undefined}
+            />
+        )
+
+        const { getByTestId, rerender } = render(<Component show />)
+        expect(getByTestId("svg").style.backgroundColor).toBe("red")
+
+        rerender(<Component show={false} />)
+        expect(getByTestId("svg").style.backgroundColor).toBe("")
+    })
 })

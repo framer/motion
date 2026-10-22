@@ -729,15 +729,21 @@ describe("drag in scopeMotion", () => {
         const scope = scopeMotion(() => {
             drag(element, {
                 momentum: false,
-                onStart: () => delay(delayed, 50),
+                onStart: () => delay(delayed, 1000),
             })
         })
 
         await dragTo(element, 100, 50)
         await release(element)
+        expect(delayed).not.toHaveBeenCalled()
         scope.stop()
-        await sleep(100)
+
+        // Jump the clock past the delay rather than waiting on wall time
+        const now = performance.now() + 2000
+        const spy = jest.spyOn(performance, "now").mockReturnValue(now)
         await nextFrame()
+        await nextFrame()
+        spy.mockRestore()
 
         expect(delayed).not.toHaveBeenCalled()
     })

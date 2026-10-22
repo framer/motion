@@ -8,8 +8,8 @@ import { createDomVisualElement } from "./create-visual-element"
 /**
  * @public
  */
-export const domAnimation: FeatureBundle = {
-    renderer: createDomVisualElement,
-    ...animations,
-    ...gestureAnimations,
-}
+export const domAnimation: FeatureBundle = /* @__PURE__ */ Object.assign(
+    { renderer: createDomVisualElement },
+    animations,
+    gestureAnimations
+)

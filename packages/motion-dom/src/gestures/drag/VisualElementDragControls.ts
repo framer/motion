@@ -287,7 +287,15 @@ export class VisualElementDragControls {
         )
     }
 
-    stop(event?: PointerEvent, panInfo?: PanInfo) {
+    /**
+     * @param dragAxes - The axes to animate on release, if not the `drag`
+     * prop's, e.g. when drag was disabled mid-gesture.
+     */
+    stop(
+        event?: PointerEvent,
+        panInfo?: PanInfo,
+        dragAxes?: MotionNodeOptions["drag"]
+    ) {
         const finalEvent = event || this.latestPointerEvent
         const finalPanInfo = panInfo || this.latestPanInfo
 
@@ -296,7 +304,7 @@ export class VisualElementDragControls {
         if (!isDragging || !finalPanInfo || !finalEvent) return
 
         const { velocity } = finalPanInfo
-        this.startAnimation(velocity)
+        this.startAnimation(velocity, dragAxes)
 
         const { onDragEnd } = this.getProps()
         if (onDragEnd) {
@@ -474,7 +482,10 @@ export class VisualElementDragControls {
         return measuredConstraints
     }
 
-    private startAnimation(velocity: Point) {
+    private startAnimation(
+        velocity: Point,
+        dragAxes?: MotionNodeOptions["drag"]
+    ) {
         const {
             drag,
             dragMomentum,
@@ -487,7 +498,7 @@ export class VisualElementDragControls {
         const constraints: Partial<ResolvedConstraints> = this.constraints || {}
 
         const momentumAnimations = eachAxis((axis) => {
-            if (!shouldDrag(axis, drag, this.currentDirection)) {
+            if (!shouldDrag(axis, dragAxes || drag, this.currentDirection)) {
                 return
             }
 
@@ -771,9 +782,22 @@ export class VisualElementDragControls {
             (({ delta, hasLayoutChanged }: LayoutUpdateData) => {
                 if (this.isDragging && hasLayoutChanged) {
                     eachAxis((axis) => {
-                        const motionValue = this.getAxisMotionValue(axis)
-                        if (!motionValue) return
+                        /**
+                         * Only compensate axes this gesture drags. A
+                         * non-drag axis follows its layout instead, as
+                         * nothing would ever move it back (e.g. snapping
+                         * to origin only animates drag axes).
+                         */
+                        if (
+                            !shouldDrag(
+                                axis,
+                                this.getProps().drag,
+                                this.currentDirection
+                            )
+                        )
+                            return
 
+                        const motionValue = this.getAxisMotionValue(axis)
                         this.originPoint[axis] += delta[axis].translate
                         motionValue.set(
                             motionValue.get() + delta[axis].translate

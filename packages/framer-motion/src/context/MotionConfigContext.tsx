@@ -66,8 +66,9 @@ export interface MotionConfigContext {
 /**
  * @public
  */
-export const MotionConfigContext = createContext<MotionConfigContext>({
-    transformPagePoint: (p) => p,
-    isStatic: false,
-    reducedMotion: "never",
-})
+export const MotionConfigContext =
+    /* @__PURE__ */ createContext<MotionConfigContext>({
+        transformPagePoint: (p) => p,
+        isStatic: false,
+        reducedMotion: "never",
+    })
