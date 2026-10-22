@@ -122,6 +122,8 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
 
     private scrollTimeline?: TimelineWithFallback
 
+    private detachScroll?: VoidFunction
+
     private resolveFinished!: VoidFunction
 
     /**
@@ -349,11 +351,11 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
     attachTimeline(timeline: TimelineWithFallback) {
         this.flush()
         this.scrollTimeline = timeline
-        const detach = this.group?.attachTimeline(timeline)
+        this.detachScroll = this.group?.attachTimeline(timeline)
 
         return () => {
             this.scrollTimeline = undefined
-            detach?.()
+            this.detachScroll?.()
         }
     }
 
@@ -414,9 +416,19 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
         let time = 0
 
         if (prev) {
-            time = prev.animations.length ? prev.time : 0
             this.isRebuilding = true
-            rewind(prev)
+            if (this.scrollTimeline) {
+                /**
+                 * Scroll-linked animations can't be seeked in seconds.
+                 * Cancelling also returns them to their starting values,
+                 * and the new build is attached to scroll instead.
+                 */
+                this.detachScroll?.()
+                prev.cancel()
+            } else {
+                time = prev.animations.length ? prev.time : 0
+                rewind(prev)
+            }
             this.isRebuilding = false
         }
 
@@ -490,16 +502,19 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
         time = Math.min(time, duration)
         if (this.isDone && time < duration) this.newFinished()
 
-        group.speed = this.playbackSpeed
-        if (this.isPaused) group.pause()
-        if (time) group.time = time
+        if (this.scrollTimeline) {
+            this.detachScroll = group.attachTimeline(this.scrollTimeline)
+        } else {
+            group.speed = this.playbackSpeed
+            if (this.isPaused) group.pause()
+            if (time) group.time = time
+        }
         /**
          * Treat a start from 0 as coming from just before it, so markers
          * at 0 fire.
          */
         this.prevTime = time || -1
 
-        this.scrollTimeline && group.attachTimeline(this.scrollTimeline)
         this.watch()
     }
 
