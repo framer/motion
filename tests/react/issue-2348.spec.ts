@@ -78,7 +78,10 @@ for (const [name, query] of [
      * The list's offsets are in its local, scaled, coordinate space, so a
      * move measured on screen must be scaled into it.
      */
-    ["bottom-anchored container in a scale(0.5) ancestor", "&fixed&anchor=bottom&scale"],
+    [
+        "bottom-anchored container in a scale(0.5) ancestor",
+        "&fixed&anchor=bottom&scale",
+    ],
 ]) {
     test(`popLayout exiting item shrinks towards its centre (${name})`, async ({
         page,
@@ -121,6 +124,14 @@ test("popLayout exiting item stays put when an item is added in the same render"
 for (const [name, query] of [
     ["page", "&scroll"],
     ["scrollable element", "&scroller"],
+    /**
+     * The scroll offset is in the scrollable element's own, here scaled,
+     * coordinate space, so must be scaled onto the screen.
+     */
+    [
+        "positioned scrollable element in a scale(0.5) ancestor",
+        "&scroller&positioned&scale",
+    ],
 ]) {
     test(`popLayout exiting item moves with the content when the ${name}'s scroll position is clamped`, async ({
         page,
@@ -133,7 +144,7 @@ for (const [name, query] of [
                     isElement
                         ? document.getElementById("scroller")!.scrollTop
                         : window.scrollY,
-                query === "&scroller"
+                query.includes("scroller")
             )
 
         await page.evaluate(() => {

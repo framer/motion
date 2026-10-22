@@ -16,7 +16,6 @@ interface Size {
     bottom: number
     direction: string
     point?: number[]
-    scale?: number[]
 }
 
 interface Props {
@@ -35,6 +34,18 @@ interface MeasureProps extends Props {
 }
 
 /**
+ * How much an element's transforms, and its ancestors', scale it on screen.
+ */
+const measureScale = (element?: HTMLElement | null) => {
+    const { width, height } =
+        element?.getBoundingClientRect() || ({} as DOMRect)
+    return [
+        width / element?.offsetWidth! || 1,
+        height / element?.offsetHeight! || 1,
+    ]
+}
+
+/**
  * The element's position in the space it scrolls in, as the projection
  * system measures it (see measurePageBox and removeElementScroll): its
  * viewport position, plus its scroll containers' scroll (across shadow
@@ -44,18 +55,28 @@ interface MeasureProps extends Props {
  *
  * So a scroll position clamped by content shrinking reads as the element
  * moving only if it doesn't scroll with that content.
+ *
+ * Scroll offsets are in their container's coordinate space, so are scaled
+ * onto the screen, and the result is returned in the offsetParent's
+ * coordinate space, which the pop rule's offsets are in.
  */
-const measurePoint = (element: Element) => {
+const measurePoint = (element: HTMLElement) => {
     let { left, top } = element.getBoundingClientRect()
-    let node: Element | null | undefined = element
+    let node: HTMLElement | null | undefined = element
     while (
-        (node = node.parentElement || (node.parentNode as ShadowRoot)?.host)
+        (node = (node.parentElement ||
+            (node.parentNode as ShadowRoot)?.host) as HTMLElement | null)
     ) {
-        left += node.scrollLeft
-        top += node.scrollTop
+        const { scrollLeft, scrollTop } = node
+        if (scrollLeft || scrollTop) {
+            const [x, y] = measureScale(node)
+            left += scrollLeft * x
+            top += scrollTop * y
+        }
         if (getComputedStyle(node).position === "fixed") break
     }
-    return [left, top]
+    const [x, y] = measureScale(element.offsetParent as HTMLElement | null)
+    return [left / x, top / y]
 }
 
 /**
@@ -84,14 +105,6 @@ class PopChildMeasure extends React.Component<MeasureProps> {
             size.bottom = parentHeight - size.height - size.top
             size.direction = computedStyle.direction
             size.point = measurePoint(element)
-            /**
-             * The pop rule's offsets are in the offsetParent's coordinate
-             * space, which ancestor (or its own) transforms can scale.
-             */
-            const { width, height } = isHTMLElement(parent)
-                ? parent.getBoundingClientRect()
-                : ({} as DOMRect)
-            size.scale = [width / parentWidth || 1, height / parentHeight || 1]
         }
 
         return null
@@ -202,10 +215,9 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop, pop
         let dx = 0
         let dy = 0
         microtask.setup(() => {
-            const s = size.current
             const [x, y] = measurePoint(element)
-            dx = (s.point![0] - x) / s.scale![0]
-            dy = (s.point![1] - y) / s.scale![1]
+            dx = size.current.point![0] - x
+            dy = size.current.point![1] - y
         })
         microtask.read(() => {
             /**

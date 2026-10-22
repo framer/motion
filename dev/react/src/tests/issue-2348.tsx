@@ -14,7 +14,8 @@ import { useRef, useState } from "react"
  * with a percentage transform. The `?fixed` and `?popLayout` params preset
  * the checkboxes. `?scroll` puts a tall spacer above the list, so removing
  * an item from the bottom of a scrolled page shrinks the document.
- * `?scroller` does the same inside a scrollable element. `?mirror` lists the
+ * `?scroller` does the same inside a scrollable element, which `?positioned`
+ * makes the list's offsetParent. `?mirror` lists the
  * items in the page as well, so on a scrolled page, removing one also
  * shrinks the document and clamps its scroll, whatever the list's position.
  * `?scale` renders everything inside a `scale(0.5)` wrapper (which is also
@@ -130,7 +131,13 @@ export const App = () => {
                 id="scroller"
                 style={
                     params.has("scroller")
-                        ? { height: 300, overflow: "auto" }
+                        ? {
+                              height: 300,
+                              overflow: "auto",
+                              position: params.has("positioned")
+                                  ? "relative"
+                                  : undefined,
+                          }
                         : undefined
                 }
             >
