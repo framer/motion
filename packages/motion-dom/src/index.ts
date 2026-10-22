@@ -75,6 +75,7 @@ export * from "./effects/utils/create-effect"
 export * from "./frameloop"
 export * from "./frameloop/batcher"
 export * from "./frameloop/microtask"
+export * from "./frameloop/process-frame"
 export * from "./frameloop/sync-time"
 export * from "./frameloop/types"
 
