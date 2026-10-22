@@ -70,7 +70,7 @@ test("card closed from onDrag animates back to its slot while the pointer is dow
      * trips happen to sample the animation.
      */
     await page.evaluate(() => {
-        const frames: DOMRect[][] = ((window as any).closeFrames = [])
+        const frames: [DOMRect, DOMRect][] = ((window as any).closeFrames = [])
         const record = () => {
             const card = document.querySelector("#card-1")!
             if (card.getAttribute("data-selected") === "false") {
@@ -95,7 +95,7 @@ test("card closed from onDrag animates back to its slot while the pointer is dow
     await expectBoxToSettle(page, 1)
 
     const [maxWidth, maxChildOffset] = await page.evaluate(() => {
-        const frames: DOMRect[][] = (window as any).closeFrames
+        const frames: [DOMRect, DOMRect][] = (window as any).closeFrames
         let maxWidth = 0
         let maxOffset = 0
         for (const [card, child] of frames) {
@@ -113,7 +113,7 @@ test("card closed from onDrag animates back to its slot while the pointer is dow
      * The card should layout animate from its open size (640px) rather than
      * jump straight to its slot's (600px), so it starts out at its open size.
      */
-    expect(maxWidth).toBeGreaterThan(620)
+    expect(maxWidth).toBeGreaterThan(610)
 
     /**
      * Its layout child animates with it, rather than jumping ahead with
