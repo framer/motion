@@ -136,8 +136,9 @@ export function createAnimationState(visualElement: any): AnimationState {
             }
 
             /**
-             * Only a type with something to animate back from re-animates
-             * the labels below it (#1831).
+             * Set after the skip above, so deactivating a type that has nothing
+             * to animate (e.g. whileTap with no prop) doesn't re-run the variants
+             * below it.
              */
             if (activeDelta === false) removedVariantIndex = i
 
