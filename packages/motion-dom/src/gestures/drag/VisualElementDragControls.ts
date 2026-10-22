@@ -771,9 +771,22 @@ export class VisualElementDragControls {
             (({ delta, hasLayoutChanged }: LayoutUpdateData) => {
                 if (this.isDragging && hasLayoutChanged) {
                     eachAxis((axis) => {
-                        const motionValue = this.getAxisMotionValue(axis)
-                        if (!motionValue) return
+                        /**
+                         * Only compensate axes this gesture drags. A
+                         * non-drag axis follows its layout instead, as
+                         * nothing would ever move it back (e.g. snapping
+                         * to origin only animates drag axes).
+                         */
+                        if (
+                            !shouldDrag(
+                                axis,
+                                this.getProps().drag,
+                                this.currentDirection
+                            )
+                        )
+                            return
 
+                        const motionValue = this.getAxisMotionValue(axis)
                         this.originPoint[axis] += delta[axis].translate
                         motionValue.set(
                             motionValue.get() + delta[axis].translate
