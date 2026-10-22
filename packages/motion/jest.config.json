@@ -1,6 +1,23 @@
 {
-    "preset": "ts-jest",
+    "transform": {
+        "^.+\\.tsx?$": [
+            "ts-jest",
+            {
+                "tsconfig": "<rootDir>/../tsconfig.test.json"
+            }
+        ]
+    },
     "testEnvironment": "jsdom",
     "rootDir": "src",
-    "testMatch": ["**/__tests__/**/*.test.(js|ts)?(x)"]
+    "testMatch": ["**/__tests__/**/*.test.(js|ts)?(x)"],
+    "reporters": [
+        "default",
+        [
+            "jest-junit",
+            {
+                "outputDirectory": "../../test_reports",
+                "outputName": "motion.xml"
+            }
+        ]
+    ]
 }
