@@ -8,7 +8,9 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Added
 
--   `processFrame`: Function for manually stepping through frameloop.
+-   `Reorder`: Grab-and-move keyboard reordering.
+-   `processFrame`: Manually process the frameloop at `t`.
+-   `stepFrames`: For tests, synchronously advance frameloop time by `duration`.
 
 ### Fixed
 
@@ -19,6 +21,11 @@ Undocumented APIs should be considered internal and may change without warning.
 -   Fix shared layout animations applying an element's own `scale`/`x`/`y` twice.
 -   Fix replaying mount animation when an element takes over a `layoutId`.
 -   `motion`: Fix updating SVG styles.
+-   `useTransform`: Improving value resolution.
+
+### Changed
+
+-   `MotionGlobalConfig.useManualTiming`:
 
 ## [14.5.0] 2026-10-20
 
