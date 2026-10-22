@@ -1,10 +1,22 @@
 import { motionValue, stagger, Variants } from "motion-dom"
 import { Fragment, Suspense, act, memo, useEffect, useState } from "react"
-import { frame, motion, MotionConfig, useMotionValue, visualElementStore } from "../../"
-import { nextFrame } from "../../gestures/__tests__/utils"
+import {
+    frame,
+    frameData,
+    motion,
+    MotionConfig,
+    MotionGlobalConfig,
+    useMotionValue,
+    visualElementStore,
+} from "../../"
+import { nextFrame, stepFrames } from "../../gestures/__tests__/utils"
 import { pointerDown, pointerEnter, pointerUp, render } from "../../jest.setup"
 
 const MotionFragment = motion.create(Fragment)
+
+afterEach(() => {
+    MotionGlobalConfig.useManualTiming = false
+})
 
 describe("animate prop as variant", () => {
     test("animates to set variant", async () => {
@@ -317,47 +329,45 @@ describe("animate prop as variant", () => {
     })
 
     test("doesn't propagate to a component with its own `animate` prop", async () => {
-        const promise = new Promise((resolve) => {
-            const opacity = motionValue(1)
+        MotionGlobalConfig.useManualTiming = true
+        const opacity = motionValue(1)
 
-            const parentVariants = {
-                initial: {
-                    x: 0,
-                },
-                animate: {
-                    x: 100,
-                },
-            }
+        const parentVariants = {
+            initial: {
+                x: 0,
+            },
+            animate: {
+                x: 100,
+            },
+        }
 
-            const childVariants = {
-                initial: {
-                    opacity: 0,
-                },
-                animate: {
-                    opacity: 1,
-                },
-            }
+        const childVariants = {
+            initial: {
+                opacity: 0,
+            },
+            animate: {
+                opacity: 1,
+            },
+        }
 
-            render(
+        render(
+            <motion.div
+                initial="initial"
+                animate="animate"
+                variants={parentVariants}
+                transition={{ duration: 0.05 }}
+            >
                 <motion.div
-                    initial="initial"
-                    animate="animate"
-                    variants={parentVariants}
+                    animate="initial"
+                    variants={childVariants}
+                    style={{ opacity }}
                     transition={{ duration: 0.05 }}
-                >
-                    <motion.div
-                        animate="initial"
-                        variants={childVariants}
-                        style={{ opacity }}
-                        transition={{ duration: 0.05 }}
-                    />
-                </motion.div>
-            )
+                />
+            </motion.div>
+        )
 
-            setTimeout(() => resolve(opacity.get()), 100)
-        })
-
-        return expect(promise).resolves.toBe(0)
+        await stepFrames(100)
+        expect(opacity.get()).toBe(0)
     })
 
     test("when: beforeChildren works correctly", async () => {
@@ -430,38 +440,40 @@ describe("animate prop as variant", () => {
             )
         }
 
-        return await new Promise<void>(async (resolve) => {
-            const { rerender } = render(<Component animate="hidden" />)
-            rerender(
-                <Component
-                    animate="visible"
-                    onAnimationComplete={() => {
-                        expect(parentOpacity.get()).toBe(1)
-                        expect(childOpacity.get()).toBe(1)
+        /**
+         * Step Motion's clock, as jsdom frames under load can land after the
+         * 50ms checks or the 100ms child animation.
+         */
+        MotionGlobalConfig.useManualTiming = true
+        const atComplete: number[][] = []
+        const recordComplete = () =>
+            atComplete.push([parentOpacity.get(), childOpacity.get()])
 
-                        rerender(
-                            <Component
-                                animate="hidden"
-                                onAnimationComplete={() => {
-                                    expect(parentOpacity.get()).toBe(0)
-                                    expect(childOpacity.get()).toBe(0)
+        const { rerender } = render(<Component animate="hidden" />)
+        rerender(
+            <Component animate="visible" onAnimationComplete={recordComplete} />
+        )
 
-                                    resolve()
-                                }}
-                            />
-                        )
-                        setTimeout(() => {
-                            expect(parentOpacity.get()).toBe(1)
-                            expect(childOpacity.get()).not.toBe(1)
-                        }, 50)
-                    }}
-                />
-            )
-            setTimeout(() => {
-                expect(parentOpacity.get()).toBe(0)
-                expect(childOpacity.get()).not.toBe(0)
-            }, 50)
-        })
+        await stepFrames(50)
+        expect(parentOpacity.get()).toBe(0)
+        expect(childOpacity.get()).not.toBe(0)
+
+        await stepFrames(500)
+        expect(atComplete).toEqual([[1, 1]])
+
+        rerender(
+            <Component animate="hidden" onAnimationComplete={recordComplete} />
+        )
+
+        await stepFrames(50)
+        expect(parentOpacity.get()).toBe(1)
+        expect(childOpacity.get()).not.toBe(1)
+
+        await stepFrames(500)
+        expect(atComplete).toEqual([
+            [1, 1],
+            [0, 0],
+        ])
     })
 
     /**
@@ -595,7 +607,8 @@ describe("animate prop as variant", () => {
     })
 
     test("Child variants correctly calculate delay based on delayChildren: stagger()", async () => {
-        const isCorrectlyStaggered = await new Promise((resolve) => {
+        MotionGlobalConfig.useManualTiming = true
+        const isCorrectlyStaggered = new Promise((resolve) => {
             const childVariants = {
                 hidden: { opacity: 0 },
                 visible: { opacity: 1, transition: { duration: 0.1 } },
@@ -608,7 +621,7 @@ describe("animate prop as variant", () => {
                 useEffect(
                     () =>
                         a.on("change", (latest) => {
-                            if (latest >= 1 && b.get() === 0) resolve(true)
+                            if (latest >= 1) resolve(b.get() === 0)
                         }),
                     [a, b]
                 )
@@ -641,11 +654,13 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        expect(isCorrectlyStaggered).toBe(true)
+        await stepFrames(500)
+        await expect(isCorrectlyStaggered).resolves.toBe(true)
     })
 
     test("Child variants with value-specific transitions correctly calculate delay based on delayChildren: stagger()", async () => {
-        const isCorrectlyStaggered = await new Promise((resolve) => {
+        MotionGlobalConfig.useManualTiming = true
+        const isCorrectlyStaggered = new Promise((resolve) => {
             const childVariants = {
                 hidden: { opacity: 0 },
                 visible: {
@@ -661,7 +676,7 @@ describe("animate prop as variant", () => {
                 useEffect(
                     () =>
                         a.on("change", (latest) => {
-                            if (latest >= 1 && b.get() === 0) resolve(true)
+                            if (latest >= 1) resolve(b.get() === 0)
                         }),
                     [a, b]
                 )
@@ -694,11 +709,13 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        expect(isCorrectlyStaggered).toBe(true)
+        await stepFrames(500)
+        await expect(isCorrectlyStaggered).resolves.toBe(true)
     })
 
     test("Child variants correctly calculate delay based on staggerChildren (deprecated)", async () => {
-        const isCorrectlyStaggered = await new Promise((resolve) => {
+        MotionGlobalConfig.useManualTiming = true
+        const isCorrectlyStaggered = new Promise((resolve) => {
             const childVariants = {
                 hidden: { opacity: 0 },
                 visible: { opacity: 1, transition: { duration: 0.1 } },
@@ -711,7 +728,7 @@ describe("animate prop as variant", () => {
                 useEffect(
                     () =>
                         a.on("change", (latest) => {
-                            if (latest >= 1 && b.get() === 0) resolve(true)
+                            if (latest >= 1) resolve(b.get() === 0)
                         }),
                     [a, b]
                 )
@@ -744,11 +761,13 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        expect(isCorrectlyStaggered).toBe(true)
+        await stepFrames(500)
+        await expect(isCorrectlyStaggered).resolves.toBe(true)
     })
 
     test("Child variants with value-specific transitions correctly calculate delay based on staggerChildren (deprecated)", async () => {
-        const isCorrectlyStaggered = await new Promise((resolve) => {
+        MotionGlobalConfig.useManualTiming = true
+        const isCorrectlyStaggered = new Promise((resolve) => {
             const childVariants = {
                 hidden: { opacity: 0 },
                 visible: {
@@ -764,7 +783,7 @@ describe("animate prop as variant", () => {
                 useEffect(
                     () =>
                         a.on("change", (latest) => {
-                            if (latest >= 1 && b.get() === 0) resolve(true)
+                            if (latest >= 1) resolve(b.get() === 0)
                         }),
                     [a, b]
                 )
@@ -797,117 +816,118 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        expect(isCorrectlyStaggered).toBe(true)
+        await stepFrames(500)
+        await expect(isCorrectlyStaggered).resolves.toBe(true)
     })
 
     test("components without variants are transparent to stagger order", async () => {
-        const [recordedOrder, staggeredEqually] = await new Promise<
-            [number[], boolean]
-        >((resolve) => {
-            const order: number[] = []
-            const delayedBy: number[] = []
-            const staggerDuration = 0.1
+        MotionGlobalConfig.useManualTiming = true
 
-            const updateDelayedBy = (i: number) => {
-                if (delayedBy[i]) return
-                delayedBy[i] = performance.now()
-            }
+        const order: number[] = []
+        const delayedBy: number[] = []
+        const staggerDuration = 0.1
 
-            // Checking a rough equidistance between stagger times allows us to see
-            // if any of the supposedly invisible interim `motion.div`s were considered part of the
-            // stagger order (which would mess up the timings)
-            const checkStaggerEquidistance = () => {
-                let isEquidistant = true
-                let prev = 0
-                for (let i = 0; i < delayedBy.length; i++) {
-                    if (prev) {
-                        const timeSincePrev = prev - delayedBy[i]
-                        if (
-                            Math.round(timeSincePrev / 100) * 100 !==
-                            staggerDuration * 1000
-                        ) {
-                            isEquidistant = false
-                        }
-                    }
-                    prev = delayedBy[i]
+        const updateDelayedBy = (i: number) => {
+            if (delayedBy[i] !== undefined) return
+            delayedBy[i] = frameData.timestamp
+        }
+
+        // Checking a rough equidistance between stagger times allows us to see
+        // if any of the supposedly invisible interim `motion.div`s were considered part of the
+        // stagger order (which would mess up the timings)
+        const checkStaggerEquidistance = () => {
+            let isEquidistant = true
+            for (let i = 1; i < delayedBy.length; i++) {
+                const timeSincePrev = delayedBy[i - 1] - delayedBy[i]
+                if (
+                    Math.round(timeSincePrev / 100) * 100 !==
+                    staggerDuration * 1000
+                ) {
+                    isEquidistant = false
                 }
-
-                return isEquidistant
             }
 
-            const parentVariants: Variants = {
-                visible: {
-                    transition: {
-                        staggerChildren: staggerDuration,
-                        staggerDirection: -1,
-                    },
+            return isEquidistant
+        }
+
+        const parentVariants: Variants = {
+            visible: {
+                transition: {
+                    staggerChildren: staggerDuration,
+                    staggerDirection: -1,
                 },
-            }
+            },
+        }
 
-            const variants: Variants = {
-                hidden: { opacity: 0 },
-                visible: {
-                    opacity: 1,
-                    transition: {
-                        duration: 0.000001,
-                    },
+        const variants: Variants = {
+            hidden: { opacity: 0 },
+            visible: {
+                opacity: 1,
+                transition: {
+                    duration: 0.000001,
                 },
-            }
+            },
+        }
 
-            render(
-                <motion.div
-                    initial="hidden"
-                    animate="visible"
-                    variants={parentVariants}
-                    onAnimationComplete={() =>
-                        requestAnimationFrame(() =>
-                            resolve([order, checkStaggerEquidistance()])
-                        )
-                    }
-                >
-                    <motion.div>
-                        <motion.div />
-                        <motion.div
-                            variants={variants}
-                            onUpdate={() => {
-                                updateDelayedBy(0)
-                                order.push(1)
-                            }}
-                            style={{ willChange: "auto" }}
-                        />
-                        <motion.div
-                            variants={variants}
-                            onUpdate={() => {
-                                updateDelayedBy(1)
-                                order.push(2)
-                            }}
-                            style={{ willChange: "auto" }}
-                        />
-                    </motion.div>
-                    <motion.div>
-                        <motion.div
-                            variants={variants}
-                            onUpdate={() => {
-                                updateDelayedBy(2)
-                                order.push(3)
-                            }}
-                            style={{ willChange: "auto" }}
-                        />
-                        <motion.div
-                            variants={variants}
-                            onUpdate={() => {
-                                updateDelayedBy(3)
-                                order.push(4)
-                            }}
-                            style={{ willChange: "auto" }}
-                        />
-                    </motion.div>
+        const onAnimationComplete = jest.fn()
+
+        render(
+            <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={parentVariants}
+                onAnimationComplete={onAnimationComplete}
+            >
+                <motion.div>
+                    <motion.div />
+                    <motion.div
+                        variants={variants}
+                        onUpdate={() => {
+                            updateDelayedBy(0)
+                            order.push(1)
+                        }}
+                        style={{ willChange: "auto" }}
+                    />
+                    <motion.div
+                        variants={variants}
+                        onUpdate={() => {
+                            updateDelayedBy(1)
+                            order.push(2)
+                        }}
+                        style={{ willChange: "auto" }}
+                    />
                 </motion.div>
-            )
-        })
+                <motion.div>
+                    <motion.div
+                        variants={variants}
+                        onUpdate={() => {
+                            updateDelayedBy(2)
+                            order.push(3)
+                        }}
+                        style={{ willChange: "auto" }}
+                    />
+                    <motion.div
+                        variants={variants}
+                        onUpdate={() => {
+                            updateDelayedBy(3)
+                            order.push(4)
+                        }}
+                        style={{ willChange: "auto" }}
+                    />
+                </motion.div>
+            </motion.div>
+        )
 
-        expect(recordedOrder).toEqual([4, 3, 2, 1])
-        expect(staggeredEqually).toEqual(true)
+        /**
+         * Step Motion's clock rather than measuring wall-clock time between
+         * jsdom frames, which under load arrive far enough apart to round
+         * the 100ms stagger gaps to 0ms or 200ms.
+         */
+        await stepFrames(1000)
+
+        expect(onAnimationComplete).toHaveBeenCalledTimes(1)
+        expect(order).toEqual([4, 3, 2, 1])
+        expect(checkStaggerEquidistance()).toEqual(true)
     })
 
     test("onUpdate", async () => {
@@ -1459,25 +1479,21 @@ describe("animate prop as variant", () => {
             )
         }
 
+        /**
+         * Step four frames, then ten, on Motion's clock. jsdom frames under
+         * load are far enough apart for every animation to finish in ten
+         * of them, leaving equal opacities.
+         */
+        MotionGlobalConfig.useManualTiming = true
+        const frameDuration = 1000 / 60
+
         const { rerender } = render(<Component items={["1", "2"]} />)
 
-        await nextFrame()
-        await nextFrame()
-        await nextFrame()
-        await nextFrame()
+        await stepFrames(4 * frameDuration)
 
         rerender(<Component items={["1", "2", "3", "4", "5"]} />)
 
-        await nextFrame()
-        await nextFrame()
-        await nextFrame()
-        await nextFrame()
-        await nextFrame()
-        await nextFrame()
-        await nextFrame()
-        await nextFrame()
-        await nextFrame()
-        await nextFrame()
+        await stepFrames(10 * frameDuration)
 
         const elements = document.querySelectorAll(".item")
 
