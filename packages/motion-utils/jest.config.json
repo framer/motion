@@ -1,5 +1,12 @@
 {
-    "preset": "ts-jest",
+    "transform": {
+        "^.+\\.tsx?$": [
+            "ts-jest",
+            {
+                "tsconfig": "<rootDir>/../tsconfig.test.json"
+            }
+        ]
+    },
     "testEnvironment": "jsdom",
     "rootDir": "src",
     "collectCoverageFrom": [
@@ -20,7 +27,7 @@
             "jest-junit",
             {
                 "outputDirectory": "../../test_reports",
-                "outputName": "framer-motion.xml"
+                "outputName": "motion-utils.xml"
             }
         ]
     ]

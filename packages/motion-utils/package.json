@@ -20,7 +20,8 @@
         "clean": "rm -rf types dist lib",
         "build": "yarn clean && tsc -p . && rollup -c",
         "dev": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
-        "test": "jest --config jest.config.json --max-workers=2"
+        "test": "jest --config jest.config.json --max-workers=2",
+        "typecheck": "tsc -p tsconfig.test.json"
     },
     "gitHead": "9c70b0208d6492d195ce5fdb60ded6cae1a3245c",
     "devDependencies": {

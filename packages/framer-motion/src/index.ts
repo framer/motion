@@ -18,13 +18,11 @@ export type {
 } from "./render/types"
 
 export { animations } from "./motion/features/animations"
-export {
-    makeUseVisualState,
-    VisualState,
-} from "./motion/utils/use-visual-state"
+export { makeUseVisualState } from "./motion/utils/use-visual-state"
+export type { VisualState } from "./motion/utils/use-visual-state"
 export { calcLength, createBox } from "motion-dom"
 export { filterProps } from "./render/dom/utils/filter-props"
-export { AnimationType } from "./render/utils/types"
+export type { AnimationType } from "./render/utils/types"
 export { isBrowser } from "./utils/is-browser"
 export { useComposedRefs } from "./utils/use-composed-ref"
 export { useForceUpdate } from "./utils/use-force-update"
@@ -46,7 +44,8 @@ export { useElementScroll } from "./value/scroll/use-element-scroll"
 export { useViewportScroll } from "./value/scroll/use-viewport-scroll"
 export { useMotionTemplate } from "./value/use-motion-template"
 export { useMotionValue } from "./value/use-motion-value"
-export { useScroll, UseScrollOptions } from "./value/use-scroll"
+export { useScroll } from "./value/use-scroll"
+export type { UseScrollOptions } from "./value/use-scroll"
 export { useFollowValue } from "./value/use-follow-value"
 export type { FollowValueOptions } from "motion-dom"
 export { useSpring } from "./value/use-spring"
@@ -95,8 +94,10 @@ export { useInstantLayoutTransition } from "./projection/use-instant-layout-tran
 export { useResetProjection } from "./projection/use-reset-projection"
 export { buildTransform, visualElementStore, VisualElement } from "motion-dom"
 export { useAnimationFrame } from "./utils/use-animation-frame"
-export { Cycle, CycleState, useCycle } from "./utils/use-cycle"
-export { useInView, UseInViewOptions } from "./utils/use-in-view"
+export { useCycle } from "./utils/use-cycle"
+export type { Cycle, CycleState } from "./utils/use-cycle"
+export { useInView } from "./utils/use-in-view"
+export type { UseInViewOptions } from "./utils/use-in-view"
 export {
     disableInstantTransitions,
     useInstantTransition,

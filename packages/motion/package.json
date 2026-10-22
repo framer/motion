@@ -91,6 +91,7 @@
         "dev": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
         "clean": "rm -rf types dist lib",
         "test": "jest --config jest.config.json --max-workers=2",
+        "typecheck": "tsc -p tsconfig.test.json",
         "prepack": "yarn build",
         "postpublish": "git push --tags"
     },

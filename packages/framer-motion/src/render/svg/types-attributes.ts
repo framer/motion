@@ -1,1 +1,1 @@
-export { SVGAttributes } from "motion-dom"
+export type { SVGAttributes } from "motion-dom"
