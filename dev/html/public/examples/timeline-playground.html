@@ -975,7 +975,8 @@
                     kind: "pause",
                     at: playheadTime() + 0.01,
                 }
-                e.handle = () => log(`pause${e.id} reached`, true)
+                e.handle = (direction) =>
+                    log(`pause${e.id}(${direction})`, true)
                 entries.push(e)
                 tl.addPause(e.at, e.handle)
                 log(`tl.addPause(${round(e.at)}, onPause)`)
@@ -989,16 +990,10 @@
                     kind: "call",
                     at: playheadTime() + 0.01,
                 }
-                e.handle = () =>
-                    log(
-                        `call${e.id} fired (${
-                            tl.speed < 0 ? "backwards" : "forwards"
-                        })`,
-                        true
-                    )
+                e.handle = (direction) => log(`call${e.id}(${direction})`, true)
                 entries.push(e)
                 tl.call(e.handle, e.at)
-                log(`tl.call(fn, ${round(e.at)})`)
+                log(`tl.call((direction) => ..., ${round(e.at)})`)
                 selected = e
                 render()
             }
@@ -1155,13 +1150,8 @@
                     "easeInOut"
                 )
                 const call = { id: nextId++, kind: "call", at: 1 }
-                call.handle = () =>
-                    log(
-                        `call${call.id} fired (${
-                            tl.speed < 0 ? "backwards" : "forwards"
-                        })`,
-                        true
-                    )
+                call.handle = (direction) =>
+                    log(`call${call.id}(${direction})`, true)
 
                 entries = [s1, s2, spin, s3, s4, s5, s6]
                 for (const e of entries) {
@@ -1192,7 +1182,7 @@
                 log(
                     'const tl = timeline([seg0, seg1, "spin", seg3, seg4, seg5, seg6])'
                 )
-                log("tl.call(fn, 1)")
+                log("tl.call((direction) => ..., 1)")
                 render()
             }
 
