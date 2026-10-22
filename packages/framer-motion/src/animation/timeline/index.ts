@@ -662,7 +662,12 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
             if (group !== this.group || this.isDone) return
             this.isDone = true
             const { onComplete, onReverseComplete } = this.options
-            const callback = this.speed < 0 ? onReverseComplete : onComplete
+            /**
+             * Without onReverseComplete, onComplete fires in either
+             * direction, as it does for a single animation.
+             */
+            const callback =
+                (this.speed < 0 && onReverseComplete) || onComplete
             callback?.()
             this.resolveFinished()
         })

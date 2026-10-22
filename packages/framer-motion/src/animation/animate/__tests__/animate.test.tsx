@@ -416,6 +416,23 @@ describe("animate", () => {
         expect(value.get()).toBe(0)
     })
 
+    test("onComplete fires when played in reverse without onReverseComplete", async () => {
+        const output: number[] = []
+        const onComplete = jest.fn()
+        const controls = animate(0, 100, {
+            duration: 0.05,
+            ease: "linear",
+            onUpdate: (v: number) => output.push(v),
+            onComplete,
+        })
+        controls.time = controls.duration
+        controls.speed = -1
+
+        await controls
+        expect(onComplete).toHaveBeenCalledTimes(1)
+        expect(output[output.length - 1]).toBe(0)
+    })
+
     test("top-level onComplete fires once when some props are equal and others animate", async () => {
         const calls: number[] = []
 
