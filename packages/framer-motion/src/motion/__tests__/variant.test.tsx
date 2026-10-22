@@ -961,31 +961,33 @@ describe("animate prop as variant", () => {
     })
 
     test("onUpdate doesnt fire if no values have changed", async () => {
+        /**
+         * Step Motion's clock: under load, the 30ms, 60ms and 90ms timers can
+         * all fire before the next jsdom frame, so onUpdate never runs.
+         */
+        MotionGlobalConfig.useManualTiming = true
         const onUpdate = jest.fn()
+        const x = motionValue(0)
 
-        await new Promise<void>((resolve) => {
-            const x = motionValue(0)
+        const Component = ({ xTarget = 0 }) => (
+            <motion.div
+                animate={{ x: xTarget }}
+                transition={{ type: false }}
+                onUpdate={onUpdate}
+                // Manually setting willChange to avoid triggering onUpdate
+                style={{ x, willChange: "transform" }}
+            />
+        )
 
-            const Component = ({ xTarget = 0 }) => (
-                <motion.div
-                    animate={{ x: xTarget }}
-                    transition={{ type: false }}
-                    onUpdate={(latest) => {
-                        expect(latest.willChange).not.toBe("auto")
-                        onUpdate(latest)
-                    }}
-                    // Manually setting willChange to avoid triggering onUpdate
-                    style={{ x, willChange: "transform" }}
-                />
-            )
-
-            const { rerender } = render(<Component xTarget={0} />)
-            setTimeout(() => rerender(<Component xTarget={1} />), 30)
-            setTimeout(() => rerender(<Component xTarget={1} />), 60)
-            setTimeout(() => resolve(), 90)
-        })
+        const { rerender } = render(<Component xTarget={0} />)
+        await stepFrames(30)
+        rerender(<Component xTarget={1} />)
+        await stepFrames(30)
+        rerender(<Component xTarget={1} />)
+        await stepFrames(30)
 
         expect(onUpdate).toHaveBeenCalledTimes(1)
+        expect(onUpdate.mock.calls[0][0].willChange).not.toBe("auto")
     })
 
     test("new child items animate from initial to animate", async () => {
