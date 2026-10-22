@@ -11,6 +11,7 @@ import {
     convertBoundingBoxToBox,
     convertBoxToBoundingBox,
 } from "../../projection/geometry/conversion"
+import { translateAxis } from "../../projection/geometry/delta-apply"
 import { calcLength } from "../../projection/geometry/delta-calc"
 import { createBox } from "../../projection/geometry/models"
 import type { LayoutUpdateData } from "../../projection/node/types"
@@ -35,6 +36,24 @@ import {
     rebaseAxisConstraints,
     resolveDragElastic,
 } from "./utils/constraints"
+
+/**
+ * The summed scroll of an element's ancestors, other than the document's,
+ * which page coordinates already include.
+ */
+function measureAncestorScroll(element: Element | null): Point {
+    const scroll = { x: 0, y: 0 }
+    const root = element!.ownerDocument.scrollingElement
+
+    while ((element = element!.parentElement)) {
+        if (element !== root) {
+            scroll.x += element.scrollLeft
+            scroll.y += element.scrollTop
+        }
+    }
+
+    return scroll
+}
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -77,6 +96,13 @@ export class VisualElementDragControls {
     private constraints: ResolvedConstraints | false = false
 
     private hasMutatedConstraints = false
+
+    /**
+     * The summed scroll of the element's ancestors (other than the
+     * document's) when its layout was measured. The layout doesn't track
+     * this scroll, so ref constraints offset it by how far it has changed.
+     */
+    private ancestorScroll?: Point
 
     /**
      * The per-axis resolved elastic values.
@@ -376,8 +402,10 @@ export class VisualElementDragControls {
         const prevConstraints = this.constraints
 
         if (isElementConstraints(dragConstraints)) {
-            if (!this.constraints) {
-                this.constraints = this.resolveRefConstraints()
+            const delta = this.ancestorScrollDelta()
+
+            if (!this.constraints || delta.x || delta.y) {
+                this.constraints = this.resolveRefConstraints(delta)
             }
         } else {
             if (dragConstraints && layout) {
@@ -419,7 +447,17 @@ export class VisualElementDragControls {
         }
     }
 
-    private resolveRefConstraints() {
+    /**
+     * How far the element's ancestors have scrolled since its layout was
+     * measured, moving it by the inverse.
+     */
+    private ancestorScrollDelta(): Point {
+        const scroll = measureAncestorScroll(this.visualElement.current!)
+        const from = (this.ancestorScroll ||= scroll)
+        return { x: scroll.x - from.x, y: scroll.y - from.y }
+    }
+
+    private resolveRefConstraints(scrollDelta = this.ancestorScrollDelta()) {
         const { dragConstraints: constraints, onMeasureDragConstraints } =
             this.getProps()
         if (!isElementConstraints(constraints)) return false
@@ -458,8 +496,19 @@ export class VisualElementDragControls {
             this.visualElement.getTransformPagePoint()
         )
 
+        /**
+         * The layout's measuredBox is where the element was on the page
+         * when measured (layoutBox also removes `layoutScroll` ancestors'
+         * scroll). Ancestor scroll has since moved it by -scrollDelta, so
+         * shift the constraints box by scrollDelta to compare the two as
+         * they are now (#2024).
+         */
+        eachAxis((axis) =>
+            translateAxis(constraintsBox[axis], scrollDelta[axis])
+        )
+
         let measuredConstraints = calcViewportConstraints(
-            projection.layout.layoutBox,
+            projection.layout.measuredBox,
             constraintsBox
         )
 
@@ -739,6 +788,11 @@ export class VisualElementDragControls {
                 resolveConstraintsElement(dragConstraints)
 
             if (constraintsElement) {
+                /**
+                 * The layout was just measured, so measure ancestor
+                 * scroll afresh.
+                 */
+                this.ancestorScroll = undefined
                 this.constraints = this.resolveRefConstraints()
 
                 if (!stopResizeObservers) {

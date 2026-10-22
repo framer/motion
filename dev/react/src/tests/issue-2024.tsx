@@ -11,6 +11,7 @@ import { useRef, useState } from "react"
  * ?constraints=ref    — dragConstraints={groupRef} (default)
  * ?constraints=object — dragConstraints={{ top: 0, bottom: 0 }}
  * ?constraints=none   — no dragConstraints (control)
+ * &layoutScroll       — mark the group as a layoutScroll container
  */
 const initialItems = Array.from({ length: 12 }, (_, i) => i)
 
@@ -48,6 +49,7 @@ const Item = ({
 export const App = () => {
     const params = new URLSearchParams(window.location.search)
     const mode = params.get("constraints") || "ref"
+    const layoutScroll = params.has("layoutScroll")
     const groupRef = useRef<HTMLUListElement>(null)
     const [items, setItems] = useState(initialItems)
 
@@ -62,6 +64,7 @@ export const App = () => {
         <Reorder.Group
             ref={groupRef}
             id="group"
+            layoutScroll={layoutScroll}
             axis="y"
             values={items}
             onReorder={setItems}

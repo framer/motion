@@ -19,6 +19,7 @@ for (const [constraints, SCROLL, index] of [
     ["none", 200, 5],
     ["object", 200, 5],
     ["ref", 200, 5],
+    ["ref&layoutScroll", 200, 5],
 ] as const) {
     test(`issue #2024: constraints=${constraints} scrollTop=${SCROLL} - dragged item follows the pointer`, async ({
         page,
@@ -60,5 +61,60 @@ for (const [constraints, SCROLL, index] of [
             // Item follows the pointer
             expect(Math.abs(dy - 20)).toBeLessThanOrEqual(2)
         }
+    })
+}
+
+/**
+ * After a reorder the item's layout is re-measured with the group scrolled.
+ * Scrolling further and dragging again must still follow the pointer, with
+ * and without layoutScroll on the group.
+ */
+for (const layoutScroll of ["", "&layoutScroll"]) {
+    test(`issue #2024: ref constraints${layoutScroll} - drag again after reordering in a scrolled group`, async ({
+        page,
+    }) => {
+        await page.goto(`?test=issue-2024&constraints=ref${layoutScroll}`)
+        const group = page.locator("#group")
+        await expect(page.locator("#item-5")).toBeVisible()
+        await page.waitForTimeout(200)
+
+        const scrollTo = async (s: number) => {
+            await page.evaluate((s) => {
+                document.getElementById("group")!.scrollTop = s
+            }, s)
+            await page.waitForTimeout(200)
+        }
+
+        const drag = async (index: number, distance: number) => {
+            const item = page.locator(`#item-${index}`)
+            const before = (await item.boundingBox())!
+            const x = before.x + 50
+            const y = before.y + 30
+            await page.mouse.move(x, y)
+            await page.mouse.down()
+            await page.mouse.move(x, y + 5, { steps: 2 })
+            await page.mouse.move(x, y + distance, { steps: 10 })
+            await page.waitForTimeout(100)
+            const during = (await item.boundingBox())!
+            return { dy: during.y - before.y, release: () => page.mouse.up() }
+        }
+
+        await scrollTo(200)
+
+        // Drag item 5 below item 6 and drop it, reordering the list
+        const first = await drag(5, 75)
+        await first.release()
+        await page.waitForTimeout(1000)
+        expect(
+            await group.evaluate((el) =>
+                Array.from(el.children, (child) => child.id).slice(5, 7)
+            )
+        ).toEqual(["item-6", "item-5"])
+
+        await scrollTo(250)
+
+        const second = await drag(5, 20)
+        await second.release()
+        expect(Math.abs(second.dy - 20)).toBeLessThanOrEqual(2)
     })
 }
