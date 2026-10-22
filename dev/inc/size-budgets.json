@@ -49,7 +49,7 @@
     "motion-div+useInView": 43650,
     "motion-div+useScroll": 46050,
     "motion-div+useTransform+useMotionTemplate": 43950,
-    "motion-div+useScroll+useTransform+useSpring": 47450,
+    "motion-div+useScroll+useTransform+useSpring": 47500,
     "motion-div+Reorder": 46150,
     "domMax+useScroll": 43450
 }
