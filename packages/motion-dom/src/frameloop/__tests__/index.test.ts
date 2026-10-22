@@ -81,7 +81,7 @@ describe("frame", () => {
         })
     })
 
-    it("runs a callback scheduled with `true` once if it hasn't run yet in the same step", () => {
+    it("runs a callback scheduled with `true` once, at the end of the step, if it hasn't run yet", () => {
         return new Promise<void>((resolve, reject) => {
             const order: string[] = []
 
@@ -95,7 +95,7 @@ describe("frame", () => {
 
             frame.render(() => {
                 const result = order.join(",")
-                result === "first,a,last" ? resolve() : reject(result)
+                result === "first,last,a" ? resolve() : reject(result)
             })
         })
     })
