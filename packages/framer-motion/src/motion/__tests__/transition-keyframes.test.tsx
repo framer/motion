@@ -1,6 +1,11 @@
 import { checkVariantsDidChange } from "motion-dom"
-import { motion, motionValue } from "../.."
+import { motion, MotionGlobalConfig, motionValue } from "../.."
+import { stepFrames } from "../../gestures/__tests__/utils"
 import { render } from "../../jest.setup"
+
+afterEach(() => {
+    MotionGlobalConfig.useManualTiming = false
+})
 
 describe("keyframes transition", () => {
     test("keyframes as target", async () => {
@@ -113,6 +118,11 @@ describe("keyframes transition", () => {
     })
 
     test("issue #2855: keyframes with shared values across variants rerun on each change", async () => {
+        /**
+         * Step Motion's clock: under load, a 100ms timer can fire before
+         * the jsdom frames that run a 50ms animation.
+         */
+        MotionGlobalConfig.useManualTiming = true
         const z = motionValue(0)
         const updateCounts: number[] = []
 
@@ -131,7 +141,7 @@ describe("keyframes transition", () => {
         const recordAndReset = async () => {
             let count = 0
             const unsubscribe = z.on("change", () => count++)
-            await new Promise((r) => setTimeout(r, 100))
+            await stepFrames(100)
             unsubscribe()
             updateCounts.push(count)
         }
