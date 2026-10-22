@@ -1,5 +1,9 @@
 import { syncDriver } from "../../animation/__tests__/utils"
 import { frame } from "../../frameloop"
+import {
+    stepFrames,
+    withManualFrames,
+} from "../../frameloop/__tests__/utils"
 import { followValue } from "../follow-value"
 import { motionValue } from "../index"
 import { attachSpring, springValue } from "../spring-value"
@@ -361,15 +365,18 @@ describe("attachSpring to a MotionValue source", () => {
     const nextFrame = () =>
         new Promise<void>((resolve) => frame.postRender(() => resolve()))
 
-    test("follows a source that already differs", async () => {
-        const source = motionValue(100)
-        const value = motionValue(0)
-        attachSpring(value, source, { duration: 0.01 } as any)
+    describe("on a manual clock", () => {
+        withManualFrames()
 
-        expect(value.isAnimating()).toBe(true)
-        await new Promise((resolve) => setTimeout(resolve, 200))
-        for (let i = 0; i < 3; i++) await nextFrame()
-        expect(value.get()).toBe(100)
+        test("follows a source that already differs", async () => {
+            const source = motionValue(100)
+            const value = motionValue(0)
+            attachSpring(value, source, { duration: 0.01 } as any)
+
+            expect(value.isAnimating()).toBe(true)
+            await stepFrames(100)
+            expect(value.get()).toBe(100)
+        })
     })
 
     test("doesn't animate when already at the source", () => {

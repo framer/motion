@@ -1,3 +1,4 @@
+import { MotionGlobalConfig } from "motion-utils"
 import { supportsBrowserAnimation } from "../waapi"
 
 // Mock Element.prototype.animate for supportsWaapi()
@@ -45,6 +46,15 @@ function createSVGMockOptions(overrides: Record<string, any> = {}) {
 }
 
 describe("supportsBrowserAnimation", () => {
+    it("returns false on a manual clock, which WAAPI can't follow", () => {
+        MotionGlobalConfig.useManualTiming = true
+        try {
+            expect(supportsBrowserAnimation(createMockOptions())).toBe(false)
+        } finally {
+            MotionGlobalConfig.useManualTiming = false
+        }
+    })
+
     it("returns true for accelerated values like opacity", () => {
         expect(supportsBrowserAnimation(createMockOptions())).toBe(true)
     })

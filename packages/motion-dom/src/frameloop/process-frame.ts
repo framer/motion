@@ -14,7 +14,10 @@ import { time } from "./sync-time"
  * milliseconds.
  *
  * Animations Motion hands to the browser (WAAPI), like `opacity` or
- * `transform` on an HTML or SVG element, follow the browser's clock instead.
+ * `transform` on an HTML or SVG element, follow the browser's clock. With
+ * `useManualTiming` on, Motion runs those in JS instead, except for
+ * `motion/mini`, view transitions and optimized appear animations, and
+ * colours only the browser can mix, like `oklch()`, which jump to their end.
  *
  * Ignored when called inside a frame.
  */
