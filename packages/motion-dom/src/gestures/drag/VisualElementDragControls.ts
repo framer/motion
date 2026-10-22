@@ -38,18 +38,19 @@ import {
 } from "./utils/constraints"
 
 /**
- * The summed scroll of an element's ancestors, other than the document's,
- * which page coordinates already include.
+ * The summed scroll of the element's ancestors that move it relative to its
+ * constraints element: those outside the constraints element, and the
+ * constraints element itself.
  */
-function measureAncestorScroll(element: Element | null): Point {
+function measureScrollWithin(element: Element, constraints: Element): Point {
     const scroll = { x: 0, y: 0 }
-    const root = element!.ownerDocument.scrollingElement
 
-    while ((element = element!.parentElement)) {
-        if (element !== root) {
-            scroll.x += element.scrollLeft
-            scroll.y += element.scrollTop
-        }
+    while (
+        (element = element.parentElement!) &&
+        (element === constraints || !element.contains(constraints))
+    ) {
+        scroll.x += element.scrollLeft
+        scroll.y += element.scrollTop
     }
 
     return scroll
@@ -98,11 +99,12 @@ export class VisualElementDragControls {
     private hasMutatedConstraints = false
 
     /**
-     * The summed scroll of the element's ancestors (other than the
-     * document's) when its layout was measured. The layout doesn't track
-     * this scroll, so ref constraints offset it by how far it has changed.
+     * The scroll (see measureScrollWithin) when ref constraints were last
+     * measured. Scrolling moves the element relative to its constraints
+     * without a layout measurement, so on drag start the constraints are
+     * shifted by how far it has changed rather than re-measured (#2024).
      */
-    private ancestorScroll?: Point
+    private scroll?: Point
 
     /**
      * The per-axis resolved elastic values.
@@ -402,10 +404,24 @@ export class VisualElementDragControls {
         const prevConstraints = this.constraints
 
         if (isElementConstraints(dragConstraints)) {
-            const delta = this.ancestorScrollDelta()
-
-            if (!this.constraints || delta.x || delta.y) {
-                this.constraints = this.resolveRefConstraints(delta)
+            const { constraints, scroll: prevScroll } = this
+            if (constraints && prevScroll) {
+                /**
+                 * Scrolling by delta moved the element by -delta relative
+                 * to its constraints, so shift them by delta.
+                 */
+                const scroll = (this.scroll = measureScrollWithin(
+                    this.visualElement.current!,
+                    resolveConstraintsElement(dragConstraints)!
+                ))
+                eachAxis((axis) =>
+                    translateAxis(
+                        constraints[axis] as Axis,
+                        scroll[axis] - prevScroll[axis]
+                    )
+                )
+            } else {
+                this.constraints = this.resolveRefConstraints()
             }
         } else {
             if (dragConstraints && layout) {
@@ -447,17 +463,7 @@ export class VisualElementDragControls {
         }
     }
 
-    /**
-     * How far the element's ancestors have scrolled since its layout was
-     * measured, moving it by the inverse.
-     */
-    private ancestorScrollDelta(): Point {
-        const scroll = measureAncestorScroll(this.visualElement.current!)
-        const from = (this.ancestorScroll ||= scroll)
-        return { x: scroll.x - from.x, y: scroll.y - from.y }
-    }
-
-    private resolveRefConstraints(scrollDelta = this.ancestorScrollDelta()) {
+    private resolveRefConstraints() {
         const { dragConstraints: constraints, onMeasureDragConstraints } =
             this.getProps()
         if (!isElementConstraints(constraints)) return false
@@ -496,17 +502,16 @@ export class VisualElementDragControls {
             this.visualElement.getTransformPagePoint()
         )
 
-        /**
-         * The layout's measuredBox is where the element was on the page
-         * when measured (layoutBox also removes `layoutScroll` ancestors'
-         * scroll). Ancestor scroll has since moved it by -scrollDelta, so
-         * shift the constraints box by scrollDelta to compare the two as
-         * they are now (#2024).
-         */
-        eachAxis((axis) =>
-            translateAxis(constraintsBox[axis], scrollDelta[axis])
+        this.scroll = measureScrollWithin(
+            this.visualElement.current!,
+            constraintsElement!
         )
 
+        /**
+         * Measure from the layout's measuredBox, which like constraintsBox
+         * is where it is on the page (layoutBox removes the scroll of
+         * `layoutScroll` ancestors).
+         */
         let measuredConstraints = calcViewportConstraints(
             projection.layout.measuredBox,
             constraintsBox
@@ -788,11 +793,6 @@ export class VisualElementDragControls {
                 resolveConstraintsElement(dragConstraints)
 
             if (constraintsElement) {
-                /**
-                 * The layout was just measured, so measure ancestor
-                 * scroll afresh.
-                 */
-                this.ancestorScroll = undefined
                 this.constraints = this.resolveRefConstraints()
 
                 if (!stopResizeObservers) {
