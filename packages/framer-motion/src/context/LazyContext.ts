@@ -8,4 +8,6 @@ export interface LazyContextProps {
     strict: boolean
 }
 
-export const LazyContext = createContext<LazyContextProps>({ strict: false })
+export const LazyContext = /* @__PURE__ */ createContext<LazyContextProps>({
+    strict: false,
+})

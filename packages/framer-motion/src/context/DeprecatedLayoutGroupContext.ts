@@ -7,4 +7,6 @@ import { createContext } from "react"
  *
  * @deprecated
  */
-export const DeprecatedLayoutGroupContext = createContext<string | null>(null)
+export const DeprecatedLayoutGroupContext = /* @__PURE__ */ createContext<
+    string | null
+>(null)
