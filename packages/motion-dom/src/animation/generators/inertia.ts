@@ -36,7 +36,7 @@ export function inertia({
 
     let amplitude = power * velocity
     const ideal = origin + amplitude
-    const target = modifyTarget === undefined ? ideal : modifyTarget(ideal)
+    const target = modifyTarget ? modifyTarget(ideal) : ideal
 
     /**
      * If the target has changed we need to re-calculate the amplitude, otherwise
@@ -49,7 +49,8 @@ export function inertia({
     const applyFriction = (t: number) => {
         const delta = calcDelta(t)
         state.done = Math.abs(delta) <= restDelta
-        state.value = state.done ? target : target + delta
+        // target + delta can be off from origin by a float error at t = 0
+        state.value = state.done ? target : t ? target + delta : origin
     }
 
     /**

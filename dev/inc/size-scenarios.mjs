@@ -71,6 +71,7 @@ export const scenarios = {
     MotionConfig: `export { MotionConfig } from "motion/react"`,
     LayoutGroup: `export { LayoutGroup } from "motion/react"`,
     Reorder: `export { Reorder } from "motion/react"`,
+    "Reorder(m)+LazyMotion": `export { Reorder } from "motion/react-m"; export { m, LazyMotion } from "motion/react"`,
 
     // React hooks
     useMotionValue: `export { useMotionValue } from "motion/react"`,
@@ -123,6 +124,11 @@ export const canaries = [
         scenarios: ["m-div"],
         forbid: "boxShadow",
         why: "Default scale correctors are bundled into m (plan 037)",
+    },
+    {
+        scenarios: ["Reorder(m)+LazyMotion"],
+        forbid: "dragMomentum",
+        why: "Reorder from motion/react-m bundles the drag feature instead of getting it from LazyMotion (#2232)",
     },
     {
         scenarios: ["mini-animate"],
