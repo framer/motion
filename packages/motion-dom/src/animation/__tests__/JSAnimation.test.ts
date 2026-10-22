@@ -486,6 +486,50 @@ describe("JSAnimation", () => {
         })
     })
 
+    /**
+     * https://github.com/motiondivision/motion/issues/1207
+     *
+     * These springs take longer to settle than maxGeneratorDuration (20s),
+     * so their duration can't be calculated. They should still play out
+     * smoothly and complete once the spring itself comes to rest.
+     */
+    test.each([
+        // Underdamped, decaying at 0.1/s
+        { stiffness: 1, damping: 0.2 },
+        // Overdamped, its slow mode decaying at 0.115/s
+        { stiffness: 4, damping: 35, mass: 0.5 },
+    ])(
+        "Completes a spring that settles after maxGeneratorDuration %o",
+        async (physics) => {
+            const output: number[] = []
+            let completedAt = 0
+
+            await new Promise<void>((resolve) => {
+                animateValue({
+                    ...physics,
+                    keyframes: [0, 1000],
+                    type: "spring",
+                    driver: syncDriver(50, 120000),
+                    onUpdate: (v) => output.push(v),
+                    onComplete: () => {
+                        completedAt = output.length * 50
+                        resolve()
+                    },
+                })
+                setTimeout(resolve, 0)
+            })
+
+            expect(completedAt).toBeGreaterThan(20000)
+            expect(completedAt).toBeLessThan(120000)
+            expect(output[output.length - 1]).toBe(1000)
+
+            // No frame jumps more than the spring's own peak speed allows
+            for (let i = 1; i < output.length; i++) {
+                expect(Math.abs(output[i] - output[i - 1])).toBeLessThan(100)
+            }
+        }
+    )
+
     test("Runs spring animations on strings", async () => {
         return new Promise<void>((resolve) => {
             const output: string[] = []

@@ -258,7 +258,11 @@ export class JSAnimation<T extends number | string>
 
         let { done } = state
 
-        if (!isInDelayPhase && calculatedDuration !== null) {
+        /**
+         * A generator that takes longer than maxGeneratorDuration to finish
+         * has an Infinity duration, so it finishes when it says it's done.
+         */
+        if (!isInDelayPhase && calculatedDuration < Infinity) {
             done =
                 this.playbackSpeed >= 0
                     ? this.currentTime >= totalDuration

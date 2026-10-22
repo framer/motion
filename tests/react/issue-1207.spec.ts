@@ -51,4 +51,11 @@ test("slow overdamped spring layout animation is not cut off", async ({
 
     // At ~10s the physical spring is still only ~2/3 of the way there
     expect(progressAt(10000)).toBeLessThan(0.8)
+
+    // It never jumps: its peak speed is ~1px per frame
+    let maxStep = 0
+    for (let i = 1; i < samples.length; i++) {
+        maxStep = Math.max(maxStep, samples[i][1] - samples[i - 1][1])
+    }
+    expect(maxStep).toBeLessThan(10)
 })
