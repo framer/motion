@@ -12,13 +12,22 @@ export function calcNextTime(
 ): number {
     if (typeof next === "number") {
         return next
-    } else if (next.startsWith("-") || next.startsWith("+")) {
-        return Math.max(0, current + parseFloat(next))
     } else if (next === "<") {
         return prev
     } else if (next.startsWith("<")) {
         return Math.max(0, prev + parseFloat(next.slice(1)))
-    } else {
-        return labels.get(next) ?? current
     }
+
+    /**
+     * Times relative to the current time ("+1", "-1") or to a label
+     * ("my label+1", "my label-1"). Exact label names take precedence.
+     */
+    const offset = !labels.has(next) && next.match(/^(.*?)([+-][\d.]+)$/)
+
+    return offset
+        ? Math.max(
+              0,
+              (labels.get(offset[1]) ?? current) + parseFloat(offset[2])
+          )
+        : labels.get(next) ?? current
 }

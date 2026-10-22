@@ -48,6 +48,6 @@ describe("calcNextTime", () => {
         expect(calcNextTime(5, "step-1-1", 100, labels)).toBe(3)
 
         // Unknown labels resolve to the current time
-        expect(calcNextTime(5, "bar+1", 100, labels)).toBe(5)
+        expect(calcNextTime(5, "bar+1", 100, labels)).toBe(6)
     })
 })
