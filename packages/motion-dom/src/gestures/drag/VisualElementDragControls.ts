@@ -13,7 +13,10 @@ import {
 } from "../../projection/geometry/conversion"
 import { calcLength } from "../../projection/geometry/delta-calc"
 import { createBox } from "../../projection/geometry/models"
-import type { LayoutUpdateData } from "../../projection/node/types"
+import type {
+    IProjectionNode,
+    LayoutUpdateData,
+} from "../../projection/node/types"
 import { eachAxis } from "../../projection/utils/each-axis"
 import { measurePageBox } from "../../projection/utils/measure"
 import type { VisualElement } from "../../render/VisualElement"
@@ -35,6 +38,29 @@ import {
     rebaseAxisConstraints,
     resolveDragElastic,
 } from "./utils/constraints"
+
+/**
+ * Re-read the scroll of the projection's ancestors, and return that of the
+ * `layoutScroll` ones as a key that changes when any of them scroll.
+ *
+ * Clear the cached scroll first so `updateScroll` bypasses its
+ * per-animationId cache and re-reads the live value.
+ */
+function measureScroll(projection: IProjectionNode) {
+    let key = ""
+
+    for (const node of projection.path) {
+        node.scroll = undefined
+        node.updateScroll()
+
+        const { scroll } = node as IProjectionNode
+        if (node !== projection.root && scroll) {
+            key += scroll.offset.x + "," + scroll.offset.y + ","
+        }
+    }
+
+    return key
+}
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -77,6 +103,12 @@ export class VisualElementDragControls {
     private constraints: ResolvedConstraints | false = false
 
     private hasMutatedConstraints = false
+
+    /**
+     * The `layoutScroll` ancestors' scroll (see measureScroll) when ref
+     * constraints were last measured.
+     */
+    private scroll?: string
 
     /**
      * The per-axis resolved elastic values.
@@ -377,10 +409,18 @@ export class VisualElementDragControls {
 
         if (isElementConstraints(dragConstraints)) {
             /**
-             * Re-resolve, as scroll can have moved the element relative to
-             * its constraints since they were measured (#2024).
+             * Ref constraints are measured with the layout. Scrolling a
+             * `layoutScroll` ancestor since can move the element relative
+             * to them without a layout measurement, so measure them again
+             * (#2024). Otherwise keep them: they and the layout can both
+             * have moved on the page since, e.g. when content above grows.
              */
-            this.constraints = this.resolveRefConstraints()
+            if (
+                !this.constraints ||
+                this.scroll !== measureScroll(this.visualElement.projection!)
+            ) {
+                this.constraints = this.resolveRefConstraints()
+            }
         } else {
             if (dragConstraints && layout) {
                 this.constraints = calcRelativeConstraints(
@@ -444,17 +484,10 @@ export class VisualElementDragControls {
          * ancestors so the constraint's viewport box translates to the
          * layout's coordinates. The scroll captured when the layout was
          * measured can be stale if they've scrolled since — e.g. via the
-         * browser restoring scroll on refresh, an ancestor layout effect
-         * running after this element's mount (#2829), or scrolling a
-         * `layoutScroll` container before dragging (#2024).
-         *
-         * Clear the cached scroll first so `updateScroll` bypasses its
-         * per-animationId cache and re-reads the live value.
+         * browser restoring scroll on refresh, or an ancestor layout effect
+         * running after this element's mount (#2829).
          */
-        for (const node of projection.path) {
-            node.scroll = undefined
-            node.updateScroll()
-        }
+        this.scroll = measureScroll(projection)
 
         const constraintsBox = measurePageBox(
             constraintsElement as HTMLElement,
