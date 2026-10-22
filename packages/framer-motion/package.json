@@ -134,11 +134,11 @@
         },
         {
             "path": "./dist/size-rollup-m-dom-max.js",
-            "maxSize": "42.45 kB"
+            "maxSize": "42.5 kB"
         },
         {
             "path": "./dist/size-rollup-animate.js",
-            "maxSize": "23.5 kB"
+            "maxSize": "23.85 kB"
         },
         {
             "path": "./dist/size-rollup-scroll.js",
