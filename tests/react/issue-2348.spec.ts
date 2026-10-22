@@ -74,6 +74,11 @@ for (const [name, query] of [
     ],
     ["fixed, transform-centred container", "&fixed&anchor=center"],
     ["static container, anchorY: bottom", "&anchorY=bottom"],
+    /**
+     * The list's offsets are in its local, scaled, coordinate space, so a
+     * move measured on screen must be scaled into it.
+     */
+    ["bottom-anchored container in a scale(0.5) ancestor", "&fixed&anchor=bottom&scale"],
 ]) {
     test(`popLayout exiting item shrinks towards its centre (${name})`, async ({
         page,
@@ -156,3 +161,29 @@ for (const [name, query] of [
         expect(Math.abs((await readOffset()) - before)).toBeLessThan(1)
     })
 }
+
+/**
+ * A fixed container doesn't scroll with the page, so the page's scroll
+ * position being clamped, here because removing the item also shrinks the
+ * page, mustn't be mistaken for the container moving.
+ */
+test("popLayout exiting item in a fixed container stays put when the page's scroll position is clamped", async ({
+    page,
+}) => {
+    await setup(page, "&fixed&anchor=bottom&scroll&mirror")
+
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+    const scrollBefore = await page.evaluate(() => window.scrollY)
+    const before = await readCentre(page, "item-1")
+
+    await page.evaluate(() => document.getElementById("item-1")!.click())
+    await expect(page.locator("#item-1")).toHaveAttribute("data-motion-pop-id")
+    await page.clock.runFor(100)
+
+    expect(await page.evaluate(() => window.scrollY)).toBeLessThan(
+        scrollBefore - 50
+    )
+    const after = await readCentre(page, "item-1")
+    expect(Math.abs(after.x - before.x)).toBeLessThan(1)
+    expect(Math.abs(after.y - before.y)).toBeLessThan(1)
+})

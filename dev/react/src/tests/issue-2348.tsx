@@ -14,7 +14,11 @@ import { useRef, useState } from "react"
  * with a percentage transform. The `?fixed` and `?popLayout` params preset
  * the checkboxes. `?scroll` puts a tall spacer above the list, so removing
  * an item from the bottom of a scrolled page shrinks the document.
- * `?scroller` does the same inside a scrollable element.
+ * `?scroller` does the same inside a scrollable element. `?mirror` lists the
+ * items in the page as well, so on a scrolled page, removing one also
+ * shrinks the document and clamps its scroll, whatever the list's position.
+ * `?scale` renders everything inside a `scale(0.5)` wrapper (which is also
+ * the containing block of the "fixed" list).
  */
 const params = new URLSearchParams(
     typeof window !== "undefined" ? window.location.search : ""
@@ -48,7 +52,19 @@ export const App = () => {
     const [isFixed, setIsFixed] = useState(params.has("fixed"))
 
     return (
-        <div className="example">
+        <div
+            className="example"
+            style={
+                params.has("scale")
+                    ? {
+                          position: "relative",
+                          height: 1200,
+                          transform: "scale(0.5)",
+                          transformOrigin: "0 0",
+                      }
+                    : undefined
+            }
+        >
             <style>{`
                 .example ul {
                     display: flex;
@@ -118,6 +134,8 @@ export const App = () => {
                 {(params.has("scroll") || params.has("scroller")) && (
                     <div style={{ height: 2000 }} />
                 )}
+                {params.has("mirror") &&
+                    items.map((id) => <div key={id} style={{ height: 70 }} />)}
                 <ul className={isFixed ? "fixed" : ""}>
                     <AnimatePresence
                         mode={popLayout ? "popLayout" : "sync"}
