@@ -17,7 +17,8 @@ export function createRenderStep(runNextFrame: () => void): Step {
     let flushNextFrame = false
 
     /**
-     * The callback currently running, so it can't re-queue itself.
+     * The callback currently running. If it schedules itself with `immediate`
+     * it's left in place, so as before it doesn't run again this step.
      */
     let running: Process | undefined
 
