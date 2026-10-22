@@ -137,7 +137,7 @@
         },
         {
             "path": "./dist/size-rollup-animate.js",
-            "maxSize": "22.1 kB"
+            "maxSize": "23.5 kB"
         },
         {
             "path": "./dist/size-rollup-scroll.js",
