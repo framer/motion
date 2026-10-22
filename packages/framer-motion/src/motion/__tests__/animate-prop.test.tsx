@@ -8,7 +8,7 @@ import {
     useMotionValue,
     useMotionValueEvent,
 } from "../../"
-import { nextFrame } from "../../gestures/__tests__/utils"
+import { nextFrame, stepFrames } from "../../gestures/__tests__/utils"
 import { render } from "../../jest.setup"
 import { act } from "react"
 
@@ -18,6 +18,10 @@ import { act } from "react"
  */
 const countChangeSubscribers = (value: any) =>
     (value.changeSubscriber ? 1 : 0) + (value.events.change?.getSize() ?? 0)
+
+afterEach(() => {
+    MotionGlobalConfig.useManualTiming = false
+})
 
 describe("animate prop as object", () => {
     test("animates to set prop", async () => {
@@ -286,32 +290,32 @@ describe("animate prop as object", () => {
     })
 
     test("animate display block => none switches to none on animation end", async () => {
-        const promise = new Promise((resolve) => {
-            let hasChecked = false
-            const Component = () => {
-                const display = useMotionValue("block")
+        /**
+         * Step Motion's clock: a jsdom frame landing more than 100ms after
+         * the animation starts would make the first update its last.
+         */
+        MotionGlobalConfig.useManualTiming = true
+        const display = motionValue("block")
+        const updates: unknown[] = []
+        const atComplete: unknown[][] = []
 
-                return (
-                    <motion.div
-                        initial={{ display: "block", opacity: 1 }}
-                        animate={{ display: "none", opacity: 0 }}
-                        style={{ display }}
-                        transition={{ duration: 0.1 }}
-                        onUpdate={(latest) => {
-                            if (!hasChecked) {
-                                expect(latest.display).toBe("block")
-                                hasChecked = true
-                            }
-                        }}
-                        onAnimationComplete={() => {
-                            resolve([hasChecked, display.get()])
-                        }}
-                    />
-                )
-            }
-            render(<Component />)
-        })
-        return expect(promise).resolves.toEqual([true, "none"])
+        render(
+            <motion.div
+                initial={{ display: "block", opacity: 1 }}
+                animate={{ display: "none", opacity: 0 }}
+                style={{ display }}
+                transition={{ duration: 0.1 }}
+                onUpdate={(latest) => updates.push(latest.display)}
+                onAnimationComplete={() =>
+                    atComplete.push([updates.length > 0, display.get()])
+                }
+            />
+        )
+
+        await stepFrames(200)
+
+        expect(updates[0]).toBe("block")
+        expect(atComplete).toEqual([[true, "none"]])
     })
 
     test("animate visibility hidden => visible immediately switches to visible", async () => {
@@ -345,33 +349,34 @@ describe("animate prop as object", () => {
     })
 
     test("animate visibility visible => hidden switches to hidden on animation end", async () => {
-        const promise = new Promise((resolve) => {
-            const Component = () => {
-                const visibility = useMotionValue("hidden")
-                let hasChecked = false
+        /**
+         * Step Motion's clock: a jsdom frame landing more than 100ms after
+         * the animation starts would make the first update its last.
+         */
+        MotionGlobalConfig.useManualTiming = true
+        const visibility = motionValue("hidden")
+        const updates: unknown[] = []
+        const atComplete: unknown[][] = []
 
-                return (
-                    <motion.div
-                        initial={{ visibility: "visible", opacity: 1 }}
-                        animate={{ visibility: "hidden", opacity: 0 }}
-                        style={{ visibility }}
-                        transition={{ duration: 0.1 }}
-                        onUpdate={(latest) => {
-                            if (!hasChecked) {
-                                expect(latest.visibility).toBe("visible")
-                                hasChecked = true
-                            }
-                        }}
-                        onAnimationComplete={() => {
-                            resolve([hasChecked, visibility.get()])
-                        }}
-                    />
-                )
-            }
-            const { rerender } = render(<Component />)
-            rerender(<Component />)
-        })
-        return expect(promise).resolves.toEqual([true, "hidden"])
+        const Component = () => (
+            <motion.div
+                initial={{ visibility: "visible", opacity: 1 }}
+                animate={{ visibility: "hidden", opacity: 0 }}
+                style={{ visibility }}
+                transition={{ duration: 0.1 }}
+                onUpdate={(latest) => updates.push(latest.visibility)}
+                onAnimationComplete={() =>
+                    atComplete.push([updates.length > 0, visibility.get()])
+                }
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        await stepFrames(200)
+
+        expect(updates[0]).toBe("visible")
+        expect(atComplete).toEqual([[true, "hidden"]])
     })
 
     test("keyframes - accepts ease as an array", async () => {
@@ -727,30 +732,29 @@ describe("animate prop as object", () => {
     })
 
     test("respects repeatDelay prop", async () => {
-        const promise = new Promise<number>((resolve) => {
-            const x = motionValue(0)
-            x.on("change", () => {
-                setTimeout(() => resolve(x.get()), 50)
-            })
-            const Component = () => (
-                <motion.div
-                    animate={{ x: [0, 20] }}
-                    transition={{
-                        x: {
-                            type: "tween",
-                            duration: 0,
-                            repeatDelay: 0.1,
-                            repeat: 1,
-                            repeatType: "reverse",
-                        },
-                    }}
-                    style={{ x }}
-                />
-            )
-            const { rerender } = render(<Component />)
-            rerender(<Component />)
-        })
-        return expect(promise).resolves.toBe(20)
+        MotionGlobalConfig.useManualTiming = true
+        const x = motionValue(0)
+        const Component = () => (
+            <motion.div
+                animate={{ x: [0, 20] }}
+                transition={{
+                    x: {
+                        type: "tween",
+                        duration: 0,
+                        repeatDelay: 0.1,
+                        repeat: 1,
+                        repeatType: "reverse",
+                    },
+                }}
+                style={{ x }}
+            />
+        )
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+
+        // 50ms in, x has jumped to 20 and is inside the 100ms repeat delay
+        await stepFrames(50)
+        expect(x.get()).toBe(20)
     })
 
     test("Correctly applies final keyframe with repeatType reverse and odd numbered repeat", async () => {
@@ -1139,27 +1143,25 @@ describe("animate prop as object", () => {
         expect([x.get(), y.get(), z.get()]).toEqual([10, 20, 20])
     })
     test("unmount cancels active animations", async () => {
-        const promise = new Promise((resolve) => {
-            const onComplete = jest.fn()
-            const Component = ({ isVisible }: any) =>
-                isVisible && (
-                    <motion.div
-                        animate={{ x: 20 }}
-                        transition={{ duration: 0.2 }}
-                        onAnimationComplete={() => onComplete()}
-                    />
-                )
-            const { rerender } = render(<Component isVisible />)
-            rerender(<Component isVisible />)
-            setTimeout(() => {
-                rerender(<Component isVisible={false} />)
-                rerender(<Component isVisible={false} />)
-            }, 100)
-            setTimeout(() => {
-                resolve(onComplete)
-            }, 300)
-        })
-        return expect(promise).resolves.not.toBeCalled()
+        MotionGlobalConfig.useManualTiming = true
+        const onComplete = jest.fn()
+        const Component = ({ isVisible }: any) =>
+            isVisible && (
+                <motion.div
+                    animate={{ x: 20 }}
+                    transition={{ duration: 0.2 }}
+                    onAnimationComplete={() => onComplete()}
+                />
+            )
+        const { rerender } = render(<Component isVisible />)
+        rerender(<Component isVisible />)
+
+        await stepFrames(100)
+        rerender(<Component isVisible={false} />)
+        rerender(<Component isVisible={false} />)
+
+        await stepFrames(200)
+        expect(onComplete).not.toBeCalled()
     })
 
     test("animate prop accepts pathOffset", () => {
