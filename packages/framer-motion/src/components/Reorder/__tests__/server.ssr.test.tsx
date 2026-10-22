@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { renderToStaticMarkup, renderToString } from "react-dom/server"
 import { Reorder } from ".."
+import { domMax, LazyMotion } from "../../.."
+import { Reorder as MReorder } from "../../../m"
 
 describe("Reorder", () => {
     it("Correctly renders HTML", () => {
@@ -17,6 +19,21 @@ describe("Reorder", () => {
 
         expect(staticMarkup).toBe(expectedMarkup)
         expect(string).toBe(expectedMarkup)
+    })
+
+    it("Renders the same HTML from the m entry within LazyMotion", () => {
+        const Component = () => (
+            <LazyMotion features={domMax} strict>
+                <MReorder.Group as="article" onReorder={() => {}} values={[]}>
+                    <MReorder.Item as="main" value={0} />
+                </MReorder.Group>
+            </LazyMotion>
+        )
+
+        const expectedMarkup = `<article style="overflow-anchor:none"><main tabindex="0" draggable="false" style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x"></main></article>`
+
+        expect(renderToStaticMarkup(<Component />)).toBe(expectedMarkup)
+        expect(renderToString(<Component />)).toBe(expectedMarkup)
     })
 
     it("onReorder is typed correctly", () => {
