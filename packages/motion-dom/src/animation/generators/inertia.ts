@@ -49,7 +49,8 @@ export function inertia({
     const applyFriction = (t: number) => {
         const delta = calcDelta(t)
         state.done = Math.abs(delta) <= restDelta
-        state.value = state.done ? target : target + delta
+        // target + delta can be off from origin by a float error at t = 0
+        state.value = state.done ? target : t ? target + delta : origin
     }
 
     /**
