@@ -64,31 +64,64 @@ test("card closed from onDrag animates back to its slot while the pointer is dow
     const { x, y } = await openAndGrab(page, 1)
     const card = page.locator("#card-1")
 
+    /**
+     * Record the card and its child every frame from the one it closes on,
+     * in the page, so assertions don't depend on when Playwright's round
+     * trips happen to sample the animation.
+     */
+    await page.evaluate(() => {
+        const frames: DOMRect[][] = ((window as any).closeFrames = [])
+        const record = () => {
+            const card = document.querySelector("#card-1")!
+            if (card.getAttribute("data-selected") === "false") {
+                frames.push([
+                    card.getBoundingClientRect(),
+                    document.querySelector("#child-1")!.getBoundingClientRect(),
+                ])
+            }
+            requestAnimationFrame(record)
+        }
+        requestAnimationFrame(record)
+    })
+
     let i = 0
     while ((await card.getAttribute("data-selected")) === "true") {
         expect(++i).toBeLessThan(30)
         await page.mouse.move(x, y + i * 10)
     }
 
-    /**
-     * The card should layout animate from its open size rather than jump
-     * straight to its slot's size.
-     */
-    const slot = await getBox(page, "#slot-1")
-    const box = await getBox(page, "#card-1")
-    expect(Math.abs(box.width - slot.width)).toBeGreaterThan(40)
-
-    /**
-     * Its layout child animates with it, rather than jumping ahead with
-     * its new layout as it would if the card were still being dragged.
-     */
-    const child = await getBox(page, "#child-1")
-    expect(Math.abs(child.x - box.x)).toBeLessThan(20)
-    expect(Math.abs(child.y - box.y)).toBeLessThan(20)
-
     // It returns to its slot without the pointer being released...
     await page.mouse.move(x, y + 300, { steps: 5 })
     await expectBoxToSettle(page, 1)
+
+    const [maxWidth, maxChildOffset] = await page.evaluate(() => {
+        const frames: DOMRect[][] = (window as any).closeFrames
+        let maxWidth = 0
+        let maxOffset = 0
+        for (const [card, child] of frames) {
+            maxWidth = Math.max(maxWidth, card.width)
+            maxOffset = Math.max(
+                maxOffset,
+                Math.abs(child.x - card.x),
+                Math.abs(child.y - card.y)
+            )
+        }
+        return [maxWidth, maxOffset]
+    })
+
+    /**
+     * The card should layout animate from its open size (640px) rather than
+     * jump straight to its slot's (600px), so it starts out at its open size.
+     */
+    expect(maxWidth).toBeGreaterThan(620)
+
+    /**
+     * Its layout child animates with it, rather than jumping ahead with
+     * its new layout (320px left and 144px down of the open card) as it would
+     * if the card were still being dragged. The child's own layout animation
+     * moves it up to ~60px from the card's corner.
+     */
+    expect(maxChildOffset).toBeLessThan(100)
 
     // ...and stays there once it is.
     await page.mouse.up()
