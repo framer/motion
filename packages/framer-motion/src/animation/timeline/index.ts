@@ -10,6 +10,7 @@ import {
 } from "motion-dom"
 import { removeItem } from "motion-utils"
 import { animateSequence } from "../animate/sequence"
+import { calcLabelTime } from "../sequence/utils/calc-time"
 import {
     AnimationSequence,
     Segment,
@@ -35,6 +36,20 @@ export interface TimelineOptions extends SequenceOptions {
      * down. Pass the scope from useAnimate() in React.
      */
     scope?: AnimationScope
+    /**
+     * Called every frame while the playhead moves, with its time in
+     * seconds within the current repeat.
+     */
+    onUpdate?: (time: number) => void
+    /**
+     * Called each time the timeline starts a repeat.
+     */
+    onRepeat?: () => void
+    /**
+     * Called instead of `onComplete` when the timeline finishes
+     * playing backwards, at its start.
+     */
+    onReverseComplete?: () => void
 }
 
 interface Marker {
@@ -97,6 +112,13 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
      * playTo(). Only created when one of those needs it.
      */
     private clock?: MotionValue<number>
+
+    private clockAnimation?: AnimationPlaybackControls
+
+    /**
+     * The repeat the playhead is in, to detect when it starts another.
+     */
+    private repeatIndex = 0
 
     private prevTime = 0
 
@@ -281,6 +303,7 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
         this.flush()
         this.prevTime = time
         this.group && (this.group.time = time)
+        this.repeatIndex = this.currentRepeat()
     }
 
     get speed() {
@@ -432,8 +455,16 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
             this.isRebuilding = false
         }
 
-        const { defaultTransition, onComplete, autoplay, scope, ...options } =
-            this.options
+        const {
+            defaultTransition,
+            onComplete,
+            onUpdate,
+            onRepeat,
+            onReverseComplete,
+            autoplay,
+            scope,
+            ...options
+        } = this.options
 
         /**
          * Inherit MotionConfig settings from a useAnimate() scope.
@@ -484,16 +515,25 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
          * Callbacks, pauses and playTo() watch a linear clock. Without
          * them, the timeline is only its animations.
          */
-        this.clock = undefined
-        if (this.markers.length || this.stopAt !== undefined) {
+        this.clock = this.clockAnimation = undefined
+        if (
+            this.markers.length ||
+            this.stopAt !== undefined ||
+            onUpdate ||
+            onRepeat
+        ) {
             const clock = (this.clock = motionValue(0))
             clock.on("change", (t) => clock === this.clock && this.onClock(t))
             animations.unshift(
-                animateSingleValue(clock, [0, duration], {
-                    ...playback,
-                    duration,
-                    ease: "linear",
-                })
+                (this.clockAnimation = animateSingleValue(
+                    clock,
+                    [0, duration],
+                    {
+                        ...playback,
+                        duration,
+                        ease: "linear",
+                    }
+                ))
             )
         }
 
@@ -509,6 +549,7 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
             if (this.isPaused) group.pause()
             if (time) group.time = time
         }
+        this.repeatIndex = this.currentRepeat()
         /**
          * Treat a start from 0 as coming from just before it, so markers
          * at 0 fire.
@@ -536,19 +577,64 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
     }
 
     private resolve(position: SequenceTime) {
+        this.flush()
         return typeof position === "number"
             ? position
-            : this.getLabelTime(position) ?? this.time
+            : calcLabelTime(position, this.labels) ?? this.time
+    }
+
+    /**
+     * The repeat the clock is in, from its time across all repeats.
+     */
+    private currentRepeat() {
+        const { repeat = 0, repeatDelay = 0, delay = 0 } = this.options
+        const cycle = this.totalDuration + repeatDelay
+        const time = (this.clockAnimation?.time ?? 0) - delay
+        return cycle && time > 0
+            ? Math.min(repeat, Math.floor(time / cycle))
+            : 0
     }
 
     private onClock(time: number) {
-        const prevTime = this.prevTime
+        let prevTime = this.prevTime
         this.prevTime = time
-        if (this.isRebuilding || time === prevTime) return
+        if (this.isRebuilding) return
 
-        const isForward = time > prevTime
+        const { onUpdate, onRepeat, repeatType = "loop" } = this.options
+        onUpdate?.(time)
+
+        const repeatIndex = this.currentRepeat()
+        if (repeatIndex !== this.repeatIndex) {
+            this.repeatIndex = repeatIndex
+            onRepeat?.()
+
+            /**
+             * A loop jumps the playhead back to the start, or to the
+             * end when playing backwards. Finish crossing the repeat
+             * that ended, then cross the new one from its edge.
+             */
+            if (repeatType === "loop") {
+                const isForward = this.speed > 0
+                if (this.cross(prevTime, isForward ? this.totalDuration : 0)) {
+                    return
+                }
+                prevTime = isForward ? -1 : Infinity
+            }
+        }
+
+        this.cross(prevTime, time)
+    }
+
+    /**
+     * Fire markers between two playhead times. Returns `true` if it
+     * paused.
+     */
+    private cross(from: number, to: number) {
+        if (from === to) return
+
+        const isForward = to > from
         const crossed = (t: number) =>
-            isForward ? t > prevTime && t <= time : t < prevTime && t >= time
+            isForward ? t > from && t <= to : t < from && t >= to
 
         const markers = isForward ? this.markers : [...this.markers].reverse()
         for (const marker of markers) {
@@ -560,12 +646,14 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
         if (this.stopAt !== undefined && crossed(this.stopAt)) {
             this.pauseAt(this.stopAt)
             this.stopAt = undefined
+            return true
         }
     }
 
     private pauseAt(time: number) {
         this.pause()
         this.time = time
+        return true
     }
 
     private watch() {
@@ -573,7 +661,9 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
         group.finished.then(() => {
             if (group !== this.group || this.isDone) return
             this.isDone = true
-            this.options.onComplete?.()
+            const { onComplete, onReverseComplete } = this.options
+            const callback = this.speed < 0 ? onReverseComplete : onComplete
+            callback?.()
             this.resolveFinished()
         })
     }

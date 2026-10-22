@@ -198,6 +198,84 @@ describe("timeline", () => {
         expect(parent.duration).toBe(3.5)
     })
 
+    test("segments and the playhead can be offset from a label", async () => {
+        const v = motionValue(0)
+        const tl = timeline(
+            [[v, 100, { duration: 1 }], "middle", [v, 200, { duration: 1 }]],
+            paused
+        )
+
+        tl.add([v, 300, { duration: 1 }], "middle+2")
+        expect(tl.duration).toBe(4)
+
+        tl.seek("middle+0.5")
+        await nextFrame()
+        expect(v.get()).toBe(150)
+    })
+
+    test("onUpdate receives the playhead", async () => {
+        const v = motionValue(0)
+        const onUpdate = jest.fn()
+        const tl = timeline([[v, 100, { duration: 0.1 }]], {
+            ...linear,
+            onUpdate,
+        })
+
+        await tl
+        expect(onUpdate.mock.calls.length).toBeGreaterThan(1)
+        expect(onUpdate).toHaveBeenLastCalledWith(0.1)
+    })
+
+    test("onRepeat fires each time the timeline repeats", async () => {
+        const v = motionValue(0)
+        const onRepeat = jest.fn()
+        const onComplete = jest.fn()
+        const tl = timeline([[v, 100, { duration: 0.05 }]], {
+            ...linear,
+            repeat: 2,
+            onRepeat,
+            onComplete,
+        })
+
+        await tl
+        expect(onRepeat).toHaveBeenCalledTimes(2)
+        expect(onComplete).toHaveBeenCalledTimes(1)
+    })
+
+    test("callbacks fire on every repeat", async () => {
+        const v = motionValue(0)
+        const callback = jest.fn()
+        const tl = timeline([[v, 100, { duration: 0.1 }]], {
+            ...linear,
+            repeat: 2,
+        })
+
+        tl.call(callback, 0.05)
+        await tl
+        expect(callback).toHaveBeenCalledTimes(3)
+        expect(callback.mock.calls).toEqual([[1], [1], [1]])
+    })
+
+    test("onReverseComplete fires instead of onComplete at the start", async () => {
+        const v = motionValue(0)
+        const onComplete = jest.fn()
+        const onReverseComplete = jest.fn()
+        const tl = timeline([[v, 100, { duration: 0.05 }]], {
+            ...linear,
+            onComplete,
+            onReverseComplete,
+        })
+
+        await tl
+        expect(onComplete).toHaveBeenCalledTimes(1)
+
+        tl.reverse()
+        await tl
+        expect(onComplete).toHaveBeenCalledTimes(1)
+        expect(onReverseComplete).toHaveBeenCalledTimes(1)
+        expect(v.get()).toBe(0)
+    })
+
     test("callbacks fire when the playhead crosses them", async () => {
         const v = motionValue(0)
         const callback = jest.fn()
