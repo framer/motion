@@ -18,7 +18,7 @@ export function useAnimate<T extends Element = any>() {
     const { skipAnimations } = useContext(MotionConfigContext)
 
     /**
-     * Shared with timeline(sequence, { scope }) without bundling it here.
+     * Read by timelines created with this scope.
      */
     scope.reduceMotion = reduceMotion
     scope.skipAnimations = skipAnimations

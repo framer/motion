@@ -1,7 +1,7 @@
-import { timeline, useAnimate } from "framer-motion"
+import { useAnimate } from "framer-motion"
 
 export const App = () => {
-    const [scope] = useAnimate()
+    const [scope, animate] = useAnimate()
 
     return (
         <div className="App" ref={scope}>
@@ -12,10 +12,10 @@ export const App = () => {
             <p>reverse</p>
             <button
                 onClick={() => {
-                    const animation = timeline(
-                        ["my label", [".four", { x: 90 }, { duration: 2 }]],
-                        { scope }
-                    )
+                    const animation = animate([
+                        "my label",
+                        [".four", { x: 90 }, { duration: 2 }],
+                    ])
 
                     animation.time = animation.duration
                     animation.speed = -1

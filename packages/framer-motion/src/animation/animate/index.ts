@@ -14,7 +14,7 @@ import {
     Segment,
     SequenceOptions,
 } from "../sequence/types"
-import { Timeline } from "../timeline"
+import { Timeline, TimelineOptions } from "../timeline"
 import { animateSubject } from "./subject"
 
 function isSequence(value: unknown): value is AnimationSequence {
@@ -38,7 +38,7 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
      */
     function scopedAnimate(
         sequence: AnimationSequence,
-        options?: SequenceOptions
+        options?: Omit<TimelineOptions, "scope">
     ): Timeline
     /**
      * Animate a string
@@ -94,7 +94,7 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
             | O
             | O[],
         optionsOrKeyframes?:
-            | SequenceOptions
+            | Omit<TimelineOptions, "scope">
             | number
             | string
             | UnresolvedValueKeyframe<number>[]

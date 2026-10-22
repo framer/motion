@@ -1,6 +1,5 @@
 import { createEffect, frame, motionValue } from "motion-dom"
 import { animate } from ".."
-import { timeline } from "../../timeline"
 
 async function nextFrame() {
     return new Promise<void>((resolve) => {
@@ -20,13 +19,9 @@ const createSubject = (values: Subject["values"] = {}): Subject => ({
 
 const subjectEffect = createEffect<Subject>(
     (subject, state, key, value) =>
-        state.set(
-            key,
-            value,
-            () => {
-                subject.values[key] = value.get()
-            }
-        ),
+        state.set(key, value, () => {
+            subject.values[key] = value.get()
+        }),
     {
         test: (subject): subject is Subject =>
             Boolean((subject as Subject)?.isSubject),
@@ -93,7 +88,7 @@ describe("animate.addEffect", () => {
         const element = document.createElement("div")
         const subject = createSubject({ x: 0 })
 
-        await timeline(
+        await animate(
             [
                 [element, { opacity: 0.5 }, { duration: 0.01 }],
                 [subject, { x: 100 }, { duration: 0.01 }],

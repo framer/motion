@@ -2,7 +2,7 @@ import { frame, motionValue, MotionValue, visualElementStore } from "motion-dom"
 import { useEffect } from "react"
 import * as THREE from "three"
 import { animate } from ".."
-import { Timeline, timeline } from "../../timeline"
+import { Timeline } from "../../timeline"
 import { motion, MotionGlobalConfig } from "../../.."
 import { render } from "../../../jest.setup"
 import { useMotionValue } from "../../../value/use-motion-value"
@@ -206,7 +206,7 @@ describe("animate", () => {
 
         a.on("change", (v) => aOutput.push(Math.round(v)))
 
-        const animation = timeline(
+        const animation = animate(
             [
                 [a, 2, { duration: 0.2 }],
                 [a, 0, { duration: 0.2 }],
@@ -236,7 +236,7 @@ describe("animate", () => {
         a.on("change", (v) => aOutput.push(Math.round(v)))
         b.on("change", (v) => bOutput.push(Math.round(v)))
 
-        const animation = timeline(
+        const animation = animate(
             [
                 [a, [50, 100]],
                 [b, 0],
@@ -396,7 +396,7 @@ describe("animate", () => {
 
     test("Doesn't throw keyframe error", async () => {
         const div = document.createElement("div")
-        timeline([
+        animate([
             [div, { x: 100 }],
             [div, { y: 100 }],
         ])
@@ -542,7 +542,7 @@ describe("Sequence callbacks", () => {
         const element = document.createElement("div")
         const values: number[] = []
 
-        const animation = timeline(
+        const animation = animate(
             [
                 [element, { opacity: 1 }, { duration: 0.5 }],
                 [(p: number) => values.push(p), { duration: 0.5 }],
@@ -568,7 +568,7 @@ describe("Sequence callbacks", () => {
         const element = document.createElement("div")
         const values: number[] = []
 
-        const animation = timeline(
+        const animation = animate(
             [
                 [element, { opacity: 1 }, { duration: 0.5 }],
                 [(v: number) => values.push(v), [0, 100], { duration: 0.5 }],
@@ -608,7 +608,7 @@ describe("Sequence callbacks", () => {
             }
         }
 
-        const animation = timeline([
+        const animation = animate([
             [element, { opacity: 1 }, { duration: 1 }],
             [
                 toggle(
@@ -653,7 +653,7 @@ describe("Sequence callbacks", () => {
         const element = document.createElement("div")
         let completed = false
 
-        const animation = timeline(
+        const animation = animate(
             [
                 [element, { opacity: 0 }, { duration: 0.01 }],
                 [element, { opacity: 1 }, { duration: 0.01 }],
@@ -674,7 +674,7 @@ describe("Sequence callbacks", () => {
         const element = document.createElement("div")
         let completedCount = 0
 
-        const animation = timeline(
+        const animation = animate(
             [
                 [element, { opacity: 0 }, { duration: 0.01 }],
                 [element, { opacity: 1 }, { duration: 0.01 }],
@@ -707,15 +707,15 @@ describe("animate: Objects", () => {
     })
 
     test("Types: Object in sequence", () => {
-        timeline([[{ x: 100 }, { x: 200 }]])
+        animate([[{ x: 100 }, { x: 200 }]])
     })
 
     test("Types: Object in sequence with transition", () => {
-        timeline([[{ x: 100 }, { x: 200 }, { duration: 1 }]])
+        animate([[{ x: 100 }, { x: 200 }, { duration: 1 }]])
     })
 
     test("Types: Object in sequence with value-specific transition", () => {
-        timeline([[{ x: 100 }, { x: 200 }, { x: { duration: 1 } }]])
+        animate([[{ x: 100 }, { x: 200 }, { x: { duration: 1 } }]])
     })
 
     test("Types: Object to object with onUpdate", () => {
@@ -743,12 +743,12 @@ describe("animate: Objects", () => {
 
     test("Types: Three.js Object3D in sequence", () => {
         const object = new THREE.Object3D()
-        timeline([[object.rotation, { x: 10 }]])
+        animate([[object.rotation, { x: 10 }]])
     })
 
     test("Types: Three.js Object3D in sequence with transition", () => {
         const object = new THREE.Object3D()
-        timeline([[object.rotation, { x: 10 }, { duration: 0.01 }]])
+        animate([[object.rotation, { x: 10 }, { duration: 0.01 }]])
     })
 
     test("Object animates", async () => {
@@ -765,13 +765,13 @@ describe("animate: Objects", () => {
 
     test("Object animates in sequence", async () => {
         const obj = { x: 100 }
-        await timeline([[obj, { x: 200 }, { duration: 0.01 }]])
+        await animate([[obj, { x: 200 }, { duration: 0.01 }]])
         expect(obj.x).toBe(200)
     })
 
     test("Three.js Object3D animates in sequence", async () => {
         const obj = new THREE.Object3D()
-        await timeline([[obj.rotation, { x: 10 }, { duration: 0.01 }]])
+        await animate([[obj.rotation, { x: 10 }, { duration: 0.01 }]])
         expect(obj.rotation.x).toBe(10)
     })
 

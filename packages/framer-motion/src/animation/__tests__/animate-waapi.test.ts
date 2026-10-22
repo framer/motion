@@ -1,7 +1,6 @@
 import { stagger } from "motion-dom"
 import { nextFrame } from "../../gestures/__tests__/utils"
 import { animate } from "../animate"
-import { timeline } from "../timeline"
 import { defaultOptions } from "../animators/waapi/__tests__/setup"
 
 describe("animate() with WAAPI", () => {
@@ -132,7 +131,7 @@ describe("animate() with WAAPI", () => {
         const a = document.createElement("div")
         const b = document.createElement("div")
 
-        timeline([
+        animate([
             "label",
             [
                 [a, b],

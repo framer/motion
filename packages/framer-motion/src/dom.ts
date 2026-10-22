@@ -2,8 +2,8 @@ export * from "motion-dom"
 export * from "motion-utils"
 
 export { animate, createScopedAnimate } from "./animation/animate"
-export { timeline, Timeline } from "./animation/timeline"
 export type {
+    Timeline,
     TimelineCallback,
     TimelineItem,
     TimelineOptions,

@@ -20,12 +20,12 @@ const translateX = (page: Page, id: string) =>
         id
     )
 
-test.describe("timeline()", () => {
+test.describe("animate() timelines", () => {
     test("accelerates opacity", async ({ page }) => {
         await load(page)
         const count = await page.evaluate(async () => {
-            const { timeline } = (window as any).Motion
-            timeline([["#a", { opacity: 0 }, { duration: 1 }]])
+            const { animate } = (window as any).Motion
+            animate([["#a", { opacity: 0 }, { duration: 1 }]])
             await new Promise((resolve) => setTimeout(resolve, 100))
             return document.getElementById("a")!.getAnimations().length
         })
@@ -37,8 +37,8 @@ test.describe("timeline()", () => {
     }) => {
         await load(page)
         await page.evaluate(async () => {
-            const { timeline } = (window as any).Motion
-            const tl = timeline(
+            const { animate } = (window as any).Motion
+            const tl = animate(
                 [
                     ["#a", { opacity: 0 }, { duration: 0.1 }],
                     ["#b", { x: 100 }, { duration: 0.1, at: 0 }],
@@ -60,11 +60,11 @@ test.describe("timeline()", () => {
     test("keeps the playhead when changed while playing", async ({ page }) => {
         await load(page)
         const [before, after] = await page.evaluate(async () => {
-            const { timeline } = (window as any).Motion
+            const { animate } = (window as any).Motion
             const box = document.getElementById("a")!
             const read = () =>
                 new DOMMatrix(getComputedStyle(box).transform).m41
-            const tl = timeline([["#a", { x: 100 }, { duration: 2 }]], {
+            const tl = animate([["#a", { x: 100 }, { duration: 2 }]], {
                 defaultTransition: { ease: "linear" },
             })
             await new Promise((resolve) => setTimeout(resolve, 500))
@@ -83,8 +83,8 @@ test.describe("timeline()", () => {
     test("pauses at addPause() and resumes", async ({ page }) => {
         await load(page)
         const time = await page.evaluate(async () => {
-            const { timeline } = (window as any).Motion
-            const tl = timeline([["#a", { opacity: 0 }, { duration: 0.4 }]], {
+            const { animate } = (window as any).Motion
+            const tl = animate([["#a", { opacity: 0 }, { duration: 0.4 }]], {
                 defaultTransition: { ease: "linear" },
             })
             tl.addPause(0.1)

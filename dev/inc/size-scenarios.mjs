@@ -43,7 +43,6 @@ export const scenarios = {
     animate: `export { animate } from "motion"`,
     "mini-animate": `export { animate } from "motion/mini"`,
     "animate-sequence": `import { animate } from "motion"; export const a = () => animate([["div", { x: 1 }]])`,
-    "timeline": `import { timeline } from "motion"; export const a = () => timeline([["div", { x: 1 }]])`,
     scroll: `export { scroll } from "motion"`,
     "scroll+animate": `export { scroll, animate } from "motion"`,
     inView: `export { inView } from "motion"`,

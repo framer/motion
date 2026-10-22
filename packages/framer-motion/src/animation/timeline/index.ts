@@ -675,19 +675,3 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
         })
     }
 }
-
-/**
- * Create a timeline that can be changed after it's created.
- *
- * ```js
- * const tl = timeline([[".box", { x: 100 }]])
- *
- * tl.add("spin")
- *   .add([".box", { rotate: 180 }])
- *   .call(() => console.log("halfway"), "spin")
- *
- * tl.seek("spin")
- * ```
- */
-export const timeline = (items?: TimelineItem[], options?: TimelineOptions) =>
-    new Timeline(items, options)
