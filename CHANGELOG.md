@@ -4,21 +4,28 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [14.6.0]
+## [14.6.0] 2026-10-20
 
 ### Added
 
--   `Reorder`: Pass `moved` to `onReorder` as second argument.
+-   `processFrame`: Function for manually stepping through frameloop.
 
 ### Fixed
 
--   `useInView`: Observe `ref` if contents change after mount.
+-   Improved tree-shaking.
+-   `motion`: Fix `layoutId` elements jumping in some situations.
+-   `Reorder`: Make auto-scroll speed independent of refresh rate.
+-   `drag`: Fix animations when disabling `drag` from within `onDrag`.
+-   Fix shared layout animations applying an element's own `scale`/`x`/`y` twice.
+-   Fix replaying mount animation when an element takes over a `layoutId`.
+-   `motion`: Fix updating SVG styles.
 
 ## [14.5.0] 2026-10-20
 
 ### Added
 
 -   `scopeMotion`/`useScopeMotion`: Scope animations and gestures to set default transitions, specify root elements, match media, and easy cleanup.
+-   `Reorder`: Pass `moved` to `onReorder` as second argument.
 
 ### Fixed
 
@@ -26,6 +33,7 @@ Undocumented APIs should be considered internal and may change without warning.
 -   `press`: Improve cleanup of keyboard accessibility events.
 -   `Reorder`: Stop double-counting `window` scroll during drag.
 -   `motion`: Ensure we animate from the latest props when parent `Activity` is made visible.
+-   `useInView`: Observe `ref` if contents change after mount.
 
 ## [14.4.0] 2026-10-18
 
