@@ -2059,7 +2059,14 @@ export function createProjectionNode<I>({
         ) {
             if (!this.instance || this.isSVG) return
 
-            if (!this.isVisible) {
+            const lead = this.getLead()
+
+            /**
+             * Without crossfade, a new lead hides the previous one, as it's
+             * usually unmounting. One that gave its layoutId away keeps
+             * rendering, so only hide nodes that follow another.
+             */
+            if (!this.isVisible && lead !== this) {
                 targetStyle.visibility = "hidden"
                 return
             }
@@ -2079,7 +2086,6 @@ export function createProjectionNode<I>({
                 return
             }
 
-            const lead = this.getLead()
             if (!this.projectionDelta || !this.layout || !lead.target) {
                 if (this.options.layoutId) {
                     targetStyle.opacity =

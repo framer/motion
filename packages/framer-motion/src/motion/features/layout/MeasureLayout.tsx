@@ -166,7 +166,7 @@ class MeasureLayoutWithContext extends Component<MeasureProps> {
 
         if (projection) {
             projection.scheduleCheckAfterUnmount()
-            layoutGroup?.group?.remove(projection)
+            layoutGroup.group?.remove(projection)
             promoteContext?.deregister?.(projection)
         }
     }
