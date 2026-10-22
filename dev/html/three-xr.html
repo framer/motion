@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Motion Three.js WebXR</title>
+    </head>
+    <body>
+        <main>
+            <header>
+                <div>
+                    <h1>Three.js WebXR</h1>
+                    <p>
+                        Drives Motion with processFrame() from the XR session's
+                        frames, where window.requestAnimationFrame may stop
+                        firing.
+                    </p>
+                </div>
+                <nav>
+                    <a href="/three-animate.html">Three animate</a>
+                    <a href="/three-effects.html">Three effects</a>
+                </nav>
+            </header>
+            <section class="stage">
+                <canvas></canvas>
+                <div class="panel">
+                    <div class="controls">
+                        <button class="primary" id="bounce">Bounce</button>
+                    </div>
+                    <output id="status">Ready</output>
+                </div>
+            </section>
+        </main>
+        <script type="module" src="/src/three-xr.js"></script>
+    </body>
+</html>

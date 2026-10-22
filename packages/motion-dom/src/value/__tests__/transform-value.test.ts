@@ -25,6 +25,34 @@ describe("transformValue", () => {
         expect(y.get()).toBe(-200)
     })
 
+    test("combined transform reflects chained transform updates in the same frame", async () => {
+        const a = motionValue(0)
+        const aHalf = transformValue(() => a.get() / 2)
+        const aQuarter = transformValue(() => aHalf.get() / 2)
+        const result = transformValue(() => a.get() + aQuarter.get())
+
+        a.set(100)
+        await nextFrame()
+        expect(aQuarter.get()).toBe(25)
+        expect(result.get()).toBe(125)
+    })
+
+    test("a change listener writing to an input doesn't re-run the transform in the same frame", async () => {
+        const x = motionValue(0)
+        const prev = motionValue(0)
+        const delta = transformValue(() => x.get() - prev.get())
+        let calls = 0
+        delta.on("change", () => {
+            // Bail rather than hang if this loops
+            if (++calls < 100) prev.set(x.get() + calls)
+        })
+
+        x.set(10)
+        await nextFrame()
+        expect(calls).toBe(1)
+        expect(delta.get()).toBe(10)
+    })
+
     test("transforms multiple values", async () => {
         const x = motionValue(4)
         const y = motionValue(5)
