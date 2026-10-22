@@ -17,8 +17,7 @@ export function createRenderStep(runNextFrame: () => void): Step {
     let flushNextFrame = false
 
     /**
-     * The callback currently running, so it can't re-queue itself. Only read
-     * while processing, so it doesn't need resetting after.
+     * The callback currently running, so it can't re-queue itself.
      */
     let running: Process | undefined
 
@@ -106,6 +105,7 @@ export function createRenderStep(runNextFrame: () => void): Step {
             // Clear the frame so no callbacks remain. This is to avoid
             // memory leaks should this render step not run for a while.
             thisFrame.clear()
+            running = undefined
 
             isProcessing = false
 
