@@ -10,4 +10,6 @@ export const variantPriorityOrder: AnimationType[] = [
     "exit",
 ]
 
-export const variantProps = ["initial", ...variantPriorityOrder]
+export const variantProps = /* @__PURE__ */ ["initial"].concat(
+    variantPriorityOrder
+)

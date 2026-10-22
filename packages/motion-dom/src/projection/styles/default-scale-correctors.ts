@@ -4,10 +4,9 @@ import { correctBoxShadow } from "./scale-box-shadow"
 import type { ScaleCorrectorMap } from "./types"
 
 export const defaultScaleCorrectors: ScaleCorrectorMap = {
-    borderRadius: {
-        ...correctBorderRadius,
-        applyTo: [...cornerRadiusProps],
-    },
+    borderRadius: /* @__PURE__ */ Object.assign({}, correctBorderRadius, {
+        applyTo: /* @__PURE__ */ cornerRadiusProps.slice(),
+    }),
     borderTopLeftRadius: correctBorderRadius,
     borderTopRightRadius: correctBorderRadius,
     borderBottomLeftRadius: correctBorderRadius,

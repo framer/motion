@@ -181,13 +181,16 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
     return scopedAnimate
 }
 
-export const animate = Object.assign(createScopedAnimate(), {
-    /**
-     * Register an effect so `animate()` can animate the subjects it
-     * claims, for instance `animate.addEffect(threeEffect)`. The most
-     * recently added effect is tested first. DOM elements are always
-     * animated directly.
-     */
-    addEffect,
-    removeEffect,
-})
+export const animate = /* @__PURE__ */ Object.assign(
+    /* @__PURE__ */ createScopedAnimate(),
+    {
+        /**
+         * Register an effect so `animate()` can animate the subjects it
+         * claims, for instance `animate.addEffect(threeEffect)`. The most
+         * recently added effect is tested first. DOM elements are always
+         * animated directly.
+         */
+        addEffect,
+        removeEffect,
+    }
+)
