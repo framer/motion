@@ -356,6 +356,28 @@ describe("createAnimationsFromSequence", () => {
         })
     })
 
+    test("It offsets from a label", () => {
+        const animations = createAnimationsFromSequence(
+            [
+                [a, { x: 100 }, { duration: 1 }],
+                "my label",
+                [a, { opacity: 0 }, { duration: 1 }],
+                [b, { y: 500 }, { duration: 1, at: "my label-0.5" }],
+                [c, { y: 500 }, { duration: 1, at: "my label+0.5" }],
+            ],
+            undefined,
+            undefined,
+            { spring }
+        )
+
+        expect(animations.get(b)!.keyframes.y).toEqual([null, null, 500, null])
+        expect(animations.get(b)!.transition.y.times).toEqual([
+            0, 0.2, 0.6, 1,
+        ])
+        expect(animations.get(c)!.keyframes.y).toEqual([null, null, 500])
+        expect(animations.get(c)!.transition.y.times).toEqual([0, 0.6, 1])
+    })
+
     test("It sets annotated labels with absolute at times", () => {
         const animations = createAnimationsFromSequence(
             [
