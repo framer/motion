@@ -2415,10 +2415,13 @@ function clearIsLayoutDirty(node: IProjectionNode) {
  * A dragged node doesn't layout animate, so it jumps to its new layout. Shift
  * its descendants' snapshots by the same amount, so they only animate layout
  * changes relative to it, rather than lagging behind.
+ *
+ * If its drag ended since the snapshot (e.g. drag disabled from onDrag), it
+ * layout animates again, so its descendants mustn't follow its jump.
  */
 function followDraggedAncestor(node: IProjectionNode) {
     const { snapshot, dragAncestor } = node
-    const to = dragAncestor?.layout
+    const to = dragAncestor?.isAnimationBlocked && dragAncestor.layout
     if (!snapshot || !to || node.resumeFrom || node.isAnimationBlocked) return
 
     const from = dragAncestor!.dragSnapshot!
