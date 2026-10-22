@@ -17,6 +17,9 @@ describe("calcNextTime", () => {
         expect(calcNextTime(5, "-1", 100, labels)).toBe(4)
         expect(calcNextTime(5, "+1", 100, labels)).toBe(6)
         expect(calcNextTime(5, "-7", 100, labels)).toBe(0)
+        expect(calcNextTime(5, "+0.5", 100, labels)).toBe(5.5)
+        expect(calcNextTime(5, "+.5", 100, labels)).toBe(5.5)
+        expect(calcNextTime(5, "-.5", 100, labels)).toBe(4.5)
 
         // Previous
         expect(calcNextTime(5, "<", 100, labels)).toBe(100)

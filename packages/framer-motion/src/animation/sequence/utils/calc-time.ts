@@ -22,7 +22,7 @@ export function calcNextTime(
      * Times relative to the current time ("+1", "-1") or to a label
      * ("my label+1", "my label-1"). Exact label names take precedence.
      */
-    const offset = !labels.has(next) && next.match(/^(.*?)([+-][\d.]+)$/)
+    const offset = !labels.has(next) && next.match(/^(.*)([+-][\d.]+)$/)
 
     return offset
         ? Math.max(
