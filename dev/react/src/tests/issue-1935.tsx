@@ -8,19 +8,29 @@ import { useState } from "react"
  * list is a `layoutRoot`, so the underline should animate relative to it, not
  * from where Tomato was on the page before the shift.
  *
- * Every frame from the click onwards, window.records gets the left edges of
- * the underlines (in document order) and of the tab list, and whether React
- * has rendered the click yet.
+ * Every frame from the click onwards, window.records gets the left and top
+ * edges of the underlines (in document order) and of the tab list, and
+ * whether React has rendered the click yet.
  *
  * ?exit=true keeps the old underline mounted while it fades out, so the two
  * crossfade. ?outside=true starts the underline in a box outside the list.
- * ?layoutRoot=false makes the list a plain element.
+ * ?layoutRoot=false makes the list a plain element. ?offset=true moves the
+ * whole window with a translate on an ancestor of the list.
+ * ?layout=position (or size) makes Lettuce wider and sets the underline's
+ * layout prop.
  */
 const tabs = ["🍅 Tomato", "🥬 Lettuce", "🧀 Cheese"]
 
 declare global {
     interface Window {
-        records: { underlines: number[]; list: number; rendered: boolean }[]
+        records: {
+            underlines: number[]
+            underlineTops: number[]
+            underlineWidths: number[]
+            list: number
+            listTop: number
+            rendered: boolean
+        }[]
         recording: boolean
     }
 }
@@ -29,12 +39,17 @@ window.records = []
 
 function record() {
     if (!window.recording) return
+    const underlines = Array.from(
+        document.querySelectorAll(".underline"),
+        (u) => u.getBoundingClientRect()
+    )
+    const list = document.querySelector("ul")!.getBoundingClientRect()
     window.records.push({
-        underlines: Array.from(
-            document.querySelectorAll(".underline"),
-            (underline) => underline.getBoundingClientRect().left
-        ),
-        list: document.querySelector("ul")!.getBoundingClientRect().left,
+        underlines: underlines.map(({ left }) => left),
+        underlineTops: underlines.map(({ top }) => top),
+        underlineWidths: underlines.map(({ width }) => width),
+        list: list.left,
+        listTop: list.top,
         rendered: Boolean(document.querySelector("aside")),
     })
     requestAnimationFrame(record)
@@ -49,10 +64,14 @@ export const App = () => {
     const exit = params.get("exit") === "true"
     // Start with the underline in a box outside the tab list
     const outside = params.get("outside") === "true"
+    // Translate an ancestor of the layoutRoot
+    const offset = params.get("offset") === "true"
+    // Only animate the underline's position or size, to a wider tab
+    const layoutType = params.get("layout") as "position" | "size" | null
     const [selected, setSelected] = useState(outside ? "" : tabs[0])
     const [showSidebar, setShowSidebar] = useState(false)
 
-    return (
+    const content = (
         <div className="window">
             {outside ? (
                 <div className="outside">
@@ -71,6 +90,7 @@ export const App = () => {
                         <li
                             key={item}
                             id={item.split(" ")[1].toLowerCase()}
+                            className={layoutType ? "wide" : undefined}
                             onClick={() => {
                                 window.recording = true
                                 requestAnimationFrame(record)
@@ -84,6 +104,7 @@ export const App = () => {
                                     <motion.div
                                         className="underline"
                                         layoutId="underline"
+                                        layout={layoutType || undefined}
                                         exit={exit ? { opacity: 0 } : undefined}
                                         transition={transition}
                                     />
@@ -96,6 +117,12 @@ export const App = () => {
             {showSidebar ? <aside /> : null}
             <style>{styles}</style>
         </div>
+    )
+
+    return offset ? (
+        <motion.div style={{ x: 50, y: 50 }}>{content}</motion.div>
+    ) : (
+        content
     )
 }
 
@@ -127,6 +154,9 @@ li, .outside {
     right: 0;
     height: 2px;
     background: blue;
+}
+#lettuce.wide {
+    width: 160px;
 }
 aside {
     width: 300px;

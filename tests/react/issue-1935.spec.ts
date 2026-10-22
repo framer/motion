@@ -90,6 +90,72 @@ test("Crossfading shared layout animation inside a layoutRoot animates relative 
     }
 })
 
+test("Shared layout animation inside a translated layoutRoot animates relative to it", async ({
+    page,
+}) => {
+    const records = await selectLettuce(page, "offset=true", {
+        underline: 400,
+        list: 400,
+    })
+    expect(records.length).toBeGreaterThan(20)
+    for (const { list, listTop } of records) {
+        expect(list).toBeCloseTo(250, 0)
+        expect(listTop).toBeCloseTo(100, 0)
+    }
+
+    // The ancestor's translate isn't applied to the underline twice
+    expectSlideAcrossList(
+        records.map(({ underlines, list }) => underlines[0] - list)
+    )
+    for (const { underlineTops, listTop } of records) {
+        expect(underlineTops[0] - listTop).toBeCloseTo(38, 0)
+    }
+})
+
+test('Shared layout="position" animation inside a layoutRoot only animates position', async ({
+    page,
+}) => {
+    // The list is 360px wide, so it starts at 320px and moves to 170px
+    const records = await selectLettuce(page, "layout=position", {
+        underline: 320,
+        list: 320,
+    })
+    expect(records.length).toBeGreaterThan(20)
+    for (const { list } of records) expect(list).toBeCloseTo(170, 0)
+
+    expectSlideAcrossList(
+        records.map(
+            ({ underlines, list }) => underlines[underlines.length - 1] - list
+        )
+    )
+    // The underline is Lettuce's width throughout
+    for (const { underlineWidths } of records) {
+        expect(underlineWidths[underlineWidths.length - 1]).toBeCloseTo(160, 0)
+    }
+})
+
+test('Shared layout="size" animation inside a layoutRoot only animates size', async ({
+    page,
+}) => {
+    const records = await selectLettuce(page, "layout=size", {
+        underline: 320,
+        list: 320,
+    })
+    expect(records.length).toBeGreaterThan(20)
+    for (const { list } of records) expect(list).toBeCloseTo(170, 0)
+
+    // The underline is under Lettuce throughout and grows to its width
+    const widths = records.map(
+        ({ underlineWidths }) => underlineWidths[underlineWidths.length - 1]
+    )
+    for (const { underlines, list } of records) {
+        expect(underlines[underlines.length - 1] - list).toBeCloseTo(100, 0)
+    }
+    expect(widths[0]).toBeLessThan(105)
+    expect(widths.some((w) => w > 120 && w < 140)).toBe(true)
+    expect(widths[widths.length - 1]).toBeCloseTo(160, 0)
+})
+
 test("Shared layout animation without a layoutRoot animates in page space", async ({
     page,
 }) => {

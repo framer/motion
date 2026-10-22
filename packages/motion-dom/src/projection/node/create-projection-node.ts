@@ -1530,12 +1530,17 @@ export function createProjectionNode<I>({
             /**
              * Apply all the parent deltas to this box to produce the corrected box. This
              * is the layout box, as it will appear on screen as a result of the transforms of its parents.
+             *
+             * A shared target is usually in page space, so ancestor transforms are applied
+             * too. But a target relative to a parent that isn't itself shared (like a
+             * layoutRoot) is in that parent's layout space, as in a plain layout animation.
              */
             applyTreeDeltas(
                 this.layoutCorrected,
                 this.treeScale,
                 this.path,
-                isShared
+                isShared &&
+                    !(lead.relativeTarget && !lead.relativeParent!.resumingFrom)
             )
 
             /**
@@ -2249,43 +2254,43 @@ function notifyLayoutUpdate(node: IProjectionNode) {
 
         // TODO Maybe we want to also resize the layout snapshot so we don't trigger
         // animations for instance if layout="size" and an element has only changed position
-        if (animationType === "size") {
-            eachAxis((axis) => {
-                const axisSnapshot = isShared
-                    ? snapshot.measuredBox[axis]
-                    : snapshot.layoutBox[axis]
-                const length = calcLength(axisSnapshot)
-                axisSnapshot.min = layout[axis].min
-                axisSnapshot.max = axisSnapshot.min + length
-            })
-        } else if (animationType === "x" || animationType === "y") {
-            const snapAxis = animationType === "x" ? "y" : "x"
-            copyAxisInto(
-                isShared
-                    ? snapshot.measuredBox[snapAxis]
-                    : snapshot.layoutBox[snapAxis],
-                layout[snapAxis]
-            )
-        } else if (
-            shouldAnimatePositionOnly(animationType, snapshot.layoutBox, layout)
-        ) {
-            eachAxis((axis) => {
-                const axisSnapshot = isShared
-                    ? snapshot.measuredBox[axis]
-                    : snapshot.layoutBox[axis]
-                const length = calcLength(layout[axis])
-                axisSnapshot.max = axisSnapshot.min + length
+        const resizeSnapshot = (box: Box, to: Box) => {
+            if (animationType === "size") {
+                eachAxis((axis) => {
+                    const length = calcLength(box[axis])
+                    box[axis].min = to[axis].min
+                    box[axis].max = box[axis].min + length
+                })
+            } else if (animationType === "x" || animationType === "y") {
+                const snapAxis = animationType === "x" ? "y" : "x"
+                copyAxisInto(box[snapAxis], to[snapAxis])
+            } else if (
+                shouldAnimatePositionOnly(
+                    animationType,
+                    snapshot.layoutBox,
+                    layout
+                )
+            ) {
+                eachAxis((axis) => {
+                    const length = calcLength(to[axis])
+                    box[axis].max = box[axis].min + length
 
-                /**
-                 * Ensure relative target gets resized and rerendererd
-                 */
-                if (node.relativeTarget && !node.currentAnimation) {
-                    node.isProjectionDirty = true
-                    node.relativeTarget[axis].max =
-                        node.relativeTarget[axis].min + length
-                }
-            })
+                    /**
+                     * Ensure relative target gets resized and rerendererd
+                     */
+                    if (node.relativeTarget && !node.currentAnimation) {
+                        node.isProjectionDirty = true
+                        node.relativeTarget[axis].max =
+                            node.relativeTarget[axis].min + length
+                    }
+                })
+            }
         }
+
+        resizeSnapshot(
+            isShared ? snapshot.measuredBox : snapshot.layoutBox,
+            layout
+        )
 
         const layoutDelta = createDelta()
 
@@ -2341,6 +2346,12 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                         parentLayout.layoutBox,
                         anchor
                     )
+
+                    /**
+                     * A shared snapshot is resized in page space, above, so
+                     * resize it relative to the layoutRoot too.
+                     */
+                    isShared && resizeSnapshot(relativeSnapshot, relativeLayout)
 
                     if (!boxEqualsRounded(relativeSnapshot, relativeLayout)) {
                         hasRelativeLayoutChanged = true
