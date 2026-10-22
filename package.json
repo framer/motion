@@ -13,7 +13,7 @@
         "watch": "turbo run watch",
         "dev": "turbo run dev",
         "dev-server": "turbo run dev-server",
-        "test": "turbo run test && turbo run typecheck",
+        "test": "turbo run test --filter='./packages/*' && turbo run typecheck --filter='./packages/*'",
         "test-playwright": "turbo run build && yarn playwright test",
         "test-ci": "turbo run test-ci --no-cache",
         "measure": "turbo run measure --force && node dev/inc/bundlesize.mjs",
