@@ -111,14 +111,20 @@ const wait = (ms: number) =>
     new Promise<void>((resolve) => setTimeout(resolve, ms))
 
 /**
+ * WAAPI animations ever created on an element. Earlier tests' animations
+ * are still running and can rebuild during a later test, so count per
+ * element rather than reading the shared animations list.
+ */
+const created = (element: Element) =>
+    animations.filter((animation) => animation.element === element)
+
+/**
  * WAAPI transform animations on an element that haven't been cancelled.
  */
 const running = (element: Element) =>
-    animations.filter(
+    created(element).filter(
         (animation) =>
-            animation.element === element &&
-            animation.keyframes &&
-            !animation.cancel.mock.calls.length
+            animation.keyframes && !animation.cancel.mock.calls.length
     ) as Array<MockAnimation & { keyframes: { transform: string[] } }>
 
 /**
@@ -251,7 +257,7 @@ describe("independent transform acceleration", () => {
         )
         await nextFrame()
 
-        expect(animations.length).toBeGreaterThan(1)
+        expect(created(element).length).toBeGreaterThan(1)
         expect(running(element)).toHaveLength(1)
         const [first] = running(element)[0].keyframes.transform
         // x carries on from where it was.
@@ -418,7 +424,7 @@ describe("independent transform acceleration", () => {
         )
         await nextFrame()
         const [waapi] = running(element)
-        const count = animations.length
+        const count = created(element).length
 
         animation.forEach((a) => a.pause())
         await nextFrame()
@@ -438,7 +444,7 @@ describe("independent transform acceleration", () => {
         await nextFrame()
         expect(waapi.playbackRate).toBe(2)
 
-        expect(animations.length).toBe(count)
+        expect(created(element).length).toBe(count)
         expect(running(element)).toEqual([waapi])
     })
 

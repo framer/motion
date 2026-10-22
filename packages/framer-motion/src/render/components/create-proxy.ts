@@ -16,7 +16,7 @@ export type CustomDomComponent<Props> = React.ComponentType<
     ComponentProps<Props>
 >
 
-type MotionProxy = typeof createMotionComponent &
+export type MotionProxy = typeof createMotionComponent &
     DOMMotionComponents & { create: typeof createMotionComponent }
 
 export function createMotionProxy(

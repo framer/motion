@@ -1,4 +1,6 @@
 import { frame, frameData, supportsFlags } from "motion-dom"
+import { MotionGlobalConfig } from "motion-utils"
+import { stepFrames } from "../../../../gestures/__tests__/utils"
 import { scroll } from "../"
 import { ScrollOffset } from "../offsets/presets"
 import { scrollInfo } from "../track"
@@ -567,22 +569,34 @@ describe("scrollInfo", () => {
         let latest: ScrollInfo
         const stop = scrollInfo((info) => (latest = info))
 
+        /**
+         * Step a 60fps frame per scroll on Motion's clock: under load, jsdom
+         * frames can land over 50ms apart, which scrollInfo reports as a
+         * velocity of 0.
+         */
+        const scrollTo = async (distance: number) => {
+            setScrollTop(distance)
+            window.dispatchEvent(new window.Event("scroll"))
+            await stepFrames(1000 / 60)
+        }
+
         try {
-            await fireScroll(100)
+            await scrollTo(100)
             expect(latest!.y.current).toBe(100)
 
             // Safari rubber-band at the top reports a negative scrollY
-            await fireScroll(-25)
+            await scrollTo(-25)
             expect(latest!.y.current).toBe(-25)
             expect(latest!.y.progress).toBe(0)
             expect(latest!.y.velocity).toBeLessThan(0)
 
             // ...and past the bottom, a scrollY beyond the scroll length
-            await fireScroll(2025)
+            await scrollTo(2025)
             expect(latest!.y.current).toBe(2025)
             expect(latest!.y.progress).toBe(1)
         } finally {
             stop()
+            MotionGlobalConfig.useManualTiming = false
             await fireScroll(0)
         }
     })
