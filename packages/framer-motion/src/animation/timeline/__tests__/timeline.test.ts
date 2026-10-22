@@ -208,6 +208,21 @@ describe("timeline", () => {
         expect(callback).toHaveBeenCalledTimes(1)
     })
 
+    test("callbacks receive the playback direction", async () => {
+        const v = motionValue(0)
+        const callback = jest.fn()
+        const tl = timeline([[v, 100, { duration: 0.1 }]], linear)
+
+        tl.call(callback, 0.05)
+        await tl
+        expect(callback).toHaveBeenLastCalledWith(1)
+
+        tl.reverse()
+        await wait(150)
+        expect(callback).toHaveBeenCalledTimes(2)
+        expect(callback).toHaveBeenLastCalledWith(-1)
+    })
+
     test("callbacks at 0 fire when playback starts", async () => {
         const v = motionValue(0)
         const callback = jest.fn()

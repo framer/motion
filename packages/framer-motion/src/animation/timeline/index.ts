@@ -19,6 +19,11 @@ import {
 
 export type TimelineItem = Segment | Timeline
 
+/**
+ * Called with the playback direction: 1 forwards, -1 backwards.
+ */
+export type TimelineCallback = (direction: 1 | -1) => void
+
 export interface TimelineOptions extends SequenceOptions {
     /**
      * Start paused. Defaults to `true` (plays as soon as it's built).
@@ -34,12 +39,12 @@ export interface TimelineOptions extends SequenceOptions {
 interface Marker {
     name: string
     time: number
-    callback?: VoidFunction
+    callback?: TimelineCallback
     pause?: boolean
 }
 
 interface Entry {
-    item: TimelineItem | VoidFunction
+    item: TimelineItem | TimelineCallback
     at?: SequenceTime
     marker?: Marker
 }
@@ -156,8 +161,9 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
 
     /**
      * Fire a callback when the playhead crosses `at`, in either direction.
+     * It receives the direction: 1 forwards, -1 backwards.
      */
-    call(callback: VoidFunction, at?: SequenceTime) {
+    call(callback: TimelineCallback, at?: SequenceTime) {
         return this.push({
             item: callback,
             at,
@@ -168,7 +174,7 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
     /**
      * Pause when the playhead reaches `at`.
      */
-    addPause(at?: SequenceTime, callback?: VoidFunction) {
+    addPause(at?: SequenceTime, callback?: TimelineCallback) {
         return this.push({
             item: callback || {},
             at,
@@ -179,7 +185,7 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
     /**
      * Change where an item starts.
      */
-    move(item: TimelineItem | VoidFunction, at: SequenceTime) {
+    move(item: TimelineItem | TimelineCallback, at: SequenceTime) {
         this.entries.forEach((entry) => {
             if (entry.item === item) entry.at = at
         })
@@ -189,7 +195,7 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
     /**
      * Remove a segment, label, callback or timeline.
      */
-    remove(item: TimelineItem | VoidFunction) {
+    remove(item: TimelineItem | TimelineCallback) {
         if (item instanceof Timeline) item.parent = undefined
         this.entries = this.entries.filter((entry) => entry.item !== item)
         return this.invalidate()
@@ -491,7 +497,7 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
         const markers = isForward ? this.markers : [...this.markers].reverse()
         for (const marker of markers) {
             if (!crossed(marker.time)) continue
-            marker.callback?.()
+            marker.callback?.(isForward ? 1 : -1)
             if (marker.pause) return this.pauseAt(marker.time)
         }
 
