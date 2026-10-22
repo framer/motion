@@ -17,7 +17,7 @@ import { useState } from "react"
  * ?layoutRoot=false makes the list a plain element. ?offset=true moves the
  * whole window with a translate on an ancestor of the list.
  * ?layout=position (or size) makes Lettuce wider and sets the underline's
- * layout prop.
+ * layout prop. ?outsideX=<px> translates the outside box.
  */
 const tabs = ["🍅 Tomato", "🥬 Lettuce", "🧀 Cheese"]
 
@@ -66,6 +66,8 @@ export const App = () => {
     const outside = params.get("outside") === "true"
     // Translate an ancestor of the layoutRoot
     const offset = params.get("offset") === "true"
+    // Translate the box outside the tab list
+    const outsideX = parseInt(params.get("outsideX") || "0")
     // Only animate the underline's position or size, to a wider tab
     const layoutType = params.get("layout") as "position" | "size" | null
     const [selected, setSelected] = useState(outside ? "" : tabs[0])
@@ -74,15 +76,18 @@ export const App = () => {
     const content = (
         <div className="window">
             {outside ? (
-                <div className="outside">
-                    {selected ? null : (
-                        <motion.div
-                            className="underline"
-                            layoutId="underline"
-                            transition={transition}
-                        />
-                    )}
-                </div>
+                <motion.div className="outside" style={{ x: outsideX }}>
+                    <AnimatePresence>
+                        {selected ? null : (
+                            <motion.div
+                                className="underline"
+                                layoutId="underline"
+                                exit={exit ? { opacity: 0 } : undefined}
+                                transition={transition}
+                            />
+                        )}
+                    </AnimatePresence>
+                </motion.div>
             ) : null}
             <nav>
                 <motion.ul layout={layoutRoot} layoutRoot={layoutRoot}>

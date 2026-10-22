@@ -194,3 +194,32 @@ test("Shared layout animation from outside a layoutRoot starts from its page pos
     }
     expect(lefts[lefts.length - 1]).toBeCloseTo(350, 0)
 })
+
+test("Crossfading from a translated box outside a layoutRoot keeps the old underline on the new one", async ({
+    page,
+}) => {
+    // The box outside the list is translated 80px, so the old underline
+    // starts at 380px and stays mounted while it fades out
+    const records = await selectLettuce(
+        page,
+        "outside=true&exit=true&outsideX=80",
+        { underline: 380, list: 400 }
+    )
+    expect(records.length).toBeGreaterThan(20)
+
+    const crossfading = records.filter(
+        ({ underlines }) => underlines.length === 2
+    )
+    expect(crossfading.length).toBeGreaterThan(20)
+
+    // The new underline animates in page space, from 380px to 350px, and
+    // the old one follows it: its translated ancestor isn't ignored
+    const lefts = records.map(
+        ({ underlines }) => underlines[underlines.length - 1]
+    )
+    expect(lefts[0]).toBeGreaterThan(375)
+    expect(lefts[lefts.length - 1]).toBeCloseTo(350, 0)
+    for (const { underlines } of crossfading) {
+        expect(underlines[0]).toBeCloseTo(underlines[1], 0)
+    }
+})

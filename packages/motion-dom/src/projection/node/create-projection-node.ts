@@ -1388,10 +1388,14 @@ export function createProjectionNode<I>({
                     (!relativeParent.resumingFrom === !this.resumingFrom ||
                         /**
                          * Shared layout animations within a layoutRoot
-                         * animate relative to it.
+                         * animate relative to it, if the old element was
+                         * inside it too.
                          */
                         (relativeParent.options.layoutRoot &&
-                            !relativeParent.resumingFrom)) &&
+                            !relativeParent.resumingFrom &&
+                            this.resumingFrom!.path.includes(
+                                relativeParent
+                            ))) &&
                     !relativeParent.options.layoutScroll &&
                     relativeParent.target &&
                     this.animationProgress !== 1
