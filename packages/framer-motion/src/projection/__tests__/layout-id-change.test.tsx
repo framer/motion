@@ -75,6 +75,48 @@ describe("changing layoutId after mount (#1411)", () => {
         expect(nodeA.resumeFrom === nodeB).toBe(true)
     })
 
+    /**
+     * The lead being taken over must be measured for the takeover, as it is
+     * when a node mounts with its layoutId (createProjectionNode calls
+     * lead.willUpdate()). A sibling that doesn't willUpdate() itself (constant
+     * layoutDependency, or memoised so it doesn't re-render) would otherwise
+     * never get a layout, so it couldn't follow the new lead or crossfade.
+     */
+    test("measures the lead it takes over from", async () => {
+        const a = createRef<HTMLDivElement>()
+        const b = createRef<HTMLDivElement>()
+        const App = ({ id }: { id: string }) => (
+            <>
+                <motion.div ref={a} layoutId={id} />
+                <motion.div ref={b} layoutId="shared" layoutDependency={1} />
+            </>
+        )
+        const { rerender } = render(<App id="initial" />)
+        const nodeB = getNode(b.current!)
+        // Let any mount-time update settle so B starts clean
+        await nextFrame()
+        expect(nodeB.isLayoutDirty).toBe(false)
+
+        rerender(<App id="shared" />)
+        expect(nodeB.isLayoutDirty).toBe(true)
+    })
+
+    /**
+     * MeasureLayout syncs its options on every update, so props like
+     * layoutAnchor can change after mount.
+     */
+    test("keeps layoutAnchor in sync", () => {
+        const ref = createRef<HTMLDivElement>()
+        const { rerender } = render(
+            <motion.div ref={ref} layout layoutAnchor={{ x: 0, y: 0 }} />
+        )
+        const node = getNode(ref.current!)
+        expect(node.options.layoutAnchor).toEqual({ x: 0, y: 0 })
+
+        rerender(<motion.div ref={ref} layout layoutAnchor={{ x: 1, y: 1 }} />)
+        expect(node.options.layoutAnchor).toEqual({ x: 1, y: 1 })
+    })
+
     test("namespaces the new layoutId by its LayoutGroup", async () => {
         const ref = createRef<HTMLDivElement>()
         const App = ({ id }: { id: string }) => (

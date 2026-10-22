@@ -95,12 +95,15 @@ class MeasureLayoutWithContext extends Component<MeasureProps> {
 
         /**
          * If layoutId changes, move this node to the new layoutId's stack,
-         * as if it had unmounted and remounted with it.
+         * as if it had unmounted and remounted with it. The lead it takes
+         * over from is measured too, as when a node mounts with its layoutId,
+         * so it can follow this node even if it doesn't willUpdate() itself.
          */
         if (prevProps.layoutId !== layoutId) {
             projection.willUpdate()
             projection.getStack()?.remove(projection)
             projection.options.layoutId = layoutId
+            projection.getStack()?.lead?.willUpdate()
             layoutId &&
                 projection.root!.registerSharedNode(layoutId, projection)
         }
