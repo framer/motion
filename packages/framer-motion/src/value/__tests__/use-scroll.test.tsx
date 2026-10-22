@@ -1,4 +1,4 @@
-import { supportsFlags } from "motion-dom"
+import { frame, supportsFlags } from "motion-dom"
 import { useRef } from "react"
 import { render } from "../../jest.setup"
 import { useScroll } from "../use-scroll"
@@ -157,5 +157,65 @@ describe("useScroll accelerate", () => {
         expect(transformAccelerate.keyframes).toEqual([0.2, 0.2, 1, 1])
         // An extra leading ease keeps each easing on its original segment
         expect(transformAccelerate.ease).toHaveLength(2)
+    })
+})
+
+describe("useScroll values", () => {
+    const mock = (element: Element, values: Record<string, number>) => {
+        for (const key in values) {
+            Object.defineProperty(element, key, {
+                value: values[key],
+                configurable: true,
+            })
+        }
+    }
+
+    test("exposes each axis's scroll length, the maximum scroll offset (#2189)", async () => {
+        let values: ReturnType<typeof useScroll> | undefined
+
+        const Component = () => {
+            const container = useRef<HTMLDivElement>(null)
+            values = useScroll({ container })
+            return (
+                <div
+                    ref={(element) => {
+                        if (!element) return
+                        mock(element, {
+                            clientWidth: 400,
+                            scrollWidth: 1000,
+                            scrollLeft: 100,
+                            clientHeight: 500,
+                            scrollHeight: 3000,
+                            scrollTop: 500,
+                        })
+                        ;(container as any).current = element
+                    }}
+                />
+            )
+        }
+
+        render(<Component />)
+
+        await new Promise<void>((resolve) =>
+            frame.postRender(() => frame.postRender(() => resolve()))
+        )
+
+        const {
+            scrollX,
+            scrollY,
+            scrollYProgress,
+            scrollXLength,
+            scrollYLength,
+        } = values!
+
+        expect(scrollY.get()).toBe(500)
+        expect(scrollYProgress.get()).toBe(0.2)
+        expect(scrollYLength.get()).toBe(2500)
+
+        expect(scrollX.get()).toBe(100)
+        expect(scrollXLength.get()).toBe(600)
+
+        // Distance from the end, as asked for in #2189
+        expect(scrollYLength.get() - scrollY.get()).toBe(2000)
     })
 })

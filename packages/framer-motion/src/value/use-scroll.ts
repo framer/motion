@@ -11,7 +11,7 @@ import {
 import { invariant } from "motion-utils"
 import { RefObject, useCallback, useEffect, useRef } from "react"
 import { scroll } from "../render/dom/scroll"
-import { ScrollInfoOptions } from "../render/dom/scroll/types"
+import { AxisScrollInfo, ScrollInfoOptions } from "../render/dom/scroll/types"
 import { offsetToViewTimelineRange } from "../render/dom/scroll/utils/offset-to-range"
 import { useConstant } from "../utils/use-constant"
 import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
@@ -27,6 +27,12 @@ const createScrollMotionValues = () => ({
     scrollY: motionValue(0),
     scrollXProgress: motionValue(0),
     scrollYProgress: motionValue(0),
+    /**
+     * The maximum scroll offset of each axis, so the distance from the end
+     * of the container is `scrollYLength.get() - scrollY.get()`.
+     */
+    scrollXLength: motionValue(0),
+    scrollYLength: motionValue(0),
 })
 
 const isRefPending = (ref?: RefObject<HTMLElement | null>) => {
@@ -117,14 +123,16 @@ export function useScroll({
                     x,
                     y,
                 }: {
-                    x: { current: number; progress: number }
-                    y: { current: number; progress: number }
+                    x: AxisScrollInfo
+                    y: AxisScrollInfo
                 }
             ) => {
                 values.scrollX.set(x.current)
                 values.scrollXProgress.set(x.progress)
+                values.scrollXLength.set(x.scrollLength)
                 values.scrollY.set(y.current)
                 values.scrollYProgress.set(y.progress)
+                values.scrollYLength.set(y.scrollLength)
             },
             {
                 ...options,
