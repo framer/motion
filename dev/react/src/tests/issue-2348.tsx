@@ -18,7 +18,10 @@ import { useRef, useState } from "react"
  * items in the page as well, so on a scrolled page, removing one also
  * shrinks the document and clamps its scroll, whatever the list's position.
  * `?scale` renders everything inside a `scale(0.5)` wrapper (which is also
- * the containing block of the "fixed" list).
+ * the containing block of the "fixed" list). `?layoutScroll` marks the list
+ * for layout animations as a scroll container, which, as it's fixed, makes
+ * it a scroll root, as layout animations in a fixed element on a scrolled
+ * page need.
  */
 const params = new URLSearchParams(
     typeof window !== "undefined" ? window.location.search : ""
@@ -136,7 +139,10 @@ export const App = () => {
                 )}
                 {params.has("mirror") &&
                     items.map((id) => <div key={id} style={{ height: 70 }} />)}
-                <ul className={isFixed ? "fixed" : ""}>
+                <motion.ul
+                    className={isFixed ? "fixed" : ""}
+                    layoutScroll={params.has("layoutScroll")}
+                >
                     <AnimatePresence
                         mode={popLayout ? "popLayout" : "sync"}
                         anchorY={anchorY}
@@ -157,7 +163,7 @@ export const App = () => {
                             />
                         ))}
                     </AnimatePresence>
-                </ul>
+                </motion.ul>
             </div>
         </div>
     )

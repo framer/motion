@@ -165,12 +165,13 @@ for (const [name, query] of [
 /**
  * A fixed container doesn't scroll with the page, so the page's scroll
  * position being clamped, here because removing the item also shrinks the
- * page, mustn't be mistaken for the container moving.
+ * page, mustn't be mistaken for the container moving. (The list has
+ * `layoutScroll`, so the items' layout animations account for that too.)
  */
 test("popLayout exiting item in a fixed container stays put when the page's scroll position is clamped", async ({
     page,
 }) => {
-    await setup(page, "&fixed&anchor=bottom&scroll&mirror")
+    await setup(page, "&fixed&anchor=bottom&scroll&mirror&layoutScroll")
 
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
     const scrollBefore = await page.evaluate(() => window.scrollY)

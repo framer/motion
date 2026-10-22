@@ -1,12 +1,11 @@
 "use client"
 
-import { isHTMLElement, type VisualElement } from "motion-dom"
+import { isHTMLElement, microtask, type VisualElement } from "motion-dom"
 import * as React from "react"
 import { useContext, useId, useInsertionEffect, useRef } from "react"
 
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { useComposedRefs } from "../../utils/use-composed-ref"
-import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 
 interface Size {
     width: number
@@ -16,7 +15,8 @@ interface Size {
     right: number
     bottom: number
     direction: string
-    page?: number[]
+    point?: number[]
+    scale?: number[]
 }
 
 interface Props {
@@ -35,11 +35,17 @@ interface MeasureProps extends Props {
 }
 
 /**
- * The element's position, plus its ancestors' scroll (across shadow roots),
- * so a scroll position clamped by content shrinking, in the page or a
- * scrollable element, doesn't read as the element moving.
+ * The element's position in the space it scrolls in, as the projection
+ * system measures it (see measurePageBox and removeElementScroll): its
+ * viewport position, plus its scroll containers' scroll (across shadow
+ * roots), plus the window's (the root's) scroll. Like checkIsScrollRoot, a
+ * fixed ancestor is a scroll root: it doesn't scroll with anything above it,
+ * so a fixed container is measured relative to the viewport.
+ *
+ * So a scroll position clamped by content shrinking reads as the element
+ * moving only if it doesn't scroll with that content.
  */
-const getPagePoint = (element: Element) => {
+const measurePoint = (element: Element) => {
     let { left, top } = element.getBoundingClientRect()
     let node: Element | null | undefined = element
     while (
@@ -47,15 +53,10 @@ const getPagePoint = (element: Element) => {
     ) {
         left += node.scrollLeft
         top += node.scrollTop
+        if (getComputedStyle(node).position === "fixed") break
     }
     return [left, top]
 }
-
-/**
- * Pop rule corrections, written by AnimatePresence once every exiting child
- * has measured, so many children exiting at once don't each force a layout.
- */
-export const popCorrections: VoidFunction[] = []
 
 /**
  * Measurement functionality has to be within a separate component
@@ -82,7 +83,15 @@ class PopChildMeasure extends React.Component<MeasureProps> {
             size.right = parentWidth - size.width - size.left
             size.bottom = parentHeight - size.height - size.top
             size.direction = computedStyle.direction
-            size.page = getPagePoint(element)
+            size.point = measurePoint(element)
+            /**
+             * The pop rule's offsets are in the offsetParent's coordinate
+             * space, which ancestor (or its own) transforms can scale.
+             */
+            const { width, height } = isHTMLElement(parent)
+                ? parent.getBoundingClientRect()
+                : ({} as DOMRect)
+            size.scale = [width / parentWidth || 1, height / parentHeight || 1]
         }
 
         return null
@@ -110,7 +119,6 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop, pop
         bottom: 0,
         direction: "ltr",
     })
-    const sheet = useRef<CSSStyleSheet | null>(null)
     const { nonce } = useContext(MotionConfigContext)
     /**
      * In React 19, refs are passed via props.ref instead of element.ref.
@@ -135,7 +143,7 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop, pop
     const getElement = () =>
         ref.current || (popNode?.current?.current as HTMLElement | undefined)
 
-    const insertPopRule = () => {
+    const insertPopRule = (sheet: CSSStyleSheet | null) => {
         const { width, height, top, left, right, bottom, direction } = size.current
         const isRTL = direction === "rtl"
         const x = anchorX === "left"
@@ -143,7 +151,7 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop, pop
             : (isRTL ? `left:${left}` : `right:${right}`)
         const y = anchorY === "bottom" ? `bottom:${bottom}` : `top:${top}`
 
-        sheet.current?.insertRule(
+        sheet?.insertRule(
             `[data-motion-pop-id="${id}"]{position:absolute!important;width:${width}px!important;height:${height}px!important;${x}px!important;${y}px!important}`
         )
     }
@@ -175,43 +183,51 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop, pop
         const parent = root ?? doc.head
         parent.appendChild(style)
 
-        sheet.current = style.sheet
-        insertPopRule()
+        insertPopRule(style.sheet)
+
+        /**
+         * Popping the element out of the layout can move its offsetParent,
+         * which we've pinned it to. For instance, a bottom-anchored or
+         * centred container shrinks around its remaining children (#2348).
+         * So once the whole commit is in the DOM, measure how far the
+         * element moved and offset it back.
+         *
+         * This runs on the microtask frameloop, so before paint even if
+         * this commit happens within an animation frame. Every popped
+         * element is measured in its first step, then corrected at the
+         * start of the read step: before the projection system, which
+         * schedules its layout measurement there from layout effects, so
+         * layout animations see the corrected position.
+         */
+        let dx = 0
+        let dy = 0
+        microtask.setup(() => {
+            const s = size.current
+            const [x, y] = measurePoint(element)
+            dx = (s.point![0] - x) / s.scale![0]
+            dy = (s.point![1] - y) / s.scale![1]
+        })
+        microtask.read(() => {
+            /**
+             * The style has no sheet if it's been removed since, because
+             * the element is present again.
+             */
+            const { sheet } = style
+            if (!sheet || (!dx && !dy)) return
+            const s = size.current
+            s.left += dx
+            s.right -= dx
+            s.top += dy
+            s.bottom -= dy
+            sheet.deleteRule(0)
+            insertPopRule(sheet)
+        })
 
         return () => {
-            sheet.current = null
             element.removeAttribute("data-motion-pop-id")
             if (parent.contains(style)) {
                 parent.removeChild(style)
             }
-        }
-    }, [isPresent])
-
-    /**
-     * Popping the element out of the layout can move its offsetParent,
-     * which we've pinned it to. For instance, a bottom-anchored or centred
-     * container shrinks around its remaining children (#2348). So once the
-     * whole commit is in the DOM (insertion effects run before later
-     * siblings are added), measure how far it moved. AnimatePresence then
-     * offsets it back, once every popped sibling has measured.
-     */
-    useIsomorphicLayoutEffect(() => {
-        if (isPresent || !sheet.current) return
-
-        const s = size.current
-        const [x, y] = getPagePoint(getElement()!)
-        const dx = s.page![0] - x
-        const dy = s.page![1] - y
-
-        if (dx || dy) {
-            popCorrections.push(() => {
-                s.left += dx
-                s.right -= dx
-                s.top += dy
-                s.bottom -= dy
-                sheet.current!.deleteRule(0)
-                insertPopRule()
-            })
         }
     }, [isPresent])
 
