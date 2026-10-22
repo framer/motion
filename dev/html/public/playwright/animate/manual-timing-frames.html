@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <style>
+            body {
+                margin: 0;
+            }
+
+            .box {
+                width: 100px;
+                height: 100px;
+                background-color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="box" id="box"></div>
+        <script type="module" src="/src/inc.js"></script>
+        <script type="module">
+            const { animate, processFrame, MotionGlobalConfig } = window.Motion
+
+            /**
+             * Render frame by frame, as a video exporter or timeline
+             * scrubber would. opacity and x would normally run as WAAPI
+             * on the browser's clock.
+             */
+            MotionGlobalConfig.useManualTiming = true
+            processFrame(0)
+            animate(
+                "#box",
+                {
+                    opacity: [0, 1],
+                    x: [0, 100],
+                    filter: ["blur(0px)", "blur(10px)"],
+                },
+                { duration: 1, ease: "linear" }
+            )
+            window.renderFrame = (t) => processFrame(t)
+            window.ready = true
+        </script>
+    </body>
+</html>

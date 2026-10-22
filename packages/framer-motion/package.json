@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "14.5.0",
+    "version": "14.6.0",
     "description": "A simple and powerful JavaScript animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -83,7 +83,8 @@
         "dev": "yarn watch",
         "clean": "rm -rf types dist lib",
         "test": "yarn test-server && yarn test-client",
-        "test-client": "jest --config jest.config.json --max-workers=2",
+        "typecheck": "tsc -p tsconfig.test.json",
+        "test-client": "jest --config jest.config.json --max-workers=4",
         "test-server": "jest --config jest.config.ssr.json",
         "prettier": "prettier ./src/* --write",
         "watch": "concurrently -c blue,red -n tsc --noEmitOnError ,rollup --kill-others \"tsc  --noEmitOnError --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
@@ -92,8 +93,8 @@
         "measure": "rollup -c ./rollup.size.config.mjs"
     },
     "dependencies": {
-        "motion-dom": "14.5.0",
-        "motion-utils": "14.1.1",
+        "motion-dom": "14.6.0",
+        "motion-utils": "14.6.0",
         "tslib": "^2.4.0"
     },
     "devDependencies": {

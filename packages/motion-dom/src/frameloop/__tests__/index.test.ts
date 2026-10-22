@@ -60,6 +60,60 @@ describe("frame", () => {
         })
     })
 
+    it("re-runs a callback scheduled with `true` after it already ran in the same step", () => {
+        return new Promise<void>((resolve, reject) => {
+            const order: string[] = []
+
+            const a = () => order.push("a")
+            frame.preRender(() => {
+                order.push("first")
+            })
+            frame.preRender(a)
+            frame.preRender(() => {
+                order.push("last")
+                frame.preRender(a, false, true)
+            })
+
+            frame.render(() => {
+                const result = order.join(",")
+                result === "first,a,last,a" ? resolve() : reject(result)
+            })
+        })
+    })
+
+    it("runs a callback scheduled with `true` once, at the end of the step, if it hasn't run yet", () => {
+        return new Promise<void>((resolve, reject) => {
+            const order: string[] = []
+
+            const a = () => order.push("a")
+            frame.preRender(() => {
+                order.push("first")
+                frame.preRender(a, false, true)
+            })
+            frame.preRender(a)
+            frame.preRender(() => order.push("last"))
+
+            frame.render(() => {
+                const result = order.join(",")
+                result === "first,last,a" ? resolve() : reject(result)
+            })
+        })
+    })
+
+    it("doesn't re-run a callback that schedules itself with `true` while running", () => {
+        return new Promise<void>((resolve, reject) => {
+            let runs = 0
+
+            const a = () => {
+                // Bail rather than hang if this loops
+                if (++runs < 100) frame.preRender(a, false, true)
+            }
+            frame.preRender(a)
+
+            frame.render(() => (runs === 1 ? resolve() : reject(runs)))
+        })
+    })
+
     it("fires callback on next frame if scheduled with `true` outside the same step", () => {
         return new Promise((resolve: Function, reject: Function) => {
             let v = 0

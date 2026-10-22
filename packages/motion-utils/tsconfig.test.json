@@ -1,0 +1,6 @@
+{
+    "extends": "./tsconfig.json",
+    "include": ["src"],
+    "exclude": [],
+    "compilerOptions": { "noEmit": true, "isolatedModules": true }
+}

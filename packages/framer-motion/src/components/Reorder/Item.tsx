@@ -1,9 +1,9 @@
 "use client"
 
-import { isMotionValue } from "motion-dom"
+import { isMotionValue, visualElementStore } from "motion-dom"
 import { invariant } from "motion-utils"
 import * as React from "react"
-import { forwardRef, FunctionComponent, useContext } from "react"
+import { forwardRef, FunctionComponent, useContext, useState } from "react"
 import { ReorderContext } from "../../context/ReorderContext"
 import { motion } from "../../render/components/motion/proxy"
 import { HTMLMotionProps } from "../../render/html/types"
@@ -63,6 +63,8 @@ export function ReorderItemComponent<
         as = "li" as TagName,
         onDrag,
         onDragEnd,
+        onKeyDown,
+        onBlur,
         layout = true,
         ...props
     }: ReorderItemProps<V, TagName>,
@@ -75,6 +77,11 @@ export function ReorderItemComponent<
     >
 
     const context = useContext(ReorderContext)
+    /**
+     * The group's values when this item was grabbed with the keyboard, for
+     * Escape to restore. Set only while grabbed.
+     */
+    const [grabbedFrom, setGrabbedFrom] = useState<V[]>()
     const point = {
         x: useDefaultMotionValue(style.x),
         y: useDefaultMotionValue(style.y),
@@ -90,12 +97,31 @@ export function ReorderItemComponent<
         "reorder-item-child"
     )
 
-    const { axis, registerItem, updateOrder, groupRef, hasReordered } = context!
+    const {
+        axis,
+        registerItem,
+        updateOrder,
+        groupRef,
+        hasReordered,
+        onKeyDown: handleKeyDown,
+    } = context!
     const dragAxis = axis === "xy" ? true : axis
+
+    /**
+     * A keyboard grab is a drag without a pointer, so it shares whileDrag
+     * (but not the drag callbacks, which need a pointer and PanInfo).
+     */
+    const grab = (element: Element, from?: V[]) => {
+        setGrabbedFrom(from)
+        visualElementStore
+            .get(element)
+            ?.animationState?.setActive("whileDrag", !!from)
+    }
 
     return (
         <Component
             drag={dragAxis}
+            tabIndex={0}
             {...props}
             dragSnapToOrigin
             style={{ ...style, x: point.x, y: point.y, zIndex }}
@@ -126,6 +152,20 @@ export function ReorderItemComponent<
                 hasReordered.current = false
                 resetAutoScrollState()
                 onDragEnd && onDragEnd(event, gesturePoint)
+            }}
+            onKeyDown={(event: React.KeyboardEvent<HTMLElement>) => {
+                onKeyDown?.(event as any)
+                handleKeyDown(event, value, grabbedFrom, grab)
+            }}
+            /**
+             * A move blurs the item, but that blur is never dispatched:
+             * React DOM disables its events while it commits, and restores
+             * focus to the item before re-enabling them. So any blur that
+             * reaches here is focus really leaving, which drops the item.
+             */
+            onBlur={(event: React.FocusEvent<HTMLElement>) => {
+                onBlur?.(event as any)
+                grabbedFrom && grab(event.currentTarget)
             }}
             onLayoutMeasure={(measured) => {
                 registerItem(value, measured)

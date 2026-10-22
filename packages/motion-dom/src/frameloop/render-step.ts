@@ -17,6 +17,12 @@ export function createRenderStep(runNextFrame: () => void): Step {
     let flushNextFrame = false
 
     /**
+     * The callback currently running. If it schedules itself with `immediate`
+     * it's left in place, so as before it doesn't run again this step.
+     */
+    let running: Process | undefined
+
+    /**
      * A set of processes which were marked keepAlive when scheduled.
      * A keepAlive process is always also held by a frame queue until
      * it's cancelled, so a Set has the same lifetime semantics as a
@@ -36,7 +42,7 @@ export function createRenderStep(runNextFrame: () => void): Step {
             runNextFrame()
         }
 
-        callback(latestFrameData)
+        ;(running = callback)(latestFrameData)
     }
 
     const step: Step = {
@@ -48,6 +54,15 @@ export function createRenderStep(runNextFrame: () => void): Step {
             const queue = addToCurrentFrame ? thisFrame : nextFrame
 
             if (keepAlive) toKeepAlive.add(callback)
+
+            /**
+             * A callback scheduled with `immediate` during processing may
+             * already have run this step (for instance, a value it reads was
+             * changed by a later callback). Re-adding moves it to the end of
+             * the queue, so it runs again. The running callback is excluded,
+             * so one that re-schedules itself can't loop forever.
+             */
+            addToCurrentFrame && callback !== running && queue.delete(callback)
 
             queue.add(callback)
 
@@ -91,6 +106,7 @@ export function createRenderStep(runNextFrame: () => void): Step {
             // Clear the frame so no callbacks remain. This is to avoid
             // memory leaks should this render step not run for a while.
             thisFrame.clear()
+            running = undefined
 
             isProcessing = false
 

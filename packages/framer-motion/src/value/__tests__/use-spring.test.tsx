@@ -2,6 +2,7 @@ import { frame, motionValue, MotionValue } from "motion-dom"
 import { useEffect, useInsertionEffect } from "react"
 import { motion, useMotionValueEvent } from "../../"
 import { syncDriver } from "../../animation/animators/__tests__/utils"
+import { stepFrames, withManualFrames } from "../../gestures/__tests__/utils"
 import { render } from "../../jest.setup"
 import { useMotionValue } from "../use-motion-value"
 import { useSpring } from "../use-spring"
@@ -333,6 +334,8 @@ describe("useSpring animation events", () => {
  * still be followed, without Strict Mode.
  */
 describe("source changed before useSpring attaches", () => {
+    withManualFrames()
+
     const SetSource = ({ v }: { v: MotionValue<number> }) => {
         useInsertionEffect(() => v.set(100), [])
         return null
@@ -356,8 +359,7 @@ describe("source changed before useSpring attaches", () => {
         }
 
         render(<C />, false)
-        await new Promise((resolve) => setTimeout(resolve, 200))
-        for (let i = 0; i < 5; i++) await nextFrame()
+        await stepFrames(100)
 
         expect(spring.get()).toBe(100)
     })
