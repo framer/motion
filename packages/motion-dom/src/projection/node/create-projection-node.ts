@@ -1385,8 +1385,13 @@ export function createProjectionNode<I>({
                 if (
                     this.options.layoutAnchor !== false &&
                     relativeParent &&
-                    Boolean(relativeParent.resumingFrom) ===
-                        Boolean(this.resumingFrom) &&
+                    (!relativeParent.resumingFrom === !this.resumingFrom ||
+                        /**
+                         * Shared layout animations within a layoutRoot
+                         * animate relative to it.
+                         */
+                        (relativeParent.options.layoutRoot &&
+                            !relativeParent.resumingFrom)) &&
                     !relativeParent.options.layoutScroll &&
                     relativeParent.target &&
                     this.animationProgress !== 1
@@ -2299,9 +2304,17 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         const hasLayoutChanged = !isDeltaZero(layoutDelta)
         let hasRelativeLayoutChanged = false
 
-        if (!node.resumeFrom) {
-            const relativeParent = node.getClosestProjectingParent()
+        const relativeParent = node.getClosestProjectingParent()
 
+        /**
+         * A snapshot resumed from another element is only relative to this
+         * node's relativeParent if it's a layoutRoot that contains both.
+         */
+        if (
+            !node.resumeFrom ||
+            (relativeParent?.options.layoutRoot &&
+                node.resumeFrom.path.includes(relativeParent))
+        ) {
             /**
              * If the relativeParent is itself resuming from a different element then
              * the relative snapshot is not relavent
