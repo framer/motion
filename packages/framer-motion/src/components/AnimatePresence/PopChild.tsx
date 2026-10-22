@@ -1,6 +1,6 @@
 "use client"
 
-import { isHTMLElement, type VisualElement } from "motion-dom"
+import { isHTMLElement, microtask, type VisualElement } from "motion-dom"
 import * as React from "react"
 import { useContext, useId, useInsertionEffect, useRef } from "react"
 
@@ -15,6 +15,7 @@ interface Size {
     right: number
     bottom: number
     direction: string
+    point?: number[]
 }
 
 interface Props {
@@ -30,6 +31,52 @@ interface Props {
 interface MeasureProps extends Props {
     getElement: () => unknown
     sizeRef: React.RefObject<Size>
+}
+
+/**
+ * How much an element's transforms, and its ancestors', scale it on screen.
+ */
+const measureScale = (element?: HTMLElement | null) => {
+    const { width, height } =
+        element?.getBoundingClientRect() || ({} as DOMRect)
+    return [
+        width / element?.offsetWidth! || 1,
+        height / element?.offsetHeight! || 1,
+    ]
+}
+
+/**
+ * The element's position in the space it scrolls in, as the projection
+ * system measures it (see measurePageBox and removeElementScroll): its
+ * viewport position, plus its scroll containers' scroll (across shadow
+ * roots), plus the window's (the root's) scroll. Like checkIsScrollRoot, a
+ * fixed ancestor is a scroll root: it doesn't scroll with anything above it,
+ * so a fixed container is measured relative to the viewport.
+ *
+ * So a scroll position clamped by content shrinking reads as the element
+ * moving only if it doesn't scroll with that content.
+ *
+ * Scroll offsets are in their container's coordinate space, so are scaled
+ * onto the screen, and the result is returned in the offsetParent's
+ * coordinate space, which the pop rule's offsets are in.
+ */
+const measurePoint = (element: HTMLElement) => {
+    let { left, top } = element.getBoundingClientRect()
+    let node: HTMLElement | null | undefined = element
+    while (
+        (node = (node.parentElement ||
+            (node.parentNode as ShadowRoot)?.host) as HTMLElement | null)
+    ) {
+        const { scrollLeft, scrollTop } = node
+        if (scrollLeft || scrollTop) {
+            const [x, y] = measureScale(node)
+            left += scrollLeft * x
+            top += scrollTop * y
+        }
+        if (getComputedStyle(node).position === "fixed") break
+    }
+    const [x, y] = measureScale(element.offsetParent as HTMLElement | null)
+    return [left / x, top / y]
 }
 
 /**
@@ -57,6 +104,7 @@ class PopChildMeasure extends React.Component<MeasureProps> {
             size.right = parentWidth - size.width - size.left
             size.bottom = parentHeight - size.height - size.top
             size.direction = computedStyle.direction
+            size.point = measurePoint(element)
         }
 
         return null
@@ -108,6 +156,19 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop, pop
     const getElement = () =>
         ref.current || (popNode?.current?.current as HTMLElement | undefined)
 
+    const insertPopRule = (sheet: CSSStyleSheet | null) => {
+        const { width, height, top, left, right, bottom, direction } = size.current
+        const isRTL = direction === "rtl"
+        const x = anchorX === "left"
+            ? (isRTL ? `right:${right}` : `left:${left}`)
+            : (isRTL ? `left:${left}` : `right:${right}`)
+        const y = anchorY === "bottom" ? `bottom:${bottom}` : `top:${top}`
+
+        sheet?.insertRule(
+            `[data-motion-pop-id="${id}"]{position:absolute!important;width:${width}px!important;height:${height}px!important;${x}px!important;${y}px!important}`
+        )
+    }
+
     /**
      * We create and inject a style block so we can apply this explicit
      * sizing in a non-destructive manner by just deleting the style block.
@@ -118,15 +179,9 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop, pop
      * styles set via the style prop.
      */
     useInsertionEffect(() => {
-        const { width, height, top, left, right, bottom, direction } = size.current
+        const { width, height } = size.current
         const element = getElement()
         if (isPresent || pop === false || !element || !width || !height) return
-
-        const isRTL = direction === "rtl"
-        const x = anchorX === "left"
-            ? (isRTL ? `right: ${right}` : `left: ${left}`)
-            : (isRTL ? `left: ${left}` : `right: ${right}`)
-        const y = anchorY === "bottom" ? `bottom: ${bottom}` : `top: ${top}`
 
         element.dataset.motionPopId = id
 
@@ -141,17 +196,44 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop, pop
         const parent = root ?? doc.head
         parent.appendChild(style)
 
-        if (style.sheet) {
-            style.sheet.insertRule(`
-          [data-motion-pop-id="${id}"] {
-            position: absolute !important;
-            width: ${width}px !important;
-            height: ${height}px !important;
-            ${x}px !important;
-            ${y}px !important;
-          }
-        `)
-        }
+        insertPopRule(style.sheet)
+
+        /**
+         * Popping the element out of the layout can move its offsetParent,
+         * which we've pinned it to. For instance, a bottom-anchored or
+         * centred container shrinks around its remaining children (#2348).
+         * So once the whole commit is in the DOM, measure how far the
+         * element moved and offset it back.
+         *
+         * This runs on the microtask frameloop, so before paint even if
+         * this commit happens within an animation frame. Every popped
+         * element is measured in its first step, then corrected at the
+         * start of the read step: before the projection system, which
+         * schedules its layout measurement there from layout effects, so
+         * layout animations see the corrected position.
+         */
+        let dx = 0
+        let dy = 0
+        microtask.setup(() => {
+            const [x, y] = measurePoint(element)
+            dx = size.current.point![0] - x
+            dy = size.current.point![1] - y
+        })
+        microtask.read(() => {
+            /**
+             * The style has no sheet if it's been removed since, because
+             * the element is present again.
+             */
+            const { sheet } = style
+            if (!sheet || (!dx && !dy)) return
+            const s = size.current
+            s.left += dx
+            s.right -= dx
+            s.top += dy
+            s.bottom -= dy
+            sheet.deleteRule(0)
+            insertPopRule(sheet)
+        })
 
         return () => {
             element.removeAttribute("data-motion-pop-id")

@@ -12,7 +12,7 @@ import { CSSProperties } from "react"
 export type VariantLabels = string | string[]
 
 import { SVGPathProperties, TransformProperties } from "motion-dom"
-export { SVGPathProperties, TransformProperties }
+export type { SVGPathProperties, TransformProperties }
 
 export type MotionValueString = MotionValue<string>
 export type MotionValueNumber = MotionValue<number>

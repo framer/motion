@@ -1041,7 +1041,20 @@ function createGroup(owner: TransformOwner): TransformGroup {
             if (isDone) continue
 
             const local = elapsed - offset
-            if (rate) {
+            if (
+                rate &&
+                animation.updatePlaybackRate &&
+                animation.playState === "running" &&
+                Math.abs(Number(animation.currentTime) - local) < 20
+            ) {
+                /**
+                 * Only the speed changed. Setting playbackRate and
+                 * startTime restarts a running compositor animation, which
+                 * can render the underlying value for a frame.
+                 */
+                animation.playbackRate !== rate &&
+                    animation.updatePlaybackRate(rate)
+            } else if (rate) {
                 animation.playbackRate = rate
                 animation.startTime = now - local / rate
             } else {
