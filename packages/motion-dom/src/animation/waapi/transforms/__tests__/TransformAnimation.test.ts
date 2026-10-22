@@ -14,9 +14,11 @@ interface MockAnimation {
     startTime: number | null
     currentTime: number | null
     playbackRate: number
+    playState: string
     onfinish: (() => void) | null
     cancel: jest.Mock
     pause: jest.Mock
+    updatePlaybackRate: jest.Mock
 }
 
 let animations: MockAnimation[] = []
@@ -32,6 +34,7 @@ beforeAll(() => {
         ) {
             let timer: ReturnType<typeof setTimeout> | undefined
             let startTime: number | null = null
+            let heldTime: number | null = null
 
             /**
              * Finish at the end of the (finite) animation, like WAAPI.
@@ -40,9 +43,21 @@ beforeAll(() => {
                 element: this,
                 keyframes,
                 options,
-                currentTime: null,
                 playbackRate: 1,
+                playState: "running",
                 onfinish: null,
+                get currentTime() {
+                    if (heldTime !== null || startTime === null) {
+                        return heldTime
+                    }
+                    return (
+                        (performance.now() - startTime) *
+                        animation.playbackRate
+                    )
+                },
+                set currentTime(value) {
+                    heldTime = value
+                },
                 get startTime() {
                     return startTime
                 },
@@ -63,7 +78,13 @@ beforeAll(() => {
                     )
                 },
                 cancel: jest.fn(() => clearTimeout(timer)),
-                pause: jest.fn(() => clearTimeout(timer)),
+                pause: jest.fn(() => {
+                    clearTimeout(timer)
+                    animation.playState = "paused"
+                }),
+                updatePlaybackRate: jest.fn((rate: number) => {
+                    animation.playbackRate = rate
+                }),
             }
             animations.push(animation)
             return animation
@@ -418,6 +439,32 @@ describe("independent transform acceleration", () => {
         expect(waapi.playbackRate).toBe(2)
 
         expect(animations.length).toBe(count)
+        expect(running(element)).toEqual([waapi])
+    })
+
+    it("changes the speed of a running animation without restarting it", async () => {
+        const element = document.createElement("div")
+        const animation = animateElement(
+            element,
+            { x: [0, 100] },
+            { duration: 1, ease: "linear" }
+        )
+        await nextFrame()
+        const [waapi] = running(element)
+        const startTime = waapi.startTime
+        const setStartTime = jest.spyOn(waapi, "startTime", "set")
+
+        /**
+         * Setting playbackRate and startTime restarts a running compositor
+         * animation, which can show the underlying value for a frame.
+         */
+        animation.forEach((a) => (a.speed = -1))
+        await nextFrame()
+
+        expect(waapi.updatePlaybackRate).toHaveBeenCalledWith(-1)
+        expect(waapi.playbackRate).toBe(-1)
+        expect(setStartTime).not.toHaveBeenCalled()
+        expect(waapi.startTime).toBe(startTime)
         expect(running(element)).toEqual([waapi])
     })
 
