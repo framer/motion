@@ -36,7 +36,7 @@ export function inertia({
 
     let amplitude = power * velocity
     const ideal = origin + amplitude
-    const target = modifyTarget === undefined ? ideal : modifyTarget(ideal)
+    const target = modifyTarget ? modifyTarget(ideal) : ideal
 
     /**
      * If the target has changed we need to re-calculate the amplitude, otherwise
