@@ -1,10 +1,6 @@
 import { createProjectionNode } from "./create-projection-node"
 import { DocumentProjectionNode } from "./DocumentProjectionNode"
-import { IProjectionNode } from "./types"
-
-export const rootProjectionNode: { current: IProjectionNode | undefined } = {
-    current: undefined,
-}
+import { rootProjectionNode } from "./root"
 
 export const HTMLProjectionNode =
     /* @__PURE__ */ createProjectionNode<HTMLElement>({
