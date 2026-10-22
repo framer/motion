@@ -1,5 +1,9 @@
 import { syncDriver } from "../../animation/__tests__/utils"
 import { frame } from "../../frameloop"
+import {
+    stepFrames,
+    withManualFrames,
+} from "../../frameloop/__tests__/utils"
 import { followValue } from "../follow-value"
 import { motionValue } from "../index"
 import { attachSpring, springValue } from "../spring-value"
@@ -361,15 +365,18 @@ describe("attachSpring to a MotionValue source", () => {
     const nextFrame = () =>
         new Promise<void>((resolve) => frame.postRender(() => resolve()))
 
-    test("follows a source that already differs", async () => {
-        const source = motionValue(100)
-        const value = motionValue(0)
-        attachSpring(value, source, { duration: 0.01 } as any)
+    describe("on a manual clock", () => {
+        withManualFrames()
 
-        expect(value.isAnimating()).toBe(true)
-        await new Promise((resolve) => setTimeout(resolve, 200))
-        for (let i = 0; i < 3; i++) await nextFrame()
-        expect(value.get()).toBe(100)
+        test("follows a source that already differs", async () => {
+            const source = motionValue(100)
+            const value = motionValue(0)
+            attachSpring(value, source, { duration: 0.01 } as any)
+
+            expect(value.isAnimating()).toBe(true)
+            await stepFrames(100)
+            expect(value.get()).toBe(100)
+        })
     })
 
     test("doesn't animate when already at the source", () => {
@@ -394,21 +401,22 @@ describe("attachSpring to a MotionValue source", () => {
         expect(value.isAnimating()).toBe(true)
         source.set(-100)
 
-        /**
-         * Count updates per frame rather than in total: a slow frame can
-         * produce no change, but an orphaned animation writing alongside
-         * this one would produce two in the same frame.
-         */
         let updates = 0
-        let maxUpdatesPerFrame = 0
         value.on("change", () => updates++)
+
+        /**
+         * At most one update per frame: no orphaned animation writing too.
+         * A frame can have none, as when a slow first frame restarts the
+         * animation from then.
+         */
+        let total = 0
         for (let i = 0; i < 5; i++) {
             await nextFrame()
-            maxUpdatesPerFrame = Math.max(maxUpdatesPerFrame, updates)
+            expect(updates).toBeLessThanOrEqual(1)
+            total += updates
             updates = 0
         }
-
-        expect(maxUpdatesPerFrame).toBe(1)
+        expect(total).toBeGreaterThan(0)
         detach()
     })
 })

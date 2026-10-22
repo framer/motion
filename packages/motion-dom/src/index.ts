@@ -75,13 +75,17 @@ export * from "./effects/utils/create-effect"
 export * from "./frameloop"
 export * from "./frameloop/batcher"
 export * from "./frameloop/microtask"
+export * from "./frameloop/process-frame"
 export * from "./frameloop/sync-time"
 export * from "./frameloop/types"
 
+export * from "./gestures/drag"
 export * from "./gestures/drag/state/is-active"
 export * from "./gestures/drag/state/set-active"
 export * from "./gestures/drag/types"
+export * from "./gestures/drag/VisualElementDragControls"
 export * from "./gestures/hover"
+export * from "./gestures/pan/PanSession"
 export * from "./gestures/pan/types"
 export * from "./gestures/press"
 export * from "./gestures/press/types"
@@ -101,6 +105,15 @@ export * from "./render/utils/keys-position"
 export * from "./render/utils/keys-transform"
 
 export * from "./resize"
+
+export * from "./scope"
+export {
+    activeScope,
+    addBuilderToScope,
+    addToScope,
+    bindToScope,
+} from "./scope/active"
+export { toMediaQuery } from "./scope/media"
 
 export * from "./stats"
 export * from "./stats/buffer"
@@ -258,6 +271,9 @@ export { mixValues } from "./projection/animation/mix-values"
 // Utilities (used by projection system)
 export { animateSingleValue } from "./animation/animate/single-value"
 export { addDomEvent } from "./events/add-dom-event"
+export { addPointerEvent } from "./events/add-pointer-event"
+export * from "./events/event-info"
+export * from "./utils/distance"
 export { compareByDepth } from "./projection/utils/compare-by-depth"
 export type { WithDepth } from "./projection/utils/compare-by-depth"
 export { FlatTree } from "./projection/utils/flat-tree"
@@ -274,10 +290,8 @@ export {
 export { DocumentProjectionNode } from "./projection/node/DocumentProjectionNode"
 export { nodeGroup } from "./projection/node/group"
 export type { NodeGroup } from "./projection/node/group"
-export {
-    HTMLProjectionNode,
-    rootProjectionNode,
-} from "./projection/node/HTMLProjectionNode"
+export { HTMLProjectionNode } from "./projection/node/HTMLProjectionNode"
+export { rootProjectionNode } from "./projection/node/root"
 export { globalProjectionState } from "./projection/node/state"
 export type {
     InitialPromotionConfig,

@@ -170,23 +170,43 @@ test.describe("animate() independent transforms", () => {
         const result = await page.evaluate(async () => {
             const element = document.getElementById("a")!
             const { animate } = window.Motion
-            const transition = { type: "spring", stiffness: 100, damping: 20 }
-            animate(element, { x: 400 }, transition)
+            animate(
+                element,
+                { x: 400 },
+                { type: "spring", stiffness: 100, damping: 20 }
+            )
             await window.waitFrame(150)
-            animate(element, { x: 0 }, transition)
-            await window.nextFrames(1)
             const before = window.readTransform(element).x
-            await window.nextFrames(3)
+
+            /**
+             * A soft spring keeps the inherited momentum carrying the
+             * element right for several frames, so the check doesn't
+             * depend on when the browser renders each frame.
+             */
+            animate(
+                element,
+                { x: 0 },
+                { type: "spring", stiffness: 50, damping: 5 }
+            )
+            const samples: number[] = []
+            for (let i = 0; i < 4; i++) {
+                await window.nextFrames(1)
+                samples.push(window.readTransform(element).x)
+            }
             return {
                 count: window.transformAnimations(element).length,
                 before,
-                after: window.readTransform(element).x,
+                peak: Math.max(...samples),
             }
         })
 
         expect(result.count).toBe(1)
-        // Still moving right from the first spring's momentum.
-        expect(result.after).toBeGreaterThan(result.before)
+        /**
+         * Still moving right from the first spring's momentum. Without it
+         * the element moves left at once (at most ~1px right of before, as
+         * the interrupt lands mid-frame).
+         */
+        expect(result.peak - result.before).toBeGreaterThan(20)
     })
 
     test("stop() leaves the element where it was", async ({ page }) => {
@@ -507,5 +527,43 @@ test.describe("animate() independent transforms", () => {
         })
 
         expect(count).toBe(1)
+    })
+
+    /**
+     * A round trip built from where it started, give or take a float
+     * residue, can't share one easing. Stretching it over that residue
+     * gives an easing the compositor can't render, and the element stops
+     * painting, although getComputedStyle reads right.
+     */
+    test("a round trip from a float residue keeps painting", async ({
+        page,
+    }) => {
+        await page.evaluate(async () => {
+            const element = document.getElementById("a")!
+            element.style.marginTop = "50px"
+            window.Motion.animate(
+                element,
+                { y: [-1e-30, -18, 0] },
+                { duration: 1.2, ease: "easeInOut", repeat: Infinity }
+            )
+            await window.waitFrame(300)
+        })
+
+        const screenshot = await page.screenshot()
+        const color = await page.evaluate(async (src) => {
+            const image = new Image()
+            image.src = src
+            await image.decode()
+            const canvas = document.createElement("canvas")
+            canvas.width = image.width
+            canvas.height = image.height
+            const context = canvas.getContext("2d")!
+            context.drawImage(image, 0, 0)
+            return Array.from(context.getImageData(50, 100, 1, 1).data)
+        }, "data:image/png;base64," + screenshot.toString("base64"))
+
+        // The box's colour, #0077ff, not the white page behind it.
+        expect(color[0]).toBeLessThan(50)
+        expect(color[2]).toBeGreaterThan(200)
     })
 })

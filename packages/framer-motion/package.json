@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "14.2.0",
+    "version": "14.6.0",
     "description": "A simple and powerful JavaScript animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -92,8 +92,8 @@
         "measure": "rollup -c ./rollup.size.config.mjs"
     },
     "dependencies": {
-        "motion-dom": "14.2.0",
-        "motion-utils": "14.1.1",
+        "motion-dom": "14.6.0",
+        "motion-utils": "14.6.0",
         "tslib": "^2.4.0"
     },
     "devDependencies": {
@@ -121,27 +121,27 @@
     "bundlesize": [
         {
             "path": "./dist/size-rollup-motion.js",
-            "maxSize": "42.2 kB"
+            "maxSize": "42.35 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
-            "maxSize": "5 kB"
+            "maxSize": "5.05 kB"
         },
         {
             "path": "./dist/size-rollup-m-dom-animation.js",
-            "maxSize": "28.6 kB"
+            "maxSize": "28.7 kB"
         },
         {
             "path": "./dist/size-rollup-m-dom-max.js",
-            "maxSize": "42.3 kB"
+            "maxSize": "42.45 kB"
         },
         {
             "path": "./dist/size-rollup-animate.js",
-            "maxSize": "22 kB"
+            "maxSize": "22.1 kB"
         },
         {
             "path": "./dist/size-rollup-scroll.js",
-            "maxSize": "3.7 kB"
+            "maxSize": "3.75 kB"
         },
         {
             "path": "./dist/size-rollup-waapi-animate.js",

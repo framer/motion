@@ -678,11 +678,28 @@ export interface PathInterpolator {
 
 /**
  * Returned by a path factory such as `arc()` and passed to `transition.path`.
- * Implements both the keyframe-animation hook (`animateVisualElement`) and
- * the layout-projection hook (`interpolateProjection`).
+ * Implements both the keyframe-animation hook (`animateValues`) and the
+ * layout-projection hook (`interpolateProjection`).
  */
 export interface MotionPath {
-    animateVisualElement(
+    /**
+     * Claim `x`/`y` from `target` (deleting them) and animate them, via
+     * the motion values `getValue` returns, along the path. Called for
+     * both VisualElements and elements animated by `animate()`.
+     */
+    animateValues?(
+        getValue: (key: string) => MotionValue | undefined,
+        target: { [key: string]: unknown },
+        transition: Transition | undefined,
+        delay: number,
+        animations: AnimationPlaybackControlsWithThen[]
+    ): void
+    /**
+     * @deprecated Implement `animateValues`, which also runs for elements
+     * animated by `animate()`. Only called for VisualElements, and only
+     * when `animateValues` isn't implemented.
+     */
+    animateVisualElement?(
         visualElement: VisualElement,
         target: TargetAndTransition,
         transition: Transition | undefined,

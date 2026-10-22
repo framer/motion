@@ -4,16 +4,75 @@ Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [14.3.0] 2026-10-14
+## [14.6.0] 2026-10-20
+
+### Added
+
+-   `Reorder`: Grab-and-move keyboard reordering.
+-   `processFrame`: Manually process the frameloop at `t`.
+-   `stepFrames`: For tests, synchronously advance frameloop time by `duration`.
+
+### Fixed
+
+-   Improved tree-shaking.
+-   `motion`: Fix `layoutId` elements jumping in some situations.
+-   `Reorder`: Make auto-scroll speed independent of refresh rate.
+-   `drag`: Fix animations when disabling `drag` from within `onDrag`.
+-   Fix shared layout animations applying an element's own `scale`/`x`/`y` twice.
+-   Fix replaying mount animation when an element takes over a `layoutId`.
+-   `motion`: Fix updating SVG styles.
+-   `useTransform`: Improving value resolution.
+
+### Changed
+
+-   `MotionGlobalConfig.useManualTiming`:
+
+## [14.5.0] 2026-10-20
+
+### Added
+
+-   `scopeMotion`/`useScopeMotion`: Scope animations and gestures to set default transitions, specify root elements, match media, and easy cleanup.
+-   `Reorder`: Pass `moved` to `onReorder` as second argument.
+
+### Fixed
+
+-   `drag`: With direction lock, apply the move that sets the lock. Before, a fast drag released in that frame didn't move.
+-   `press`: Improve cleanup of keyboard accessibility events.
+-   `Reorder`: Stop double-counting `window` scroll during drag.
+-   `motion`: Ensure we animate from the latest props when parent `Activity` is made visible.
+-   `useInView`: Observe `ref` if contents change after mount.
+
+## [14.4.0] 2026-10-18
+
+### Added
+
+-   `drag`: Drag gesture added to JavaScript API.
+
+## [14.3.1] 2026-10-18
+
+### Fixed
+
+-   `AnimatePresence`: Fire `onExitComplete` after exiting children unmount.
+-   `AnimatePresence`: `popLayout` children that don't accept `ref` are now popped when root component is `<motion>` element.
+-   Fix interpolation of axis `rotate` and `skew` transforms during shared layout animation.
+-   Fix layout animations when `layout` is enabled after mount.
+-   Fix `drag` jumping to `0` after animate `x`/`y` to CSS variable.
+-   `arc`: Fix path animations with `animate`.
+-   Ensure shared elements are freed from memory when unmounted.
+-   Fix accelerated independent transform animations vanishing when they start from a float residue.
+
+## [14.3.0] 2026-10-15
 
 ### Added
 
 -   `stagger`: New `grid`, `from: "edges" | "random"` options.
+-   Support for `scaleZ`.
 
 ### Fixed
 
 -   Fix matrix3d and other digit-named transform functions being tokenised as numbers.
 -   `useSpring`: Ensure when switching targets we animate to the new target on switch.
+-   Fix SVG MotionValue children being written as a children attribute.
 
 ## [14.2.0] 2026-10-13
 

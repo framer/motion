@@ -17,7 +17,12 @@ export type { ResolvedValues }
 export interface PresenceContextProps {
     id: string
     isPresent: boolean
-    register: (id: string | number) => () => void
+    /**
+     * Registers a child with this presence. Motion components also pass
+     * their VisualElement, so `mode="popLayout"` can find the child's
+     * element when the child can't be given a ref.
+     */
+    register: (id: string | number, node?: any) => () => void
     onExitComplete?: (id: string | number) => void
     initial?: false | VariantLabels
     custom?: any

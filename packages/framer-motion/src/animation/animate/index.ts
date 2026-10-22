@@ -8,14 +8,24 @@ import type {
     UnresolvedValueKeyframe,
     ValueAnimationTransition,
 } from "motion-dom"
-import { addEffect, GroupAnimationWithThen, removeEffect } from "motion-dom"
-import { invariant, removeItem } from "motion-utils"
+import {
+    activeScope,
+    addEffect,
+    GroupAnimationWithThen,
+    removeEffect,
+} from "motion-dom"
+import { removeItem } from "motion-utils"
 import {
     AnimationSequence,
     ObjectTarget,
     SequenceOptions,
 } from "../sequence/types"
+import { animateSequence } from "./sequence"
 import { animateSubject } from "./subject"
+
+function isSequence(value: unknown): value is AnimationSequence {
+    return Array.isArray(value) && value.some(Array.isArray)
+}
 
 interface ScopedAnimateOptions {
     scope?: AnimationScope
@@ -30,13 +40,12 @@ interface ScopedAnimateOptions {
 export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
     const { scope, reduceMotion, skipAnimations } = options
     /**
-     * @deprecated Sequences have moved to `timeline()`:
-     * `timeline([...segments], options)`.
+     * Animate a sequence
      */
     function scopedAnimate(
         sequence: AnimationSequence,
         options?: SequenceOptions
-    ): never
+    ): AnimationPlaybackControlsWithThen
     /**
      * Animate a string
      */
@@ -81,7 +90,7 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
      * Implementation
      */
     function scopedAnimate<O extends {}>(
-        subject:
+        subjectOrSequence:
             | AnimationSequence
             | MotionValue<number>
             | MotionValue<string>
@@ -90,7 +99,7 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
             | ElementOrSelector
             | O
             | O[],
-        keyframes?:
+        optionsOrKeyframes?:
             | SequenceOptions
             | number
             | string
@@ -103,11 +112,10 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
             | ValueAnimationTransition<string>
             | DynamicAnimationOptions
     ): AnimationPlaybackControlsWithThen {
-        invariant(
-            !(Array.isArray(subject) && subject.some(Array.isArray)),
-            "Sequences have moved from animate() to timeline(): timeline([...segments], options)",
-            "animate-sequence"
-        )
+        let animations: AnimationPlaybackControlsWithThen[] = []
+        let animationOnComplete: VoidFunction | undefined
+        const motionScope = activeScope.current
+        const scopeTransition = motionScope?.transition
 
         const inherited: { reduceMotion?: boolean; skipAnimations?: boolean } =
             {}
@@ -115,20 +123,49 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
         if (skipAnimations !== undefined)
             inherited.skipAnimations = skipAnimations
 
-        // Extract top-level onComplete so it doesn't get applied per-value
-        const { onComplete, ...rest } = options || {}
-
-        const animation = new GroupAnimationWithThen(
-            animateSubject(
-                subject as ElementOrSelector,
-                keyframes as DOMKeyframesDefinition,
-                { ...inherited, ...rest } as DynamicAnimationOptions,
+        if (isSequence(subjectOrSequence)) {
+            const { onComplete, ...sequenceOptions } =
+                (optionsOrKeyframes as SequenceOptions) || {}
+            if (typeof onComplete === "function") {
+                animationOnComplete = onComplete as VoidFunction
+            }
+            if (scopeTransition) {
+                sequenceOptions.defaultTransition = {
+                    ...scopeTransition,
+                    ...sequenceOptions.defaultTransition,
+                } as SequenceOptions["defaultTransition"]
+            }
+            animations = animateSequence(
+                subjectOrSequence,
+                { ...inherited, ...sequenceOptions } as SequenceOptions,
                 scope
             )
-        )
+        } else {
+            // Extract top-level onComplete so it doesn't get applied per-value
+            const { onComplete, ...rest } = options || {}
+            if (typeof onComplete === "function") {
+                animationOnComplete = onComplete as VoidFunction
+            }
+            animations = animateSubject(
+                subjectOrSequence as ElementOrSelector,
+                optionsOrKeyframes as DOMKeyframesDefinition,
+                {
+                    ...inherited,
+                    ...scopeTransition,
+                    ...rest,
+                } as DynamicAnimationOptions,
+                scope
+            )
+        }
 
-        if (typeof onComplete === "function") {
-            animation.finished.then(onComplete as VoidFunction)
+        const animation = new GroupAnimationWithThen(animations)
+
+        if (animationOnComplete) {
+            animation.finished.then(animationOnComplete)
+        }
+
+        if (motionScope) {
+            animation.finished.then(motionScope.add(() => animation.stop()))
         }
 
         if (scope) {
@@ -144,13 +181,16 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
     return scopedAnimate
 }
 
-export const animate = Object.assign(createScopedAnimate(), {
-    /**
-     * Register an effect so `animate()` can animate the subjects it
-     * claims, for instance `animate.addEffect(threeEffect)`. The most
-     * recently added effect is tested first. DOM elements are always
-     * animated directly.
-     */
-    addEffect,
-    removeEffect,
-})
+export const animate = /* @__PURE__ */ Object.assign(
+    /* @__PURE__ */ createScopedAnimate(),
+    {
+        /**
+         * Register an effect so `animate()` can animate the subjects it
+         * claims, for instance `animate.addEffect(threeEffect)`. The most
+         * recently added effect is tested first. DOM elements are always
+         * animated directly.
+         */
+        addEffect,
+        removeEffect,
+    }
+)

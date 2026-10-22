@@ -36,6 +36,7 @@ export function buildProjectionTransform(
             pathRotation,
             rotateX,
             rotateY,
+            rotateZ,
             skewX,
             skewY,
         } = latestTransform
@@ -46,6 +47,7 @@ export function buildProjectionTransform(
         if (pathRotation) transform += `rotate(${pathRotation}deg) `
         if (rotateX) transform += `rotateX(${rotateX}deg) `
         if (rotateY) transform += `rotateY(${rotateY}deg) `
+        if (rotateZ) transform += `rotateZ(${rotateZ}deg) `
         if (skewX) transform += `skewX(${skewX}deg) `
         if (skewY) transform += `skewY(${skewY}deg) `
     }

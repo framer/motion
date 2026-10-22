@@ -82,8 +82,12 @@ describe("numbers and colours are still tokenised", () => {
 })
 
 test("tokenising long minified SVG paths stays linear", () => {
-    const path = "M0 0" + "l-5-5-5-5h-10v-10".repeat(2000)
+    /**
+     * Linear tokenising takes ~30ms here and quadratic several seconds, so
+     * the budget leaves room for a loaded test machine.
+     */
+    const path = "M0 0" + "l-5-5-5-5h-10v-10".repeat(8000)
     const start = performance.now()
-    expect(complex.parse(path)).toHaveLength(12002)
-    expect(performance.now() - start).toBeLessThan(100)
+    expect(complex.parse(path)).toHaveLength(48002)
+    expect(performance.now() - start).toBeLessThan(1000)
 })

@@ -1,6 +1,6 @@
 "use client"
 
-import { invariant } from "motion-utils"
+import { invariant, moveItem } from "motion-utils"
 import * as React from "react"
 import {
     forwardRef,
@@ -47,9 +47,14 @@ export interface Props<
      * A callback to fire with the new value order. For instance, if the values
      * are provided as a state from `useState`, this could be the set state function.
      *
+     * The second argument is the value of the item that moved. Its old and
+     * new positions are `values.indexOf(moved)` and `newOrder.indexOf(moved)`.
+     * This fires for each step of a drag, not once when it ends, so these
+     * describe that step's move.
+     *
      * @public
      */
-    onReorder: (newOrder: V[]) => void
+    onReorder: (newOrder: V[], moved: V) => void
 
     /**
      * The latest values state.
@@ -118,10 +123,93 @@ export function ReorderGroupComponent<
         if (!valuesSet.has(value)) itemLayouts.current.delete(value)
     })
 
+    const getOrder = () =>
+        values.flatMap((value) => {
+            const layout = itemLayouts.current.get(value)
+            return layout ? [{ value, layout }] : []
+        })
+
+    const isRTL = () =>
+        groupRef.current?.ownerDocument.defaultView?.getComputedStyle(
+            groupRef.current
+        ).direction === "rtl"
+
+    /**
+     * Write the new order of the measured items back into the slots they
+     * hold in `values`, leaving unmeasured (e.g. virtualized) values in place.
+     */
+    const commit = (newOrder: ItemData<V>[], moved: V) => {
+        let i = 0
+        const newValues = values.map((value) =>
+            itemLayouts.current.has(value) ? newOrder[i++].value : value
+        )
+        newValues.some((value, j) => value !== values[j]) &&
+            onReorder(newValues, moved)
+    }
+
     const context: ReorderContextProps<V> = {
         axis,
         groupRef,
         hasReordered,
+        /**
+         * Space grabs and drops the item, arrows along `axis` move
+         * the grabbed item one place (Left and Right swap in RTL) and Escape
+         * restores the order in `from`, the values when it was grabbed. Keys
+         * from children or with modifiers (Alt+Left etc.) are left alone.
+         */
+        onKeyDown: (event, item, from, grab) => {
+            const { key, currentTarget } = event
+            if (
+                event.defaultPrevented ||
+                event.target !== currentTarget ||
+                event.altKey ||
+                event.ctrlKey ||
+                event.metaKey
+            ) {
+                return
+            }
+
+            const order = getOrder()
+            const keyIndex = [
+                "ArrowUp",
+                "ArrowLeft",
+                "ArrowDown",
+                "ArrowRight",
+            ].indexOf(key)
+            const isX = keyIndex % 2
+            if (key === " ") {
+                event.repeat || grab(currentTarget, from ? undefined : values)
+            } else if (!from) {
+                return
+            } else if (key === "Escape") {
+                /**
+                 * Values added since the grab keep their slots.
+                 */
+                const kept = from.flatMap((value) =>
+                    order.filter((data) => data.value === value)
+                )
+                commit(
+                    order.map((data) =>
+                        from.includes(data.value) ? kept.shift()! : data
+                    ),
+                    item
+                )
+                grab(currentTarget)
+            } else if (
+                keyIndex < 0 ||
+                (axis !== "xy" && axis !== (isX ? "x" : "y"))
+            ) {
+                return
+            } else {
+                const index = order.findIndex(({ value }) => value === item)
+                const target =
+                    index + (keyIndex > 1 !== !!(isX && isRTL()) ? 1 : -1)
+                index > -1 &&
+                    order[target] &&
+                    commit(moveItem(order, index, target), item)
+            }
+            event.preventDefault()
+        },
         registerItem: (value, layout) => {
             itemLayouts.current.set(value, layout)
 
@@ -139,37 +227,20 @@ export function ReorderGroupComponent<
         updateOrder: (item, offset, velocity) => {
             if (isReordering.current) return
 
-            const order = values.flatMap((value) => {
-                const layout = itemLayouts.current.get(value)
-                return layout ? [{ value, layout }] : []
-            })
-            const direction =
-                groupRef.current?.ownerDocument.defaultView?.getComputedStyle(
-                    groupRef.current
-                ).direction === "rtl"
-                    ? "rtl"
-                    : "ltr"
+            const order = getOrder()
             const newOrder = checkReorder(
                 order,
                 item,
                 offset,
                 velocity,
                 axis,
-                direction
+                isRTL() ? "rtl" : "ltr"
             )
 
             if (order !== newOrder) {
                 isReordering.current = true
                 hasReordered.current = true
-
-                const newValues = [...values]
-                const measuredIndexes = order.map(({ value }) =>
-                    values.indexOf(value)
-                )
-                newOrder.forEach(({ value }, index) => {
-                    newValues[measuredIndexes[index]] = value
-                })
-                onReorder(newValues)
+                commit(newOrder, item)
             }
         },
     }
@@ -252,6 +323,6 @@ export const ReorderGroup = /*@__PURE__*/ forwardRef(ReorderGroupComponent) as <
         "values" | "onReorder"
     > & {
         values: Values
-        onReorder: (newOrder: Values) => void
+        onReorder: (newOrder: Values, moved: Values[number]) => void
     } & { ref?: React.ForwardedRef<any> }
 ) => ReturnType<typeof ReorderGroupComponent>

@@ -1,30 +1,31 @@
+import { Axis, invariant, Point } from "motion-utils"
+import { animateMotionValue } from "../../animation/interfaces/motion-value"
+import type { Transition } from "../../animation/types"
+import { getVariableValue } from "../../animation/utils/css-variables-conversion"
+import { isCSSVariableToken } from "../../animation/utils/is-css-variable"
+import { addDomEvent } from "../../events/add-dom-event"
+import { addPointerEvent } from "../../events/add-pointer-event"
+import { frame } from "../../frameloop/frame"
+import type { MotionNodeOptions } from "../../node/types"
 import {
-    addValueToWillChange,
-    animateMotionValue,
-    calcLength,
     convertBoundingBoxToBox,
     convertBoxToBoundingBox,
-    createBox,
-    eachAxis,
-    frame,
-    isElementTextInput,
-    measurePageBox,
-    mixNumber,
-    PanInfo,
-    percent,
-    ResolvedConstraints,
-    resize,
-    setDragLock,
-    Transition,
-    type VisualElement,
-} from "motion-dom"
-import { Axis, Point, invariant } from "motion-utils"
-import { addDomEvent, type LayoutUpdateData } from "motion-dom"
-import { addPointerEvent } from "../../events/add-pointer-event"
-import { MotionProps } from "../../motion/types"
-import { getContextWindow } from "../../utils/get-context-window"
-import { isRefObject } from "../../utils/is-ref-object"
+} from "../../projection/geometry/conversion"
+import { calcLength } from "../../projection/geometry/delta-calc"
+import { createBox } from "../../projection/geometry/models"
+import type { LayoutUpdateData } from "../../projection/node/types"
+import { eachAxis } from "../../projection/utils/each-axis"
+import { measurePageBox } from "../../projection/utils/measure"
+import type { VisualElement } from "../../render/VisualElement"
+import { resize } from "../../resize"
+import { mixNumber } from "../../utils/mix/number"
+import { percent, px } from "../../value/types/numbers/units"
+import { addValueToWillChange } from "../../value/will-change/add-will-change"
+import type { PanInfo } from "../pan/types"
 import { PanSession } from "../pan/PanSession"
+import { isElementTextInput } from "../press/utils/is-keyboard-accessible"
+import { setDragLock } from "./state/set-active"
+import type { ResolvedConstraints } from "./types"
 import {
     applyConstraints,
     calcOrigin,
@@ -92,8 +93,19 @@ export class VisualElementDragControls {
      */
     private latestPanInfo: PanInfo | null = null
 
-    constructor(visualElement: VisualElement<HTMLElement>) {
+    /**
+     * Where drag options are read from. By default these are the
+     * VisualElement's props (as with a React `motion` component), but the
+     * vanilla `drag()` API provides its own.
+     */
+    private readProps: () => MotionNodeOptions
+
+    constructor(
+        visualElement: VisualElement<HTMLElement>,
+        readProps: () => MotionNodeOptions = () => visualElement.getProps()
+    ) {
         this.visualElement = visualElement
+        this.readProps = readProps
     }
 
     start(
@@ -144,9 +156,23 @@ export class VisualElementDragControls {
                 let current = this.getAxisMotionValue(axis).get() || 0
 
                 /**
-                 * If the MotionValue is a percentage value convert to px
+                 * If the MotionValue is a CSS variable, like "var(--y)",
+                 * resolve it so it can be converted to px below.
                  */
-                if (percent.test(current)) {
+                if (isCSSVariableToken(current)) {
+                    current =
+                        getVariableValue(
+                            current,
+                            this.visualElement.current!
+                        ) || 0
+                }
+
+                /**
+                 * If the MotionValue is a px or percentage value convert to px
+                 */
+                if (px.test(current)) {
+                    current = parseFloat(current)
+                } else if (percent.test(current)) {
                     const { projection } = this.visualElement
 
                     if (projection && projection.layout) {
@@ -192,12 +218,14 @@ export class VisualElementDragControls {
             if (dragDirectionLock && this.currentDirection === null) {
                 this.currentDirection = getCurrentDirection(offset)
 
-                // If we've successfully set a direction, notify listener
-                if (this.currentDirection !== null) {
-                    onDirectionLock && onDirectionLock(this.currentDirection)
-                }
+                /**
+                 * Wait for more movement until a direction is set. Once
+                 * it is, apply this move too: it can be the last before
+                 * release when the browser coalesces a fast gesture.
+                 */
+                if (this.currentDirection === null) return
 
-                return
+                onDirectionLock && onDirectionLock(this.currentDirection)
             }
 
             // Update each point with the latest position
@@ -252,16 +280,22 @@ export class VisualElementDragControls {
                 transformPagePoint: this.visualElement.getTransformPagePoint(),
                 dragSnapToOrigin,
                 distanceThreshold,
-                contextWindow: getContextWindow(this.visualElement),
+                contextWindow:
+                    this.visualElement.current?.ownerDocument.defaultView,
                 element: this.visualElement.current,
             }
         )
     }
 
     /**
-     * @internal
+     * @param dragAxes - The axes to animate on release, if not the `drag`
+     * prop's, e.g. when drag was disabled mid-gesture.
      */
-    stop(event?: PointerEvent, panInfo?: PanInfo) {
+    stop(
+        event?: PointerEvent,
+        panInfo?: PanInfo,
+        dragAxes?: MotionNodeOptions["drag"]
+    ) {
         const finalEvent = event || this.latestPointerEvent
         const finalPanInfo = panInfo || this.latestPanInfo
 
@@ -270,7 +304,7 @@ export class VisualElementDragControls {
         if (!isDragging || !finalPanInfo || !finalEvent) return
 
         const { velocity } = finalPanInfo
-        this.startAnimation(velocity)
+        this.startAnimation(velocity, dragAxes)
 
         const { onDragEnd } = this.getProps()
         if (onDragEnd) {
@@ -278,9 +312,6 @@ export class VisualElementDragControls {
         }
     }
 
-    /**
-     * @internal
-     */
     cancel() {
         this.isDragging = false
 
@@ -306,7 +337,6 @@ export class VisualElementDragControls {
      * Clean up the pan session without modifying other drag state.
      * This is used during unmount to ensure event listeners are removed
      * without affecting projection animations or drag locks.
-     * @internal
      */
     endPanSession() {
         this.panSession && this.panSession.end()
@@ -345,7 +375,7 @@ export class VisualElementDragControls {
 
         const prevConstraints = this.constraints
 
-        if (dragConstraints && isRefObject(dragConstraints)) {
+        if (isElementConstraints(dragConstraints)) {
             if (!this.constraints) {
                 this.constraints = this.resolveRefConstraints()
             }
@@ -370,7 +400,7 @@ export class VisualElementDragControls {
          */
         if (
             prevConstraints !== this.constraints &&
-            !isRefObject(dragConstraints) &&
+            !isElementConstraints(dragConstraints) &&
             layout &&
             this.constraints &&
             !this.hasMutatedConstraints
@@ -392,12 +422,12 @@ export class VisualElementDragControls {
     private resolveRefConstraints() {
         const { dragConstraints: constraints, onMeasureDragConstraints } =
             this.getProps()
-        if (!constraints || !isRefObject(constraints)) return false
+        if (!isElementConstraints(constraints)) return false
 
-        const constraintsElement = constraints.current as HTMLElement
+        const constraintsElement = resolveConstraintsElement(constraints)
 
         invariant(
-            constraintsElement !== null,
+            !!constraintsElement,
             "If `dragConstraints` is set as a React ref, that ref must be passed to another component's `ref` prop.",
             "drag-constraints-ref"
         )
@@ -423,7 +453,7 @@ export class VisualElementDragControls {
         }
 
         const constraintsBox = measurePageBox(
-            constraintsElement,
+            constraintsElement as HTMLElement,
             projection.root!,
             this.visualElement.getTransformPagePoint()
         )
@@ -452,7 +482,10 @@ export class VisualElementDragControls {
         return measuredConstraints
     }
 
-    private startAnimation(velocity: Point) {
+    private startAnimation(
+        velocity: Point,
+        dragAxes?: MotionNodeOptions["drag"]
+    ) {
         const {
             drag,
             dragMomentum,
@@ -465,7 +498,7 @@ export class VisualElementDragControls {
         const constraints: Partial<ResolvedConstraints> = this.constraints || {}
 
         const momentumAnimations = eachAxis((axis) => {
-            if (!shouldDrag(axis, drag, this.currentDirection)) {
+            if (!shouldDrag(axis, dragAxes || drag, this.currentDirection)) {
                 return
             }
 
@@ -528,7 +561,7 @@ export class VisualElementDragControls {
         )
     }
 
-    private stopAnimation() {
+    stopAnimation() {
         eachAxis((axis) => this.getAxisMotionValue(axis).stop())
     }
 
@@ -541,7 +574,7 @@ export class VisualElementDragControls {
     private getAxisMotionValue(axis: DragDirection) {
         const dragKey =
             `_drag${axis.toUpperCase()}` as `_drag${Uppercase<DragDirection>}`
-        const props = this.visualElement.getProps()
+        const props = this.readProps()
         const externalMotionValue = props[dragKey]
 
         return externalMotionValue
@@ -585,7 +618,11 @@ export class VisualElementDragControls {
 
         const { drag, dragConstraints } = this.getProps()
         const { projection } = this.visualElement
-        if (!isRefObject(dragConstraints) || !projection || !this.constraints)
+        if (
+            !isElementConstraints(dragConstraints) ||
+            !projection ||
+            !this.constraints
+        )
             return
 
         /**
@@ -697,13 +734,17 @@ export class VisualElementDragControls {
 
         const measureDragConstraints = () => {
             const { dragConstraints } = this.getProps()
-            if (isRefObject(dragConstraints) && dragConstraints.current) {
+            const constraintsElement =
+                isElementConstraints(dragConstraints) &&
+                resolveConstraintsElement(dragConstraints)
+
+            if (constraintsElement) {
                 this.constraints = this.resolveRefConstraints()
 
                 if (!stopResizeObservers) {
                     stopResizeObservers = startResizeObservers(
                         element,
-                        dragConstraints.current as HTMLElement,
+                        constraintsElement as HTMLElement,
                         () => this.scalePositionWithinConstraints()
                     )
                 }
@@ -741,9 +782,22 @@ export class VisualElementDragControls {
             (({ delta, hasLayoutChanged }: LayoutUpdateData) => {
                 if (this.isDragging && hasLayoutChanged) {
                     eachAxis((axis) => {
-                        const motionValue = this.getAxisMotionValue(axis)
-                        if (!motionValue) return
+                        /**
+                         * Only compensate axes this gesture drags. A
+                         * non-drag axis follows its layout instead, as
+                         * nothing would ever move it back (e.g. snapping
+                         * to origin only animates drag axes).
+                         */
+                        if (
+                            !shouldDrag(
+                                axis,
+                                this.getProps().drag,
+                                this.currentDirection
+                            )
+                        )
+                            return
 
+                        const motionValue = this.getAxisMotionValue(axis)
                         this.originPoint[axis] += delta[axis].translate
                         motionValue.set(
                             motionValue.get() + delta[axis].translate
@@ -764,8 +818,8 @@ export class VisualElementDragControls {
         }
     }
 
-    getProps(): MotionProps {
-        const props = this.visualElement.getProps()
+    getProps(): MotionNodeOptions {
+        const props = this.readProps()
         const {
             drag = false,
             dragDirectionLock = false,
@@ -785,6 +839,24 @@ export class VisualElementDragControls {
         }
     }
 }
+
+type ConstraintsElement = Element | { current: Element | null }
+
+/**
+ * `dragConstraints` can be an element, or a ref (`{ current }`) to one.
+ */
+function isElementConstraints(
+    constraints: MotionNodeOptions["dragConstraints"]
+): constraints is ConstraintsElement {
+    return (
+        !!constraints &&
+        typeof constraints === "object" &&
+        ("current" in constraints || "nodeType" in constraints)
+    )
+}
+
+const resolveConstraintsElement = (constraints: ConstraintsElement) =>
+    "current" in constraints ? constraints.current : constraints
 
 function skipFirstCall(callback: VoidFunction): VoidFunction {
     let isFirst = true
@@ -846,6 +918,6 @@ function getCurrentDirection(
 export function expectsResolvedDragConstraints({
     dragConstraints,
     onMeasureDragConstraints,
-}: MotionProps) {
-    return isRefObject(dragConstraints) && !!onMeasureDragConstraints
+}: MotionNodeOptions) {
+    return isElementConstraints(dragConstraints) && !!onMeasureDragConstraints
 }

@@ -3,7 +3,9 @@ import { svgSubjectEffect } from "../../effects/svg"
 import { measureViewportBox } from "../../projection/utils/measure"
 import type { VisualElement } from "../../render/VisualElement"
 import { isSVGElement } from "../../utils/is-svg-element"
+import { activeScope } from "../../scope/active"
 import { MotionValue, Owner } from "../../value"
+import { transformGroups } from "../waapi/transforms/groups"
 import { DOMKeyframesResolver } from "../keyframes/DOMKeyframesResolver"
 import { AnimationElement } from "../keyframes/types"
 import { AnimationPlaybackControlsWithThen } from "../types"
@@ -71,6 +73,8 @@ export function animateElement(
     transition?: EffectTransition,
     visualElement?: VisualElement
 ): AnimationPlaybackControlsWithThen[] {
+    activeScope.current?.track(element)
+
     if (visualElement) {
         return animateValues(
             (key) => visualElement.getValue(key, null),
@@ -92,6 +96,15 @@ export function animateElement(
 }
 
 /**
+ * Detach the values styleEffect/svgEffect bound to `element`, so the
+ * next animation reads its starting values from the DOM again.
+ */
+export const releaseElement = (element: Element) =>
+    getElementEffect(element)
+        .state(element as StyleSubject)
+        ?.release()
+
+/**
  * Hand the values styleEffect/svgEffect are rendering on `element`,
  * whether bound by animate() or directly, to a VisualElement that now
  * owns the element (e.g. created by animateLayout()), so a single
@@ -104,6 +117,18 @@ export function handOffElementState(
     const state = getElementEffect(element).state(element as StyleSubject)
     if (!state) return
 
+    /**
+     * A transform group reads values through the effect state, which is
+     * about to be emptied. Hand its animations to the main thread (writing
+     * their current transform) and detach it, so animations the
+     * VisualElement starts form a new group that reads from it.
+     */
+    const group = transformGroups.get(element)
+    if (group) {
+        group.demote()
+        transformGroups.delete(element)
+    }
+
     const { transformKeys } = state
     state.release().forEach((value: MotionValue, key: string) => {
         /**
@@ -114,6 +139,9 @@ export function handOffElementState(
             key === "transformBox" ||
             (key === "transform" && transformKeys?.length)
 
-        derived || visualElement.addValue(key, value)
+        if (!derived) {
+            value.owner = visualElement
+            visualElement.addValue(key, value)
+        }
     })
 }

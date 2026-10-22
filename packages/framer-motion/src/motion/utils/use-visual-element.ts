@@ -108,13 +108,14 @@ export function useVisualElement<
         )
     }
 
-    const isMounted = useRef(false)
     useInsertionEffect(() => {
         /**
-         * Check the component has already mounted before calling
-         * `update` unnecessarily. This ensures we skip the initial update.
+         * Skip the update if the visual element was created with these props.
+         * This isn't gated on the layout effect below having run, as a hidden
+         * <Activity> runs insertion effects but not layout effects, and
+         * props from renders made while hidden must still reach the element.
          */
-        if (visualElement && isMounted.current) {
+        if (visualElement && visualElement.props !== props) {
             visualElement.update(props, presenceContext)
         }
     })
@@ -154,7 +155,6 @@ export function useVisualElement<
 
         if (!visualElement) return
 
-        isMounted.current = true
         window.MotionIsMounted = true
 
         visualElement.updateFeatures()
@@ -218,14 +218,15 @@ function createProjectionNode(
         layoutCrossfade,
     } = props
 
-    visualElement.projection = new ProjectionNodeConstructor(
-        visualElement.latestValues,
-        props["data-framer-portal-id"]
-            ? undefined
-            : getClosestProjectingNode(visualElement.parent)
-    ) as IProjectionNode
+    const projection = (visualElement.projection =
+        new ProjectionNodeConstructor(
+            visualElement.latestValues,
+            props["data-framer-portal-id"]
+                ? undefined
+                : getClosestProjectingNode(visualElement.parent)
+        ) as IProjectionNode)
 
-    visualElement.projection.setOptions({
+    projection.setOptions({
         layoutId,
         layout,
         alwaysMeasureLayout:
@@ -245,6 +246,23 @@ function createProjectionNode(
         layoutRoot,
         layoutAnchor,
     })
+
+    /**
+     * This node will take over from its layoutId's current lead, so snapshot
+     * the lead now, while rendering. By the time the lead unmounts (or this
+     * node mounts) React may already have committed DOM changes that come
+     * before it in the tree, like a sibling changing height, and a snapshot
+     * taken then starts the animation from a position never seen on screen.
+     *
+     * If React discards this render (e.g. it suspends), nothing else
+     * completes the update, so check it after the next frame as an
+     * unmounting node does.
+     */
+    const lead = projection.getStack()?.lead
+    if (lead && !projection.root!.isUpdateBlocked()) {
+        lead.willUpdate()
+        lead.scheduleCheckAfterUnmount()
+    }
 }
 
 function getClosestProjectingNode(

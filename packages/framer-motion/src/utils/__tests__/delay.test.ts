@@ -1,26 +1,41 @@
-import { delay } from "motion-dom"
+import { cancelFrame, delay, frame, frameData } from "motion-dom"
+import { MotionGlobalConfig } from "motion-utils"
+
+/**
+ * Frames 20ms apart, however long the test machine takes between them.
+ */
+const advance = () => {
+    frameData.timestamp += 20
+}
 
 describe("delay", () => {
-    test("resolves after provided duration", async () => {
-        const startTime = performance.now()
+    beforeEach(() => {
+        MotionGlobalConfig.useManualTiming = true
+        frameData.timestamp = 0
+        frame.setup(advance, true)
+    })
 
-        return new Promise<void>((resolve) => {
-            delay(() => {
-                const elapsed = performance.now() - startTime
-                expect(elapsed > 50 && elapsed < 80).toBe(true)
-                resolve()
-            }, 50)
+    afterEach(() => {
+        cancelFrame(advance)
+        MotionGlobalConfig.useManualTiming = false
+    })
+
+    test("resolves after provided duration", async () => {
+        const start = frameData.timestamp
+        const elapsed = await new Promise<number>((resolve) => {
+            delay(() => resolve(frameData.timestamp - start), 50)
         })
+
+        // The first frame at or after 50ms.
+        expect(elapsed).toBe(60)
     })
 
     test("provides overshoot duration", async () => {
-        return new Promise<void>((resolve) => {
-            delay((overshoot) => {
-                expect(overshoot).toBeLessThan(50)
-                expect(overshoot).toBeGreaterThan(0)
-                resolve()
-            }, 50)
+        const overshoot = await new Promise<number>((resolve) => {
+            delay(resolve, 50)
         })
+
+        expect(overshoot).toBe(10)
     })
 
     test("callback doesn't fire if cancelled", async () => {

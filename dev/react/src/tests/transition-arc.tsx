@@ -1,4 +1,4 @@
-import { arc, LayoutGroup, motion } from "framer-motion"
+import { arc, LayoutGroup, motion, useAnimate } from "framer-motion"
 import { useEffect, useMemo, useRef, useState } from "react"
 
 const ITEM_A = { left: 50, top: 200, width: 100, height: 50 }
@@ -19,6 +19,7 @@ const ITEM_B_NEAR = { left: 60, top: 200, width: 100, height: 50 }
  *   cw            — direction locked clockwise
  *   ccw           — direction locked counter-clockwise
  *   ping-pong     — keyframe arc bouncing between three points
+ *   use-animate   — keyframe arc via useAnimate() on a plain element
  */
 export const App = () => {
     const params = new URLSearchParams(window.location.search)
@@ -28,6 +29,7 @@ export const App = () => {
         return <KeyframeArc oriented={variant === "oriented"} />
     }
 
+    if (variant === "use-animate") return <UseAnimateArc />
     if (variant === "ping-pong") return <PingPong />
     if (variant === "axis-change") return <AxisChange />
     if (variant === "rotate-compose") return <RotateCompose />
@@ -133,6 +135,57 @@ const KeyframeArc = ({ oriented }: { oriented: boolean }) => {
                     ...(freezeAt !== undefined ? { ease: () => freezeAt } : {}),
                     path,
                 }}
+                style={{
+                    position: "absolute",
+                    top: 200,
+                    left: 50,
+                    width: 100,
+                    height: 100,
+                    background: "red",
+                }}
+            />
+        </div>
+    )
+}
+
+/**
+ * The same keyframe arc as KeyframeArc, but driven by useAnimate() on a
+ * plain element, which animate() binds through styleEffect rather than a
+ * VisualElement.
+ */
+const UseAnimateArc = () => {
+    const [scope, animate] = useAnimate()
+    const [target, setTarget] = useState<"a" | "b">("a")
+    const path = useRef(arc({ strength: 1 })).current
+    const freeze = new URLSearchParams(window.location.search).has("freeze")
+
+    useEffect(() => {
+        if (target === "a") return
+        animate(
+            scope.current,
+            { x: 400, y: 0 },
+            freeze
+                ? { duration: 4, ease: () => 0.5, path }
+                : { duration: 1.2, path }
+        )
+    }, [target])
+
+    return (
+        <div
+            id="container"
+            style={{ position: "relative", width: "100vw", height: "100vh" }}
+        >
+            <Hud variant="use-animate" />
+            <button
+                id="toggle"
+                onClick={() => setTarget("b")}
+                style={{ position: "fixed", top: 16, left: 16 }}
+            >
+                Toggle
+            </button>
+            <div
+                id="indicator"
+                ref={scope}
                 style={{
                     position: "absolute",
                     top: 200,

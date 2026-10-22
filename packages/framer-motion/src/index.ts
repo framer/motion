@@ -17,8 +17,6 @@ export type {
     ScrapeMotionValuesFromProps,
 } from "./render/types"
 
-export { addPointerEvent } from "./events/add-pointer-event"
-export { addPointerInfo } from "./events/event-info"
 export { animations } from "./motion/features/animations"
 export {
     makeUseVisualState,
@@ -71,6 +69,8 @@ export { useReducedMotionConfig } from "./utils/reduced-motion/use-reduced-motio
 export { MotionGlobalConfig } from "motion-utils"
 export { animationControls } from "./animation/hooks/animation-controls"
 export { useAnimate } from "./animation/hooks/use-animate"
+export { useScopeMotion } from "./animation/hooks/use-scope-motion"
+export type { UseScopeMotionOptions } from "./animation/hooks/use-scope-motion"
 export { useAnimateMini } from "./animation/hooks/use-animate-style"
 export {
     useAnimation,

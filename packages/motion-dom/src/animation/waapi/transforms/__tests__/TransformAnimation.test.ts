@@ -79,6 +79,10 @@ beforeEach(() => {
     animations = []
 })
 
+afterEach(() => {
+    jest.restoreAllMocks()
+})
+
 const nextFrame = () =>
     new Promise<void>((resolve) => frame.postRender(() => resolve()))
 
@@ -170,7 +174,11 @@ describe("independent transform acceleration", () => {
         }
         expect(options.easing).toBe("linear")
         expect(options.duration).toBeGreaterThan(900)
-        expect(options.duration).toBeLessThanOrEqual(1000)
+        /**
+         * A slow first frame starts the animation from then, so it lasts
+         * the full 1000ms, give or take floating point error.
+         */
+        expect(options.duration).toBeLessThan(1000.001)
         expect(startTime).not.toBe(null)
     })
 
@@ -289,17 +297,29 @@ describe("independent transform acceleration", () => {
     })
 
     it("moves to the main thread when another source keeps writing a transform", async () => {
+        /**
+         * Frames are 1000/60ms apart however long this environment takes
+         * between them, so writes in consecutive frames always land within
+         * the churn window. Not useManualTiming, which turns WAAPI off.
+         */
+        let now = performance.now()
+        jest.spyOn(performance, "now").mockImplementation(() => now)
+        const nextFrameAt60fps = () => {
+            now += 1000 / 60
+            return nextFrame()
+        }
+
         const element = document.createElement("div")
         const rotate = motionValue(0)
         styleEffect(element, { rotate })
 
         animateElement(element, { x: [0, 100] }, { duration: 1 })
-        await nextFrame()
+        await nextFrameAt60fps()
         expect(running(element)).toHaveLength(1)
 
         // One outside write rebuilds the animation with the new value.
         rotate.set(10)
-        await nextFrame()
+        await nextFrameAt60fps()
         expect(running(element)).toHaveLength(1)
         expect(running(element)[0].keyframes.transform[0]).toContain(
             "rotate(10deg)"
@@ -307,7 +327,7 @@ describe("independent transform acceleration", () => {
 
         // Writing every frame moves it to the main thread.
         rotate.set(20)
-        await nextFrame()
+        await nextFrameAt60fps()
         expect(running(element)).toHaveLength(0)
         expect(element.style.transform).toContain("rotate(20deg)")
     })
@@ -412,11 +432,14 @@ describe("independent transform acceleration", () => {
             { scale: [1, 2] },
             { duration: 0.1 }
         )
-        short.then(() => (finishedAt = performance.now() - start))
-        await wait(250)
+        await short.then(() => (finishedAt = performance.now() - start))
 
+        /**
+         * Well before x's 1s, though how long after 100ms depends on how
+         * busy the test machine is.
+         */
         expect(finishedAt).toBeGreaterThan(80)
-        expect(finishedAt).toBeLessThan(200)
+        expect(finishedAt).toBeLessThan(800)
         // x is still running on the compositor.
         expect(running(element)).toHaveLength(1)
     })
@@ -558,20 +581,21 @@ describe("independent transform acceleration", () => {
     it("keeps every repeat of a short animation that repeats many times", async () => {
         const element = document.createElement("div")
 
-        // Start in a frame, so the build uses the same timestamp as the
-        // start, however long the test runner takes to reach the build.
-        frame.update(() => {
-            animateElement(
-                element,
-                { x: [0, 100] },
-                { duration: 0.1, ease: "linear", repeat: 199 }
-            )
-        })
+        const [x] = animateElement(
+            element,
+            { x: [0, 100] },
+            { duration: 0.1, ease: "linear", repeat: 199 }
+        )
         await nextFrame()
 
+        /**
+         * The WAAPI animation is built from when it's committed, which can
+         * be later than the animation started if the first frame is slow.
+         */
         const [animation] = running(element)
-        expect(xAt(animation, 150)).toBeCloseTo(50, -1)
-        expect(xAt(animation, 10_050)).toBeCloseTo(50, -1)
+        const built = animation.startTime! - x.startTime!
+        expect(xAt(animation, 150 - built)).toBeCloseTo(50, -1)
+        expect(xAt(animation, 10_050 - built)).toBeCloseTo(50, -1)
     })
 
     it("keeps keyframes that return to where they started", async () => {
@@ -592,6 +616,78 @@ describe("independent transform acceleration", () => {
         expect(xAt(animation, 25)).toBeCloseTo(100, -1)
         expect(xAt(animation, 50)).toBeCloseTo(0, -1)
         expect(xAt(animation, 75)).toBeCloseTo(100, -1)
+    })
+
+    /**
+     * A value that ends where it started can't follow a shared easing, as
+     * its progress has no range to be a fraction of. Built a little after
+     * it starts, or from a float residue like -1e-30, it ends a tiny way
+     * from where it started. Dividing by that would stretch the easing to
+     * huge values (like linear(0, -5e+27, ...)), and Chromium's compositor
+     * stops painting the element. The round trip must be in the keyframes
+     * instead.
+     */
+    describe("keeps a round trip in the keyframes", () => {
+        const readY = (transform: string) =>
+            parseFloat(transform.match(/translateY\((.+?)px\)/)![1])
+
+        const expectRoundTrip = (element: Element) => {
+            const [{ keyframes, options }] = running(element)
+            const ys = keyframes.transform.map(readY)
+            const easing = options.easing as string
+
+            expect(Math.min(...ys)).toBeCloseTo(-18, 0)
+            if (easing.startsWith("linear(")) {
+                for (const item of easing.slice(7, -1).split(",")) {
+                    expect(Math.abs(parseFloat(item))).toBeLessThan(2)
+                }
+            }
+        }
+
+        /**
+         * Start in a frame, so the build uses the same timestamp as the
+         * start. A slow first frame would otherwise build it far enough in
+         * that it's no longer a round trip. A negative delay builds it a
+         * fixed time after it starts.
+         */
+        it.each([
+            ["built just after it starts", [0, -18, 0], -0.005],
+            ["from a float residue", [-1e-30, -18, 0], 0],
+        ])("%s", async (_, y, delay) => {
+            const element = document.createElement("div")
+
+            frame.update(() => {
+                animateElement(
+                    element,
+                    { y },
+                    { duration: 1.2, ease: "easeInOut", delay }
+                )
+            })
+            await nextFrame()
+
+            expectRoundTrip(element)
+        })
+
+        it("from a float residue when it repeats forever", async () => {
+            const element = document.createElement("div")
+
+            frame.update(() => {
+                animateElement(
+                    element,
+                    { y: [-1e-30, -18, 0] },
+                    {
+                        duration: 1.2,
+                        ease: "easeInOut",
+                        repeat: Infinity,
+                        repeatDelay: 0.9,
+                        delay: 0.66,
+                    }
+                )
+            })
+            await nextFrame()
+
+            expectRoundTrip(element)
+        })
     })
 
     it("doesn't hide a transform bound with styleEffect", async () => {
@@ -663,5 +759,57 @@ describe("independent transform acceleration", () => {
         await nextFrame()
 
         expect(animations.filter((a) => a.element === element)).toHaveLength(0)
+    })
+
+    it("leaves the element's transform to its caller once stopped", async () => {
+        const element = document.createElement("div")
+
+        const animations = animateElement(
+            element,
+            { x: [0, 100], scale: [1, 2] },
+            { duration: 1, ease: "linear" }
+        )
+        await nextFrame()
+        for (const animation of animations) {
+            animation.pause()
+            animation.time = 0.5
+        }
+        await nextFrame()
+
+        for (const animation of animations) animation.stop()
+
+        /**
+         * It stops where it was, without waiting for a frame.
+         */
+        expect(running(element)).toHaveLength(0)
+        expect(element.style.transform).toBe("translateX(50px) scale(1.5)")
+
+        element.style.transform = "translateX(-40px)"
+        await nextFrame()
+        await nextFrame()
+
+        expect(element.style.transform).toBe("translateX(-40px)")
+    })
+
+    it("keeps an animation that starts as another is stopped from its onPlay", async () => {
+        const element = document.createElement("div")
+
+        const [x] = animateElement(
+            element,
+            { x: [0, 100], scale: [1, 2] },
+            { duration: 1 }
+        )
+        await nextFrame()
+
+        const [y] = animateElement(
+            element,
+            { y: [0, 100] },
+            { duration: 0.1, onPlay: () => x.stop() }
+        )
+        await nextFrame()
+
+        const transform = running(element)[0].keyframes.transform
+        expect(transform[transform.length - 1]).toContain("translateY(100px)")
+        await y.finished
     })
 })

@@ -3,9 +3,10 @@ import { drag } from "../../../motion/features/drag"
 import { gestureAnimations } from "../../../motion/features/gestures"
 import { layout } from "../../../motion/features/layout"
 
-export const featureBundle = {
-    ...animations,
-    ...gestureAnimations,
-    ...drag,
-    ...layout,
-}
+export const featureBundle = /* @__PURE__ */ Object.assign(
+    {},
+    animations,
+    gestureAnimations,
+    drag,
+    layout
+)

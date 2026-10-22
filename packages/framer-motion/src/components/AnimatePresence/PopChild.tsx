@@ -1,6 +1,6 @@
 "use client"
 
-import { isHTMLElement } from "motion-dom"
+import { isHTMLElement, type VisualElement } from "motion-dom"
 import * as React from "react"
 import { useContext, useId, useInsertionEffect, useRef } from "react"
 
@@ -24,10 +24,11 @@ interface Props {
     anchorY?: "top" | "bottom"
     root?: HTMLElement | ShadowRoot
     pop?: boolean
+    popNode?: React.RefObject<VisualElement | undefined>
 }
 
 interface MeasureProps extends Props {
-    childRef: React.RefObject<HTMLElement | null>
+    getElement: () => unknown
     sizeRef: React.RefObject<Size>
 }
 
@@ -37,7 +38,7 @@ interface MeasureProps extends Props {
  */
 class PopChildMeasure extends React.Component<MeasureProps> {
     getSnapshotBeforeUpdate(prevProps: MeasureProps) {
-        const element = this.props.childRef.current
+        const element = this.props.getElement()
         if (isHTMLElement(element) && prevProps.isPresent && !this.props.isPresent && this.props.pop !== false) {
             const parent = element.offsetParent
             const parentWidth = isHTMLElement(parent)
@@ -71,7 +72,7 @@ class PopChildMeasure extends React.Component<MeasureProps> {
     }
 }
 
-export function PopChild({ children, isPresent, anchorX, anchorY, root, pop }: Props) {
+export function PopChild({ children, isPresent, anchorX, anchorY, root, pop, popNode }: Props) {
     const id = useId()
     const ref = useRef<HTMLElement>(null)
     const size = useRef<Size>({
@@ -100,6 +101,14 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop }: P
     const composedRef = useComposedRefs(ref, childRef)
 
     /**
+     * The child's element: the one our ref reached or, if the child can't
+     * be given a ref (for instance a function component that doesn't
+     * forward it), its outermost motion component's element (#2503).
+     */
+    const getElement = () =>
+        ref.current || (popNode?.current?.current as HTMLElement | undefined)
+
+    /**
      * We create and inject a style block so we can apply this explicit
      * sizing in a non-destructive manner by just deleting the style block.
      *
@@ -110,7 +119,8 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop }: P
      */
     useInsertionEffect(() => {
         const { width, height, top, left, right, bottom, direction } = size.current
-        if (isPresent || pop === false || !ref.current || !width || !height) return
+        const element = getElement()
+        if (isPresent || pop === false || !element || !width || !height) return
 
         const isRTL = direction === "rtl"
         const x = anchorX === "left"
@@ -118,7 +128,6 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop }: P
             : (isRTL ? `left: ${left}` : `right: ${right}`)
         const y = anchorY === "bottom" ? `bottom: ${bottom}` : `top: ${top}`
 
-        const element = ref.current
         element.dataset.motionPopId = id
 
         /**
@@ -145,7 +154,7 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop }: P
         }
 
         return () => {
-            ref.current?.removeAttribute("data-motion-pop-id")
+            element.removeAttribute("data-motion-pop-id")
             if (parent.contains(style)) {
                 parent.removeChild(style)
             }
@@ -153,7 +162,7 @@ export function PopChild({ children, isPresent, anchorX, anchorY, root, pop }: P
     }, [isPresent])
 
     return (
-        <PopChildMeasure isPresent={isPresent} childRef={ref} sizeRef={size} pop={pop}>
+        <PopChildMeasure isPresent={isPresent} getElement={getElement} sizeRef={size} pop={pop}>
             {pop === false
                 ? children
                 : React.cloneElement(children as any, { ref: composedRef })}
