@@ -1,5 +1,4 @@
 import type {
-    AnimationPlaybackControlsWithThen,
     AnimationScope,
     DOMKeyframesDefinition,
     AnimationOptions as DynamicAnimationOptions,
@@ -8,19 +7,14 @@ import type {
     UnresolvedValueKeyframe,
     ValueAnimationTransition,
 } from "motion-dom"
-import {
-    activeScope,
-    addEffect,
-    GroupAnimationWithThen,
-    removeEffect,
-} from "motion-dom"
-import { removeItem } from "motion-utils"
+import { activeScope, addEffect, removeEffect } from "motion-dom"
 import {
     AnimationSequence,
     ObjectTarget,
+    Segment,
     SequenceOptions,
 } from "../sequence/types"
-import { animateSequence } from "./sequence"
+import { Timeline } from "../timeline"
 import { animateSubject } from "./subject"
 
 function isSequence(value: unknown): value is AnimationSequence {
@@ -45,7 +39,7 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
     function scopedAnimate(
         sequence: AnimationSequence,
         options?: SequenceOptions
-    ): AnimationPlaybackControlsWithThen
+    ): Timeline
     /**
      * Animate a string
      */
@@ -53,7 +47,7 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
         value: string | MotionValue<string>,
         keyframes: string | UnresolvedValueKeyframe<string>[],
         options?: ValueAnimationTransition<string>
-    ): AnimationPlaybackControlsWithThen
+    ): Timeline
     /**
      * Animate a number
      */
@@ -61,7 +55,7 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
         value: number | MotionValue<number>,
         keyframes: number | UnresolvedValueKeyframe<number>[],
         options?: ValueAnimationTransition<number>
-    ): AnimationPlaybackControlsWithThen
+    ): Timeline
     /**
      * Animate a generic motion value
      */
@@ -69,7 +63,7 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
         value: V | MotionValue<V>,
         keyframes: V | UnresolvedValueKeyframe<V>[],
         options?: ValueAnimationTransition<V>
-    ): AnimationPlaybackControlsWithThen
+    ): Timeline
     /**
      * Animate an Element
      */
@@ -77,7 +71,7 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
         element: ElementOrSelector,
         keyframes: DOMKeyframesDefinition,
         options?: DynamicAnimationOptions
-    ): AnimationPlaybackControlsWithThen
+    ): Timeline
     /**
      * Animate an object
      */
@@ -85,7 +79,7 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
         object: O | O[],
         keyframes: ObjectTarget<O>,
         options?: DynamicAnimationOptions
-    ): AnimationPlaybackControlsWithThen
+    ): Timeline
     /**
      * Implementation
      */
@@ -111,9 +105,7 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
             | ValueAnimationTransition<number>
             | ValueAnimationTransition<string>
             | DynamicAnimationOptions
-    ): AnimationPlaybackControlsWithThen {
-        let animations: AnimationPlaybackControlsWithThen[] = []
-        let animationOnComplete: VoidFunction | undefined
+    ): Timeline {
         const motionScope = activeScope.current
         const scopeTransition = motionScope?.transition
 
@@ -123,11 +115,13 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
         if (skipAnimations !== undefined)
             inherited.skipAnimations = skipAnimations
 
+        let timeline: Timeline
+
         if (isSequence(subjectOrSequence)) {
-            const { onComplete, ...sequenceOptions } =
-                (optionsOrKeyframes as SequenceOptions) || {}
-            if (typeof onComplete === "function") {
-                animationOnComplete = onComplete as VoidFunction
+            const sequenceOptions = {
+                ...inherited,
+                ...(optionsOrKeyframes as SequenceOptions),
+                scope,
             }
             if (scopeTransition) {
                 sequenceOptions.defaultTransition = {
@@ -135,47 +129,54 @@ export function createScopedAnimate(options: ScopedAnimateOptions = {}) {
                     ...sequenceOptions.defaultTransition,
                 } as SequenceOptions["defaultTransition"]
             }
-            animations = animateSequence(
-                subjectOrSequence,
-                { ...inherited, ...sequenceOptions } as SequenceOptions,
-                scope
-            )
+            timeline = new Timeline(subjectOrSequence, sequenceOptions)
         } else {
             // Extract top-level onComplete so it doesn't get applied per-value
             const { onComplete, ...rest } = options || {}
-            if (typeof onComplete === "function") {
-                animationOnComplete = onComplete as VoidFunction
-            }
-            animations = animateSubject(
-                subjectOrSequence as ElementOrSelector,
-                optionsOrKeyframes as DOMKeyframesDefinition,
-                {
-                    ...inherited,
-                    ...scopeTransition,
-                    ...rest,
-                } as DynamicAnimationOptions,
-                scope
+            const transition = {
+                ...inherited,
+                ...scopeTransition,
+                ...rest,
+            } as DynamicAnimationOptions
+
+            /**
+             * Play the animations directly, and only compile them as a
+             * sequence if the timeline is changed. Values animated from a
+             * number are animated via their onUpdate callback instead.
+             */
+            const { onUpdate } = rest as ValueAnimationTransition
+            const segment = (
+                typeof subjectOrSequence === "number" ||
+                (typeof subjectOrSequence === "string" &&
+                    (typeof optionsOrKeyframes === "string" ||
+                        Array.isArray(optionsOrKeyframes)))
+                    ? [
+                          onUpdate || (() => {}),
+                          Array.isArray(optionsOrKeyframes)
+                              ? optionsOrKeyframes
+                              : [subjectOrSequence, optionsOrKeyframes],
+                          { ...transition, onUpdate: undefined },
+                      ]
+                    : [subjectOrSequence, optionsOrKeyframes, transition]
+            ) as Segment
+
+            timeline = new Timeline(
+                [segment],
+                { ...inherited, onComplete, scope } as SequenceOptions,
+                animateSubject(
+                    subjectOrSequence as ElementOrSelector,
+                    optionsOrKeyframes as DOMKeyframesDefinition,
+                    transition,
+                    scope
+                )
             )
         }
 
-        const animation = new GroupAnimationWithThen(animations)
-
-        if (animationOnComplete) {
-            animation.finished.then(animationOnComplete)
-        }
-
         if (motionScope) {
-            animation.finished.then(motionScope.add(() => animation.stop()))
+            timeline.finished.then(motionScope.add(() => timeline.stop()))
         }
 
-        if (scope) {
-            scope.animations.push(animation)
-            animation.finished.then(() => {
-                removeItem(scope.animations, animation)
-            })
-        }
-
-        return animation
+        return timeline
     }
 
     return scopedAnimate

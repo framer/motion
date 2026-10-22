@@ -70,8 +70,9 @@ test.describe("timeline()", () => {
             await new Promise((resolve) => setTimeout(resolve, 500))
             const before = read()
             tl.add(["#a", { x: 0 }, { duration: 2 }])
-            // Force the rebuild now and read in the same task
+            // Force the rebuild now, and read before the next frame
             tl.duration
+            await Promise.resolve()
             return [before, read()]
         })
 

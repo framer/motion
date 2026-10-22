@@ -4,6 +4,7 @@ import {
     AnimationPlaybackControlsWithThen,
     AnimationScope,
     GroupAnimationWithThen,
+    MotionValue,
     motionValue,
     TimelineWithFallback,
 } from "motion-dom"
@@ -85,16 +86,17 @@ function rewind(animation: AnimationPlaybackControls) {
  * made while playing take effect without a jump.
  */
 export class Timeline implements AnimationPlaybackControlsWithThen {
-    finished!: Promise<void>
+    finished!: Promise<any>
 
     private entries: Entry[] = []
 
     private group?: GroupAnimationWithThen
 
     /**
-     * Tracks the playhead in seconds. Used to fire callbacks and pauses.
+     * Tracks the playhead in seconds. Used to fire callbacks, pauses and
+     * playTo(). Only created when one of those needs it.
      */
-    private clock = motionValue(0)
+    private clock?: MotionValue<number>
 
     private prevTime = 0
 
@@ -122,21 +124,40 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
 
     private resolveFinished!: VoidFunction
 
+    /**
+     * True while this plays the animations it was created with, before
+     * any change compiles it as a sequence.
+     */
+    private isWrapped = false
+
+    /**
+     * `animations` are already running animations of `items`, as
+     * animate() makes them. The timeline plays these until it's first
+     * changed, so it costs nothing over the animations themselves until
+     * then.
+     */
     constructor(
         items: TimelineItem[] = [],
-        private options: TimelineOptions = {}
+        private options: TimelineOptions = {},
+        animations?: AnimationPlaybackControlsWithThen[]
     ) {
         this.isPaused = options.autoplay === false
         this.newFinished()
-        this.clock.on("change", (t) => this.onClock(t))
         items.forEach((item) => this.add(item))
 
-        /**
-         * Build now, like animate(), so selectors resolve while a scope
-         * is attached. Later changes are batched.
-         */
-        this.invalidate()
-        this.flush()
+        if (animations) {
+            this.isDirty = false
+            this.isWrapped = true
+            this.group = new GroupAnimationWithThen(animations)
+            this.watch()
+        } else {
+            /**
+             * Build now, like animate(), so selectors resolve while a
+             * scope is attached. Later changes are batched.
+             */
+            this.invalidate()
+            this.flush()
+        }
 
         /**
          * Register with the scope (for instance from useAnimate()) so it
@@ -231,6 +252,7 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
         const speed = Math.abs(this.speed)
         this.speed = target < this.time ? -speed : speed
         this.stopAt = target
+        this.clock || this.invalidate()
         this.play()
         return this
     }
@@ -270,11 +292,14 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
 
     get duration() {
         this.flush()
-        return this.totalDuration
+        return this.isWrapped ? this.group!.duration : this.totalDuration
     }
 
     get iterationDuration() {
-        return this.duration
+        this.flush()
+        return this.isWrapped
+            ? this.group!.iterationDuration
+            : this.totalDuration
     }
 
     get state() {
@@ -288,11 +313,16 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
     play() {
         this.flush()
         this.isPaused = false
+        this.group?.play()
+
+        /**
+         * Watch after playing, so it waits for the restarted animations
+         * rather than the ones that already finished.
+         */
         if (this.isDone) {
             this.newFinished()
             this.watch()
         }
-        this.group?.play()
     }
 
     pause() {
@@ -378,6 +408,7 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
 
     private build() {
         this.isDirty = false
+        this.isWrapped = false
 
         const prev = this.group
         let time = 0
@@ -437,14 +468,24 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
         this.labels = labels
         this.totalDuration = duration
 
-        const group = (this.group = new GroupAnimationWithThen([
-            animateSingleValue(this.clock, [0, duration], {
-                ...playback,
-                duration,
-                ease: "linear",
-            }),
-            ...animations,
-        ]))
+        /**
+         * Callbacks, pauses and playTo() watch a linear clock. Without
+         * them, the timeline is only its animations.
+         */
+        this.clock = undefined
+        if (this.markers.length || this.stopAt !== undefined) {
+            const clock = (this.clock = motionValue(0))
+            clock.on("change", (t) => clock === this.clock && this.onClock(t))
+            animations.unshift(
+                animateSingleValue(clock, [0, duration], {
+                    ...playback,
+                    duration,
+                    ease: "linear",
+                })
+            )
+        }
+
+        const group = (this.group = new GroupAnimationWithThen(animations))
 
         time = Math.min(time, duration)
         if (this.isDone && time < duration) this.newFinished()
@@ -524,7 +565,7 @@ export class Timeline implements AnimationPlaybackControlsWithThen {
 
     private newFinished() {
         this.isDone = false
-        this.finished = new Promise((resolve) => {
+        this.finished = new Promise<void>((resolve) => {
             this.resolveFinished = resolve
         })
     }

@@ -2,7 +2,7 @@ import { frame, motionValue, MotionValue, visualElementStore } from "motion-dom"
 import { useEffect } from "react"
 import * as THREE from "three"
 import { animate } from ".."
-import { timeline } from "../../timeline"
+import { Timeline, timeline } from "../../timeline"
 import { motion, MotionGlobalConfig } from "../../.."
 import { render } from "../../../jest.setup"
 import { useMotionValue } from "../../../value/use-motion-value"
@@ -17,11 +17,75 @@ async function nextFrame() {
 }
 
 describe("animate", () => {
-    test("points sequences to timeline()", () => {
-        const div = document.createElement("div")
-        expect(() => animate([[div, { x: 100 }]] as any)).toThrow(
-            /timeline\(\)/
-        )
+    test("animates sequences as a timeline", async () => {
+        const a = motionValue(0)
+        const b = motionValue(0)
+        const animation = animate([
+            [a, 100, { duration: 0.05 }],
+            [b, 100, { duration: 0.05 }],
+        ])
+
+        expect(animation).toBeInstanceOf(Timeline)
+        expect(animation.duration).toBeCloseTo(0.1)
+        await animation
+        expect(a.get()).toBe(100)
+        expect(b.get()).toBe(100)
+    })
+
+    test("returns a timeline that plays its animations directly", async () => {
+        const v = motionValue(0)
+        const animation = animate(v, 100, { duration: 0.05 })
+
+        expect(animation).toBeInstanceOf(Timeline)
+        expect(animation.duration).toBe(0.05)
+        await animation
+        expect(v.get()).toBe(100)
+    })
+
+    test("can be added to after it starts", async () => {
+        const a = motionValue(0)
+        const b = motionValue(0)
+        const animation = animate(a, 100, { duration: 1, ease: "linear" })
+
+        animation.pause()
+        animation.time = 0.5
+        animation.add([b, 100, { duration: 1, ease: "linear" }])
+
+        expect(animation.duration).toBe(2)
+        expect(animation.time).toBeCloseTo(0.5)
+
+        animation.time = 1.5
+        await nextFrame()
+        expect(a.get()).toBe(100)
+        expect(b.get()).toBe(50)
+    })
+
+    test("rebuilds from the value it started at when added to", async () => {
+        const a = motionValue(0)
+        const animation = animate(a, 100, { duration: 1, ease: "linear" })
+
+        animation.pause()
+        animation.time = 0.5
+        await nextFrame()
+        animation.call(() => {}, 0.75)
+        animation.time = 0.25
+        await nextFrame()
+        expect(a.get()).toBe(25)
+    })
+
+    test("animates numbers through onUpdate once added to", async () => {
+        const output: number[] = []
+        const animation = animate(0, 100, {
+            duration: 1,
+            ease: "linear",
+            onUpdate: (latest) => output.push(latest),
+        })
+
+        animation.pause()
+        animation.add("end")
+        animation.time = 0.5
+        await nextFrame()
+        expect(output[output.length - 1]).toBe(50)
     })
 
     test("correctly animates MotionValues", async () => {

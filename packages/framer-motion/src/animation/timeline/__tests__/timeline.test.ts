@@ -208,6 +208,24 @@ describe("timeline", () => {
         expect(callback).toHaveBeenCalledTimes(1)
     })
 
+    test("only runs a clock when callbacks, pauses or playTo() need it", async () => {
+        const v = motionValue(0)
+        const tl = timeline([[v, 100, { duration: 1 }]], paused)
+        expect((tl as any).clock).toBeUndefined()
+
+        const callback = jest.fn()
+        tl.call(callback, 0.5)
+        expect(tl.duration).toBe(1)
+        expect((tl as any).clock).toBeDefined()
+
+        tl.remove(callback)
+        expect(tl.duration).toBe(1)
+        expect((tl as any).clock).toBeUndefined()
+
+        tl.playTo(0.5)
+        expect((tl as any).clock).toBeDefined()
+    })
+
     test("callbacks receive the playback direction", async () => {
         const v = motionValue(0)
         const callback = jest.fn()
