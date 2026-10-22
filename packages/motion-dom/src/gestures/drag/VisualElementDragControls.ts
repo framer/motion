@@ -11,13 +11,9 @@ import {
     convertBoundingBoxToBox,
     convertBoxToBoundingBox,
 } from "../../projection/geometry/conversion"
-import { translateAxis } from "../../projection/geometry/delta-apply"
 import { calcLength } from "../../projection/geometry/delta-calc"
 import { createBox } from "../../projection/geometry/models"
-import type {
-    IProjectionNode,
-    LayoutUpdateData,
-} from "../../projection/node/types"
+import type { LayoutUpdateData } from "../../projection/node/types"
 import { eachAxis } from "../../projection/utils/each-axis"
 import { measurePageBox } from "../../projection/utils/measure"
 import type { VisualElement } from "../../render/VisualElement"
@@ -39,33 +35,6 @@ import {
     rebaseAxisConstraints,
     resolveDragElastic,
 } from "./utils/constraints"
-
-/**
- * The summed scroll of the element's `layoutScroll` ancestors that move it
- * relative to its constraints element: the constraints element itself, and
- * those that don't contain it.
- */
-function measureScrollWithin(
-    { path, root }: IProjectionNode,
-    constraints: Element
-): Point {
-    const scroll = { x: 0, y: 0 }
-
-    for (const node of path) {
-        const element = node.instance as Element
-
-        if (
-            node !== root &&
-            node.options.layoutScroll &&
-            (element === constraints || !element.contains(constraints))
-        ) {
-            scroll.x += element.scrollLeft
-            scroll.y += element.scrollTop
-        }
-    }
-
-    return scroll
-}
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -108,14 +77,6 @@ export class VisualElementDragControls {
     private constraints: ResolvedConstraints | false = false
 
     private hasMutatedConstraints = false
-
-    /**
-     * The scroll (see measureScrollWithin) when ref constraints were last
-     * measured. Scrolling moves the element relative to its constraints
-     * without a layout measurement, so on drag start the constraints are
-     * shifted by how far it has changed (#2024).
-     */
-    private scroll?: Point
 
     /**
      * The per-axis resolved elastic values.
@@ -415,21 +376,11 @@ export class VisualElementDragControls {
         const prevConstraints = this.constraints
 
         if (isElementConstraints(dragConstraints)) {
-            const { constraints, scroll: prevScroll } = this
-            if (constraints && prevScroll) {
-                const scroll = (this.scroll = measureScrollWithin(
-                    this.visualElement.projection!,
-                    resolveConstraintsElement(dragConstraints)!
-                ))
-                eachAxis((axis) =>
-                    translateAxis(
-                        constraints[axis] as Axis,
-                        scroll[axis] - prevScroll[axis]
-                    )
-                )
-            } else {
-                this.constraints = this.resolveRefConstraints()
-            }
+            /**
+             * Re-resolve, as scroll can have moved the element relative to
+             * its constraints since they were measured (#2024).
+             */
+            this.constraints = this.resolveRefConstraints()
         } else {
             if (dragConstraints && layout) {
                 this.constraints = calcRelativeConstraints(
@@ -489,18 +440,20 @@ export class VisualElementDragControls {
         if (!projection || !projection.layout) return false
 
         /**
-         * Refresh the root scroll offset so the constraint's viewport box
-         * translates to correct page coordinates. The scroll captured at
-         * drag mount can be stale if the document was scrolled afterwards —
-         * e.g. via the browser restoring scroll on refresh, or an ancestor
-         * layout effect running after this element's mount (#2829).
+         * Refresh the scroll offsets of the root and `layoutScroll`
+         * ancestors so the constraint's viewport box translates to the
+         * layout's coordinates. The scroll captured when the layout was
+         * measured can be stale if they've scrolled since — e.g. via the
+         * browser restoring scroll on refresh, an ancestor layout effect
+         * running after this element's mount (#2829), or scrolling a
+         * `layoutScroll` container before dragging (#2024).
          *
          * Clear the cached scroll first so `updateScroll` bypasses its
          * per-animationId cache and re-reads the live value.
          */
-        if (projection.root) {
-            projection.root.scroll = undefined
-            projection.root.updateScroll()
+        for (const node of projection.path) {
+            node.scroll = undefined
+            node.updateScroll()
         }
 
         const constraintsBox = measurePageBox(
@@ -509,15 +462,13 @@ export class VisualElementDragControls {
             this.visualElement.getTransformPagePoint()
         )
 
-        this.scroll = measureScrollWithin(projection, constraintsElement!)
-
         /**
-         * Compare the layout's measuredBox, which like constraintsBox is
-         * where it is on the page (layoutBox removes `layoutScroll` scroll).
+         * layoutBox removes the scroll of `layoutScroll` ancestors, so
+         * remove it from the constraints box too.
          */
         let measuredConstraints = calcViewportConstraints(
-            projection.layout.measuredBox,
-            constraintsBox
+            projection.layout.layoutBox,
+            projection.removeElementScroll(constraintsBox)
         )
 
         /**
