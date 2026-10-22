@@ -66,6 +66,41 @@ describe("NativeAnimation - onfinish style commit", () => {
         expect(element.style.opacity).toBe("1")
     })
 
+    test("stopping before a pending finish event syncs the value, and the event doesn't apply it later", () => {
+        const element = document.createElement("div")
+        const mv = motionValue(1)
+        const onComplete = jest.fn()
+
+        const animation = new NativeAnimationExtended({
+            element,
+            name: "opacity",
+            keyframes: [1, 0.5],
+            motionValue: mv,
+            finalKeyframe: 0.5,
+            onComplete,
+            duration: 0,
+            ease: "easeOut",
+        } as any)
+
+        // An instant animation is finished before its finish event fires
+        mockAnimation.playState = "finished"
+        animation.stop()
+
+        // It's showing its end, so that's where the value is now
+        expect(mv.get()).toBe(0.5)
+        expect(element.style.opacity).toBe("0.5")
+        expect(mockAnimation.cancel).toHaveBeenCalled()
+
+        // The next animation sets the value, then the finish event fires
+        mv.set(1)
+        element.style.opacity = "1"
+        mockAnimation.onfinish?.()
+
+        expect(mv.get()).toBe(1)
+        expect(element.style.opacity).toBe("1")
+        expect(onComplete).not.toHaveBeenCalled()
+    })
+
     test("doesn't leave a frame driver running after sampling its value", () => {
         const running = new Set<object>()
         const driver = () => {

@@ -7,12 +7,19 @@ import { expect, Page, test } from "@playwright/test"
  */
 const text = (page: Page, id: string) => page.locator(id).textContent()
 const focused = (page: Page) => page.evaluate(() => document.activeElement?.id)
+/**
+ * Grabbed items show their whileDrag opacity, read after it has rendered.
+ */
 const grabbed = (page: Page) =>
-    page.evaluate(() =>
-        Array.from(document.querySelectorAll("[data-grabbed]"))
+    page.evaluate(async () => {
+        await new Promise((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(resolve))
+        )
+        return Array.from(document.querySelectorAll("li"))
+            .filter((element) => getComputedStyle(element).opacity === "0.5")
             .map((element) => element.id)
             .join(",")
-    )
+    })
 const scrollY = (page: Page) => page.evaluate(() => window.scrollY)
 
 test.describe("Reorder items with nested controls", () => {
@@ -37,7 +44,7 @@ test.describe("Reorder items with nested controls", () => {
         await page.focus("#b-checkbox")
         await page.keyboard.press("Space")
         expect(await text(page, "#checked")).toBe("b")
-        expect(await grabbed(page)).toBe("")
+        await expect.poll(() => grabbed(page)).toBe("")
         await page.keyboard.press("ArrowUp")
         expect(await text(page, "#order")).toBe("a,b,c")
         expect(await focused(page)).toBe("b-checkbox")
@@ -48,7 +55,7 @@ test.describe("Reorder items with nested controls", () => {
         await page.keyboard.press("Space")
         await page.keyboard.press("Enter")
         expect(await text(page, "#clicks")).toBe("2")
-        expect(await grabbed(page)).toBe("")
+        await expect.poll(() => grabbed(page)).toBe("")
     })
 
     test("Enter follows a nested link", async ({ page }) => {
@@ -69,9 +76,9 @@ test.describe("Reorder items with nested controls", () => {
     test("clicking a control drops a grabbed item", async ({ page }) => {
         await page.focus("#a")
         await page.keyboard.press("Space")
-        expect(await grabbed(page)).toBe("a")
+        await expect.poll(() => grabbed(page)).toBe("a")
         await page.click("#b-checkbox")
-        expect(await grabbed(page)).toBe("")
+        await expect.poll(() => grabbed(page)).toBe("")
         expect(await text(page, "#checked")).toBe("b")
     })
 

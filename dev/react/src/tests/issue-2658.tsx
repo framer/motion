@@ -37,7 +37,10 @@ export const App = () => {
                         key={item}
                         value={item}
                         id={item}
-                        whileDrag={{ opacity: 0.5 }}
+                        whileDrag={{
+                            opacity: 0.5,
+                            transition: { duration: 0 },
+                        }}
                         transition={
                             params.has("layout")
                                 ? { duration: 1, ease: "linear" }

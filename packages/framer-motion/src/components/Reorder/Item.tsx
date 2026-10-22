@@ -167,7 +167,6 @@ export function ReorderItemComponent<
                 onBlur?.(event as any)
                 grabbedFrom && grab(event.currentTarget)
             }}
-            data-grabbed={grabbedFrom && ""}
             onLayoutMeasure={(measured) => {
                 registerItem(value, measured)
             }}

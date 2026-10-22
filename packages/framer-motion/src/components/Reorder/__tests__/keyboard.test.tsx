@@ -1,5 +1,5 @@
 import { fireEvent } from "@testing-library/react"
-import { motionValue } from "motion-dom"
+import { motionValue, visualElementStore } from "motion-dom"
 import { act, useState } from "react"
 import { Reorder } from ".."
 import { nextFrame } from "../../../gestures/__tests__/utils"
@@ -36,6 +36,7 @@ const List = ({
                     key={item}
                     value={item}
                     data-testid={item}
+                    whileDrag={{ opacity: 0.5 }}
                     {...itemProps}
                 >
                     {item}
@@ -62,7 +63,13 @@ const press = (element: Element, key: string, init: object = {}) => {
     return result
 }
 
-const isGrabbed = (element: Element) => element.hasAttribute("data-grabbed")
+/**
+ * A grabbed item has its whileDrag state active. List gives items a
+ * whileDrag, as only items with animation props have an animation state.
+ */
+const isGrabbed = (element: Element) =>
+    !!visualElementStore.get(element)?.animationState?.getState().whileDrag
+        .isActive
 
 describe("Reorder keyboard", () => {
     it("makes items focusable", () => {

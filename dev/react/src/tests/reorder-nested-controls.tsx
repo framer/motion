@@ -28,6 +28,7 @@ export const App = () => {
                         value={item}
                         id={item}
                         transition={{ duration: 0 }}
+                        whileDrag={{ opacity: 0.5 }}
                         style={{ height: 60, background: "#eee" }}
                     >
                         <span id={`${item}-text`}>{item}</span>
