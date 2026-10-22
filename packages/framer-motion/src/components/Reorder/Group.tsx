@@ -11,7 +11,7 @@ import {
     useState,
 } from "react"
 import { ReorderContext } from "../../context/ReorderContext"
-import { motion } from "../../render/components/motion/proxy"
+import type { MotionProxy } from "../../render/components/create-proxy"
 import { HTMLMotionProps } from "../../render/html/types"
 import { useConstant } from "../../utils/use-constant"
 import {
@@ -97,10 +97,11 @@ export function ReorderGroupComponent<
         onClickCapture,
         ...props
     }: ReorderGroupProps<V, TagName>,
-    externalRef?: React.ForwardedRef<any>
+    externalRef: React.ForwardedRef<any>,
+    proxy: MotionProxy
 ): JSX.Element {
     const Component = useConstant(
-        () => motion[as as keyof typeof motion]
+        () => proxy[as as keyof MotionProxy]
     ) as FunctionComponent<
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
     >
@@ -149,6 +150,7 @@ export function ReorderGroupComponent<
 
     const context: ReorderContextProps<V> = {
         axis,
+        proxy,
         groupRef,
         hasReordered,
         /**
@@ -314,15 +316,22 @@ export function ReorderGroupComponent<
     )
 }
 
-export const ReorderGroup = /*@__PURE__*/ forwardRef(ReorderGroupComponent) as <
-    Values extends any[],
-    TagName extends ReorderElementTag = DefaultGroupElement
->(
-    props: Omit<
-        ReorderGroupProps<Values[number], TagName>,
-        "values" | "onReorder"
-    > & {
-        values: Values
-        onReorder: (newOrder: Values, moved: Values[number]) => void
-    } & { ref?: React.ForwardedRef<any> }
-) => ReturnType<typeof ReorderGroupComponent>
+/**
+ * Creates `Reorder.Group` rendering the components of `proxy`: `motion`,
+ * or `m` to get its features from `LazyMotion`. Its items render the same.
+ */
+export const createReorderGroup = (proxy: MotionProxy) =>
+    forwardRef((props: ReorderGroupProps<any, any>, ref) =>
+        ReorderGroupComponent(props, ref, proxy)
+    ) as <
+        Values extends any[],
+        TagName extends ReorderElementTag = DefaultGroupElement
+    >(
+        props: Omit<
+            ReorderGroupProps<Values[number], TagName>,
+            "values" | "onReorder"
+        > & {
+            values: Values
+            onReorder: (newOrder: Values, moved: Values[number]) => void
+        } & { ref?: React.ForwardedRef<any> }
+    ) => ReturnType<typeof ReorderGroupComponent>
