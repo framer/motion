@@ -7,19 +7,22 @@
  * in the report, or later via a click). A is then replaced by element B with
  * layoutId "shared". B should animate from A's position (left: 0) towards its
  * own (left: 400) over a 10s linear transition, rather than snapping to 400.
+ * Likewise, once A's layoutId changes away from "shared", B shouldn't animate
+ * from A.
  */
 import { expect, Page, test } from "@playwright/test"
 
 async function measureAfterSwap(
     page: Page,
     query: string,
-    clickChange = false
+    clickChange = false,
+    expectedId = "shared"
 ) {
     await page.goto(`?test=issue-1411&${query}`)
     await expect(page.locator("#a")).toBeVisible()
     await page.waitForTimeout(200)
     if (clickChange) await page.click("#change")
-    await expect(page.locator("#current-id")).toHaveText("shared")
+    await expect(page.locator("#current-id")).toHaveText(expectedId)
     await page.waitForTimeout(200)
     await page.click("#toggle")
     await expect(page.locator("#b")).toBeVisible()
@@ -54,5 +57,12 @@ test.describe("issue #1411: changing layoutId after mount", () => {
             true
         )
         expect(left).toBeLessThan(300)
+    })
+
+    test("layoutId changed away no longer animates from previous element", async ({
+        page,
+    }) => {
+        const left = await measureAfterSwap(page, "away=true", false, "other")
+        expect(left).toBe(400)
     })
 })

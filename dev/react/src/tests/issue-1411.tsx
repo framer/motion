@@ -5,16 +5,21 @@ import { useEffect, useState } from "react"
  * Issue #1411: layoutId changed after first render should be honoured.
  * ?changed=true -> layoutId starts as "initial" and is set to "shared" after mount.
  * ?changed=false -> layoutId is "shared" from the start (control).
+ * ?away=true -> layoutId starts as "shared" and is set to "other".
  */
 export const App = () => {
     const params = new URLSearchParams(window.location.search)
     const changed = params.get("changed") !== "false"
-    const [layoutId, setLayoutId] = useState(changed ? "initial" : "shared")
+    const away = params.get("away") === "true"
+    const target = away ? "other" : "shared"
+    const [layoutId, setLayoutId] = useState(
+        changed && !away ? "initial" : "shared"
+    )
     const [showB, setShowB] = useState(false)
 
     const late = params.get("late") === "true"
     useEffect(() => {
-        if (!late) setLayoutId("shared")
+        if (!late) setLayoutId(target)
     }, [])
 
     const transition = {
@@ -28,7 +33,7 @@ export const App = () => {
             <button id="toggle" onClick={() => setShowB(true)}>
                 toggle
             </button>
-            <button id="change" onClick={() => setLayoutId("shared")}>
+            <button id="change" onClick={() => setLayoutId(target)}>
                 change
             </button>
             <span id="current-id">{layoutId}</span>
