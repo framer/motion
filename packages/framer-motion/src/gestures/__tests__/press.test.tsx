@@ -570,12 +570,23 @@ describe("press", () => {
 
     test("press gesture works with animation state", async () => {
         const [a, b] = await new Promise<[Element, Element]>((resolve) => {
+            let completed = 0
             const childProps = {
                 variants: {
                     rest: { opacity: 0.5 },
                     pressed: { opacity: 0.8 },
                 },
                 transition: { duration: 0.01 },
+                // Resolve once both children finish the pressed animation,
+                // rather than after a fixed wall-clock wait.
+                onAnimationComplete: (definition: unknown) => {
+                    if (definition === "pressed" && ++completed === 2) {
+                        resolve([
+                            getByTestId("a") as Element,
+                            getByTestId("b") as Element,
+                        ])
+                    }
+                },
             }
 
             const Component = () => {
@@ -599,14 +610,6 @@ describe("press", () => {
 
             // Trigger mouse down
             pointerDown(getByTestId("a") as Element)
-            setTimeout(
-                () =>
-                    resolve([
-                        getByTestId("a") as Element,
-                        getByTestId("b") as Element,
-                    ]),
-                200
-            )
         })
 
         expect(a).toHaveStyle("opacity: 0.8")
