@@ -1143,11 +1143,12 @@ export function createProjectionNode<I>({
             box: Box,
             transformOnly = false,
             output?: Box,
-            skipOwnTransform?: boolean
+            skipOwnTransform?: boolean,
+            start = 0
         ): Box {
             const withTransforms = output || createBox()
             copyBoxInto(withTransforms, box)
-            for (let i = 0; i < this.path.length; i++) {
+            for (let i = start; i < this.path.length; i++) {
                 const node = this.path[i]
 
                 if (
@@ -1388,14 +1389,10 @@ export function createProjectionNode<I>({
                     (!relativeParent.resumingFrom === !this.resumingFrom ||
                         /**
                          * Shared layout animations within a layoutRoot
-                         * animate relative to it, if the old element was
-                         * inside it too.
+                         * animate relative to it.
                          */
                         (relativeParent.options.layoutRoot &&
-                            !relativeParent.resumingFrom &&
-                            this.resumingFrom!.path.includes(
-                                relativeParent
-                            ))) &&
+                            !relativeParent.resumingFrom)) &&
                     !relativeParent.options.layoutScroll &&
                     relativeParent.target &&
                     this.animationProgress !== 1
@@ -1537,14 +1534,18 @@ export function createProjectionNode<I>({
              *
              * A shared target is usually in page space, so ancestor transforms are applied
              * too. But a target relative to a parent that isn't itself shared (like a
-             * layoutRoot) is in that parent's layout space, as in a plain layout animation.
+             * layoutRoot) is in that parent's layout space. So the transforms of the
+             * parent and its ancestors, which move both elements alike, are skipped,
+             * but those of other ancestors (between it and either element) apply.
              */
             applyTreeDeltas(
                 this.layoutCorrected,
                 this.treeScale,
                 this.path,
                 isShared &&
-                    !(lead.relativeTarget && !lead.relativeParent!.resumingFrom)
+                    (lead.relativeTarget && !lead.relativeParent!.resumingFrom
+                        ? lead.relativeParent
+                        : true)
             )
 
             /**
@@ -2335,10 +2336,23 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                 if (parentSnapshot && parentLayout) {
                     const anchor = node.options.layoutAnchor || undefined
 
+                    /**
+                     * A shared snapshot includes the transforms of the old
+                     * element's ancestors below the layoutRoot, as they
+                     * aren't shared with the new element.
+                     */
                     const relativeSnapshot = createBox()
                     calcRelativePosition(
                         relativeSnapshot,
-                        snapshot.layoutBox,
+                        isShared
+                            ? node.resumeFrom!.applyTransform(
+                                  snapshot.layoutBox,
+                                  true,
+                                  undefined,
+                                  true,
+                                  relativeParent.depth + 1
+                              )
+                            : snapshot.layoutBox,
                         parentSnapshot.layoutBox,
                         anchor
                     )
