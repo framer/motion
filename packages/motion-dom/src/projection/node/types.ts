@@ -9,6 +9,43 @@ import type { VisualElement, MotionStyle } from "../../render/VisualElement"
 import { Box, Delta, Point } from "motion-utils"
 import { FlatTree } from "../utils/flat-tree"
 import { NodeStack } from "../shared/stack"
+import type { Mat3 } from "../quad/mat3"
+import type { Quad } from "../quad/quad"
+import type { QuadProjection } from "./quad-projection"
+import type { SpaceMeasurement } from "../quad/measure-space"
+
+/**
+ * How a node is drawn when a box can't describe it: inside a rotated,
+ * skewed or 3D space, or (for snapshots) under rotated ancestors.
+ */
+export interface QuadMeasurements {
+    /**
+     * The node's untransformed box on the page.
+     */
+    rect: Box
+
+    /**
+     * Transforms Motion doesn't control, between the node's projection
+     * parent and the node, as a page-space homography.
+     */
+    env: Mat3
+
+    /**
+     * `perspective` on the node's parent: distance (0 if none), then its
+     * page origin.
+     */
+    perspective: Float64Array
+
+    /**
+     * Whether the space the node is drawn in isn't axis-aligned.
+     */
+    isQuadSpace: boolean
+
+    /**
+     * For snapshots, the corners the node was visible at.
+     */
+    visual?: Quad
+}
 
 export interface Measurements {
     animationId: number
@@ -16,6 +53,7 @@ export interface Measurements {
     layoutBox: Box
     latestValues: ResolvedValues
     source: number
+    quad?: QuadMeasurements
 }
 
 export type Phase = "snapshot" | "measure"
@@ -66,6 +104,9 @@ export interface IProjectionNode<I = unknown> {
     treeScale?: Point
     projectionDelta?: Delta
     projectionDeltaWithTransform?: Delta
+    quad?: QuadProjection
+    isSVG?: boolean
+    applyTransformsToTarget(): void
     latestValues: ResolvedValues
     isLayoutDirty: boolean
     isProjectionDirty: boolean
@@ -96,6 +137,7 @@ export interface IProjectionNode<I = unknown> {
     sharedNodes: Map<string, NodeStack>
     registerSharedNode(id: string, node: IProjectionNode): void
     getStack(): NodeStack | undefined
+    getLead(): IProjectionNode
     isVisible: boolean
     hide(): void
     show(): void
@@ -174,6 +216,16 @@ export interface ProjectionNodeConfig<I> {
     measureScroll: (instance: I) => Point
     checkIsScrollRoot: (instance: I) => boolean
     resetTransform?: (instance: I, value?: string) => void
+    /**
+     * Measure the space the instance is drawn in, for quad projection.
+     * Renderers that can't leave this undefined, and only use boxes.
+     */
+    measureSpace?: (
+        instance: I,
+        parent: IProjectionNode | undefined,
+        out: SpaceMeasurement,
+        force: boolean
+    ) => boolean
 }
 
 /**

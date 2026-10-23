@@ -1,3 +1,4 @@
+import { measureSpace } from "../quad/measure-space"
 import { createProjectionNode } from "./create-projection-node"
 import { DocumentProjectionNode } from "./DocumentProjectionNode"
 import { rootProjectionNode } from "./root"
@@ -22,4 +23,11 @@ export const HTMLProjectionNode =
         },
         checkIsScrollRoot: (instance) =>
             Boolean(window.getComputedStyle(instance).position === "fixed"),
+        measureSpace: (instance, parent, out, force) =>
+            measureSpace(
+                instance,
+                parent?.instance instanceof Element ? parent.instance : null,
+                out,
+                force
+            ),
     })
