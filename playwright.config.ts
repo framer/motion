@@ -61,13 +61,29 @@ export default defineConfig({
                 ...devices["Desktop Chrome"],
                 launchOptions: chromiumLaunchOptions,
             },
-            testIgnore: /tests\/react\//,
+            testIgnore: [/tests\/react\//, /\.gpu\.spec\.ts/],
         },
 
         {
             name: "webkit",
             use: { ...devices["Desktop Safari"] },
-            testIgnore: /tests\/react\//,
+            testIgnore: [/tests\/react\//, /\.gpu\.spec\.ts/],
+        },
+
+        /**
+         * Chromium with WebGPU, for the GPU layout engine. Headless, it
+         * computes on SwiftShader.
+         */
+        {
+            name: "chromium-webgpu",
+            testMatch: /\.gpu\.spec\.ts/,
+            use: {
+                ...devices["Desktop Chrome"],
+                launchOptions: {
+                    ...chromiumLaunchOptions,
+                    args: ["--enable-unsafe-webgpu"],
+                },
+            },
         },
 
         /**
