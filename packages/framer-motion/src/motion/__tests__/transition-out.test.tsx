@@ -73,6 +73,33 @@ describe("transition.out", () => {
         expect(opacity.get()).toBe(1)
     })
 
+    test("variant children use the inherited initial's out transition on mount", async () => {
+        const parentOpacity = motionValue(0)
+        const childOpacity = motionValue(0)
+        const variants: Variants = {
+            hidden: { opacity: 0, transition: { out: { type: false } } },
+            visible: { opacity: 1, transition: { delay: 10 } },
+        }
+        const Component = () => (
+            <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={variants}
+                style={{ opacity: parentOpacity }}
+            >
+                <motion.div
+                    variants={variants}
+                    style={{ opacity: childOpacity }}
+                />
+            </motion.div>
+        )
+
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+        await frames()
+        expect([parentOpacity.get(), childOpacity.get()]).toEqual([1, 1])
+    })
+
     test("initial's out transition doesn't apply to values initial doesn't change on mount", async () => {
         const x = motionValue(0)
         const Component = ({ target }: { target: number }) => (

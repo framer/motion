@@ -84,20 +84,14 @@ export function createAnimationState(visualElement: any): AnimationState {
         const { initial } = props
         const isMounting = isInitialRender || wasReset
         const animations: DefinitionAndOptions[] = []
-        const resolveInitial = () =>
-            (typeof initial !== "boolean" &&
+        const resolveInitial = (definition = initial) =>
+            (typeof definition !== "boolean" &&
                 resolveVariant(
                     visualElement,
-                    Array.isArray(initial) ? initial[0] : initial,
+                    Array.isArray(definition) ? definition[0] : definition,
                     visualElement.presenceContext?.custom
                 )) ||
             undefined
-
-        /**
-         * Mounting leaves initial, so values use its out transition.
-         */
-        const initialOut =
-            isMounting && getOutTransition(resolveInitial()?.transition)
 
         /**
          * Values removed from a type, mapped to the out transition of the
@@ -124,6 +118,17 @@ export function createAnimationState(visualElement: any): AnimationState {
         let source = visualElement
         do source = source.props.inherit !== false && source.parent
         while (source && !source.isControllingVariants)
+
+        /**
+         * Mounting leaves initial, so values use its out transition. Like the
+         * other types, variant children inherit initial's label.
+         */
+        const initialOut =
+            isMounting &&
+            getOutTransition(
+                resolveInitial(initial ?? (source && source.props.initial))
+                    ?.transition
+            )
 
         reversePriorityOrder.forEach((type, i) => {
             const typeState = state[type]
