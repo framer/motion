@@ -960,6 +960,7 @@ export function createProjectionNode<I>({
                         0
             }
 
+            this.nodes!.forEach(remixValues)
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
@@ -1728,6 +1729,13 @@ export function createProjectionNode<I>({
         mixTargetDelta: (progress: number) => void
         animationProgress = 0
 
+        /**
+         * Mix a shared element's values again, once every animation has
+         * updated this frame, so it uses the lead's latest values rather
+         * than last frame's.
+         */
+        remixValues?: VoidFunction
+
         setAnimationOrigin(
             delta: Delta,
             hasOnlyRelativeTargetChanged: boolean = false,
@@ -1761,6 +1769,18 @@ export function createProjectionNode<I>({
             )
 
             this.animationProgress = 0
+
+            this.remixValues = isSharedLayoutAnimation
+                ? () =>
+                      mixValues(
+                          mixedValues,
+                          snapshotLatestValues,
+                          this.latestValues,
+                          this.animationProgress,
+                          shouldCrossfadeOpacity,
+                          isOnlyMember
+                      )
+                : undefined
 
             if (startQuadAnimation(this, snapshot, isSharedLayoutAnimation)) {
                 const quad = this.quad!
@@ -1948,6 +1968,7 @@ export function createProjectionNode<I>({
             this.resumingFrom =
                 this.currentAnimation =
                 this.animationValues =
+                this.remixValues =
                     undefined
 
             this.notifyListeners("animationComplete")
@@ -2534,6 +2555,10 @@ function notifyLayoutUpdate(node: IProjectionNode) {
      * and why we need it at all
      */
     node.options.transition = undefined
+}
+
+function remixValues(node: IProjectionNode) {
+    node.animationValues && node.remixValues?.()
 }
 
 export function propagateDirtyNodes(node: IProjectionNode) {

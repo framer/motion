@@ -7,7 +7,6 @@ import {
     createComponents,
     decompose,
     HomographyComponents,
-    mixComponents,
     unwrapRotation,
 } from "../quad/decompose"
 import {
@@ -88,10 +87,17 @@ export interface QuadProjection {
     from: HomographyComponents
 
     /**
-     * Components of the node's live transform, and the mix of the two.
+     * Components of the node's live transform, the same when the
+     * animation resolved, and the mix.
      */
     to: HomographyComponents
+    base: HomographyComponents
     mixed: HomographyComponents
+
+    /**
+     * Whether the node took over from another (a shared layout animation).
+     */
+    isShared: boolean
 
     /**
      * Rotation to add to the shortest path, in degrees, when the snapshot
@@ -140,7 +146,9 @@ export function createQuadProjection(): QuadProjection {
         local: createQuad(),
         from: createComponents(),
         to: createComponents(),
+        base: createComponents(),
         mixed: createComponents(),
+        isShared: false,
         turns: 0,
         space: createMat3(),
         output: createMat3(),
@@ -487,6 +495,7 @@ export function startQuadAnimation(
     quad.active = true
     quad.resolved = false
     quad.progress = 0
+    quad.isShared = isShared
 
     if (snapshotQuad?.visual) {
         copyQuad(quad.origin, snapshotQuad.visual)
@@ -515,7 +524,7 @@ const start = /* @__PURE__ */ createMat3()
  */
 export function calcQuadLead(node: IProjectionNode) {
     const quad = node.quad!
-    const { rect, from, to, mixed } = quad
+    const { rect, from, to, base, mixed } = quad
     const cx = (rect.x.min + rect.x.max) / 2
     const cy = (rect.y.min + rect.y.max) / 2
 
@@ -561,16 +570,45 @@ export function calcQuadLead(node: IProjectionNode) {
                 Math.round(((quad.turns * Math.PI) / 180 - shortest) / TAU) *
                 TAU
         }
+        base.set(to)
         quad.resolved = true
     } else {
         unwrapRotation(to, previousRotation)
     }
 
-    mixComponents(mixed, from, to, quad.progress)
+    mixToLive(mixed, from, base, to, quad.progress, quad.isShared)
     constrain(mixed, to, node.options.animationType, from)
 
     compose(quad.output, mixed, cx, cy)
     multiply(quad.visual, quad.space, quad.output)
+}
+
+/**
+ * Mix from the snapshot towards the node's transform as it was when the
+ * animation resolved, then add how that transform has changed since, as
+ * the box engine does. Changes to position and scale apply in full, so an
+ * element dragged mid-animation tracks the pointer. A shared element's
+ * rotation, skew and perspective instead mix towards their live values,
+ * as the box engine mixes a shared element's rotate.
+ */
+function mixToLive(
+    out: HomographyComponents,
+    from: HomographyComponents,
+    base: HomographyComponents,
+    live: HomographyComponents,
+    progress: number,
+    isShared: boolean
+) {
+    for (let i = 0; i < 8; i++) {
+        const mixed = from[i] + (base[i] - from[i]) * progress
+        const change = live[i] - base[i]
+
+        if ((i === 3 || i === 4) && base[i]) {
+            out[i] = mixed * (live[i] / base[i])
+        } else {
+            out[i] = mixed + (isShared && i > 1 ? change * progress : change)
+        }
+    }
 }
 
 /**

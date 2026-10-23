@@ -182,6 +182,7 @@ export interface IProjectionNode<I = unknown> {
 
     isProjecting(): boolean
     animationValues?: ResolvedValues
+    remixValues?: VoidFunction
     currentAnimation?: JSAnimation<number>
     isTreeAnimating?: boolean
     isAnimationBlocked?: boolean
