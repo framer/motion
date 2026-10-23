@@ -465,7 +465,18 @@ export function renderedTransform(
  * environment between them.
  */
 export function getSpace(node: IProjectionNode, out: Mat3): Mat3 {
-    node.parent ? getVisual(node.parent, out) : identity(out)
+    const { parent } = node
+
+    /**
+     * Parents project before their children, so a projecting parent's
+     * visual is already this frame's, without walking the rest of the
+     * tree.
+     */
+    parent?.quad?.active
+        ? copyMat3(out, parent.quad.visual)
+        : parent
+        ? getVisual(parent, out)
+        : identity(out)
     const env = node.layout?.quad?.env
     return env ? multiply(out, out, env) : out
 }
@@ -733,9 +744,8 @@ export function calcQuadFollow(node: IProjectionNode) {
         to.height
     )
 
-    multiply(quad.output, leadQuad.visual, fit)
-    multiply(quad.output, inverse, quad.output)
-    copyMat3(quad.visual, leadQuad.visual)
+    multiply(quad.visual, leadQuad.visual, fit)
+    multiply(quad.output, inverse, quad.visual)
     quad.mixed.set(leadQuad.mixed)
     quad.mixed[3] *= to.width / fromWidth
     quad.mixed[4] *= to.height / fromHeight

@@ -26,10 +26,11 @@ export const MIXED = 18 // the mixed components
 /**
  * Dispatches are made level by level, so every node is computed after the
  * parent and lead it depends on. Each level's range of `order` is a
- * uniform at this stride, bound with a dynamic offset.
+ * uniform at this stride, bound with a dynamic offset. There's room for
+ * LEVELS to start with, and more for deeper trees.
  */
 export const LEVEL_STRIDE = 256
-export const MAX_LEVELS = 32
+export const LEVELS = 32
 export const WORKGROUP_SIZE = 64
 
 export const animationTypes: { [key: string]: number } = {
@@ -251,8 +252,8 @@ fn main(@builtin(global_invocation_id) id: vec3<u32>) {
             0.0, sy, 0.0,
             leadRect.x - rect.x * sx, leadRect.y - rect.y * sy, 1.0
         );
-        let visual = loadOutput(leadOut + ${VISUAL}u);
-        storeOutput(out + ${OUTPUT}u, inverse(space) * visual * fit);
+        let visual = loadOutput(leadOut + ${VISUAL}u) * fit;
+        storeOutput(out + ${OUTPUT}u, inverse(space) * visual);
         storeOutput(out + ${VISUAL}u, visual);
         for (var i = 0u; i < 8u; i++) {
             outputs[out + ${MIXED}u + i] = outputs[leadOut + ${MIXED}u + i];

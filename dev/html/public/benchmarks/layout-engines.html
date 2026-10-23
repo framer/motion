@@ -34,6 +34,15 @@
                 height: 10px;
                 background: #00cc88;
             }
+            /* Nested items sit inside their parent, offset by a pixel */
+            .item .item {
+                position: absolute;
+                left: 1px;
+                top: 1px;
+            }
+            .item {
+                position: relative;
+            }
             #results {
                 position: fixed;
                 left: 8px;
@@ -55,6 +64,8 @@
              *
              *   ?n=1000              the CPU quad engine
              *   ?n=1000&engine=gpu   the WebGPU engine
+             *   ?n=1000&depth=10     the same number of elements, nested
+             *                        in chains 10 deep
              *
              * Reports main-thread time per frame, from the start of the
              * update step to the end of postRender, which includes the
@@ -65,14 +76,18 @@
             const params = new URLSearchParams(location.search)
             const n = Number(params.get("n") || 500)
             const duration = Number(params.get("duration") || 3)
+            const depth = Math.max(1, Number(params.get("depth") || 1))
 
             const a = document.getElementById("a")
             const b = document.getElementById("b")
+            let parent = a
             for (let i = 0; i < n; i++) {
                 const item = document.createElement("div")
                 item.className = "item"
                 item.dataset.layout = ""
-                a.appendChild(item)
+                if (i % depth === 0) parent = a
+                parent.appendChild(item)
+                parent = item
             }
 
             const readbacks = []
@@ -138,6 +153,7 @@
                     engine: engine ? "gpu" : "cpu",
                     isReady,
                     n,
+                    depth,
                     frame: summarise(frames),
                     readback: engine ? summarise(readbacks) : undefined,
                 }

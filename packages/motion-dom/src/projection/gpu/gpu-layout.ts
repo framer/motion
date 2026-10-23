@@ -24,7 +24,7 @@ import {
     LEAD,
     LEVEL_STRIDE,
     LIVE,
-    MAX_LEVELS,
+    LEVELS,
     MIXED,
     OUT,
     OUTPUT,
@@ -135,10 +135,10 @@ export function createGPULayout(): GPULayout {
 
     let levelOf = new Int32Array(0)
     let order = new Uint32Array(0)
-    const levelCounts = new Uint32Array(MAX_LEVELS)
-    const levelParams = new Uint32Array((MAX_LEVELS * LEVEL_STRIDE) / 4)
-    const dynamicOffsets = new Uint32Array(MAX_LEVELS)
-    for (let i = 0; i < MAX_LEVELS; i++) dynamicOffsets[i] = i * LEVEL_STRIDE
+    let levelCapacity = 0
+    let levelCounts = new Uint32Array(0)
+    let levelParams = new Uint32Array(0)
+    let dynamicOffsets = new Uint32Array(0)
     const commands: object[] = []
 
     const readbacks: Readback[] = []
@@ -186,6 +186,24 @@ export function createGPULayout(): GPULayout {
         device && createBuffers(previous)
     }
 
+    /**
+     * Make room for a tree this many levels deep.
+     */
+    function growLevels(size: number) {
+        levelCapacity = Math.max(LEVELS, levelCapacity * 2, size)
+        levelCounts = new Uint32Array(levelCapacity)
+        levelParams = new Uint32Array((levelCapacity * LEVEL_STRIDE) / 4)
+        dynamicOffsets = new Uint32Array(levelCapacity)
+        for (let i = 0; i < levelCapacity; i++) {
+            dynamicOffsets[i] = i * LEVEL_STRIDE
+        }
+
+        levelBuffer?.destroy()
+        levelBuffer = undefined
+        inputBuffer && bind()
+    }
+    growLevels(LEVELS)
+
     function createBuffers(previous: number) {
         const gpu = device!
         const oldRotations = rotationBuffer
@@ -208,10 +226,6 @@ export function createGPULayout(): GPULayout {
         orderBuffer = gpu.createBuffer({
             size: capacity * 4,
             usage: STORAGE | COPY_DST,
-        })
-        levelBuffer ||= gpu.createBuffer({
-            size: MAX_LEVELS * LEVEL_STRIDE,
-            usage: UNIFORM | COPY_DST,
         })
 
         /**
@@ -240,13 +254,22 @@ export function createGPULayout(): GPULayout {
             oldOutputs.destroy()
         }
 
+        bind()
+    }
+
+    function bind() {
+        const gpu = device!
+        levelBuffer ||= gpu.createBuffer({
+            size: levelCapacity * LEVEL_STRIDE,
+            usage: UNIFORM | COPY_DST,
+        })
         bindGroup = gpu.createBindGroup({
             layout: bindGroupLayout!,
             entries: [
-                { binding: 0, resource: { buffer: inputBuffer } },
-                { binding: 1, resource: { buffer: rotationBuffer } },
-                { binding: 2, resource: { buffer: outputBuffer } },
-                { binding: 3, resource: { buffer: orderBuffer } },
+                { binding: 0, resource: { buffer: inputBuffer! } },
+                { binding: 1, resource: { buffer: rotationBuffer! } },
+                { binding: 2, resource: { buffer: outputBuffer! } },
+                { binding: 3, resource: { buffer: orderBuffer! } },
                 { binding: 4, resource: { buffer: levelBuffer, size: 16 } },
             ],
         })
@@ -485,7 +508,7 @@ export function createGPULayout(): GPULayout {
         if (lead >= 0 && isQueued[lead]) {
             level = Math.max(level, levelFor(lead) + 1)
         }
-        return (levelOf[slot] = Math.min(level, MAX_LEVELS - 1))
+        return (levelOf[slot] = level)
     }
 
     function submit() {
@@ -525,13 +548,13 @@ export function createGPULayout(): GPULayout {
         /**
          * Order slots by level.
          */
-        levelCounts.fill(0)
         let levels = 0
         for (let i = 0; i < count; i++) {
-            const level = levelFor(queued[i])
-            levelCounts[level]++
-            levels = Math.max(levels, level + 1)
+            levels = Math.max(levels, levelFor(queued[i]) + 1)
         }
+        if (levels > levelCapacity) growLevels(levels)
+        levelCounts.fill(0)
+        for (let i = 0; i < count; i++) levelCounts[levelOf[queued[i]]]++
         let offset = 0
         for (let level = 0; level < levels; level++) {
             const at = (level * LEVEL_STRIDE) / 4
