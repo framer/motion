@@ -32,11 +32,16 @@ let hasTakenAnySnapshot = false
 
 /**
  * The projection node is created with the props from the component's first
- * render, so keep these in sync as `layout` can change (or be enabled) later.
+ * render, so keep these in sync as they can change (or be enabled) later.
  */
-const layoutOptions = ({ layout, layoutDependency }: MeasureProps) => ({
+const layoutOptions = ({
     layout,
     layoutDependency,
+    layoutAnchor,
+}: MeasureProps) => ({
+    layout,
+    layoutDependency,
+    layoutAnchor,
     animationType: typeof layout === "string" ? layout : "both",
 })
 
@@ -52,19 +57,16 @@ class MeasureLayoutWithContext extends Component<MeasureProps> {
         const { projection } = visualElement
 
         if (projection) {
-            if (layoutGroup.group) layoutGroup.group.add(projection)
-
-            if (switchLayoutGroup && switchLayoutGroup.register && layoutId) {
-                switchLayoutGroup.register(projection)
-            }
+            layoutGroup.group?.add(projection)
+            layoutId && switchLayoutGroup?.register?.(projection)
 
             if (hasTakenAnySnapshot) {
                 projection.root!.didUpdate()
             }
 
-            projection.addEventListener("animationComplete", () => {
+            projection.addEventListener("animationComplete", () =>
                 this.safeToRemove()
-            })
+            )
             projection.setOptions({
                 ...projection.options,
                 ...layoutOptions(this.props),
@@ -76,7 +78,7 @@ class MeasureLayoutWithContext extends Component<MeasureProps> {
     }
 
     getSnapshotBeforeUpdate(prevProps: MeasureProps) {
-        const { layout, layoutDependency, visualElement, drag, isPresent } =
+        const { layoutDependency, layoutId, visualElement, drag, isPresent } =
             this.props
         const { projection } = visualElement
 
@@ -91,15 +93,42 @@ class MeasureLayoutWithContext extends Component<MeasureProps> {
          */
         projection.isPresent = isPresent
 
-        if (
-            prevProps.layoutDependency !== layoutDependency ||
-            prevProps.layout !== layout
-        ) {
-            projection.setOptions({
-                ...projection.options,
-                ...layoutOptions(this.props),
-            })
+        /**
+         * If layoutId changes, move this node to the new layoutId's stack.
+         * It's already on screen, so it takes over the new stack instantly:
+         * it keeps its own snapshot rather than resuming from the lead, and
+         * the lead is hidden, as it would be at the end of a crossfade.
+         */
+        if (prevProps.layoutId !== layoutId) {
+            projection.willUpdate()
+            const { snapshot } = projection
+            const stack = projection.getStack()
+            stack?.remove(projection)
+            /**
+             * The old stack's new lead animates from this node's snapshot,
+             * which it now holds. Unlike a node that unmounts, this one stays
+             * mounted, so unlink them: the new lead mustn't read this node's
+             * snapshot after it changes, or stop or share its animation.
+             */
+            const lead = stack?.lead
+            if (lead?.resumeFrom === projection)
+                lead.resumeFrom =
+                    lead.currentAnimation =
+                    projection.resumingFrom =
+                        undefined
+            projection.options.layoutId = layoutId
+            if (layoutId) {
+                projection.getStack()?.lead?.hide()
+                projection.root!.registerSharedNode(layoutId, projection)
+                projection.resumeFrom = undefined
+                projection.snapshot = snapshot
+            }
         }
+
+        projection.setOptions({
+            ...projection.options,
+            ...layoutOptions(this.props),
+        })
 
         hasTakenAnySnapshot = true
 
@@ -124,10 +153,7 @@ class MeasureLayoutWithContext extends Component<MeasureProps> {
                  * be in charge of the safe to remove. Otherwise we call it here.
                  */
                 frame.postRender(() => {
-                    const stack = projection.getStack()
-                    if (!stack || !stack.members.length) {
-                        this.safeToRemove()
-                    }
+                    projection.getStack()?.members.length || this.safeToRemove()
                 })
             }
         }
@@ -136,11 +162,8 @@ class MeasureLayoutWithContext extends Component<MeasureProps> {
     }
 
     componentDidUpdate() {
-        const { visualElement, layoutAnchor } = this.props
-        const { projection } = visualElement
+        const { projection } = this.props.visualElement
         if (projection) {
-            projection.options.layoutAnchor = layoutAnchor
-
             projection.root!.didUpdate()
 
             microtask.postRender(() => {
@@ -163,16 +186,13 @@ class MeasureLayoutWithContext extends Component<MeasureProps> {
 
         if (projection) {
             projection.scheduleCheckAfterUnmount()
-            if (layoutGroup && layoutGroup.group)
-                layoutGroup.group.remove(projection)
-            if (promoteContext && promoteContext.deregister)
-                promoteContext.deregister(projection)
+            layoutGroup.group?.remove(projection)
+            promoteContext?.deregister?.(projection)
         }
     }
 
     safeToRemove() {
-        const { safeToRemove } = this.props
-        safeToRemove && safeToRemove()
+        this.props.safeToRemove?.()
     }
 
     render() {
