@@ -183,6 +183,13 @@ export interface IProjectionNode<I = unknown> {
     isProjecting(): boolean
     animationValues?: ResolvedValues
     remixValues?: VoidFunction
+
+    /**
+     * For nodes whose own transform isn't in `latestValues`, like planes
+     * in a 3D scene: write the page-space homography from `rect` onto
+     * where the node is laid out now. Returns false if it can't be seen.
+     */
+    measureTransform?(rect: Box, out: Mat3): boolean
     currentAnimation?: JSAnimation<number>
     isTreeAnimating?: boolean
     isAnimationBlocked?: boolean

@@ -329,6 +329,12 @@ export {
     parseAnimateLayoutArgs,
 } from "./layout/LayoutAnimationBuilder"
 export { animateLayout } from "./layout/animate-layout"
+export { createLayoutPlane } from "./layout/layout-plane"
+export type {
+    LayoutPlane,
+    LayoutPlaneOptions,
+    LayoutPlaneSource,
+} from "./layout/layout-plane"
 
 /**
  * Deprecated

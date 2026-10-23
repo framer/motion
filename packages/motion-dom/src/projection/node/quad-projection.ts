@@ -536,15 +536,17 @@ export function calcQuadLead(node: IProjectionNode) {
      */
     const previousRotation = to[2]
     const { width, height } = size(rect)
-    valuesToHomography(
-        live,
-        node.latestValues,
-        rect.x.min,
-        rect.y.min,
-        width,
-        height,
-        node.layout?.quad?.perspective
-    )
+    if (!node.measureTransform?.(rect, live)) {
+        valuesToHomography(
+            live,
+            node.latestValues,
+            rect.x.min,
+            rect.y.min,
+            width,
+            height,
+            node.layout?.quad?.perspective
+        )
+    }
     decompose(to, live, cx, cy)
 
     if (!quad.resolved) {

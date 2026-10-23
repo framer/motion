@@ -155,6 +155,30 @@ function matchCorners(element, expected, label = "", threshold = 0.5) {
     return !wrong
 }
 
+/**
+ * Compare corners that weren't read from an element, like a canvas
+ * plane's.
+ */
+function matchQuad(actual, expected, label = "", threshold = 0.5) {
+    const wrong = actual.some(
+        (v, i) => !(Math.abs(v - expected[i]) <= threshold)
+    )
+    if (wrong) {
+        report(
+            document.body,
+            `${label} corners [${format(actual)}] don't match [${format(
+                expected
+            )}]`
+        )
+    }
+    return !wrong
+}
+
+function check(condition, message) {
+    if (!condition) report(document.body, message)
+    return condition
+}
+
 function matchPoint(element, actual, expected, label = "", threshold = 0.5) {
     if (
         Math.abs(actual[0] - expected[0]) > threshold ||
@@ -204,6 +228,8 @@ window.Quad = {
     rectCorners,
     mixRects,
     matchCorners,
+    matchQuad,
+    check,
     matchPoint,
     nextFrame,
     seek,
