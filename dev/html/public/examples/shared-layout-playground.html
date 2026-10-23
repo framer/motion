@@ -423,6 +423,7 @@
                 align: "flex-start",
                 cardWidth: 100,
                 cardHeight: 100,
+                cardRadius: 12,
             }
 
             const defaults = {
@@ -450,6 +451,7 @@
                     align: "center",
                     cardWidth: 220,
                     cardHeight: 140,
+                    cardRadius: 32,
                 },
             }
 
@@ -508,10 +510,53 @@
                     .join(" ")
             }
 
-            function applyParent(side) {
+            /**
+             * A parent's transform is Motion-free CSS, but changing it
+             * animates it, so its children move with it rather than run a
+             * layout animation of their own. These are the values it's
+             * currently drawn with.
+             */
+            const transformKeys = [
+                "x",
+                "y",
+                "rotate",
+                "scale",
+                "skewX",
+                "rotateX",
+                "rotateY",
+                "perspective",
+            ]
+            const shown = {
+                a: pick(state.a, transformKeys),
+                b: pick(state.b, transformKeys),
+            }
+            const parentAnimations = {}
+
+            function applyTransform(side) {
+                parents[side].style.transform = parentTransform(shown[side])
+            }
+
+            function animateTransform(side) {
+                parentAnimations[side]?.stop()
+                const from = { ...shown[side] }
+                const to = pick(state[side], transformKeys)
+                const animation = animate(0, 1, {
+                    ...transitionOptions(),
+                    onUpdate: (progress) => {
+                        for (const key of transformKeys) {
+                            shown[side][key] =
+                                from[key] + (to[key] - from[key]) * progress
+                        }
+                        applyTransform(side)
+                    },
+                })
+                parentAnimations[side] = animation
+                return animation
+            }
+
+            function applyLayout(side) {
                 const p = state[side]
                 const parent = parents[side]
-                parent.style.transform = parentTransform(p)
                 parent.style.width = `${p.width}px`
                 parent.style.height = `${p.height}px`
                 parent.style.justifyContent = p.justify
@@ -520,6 +565,30 @@
                     card.style.width = `${p.cardWidth}px`
                     card.style.height = `${p.cardHeight}px`
                 }
+            }
+
+            /**
+             * Border radius is set with Motion, so layout animations
+             * correct it for scale and mix it between the two cards. One
+             * set in CSS is invisible to them.
+             */
+            function animateRadius(side, options = { duration: 0 }) {
+                const cards = [...parents[side].querySelectorAll(".card")]
+                return cards.length
+                    ? animate(
+                          cards,
+                          { borderRadius: state[side].cardRadius },
+                          options
+                      )
+                    : undefined
+            }
+
+            function applyParent(side) {
+                parentAnimations[side]?.stop()
+                Object.assign(shown[side], pick(state[side], transformKeys))
+                applyTransform(side)
+                applyLayout(side)
+                animateRadius(side)
             }
 
             function applyParents() {
@@ -616,30 +685,40 @@
 
             /**
              * A setting changed. Parents and cards either change at once,
-             * animate, or wait to change in the next move.
+             * animate, or wait to change in the next move. Transforms and
+             * radii animate with Motion, and layout with animateLayout.
              */
-            function onChange(group, isFinal) {
+            function onChange(group, isFinal, key) {
                 save()
+                const { apply } = state.transition
                 if (group === "lead") {
                     if (!isFinal) return
                     const lead = leadCard()
                     lead &&
-                        animate(
-                            lead,
-                            leadValues(),
-                            state.transition.apply === "live"
-                                ? { duration: 0 }
-                                : transitionOptions()
-                        )
+                        track([
+                            animate(
+                                lead,
+                                leadValues(),
+                                apply === "live"
+                                    ? { duration: 0 }
+                                    : transitionOptions()
+                            ),
+                        ])
                     return
                 }
                 if (group !== "a" && group !== "b") return
 
-                const { apply } = state.transition
                 if (apply === "live") {
                     applyParent(group)
                 } else if (apply === "animate") {
-                    isFinal && run(() => applyParent(group), false)
+                    if (!isFinal) return
+                    if (transformKeys.includes(key)) {
+                        track([animateTransform(group)])
+                    } else if (key === "cardRadius") {
+                        track([animateRadius(group, transitionOptions())])
+                    } else {
+                        run(() => applyLayout(group), false)
+                    }
                 } else {
                     pending = true
                     showPending()
@@ -663,6 +742,7 @@
                     ["height", 120, 420, 1, "px"],
                     ["cardWidth", 30, 320, 1, "px"],
                     ["cardHeight", 30, 320, 1, "px"],
+                    ["cardRadius", 0, 80, 1, "px"],
                 ],
                 lead: [
                     ["x", -200, 200, 1, "px"],
@@ -679,6 +759,7 @@
             const labels = {
                 cardWidth: "card width",
                 cardHeight: "card height",
+                cardRadius: "card radius",
             }
 
             const refreshers = []
@@ -699,9 +780,11 @@
                 input.addEventListener("input", () => {
                     state[group][key] = Number(input.value)
                     output.textContent = `${input.value}${unit}`
-                    onChange(group, false)
+                    onChange(group, false, key)
                 })
-                input.addEventListener("change", () => onChange(group, true))
+                input.addEventListener("change", () =>
+                    onChange(group, true, key)
+                )
                 container.appendChild(field)
             }
 
@@ -718,7 +801,7 @@
                 refreshers.push(() => (select.value = state[group][key]))
                 select.addEventListener("change", () => {
                     state[group][key] = select.value
-                    onChange(group, true)
+                    onChange(group, true, key)
                 })
                 container.appendChild(field)
             }
@@ -731,7 +814,7 @@
                 refreshers.push(() => (input.checked = state[group][key]))
                 input.addEventListener("change", () => {
                     state[group][key] = input.checked
-                    onChange(group, true)
+                    onChange(group, true, key)
                 })
                 container.appendChild(field)
             }
@@ -840,20 +923,32 @@
                     refresh()
                     save()
                     const { apply } = state.transition
+                    const sides = ["a", "b"].filter((side) => side in preset)
+                    const lead = "lead" in preset && leadCard()
                     if (apply === "move") {
                         pending = true
                         showPending()
                     } else if (apply === "live") {
-                        applyParents()
+                        sides.forEach(applyParent)
+                        lead && animate(lead, leadValues(), { duration: 0 })
                     } else {
-                        run(applyParents, false)
+                        track([
+                            ...sides.map(animateTransform),
+                            lead &&
+                                animate(
+                                    lead,
+                                    leadValues(),
+                                    transitionOptions()
+                                ),
+                        ])
                     }
                 })
                 presetRow.appendChild(button)
             }
 
             /**
-             * Presets change transforms and keep each parent's layout.
+             * Presets change transforms and keep each parent's layout and
+             * radius.
              */
             const layoutKeys = [
                 "width",
@@ -862,6 +957,7 @@
                 "align",
                 "cardWidth",
                 "cardHeight",
+                "cardRadius",
             ]
             function pick(object, keys) {
                 const out = {}
@@ -925,10 +1021,12 @@
                  */
                 current = animations.filter(
                     (animation) =>
-                        !animation.animations || animation.animations.length
+                        animation &&
+                        (!animation.animations || animation.animations.length)
                 )
                 const duration = Math.max(
-                    ...animations.map((animation) => animation.duration || 0)
+                    0,
+                    ...current.map((animation) => animation.duration || 0)
                 )
                 scrub.max = duration || 1
                 if (startPaused.checked) {
