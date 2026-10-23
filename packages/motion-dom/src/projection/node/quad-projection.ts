@@ -462,7 +462,9 @@ export function renderedTransform(
 
 /**
  * The space a node is drawn in: its parent's visual transform, then the
- * environment between them.
+ * environment between them. While snapshots are taken, a node already
+ * snapshotted is measured where it is now; its last layout could be stale,
+ * or not measured yet.
  */
 export function getSpace(node: IProjectionNode, out: Mat3): Mat3 {
     const { parent } = node
@@ -477,7 +479,7 @@ export function getSpace(node: IProjectionNode, out: Mat3): Mat3 {
         : parent
         ? getVisual(parent, out)
         : identity(out)
-    const env = node.layout?.quad?.env
+    const env = (node.snapshot || node.layout)?.quad?.env
     return env ? multiply(out, out, env) : out
 }
 

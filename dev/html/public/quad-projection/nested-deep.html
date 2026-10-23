@@ -17,6 +17,11 @@
                 background: #eee;
             }
 
+            /* Rotated from the start, so the chain starts in a turned space */
+            .container {
+                transform: rotate(-20deg);
+            }
+
             .container.turned {
                 transform: rotate(40deg);
             }
@@ -118,8 +123,9 @@
 
             /**
              * The box from container-turns, with a deep chain of nested
-             * elements inside it. Every one of them moves between spaces
-             * with the box, and stays where it sits on it.
+             * elements inside it, and a container that's already turned.
+             * Every one of them moves between spaces with the box, and
+             * stays where it sits on it.
              */
             async function runTest() {
                 const container = document.getElementById("container")
