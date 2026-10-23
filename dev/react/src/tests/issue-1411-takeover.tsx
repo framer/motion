@@ -4,17 +4,16 @@ import * as ReactDOMClient from "react-dom/client"
 
 /**
  * Issue #1411: element A's layoutId changes to "shared" while element B,
- * which already has layoutId "shared", is mounted. A takes over as lead and
- * animates from B's position; B becomes a follower, projected onto A and
- * crossfaded out, exactly as if A had mounted with "shared".
+ * which already has layoutId "shared", is mounted. A is already on screen, so
+ * it takes over as lead instantly, staying where it is, and B, now a
+ * follower, is hidden.
  *
  * B has a constant layoutDependency so its own MeasureLayout doesn't
  * willUpdate() it on re-render (as a memoised sibling wouldn't re-render at
- * all). The takeover itself must measure B.
+ * all). The takeover itself must hide B.
  *
- * Rendered in its own React root, outside the dev harness's StrictMode:
- * StrictMode's double mount in dev leaves every node measured, which hides
- * the bug. The nested root is guarded to a single instance as in
+ * Rendered in its own React root, outside the dev harness's StrictMode,
+ * whose double render in dev would re-render B anyway. The nested root is guarded to a single instance as in
  * use-scroll-target-late-ref.tsx.
  */
 export const App = () => {

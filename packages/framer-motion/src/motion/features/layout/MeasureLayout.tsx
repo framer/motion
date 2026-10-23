@@ -94,18 +94,35 @@ class MeasureLayoutWithContext extends Component<MeasureProps> {
         projection.isPresent = isPresent
 
         /**
-         * If layoutId changes, move this node to the new layoutId's stack,
-         * as if it had unmounted and remounted with it. The lead it takes
-         * over from is measured too, as when a node mounts with its layoutId,
-         * so it can follow this node even if it doesn't willUpdate() itself.
+         * If layoutId changes, move this node to the new layoutId's stack.
+         * It's already on screen, so it takes over the new stack instantly:
+         * it keeps its own snapshot rather than resuming from the lead, and
+         * the lead is hidden, as it would be at the end of a crossfade.
          */
         if (prevProps.layoutId !== layoutId) {
             projection.willUpdate()
-            projection.getStack()?.remove(projection)
+            const { snapshot } = projection
+            const stack = projection.getStack()
+            stack?.remove(projection)
+            /**
+             * The old stack's new lead animates from this node's snapshot,
+             * which it now holds. Unlike a node that unmounts, this one stays
+             * mounted, so unlink them: the new lead mustn't read this node's
+             * snapshot after it changes, or stop or share its animation.
+             */
+            const lead = stack?.lead
+            if (lead?.resumeFrom === projection)
+                lead.resumeFrom =
+                    lead.currentAnimation =
+                    projection.resumingFrom =
+                        undefined
             projection.options.layoutId = layoutId
-            projection.getStack()?.lead?.willUpdate()
-            layoutId &&
+            if (layoutId) {
+                projection.getStack()?.lead?.hide()
                 projection.root!.registerSharedNode(layoutId, projection)
+                projection.resumeFrom = undefined
+                projection.snapshot = snapshot
+            }
         }
 
         projection.setOptions({

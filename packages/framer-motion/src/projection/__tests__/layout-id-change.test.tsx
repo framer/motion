@@ -52,54 +52,47 @@ describe("changing layoutId after mount (#1411)", () => {
         )
     })
 
-    test("takes over from the lead of the new layoutId", async () => {
-        const a = createRef<HTMLDivElement>()
-        const b = createRef<HTMLDivElement>()
-        const App = ({ id }: { id: string }) => (
-            <>
-                <motion.div ref={a} layoutId={id} />
-                <motion.div ref={b} layoutId="shared" />
-            </>
-        )
-        const { rerender } = render(<App id="initial" />)
-        const nodeA = getNode(a.current!)
-        const nodeB = getNode(b.current!)
-
-        expect(nodeB.getStack()!.lead === nodeB).toBe(true)
-
-        rerender(<App id="shared" />)
-
-        const stack = nodeA.root!.sharedNodes.get("shared")!
-        expect(stack.lead === nodeA).toBe(true)
-        expect(stack.prevLead === nodeB).toBe(true)
-        expect(nodeA.resumeFrom === nodeB).toBe(true)
-    })
-
     /**
-     * The lead being taken over must be measured for the takeover, as it is
-     * when a node mounts with its layoutId (createProjectionNode calls
-     * lead.willUpdate()). A sibling that doesn't willUpdate() itself (constant
-     * layoutDependency, or memoised so it doesn't re-render) would otherwise
-     * never get a layout, so it couldn't follow the new lead or crossfade.
+     * A node that's already on screen takes over the new layoutId instantly,
+     * rather than animating from the lead as a node mounting with it would.
+     * The lead is hidden, as at the end of a crossfade, even if it doesn't
+     * re-render (constant layoutDependency, or memoised).
      */
-    test("measures the lead it takes over from", async () => {
-        const a = createRef<HTMLDivElement>()
-        const b = createRef<HTMLDivElement>()
-        const App = ({ id }: { id: string }) => (
-            <>
-                <motion.div ref={a} layoutId={id} />
-                <motion.div ref={b} layoutId="shared" layoutDependency={1} />
-            </>
-        )
-        const { rerender } = render(<App id="initial" />)
-        const nodeB = getNode(b.current!)
-        // Let any mount-time update settle so B starts clean
-        await nextFrame()
-        expect(nodeB.isLayoutDirty).toBe(false)
+    test.each([undefined, 1])(
+        "takes over the new layoutId's lead instantly (layoutDependency %s)",
+        async (layoutDependency) => {
+            const a = createRef<HTMLDivElement>()
+            const b = createRef<HTMLDivElement>()
+            const App = ({ id }: { id: string }) => (
+                <>
+                    <motion.div ref={a} layoutId={id} />
+                    <motion.div
+                        ref={b}
+                        layoutId="shared"
+                        layoutDependency={layoutDependency}
+                    />
+                </>
+            )
+            const { rerender } = render(<App id="initial" />)
+            const nodeA = getNode(a.current!)
+            const nodeB = getNode(b.current!)
+            await nextFrame()
 
-        rerender(<App id="shared" />)
-        expect(nodeB.isLayoutDirty).toBe(true)
-    })
+            expect(nodeB.getStack()!.lead === nodeB).toBe(true)
+
+            rerender(<App id="shared" />)
+
+            const stack = nodeA.root!.sharedNodes.get("shared")!
+            expect(stack.lead === nodeA).toBe(true)
+            expect(stack.prevLead === nodeB).toBe(true)
+            expect(nodeA.resumeFrom).toBeUndefined()
+
+            await nextFrame()
+            expect(nodeA.currentAnimation).toBeUndefined()
+            expect(a.current!.style.visibility).not.toBe("hidden")
+            expect(b.current!.style.visibility).toBe("hidden")
+        }
+    )
 
     /**
      * MeasureLayout syncs its options on every update, so props like
@@ -210,4 +203,128 @@ describe("changing layoutId after mount (#1411)", () => {
             expect(visible).not.toContain("hidden")
         }
     )
+})
+
+/**
+ * A gallery: thumbnails "one" and "two" each have their own layoutId, and a
+ * persistent, open detail card has layoutId={open}. When open changes from
+ * "one" to "two", the card leaves stack "one" (so thumbnail one leads it
+ * again, resuming from the card) and takes over stack "two" from thumbnail
+ * two. The card switches instantly, as it's already open, and thumbnail two
+ * follows it out of sight. Thumbnail one animates home from the card's box,
+ * whatever joining stack "two" does to the card's own snapshot.
+ *
+ * JSDOM has no layout, so getBoundingClientRect reads each element's box
+ * from its data-box attribute.
+ */
+describe("changing an open card's layoutId (#1411)", () => {
+    const boxes = {
+        one: [0, 0, 100, 50],
+        two: [200, 0, 100, 50],
+        card: [50, 200, 400, 300],
+    }
+
+    beforeEach(() => {
+        jest.spyOn(
+            HTMLElement.prototype,
+            "getBoundingClientRect"
+        ).mockImplementation(function (this: HTMLElement) {
+            const [x, y, width, height] = boxes[
+                this.dataset.box as keyof typeof boxes
+            ] ?? [0, 0, 0, 0]
+            return {
+                x,
+                y,
+                left: x,
+                top: y,
+                width,
+                height,
+                right: x + width,
+                bottom: y + height,
+                toJSON() {},
+            } as DOMRect
+        })
+    })
+
+    afterEach(() => jest.restoreAllMocks())
+
+    const transition = { type: "tween", ease: "linear", duration: 10 } as const
+
+    const Gallery = ({ open }: { open?: string }) => (
+        <>
+            {(["one", "two"] as const).map((id) => (
+                <motion.div
+                    key={id}
+                    id={id}
+                    data-box={id}
+                    layoutId={id}
+                    transition={transition}
+                />
+            ))}
+            {open && (
+                <motion.div
+                    id="card"
+                    data-box="card"
+                    layoutId={open}
+                    transition={transition}
+                />
+            )}
+        </>
+    )
+
+    const element = (id: string) => document.getElementById(id)!
+
+    async function openThenChange() {
+        const { rerender } = render(<Gallery />)
+        await nextFrame()
+        rerender(<Gallery open="one" />)
+        await nextFrame()
+        await nextFrame()
+
+        const one = getNode(element("one"))
+        const card = getNode(element("card"))
+        // The card grows out of thumbnail one. Finish that.
+        expect(card.currentAnimation).toBeDefined()
+        card.currentAnimation!.complete()
+        await nextFrame()
+
+        const snapshots: Record<string, any> = {}
+        for (const id of ["one", "card"]) {
+            getNode(element(id)).addEventListener(
+                "didUpdate",
+                ({ snapshot }: any) => (snapshots[id] = snapshot)
+            )
+        }
+
+        rerender(<Gallery open="two" />)
+        await nextFrame()
+        await nextFrame()
+
+        return { one, two: getNode(element("two")), card, snapshots }
+    }
+
+    test("the old thumbnail resumes from the card's box", async () => {
+        const { one, snapshots } = await openThenChange()
+
+        expect(one.isLead()).toBe(true)
+        expect(snapshots.one.measuredBox).toEqual({
+            x: { min: 50, max: 450 },
+            y: { min: 200, max: 500 },
+        })
+    })
+
+    test("the card switches instantly and the new thumbnail is hidden", async () => {
+        const { two, card, snapshots } = await openThenChange()
+
+        expect(card.getStack()!.lead === card).toBe(true)
+        expect(two.getStack() === card.getStack()).toBe(true)
+        expect(snapshots.card.measuredBox).toEqual({
+            x: { min: 50, max: 450 },
+            y: { min: 200, max: 500 },
+        })
+        expect(card.currentAnimation).toBeUndefined()
+        expect(element("card").style.visibility).not.toBe("hidden")
+        expect(element("card").style.opacity).not.toBe("0")
+        expect(element("two").style.visibility).toBe("hidden")
+    })
 })
