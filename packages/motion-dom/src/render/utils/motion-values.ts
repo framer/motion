@@ -38,7 +38,15 @@ export function updateMotionValuesFromProps(
                 const existingValue = element.getValue(key)!
 
                 if (existingValue.liveStyle === true) {
-                    existingValue.jump(nextValue)
+                    /**
+                     * A value handed back from animation state is only
+                     * scraped from then on, so prev can be missing it.
+                     * Only jump if the style value really changed, or
+                     * we'd kill the animation back to it.
+                     */
+                    if (element.prevProps?.style?.[key] !== nextValue) {
+                        existingValue.jump(nextValue)
+                    }
                 } else if (!existingValue.hasAnimated) {
                     existingValue.set(nextValue)
                 }
