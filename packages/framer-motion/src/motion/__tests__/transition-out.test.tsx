@@ -381,6 +381,29 @@ describe("transition.out", () => {
         await frames()
         expect(opacity.get()).toBe(0.5)
     })
+    test("setting only out keeps the value's default transition into the state", async () => {
+        const x = motionValue(0)
+        const values: number[] = []
+        x.on("change", (v) => values.push(v))
+        const Component = () => (
+            <motion.div
+                initial={false}
+                animate={{ x: 0 }}
+                whileHover={{ x: 100, transition: { out: { type: false } } }}
+                style={{ x }}
+            />
+        )
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+
+        pointerEnter(container.firstChild as Element)
+        await frames(40)
+
+        // x's default transition is an underdamped spring, which overshoots
+        expect(Math.max(...values)).toBeGreaterThan(100)
+    })
+
     test("exiting while hovered uses exit's transition, not hover's out", async () => {
         const opacity = motionValue(0.5)
         const Component = ({ isVisible }: { isVisible: boolean }) => (
