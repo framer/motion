@@ -16,14 +16,18 @@ async function selectLettuce(
     await page.goto(`?test=issue-1935&${query}`)
     await expect(page.locator(".underline")).toBeVisible()
 
-    expect(
-        await page.evaluate(() => ({
-            underline: document
-                .querySelector(".underline")!
-                .getBoundingClientRect().left,
-            list: document.querySelector("ul")!.getBoundingClientRect().left,
-        }))
-    ).toEqual(before)
+    // Wait for anything that animates on mount to settle
+    await expect
+        .poll(() =>
+            page.evaluate(() => ({
+                underline: document
+                    .querySelector(".underline")!
+                    .getBoundingClientRect().left,
+                list: document.querySelector("ul")!.getBoundingClientRect()
+                    .left,
+            }))
+        )
+        .toEqual(before)
 
     await page.click("#lettuce")
     // The underline transition is 1s
@@ -37,20 +41,44 @@ async function selectLettuce(
     })
 }
 
-function expectSlideAcrossList(offsets: number[]) {
-    // From Tomato (0px) to Lettuce (100px) within the list
-    expect(offsets[0]).toBeLessThan(5)
+function expectSlideAcrossList(offsets: number[], from = 0, to = 100) {
+    // From Tomato (0px) to Lettuce (100px) within the list, by default
+    expect(Math.abs(offsets[0] - from)).toBeLessThan(5)
     for (const offset of offsets) {
-        expect(offset).toBeGreaterThanOrEqual(-0.5)
-        expect(offset).toBeLessThanOrEqual(100.5)
+        expect(offset).toBeGreaterThanOrEqual(from - 0.5)
+        expect(offset).toBeLessThanOrEqual(to + 0.5)
     }
     for (let i = 1; i < offsets.length; i++) {
         expect(offsets[i]).toBeGreaterThanOrEqual(offsets[i - 1] - 0.5)
     }
     // Mid-animation it's partway, not already at the end
-    expect(offsets.some((o) => o > 30 && o < 70)).toBe(true)
-    expect(offsets[offsets.length - 1]).toBeCloseTo(100, 0)
+    const range = to - from
+    expect(
+        offsets.some((o) => o > from + range * 0.3 && o < to - range * 0.3)
+    ).toBe(true)
+    expect(offsets[offsets.length - 1]).toBeCloseTo(to, 0)
 }
+
+/**
+ * Crossfading underlines are both mounted and in the same place
+ */
+function expectCrossfade(records: { underlines: number[] }[]) {
+    const crossfading = records.filter(
+        ({ underlines }) => underlines.length === 2
+    )
+    expect(crossfading.length).toBeGreaterThan(20)
+    for (const { underlines } of crossfading) {
+        expect(underlines[0]).toBeCloseTo(underlines[1], 0)
+    }
+}
+
+/**
+ * The left edge of the new underline relative to the list, per frame
+ */
+const leadOffsets = (records: { underlines: number[]; list: number }[]) =>
+    records.map(
+        ({ underlines, list }) => underlines[underlines.length - 1] - list
+    )
 
 test("Shared layout animation inside a layoutRoot animates relative to it", async ({
     page,
@@ -221,5 +249,93 @@ test("Crossfading from a translated box outside a layoutRoot keeps the old under
     expect(lefts[lefts.length - 1]).toBeCloseTo(350, 0)
     for (const { underlines } of crossfading) {
         expect(underlines[0]).toBeCloseTo(underlines[1], 0)
+    }
+})
+
+/**
+ * Tomato's underline is wrapped in a box inside its tab that's translated
+ * 80px, so it starts visually 80px into the list (430px on the page). The
+ * new underline should start there, relative to the list, and slide to
+ * Lettuce (100px into the list).
+ */
+test("Shared layout animation from a translated box inside a layoutRoot starts from its visual position", async ({
+    page,
+}) => {
+    const records = await selectLettuce(page, "innerX=80", {
+        underline: 430,
+        list: 350,
+    })
+    expect(records.length).toBeGreaterThan(20)
+    for (const { list } of records) expect(list).toBeCloseTo(200, 0)
+
+    expectSlideAcrossList(leadOffsets(records), 80)
+})
+
+test("Crossfading from a translated box inside a layoutRoot keeps the old underline on the new one", async ({
+    page,
+}) => {
+    const records = await selectLettuce(page, "innerX=80&exit=true", {
+        underline: 430,
+        list: 350,
+    })
+    expect(records.length).toBeGreaterThan(20)
+    for (const { list } of records) expect(list).toBeCloseTo(200, 0)
+
+    // The old underline's translated box isn't ignored
+    expectCrossfade(records)
+    expectSlideAcrossList(leadOffsets(records), 80)
+})
+
+test("Crossfading inside a scrolled layoutScroll box in a layoutRoot animates relative to it", async ({
+    page,
+}) => {
+    // The tabs are in a box in the list that's scrolled 50px, so Tomato's
+    // underline starts at 300px, 50px left of the list
+    const records = await selectLettuce(page, "scroll=50&exit=true", {
+        underline: 300,
+        list: 350,
+    })
+    expect(records.length).toBeGreaterThan(20)
+    for (const { list } of records) expect(list).toBeCloseTo(200, 0)
+
+    // From -50px to 50px within the list: the scroll applies to both
+    expectSlideAcrossList(leadOffsets(records), -50, 50)
+    expectCrossfade(records)
+})
+
+test("Crossfading translated underlines inside a layoutRoot keeps their translate", async ({
+    page,
+}) => {
+    // Both underlines are translated 10px
+    const records = await selectLettuce(page, "underlineX=10&exit=true", {
+        underline: 360,
+        list: 350,
+    })
+    expect(records.length).toBeGreaterThan(20)
+    for (const { list } of records) expect(list).toBeCloseTo(200, 0)
+
+    expectSlideAcrossList(leadOffsets(records), 10, 110)
+    expectCrossfade(records)
+})
+
+test("Crossfading inside a scaled ancestor of a layoutRoot animates relative to it", async ({
+    page,
+}) => {
+    // The ancestor's 0.8 scale makes the tabs 80px wide, and the list starts
+    // at 430px
+    const records = await selectLettuce(
+        page,
+        "offset=true&offsetScale=0.8&exit=true",
+        { underline: 430, list: 430 }
+    )
+    expect(records.length).toBeGreaterThan(20)
+    for (const { list } of records) expect(list).toBeCloseTo(310, 0)
+
+    expectSlideAcrossList(leadOffsets(records), 0, 80)
+    expectCrossfade(records)
+    for (const { underlineTops, listTop } of records) {
+        for (const top of underlineTops) {
+            expect(top - listTop).toBeCloseTo(30.4, 0)
+        }
     }
 })

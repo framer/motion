@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 /**
  * #1935: the docs' tabs example with a sidebar that appears when Lettuce is
@@ -17,7 +17,11 @@ import { useState } from "react"
  * ?layoutRoot=false makes the list a plain element. ?offset=true moves the
  * whole window with a translate on an ancestor of the list.
  * ?layout=position (or size) makes Lettuce wider and sets the underline's
- * layout prop. ?outsideX=<px> translates the outside box.
+ * layout prop. ?outsideX=<px> translates the outside box. ?innerX=<px> wraps
+ * Tomato's underline in a translated box inside its tab, within the list.
+ * ?scroll=<px> puts the tabs in a scrolled layoutScroll box in the list.
+ * ?underlineX=<px> translates the underlines. ?offsetScale=<n> also scales
+ * the ?offset ancestor.
  */
 const tabs = ["🍅 Tomato", "🥬 Lettuce", "🧀 Cheese"]
 
@@ -64,14 +68,63 @@ export const App = () => {
     const exit = params.get("exit") === "true"
     // Start with the underline in a box outside the tab list
     const outside = params.get("outside") === "true"
-    // Translate an ancestor of the layoutRoot
+    // Translate an ancestor of the layoutRoot, and scale it by offsetScale
     const offset = params.get("offset") === "true"
+    const offsetScale = Number(params.get("offsetScale") || 1)
     // Translate the box outside the tab list
     const outsideX = parseInt(params.get("outsideX") || "0")
     // Only animate the underline's position or size, to a wider tab
     const layoutType = params.get("layout") as "position" | "size" | null
+    // Translate a box around Tomato's underline, inside the list
+    const innerX = parseInt(params.get("innerX") || "0")
+    // Scroll the tabs inside a layoutScroll box in the list by this many px
+    const scroll = parseInt(params.get("scroll") || "0")
+    // Translate the underlines themselves
+    const underlineX = parseInt(params.get("underlineX") || "0")
     const [selected, setSelected] = useState(outside ? "" : tabs[0])
     const [showSidebar, setShowSidebar] = useState(false)
+
+    useEffect(() => {
+        if (scroll) document.querySelector(".scroller")!.scrollLeft = scroll
+    }, [])
+
+    const underline = (item: string) => (
+        <AnimatePresence>
+            {item === selected ? (
+                <motion.div
+                    className="underline"
+                    layoutId="underline"
+                    layout={layoutType || undefined}
+                    style={{ x: underlineX }}
+                    exit={exit ? { opacity: 0 } : undefined}
+                    transition={transition}
+                />
+            ) : null}
+        </AnimatePresence>
+    )
+
+    const tabItems = tabs.map((item) => (
+        <li
+            key={item}
+            id={item.split(" ")[1].toLowerCase()}
+            className={layoutType ? "wide" : undefined}
+            onClick={() => {
+                window.recording = true
+                requestAnimationFrame(record)
+                setShowSidebar(item === tabs[1])
+                setSelected(item)
+            }}
+        >
+            {item}
+            {item === tabs[0] && innerX ? (
+                <motion.div className="inner" style={{ x: innerX }}>
+                    {underline(item)}
+                </motion.div>
+            ) : (
+                underline(item)
+            )}
+        </li>
+    ))
 
     const content = (
         <div className="window">
@@ -91,32 +144,14 @@ export const App = () => {
             ) : null}
             <nav>
                 <motion.ul layout={layoutRoot} layoutRoot={layoutRoot}>
-                    {tabs.map((item) => (
-                        <li
-                            key={item}
-                            id={item.split(" ")[1].toLowerCase()}
-                            className={layoutType ? "wide" : undefined}
-                            onClick={() => {
-                                window.recording = true
-                                requestAnimationFrame(record)
-                                setShowSidebar(item === tabs[1])
-                                setSelected(item)
-                            }}
-                        >
-                            {item}
-                            <AnimatePresence>
-                                {item === selected ? (
-                                    <motion.div
-                                        className="underline"
-                                        layoutId="underline"
-                                        layout={layoutType || undefined}
-                                        exit={exit ? { opacity: 0 } : undefined}
-                                        transition={transition}
-                                    />
-                                ) : null}
-                            </AnimatePresence>
-                        </li>
-                    ))}
+                    {scroll ? (
+                        <motion.div className="scroller" layoutScroll>
+                            {tabItems}
+                            <li />
+                        </motion.div>
+                    ) : (
+                        tabItems
+                    )}
                 </motion.ul>
             </nav>
             {showSidebar ? <aside /> : null}
@@ -125,7 +160,9 @@ export const App = () => {
     )
 
     return offset ? (
-        <motion.div style={{ x: 50, y: 50 }}>{content}</motion.div>
+        <motion.div style={{ x: 50, y: 50, scale: offsetScale }}>
+            {content}
+        </motion.div>
     ) : (
         content
     )
@@ -159,6 +196,18 @@ li, .outside {
     right: 0;
     height: 2px;
     background: blue;
+}
+.scroller {
+    display: flex;
+    width: 300px;
+    overflow-x: scroll;
+}
+.scroller li {
+    flex-shrink: 0;
+}
+.inner {
+    position: absolute;
+    inset: 0;
 }
 #lettuce.wide {
     width: 160px;
