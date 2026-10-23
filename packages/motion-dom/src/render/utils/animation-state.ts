@@ -195,7 +195,7 @@ export function createAnimationState(visualElement: any): AnimationState {
             let handledRemovedValues = false
             const definitionList = Array.isArray(prop) ? prop : [prop]
             let resolvedValues: { [key: string]: any } = {}
-            const transitions: { [key: string]: any } = {}
+            let out: any
 
             if (activeDelta !== false) {
                 for (const definition of definitionList) {
@@ -210,7 +210,11 @@ export function createAnimationState(visualElement: any): AnimationState {
                         ...target,
                         ...transitionEnd,
                     }
-                    for (const key in target) transitions[key] = transition
+                    /**
+                     * One out transition per type. With a list of labels,
+                     * the last one that sets out applies to all its values.
+                     */
+                    out = getOutTransition(transition) || out
                 }
             }
 
@@ -238,10 +242,7 @@ export function createAnimationState(visualElement: any): AnimationState {
                      * The highest-priority state a value leaves wins.
                      */
                     removedKeys.has(key) ||
-                        removedKeys.set(
-                            key,
-                            getOutTransition(typeState.prevTransitions[key])
-                        )
+                        removedKeys.set(key, typeState.prevOut)
                 } else if (
                     valueHasChanged ||
                     (next !== undefined && removedKeys.has(key))
@@ -257,12 +258,12 @@ export function createAnimationState(visualElement: any): AnimationState {
                     typeState.protectedKeys[key] = true
                 }
 
-                typeState.outTransitions[key] = outTransition
+                typeState.out[key] = outTransition
             }
 
             typeState.prevProp = prop
             typeState.prevResolvedValues = resolvedValues
-            typeState.prevTransitions = transitions
+            typeState.prevOut = out
 
             if (typeState.isActive) {
                 encounteredKeys = { ...encounteredKeys, ...resolvedValues }
@@ -434,14 +435,14 @@ export interface AnimationTypeState {
     needsAnimating: { [key: string]: boolean }
     prevResolvedValues: { [key: string]: any }
     /**
-     * Each value's transition in prevResolvedValues.
+     * The out transition of prevProp (#1725).
      */
-    prevTransitions: { [key: string]: any }
+    prevOut?: any
     /**
      * Out transitions of the states that values flagged in needsAnimating
      * are leaving (#1725).
      */
-    outTransitions: { [key: string]: any }
+    out: { [key: string]: any }
     prevProp?: VariantLabels | TargetAndTransition
 }
 
@@ -454,8 +455,7 @@ function createState() {
             protectedKeys: {},
             needsAnimating: {},
             prevResolvedValues: {},
-            prevTransitions: {},
-            outTransitions: {},
+            out: {},
         }
     }
 

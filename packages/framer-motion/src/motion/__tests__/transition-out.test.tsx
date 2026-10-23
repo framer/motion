@@ -431,6 +431,42 @@ describe("transition.out", () => {
         expect(Math.max(...values)).toBeGreaterThan(100)
     })
 
+    test("with a list of labels, the last label that sets out applies to all its values", async () => {
+        const opacity = motionValue(0.5)
+        const x = motionValue(0)
+        const Component = () => (
+            <motion.div
+                initial={false}
+                animate="rest"
+                whileHover={["fade", "move"]}
+                variants={{
+                    rest: { opacity: 0.5, x: 0, transition: { delay: 10 } },
+                    fade: {
+                        opacity: 1,
+                        transition: { type: false, out: true },
+                    },
+                    move: { x: 10, transition: { type: false } },
+                }}
+                style={{ opacity, x }}
+            />
+        )
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+
+        pointerEnter(container.firstChild as Element)
+        await frames()
+        expect([opacity.get(), x.get()]).toEqual([1, 10])
+
+        /**
+         * out is tracked per state, not per value, so x (from "move", which
+         * has no out) also leaves with "fade"'s out transition.
+         */
+        pointerLeave(container.firstChild as Element)
+        await frames()
+        expect([opacity.get(), x.get()]).toEqual([0.5, 0])
+    })
+
     test("exiting while hovered uses exit's transition, not hover's out", async () => {
         const opacity = motionValue(0.5)
         const Component = ({ isVisible }: { isVisible: boolean }) => (

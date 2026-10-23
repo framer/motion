@@ -99,7 +99,7 @@ export function animateTarget(
         const valueTransition = {
             delay,
             ...getValueTransition(
-                animationTypeState?.outTransitions[key] || transition || {},
+                animationTypeState?.out[key] || transition || {},
                 key
             ),
         }
