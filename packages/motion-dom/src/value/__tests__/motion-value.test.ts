@@ -291,6 +291,20 @@ describe("MotionValue.start", () => {
     })
 })
 
+describe("MotionValue.jump", () => {
+    test("ends on the jumped-to value when stopping the animation writes its latest value", () => {
+        const value = motionValue(0)
+        // Like a WAAPI animation, which commits its latest sample on stop
+        value.start(() => ({ stop: () => value.set(50) } as any))
+
+        value.jump(100)
+
+        expect(value.get()).toBe(100)
+        expect(value.getVelocity()).toBe(0)
+        expect(value.isAnimating()).toBe(false)
+    })
+})
+
 describe("MotionValue velocity calculations", () => {
     beforeEach(() => {
         MotionGlobalConfig.useManualTiming = true
