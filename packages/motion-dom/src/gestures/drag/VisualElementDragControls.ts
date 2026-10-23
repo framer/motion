@@ -11,6 +11,8 @@ import {
     convertBoundingBoxToBox,
     convertBoxToBoundingBox,
 } from "../../projection/geometry/conversion"
+import { copyBoxInto } from "../../projection/geometry/copy"
+import { transformBox } from "../../projection/geometry/delta-apply"
 import { calcLength } from "../../projection/geometry/delta-calc"
 import { createBox } from "../../projection/geometry/models"
 import type {
@@ -40,14 +42,17 @@ import {
 } from "./utils/constraints"
 
 /**
- * Re-read the scroll of the projection's ancestors, and return that of the
- * `layoutScroll` ones as a key that changes when any of them scroll.
+ * Re-read the scroll of the projection's ancestors, and return a key of the
+ * `layoutScroll` ones' scroll and the element's scale, that changes when the
+ * element moves or resizes relative to its ref constraints without a layout
+ * measurement.
  *
  * Clear the cached scroll first so `updateScroll` bypasses its
  * per-animationId cache and re-reads the live value.
  */
 function measureScroll(projection: IProjectionNode) {
-    let key = ""
+    const { scale, scaleX, scaleY } = projection.latestValues
+    let key = "" + [scale, scaleX, scaleY]
 
     for (const node of projection.path) {
         node.scroll = undefined
@@ -105,8 +110,8 @@ export class VisualElementDragControls {
     private hasMutatedConstraints = false
 
     /**
-     * The `layoutScroll` ancestors' scroll (see measureScroll) when ref
-     * constraints were last measured.
+     * The `layoutScroll` ancestors' scroll and the element's scale (see
+     * measureScroll) when ref constraints were last measured.
      */
     private scroll?: string
 
@@ -410,10 +415,11 @@ export class VisualElementDragControls {
         if (isElementConstraints(dragConstraints)) {
             /**
              * Ref constraints are measured with the layout. Scrolling a
-             * `layoutScroll` ancestor since can move the element relative
-             * to them without a layout measurement, so measure them again
-             * (#2024). Otherwise keep them: they and the layout can both
-             * have moved on the page since, e.g. when content above grows.
+             * `layoutScroll` ancestor (#2024) or changing the element's
+             * scale (#1827) since can move or resize the element relative
+             * to them without a layout measurement, so measure them again.
+             * Otherwise keep them: they and the layout can both have moved
+             * on the page since, e.g. when content above grows.
              */
             if (
                 !this.constraints ||
@@ -496,11 +502,19 @@ export class VisualElementDragControls {
         )
 
         /**
+         * The layout has no transform, but the element's scale changes the
+         * box its drag transform moves, so constrain that box (#1827).
+         */
+        const box = createBox()
+        copyBoxInto(box, projection.layout.layoutBox)
+        transformBox(box, { ...projection.latestValues, x: 0, y: 0 })
+
+        /**
          * layoutBox removes the scroll of `layoutScroll` ancestors, so
          * remove it from the constraints box too.
          */
         let measuredConstraints = calcViewportConstraints(
-            projection.layout.layoutBox,
+            box,
             projection.removeElementScroll(constraintsBox)
         )
 
@@ -794,15 +808,22 @@ export class VisualElementDragControls {
 
         const { projection } = this.visualElement
 
+        if (projection && !projection!.layout) {
+            projection.root && projection.root.updateScroll()
+
+            /**
+             * Measure without the element's transform, like every later
+             * layout measurement, as ref constraints apply its scale to the
+             * layout (#1827). This schedules a render to restore it.
+             */
+            projection.resetTransform()
+            projection.updateLayout()
+        }
+
         const stopMeasureLayoutListener = projection!.addEventListener(
             "measure",
             measureDragConstraints
         )
-
-        if (projection && !projection!.layout) {
-            projection.root && projection.root.updateScroll()
-            projection.updateLayout()
-        }
 
         frame.read(measureDragConstraints)
 

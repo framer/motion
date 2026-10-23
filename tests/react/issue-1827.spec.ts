@@ -7,11 +7,12 @@
  * the right, the box's right edge should stop exactly at the container's
  * right edge.
  *
- * Size changes (box width / container width) are handled on current main via
- * ResizeObserver (#2458). Changing the draggable's `scale` after the initial
- * render (reported in the issue comments) is still broken: the box overshoots
- * the container by the scaled extra width (600 vs 500), while the same scale
- * set from the first render (`scale-initial`) is constrained correctly.
+ * Size changes (box width / container width) are handled via ResizeObserver
+ * (#2458). Scale changes the box the drag transform moves without resizing
+ * it, so constraints must apply the draggable's current scale: whether set
+ * by a re-render (`scale`, `scale-center`, `scale-rerender`) or a motion
+ * value (`scale-value`), and whether it was there from the first render
+ * (`scale-initial`). `object` swaps `false` for object constraints.
  */
 import { expect, Page, test } from "@playwright/test"
 
@@ -64,6 +65,12 @@ for (const [mode, toggle, preDrag] of [
     ["box", true, true],
     ["container", true, true],
     ["scale", true, true],
+    ["scale-center", true, false],
+    ["scale-rerender", true, false],
+    ["scale-value", true, false],
+    ["scale-value", true, true],
+    ["object", true, false],
+    ["object", true, true],
 ] as const) {
     test(`issue #1827: mode=${mode} toggled=${toggle} preDrag=${preDrag} stays within constraints`, async ({
         page,
@@ -75,7 +82,7 @@ for (const [mode, toggle, preDrag] of [
             preDrag
         )
         if (mode === "box") expect(width).toBeCloseTo(300, 0)
-        if (mode === "scale" || mode === "scale-initial") expect(width).toBeCloseTo(200, 0)
+        if (mode.startsWith("scale")) expect(width).toBeCloseTo(200, 0)
         if (mode === "container") expect(cw).toBeCloseTo(300, 0)
         expect(box).toBeLessThanOrEqual(container + 1)
         expect(box).toBeGreaterThanOrEqual(container - 1)

@@ -555,6 +555,34 @@ describe("dragging", () => {
         expect(values(element)).toEqual({ x: 10, y: 0 })
     })
 
+    test("element constraints apply the element's scale (#1827)", async () => {
+        const rect = (width: number) => () =>
+            ({ left: 0, top: 0, right: width, bottom: 100 } as DOMRect)
+        const container = createElement()
+        container.getBoundingClientRect = rect(500)
+        element.getBoundingClientRect = rect(100)
+        makeDraggable(element, {
+            axis: "x",
+            constraints: container,
+            elastic: false,
+            momentum: false,
+        })
+        await nextFrame()
+
+        /**
+         * Scale without a layout measurement, as a motion value or an
+         * animation would. Scaled 2x from its centre, the 100px box spans
+         * -50px to 150px, so it can move 350px right within the container.
+         */
+        visualElementStore.get(element)!.getValue("scale", 1).set(2)
+
+        const pointer = await gesture(element).to(1, 0)
+        await pointer.to(1000, 0)
+        pointer.end()
+
+        expect(values(element).x).toBe(350)
+    })
+
     test("applies drag transition", async () => {
         makeDraggable(element, {
             axis: "x",
