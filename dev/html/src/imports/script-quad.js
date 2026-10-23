@@ -64,6 +64,61 @@ function mix(a, b, p) {
     return a.map((v, i) => v + (b[i] - v) * p)
 }
 
+/**
+ * A rotated rectangle's centre, size and rotation (degrees) from its
+ * corners.
+ */
+function describe(quad) {
+    const [x0, y0, x1, y1, , , x3, y3] = quad
+    const [cx, cy] = centre(quad)
+    return {
+        cx,
+        cy,
+        width: Math.hypot(x1 - x0, y1 - y0),
+        height: Math.hypot(x3 - x0, y3 - y0),
+        rotate: (Math.atan2(y1 - y0, x1 - x0) * 180) / Math.PI,
+    }
+}
+
+/**
+ * The corners of a rectangle centred on (cx, cy), rotated clockwise.
+ */
+function rectCorners({ cx, cy, width, height, rotate }) {
+    const angle = (rotate * Math.PI) / 180
+    const cos = Math.cos(angle)
+    const sin = Math.sin(angle)
+    const out = []
+    for (const [x, y] of [
+        [-0.5, -0.5],
+        [0.5, -0.5],
+        [0.5, 0.5],
+        [-0.5, 0.5],
+    ]) {
+        const dx = x * width
+        const dy = y * height
+        out.push(cx + dx * cos - dy * sin, cy + dx * sin + dy * cos)
+    }
+    return out
+}
+
+/**
+ * Where a rotated rectangle animating between two others is expected to
+ * be: its centre, size and rotation each interpolate linearly.
+ */
+function mixRects(from, to, p) {
+    const a = describe(from)
+    const b = describe(to)
+    let turn = b.rotate - a.rotate
+    turn -= Math.round(turn / 360) * 360
+    return rectCorners({
+        cx: a.cx + (b.cx - a.cx) * p,
+        cy: a.cy + (b.cy - a.cy) * p,
+        width: a.width + (b.width - a.width) * p,
+        height: a.height + (b.height - a.height) * p,
+        rotate: a.rotate + turn * p,
+    })
+}
+
 const format = (quad) => quad.map((v) => Math.round(v * 100) / 100).join(", ")
 
 const reported = new Set()
@@ -120,6 +175,14 @@ const nextFrame = () =>
     )
 
 /**
+ * Seek paused animation controls and wait for the frame that renders it.
+ */
+async function seek(controls, time) {
+    controls.time = time
+    await nextFrame()
+}
+
+/**
  * Mark the test as finished, so the runner can tell a pass from a page
  * whose script never ran.
  */
@@ -137,9 +200,13 @@ window.Quad = {
     corners,
     centre,
     mix,
+    describe,
+    rectCorners,
+    mixRects,
     matchCorners,
     matchPoint,
     nextFrame,
+    seek,
     done,
     fail,
 }

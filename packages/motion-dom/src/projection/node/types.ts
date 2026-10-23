@@ -15,8 +15,12 @@ import type { QuadProjection } from "./quad-projection"
 import type { SpaceMeasurement } from "../quad/measure-space"
 
 /**
- * How a node is drawn when a box can't describe it: inside a rotated,
- * skewed or 3D space, or (for snapshots) under rotated ancestors.
+ * The space a node is drawn in, when transforms Motion doesn't control
+ * ("layers") lie above it, and (for snapshots that might hand over to
+ * another space) the corners it was visible at.
+ *
+ * A node's boxes are measured inside its layers, so the box engine
+ * animates it exactly while it stays in the same space.
  */
 export interface QuadMeasurements {
     /**
@@ -25,10 +29,16 @@ export interface QuadMeasurements {
     rect: Box
 
     /**
-     * Transforms Motion doesn't control, between the node's projection
-     * parent and the node, as a page-space homography.
+     * Layers between the node's projection parent and the node, as a
+     * page-space homography.
      */
     env: Mat3
+
+    /**
+     * Every layer above the node, as a page-space homography. A node whose
+     * frame changes between snapshot and layout has moved between spaces.
+     */
+    frame: Mat3
 
     /**
      * `perspective` on the node's parent: distance (0 if none), then its
@@ -37,7 +47,8 @@ export interface QuadMeasurements {
     perspective: Float64Array
 
     /**
-     * Whether the space the node is drawn in isn't axis-aligned.
+     * Whether a layer distorts the node relative to a tracked projection
+     * parent, which the box engine can't correct for.
      */
     isQuadSpace: boolean
 
@@ -45,6 +56,12 @@ export interface QuadMeasurements {
      * For snapshots, the corners the node was visible at.
      */
     visual?: Quad
+
+    /**
+     * The layers to neutralise while measuring the node's boxes. Released
+     * once they're measured.
+     */
+    layers?: unknown[]
 }
 
 export interface Measurements {
@@ -219,13 +236,20 @@ export interface ProjectionNodeConfig<I> {
     /**
      * Measure the space the instance is drawn in, for quad projection.
      * Renderers that can't leave this undefined, and only use boxes.
+     * `pass` identifies the measurement pass, for caching.
      */
     measureSpace?: (
         instance: I,
         parent: IProjectionNode | undefined,
-        out: SpaceMeasurement,
-        force: boolean
+        pass: number,
+        out: SpaceMeasurement
     ) => boolean
+
+    /**
+     * Neutralise the layers `measureSpace` found until the returned
+     * function is called, so boxes measure in the space inside them.
+     */
+    neutraliseLayers?: (layers: unknown[]) => VoidFunction
 }
 
 /**

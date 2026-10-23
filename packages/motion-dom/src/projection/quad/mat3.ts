@@ -248,3 +248,16 @@ export function rectToRect(
  */
 export const toMatrix3d = (m: Mat3) =>
     `matrix3d(${m[0]}, ${m[3]}, 0, ${m[6]}, ${m[1]}, ${m[4]}, 0, ${m[7]}, 0, 0, 1, 0, ${m[2]}, ${m[5]}, 0, ${m[8]})`
+
+/**
+ * Whether `a` and `b` describe the same mapping, within `epsilon` of each
+ * entry once both are normalised.
+ */
+export function mat3Equals(a: Mat3, b: Mat3, epsilon = 1e-6) {
+    const wa = a[8]
+    const wb = b[8]
+    for (let i = 0; i < 9; i++) {
+        if (Math.abs(a[i] / wa - b[i] / wb) > epsilon) return false
+    }
+    return true
+}

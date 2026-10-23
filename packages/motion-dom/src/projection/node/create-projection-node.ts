@@ -65,12 +65,13 @@ import { buildProjectionTransform } from "../styles/transform"
 import { eachAxis } from "../utils/each-axis"
 import { FlatTree } from "../utils/flat-tree"
 import { has2DTranslate, hasScale, hasTransform } from "../utils/has-transform"
-import { globalProjectionState } from "./state"
+import { globalProjectionState, projectionInstances } from "./state"
 import {
     calcQuadFollow,
     calcQuadLead,
     measureQuad,
     QuadProjection,
+    readSpace,
     quadTransform,
     startQuadAnimation,
     stopQuadProjection,
@@ -101,6 +102,12 @@ const transformAxes = ["", "X", "Y", "Z"]
 const animationTarget = 1000
 
 let id = 0
+
+/**
+ * Identifies each pass of measurements, snapshot or layout, so measuring
+ * spaces can share work across the nodes in one pass.
+ */
+let measurePass = 0
 
 function resetDistortingTransform(
     key: string,
@@ -158,6 +165,7 @@ export function createProjectionNode<I>({
     checkIsScrollRoot,
     resetTransform,
     measureSpace,
+    neutraliseLayers,
 }: ProjectionNodeConfig<I>) {
     /**
      * Correctors registered via addScaleCorrector before projection loaded
@@ -489,6 +497,7 @@ export function createProjectionNode<I>({
             this.isSVG = isSVGElement(instance) && !isSVGSVGElement(instance)
 
             this.instance = instance
+            projectionInstances.add(instance as object)
 
             const { layoutId, layout, visualElement } = this.options
             if (visualElement && !visualElement.current) {
@@ -667,6 +676,7 @@ export function createProjectionNode<I>({
             const stack = this.getStack()
             stack && stack.remove(this)
             this.parent && this.parent.children.delete(this)
+            this.instance && projectionInstances.delete(this.instance as object)
             this.instance = undefined
             this.eventHandlers.clear()
             this.hasLayoutListener = false
@@ -695,6 +705,7 @@ export function createProjectionNode<I>({
 
             this.nodes && this.nodes.forEach(resetSkewAndRotation)
             this.animationId++
+            measurePass++
         }
 
         getTransformTemplate() {
@@ -790,6 +801,7 @@ export function createProjectionNode<I>({
 
         update() {
             this.updateScheduled = false
+            measurePass++
 
             const updateWasBlocked = this.isUpdateBlocked()
 
@@ -1079,6 +1091,27 @@ export function createProjectionNode<I>({
         }
 
         measure(removeTransform = true): Measurements {
+            /**
+             * Inside transforms Motion doesn't control, measure boxes in
+             * the space they create, so the box engine animates within it
+             * exactly.
+             */
+            const space = measureSpace
+                ? readSpace(
+                      this,
+                      measureSpace,
+                      measurePass,
+                      this.scroll?.wasRoot ||
+                          this.path.some(checkNodeWasScrollRoot)
+                          ? undefined
+                          : this.root.scroll?.offset
+                  )
+                : undefined
+            const restore =
+                space?.layers?.length && neutraliseLayers
+                    ? neutraliseLayers(space.layers)
+                    : undefined
+
             const pageBox = this.measurePageBox()
 
             let layoutBox = this.removeElementScroll(pageBox)
@@ -1092,6 +1125,8 @@ export function createProjectionNode<I>({
                 layoutBox = this.removeTransform(layoutBox)
             }
 
+            restore?.()
+
             roundBox(layoutBox)
 
             return {
@@ -1101,16 +1136,7 @@ export function createProjectionNode<I>({
                 latestValues: {},
                 source: this.id,
                 quad: measureSpace
-                    ? measureQuad(
-                          this,
-                          removeTransform,
-                          layoutBox,
-                          measureSpace,
-                          this.scroll?.wasRoot ||
-                              this.path.some(checkNodeWasScrollRoot)
-                              ? undefined
-                              : this.root.scroll?.offset
-                      )
+                    ? measureQuad(this, space, removeTransform, layoutBox)
                     : undefined,
             }
         }

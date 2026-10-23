@@ -3,38 +3,96 @@ import { identity, Mat3, multiply } from "./mat3"
 
 /**
  * The space an element is drawn in, as measured from the DOM.
+ *
+ * Elements Motion tracks with projection nodes have their transforms
+ * reset or modelled by the projection engine. Every other element's
+ * transform, other than a plain 2D translate, is a "layer": something the
+ * engine doesn't control that turns, scales, shears or foreshortens the
+ * elements inside it.
  */
 export interface SpaceMeasurement {
     /**
-     * The element's border box in the viewport with every transform above
-     * it, and its own, removed.
+     * The element's border box in the viewport with its own transform, and
+     * every transform above it except plain translates on layers, removed.
      */
     rect: Box
 
     /**
-     * Transforms Motion doesn't control, between the element's projection
-     * parent and the element, as a viewport-space homography. This includes
-     * CSS `transform`, `translate`, `rotate` and `scale`, and `perspective`
-     * on their parents.
+     * Layers between the element's projection parent and the element, as
+     * a viewport-space homography.
      */
     env: Mat3
+
+    /**
+     * Every layer above the element, as a viewport-space homography.
+     */
+    frame: Mat3
 
     /**
      * `perspective` on the element's parent, which applies to its own
      * transform, and its origin in the viewport. Distance 0 if none.
      */
     perspective: Float64Array
+
+    /**
+     * Every layer above the element, innermost first.
+     */
+    layers: Element[]
 }
 
-interface Layer {
-    element: Element
-    transform?: string
-    origin?: string
+interface StyleInfo {
     /**
-     * The element's parent has `perspective`, which applies to this
-     * element's transform.
+     * The transform as a row-major 4x4, about its origin, if it has one.
      */
-    perspective?: Element
+    transform?: Float64Array
+    origin?: string
+    isTranslate: boolean
+    perspective: number
+    perspectiveOrigin?: string
+}
+
+/**
+ * Computed styles, cached for one measurement pass so elements shared by
+ * many nodes' ancestor chains are only read once. A pass ends with the
+ * task it ran in, or when a different pass starts.
+ */
+let cache: WeakMap<Element, StyleInfo> | undefined
+let cachePass: number | undefined
+
+function styleOf(element: Element, pass: number): StyleInfo {
+    if (!cache || pass !== cachePass) {
+        cache = new WeakMap()
+        cachePass = pass
+        queueMicrotask(() => (cache = undefined))
+    }
+
+    let info = cache.get(element)
+    if (info) return info
+
+    const style = getComputedStyle(element)
+    const list = readTransform(style)
+    info = { isTranslate: true, perspective: 0 }
+
+    if (list) {
+        const matrix = new DOMMatrix(list)
+        info.transform = fromDOMMatrix(matrix, new Float64Array(16))
+        info.origin = style.transformOrigin
+        info.isTranslate =
+            matrix.is2D &&
+            matrix.a === 1 &&
+            matrix.b === 0 &&
+            matrix.c === 0 &&
+            matrix.d === 1
+    }
+
+    const { perspective } = style
+    if (perspective && perspective !== "none") {
+        info.perspective = parseFloat(perspective)
+        info.perspectiveOrigin = style.perspectiveOrigin
+    }
+
+    cache.set(element, info)
+    return info
 }
 
 const parentOf = (element: Element): Element | null =>
@@ -126,17 +184,19 @@ function moveOrigin(m: Float64Array, x: number, y: number, z: number) {
     }
 }
 
-function multiply4(out: Float64Array, a: Float64Array, b: Float64Array) {
-    const result = new Float64Array(16)
-    for (let r = 0; r < 4; r++) {
-        for (let c = 0; c < 4; c++) {
-            let sum = 0
-            for (let k = 0; k < 4; k++) sum += a[r * 4 + k] * b[k * 4 + c]
-            result[r * 4 + c] = sum
+/**
+ * `m = a * m`
+ */
+function premultiply4(a: Float64Array, m: Float64Array) {
+    for (let c = 0; c < 4; c++) {
+        const m0 = m[c]
+        const m1 = m[4 + c]
+        const m2 = m[8 + c]
+        const m3 = m[12 + c]
+        for (let r = 0; r < 16; r += 4) {
+            m[r + c] = a[r] * m0 + a[r + 1] * m1 + a[r + 2] * m2 + a[r + 3] * m3
         }
     }
-    out.set(result)
-    return out
 }
 
 /**
@@ -156,22 +216,16 @@ function reduce(m: Float64Array, out: Mat3) {
 }
 
 function perspectiveMatrix(
-    parent: Element,
+    info: StyleInfo,
     rect: DOMRect,
     out: Float64Array
 ): Float64Array {
-    const style = getComputedStyle(parent)
     out.fill(0)
     out[0] = out[5] = out[10] = out[15] = 1
-    out[14] = -1 / parseFloat(style.perspective)
-    readOrigin(style.perspectiveOrigin, origin)
+    out[14] = -1 / info.perspective
+    readOrigin(info.perspectiveOrigin!, origin)
     moveOrigin(out, rect.left + origin[0], rect.top + origin[1], 0)
     return out
-}
-
-const hasPerspective = (element: Element) => {
-    const { perspective } = getComputedStyle(element)
-    return Boolean(perspective) && perspective !== "none"
 }
 
 interface SavedTransform {
@@ -213,79 +267,136 @@ function restore(saved: SavedTransform[]) {
 }
 
 /**
- * Measure the space `element` is drawn in, between it and `until` (its
- * projection parent, or null for the document).
+ * Neutralise `layers` until the returned function is called, so boxes
+ * measure in the space inside them.
+ */
+export function neutraliseLayers(layers: Element[]): VoidFunction {
+    const saved: SavedTransform[] = []
+    for (const layer of layers) neutralise(layer, saved)
+    return () => restore(saved)
+}
+
+const m = /* @__PURE__ */ new Float64Array(16)
+const p = /* @__PURE__ */ new Float64Array(16)
+const h = /* @__PURE__ */ new Float64Array(9)
+
+/**
+ * Compose `layers[0..count)` into `out`, outermost first, as homographies
+ * of the untransformed page.
+ */
+function composeLayers(
+    out: Mat3,
+    layers: Element[],
+    count: number,
+    layerRects: DOMRect[],
+    perspectiveRects: Array<DOMRect | undefined>,
+    pass: number
+) {
+    identity(out)
+    for (let i = count - 1; i >= 0; i--) {
+        const layer = layers[i]
+        const info = styleOf(layer, pass)
+        const layerRect = layerRects[i]
+        m.set(info.transform!)
+        readOrigin(info.origin!, origin)
+        moveOrigin(
+            m,
+            layerRect.left + origin[0],
+            layerRect.top + origin[1],
+            origin[2]
+        )
+
+        /**
+         * `perspective` on a layer's parent applies to the layer's own
+         * transform.
+         */
+        const perspectiveRect = perspectiveRects[i]
+        if (perspectiveRect) {
+            premultiply4(
+                perspectiveMatrix(
+                    styleOf(parentOf(layer)!, pass),
+                    perspectiveRect,
+                    p
+                ),
+                m
+            )
+        }
+
+        multiply(out, out, reduce(m, h))
+    }
+}
+
+/**
+ * Measure the space `element` is drawn in. `until` is its projection
+ * parent (null for the document), `isTracked` whether an element has a
+ * projection node, and `pass` identifies the measurement pass, so styles
+ * are cached across the nodes it measures.
  *
- * Returns false, without writing to the DOM, if no transform or
- * perspective lies between them and `force` is false. Otherwise every
- * transform from the element up to the document is briefly neutralised to
- * read untransformed boxes, then restored.
+ * Returns false, without writing to the DOM, if no layer lies above the
+ * element and its parent has no perspective. Otherwise every transform
+ * from the element up to the document is briefly neutralised to read
+ * untransformed boxes, then restored.
  */
 export function measureSpace(
     element: Element,
     until: Element | null,
-    out: SpaceMeasurement,
-    force = false
+    isTracked: (element: Element) => boolean,
+    pass: number,
+    out: SpaceMeasurement
 ): boolean {
     if (typeof DOMMatrix === "undefined") return false
 
+    const { layers } = out
+    layers.length = 0
+
     /**
-     * Layers between the element and its projection parent, innermost
-     * first.
+     * Elements whose transforms to neutralise when measuring.
      */
-    const layers: Layer[] = []
-    let parent = parentOf(element)
-    let found = false
+    const transformed: Element[] = []
+    let envLayers = 0
+    let reachedParent = false
 
-    const perspectiveParent = Boolean(parent && hasPerspective(parent))
+    if (styleOf(element, pass).transform) transformed.push(element)
 
-    while (parent && parent !== until) {
-        const style = getComputedStyle(parent)
-        const transform = readTransform(style)
-        const layer: Layer = { element: parent }
+    const elementParent = parentOf(element)
+    const parentStyle = elementParent && styleOf(elementParent, pass)
 
-        if (transform) {
-            layer.transform = transform
-            layer.origin = style.transformOrigin
-            found = true
+    let ancestor = elementParent
+    while (ancestor) {
+        if (ancestor === until) reachedParent = true
 
-            const grandparent = parentOf(parent)
-            if (grandparent && hasPerspective(grandparent)) {
-                layer.perspective = grandparent
+        const info = styleOf(ancestor, pass)
+        if (info.transform) {
+            const tracked = isTracked(ancestor)
+            if (!tracked && !info.isTranslate) {
+                layers.push(ancestor)
+                if (!reachedParent) envLayers++
+                transformed.push(ancestor)
+            } else if (tracked) {
+                transformed.push(ancestor)
             }
         }
 
-        layers.push(layer)
-        parent = parentOf(parent)
-    }
-
-    if (!found && !perspectiveParent && !force) return false
-
-    /**
-     * Neutralise every transform from the element up to the document, so
-     * boxes measure untransformed.
-     */
-    const saved: SavedTransform[] = []
-    let ancestor: Element | null = element
-    while (ancestor) {
-        if (readTransform(getComputedStyle(ancestor))) {
-            neutralise(ancestor, saved)
-        }
         ancestor = parentOf(ancestor)
     }
 
+    const hasPerspectiveParent = Boolean(parentStyle && parentStyle.perspective)
+
+    if (!layers.length && !hasPerspectiveParent) return false
+
+    const saved: SavedTransform[] = []
+    for (const target of transformed) neutralise(target, saved)
+
     const rect = element.getBoundingClientRect()
-    const layerRects = layers.map((layer) =>
-        layer.transform ? layer.element.getBoundingClientRect() : undefined
-    )
-    const perspectiveRects = layers.map((layer) =>
-        layer.perspective
-            ? layer.perspective.getBoundingClientRect()
+    const layerRects = layers.map((layer) => layer.getBoundingClientRect())
+    const perspectiveRects = layers.map((layer) => {
+        const grandparent = parentOf(layer)
+        return grandparent && styleOf(grandparent, pass).perspective
+            ? grandparent.getBoundingClientRect()
             : undefined
-    )
-    const elementParent = parentOf(element)
+    })
     const parentRect =
-        perspectiveParent && elementParent
+        hasPerspectiveParent && elementParent
             ? elementParent.getBoundingClientRect()
             : undefined
 
@@ -296,41 +407,28 @@ export function measureSpace(
     out.rect.y.min = rect.top
     out.rect.y.max = rect.bottom
 
-    /**
-     * Compose layers outermost first.
-     */
-    identity(out.env)
-    const m = new Float64Array(16)
-    const p = new Float64Array(16)
-    const h = new Float64Array(9)
-    for (let i = layers.length - 1; i >= 0; i--) {
-        const layer = layers[i]
-        if (!layer.transform) continue
-
-        const layerRect = layerRects[i]!
-        fromDOMMatrix(new DOMMatrix(layer.transform), m)
-        readOrigin(layer.origin!, origin)
-        moveOrigin(
-            m,
-            layerRect.left + origin[0],
-            layerRect.top + origin[1],
-            origin[2]
-        )
-
-        if (layer.perspective) {
-            perspectiveMatrix(layer.perspective, perspectiveRects[i]!, p)
-            multiply4(m, p, m)
-        }
-
-        multiply(out.env, out.env, reduce(m, h))
-    }
+    composeLayers(
+        out.frame,
+        layers,
+        layers.length,
+        layerRects,
+        perspectiveRects,
+        pass
+    )
+    composeLayers(
+        out.env,
+        layers,
+        envLayers,
+        layerRects,
+        perspectiveRects,
+        pass
+    )
 
     const perspective = out.perspective
     perspective[0] = 0
-    if (parentRect && elementParent) {
-        const style = getComputedStyle(elementParent)
-        perspective[0] = parseFloat(style.perspective)
-        readOrigin(style.perspectiveOrigin, origin)
+    if (parentRect && parentStyle) {
+        perspective[0] = parentStyle.perspective
+        readOrigin(parentStyle.perspectiveOrigin!, origin)
         perspective[1] = parentRect.left + origin[0]
         perspective[2] = parentRect.top + origin[1]
     }

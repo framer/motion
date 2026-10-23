@@ -16,3 +16,9 @@ export const globalProjectionState = {
      */
     hasEverUpdated: false,
 }
+
+/**
+ * Instances with a mounted projection node, whose transforms the engine
+ * controls.
+ */
+export const projectionInstances = /* @__PURE__ */ new WeakSet<object>()

@@ -17,7 +17,9 @@ import {
     identity,
     invert,
     isAxisAligned,
+    isIdentity,
     Mat3,
+    mat3Equals,
     multiply,
     rectToRect,
     toMatrix3d,
@@ -155,14 +157,16 @@ export function createQuadProjection(): QuadProjection {
 export type MeasureSpace<I> = (
     instance: I,
     parent: IProjectionNode | undefined,
-    out: SpaceMeasurement,
-    force: boolean
+    pass: number,
+    out: SpaceMeasurement
 ) => boolean
 
 const space: SpaceMeasurement = {
     rect: /* @__PURE__ */ createBox(),
     env: /* @__PURE__ */ createMat3(),
+    frame: /* @__PURE__ */ createMat3(),
     perspective: /* @__PURE__ */ new Float64Array(3),
+    layers: [],
 }
 
 const has3DTransform = (values: ResolvedValues) =>
@@ -177,6 +181,9 @@ const isDistorting = (node: IProjectionNode) =>
 
 const hasRotatedAncestor = (node: IProjectionNode) =>
     node.path.some(isDistorting)
+
+const hasQuadAncestor = (node: IProjectionNode) =>
+    node.path.some((ancestor) => ancestor.quad?.active)
 
 const sourceOf = (node: IProjectionNode) =>
     node.resumeFrom || node.resumingFrom || node
@@ -213,99 +220,152 @@ function boxCanHandOver(lead: IProjectionNode, prev: IProjectionNode) {
 }
 
 /**
- * Whether `node` is drawn in a space a box can't describe.
+ * Whether two measurements were taken in the same space, so the box
+ * engine can animate between their boxes. No measurement means no layers.
  */
-const isInQuadSpace = (node: IProjectionNode) =>
-    Boolean(node.layout?.quad?.isQuadSpace || node.quad?.active)
+function isSameSpace(
+    a: QuadMeasurements | undefined,
+    b: QuadMeasurements | undefined,
+    is3D: boolean
+) {
+    if (a && b) {
+        return (
+            mat3Equals(a.frame, b.frame, 1e-4) &&
+            (!is3D || isSamePerspective(a.perspective, b.perspective))
+        )
+    }
+
+    const measured = a || b
+    return (
+        !measured ||
+        (isIdentity(measured.frame, 1e-6) &&
+            (!is3D || !measured.perspective[0]))
+    )
+}
+
+const isSamePerspective = (a: Float64Array, b: Float64Array) =>
+    a[0] === b[0] &&
+    (!a[0] || (Math.abs(a[1] - b[1]) < 1e-4 && Math.abs(a[2] - b[2]) < 1e-4))
 
 /**
- * Measure the space a node is drawn in, alongside its box. Only called
- * where the renderer can measure spaces. Returns undefined, the common
- * case, if a box describes the node.
+ * Read the space a node is drawn in, before its boxes are measured. Only
+ * called where the renderer can measure spaces. Returns undefined, the
+ * common case, if no layer lies above the node.
  */
-export function measureQuad<I>(
+export function readSpace<I>(
     node: IProjectionNode<I>,
-    isSnapshot: boolean,
-    layoutBox: Box,
     measureSpace: MeasureSpace<I>,
+    pass: number,
     scroll?: Point
 ): QuadMeasurements | undefined {
     const { instance, parent } = node
-    if (!instance) return undefined
-
-    const inherited = Boolean(parent && isInQuadSpace(parent))
-
-    let isQuadSpace = false
-    const measured = measureSpace(instance, parent, space, inherited)
-
-    if (measured) {
-        isQuadSpace =
-            inherited ||
-            !isAxisAligned(space.env) ||
-            Boolean(space.perspective[0] && has3DTransform(node.latestValues))
-    }
 
     /**
-     * A shared element that's rotated, or under rotated ancestors, still
-     * needs its visible corners, in case the element it hands over to
-     * can't start from its box.
+     * An app that maps page points itself (for instance to zoom a canvas)
+     * measures in its own space.
      */
-    const needsVisual =
-        isSnapshot &&
-        node.options.layoutId !== undefined &&
-        (isDistorting(node) || hasRotatedAncestor(node))
+    if (!instance || node.options.visualElement?.getTransformPagePoint()) {
+        return undefined
+    }
 
-    if (!isQuadSpace && !needsVisual) return undefined
+    if (!measureSpace(instance, parent, pass, space)) return undefined
 
     const quad: QuadMeasurements = {
         rect: createBox(),
         env: createMat3(),
+        frame: createMat3(),
         perspective: new Float64Array(3),
-        isQuadSpace,
+        isQuadSpace: false,
+        layers: space.layers.slice(),
     }
 
-    if (isQuadSpace) {
-        copyBoxInto(quad.rect, space.rect)
-        quad.env.set(space.env)
-        quad.perspective.set(space.perspective)
+    copyBoxInto(quad.rect, space.rect)
+    quad.env.set(space.env)
+    quad.frame.set(space.frame)
+    quad.perspective.set(space.perspective)
 
-        if (scroll) {
-            const { x, y } = scroll
-            quad.rect.x.min += x
-            quad.rect.x.max += x
-            quad.rect.y.min += y
-            quad.rect.y.max += y
-            conjugateTranslate(quad.env, quad.env, x, y)
-            quad.perspective[1] += x
-            quad.perspective[2] += y
+    if (scroll) {
+        const { x, y } = scroll
+        quad.rect.x.min += x
+        quad.rect.x.max += x
+        quad.rect.y.min += y
+        quad.rect.y.max += y
+        conjugateTranslate(quad.env, quad.env, x, y)
+        conjugateTranslate(quad.frame, quad.frame, x, y)
+        quad.perspective[1] += x
+        quad.perspective[2] += y
+    }
+
+    /**
+     * Inside a layer, a node's boxes are measured in the layer's own
+     * space, so the box engine still animates it exactly. Unless the
+     * layer sits between it and a tracked parent: the box engine corrects
+     * a node for its parent's projection, which the layer would distort.
+     */
+    quad.isQuadSpace =
+        Boolean(parent && parent !== node.root) &&
+        (!isAxisAligned(quad.env) ||
+            Boolean(quad.perspective[0] && has3DTransform(node.latestValues)))
+
+    return quad
+}
+
+/**
+ * Finish a node's quad measurements once its boxes are measured. For a
+ * snapshot that might hand over to another space, record the corners it's
+ * visible at.
+ */
+export function measureQuad(
+    node: IProjectionNode,
+    quad: QuadMeasurements | undefined,
+    isSnapshot: boolean,
+    layoutBox: Box
+): QuadMeasurements | undefined {
+    if (quad) quad.layers = undefined
+
+    const needsVisual =
+        isSnapshot &&
+        (quad ||
+            node.quad?.active ||
+            hasQuadAncestor(node) ||
+            (node.options.layoutId !== undefined &&
+                (isDistorting(node) || hasRotatedAncestor(node))))
+
+    if (!needsVisual) return quad
+
+    if (!quad) {
+        quad = {
+            rect: createBox(),
+            env: createMat3(),
+            frame: createMat3(),
+            perspective: new Float64Array(3),
+            isQuadSpace: false,
         }
-    } else {
         copyBoxInto(quad.rect, layoutBox)
     }
 
-    if (isSnapshot) {
-        quad.visual = createQuad()
-        if (parent) {
-            getVisual(parent, snapshotSpace)
-        } else {
-            identity(snapshotSpace)
-        }
-        multiply(snapshotSpace, snapshotSpace, quad.env)
-
-        /**
-         * A projecting node's transform applies to the layout it was
-         * projected from, not the box just measured, which includes it.
-         */
-        const rect = node.quad?.active
-            ? node.quad.rect
-            : isBoxProjecting(node)
-            ? layoutRect(node)!
-            : quad.rect
-
-        renderedTransform(node, rendered, rect, quad.perspective)
-        multiply(snapshotSpace, snapshotSpace, rendered)
-        transformBoxToQuad(quad.visual, snapshotSpace, rect)
+    const { parent } = node
+    quad.visual = createQuad()
+    if (parent) {
+        getVisual(parent, snapshotSpace)
+    } else {
+        identity(snapshotSpace)
     }
+    multiply(snapshotSpace, snapshotSpace, quad.env)
+
+    /**
+     * A projecting node's transform applies to the layout it was
+     * projected from, not the box just measured, which includes it.
+     */
+    const rect = node.quad?.active
+        ? node.quad.rect
+        : isBoxProjecting(node)
+        ? layoutRect(node)!
+        : quad.rect
+
+    renderedTransform(node, rendered, rect, quad.perspective)
+    multiply(snapshotSpace, snapshotSpace, rendered)
+    transformBoxToQuad(quad.visual, snapshotSpace, rect)
 
     return quad
 }
@@ -408,9 +468,14 @@ export function startQuadAnimation(
     const engage =
         layout &&
         snapshot &&
-        (layout.quad?.isQuadSpace ||
+        ((parent && parent.quad?.active) ||
+            layout.quad?.isQuadSpace ||
             snapshotQuad?.isQuadSpace ||
-            (parent && parent.quad?.active) ||
+            !isSameSpace(
+                snapshotQuad,
+                layout.quad,
+                has3DTransform(node.latestValues)
+            ) ||
             (isShared && prev && !boxCanHandOver(node, prev)))
 
     if (!engage) {
