@@ -13,6 +13,10 @@
  * by a re-render (`scale`, `scale-center`, `scale-rerender`) or a motion
  * value (`scale-value`), and whether it was there from the first render
  * (`scale-initial`). `object` swaps `false` for object constraints.
+ *
+ * Gesture scales (`while-*`) are transient, so the box must come to rest
+ * against the constraint once they end: constraints use the scale the
+ * element rests at, not the one a gesture is animating.
  */
 import { expect, Page, test } from "@playwright/test"
 
@@ -20,13 +24,24 @@ async function drag(page: Page, dx: number) {
     const start = (await page.locator("#box").boundingBox())!
     const x = start.x + 10
     const y = start.y + 10
+    /**
+     * Pause after hovering and pressing, so whileHover and whileTap scales
+     * have settled when the drag starts.
+     */
     await page.mouse.move(x, y)
+    await page.waitForTimeout(300)
     await page.mouse.down()
+    await page.waitForTimeout(300)
     await page.mouse.move(x + 20, y, { steps: 2 })
     await page.mouse.move(x + dx, y, { steps: 10 })
     await page.waitForTimeout(100)
     await page.mouse.up()
-    await page.waitForTimeout(300)
+    /**
+     * Move off the box so gesture scales (whileHover) end, and wait for
+     * them to settle.
+     */
+    await page.mouse.move(900, 650)
+    await page.waitForTimeout(600)
 }
 
 async function dragFarRight(
@@ -71,6 +86,10 @@ for (const [mode, toggle, preDrag] of [
     ["scale-value", true, true],
     ["object", true, false],
     ["object", true, true],
+    ["while-tap", false, false],
+    ["while-drag", false, false],
+    ["while-drag-rerender", false, false],
+    ["while-hover", false, false],
 ] as const) {
     test(`issue #1827: mode=${mode} toggled=${toggle} preDrag=${preDrag} stays within constraints`, async ({
         page,
@@ -83,6 +102,7 @@ for (const [mode, toggle, preDrag] of [
         )
         if (mode === "box") expect(width).toBeCloseTo(300, 0)
         if (mode.startsWith("scale")) expect(width).toBeCloseTo(200, 0)
+        if (mode.startsWith("while")) expect(width).toBeCloseTo(100, 0)
         if (mode === "container") expect(cw).toBeCloseTo(300, 0)
         expect(box).toBeLessThanOrEqual(container + 1)
         expect(box).toBeGreaterThanOrEqual(container - 1)

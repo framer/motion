@@ -583,6 +583,21 @@ describe("dragging", () => {
         expect(values(element).x).toBe(350)
     })
 
+    test("measuring element constraints keeps the element's transform", async () => {
+        animateElement(element, { scale: 2 }, { duration: 0 })
+        await nextFrame()
+        expect(element.style.transform).toBe("scale(2)")
+
+        /**
+         * The mount measurement removes the transform, which must be back
+         * before drag() returns: called after this frame's render step,
+         * a scheduled render wouldn't put it back until a frame was painted.
+         */
+        makeDraggable(element, { constraints: createElement() })
+
+        expect(element.style.transform).toBe("scale(2)")
+    })
+
     test("applies drag transition", async () => {
         makeDraggable(element, {
             axis: "x",

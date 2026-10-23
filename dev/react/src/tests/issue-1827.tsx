@@ -12,6 +12,10 @@ import { useRef, useState } from "react"
  * ?mode=scale-rerender — scale 2 from the first render, button re-renders it
  * ?mode=scale-value — button sets a `scale` motion value to 2, no re-render
  * ?mode=object — button swaps `dragConstraints` from false to an object
+ * ?mode=while-tap — whileTap scale 0.8
+ * ?mode=while-drag — whileDrag scale 1.2
+ * ?mode=while-drag-rerender — whileDrag scale 1.2, re-rendering on drag
+ * ?mode=while-hover — whileHover scale 1.2
  * ?mode=none      — button does nothing (control)
  */
 export const App = () => {
@@ -19,6 +23,7 @@ export const App = () => {
     const mode = params.get("mode") || "box"
     const ref = useRef<HTMLDivElement>(null)
     const [toggled, setToggled] = useState(false)
+    const [, setDragCount] = useState(0)
     const scaleValue = useMotionValue(1)
 
     const boxSize = mode === "box" && toggled ? 300 : 100
@@ -72,11 +77,26 @@ export const App = () => {
                     }
                     dragElastic={0}
                     dragMomentum={false}
+                    whileTap={mode === "while-tap" ? { scale: 0.8 } : undefined}
+                    whileDrag={
+                        mode.startsWith("while-drag")
+                            ? { scale: 1.2 }
+                            : undefined
+                    }
+                    whileHover={
+                        mode === "while-hover" ? { scale: 1.2 } : undefined
+                    }
+                    onDrag={
+                        mode === "while-drag-rerender"
+                            ? () => setDragCount((count) => count + 1)
+                            : undefined
+                    }
                     style={{
                         width: boxSize,
                         height: 100,
                         background: "red",
-                        scale,
+                        // Gesture modes don't set a style scale to rest at
+                        scale: mode.startsWith("while") ? undefined : scale,
                         ...(mode === "scale-center"
                             ? { marginLeft: 100, marginTop: 100 }
                             : { originX: 0, originY: 0 }),
