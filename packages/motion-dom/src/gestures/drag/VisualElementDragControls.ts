@@ -11,6 +11,8 @@ import {
     convertBoundingBoxToBox,
     convertBoxToBoundingBox,
 } from "../../projection/geometry/conversion"
+import { copyBoxInto } from "../../projection/geometry/copy"
+import { transformBox } from "../../projection/geometry/delta-apply"
 import { calcLength } from "../../projection/geometry/delta-calc"
 import { createBox } from "../../projection/geometry/models"
 import type {
@@ -19,10 +21,11 @@ import type {
 } from "../../projection/node/types"
 import { eachAxis } from "../../projection/utils/each-axis"
 import { measurePageBox } from "../../projection/utils/measure"
-import type { VisualElement } from "../../render/VisualElement"
+import type { MotionStyle, VisualElement } from "../../render/VisualElement"
 import { resize } from "../../resize"
 import { mixNumber } from "../../utils/mix/number"
 import { percent, px } from "../../value/types/numbers/units"
+import { isMotionValue } from "../../value/utils/is-motion-value"
 import { addValueToWillChange } from "../../value/will-change/add-will-change"
 import type { PanInfo } from "../pan/types"
 import { PanSession } from "../pan/PanSession"
@@ -40,14 +43,32 @@ import {
 } from "./utils/constraints"
 
 /**
- * Re-read the scroll of the projection's ancestors, and return that of the
- * `layoutScroll` ones as a key that changes when any of them scroll.
+ * The `scale` the element rests at once gesture states like `whileTap` end,
+ * as those only scale it while they're active (#1827): its `animate` target,
+ * else its `style`. Without an animation state (vanilla `drag()`), nothing
+ * scales it transiently. Keyframes and other non-numbers fall back to the
+ * default scale.
+ */
+function restingScale({ animationState, props, latestValues }: VisualElement) {
+    const scale = animationState
+        ? animationState.getState().animate.prevResolvedValues.scale ??
+          (props as { style?: MotionStyle }).style?.scale
+        : latestValues.scale
+
+    return isMotionValue(scale) ? scale.get() : +scale! || 1
+}
+
+/**
+ * Re-read the scroll of the projection's ancestors, and return a key of the
+ * `layoutScroll` ones' scroll and the element's resting scale, that changes
+ * when the element moves or resizes relative to its ref constraints without
+ * a layout measurement.
  *
  * Clear the cached scroll first so `updateScroll` bypasses its
  * per-animationId cache and re-reads the live value.
  */
-function measureScroll(projection: IProjectionNode) {
-    let key = ""
+function measureScroll(projection: IProjectionNode, scale: number) {
+    let key = scale + ","
 
     for (const node of projection.path) {
         node.scroll = undefined
@@ -105,8 +126,8 @@ export class VisualElementDragControls {
     private hasMutatedConstraints = false
 
     /**
-     * The `layoutScroll` ancestors' scroll (see measureScroll) when ref
-     * constraints were last measured.
+     * The `layoutScroll` ancestors' scroll and the element's scale (see
+     * measureScroll) when ref constraints were last measured.
      */
     private scroll?: string
 
@@ -410,14 +431,19 @@ export class VisualElementDragControls {
         if (isElementConstraints(dragConstraints)) {
             /**
              * Ref constraints are measured with the layout. Scrolling a
-             * `layoutScroll` ancestor since can move the element relative
-             * to them without a layout measurement, so measure them again
-             * (#2024). Otherwise keep them: they and the layout can both
-             * have moved on the page since, e.g. when content above grows.
+             * `layoutScroll` ancestor (#2024) or changing the element's
+             * scale (#1827) since can move or resize the element relative
+             * to them without a layout measurement, so measure them again.
+             * Otherwise keep them: they and the layout can both have moved
+             * on the page since, e.g. when content above grows.
              */
             if (
                 !this.constraints ||
-                this.scroll !== measureScroll(this.visualElement.projection!)
+                this.scroll !==
+                    measureScroll(
+                        this.visualElement.projection!,
+                        restingScale(this.visualElement)
+                    )
             ) {
                 this.constraints = this.resolveRefConstraints()
             }
@@ -487,7 +513,8 @@ export class VisualElementDragControls {
          * browser restoring scroll on refresh, or an ancestor layout effect
          * running after this element's mount (#2829).
          */
-        this.scroll = measureScroll(projection)
+        const scale = restingScale(this.visualElement)
+        this.scroll = measureScroll(projection, scale)
 
         const constraintsBox = measurePageBox(
             constraintsElement as HTMLElement,
@@ -496,11 +523,19 @@ export class VisualElementDragControls {
         )
 
         /**
+         * The layout has no transform, but the element's scale changes the
+         * box its drag transform moves, so constrain that box (#1827).
+         */
+        const box = createBox()
+        copyBoxInto(box, projection.layout.layoutBox)
+        transformBox(box, { ...projection.latestValues, scale, x: 0, y: 0 })
+
+        /**
          * layoutBox removes the scroll of `layoutScroll` ancestors, so
          * remove it from the constraints box too.
          */
         let measuredConstraints = calcViewportConstraints(
-            projection.layout.layoutBox,
+            box,
             projection.removeElementScroll(constraintsBox)
         )
 
@@ -689,12 +724,7 @@ export class VisualElementDragControls {
         /**
          * Update the layout of this element and resolve the latest drag constraints
          */
-        const { transformTemplate } = this.visualElement.getProps()
-        this.visualElement.current.style.transform = transformTemplate
-            ? transformTemplate({}, "")
-            : "none"
-        projection.root && projection.root.updateScroll()
-        projection.updateLayout()
+        this.updateLayout(projection)
 
         /**
          * Reset constraints so resolveConstraints() will recalculate them
@@ -731,6 +761,17 @@ export class VisualElementDragControls {
          * the transform was stripped for measurement.
          */
         this.visualElement.render()
+    }
+
+    /**
+     * Measure the layout without the element's transform, like every
+     * projection layout measurement, as ref constraints apply its scale to
+     * the layout (#1827). The caller renders to restore the transform.
+     */
+    private updateLayout(projection: IProjectionNode) {
+        projection.root && projection.root.updateScroll()
+        projection.resetTransform()
+        projection.updateLayout()
     }
 
     addListeners() {
@@ -794,15 +835,20 @@ export class VisualElementDragControls {
 
         const { projection } = this.visualElement
 
+        if (projection && !projection!.layout) {
+            this.updateLayout(projection)
+
+            /**
+             * Restore the transform synchronously, as a scheduled render can
+             * come after a paint, e.g. when called in postRender.
+             */
+            this.visualElement.render()
+        }
+
         const stopMeasureLayoutListener = projection!.addEventListener(
             "measure",
             measureDragConstraints
         )
-
-        if (projection && !projection!.layout) {
-            projection.root && projection.root.updateScroll()
-            projection.updateLayout()
-        }
 
         frame.read(measureDragConstraints)
 
