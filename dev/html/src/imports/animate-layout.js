@@ -4,6 +4,7 @@ import {
     createGPULayout,
     frame,
     animate,
+    quadLayout,
     setLayoutEngine,
 } from "framer-motion/dom"
 
@@ -22,4 +23,6 @@ window.AnimateLayout = {
     frame,
     animate,
     engine,
+    quadLayout,
+    setLayoutEngine,
 }
