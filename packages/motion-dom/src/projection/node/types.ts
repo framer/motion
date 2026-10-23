@@ -12,7 +12,6 @@ import { NodeStack } from "../shared/stack"
 import type { Mat3 } from "../quad/mat3"
 import type { Quad } from "../quad/quad"
 import type { QuadProjection } from "./quad-projection"
-import type { SpaceMeasurement } from "../quad/measure-space"
 
 /**
  * The space a node is drawn in, when transforms Motion doesn't control
@@ -58,10 +57,9 @@ export interface QuadMeasurements {
     visual?: Quad
 
     /**
-     * The layers to neutralise while measuring the node's boxes. Released
-     * once they're measured.
+     * Restores the layers neutralised while the node's boxes are measured.
      */
-    layers?: unknown[]
+    restore?: VoidFunction
 }
 
 export interface Measurements {
@@ -182,7 +180,11 @@ export interface IProjectionNode<I = unknown> {
 
     isProjecting(): boolean
     animationValues?: ResolvedValues
-    remixValues?: VoidFunction
+    mixShared?: VoidFunction
+    animationProgress: number
+    mixTargetDelta: (progress: number) => void
+    attemptToResolveRelativeTarget?: boolean
+    hasProjected: boolean
 
     /**
      * For nodes whose own transform isn't in `latestValues`, like planes
@@ -241,23 +243,6 @@ export interface ProjectionNodeConfig<I> {
     measureScroll: (instance: I) => Point
     checkIsScrollRoot: (instance: I) => boolean
     resetTransform?: (instance: I, value?: string) => void
-    /**
-     * Measure the space the instance is drawn in, for quad projection.
-     * Renderers that can't leave this undefined, and only use boxes.
-     * `pass` identifies the measurement pass, for caching.
-     */
-    measureSpace?: (
-        instance: I,
-        parent: IProjectionNode | undefined,
-        pass: number,
-        out: SpaceMeasurement
-    ) => boolean
-
-    /**
-     * Neutralise the layers `measureSpace` found until the returned
-     * function is called, so boxes measure in the space inside them.
-     */
-    neutraliseLayers?: (layers: unknown[]) => VoidFunction
 }
 
 /**

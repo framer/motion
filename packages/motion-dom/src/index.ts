@@ -329,6 +329,9 @@ export {
     parseAnimateLayoutArgs,
 } from "./layout/LayoutAnimationBuilder"
 export { animateLayout } from "./layout/animate-layout"
+export { setLayoutEngine } from "./projection/node/layout-engine"
+export type { LayoutEngine } from "./projection/node/layout-engine"
+export { quadLayout } from "./projection/node/quad-projection"
 export { createLayoutPlane } from "./layout/layout-plane"
 export type {
     LayoutPlane,

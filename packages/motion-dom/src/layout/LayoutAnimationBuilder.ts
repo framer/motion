@@ -7,6 +7,8 @@ import { frameData, frameSteps } from "../frameloop"
 import { microtask } from "../frameloop/microtask"
 import { time } from "../frameloop/sync-time"
 import { HTMLProjectionNode } from "../projection/node/HTMLProjectionNode"
+import { layoutEngine, setLayoutEngine } from "../projection/node/layout-engine"
+import { quadLayout } from "../projection/node/quad-projection"
 import type { IProjectionNode } from "../projection/node/types"
 import { HTMLVisualElement } from "../render/html/HTMLVisualElement"
 import { visualElementStore } from "../render/store"
@@ -338,6 +340,12 @@ export class LayoutAnimationBuilder {
             this.notifyReady = resolve
             this.rejectReady = reject
         })
+
+        /**
+         * Animate elements in and between transformed spaces, unless an
+         * app has chosen another engine.
+         */
+        layoutEngine || setLayoutEngine(quadLayout)
 
         if (!pendingBuilders) {
             pendingBuilders = []

@@ -4,6 +4,8 @@ import { frame } from "../frameloop"
 import { createBox } from "../projection/geometry/models"
 import { createProjectionNode } from "../projection/node/create-projection-node"
 import { documentRoot } from "../projection/node/HTMLProjectionNode"
+import { layoutEngine, setLayoutEngine } from "../projection/node/layout-engine"
+import { quadLayout } from "../projection/node/quad-projection"
 import type {
     IProjectionNode,
     Measurements,
@@ -330,6 +332,11 @@ export function createLayoutPlane(
     source: LayoutPlaneSource,
     { visible = true, transition, ...options }: LayoutPlaneOptions
 ): LayoutPlane {
+    /**
+     * Planes always animate with quad projection.
+     */
+    layoutEngine || setLayoutEngine(quadLayout)
+
     let node: PlaneNode | undefined
     let leaving: PlaneNode | undefined
 

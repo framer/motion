@@ -1,4 +1,6 @@
 import type { Box, Delta, Point } from "motion-utils"
+import type { TransformTemplate } from "../../node/types"
+import { visualElementStore } from "../../render/store"
 import type { ResolvedValues } from "../../render/types"
 import { copyBoxInto } from "../geometry/copy"
 import { createBox, createDelta } from "../geometry/models"
@@ -23,7 +25,11 @@ import {
     rectToRect,
     toMatrix3d,
 } from "../quad/mat3"
-import type { SpaceMeasurement } from "../quad/measure-space"
+import {
+    measureSpace,
+    neutraliseLayers,
+    SpaceMeasurement,
+} from "../quad/measure-space"
 import {
     boxToQuad,
     copyQuad,
@@ -38,6 +44,7 @@ import {
     projectionToHomography,
     valuesToHomography,
 } from "../quad/transform"
+import type { LayoutEngine } from "./layout-engine"
 import type { IProjectionNode, Measurements, QuadMeasurements } from "./types"
 
 /**
@@ -162,12 +169,12 @@ export function createQuadProjection(): QuadProjection {
     }
 }
 
-export type MeasureSpace<I> = (
-    instance: I,
-    parent: IProjectionNode | undefined,
-    pass: number,
-    out: SpaceMeasurement
-) => boolean
+/**
+ * Whether an element has a projection node, so the box engine accounts for
+ * its transform.
+ */
+const isTracked = (element: Element) =>
+    visualElementStore.get(element)?.projection?.instance === element
 
 const space: SpaceMeasurement = {
     rect: /* @__PURE__ */ createBox(),
@@ -255,16 +262,17 @@ const isSamePerspective = (a: Float64Array, b: Float64Array) =>
     a[0] === b[0] &&
     (!a[0] || (Math.abs(a[1] - b[1]) < 1e-4 && Math.abs(a[2] - b[2]) < 1e-4))
 
+const wasScrollRoot = (node: IProjectionNode) =>
+    node !== node.root && node.scroll?.wasRoot
+
 /**
- * Read the space a node is drawn in, before its boxes are measured. Only
- * called where the renderer can measure spaces. Returns undefined, the
- * common case, if no layer lies above the node.
+ * Read the space an element is drawn in, before its boxes are measured, and
+ * neutralise its layers until they are. Returns undefined, the common case,
+ * if no layer lies above it.
  */
-export function readSpace<I>(
-    node: IProjectionNode<I>,
-    measureSpace: MeasureSpace<I>,
-    pass: number,
-    scroll?: Point
+export function readSpace(
+    node: IProjectionNode,
+    pass: number
 ): QuadMeasurements | undefined {
     const { instance, parent } = node
 
@@ -272,11 +280,19 @@ export function readSpace<I>(
      * An app that maps page points itself (for instance to zoom a canvas)
      * measures in its own space.
      */
-    if (!instance || node.options.visualElement?.getTransformPagePoint()) {
+    if (
+        !(instance instanceof Element) ||
+        node.options.visualElement?.getTransformPagePoint() ||
+        !measureSpace(
+            instance,
+            parent?.instance instanceof Element ? parent.instance : null,
+            isTracked,
+            pass,
+            space
+        )
+    ) {
         return undefined
     }
-
-    if (!measureSpace(instance, parent, pass, space)) return undefined
 
     const quad: QuadMeasurements = {
         rect: createBox(),
@@ -284,7 +300,6 @@ export function readSpace<I>(
         frame: createMat3(),
         perspective: new Float64Array(3),
         isQuadSpace: false,
-        layers: space.layers.slice(),
     }
 
     copyBoxInto(quad.rect, space.rect)
@@ -292,7 +307,12 @@ export function readSpace<I>(
     quad.frame.set(space.frame)
     quad.perspective.set(space.perspective)
 
-    if (scroll) {
+    /**
+     * Viewport to page, unless the node or an ancestor was its own scroll
+     * root, whose boxes stay in the viewport.
+     */
+    const scroll = node.root!.scroll?.offset
+    if (scroll && !node.scroll?.wasRoot && !node.path.some(wasScrollRoot)) {
         const { x, y } = scroll
         quad.rect.x.min += x
         quad.rect.x.max += x
@@ -315,6 +335,8 @@ export function readSpace<I>(
         (!isAxisAligned(quad.env) ||
             Boolean(quad.perspective[0] && has3DTransform(node.latestValues)))
 
+    if (space.layers.length) quad.restore = neutraliseLayers(space.layers)
+
     return quad
 }
 
@@ -329,7 +351,10 @@ export function measureQuad(
     isSnapshot: boolean,
     layoutBox: Box
 ): QuadMeasurements | undefined {
-    if (quad) quad.layers = undefined
+    if (quad?.restore) {
+        quad.restore()
+        quad.restore = undefined
+    }
 
     const needsVisual =
         isSnapshot &&
@@ -461,7 +486,7 @@ const numericRotation = (values: ResolvedValues) =>
 
 /**
  * Decide whether a starting layout animation needs quad projection, and if
- * so prepare it. Called once per animation.
+ * so start it. Called once per animation.
  */
 export function startQuadAnimation(
     node: IProjectionNode,
@@ -494,7 +519,6 @@ export function startQuadAnimation(
     const quad = (node.quad ||= createQuadProjection())
     quad.active = true
     quad.resolved = false
-    quad.progress = 0
     quad.isShared = isShared
 
     if (snapshotQuad?.visual) {
@@ -510,6 +534,22 @@ export function startQuadAnimation(
           numericRotation(snapshot.latestValues)
         : 0
 
+    /**
+     * Quad projection resolves its own target, so the box engine's
+     * targets are left unset.
+     */
+    node.targetDelta = node.relativeTarget = undefined
+    node.relativeTargetOrigin = node.relativeParent = undefined
+    node.attemptToResolveRelativeTarget = false
+
+    node.mixTargetDelta = (latest: number) => {
+        quad.progress = node.animationProgress = latest / 1000
+        node.mixShared?.()
+        node.root!.scheduleUpdateProjection()
+        node.scheduleRender()
+    }
+    node.mixTargetDelta(node.options.layoutRoot ? 1000 : 0)
+
     return true
 }
 
@@ -519,8 +559,20 @@ const inverse = /* @__PURE__ */ createMat3()
 const start = /* @__PURE__ */ createMat3()
 
 /**
- * Per frame: mix the lead's start and live components into its own
- * transform.
+ * Per frame, for every node whose lead is projecting a quad. Follow nodes
+ * are projected onto their lead once every lead has been, in
+ * calcQuadFollow.
+ */
+function calcQuadProjection(node: IProjectionNode, lead: IProjectionNode) {
+    node.isTreeAnimating = true
+    if (lead === node && node.layout) {
+        calcQuadLead(node)
+        node.scheduleRender()
+    }
+}
+
+/**
+ * Mix the lead's start and live components into its own transform.
  */
 export function calcQuadLead(node: IProjectionNode) {
     const quad = node.quad!
@@ -712,8 +764,32 @@ export function stopQuadProjection(node: IProjectionNode) {
 const css = /* @__PURE__ */ createMat3()
 
 /**
+ * Render a node's quad projection, and return its transform.
+ */
+function applyQuadStyles(
+    node: IProjectionNode,
+    targetStyle: any,
+    valuesToRender: ResolvedValues,
+    transformTemplate: TransformTemplate | undefined
+) {
+    const originX = (node.latestValues.originX as number) ?? 0.5
+    const originY = (node.latestValues.originY as number) ?? 0.5
+
+    let transform = quadTransform(node, originX, originY)
+    if (transformTemplate) {
+        transform = transformTemplate(valuesToRender, transform)
+    }
+
+    targetStyle.transform = transform
+    targetStyle.transformOrigin = `${originX * 100}% ${originY * 100}% 0`
+
+    node.hasProjected = true
+    return transform
+}
+
+/**
  * The CSS transform for a node's quad projection, about `origin` (0-1 of
- * its box), with the stand-in node its scale correctors should read.
+ * its box). Also sizes the stand-in node its scale correctors read.
  */
 export function quadTransform(
     node: IProjectionNode,
@@ -742,4 +818,18 @@ export function quadTransform(
     correction.projectionDelta.y.scale = scaleY
 
     return toMatrix3d(css)
+}
+
+/**
+ * Projects elements from any quad, in any transformed space, onto any
+ * other, with homographies.
+ */
+export const quadLayout: LayoutEngine = {
+    readSpace,
+    measureQuad,
+    startAnimation: startQuadAnimation,
+    calcLead: calcQuadProjection,
+    calcFollow: calcQuadFollow,
+    applyStyles: applyQuadStyles,
+    stop: stopQuadProjection,
 }

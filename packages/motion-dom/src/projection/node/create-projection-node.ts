@@ -65,17 +65,9 @@ import { buildProjectionTransform } from "../styles/transform"
 import { eachAxis } from "../utils/each-axis"
 import { FlatTree } from "../utils/flat-tree"
 import { has2DTranslate, hasScale, hasTransform } from "../utils/has-transform"
-import { globalProjectionState, projectionInstances } from "./state"
-import {
-    calcQuadFollow,
-    calcQuadLead,
-    measureQuad,
-    QuadProjection,
-    readSpace,
-    quadTransform,
-    startQuadAnimation,
-    stopQuadProjection,
-} from "./quad-projection"
+import { globalProjectionState } from "./state"
+import { layoutEngine } from "./layout-engine"
+import type { QuadProjection } from "./quad-projection"
 import {
     IProjectionNode,
     LayoutEvents,
@@ -164,8 +156,6 @@ export function createProjectionNode<I>({
     measureScroll,
     checkIsScrollRoot,
     resetTransform,
-    measureSpace,
-    neutraliseLayers,
 }: ProjectionNodeConfig<I>) {
     /**
      * Correctors registered via addScaleCorrector before projection loaded
@@ -497,7 +487,6 @@ export function createProjectionNode<I>({
             this.isSVG = isSVGElement(instance) && !isSVGSVGElement(instance)
 
             this.instance = instance
-            projectionInstances.add(instance as object)
 
             const { layoutId, layout, visualElement } = this.options
             if (visualElement && !visualElement.current) {
@@ -676,7 +665,6 @@ export function createProjectionNode<I>({
             const stack = this.getStack()
             stack && stack.remove(this)
             this.parent && this.parent.children.delete(this)
-            this.instance && projectionInstances.delete(this.instance as object)
             this.instance = undefined
             this.eventHandlers.clear()
             this.hasLayoutListener = false
@@ -960,11 +948,11 @@ export function createProjectionNode<I>({
                         0
             }
 
-            this.nodes!.forEach(remixValues)
+            this.nodes!.forEach(mixShared)
             this.nodes!.forEach(propagateDirtyNodes)
             this.nodes!.forEach(resolveTargetDelta)
             this.nodes!.forEach(calcProjection)
-            this.nodes!.forEach(calcQuadFollow)
+            layoutEngine && this.nodes!.forEach(layoutEngine.calcFollow)
             this.nodes!.forEach(cleanDirtyNodes)
 
             if (statsBuffer.addProjectionMetrics) {
@@ -1068,7 +1056,7 @@ export function createProjectionNode<I>({
 
             const hasProjection =
                 (this.projectionDelta && !isDeltaZero(this.projectionDelta)) ||
-                this.quad?.active
+                (layoutEngine && this.quad?.active)
 
             const transformTemplate = this.getTransformTemplate()
             const transformTemplateValue = transformTemplate
@@ -1097,21 +1085,7 @@ export function createProjectionNode<I>({
              * the space they create, so the box engine animates within it
              * exactly.
              */
-            const space = measureSpace
-                ? readSpace(
-                      this,
-                      measureSpace,
-                      measurePass,
-                      this.scroll?.wasRoot ||
-                          this.path.some(checkNodeWasScrollRoot)
-                          ? undefined
-                          : this.root.scroll?.offset
-                  )
-                : undefined
-            const restore =
-                space?.layers?.length && neutraliseLayers
-                    ? neutraliseLayers(space.layers)
-                    : undefined
+            const space = layoutEngine?.readSpace(this, measurePass)
 
             const pageBox = this.measurePageBox()
 
@@ -1126,20 +1100,26 @@ export function createProjectionNode<I>({
                 layoutBox = this.removeTransform(layoutBox)
             }
 
-            restore?.()
-
             roundBox(layoutBox)
 
-            return {
+            const measurements: Measurements = {
                 animationId: this.root.animationId,
                 measuredBox: pageBox,
                 layoutBox,
                 latestValues: {},
                 source: this.id,
-                quad: measureSpace
-                    ? measureQuad(this, space, removeTransform, layoutBox)
-                    : undefined,
             }
+
+            if (layoutEngine) {
+                measurements.quad = layoutEngine.measureQuad(
+                    this,
+                    space,
+                    removeTransform,
+                    layoutBox
+                )
+            }
+
+            return measurements
         }
 
         measurePageBox() {
@@ -1323,9 +1303,11 @@ export function createProjectionNode<I>({
             const lead = this.getLead()
 
             /**
-             * Quad projection resolves its own target, in calcProjection.
+             * A layout engine projecting the lead resolves its own target,
+             * in calcProjection. Checking the engine first lets bundles
+             * without one drop these branches.
              */
-            if (lead.quad?.active) return
+            if (layoutEngine && lead.quad?.active) return
 
             this.isProjectionDirty ||= lead.isProjectionDirty
             this.isTransformDirty ||= lead.isTransformDirty
@@ -1525,17 +1507,8 @@ export function createProjectionNode<I>({
         calcProjection() {
             const lead = this.getLead()
 
-            if (lead.quad?.active) {
-                this.isTreeAnimating = true
-                /**
-                 * Follow nodes are projected onto the lead once every lead
-                 * has been, in calcQuadFollow.
-                 */
-                if (lead === this && this.layout) {
-                    calcQuadLead(this)
-                    this.scheduleRender()
-                }
-                return
+            if (layoutEngine && lead.quad?.active) {
+                return layoutEngine.calcLead(this, lead)
             }
 
             const isShared = Boolean(this.resumingFrom) || this !== lead
@@ -1730,11 +1703,12 @@ export function createProjectionNode<I>({
         animationProgress = 0
 
         /**
-         * Mix a shared element's values again, once every animation has
-         * updated this frame, so it uses the lead's latest values rather
-         * than last frame's.
+         * Mix a shared element's values. Called as the animation updates,
+         * and again in updateProjection once every animation has updated
+         * this frame, so it lands on the lead's latest values rather than
+         * last frame's.
          */
-        remixValues?: VoidFunction
+        mixShared?: VoidFunction
 
         setAnimationOrigin(
             delta: Delta,
@@ -1770,10 +1744,10 @@ export function createProjectionNode<I>({
 
             this.animationProgress = 0
 
-            this.remixValues = isSharedLayoutAnimation
+            this.mixShared = isSharedLayoutAnimation
                 ? () =>
                       mixValues(
-                          mixedValues,
+                          (this.animationValues = mixedValues),
                           snapshotLatestValues,
                           this.latestValues,
                           this.animationProgress,
@@ -1782,34 +1756,13 @@ export function createProjectionNode<I>({
                       )
                 : undefined
 
-            if (startQuadAnimation(this, snapshot, isSharedLayoutAnimation)) {
-                const quad = this.quad!
-                this.targetDelta = this.relativeTarget = undefined
-                this.relativeTargetOrigin = this.relativeParent = undefined
-                this.attemptToResolveRelativeTarget = false
-
-                this.mixTargetDelta = (latest: number) => {
-                    const progress = latest / 1000
-                    quad.progress = progress
-
-                    if (isSharedLayoutAnimation) {
-                        this.animationValues = mixedValues
-                        mixValues(
-                            mixedValues,
-                            snapshotLatestValues,
-                            this.latestValues,
-                            progress,
-                            shouldCrossfadeOpacity,
-                            isOnlyMember
-                        )
-                    }
-
-                    this.root.scheduleUpdateProjection()
-                    this.scheduleRender()
-                    this.animationProgress = progress
-                }
-
-                this.mixTargetDelta(this.options.layoutRoot ? 1000 : 0)
+            if (
+                layoutEngine?.startAnimation(
+                    this,
+                    snapshot,
+                    isSharedLayoutAnimation
+                )
+            ) {
                 return
             }
 
@@ -1875,18 +1828,8 @@ export function createProjectionNode<I>({
                     copyBoxInto(prevRelativeTarget, this.relativeTarget)
                 }
 
-                if (isSharedLayoutAnimation) {
-                    this.animationValues = mixedValues
-
-                    mixValues(
-                        mixedValues,
-                        snapshotLatestValues,
-                        this.latestValues,
-                        progress,
-                        shouldCrossfadeOpacity,
-                        isOnlyMember
-                    )
-                }
+                this.animationProgress = progress
+                this.mixShared?.()
 
                 if (point && point.rotate !== undefined) {
                     // Dedicated `pathRotation` channel, not `rotate`, so an
@@ -1898,8 +1841,6 @@ export function createProjectionNode<I>({
 
                 this.root.scheduleUpdateProjection()
                 this.scheduleRender()
-
-                this.animationProgress = progress
             }
 
             this.mixTargetDelta(this.options.layoutRoot ? 1000 : 0)
@@ -1964,11 +1905,10 @@ export function createProjectionNode<I>({
 
             const stack = this.getStack()
             stack && stack.exitAnimationComplete()
-            stopQuadProjection(this)
+            layoutEngine?.stop(this)
             this.resumingFrom =
                 this.currentAnimation =
                 this.animationValues =
-                this.remixValues =
                     undefined
 
             this.notifyListeners("animationComplete")
@@ -2209,18 +2149,13 @@ export function createProjectionNode<I>({
             }
 
             const lead = this.getLead()
+            const isQuad =
+                layoutEngine && this.quad?.active && lead.quad?.active
 
-            if (this.quad?.active && lead.quad?.active) {
-                this.applyQuadProjectionStyles(
-                    targetStyle,
-                    styleProp,
-                    lead,
-                    transformTemplate
-                )
-                return
-            }
-
-            if (!this.projectionDelta || !this.layout || !lead.target) {
+            if (
+                !isQuad &&
+                (!this.projectionDelta || !this.layout || !lead.target)
+            ) {
                 if (this.options.layoutId) {
                     targetStyle.opacity =
                         this.latestValues.opacity !== undefined
@@ -2242,80 +2177,36 @@ export function createProjectionNode<I>({
             targetStyle.visibility = ""
 
             const valuesToRender = lead.animationValues || lead.latestValues
-            this.applyTransformsToTarget()
+            let transform: string
 
-            let transform = buildProjectionTransform(
-                this.projectionDeltaWithTransform!,
-                this.treeScale,
-                valuesToRender
-            )
+            if (isQuad) {
+                transform = layoutEngine!.applyStyles(
+                    this,
+                    targetStyle,
+                    valuesToRender,
+                    transformTemplate
+                )
+            } else {
+                this.applyTransformsToTarget()
 
-            if (transformTemplate) {
-                transform = transformTemplate(valuesToRender, transform)
+                transform = buildProjectionTransform(
+                    this.projectionDeltaWithTransform!,
+                    this.treeScale,
+                    valuesToRender
+                )
+
+                if (transformTemplate) {
+                    transform = transformTemplate(valuesToRender, transform)
+                }
+
+                targetStyle.transform = transform
+
+                const { x, y } = this.projectionDelta!
+                targetStyle.transformOrigin = `${x.origin * 100}% ${
+                    y.origin * 100
+                }% 0`
             }
 
-            targetStyle.transform = transform
-
-            const { x, y } = this.projectionDelta
-            targetStyle.transformOrigin = `${x.origin * 100}% ${
-                y.origin * 100
-            }% 0`
-
-            this.applyProjectedStyles(
-                targetStyle,
-                styleProp,
-                lead,
-                valuesToRender,
-                transform === "none" ? undefined : lead
-            )
-        }
-
-        applyQuadProjectionStyles(
-            targetStyle: any,
-            styleProp: MotionStyle | undefined,
-            lead: IProjectionNode,
-            transformTemplate: ReturnType<
-                ProjectionNode["getTransformTemplate"]
-            >
-        ) {
-            targetStyle.visibility = ""
-
-            const valuesToRender = lead.animationValues || lead.latestValues
-            const originX = (this.latestValues.originX as number) ?? 0.5
-            const originY = (this.latestValues.originY as number) ?? 0.5
-
-            let transform = quadTransform(this, originX, originY)
-            if (transformTemplate) {
-                transform = transformTemplate(valuesToRender, transform)
-            }
-
-            targetStyle.transform = transform
-            targetStyle.transformOrigin = `${originX * 100}% ${
-                originY * 100
-            }% 0`
-
-            this.hasProjected = true
-            this.applyProjectedStyles(
-                targetStyle,
-                styleProp,
-                lead,
-                valuesToRender,
-                this.quad!.correction as unknown as IProjectionNode
-            )
-        }
-
-        /**
-         * Opacity, scale-corrected values and pointer events for a node
-         * that's projecting. Scale correctors read the projected size from
-         * `correctFor`, or values are left uncorrected if it's undefined.
-         */
-        applyProjectedStyles(
-            targetStyle: any,
-            styleProp: MotionStyle | undefined,
-            lead: IProjectionNode,
-            valuesToRender: ResolvedValues,
-            correctFor: IProjectionNode | undefined
-        ) {
             if (lead.animationValues) {
                 /**
                  * If the lead component is animating, assign this either the entering/leaving
@@ -2358,9 +2249,16 @@ export function createProjectionNode<I>({
                  * vulnerable to distortion if the element changes size without
                  * a corresponding layout animation.
                  */
-                const corrected = correctFor
-                    ? correct(valuesToRender[key], correctFor)
-                    : valuesToRender[key]
+                const corrected =
+                    transform === "none"
+                        ? valuesToRender[key]
+                        : correct(
+                              valuesToRender[key],
+                              isQuad
+                                  ? (this.quad!
+                                        .correction as unknown as IProjectionNode)
+                                  : lead
+                          )
 
                 if (applyTo) {
                     const num = applyTo.length
@@ -2557,8 +2455,8 @@ function notifyLayoutUpdate(node: IProjectionNode) {
     node.options.transition = undefined
 }
 
-function remixValues(node: IProjectionNode) {
-    node.animationValues && node.remixValues?.()
+function mixShared(node: IProjectionNode) {
+    node.animationValues && node.mixShared?.()
 }
 
 export function propagateDirtyNodes(node: IProjectionNode) {
