@@ -315,8 +315,7 @@
                                 Engine
                                 <select id="engine">
                                     <option value="box">Box (v1)</option>
-                                    <option value="quad">Quad (CPU)</option>
-                                    <option value="gpu">Quad (WebGPU)</option>
+                                    <option value="quad">Quad</option>
                                 </select>
                             </label>
                             <span class="pill" id="engine-status"></span>
@@ -906,21 +905,10 @@
                 location.search = `${params}${location.hash}`
             })
 
-            const engineStatus = document.getElementById("engine-status")
-            const engine = window.AnimateLayout.engine
-            if (engineName === "gpu" && engine) {
-                engineStatus.textContent = "Starting WebGPU…"
-                engine.ready.then((isReady) => {
-                    engineStatus.textContent = isReady
-                        ? "WebGPU ready"
-                        : "No WebGPU: layout animations are instant"
-                })
-            } else {
-                engineStatus.textContent =
-                    engineName === "box"
-                        ? "Boxes only, as before quad projection"
-                        : "Quad projection when a box can't describe it"
-            }
+            document.getElementById("engine-status").textContent =
+                engineName === "box"
+                    ? "Boxes only, as before quad projection"
+                    : "Quad projection when a box can't describe it"
 
             /**
              * Timeline

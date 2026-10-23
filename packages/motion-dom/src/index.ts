@@ -332,8 +332,6 @@ export { animateLayout } from "./layout/animate-layout"
 export { setLayoutEngine } from "./projection/node/layout-engine"
 export type { LayoutEngine } from "./projection/node/layout-engine"
 export { quadLayout } from "./projection/node/quad-projection"
-export { createGPULayout } from "./projection/gpu/gpu-layout"
-export type { GPULayout } from "./projection/gpu/gpu-layout"
 export { createLayoutPlane } from "./layout/layout-plane"
 export type {
     LayoutPlane,

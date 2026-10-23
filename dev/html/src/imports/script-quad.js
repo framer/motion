@@ -193,16 +193,10 @@ function matchPoint(element, actual, expected, label = "", threshold = 0.5) {
     }
 }
 
-/**
- * Wait for the next rendered frame. The GPU engine reads its results back
- * asynchronously, so with it, wait until they've been drawn too.
- */
-const nextFrame = async () => {
-    await new Promise((resolve) =>
+const nextFrame = () =>
+    new Promise((resolve) =>
         window.AnimateLayout.frame.postRender(() => resolve())
     )
-    await window.AnimateLayout.engine?.flush()
-}
 
 /**
  * Seek paused animation controls and wait for the frame that renders it.

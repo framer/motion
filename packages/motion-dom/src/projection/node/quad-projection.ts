@@ -406,7 +406,7 @@ export function measureQuad(
 const snapshotSpace = /* @__PURE__ */ createMat3()
 const rendered = /* @__PURE__ */ createMat3()
 
-export const layoutRect = (node: IProjectionNode) =>
+const layoutRect = (node: IProjectionNode) =>
     node.layout &&
     (node.layout.quad ? node.layout.quad.rect : node.layout.layoutBox)
 
@@ -778,7 +778,7 @@ const css = /* @__PURE__ */ createMat3()
 /**
  * Render a node's quad projection, and return its transform.
  */
-export function applyQuadStyles(
+function applyQuadStyles(
     node: IProjectionNode,
     targetStyle: any,
     valuesToRender: ResolvedValues,

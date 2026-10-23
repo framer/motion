@@ -58,21 +58,19 @@
         <script type="module" src="/src/imports/animate-layout.js"></script>
         <script type="module">
             /**
-             * Compares layout engines on the same work: n elements each
-             * moving between two transformed spaces, which every frame
-             * needs quad projection for.
+             * Measures the quad engine on n elements each moving between
+             * two transformed spaces, which every frame needs quad
+             * projection for.
              *
-             *   ?n=1000              the CPU quad engine
-             *   ?n=1000&engine=gpu   the WebGPU engine
+             *   ?n=1000              1000 elements
              *   ?n=1000&depth=10     the same number of elements, nested
              *                        in chains 10 deep
              *
              * Reports main-thread time per frame, from the start of the
              * update step to the end of postRender, which includes the
-             * animation and writing styles. With the GPU engine it also
-             * reports how long each readback took.
+             * animation and writing styles.
              */
-            const { animateLayout, frame, engine } = window.AnimateLayout
+            const { animateLayout, frame } = window.AnimateLayout
             const params = new URLSearchParams(location.search)
             const n = Number(params.get("n") || 500)
             const duration = Number(params.get("duration") || 3)
@@ -88,18 +86,6 @@
                 if (i % depth === 0) parent = a
                 parent.appendChild(item)
                 parent = item
-            }
-
-            const readbacks = []
-            if (engine && window.GPUBuffer) {
-                const mapAsync = GPUBuffer.prototype.mapAsync
-                GPUBuffer.prototype.mapAsync = function (...args) {
-                    const start = performance.now()
-                    return mapAsync.apply(this, args).then((result) => {
-                        readbacks.push(performance.now() - start)
-                        return result
-                    })
-                }
             }
 
             const frames = []
@@ -126,8 +112,6 @@
             }
 
             async function run() {
-                const isReady = engine ? await engine.ready : true
-
                 frame.update(start, true)
                 frame.postRender(end, true)
 
@@ -150,12 +134,9 @@
                 isMeasuring = false
 
                 const results = {
-                    engine: engine ? "gpu" : "cpu",
-                    isReady,
                     n,
                     depth,
                     frame: summarise(frames),
-                    readback: engine ? summarise(readbacks) : undefined,
                 }
                 document.getElementById("results").textContent = JSON.stringify(
                     results,

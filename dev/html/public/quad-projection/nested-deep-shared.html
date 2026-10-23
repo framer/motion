@@ -79,9 +79,6 @@
             const { animateLayout } = window.AnimateLayout
             const { corners, matchCorners, seek, done, fail } = window.Quad
 
-            /**
-             * Deeper than the GPU engine's first 32 dispatch levels.
-             */
             const depth = 40
 
             const box = document.getElementById("box")
@@ -98,8 +95,8 @@
              * As container-turns, with a chain of nested elements inside
              * the box. A new element at the end of the chain takes over
              * from one outside it, which stays mounted and follows it.
-             * The follower can only be drawn once every level above the
-             * lead is.
+             * The follower is drawn where every level above the lead
+             * puts it.
              */
             async function runTest() {
                 const container = document.getElementById("container")

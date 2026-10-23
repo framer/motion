@@ -1,5 +1,4 @@
 import type { JSAnimation } from "../../animation/JSAnimation"
-import type { Process } from "../../frameloop/types"
 import type {
     MotionPath,
     Transition,
@@ -194,7 +193,6 @@ export interface IProjectionNode<I = unknown> {
      */
     measureTransform?(rect: Box, out: Mat3): boolean
     currentAnimation?: JSAnimation<number>
-    pendingAnimation?: Process
     isTreeAnimating?: boolean
     isAnimationBlocked?: boolean
     setAnimationOrigin(
